@@ -1,6 +1,8 @@
 ---
+import "../styles/tailwind.css";
 import "../styles/global.css";
-interface Props { title: string; }
+import ThemeToggle from "../components/ThemeToggle.tsx";
+interface Props { title: string }
 const { title } = Astro.props;
 const base = import.meta.env.BASE_URL;
 ---
@@ -15,7 +17,7 @@ const base = import.meta.env.BASE_URL;
     <header class="site">
       <div class="wrap">
         <h1><a href={base}>📚 Paper Library</a></h1>
-        <nav><a href={base}>Catalog</a></nav>
+        <nav><a href={base}>Catalog</a> <ThemeToggle client:load /></nav>
       </div>
     </header>
     <main class="wrap"><slot /></main>

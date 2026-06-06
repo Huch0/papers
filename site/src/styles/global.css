@@ -70,3 +70,5 @@ ul.catalog .ttl { font-weight: 600; font-size: 1.02rem; }
 ul.catalog .sub { color: var(--mut); font-size: .85rem; }
 ul.catalog .tags { font-size: .78rem; color: var(--mut); }
 .hidden { display: none !important; }
+
+.dark { --ink:#e8e8e8; --mut:#9a9a9a; --line:#333; --bg:#141414; --soft:#1d1d1d; }

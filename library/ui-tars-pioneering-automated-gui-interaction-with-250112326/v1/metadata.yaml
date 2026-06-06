@@ -1,0 +1,115 @@
+canonical_key: arxiv-2501.12326
+version_key: v1
+title: 'UI-TARS: Pioneering Automated GUI Interaction with Native Agents'
+authors:
+- Yujia Qin
+- Yining Ye
+- Junjie Fang
+- Haoming Wang
+- Shihao Liang
+- Shizuo Tian
+- Junda Zhang
+- Jiahao Li
+- Yunxin Li
+- Shijue Huang
+- Wanjun Zhong
+- Kuanye Li
+- Jiale Yang
+- Yu Miao
+- Woyu Lin
+- Longxiang Liu
+- Xu Jiang
+- Qianli Ma
+- Jingyu Li
+- Xiaojun Xiao
+- Kai Cai
+- Chuang Li
+- Yaowei Zheng
+- Chaolin Jin
+- Chen Li
+- Xiao Zhou
+- Minchao Wang
+- Haoli Chen
+- Zhaojian Li
+- Haihua Yang
+- Haifeng Liu
+- Feng Lin
+- Tao Peng
+- Xin Liu
+- Guang Shi
+abstract: 'This paper introduces UI-TARS, a native GUI agent model that solely perceives the screenshots
+  as input and performs human-like interactions (e.g., keyboard and mouse operations). Unlike prevailing
+  agent frameworks that depend on heavily wrapped commercial models (e.g., GPT-4o) with expert-crafted
+  prompts and workflows, UI-TARS is an end-to-end model that outperforms these sophisticated frameworks.
+  Experiments demonstrate its superior performance: UI-TARS achieves SOTA performance in 10+ GUI agent
+  benchmarks evaluating perception, grounding, and GUI task execution. Notably, in the OSWorld benchmark,
+  UI-TARS achieves scores of 24.6 with 50 steps and 22.7 with 15 steps, outperforming Claude (22.0 and
+  14.9 respectively). In AndroidWorld, UI-TARS achieves 46.6, surpassing GPT-4o (34.5). UI-TARS incorporates
+  several key innovations: (1) Enhanced Perception: leveraging a large-scale dataset of GUI screenshots
+  for context-aware understanding of UI elements and precise captioning; (2) Unified Action Modeling,
+  which standardizes actions into a unified space across platforms and achieves precise grounding and
+  interaction through large-scale action traces; (3) System-2 Reasoning, which incorporates deliberate
+  reasoning into multi-step decision making, involving multiple reasoning patterns such as task decomposition,
+  reflection thinking, milestone recognition, etc. (4) Iterative Training with Reflective Online Traces,
+  which addresses the data bottleneck by automatically collecting, filtering, and reflectively refining
+  new interaction traces on hundreds of virtual machines. Through iterative training and reflection tuning,
+  UI-TARS continuously learns from its mistakes and adapts to unforeseen situations with minimal human
+  intervention. We also analyze the evolution path of GUI agents to guide the further development of this
+  domain.'
+venue: arXiv
+year: 2025
+source: arxiv
+source_url: https://arxiv.org/abs/2501.12326v1
+pdf_url: https://arxiv.org/pdf/2501.12326v1
+pdf_sha256: 999d01bdd86eb39df1c322d7ab2a48f9f10d8f8a6cb2af913591612712b3964e
+fetched_at: '2026-06-06T07:14:14Z'
+source_updated_at: '2025-01-21T17:48:10Z'
+ids:
+  doi: null
+  arxiv_id: 2501.12326v1
+  arxiv_base_id: '2501.12326'
+  arxiv_version: v1
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+- general_agent_methods
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: interest_fit(0.91), trend_signal(0.70), novelty(0.55) |
+    interests: computer_use_agents:GUI agent, computer_use_agents:group:computer_use_agents, general_agent_methods:reflection,
+    general_agent_methods:group:general_agent_methods | milestone/foundational floor applied'
+  matched_interests:
+  - computer_use_agents:GUI agent
+  - computer_use_agents:group:computer_use_agents
+  - general_agent_methods:reflection
+  - general_agent_methods:group:general_agent_methods
+  negative_signals: []
+  subscores:
+    interest_fit: 0.91
+    recency: 0.35
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 0.55
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.7
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/ui-tars-pioneering-automated-gui-interaction-with-250112326/v1/paper.pdf
+  extraction: library/ui-tars-pioneering-automated-gui-interaction-with-250112326/v1/extraction.txt
+  summary: library/ui-tars-pioneering-automated-gui-interaction-with-250112326/v1/summary.md
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread

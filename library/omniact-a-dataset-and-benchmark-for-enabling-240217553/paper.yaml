@@ -1,0 +1,64 @@
+canonical_key: arxiv-2402.17553
+slug: omniact-a-dataset-and-benchmark-for-enabling-240217553
+title: 'OmniACT: A Dataset and Benchmark for Enabling Multimodal Generalist Autonomous Agents for Desktop
+  and Web'
+authors:
+- Raghav Kapoor
+- Yash Butala
+- M. Russak
+- Jing Yu Koh
+- Kiran Kamble
+- Waseem Alshikh
+- Ruslan Salakhutdinov
+year: 2024
+primary_ids:
+  doi: 10.48550/arXiv.2402.17553
+  arxiv_base_id: '2402.17553'
+  openreview_id: null
+  semantic_scholar_id: c7d35995a9a4d49011cf47f130535e1391ebeebc
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2402.17553
+- https://arxiv.org/pdf/2402.17553
+topic_groups:
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: European Conference on Computer Vision
+  tier: unknown
+  status: unknown
+  year: 2024
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: foundational
+  significance: Large (9.8K task) dataset/benchmark across macOS/Windows/Linux/web evaluating code-to-action
+    on desktop+web.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2402.17553
+  pdf_path: library/omniact-a-dataset-and-benchmark-for-enabling-240217553/v1/paper.pdf
+  summary_path: library/omniact-a-dataset-and-benchmark-for-enabling-240217553/v1/summary.md
+  metadata_path: library/omniact-a-dataset-and-benchmark-for-enabling-240217553/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:29Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: 1c17f052fc21bf1095cb5a24c96145793d9c41f739cc6bb0e2c3fe3f3d096de4
+  pdf_bytes: 6962645
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-06-06T07:57:29Z'
+  updated_at: '2026-06-06T08:23:02Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

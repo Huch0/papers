@@ -1,0 +1,62 @@
+canonical_key: arxiv-2410.14803
+slug: distrl-an-asynchronous-distributed-reinforcement-learning-framework-241014803
+title: 'DistRL: An Asynchronous Distributed Reinforcement Learning Framework for On-Device Control Agents'
+authors:
+- Taiyi Wang
+- Zhihao Wu
+- Jianheng Liu
+- Jianye Hao
+- Jun Wang
+- Kun Shao
+year: 2024
+primary_ids:
+  doi: 10.48550/arXiv.2410.14803
+  arxiv_base_id: '2410.14803'
+  openreview_id: null
+  semantic_scholar_id: cf925627d69833bedd0c63ec32932bd0e747fcf3
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2410.14803
+- https://arxiv.org/pdf/2410.14803
+topic_groups:
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: International Conference on Learning Representations
+  tier: A_star
+  status: unknown
+  year: 2024
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: expansion
+  significance: Scalable async distributed RL decoupling collection from learning across emulators; improved
+    online mobile-agent RL efficiency.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2410.14803
+  pdf_path: library/distrl-an-asynchronous-distributed-reinforcement-learning-framework-241014803/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/distrl-an-asynchronous-distributed-reinforcement-learning-framework-241014803/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:38Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: 8950ccf1b6ed412e1ecc5e2e52cdd7cd31c79ef322133a06967f129fc5eb2b11
+  pdf_bytes: 17727668
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-06-06T07:57:38Z'
+  updated_at: '2026-06-06T07:57:38Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

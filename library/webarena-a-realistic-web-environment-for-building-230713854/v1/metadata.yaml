@@ -1,0 +1,84 @@
+canonical_key: arxiv-2307.13854
+version_key: v1
+title: 'WebArena: A Realistic Web Environment for Building Autonomous Agents'
+authors:
+- Shuyan Zhou
+- Frank F. Xu
+- Hao Zhu
+- Xuhui Zhou
+- Robert Lo
+- Abishek Sridhar
+- Xianyi Cheng
+- Tianyue Ou
+- Yonatan Bisk
+- Daniel Fried
+- Uri Alon
+- Graham Neubig
+abstract: 'With advances in generative AI, there is now potential for autonomous agents to manage daily
+  tasks via natural language commands. However, current agents are primarily created and tested in simplified
+  synthetic environments, leading to a disconnect with real-world scenarios. In this paper, we build an
+  environment for language-guided agents that is highly realistic and reproducible. Specifically, we focus
+  on agents that perform tasks on the web, and create an environment with fully functional websites from
+  four common domains: e-commerce, social forum discussions, collaborative software development, and content
+  management. Our environment is enriched with tools (e.g., a map) and external knowledge bases (e.g.,
+  user manuals) to encourage human-like task-solving. Building upon our environment, we release a set
+  of benchmark tasks focusing on evaluating the functional correctness of task completions. The tasks
+  in our benchmark are diverse, long-horizon, and designed to emulate tasks that humans routinely perform
+  on the internet. We experiment with several baseline agents, integrating recent techniques such as reasoning
+  before acting. The results demonstrate that solving complex tasks is challenging: our best GPT-4-based
+  agent only achieves an end-to-end task success rate of 14.41%, significantly lower than the human performance
+  of 78.24%. These results highlight the need for further development of robust agents, that current state-of-the-art
+  large language models are far from perfect performance in these real-life tasks, and that WebArena can
+  be used to measure such progress.'
+venue: ICLR
+year: 2024
+source: arxiv
+source_url: https://arxiv.org/abs/2307.13854v4
+pdf_url: https://arxiv.org/pdf/2307.13854v4
+pdf_sha256: f9731b92bc3d29a2ea7b5f9cb46b48540c76bc3f84a57e0c48fc37ea73107f95
+fetched_at: '2026-06-06T07:14:00Z'
+source_updated_at: '2024-04-16T15:13:18Z'
+ids:
+  doi: null
+  arxiv_id: 2307.13854v4
+  arxiv_base_id: '2307.13854'
+  arxiv_version: v4
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+scoring:
+  score: 85.9
+  label: MUST_READ
+  confidence: high
+  rationale: 'score=86 -> MUST_READ | strong: interest_fit(1.00), venue_quality(1.00), trend_signal(1.00)
+    | interests: computer_use_agents:group:computer_use_agents'
+  matched_interests:
+  - computer_use_agents:group:computer_use_agents
+  negative_signals: []
+  subscores:
+    interest_fit: 1.0
+    recency: 0.35
+    venue_quality: 1.0
+    harness_relevance: 0.9
+    novelty: 0.9
+    artifact_availability: 0.9
+    evaluation_quality: 0.95
+    trend_signal: 1.0
+    author_or_lab_signal: 0.3
+artifacts:
+  pdf: library/webarena-a-realistic-web-environment-for-building-230713854/v1/paper.pdf
+  extraction: library/webarena-a-realistic-web-environment-for-building-230713854/v1/extraction.txt
+  summary: library/webarena-a-realistic-web-environment-for-building-230713854/v1/summary.md
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread

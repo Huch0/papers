@@ -1,0 +1,64 @@
+canonical_key: arxiv-2504.01382
+slug: an-illusion-of-progress-assessing-the-current-250401382
+title: An Illusion of Progress? Assessing the Current State of Web Agents
+authors:
+- Tianci Xue
+- Weijian Qi
+- Tianneng Shi
+- Chan Hee Song
+- Boyu Gou
+- D. Song
+- Huan Sun
+- Yu Su
+year: 2025
+primary_ids:
+  doi: 10.48550/arXiv.2504.01382
+  arxiv_base_id: '2504.01382'
+  openreview_id: null
+  semantic_scholar_id: e17d67990721add9597890e777cb337ef9a20973
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2504.01382
+- https://arxiv.org/pdf/2504.01382
+topic_groups:
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: arXiv.org
+  tier: workshop_or_minor
+  status: unknown
+  year: 2025
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: recent
+  significance: Introduced Online-Mind2Web (300 live tasks/136 sites); showed prior progress overstated;
+    leading live leaderboard.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2504.01382
+  pdf_path: library/an-illusion-of-progress-assessing-the-current-250401382/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/an-illusion-of-progress-assessing-the-current-250401382/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:40Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: 8c0e6e48539e328dce612c46625043620e76a950c733dd02bf15345908e59ef5
+  pdf_bytes: 4872960
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-06-06T07:57:40Z'
+  updated_at: '2026-06-06T07:57:40Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

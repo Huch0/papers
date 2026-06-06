@@ -1,0 +1,89 @@
+canonical_key: arxiv-2411.18279
+version_key: v1
+title: 'Large Language Model-Brained GUI Agents: A Survey'
+authors:
+- Chaoyun Zhang
+- Shilin He
+- Jiaxu Qian
+- Bowen Li
+- Liqun Li
+- Si Qin
+- Yu Kang
+- Ming-Jie Ma
+- Qingwei Lin
+- S. Rajmohan
+- Dongmei Zhang
+- Qi Zhang
+abstract: GUIs have long been central to human-computer interaction, providing an intuitive and visually-driven
+  way to access and interact with digital systems. The advent of LLMs, particularly multimodal models,
+  has ushered in a new era of GUI automation. They have demonstrated exceptional capabilities in natural
+  language understanding, code generation, and visual processing. This has paved the way for a new generation
+  of LLM-brained GUI agents capable of interpreting complex GUI elements and autonomously executing actions
+  based on natural language instructions. These agents represent a paradigm shift, enabling users to perform
+  intricate, multi-step tasks through simple conversational commands. Their applications span across web
+  navigation, mobile app interactions, and desktop automation, offering a transformative user experience
+  that revolutionizes how individuals interact with software. This emerging field is rapidly advancing,
+  with significant progress in both research and industry. To provide a structured understanding of this
+  trend, this paper presents a comprehensive survey of LLM-brained GUI agents, exploring their historical
+  evolution, core components, and advanced techniques. We address research questions such as existing
+  GUI agent frameworks, the collection and utilization of data for training specialized GUI agents, the
+  development of large action models tailored for GUI tasks, and the evaluation metrics and benchmarks
+  necessary to assess their effectiveness. Additionally, we examine emerging applications powered by these
+  agents. Through a detailed analysis, this survey identifies key research gaps and outlines a roadmap
+  for future advancements in the field. By consolidating foundational knowledge and state-of-the-art developments,
+  this work aims to guide both researchers and practitioners in overcoming challenges and unlocking the
+  full potential of LLM-brained GUI agents.
+venue: arXiv.org
+year: 2024
+source: arxiv
+source_url: https://arxiv.org/abs/2411.18279
+pdf_url: https://arxiv.org/pdf/2411.18279
+pdf_sha256: 8419cb8f386bdc982b46ca9a4c81f5bcc026e153509ce2fc7e216fffb3950cea
+fetched_at: '2026-06-06T07:57:39Z'
+source_updated_at: null
+ids:
+  doi: 10.48550/arXiv.2411.18279
+  arxiv_id: '2411.18279'
+  arxiv_base_id: '2411.18279'
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: 0663fea61d9fec219f3f84dd2e4aa716edc4223a
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: recency(1.00), interest_fit(0.91), novelty(0.55) | interests:
+    computer_use_agents:GUI agent, computer_use_agents:group:computer_use_agents | milestone/foundational
+    floor applied'
+  matched_interests:
+  - computer_use_agents:GUI agent
+  - computer_use_agents:group:computer_use_agents
+  negative_signals: []
+  subscores:
+    interest_fit: 0.91
+    recency: 1.0
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 0.55
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/large-language-model-brained-gui-agents-a-241118279/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

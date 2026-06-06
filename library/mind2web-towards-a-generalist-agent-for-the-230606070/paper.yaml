@@ -1,0 +1,63 @@
+canonical_key: arxiv-2306.06070
+slug: mind2web-towards-a-generalist-agent-for-the-230606070
+title: 'Mind2Web: Towards a Generalist Agent for the Web'
+authors:
+- Xiang Deng
+- Yu Gu
+- Boyuan Zheng
+- Shijie Chen
+- Samuel Stevens
+- Boshi Wang
+- Huan Sun
+- Yu Su
+year: 2023
+primary_ids:
+  doi: null
+  arxiv_base_id: '2306.06070'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2306.06070v3
+- https://arxiv.org/pdf/2306.06070v3
+topic_groups:
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: NeurIPS
+  tier: A_star
+  status: accepted
+  year: 2023
+user:
+  read_status: unread
+  triage_label: MUST_READ
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: foundational
+  significance: Generalist web-agent benchmark across many real sites.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v3
+  source: arxiv
+  source_url: https://arxiv.org/abs/2306.06070v3
+  pdf_path: library/mind2web-towards-a-generalist-agent-for-the-230606070/v1/paper.pdf
+  summary_path: library/mind2web-towards-a-generalist-agent-for-the-230606070/v1/summary.md
+  metadata_path: library/mind2web-towards-a-generalist-agent-for-the-230606070/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:14:00Z'
+  source_updated_at: '2023-12-09T05:57:46Z'
+  arxiv_version: v3
+  pdf_sha256: 75d8af953769a53bf75913908e2bb6185c6b338c8d89b7304e7fd8cfb79934e8
+  pdf_bytes: 7635816
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-06-06T07:14:00Z'
+  updated_at: '2026-06-06T07:19:25Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

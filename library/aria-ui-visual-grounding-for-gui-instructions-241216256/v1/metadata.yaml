@@ -1,0 +1,73 @@
+canonical_key: arxiv-2412.16256
+version_key: v1
+title: 'Aria-UI: Visual Grounding for GUI Instructions'
+authors:
+- Yuhao Yang
+- Yue Wang
+- Dongxu Li
+- Ziyang Luo
+- Bei Chen
+- Chao Huang
+- Junnan Li
+abstract: Digital agents for automating tasks across different platforms by directly manipulating the
+  GUIs are increasingly important. For these agents, grounding from language instructions to target elements
+  remains a significant challenge due to reliance on HTML or AXTree inputs. In this paper, we introduce
+  Aria-UI, a large multimodal model specifically designed for GUI grounding. Aria-UI adopts a pure-vision
+  approach, eschewing reliance on auxiliary inputs. To adapt to heterogeneous planning instructions, we
+  propose a scalable data pipeline that synthesizes diverse and high-quality instruction samples for grounding.
+  To handle dynamic contexts in task performing, Aria-UI incorporates textual and text-image interleaved
+  action histories, enabling robust context-aware reasoning for grounding. Aria-UI sets new state-of-the-art
+  results across offline and online agent benchmarks, outperforming both vision-only and AXTree-reliant
+  baselines. We release all training data and model checkpoints to foster further research at https://ariaui.github.io.
+venue: Annual Meeting of the Association for Computational Linguistics
+year: 2024
+source: arxiv
+source_url: https://arxiv.org/abs/2412.16256
+pdf_url: https://arxiv.org/pdf/2412.16256
+pdf_sha256: 169bc7694b456530ce8a6f0336b7efc33a32a21a731e1656caf4934e83f59334
+fetched_at: '2026-06-06T07:57:35Z'
+source_updated_at: null
+ids:
+  doi: 10.48550/arXiv.2412.16256
+  arxiv_id: '2412.16256'
+  arxiv_base_id: '2412.16256'
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: 0c989f2c896e4ad5032b3c87abff8f7ba1f89c7a
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: recency(1.00), venue_quality(1.00), novelty(0.80) | interests:
+    computer_use_agents:group:computer_use_agents | milestone/foundational floor applied'
+  matched_interests:
+  - computer_use_agents:group:computer_use_agents
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 1.0
+    venue_quality: 1.0
+    harness_relevance: 0.0
+    novelty: 0.8
+    artifact_availability: 0.55
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/aria-ui-visual-grounding-for-gui-instructions-241216256/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

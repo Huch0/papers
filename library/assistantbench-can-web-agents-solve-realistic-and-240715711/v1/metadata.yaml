@@ -1,0 +1,76 @@
+canonical_key: arxiv-2407.15711
+version_key: v1
+title: 'AssistantBench: Can Web Agents Solve Realistic and Time-Consuming Tasks?'
+authors:
+- Ori Yoran
+- S. Amouyal
+- Chaitanya Malaviya
+- Ben Bogin
+- Ofir Press
+- Jonathan Berant
+abstract: Language agents, built on top of language models (LMs), are systems that can interact with complex
+  environments, such as the open web. In this work, we examine whether such agents can perform realistic
+  and time-consuming tasks on the web, e.g., monitoring real-estate markets or locating relevant nearby
+  businesses. We introduce AssistantBench, a challenging new benchmark consisting of 214 realistic tasks
+  that can be automatically evaluated, covering different scenarios and domains. We find that AssistantBench
+  exposes the limitations of current systems, including language models and retrieval-augmented language
+  models, as no model reaches an accuracy of more than 25 points. While closed-book LMs perform well in
+  terms of accuracy, they exhibit low precision and tend to hallucinate facts. State-of-the-art web agents
+  reach a score of near zero. Additionally, we introduce SeePlanAct (SPA), a new web agent that significantly
+  outperforms previous agents, and an ensemble of SPA and closed-book models reaches the best overall
+  performance. Moreover, we analyze failures of current systems and highlight that open web navigation
+  remains a major challenge.
+venue: Conference on Empirical Methods in Natural Language Processing
+year: 2024
+source: arxiv
+source_url: https://arxiv.org/abs/2407.15711
+pdf_url: https://arxiv.org/pdf/2407.15711
+pdf_sha256: f85974c1441ac70de53675aa3c0bf3f2d719b963d296c1bc28733f203fcc027d
+fetched_at: '2026-06-06T07:57:33Z'
+source_updated_at: null
+ids:
+  doi: 10.48550/arXiv.2407.15711
+  arxiv_id: '2407.15711'
+  arxiv_base_id: '2407.15711'
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: 2026c795a2c0ea07d860bc01843c01f02ed16faf
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: recency(1.00), venue_quality(1.00), novelty(1.00) | interests:
+    computer_use_agents:web agent, computer_use_agents:group:computer_use_agents | milestone/foundational
+    floor applied'
+  matched_interests:
+  - computer_use_agents:web agent
+  - computer_use_agents:group:computer_use_agents
+  negative_signals: []
+  subscores:
+    interest_fit: 0.91
+    recency: 1.0
+    venue_quality: 1.0
+    harness_relevance: 0.36
+    novelty: 1.0
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/assistantbench-can-web-agents-solve-realistic-and-240715711/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

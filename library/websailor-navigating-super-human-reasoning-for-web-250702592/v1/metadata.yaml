@@ -1,0 +1,88 @@
+canonical_key: arxiv-2507.02592
+version_key: v1
+title: 'WebSailor: Navigating Super-human Reasoning for Web Agent'
+authors:
+- Kuan Li
+- Zhongwang Zhang
+- Huifeng Yin
+- Liwen Zhang
+- Litu Ou
+- Jialong Wu
+- Wenbiao Yin
+- Baixuan Li
+- Zhengwei Tao
+- Xinyu Wang
+- Weizhou Shen
+- Junkai Zhang
+- Dingchu Zhang
+- Xixi Wu
+- Yong Jiang
+- Ming Yan
+- Pengjun Xie
+- Fei Huang
+- Jingren Zhou
+abstract: 'Transcending human cognitive limitations represents a critical frontier in LLM training. Proprietary
+  agentic systems like DeepResearch have demonstrated superhuman capabilities on extremely complex information-seeking
+  benchmarks such as BrowseComp, a feat previously unattainable. We posit that their success hinges on
+  a sophisticated reasoning pattern absent in open-source models: the ability to systematically reduce
+  extreme uncertainty when navigating vast information landscapes. Based on this insight, we introduce
+  WebSailor, a complete post-training methodology designed to instill this crucial capability. Our approach
+  involves generating novel, high-uncertainty tasks through structured sampling and information obfuscation,
+  RFT cold start, and an efficient agentic RL training algorithm, Duplicating Sampling Policy Optimization
+  (DUPO). With this integrated pipeline, WebSailor significantly outperforms all opensource agents in
+  complex information-seeking tasks, matching proprietary agents''performance and closing the capability
+  gap.'
+venue: arXiv.org
+year: 2025
+source: arxiv
+source_url: https://arxiv.org/abs/2507.02592
+pdf_url: https://arxiv.org/pdf/2507.02592
+pdf_sha256: f4d03667b7de9073c6b42f935344cf80f65417eab482d77f8c68b844c45b9e16
+fetched_at: '2026-06-06T07:57:41Z'
+source_updated_at: null
+ids:
+  doi: 10.48550/arXiv.2507.02592
+  arxiv_id: '2507.02592'
+  arxiv_base_id: '2507.02592'
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: 216fd8b8b8f5e7947f6bf1b121a394598934145c
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: recency(1.00), novelty(1.00), interest_fit(0.91) | interests:
+    computer_use_agents:web agent, computer_use_agents:group:computer_use_agents | milestone/foundational
+    floor applied'
+  matched_interests:
+  - computer_use_agents:web agent
+  - computer_use_agents:group:computer_use_agents
+  negative_signals: []
+  subscores:
+    interest_fit: 0.91
+    recency: 1.0
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 1.0
+    artifact_availability: 0.55
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/websailor-navigating-super-human-reasoning-for-web-250702592/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

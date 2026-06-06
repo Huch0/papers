@@ -1,0 +1,77 @@
+canonical_key: arxiv-2402.07456
+version_key: v1
+title: 'OS-Copilot: Towards Generalist Computer Agents with Self-Improvement'
+authors:
+- Zhiyong Wu
+- Chengcheng Han
+- Zichen Ding
+- Zhenmin Weng
+- Zhoumianze Liu
+- Shunyu Yao
+- Tao Yu
+- Lingpeng Kong
+abstract: Autonomous interaction with the computer has been a longstanding challenge with great potential,
+  and the recent proliferation of large language models (LLMs) has markedly accelerated progress in building
+  digital agents. However, most of these agents are designed to interact with a narrow domain, such as
+  a specific software or website. This narrow focus constrains their applicability for general computer
+  tasks. To this end, we introduce OS-Copilot, a framework to build generalist agents capable of interfacing
+  with comprehensive elements in an operating system (OS), including the web, code terminals, files, multimedia,
+  and various third-party applications. We use OS-Copilot to create FRIDAY, a self-improving embodied
+  agent for automating general computer tasks. On GAIA, a general AI assistants benchmark, FRIDAY outperforms
+  previous methods by 35%, showcasing strong generalization to unseen applications via accumulated skills
+  from previous tasks. We also present numerical and quantitative evidence that FRIDAY learns to control
+  and self-improve on Excel and Powerpoint with minimal supervision. Our OS-Copilot framework and empirical
+  findings provide infrastructure and insights for future research toward more capable and general-purpose
+  computer agents.
+venue: arXiv.org
+year: 2024
+source: arxiv
+source_url: https://arxiv.org/abs/2402.07456
+pdf_url: https://arxiv.org/pdf/2402.07456
+pdf_sha256: 05cf9834874c837604161eba30ef1ee472836e9f8045d9432aaf65821178d98b
+fetched_at: '2026-06-06T07:57:28Z'
+source_updated_at: null
+ids:
+  doi: 10.48550/arXiv.2402.07456
+  arxiv_id: '2402.07456'
+  arxiv_base_id: '2402.07456'
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: 8acdc5c7cb5913dab1ceed71c4750838f5cd8cca
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: recency(1.00), novelty(0.80), interest_fit(0.73) | interests:
+    computer_use_agents:group:computer_use_agents | milestone/foundational floor applied'
+  matched_interests:
+  - computer_use_agents:group:computer_use_agents
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 1.0
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 0.8
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.7
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/os-copilot-towards-generalist-computer-agents-with-240207456/v1/paper.pdf
+  extraction: library/os-copilot-towards-generalist-computer-agents-with-240207456/v1/extraction.txt
+  summary: library/os-copilot-towards-generalist-computer-agents-with-240207456/v1/summary.md
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread

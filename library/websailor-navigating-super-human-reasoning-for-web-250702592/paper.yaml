@@ -1,0 +1,75 @@
+canonical_key: arxiv-2507.02592
+slug: websailor-navigating-super-human-reasoning-for-web-250702592
+title: 'WebSailor: Navigating Super-human Reasoning for Web Agent'
+authors:
+- Kuan Li
+- Zhongwang Zhang
+- Huifeng Yin
+- Liwen Zhang
+- Litu Ou
+- Jialong Wu
+- Wenbiao Yin
+- Baixuan Li
+- Zhengwei Tao
+- Xinyu Wang
+- Weizhou Shen
+- Junkai Zhang
+- Dingchu Zhang
+- Xixi Wu
+- Yong Jiang
+- Ming Yan
+- Pengjun Xie
+- Fei Huang
+- Jingren Zhou
+year: 2025
+primary_ids:
+  doi: 10.48550/arXiv.2507.02592
+  arxiv_base_id: '2507.02592'
+  openreview_id: null
+  semantic_scholar_id: 216fd8b8b8f5e7947f6bf1b121a394598934145c
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2507.02592
+- https://arxiv.org/pdf/2507.02592
+topic_groups:
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: arXiv.org
+  tier: workshop_or_minor
+  status: unknown
+  year: 2025
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: recent
+  significance: Open SOTA on hard browsing (BrowseComp, GAIA) via high-uncertainty data synthesis + RL;
+    closed gap to proprietary.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2507.02592
+  pdf_path: library/websailor-navigating-super-human-reasoning-for-web-250702592/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/websailor-navigating-super-human-reasoning-for-web-250702592/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:41Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: f4d03667b7de9073c6b42f935344cf80f65417eab482d77f8c68b844c45b9e16
+  pdf_bytes: 1355518
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-06-06T07:57:41Z'
+  updated_at: '2026-06-06T07:57:41Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

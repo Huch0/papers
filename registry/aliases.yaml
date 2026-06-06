@@ -1,0 +1,6 @@
+# Alias / duplicate resolution map.
+# Maps a non-canonical key to the canonical_key it should resolve to.
+# Populated by humans or /evolve-paper-system after reviewing duplicate_candidates.jsonl.
+# Format:  <alias_key>: <canonical_key>
+version: 1
+aliases: {}

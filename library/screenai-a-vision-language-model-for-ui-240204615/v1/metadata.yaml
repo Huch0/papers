@@ -1,0 +1,97 @@
+canonical_key: arxiv-2402.04615
+version_key: v1
+title: 'ScreenAI: A Vision-Language Model for UI and Infographics Understanding'
+authors:
+- Gilles Baechler
+- Srinivas Sunkara
+- Maria Wang
+- Fedir Zubach
+- H. Mansoor
+- Vincent Etter
+- Victor Carbune
+- Jason Lin
+- Jindong Chen
+- Abhanshu Sharma
+abstract: 'Screen user interfaces (UIs) and infographics, sharing similar visual language and design principles,
+  play important roles in human communication and human-machine interaction.
+
+
+  We introduce ScreenAI, a vision-language model that specializes in UI and infographics understanding.
+
+
+  Our model improves upon the PaLI architecture with the flexible patching strategy of pix2struct and
+  is trained on a unique mixture of datasets.
+
+
+  At the heart of this mixture is a novel screen annotation task in which the model has to identify the
+  type and location of UI elements.
+
+
+  We use these text annotations to describe screens to Large Language Models and automatically generate
+  question-answering (QA), UI navigation, and summarization training datasets at scale.
+
+
+  We run ablation studies to demonstrate the impact of these design choices.
+
+
+  At only 5B parameters, ScreenAI achieves new state-of-the-art results
+
+
+  on UI- and infographics-based tasks (Multipage DocVQA, WebSRC, and MoTIF), and new best-in-class performance
+  on others (ChartQA, DocVQA, and InfographicVQA) compared to models of similar size.
+
+
+  Finally, we release three new datasets: one focused on the screen annotation task and two others focused
+  on question answering.'
+venue: International Joint Conference on Artificial Intelligence
+year: 2024
+source: arxiv
+source_url: https://arxiv.org/abs/2402.04615
+pdf_url: https://arxiv.org/pdf/2402.04615
+pdf_sha256: fa5658622389c4c97d1a8a305e4db86548e30919e8aad6b757b9932298030698
+fetched_at: '2026-06-06T07:57:28Z'
+source_updated_at: null
+ids:
+  doi: 10.48550/arXiv.2402.04615
+  arxiv_id: '2402.04615'
+  arxiv_base_id: '2402.04615'
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: 73619a1084d7e50191cea7d0393ba2604659da31
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: recency(1.00), novelty(1.00), interest_fit(0.73) | interests:
+    computer_use_agents:group:computer_use_agents | milestone/foundational floor applied'
+  matched_interests:
+  - computer_use_agents:group:computer_use_agents
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 1.0
+    venue_quality: 0.3
+    harness_relevance: 0.36
+    novelty: 1.0
+    artifact_availability: 0.55
+    evaluation_quality: 0.55
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/screenai-a-vision-language-model-for-ui-240204615/v1/paper.pdf
+  extraction: library/screenai-a-vision-language-model-for-ui-240204615/v1/extraction.txt
+  summary: library/screenai-a-vision-language-model-for-ui-240204615/v1/summary.md
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread

@@ -1,0 +1,69 @@
+canonical_key: arxiv-2411.02337
+slug: webrl-training-llm-web-agents-via-self-241102337
+title: 'WebRL: Training LLM Web Agents via Self-Evolving Online Curriculum Reinforcement Learning'
+authors:
+- Zehan Qi
+- Xiao Liu
+- Iat Long Iong
+- Hanyu Lai
+- Xueqiao Sun
+- Xinyue Yang
+- Jiadai Sun
+- Yu Yang
+- Shuntian Yao
+- Tianjie Zhang
+- Wei Xu
+- Jie Tang
+- Yuxiao Dong
+year: 2024
+primary_ids:
+  doi: 10.48550/arXiv.2411.02337
+  arxiv_base_id: '2411.02337'
+  openreview_id: null
+  semantic_scholar_id: bde841b0dbbf7a15ee69966a828c7fe2cf532ad9
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2411.02337
+- https://arxiv.org/pdf/2411.02337
+topic_groups:
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: arXiv.org
+  tier: workshop_or_minor
+  status: unknown
+  year: 2024
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: recent
+  significance: Self-evolving online curriculum RL lifting open 8-9B models past GPT-4 on WebArena-Lite;
+    modern open web-agent recipe.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2411.02337
+  pdf_path: library/webrl-training-llm-web-agents-via-self-241102337/v1/paper.pdf
+  summary_path: library/webrl-training-llm-web-agents-via-self-241102337/v1/summary.md
+  metadata_path: library/webrl-training-llm-web-agents-via-self-241102337/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:47Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: 79a93b02cca5586d9e3e2742c5af53f683c632dc0eaed3b7bf87f53daaa2d462
+  pdf_bytes: 10184269
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-06-06T07:57:47Z'
+  updated_at: '2026-06-06T11:12:17Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

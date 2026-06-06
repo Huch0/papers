@@ -1,0 +1,67 @@
+canonical_key: arxiv-2404.03648
+slug: autowebglm-a-large-language-model-based-web-240403648
+title: 'AutoWebGLM: A Large Language Model-based Web Navigating Agent'
+authors:
+- Hanyu Lai
+- Xiao Liu
+- Iat Long Iong
+- Shuntian Yao
+- Yuxuan Chen
+- Pengbo Shen
+- Hao Yu
+- Hanchen Zhang
+- Xiaohan Zhang
+- Yuxiao Dong
+- Jie Tang
+year: 2024
+primary_ids:
+  doi: 10.1145/3637528.3671620
+  arxiv_base_id: '2404.03648'
+  openreview_id: null
+  semantic_scholar_id: 6c00f661c46391642208a5292f38b5a9e0e09cae
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2404.03648
+- https://arxiv.org/pdf/2404.03648
+topic_groups:
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: Knowledge Discovery and Data Mining
+  tier: unknown
+  status: unknown
+  year: 2024
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: expansion
+  significance: Leading open-LLM web agent (ChatGLM3-6B) via curriculum + RL bootstrapping; prior SOTA
+    for trained open web agents.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2404.03648
+  pdf_path: library/autowebglm-a-large-language-model-based-web-240403648/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/autowebglm-a-large-language-model-based-web-240403648/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:32Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: ee5100b55bdcc64eca63c5a0f9604a61dcaf60efdeea44838f60ba246cedfa72
+  pdf_bytes: 8809918
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-06-06T07:57:32Z'
+  updated_at: '2026-06-06T07:57:32Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

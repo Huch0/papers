@@ -1,0 +1,67 @@
+canonical_key: arxiv-2202.08137
+slug: a-data-driven-approach-for-learning-to-220208137
+title: A data-driven approach for learning to control computers
+authors:
+- P. Humphreys
+- David Raposo
+- Tobias Pohlen
+- Gregory Thornton
+- Rachita Chhaparia
+- Alistair Muldal
+- Josh Abramson
+- Petko Georgiev
+- Alex Goldin
+- Adam Santoro
+- T. Lillicrap
+year: 2022
+primary_ids:
+  doi: null
+  arxiv_base_id: '2202.08137'
+  openreview_id: null
+  semantic_scholar_id: 44d6c201a4056e260e9844bdbb01461ea9b1a011
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2202.08137
+- https://arxiv.org/pdf/2202.08137
+topic_groups:
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: International Conference on Machine Learning
+  tier: A_star
+  status: unknown
+  year: 2022
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: foundational
+  significance: First agent to reach human-level mean on MiniWoB++ from pixels via demos+RL; capstone
+    of pixel-based RL web control.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2202.08137
+  pdf_path: library/a-data-driven-approach-for-learning-to-220208137/v1/paper.pdf
+  summary_path: library/a-data-driven-approach-for-learning-to-220208137/v1/summary.md
+  metadata_path: library/a-data-driven-approach-for-learning-to-220208137/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:31Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: 84090859eca84c271e50c27afe0c3bea3800bfef1e68521f144330ee80216195
+  pdf_bytes: 5131706
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-06-06T07:57:31Z'
+  updated_at: '2026-06-06T08:13:38Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

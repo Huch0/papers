@@ -1,0 +1,77 @@
+canonical_key: arxiv-2401.16158
+version_key: v1
+title: 'Mobile-Agent: Autonomous Multi-Modal Mobile Device Agent with Visual Perception'
+authors:
+- Junyang Wang
+- Haiyang Xu
+- Jiabo Ye
+- Mingshi Yan
+- Weizhou Shen
+- Ji Zhang
+- Fei Huang
+- Jitao Sang
+abstract: Mobile device agent based on Multimodal Large Language Models (MLLM) is becoming a popular application.
+  In this paper, we introduce Mobile-Agent, an autonomous multi-modal mobile device agent. Mobile-Agent
+  first leverages visual perception tools to accurately identify and locate both the visual and textual
+  elements within the app's front-end interface. Based on the perceived vision context, it then autonomously
+  plans and decomposes the complex operation task, and navigates the mobile Apps through operations step
+  by step. Different from previous solutions that rely on XML files of Apps or mobile system metadata,
+  Mobile-Agent allows for greater adaptability across diverse mobile operating environments in a vision-centric
+  way, thereby eliminating the necessity for system-specific customizations. To assess the performance
+  of Mobile-Agent, we introduced Mobile-Eval, a benchmark for evaluating mobile device operations. Based
+  on Mobile-Eval, we conducted a comprehensive evaluation of Mobile-Agent. The experimental results indicate
+  that Mobile-Agent achieved remarkable accuracy and completion rates. Even with challenging instructions,
+  such as multi-app operations, Mobile-Agent can still complete the requirements. Code and model will
+  be open-sourced at https://github.com/X-PLUG/MobileAgent.
+venue: arXiv.org
+year: 2024
+source: arxiv
+source_url: https://arxiv.org/abs/2401.16158
+pdf_url: https://arxiv.org/pdf/2401.16158
+pdf_sha256: 6b511d598fa2f9bea3692d3acf028ebfe46b36b83181baab60a0152955ebec0d
+fetched_at: '2026-06-06T07:57:29Z'
+source_updated_at: null
+ids:
+  doi: 10.48550/arXiv.2401.16158
+  arxiv_id: '2401.16158'
+  arxiv_base_id: '2401.16158'
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: c5db6c2726911b72d534f97bd4d1ed63f6431340
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: recency(1.00), novelty(0.80), artifact_availability(0.80)
+    | interests: computer_use_agents:group:computer_use_agents | milestone/foundational floor applied'
+  matched_interests:
+  - computer_use_agents:group:computer_use_agents
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 1.0
+    venue_quality: 0.4
+    harness_relevance: 0.68
+    novelty: 0.8
+    artifact_availability: 0.8
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/mobile-agent-autonomous-multi-modal-mobile-device-240116158/v1/paper.pdf
+  extraction: library/mobile-agent-autonomous-multi-modal-mobile-device-240116158/v1/extraction.txt
+  summary: library/mobile-agent-autonomous-multi-modal-mobile-device-240116158/v1/summary.md
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread

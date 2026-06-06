@@ -1,0 +1,63 @@
+canonical_key: arxiv-2406.11896
+slug: digirl-training-in-the-wild-device-control-240611896
+title: 'DigiRL: Training In-The-Wild Device-Control Agents with Autonomous Reinforcement Learning'
+authors:
+- Hao Bai
+- Yifei Zhou
+- M. Cemri
+- Jiayi Pan
+- Alane Suhr
+- Sergey Levine
+- Aviral Kumar
+year: 2024
+primary_ids:
+  doi: 10.48550/arXiv.2406.11896
+  arxiv_base_id: '2406.11896'
+  openreview_id: null
+  semantic_scholar_id: c6e3e5f794233da2b27ea5dd4af19e62b95c863f
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2406.11896
+- https://arxiv.org/pdf/2406.11896
+topic_groups:
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: Neural Information Processing Systems
+  tier: unknown
+  status: unknown
+  year: 2024
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: expansion
+  significance: Offline-to-online autonomous RL with a VLM evaluator + curriculum; SOTA for in-the-wild
+    Android control; anchored RL-for-device-control.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2406.11896
+  pdf_path: library/digirl-training-in-the-wild-device-control-240611896/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/digirl-training-in-the-wild-device-control-240611896/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:37Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: edab3b139eeb083a80ce129ac8a37d44c72141f7ce615b9cc5e4951c39eec614
+  pdf_bytes: 28179560
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-06-06T07:57:37Z'
+  updated_at: '2026-06-06T07:57:37Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

@@ -1,0 +1,69 @@
+# Venue tiers and normalization.
+# Used by score_paper.py (venue_quality dimension) and by indexes (BY_VENUE.md).
+# Matching is case-insensitive on normalized venue names + aliases.
+
+version: 1
+
+tiers:
+  A_star:
+    weight: 1.0
+    venues:
+      - NeurIPS
+      - ICML
+      - ICLR
+      - ACL
+      - EMNLP
+      - NAACL
+      - AAAI
+      - IJCAI
+      - CVPR
+      - ICCV
+      - ECCV
+      - KDD
+      - SIGIR
+      - WWW
+      - CHI
+      - UIST
+      - OSDI
+      - SOSP
+      - NSDI
+      - PLDI
+      - FSE
+      - ICSE
+
+  strong_preprint_signal:
+    # Not a fixed venue list; these are qualitative signals applied to preprints.
+    # score_paper.py treats a preprint as strong-signal when watch_labs/watch_benchmarks
+    # match or when artifacts indicate wide adoption.
+    weight: 0.7
+    signals:
+      - notable industry technical report
+      - widely used benchmark/system
+      - highly starred repository
+      - strong leaderboard adoption
+      - paper by major AI lab
+      - paper that introduces a benchmark or harness others already use
+
+  workshop_or_minor:
+    weight: 0.4
+    venues:
+      - Workshop
+      - arXiv  # bare preprint with no other signal
+
+  unknown:
+    weight: 0.3
+
+# Alias normalization: maps raw venue strings -> canonical venue name above.
+aliases:
+  "Advances in Neural Information Processing Systems": NeurIPS
+  "Conference on Neural Information Processing Systems": NeurIPS
+  "International Conference on Machine Learning": ICML
+  "International Conference on Learning Representations": ICLR
+  "Annual Meeting of the Association for Computational Linguistics": ACL
+  "Conference on Empirical Methods in Natural Language Processing": EMNLP
+  "Computer Vision and Pattern Recognition": CVPR
+  "ACM SIGSOFT International Symposium on the Foundations of Software Engineering": FSE
+  "International Conference on Software Engineering": ICSE
+  "Conference on Human Factors in Computing Systems": CHI
+  "CoRR": arXiv
+  "arXiv.org": arXiv

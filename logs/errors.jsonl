@@ -1,0 +1,74 @@
+{"ts": "2026-06-06T06:03:32Z", "stage": "fetch.arxiv_submittedDate", "message": "GET failed: HTTP 429", "url": "http://export.arxiv.org/api/query"}
+{"ts": "2026-06-06T06:03:32Z", "stage": "daily.fetch_arxiv", "message": "GET http://export.arxiv.org/api/query failed after 4 attempts: HTTP 429"}
+{"ts": "2026-06-06T06:04:59Z", "stage": "fetch.arxiv_submittedDate", "message": "GET failed: HTTPSConnectionPool(host='export.arxiv.org', port=443): Read timed out. (read timeout=30)", "url": "http://export.arxiv.org/api/query"}
+{"ts": "2026-06-06T06:56:12Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-06-06T06:56:12Z", "stage": "milestones.discover", "message": "GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-06-06T07:13:03Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-06-06T07:13:03Z", "stage": "milestones.resolve", "message": "s2 'World of Bits: An Open-Domain Platform for Web-Based Agents': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-06-06T07:32:53Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-06-06T07:32:53Z", "stage": "milestones.discover", "message": "GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-06-06T07:45:31Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-06-06T07:45:31Z", "stage": "milestones.resolve", "message": "s2 'World of Bits: An Open-Domain Platform for Web-Based Agents': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-06-06T07:45:55Z", "stage": "fetch.arxiv_id", "message": "GET failed: HTTP 429", "url": "http://export.arxiv.org/api/query"}
+{"ts": "2026-06-06T07:45:55Z", "stage": "milestones.resolve", "message": "arxiv 2309.11436: GET http://export.arxiv.org/api/query failed after 4 attempts: HTTP 429"}
+{"ts": "2026-06-06T07:46:11Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-06-06T07:46:11Z", "stage": "milestones.resolve", "message": "s2 'You Only Look at Screens: Multimodal Chain-of-Action Agents (Auto-GUI)': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-06-06T07:46:28Z", "stage": "fetch.arxiv_id", "message": "GET failed: HTTP 429", "url": "http://export.arxiv.org/api/query"}
+{"ts": "2026-06-06T07:46:28Z", "stage": "milestones.resolve", "message": "arxiv 2307.10088: GET http://export.arxiv.org/api/query failed after 4 attempts: HTTP 429"}
+{"ts": "2026-06-06T07:46:43Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-06-06T07:46:43Z", "stage": "milestones.resolve", "message": "s2 'Android in the Wild: A Large-Scale Dataset for Android Device Control': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-06-06T07:47:00Z", "stage": "fetch.arxiv_id", "message": "GET failed: HTTP 429", "url": "http://export.arxiv.org/api/query"}
+{"ts": "2026-06-06T07:47:00Z", "stage": "milestones.resolve", "message": "arxiv 2308.15272: GET http://export.arxiv.org/api/query failed after 4 attempts: HTTP 429"}
+{"ts": "2026-06-06T07:47:16Z", "stage": "fetch.arxiv_id", "message": "GET failed: HTTP 429", "url": "http://export.arxiv.org/api/query"}
+{"ts": "2026-06-06T07:47:16Z", "stage": "milestones.resolve", "message": "arxiv 2312.13771: GET http://export.arxiv.org/api/query failed after 4 attempts: HTTP 429"}
+{"ts": "2026-06-06T07:47:32Z", "stage": "fetch.arxiv_id", "message": "GET failed: HTTP 429", "url": "http://export.arxiv.org/api/query"}
+{"ts": "2026-06-06T07:47:32Z", "stage": "milestones.resolve", "message": "arxiv 2308.03688: GET http://export.arxiv.org/api/query failed after 4 attempts: HTTP 429"}
+{"ts": "2026-06-06T07:47:47Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-06-06T07:47:47Z", "stage": "milestones.resolve", "message": "s2 'AgentBench: Evaluating LLMs as Agents': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-06-06T07:48:04Z", "stage": "fetch.arxiv_id", "message": "GET failed: HTTP 429", "url": "http://export.arxiv.org/api/query"}
+{"ts": "2026-06-06T07:48:04Z", "stage": "milestones.resolve", "message": "arxiv 2309.17421: GET http://export.arxiv.org/api/query failed after 4 attempts: HTTP 429"}
+{"ts": "2026-06-06T07:48:19Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-06-06T07:48:19Z", "stage": "milestones.resolve", "message": "s2 'The Dawn of LMMs: Preliminary Explorations with GPT-4V(ision)': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-06-06T07:48:36Z", "stage": "fetch.arxiv_id", "message": "GET failed: HTTP 429", "url": "http://export.arxiv.org/api/query"}
+{"ts": "2026-06-06T07:48:36Z", "stage": "milestones.resolve", "message": "arxiv 2310.11441: GET http://export.arxiv.org/api/query failed after 4 attempts: HTTP 429"}
+{"ts": "2026-06-06T07:48:52Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-06-06T07:48:52Z", "stage": "milestones.resolve", "message": "s2 'Set-of-Mark Prompting Unleashes Extraordinary Visual Grounding in GPT-4V': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-06-06T07:49:09Z", "stage": "fetch.arxiv_id", "message": "GET failed: HTTP 429", "url": "http://export.arxiv.org/api/query"}
+{"ts": "2026-06-06T07:49:09Z", "stage": "milestones.resolve", "message": "arxiv 2202.08137: GET http://export.arxiv.org/api/query failed after 4 attempts: HTTP 429"}
+{"ts": "2026-06-06T07:49:25Z", "stage": "fetch.arxiv_id", "message": "GET failed: HTTP 429", "url": "http://export.arxiv.org/api/query"}
+{"ts": "2026-06-06T07:49:25Z", "stage": "milestones.resolve", "message": "arxiv 2112.09332: GET http://export.arxiv.org/api/query failed after 4 attempts: HTTP 429"}
+{"ts": "2026-06-06T07:49:41Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-06-06T07:49:41Z", "stage": "milestones.resolve", "message": "s2 'WebGPT: Browser-Assisted Question-Answering with Human Feedback': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-06-06T07:50:02Z", "stage": "fetch.arxiv_id", "message": "GET failed: HTTP 429", "url": "http://export.arxiv.org/api/query"}
+{"ts": "2026-06-06T07:50:02Z", "stage": "milestones.resolve", "message": "arxiv 2502.14282: GET http://export.arxiv.org/api/query failed after 4 attempts: HTTP 429"}
+{"ts": "2026-06-06T07:50:17Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-06-06T07:50:17Z", "stage": "milestones.resolve", "message": "s2 'PC-Agent: A Hierarchical Multi-Agent Collaboration Framework for Complex Task Automation on PC': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-06-06T07:50:34Z", "stage": "fetch.arxiv_id", "message": "GET failed: HTTP 429", "url": "http://export.arxiv.org/api/query"}
+{"ts": "2026-06-06T07:50:34Z", "stage": "milestones.resolve", "message": "arxiv 2504.00906: GET http://export.arxiv.org/api/query failed after 4 attempts: HTTP 429"}
+{"ts": "2026-06-06T07:50:50Z", "stage": "fetch.arxiv_id", "message": "GET failed: HTTP 429", "url": "http://export.arxiv.org/api/query"}
+{"ts": "2026-06-06T07:50:50Z", "stage": "milestones.resolve", "message": "arxiv 2504.14603: GET http://export.arxiv.org/api/query failed after 4 attempts: HTTP 429"}
+{"ts": "2026-06-06T07:51:06Z", "stage": "fetch.arxiv_id", "message": "GET failed: HTTP 429", "url": "http://export.arxiv.org/api/query"}
+{"ts": "2026-06-06T07:51:06Z", "stage": "milestones.resolve", "message": "arxiv 2401.13649: GET http://export.arxiv.org/api/query failed after 4 attempts: HTTP 429"}
+{"ts": "2026-06-06T07:51:23Z", "stage": "fetch.arxiv_id", "message": "GET failed: HTTP 429", "url": "http://export.arxiv.org/api/query"}
+{"ts": "2026-06-06T07:51:23Z", "stage": "milestones.resolve", "message": "arxiv 2401.01614: GET http://export.arxiv.org/api/query failed after 4 attempts: HTTP 429"}
+{"ts": "2026-06-06T07:51:38Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-06-06T07:51:38Z", "stage": "milestones.resolve", "message": "s2 'GPT-4V(ision) is a Generalist Web Agent, if Grounded (SeeAct)': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-06-06T07:52:24Z", "stage": "fetch.arxiv_id", "message": "GET failed: HTTP 429", "url": "http://export.arxiv.org/api/query"}
+{"ts": "2026-06-06T07:52:24Z", "stage": "milestones.resolve", "message": "arxiv 2412.19723: GET http://export.arxiv.org/api/query failed after 4 attempts: HTTP 429"}
+{"ts": "2026-06-06T07:52:40Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-06-06T07:52:40Z", "stage": "milestones.resolve", "message": "s2 'OS-Genesis: Automating GUI Agent Trajectory Construction via Reverse Task Synthesis': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-06-06T07:52:57Z", "stage": "fetch.arxiv_id", "message": "GET failed: HTTP 429", "url": "http://export.arxiv.org/api/query"}
+{"ts": "2026-06-06T07:52:57Z", "stage": "milestones.resolve", "message": "arxiv 2406.01014: GET http://export.arxiv.org/api/query failed after 4 attempts: HTTP 429"}
+{"ts": "2026-06-06T07:53:20Z", "stage": "fetch.arxiv_id", "message": "GET failed: HTTP 429", "url": "http://export.arxiv.org/api/query"}
+{"ts": "2026-06-06T07:53:20Z", "stage": "milestones.resolve", "message": "arxiv 2406.03679: GET http://export.arxiv.org/api/query failed after 4 attempts: HTTP 429"}
+{"ts": "2026-06-06T07:53:45Z", "stage": "fetch.arxiv_id", "message": "GET failed: HTTP 429", "url": "http://export.arxiv.org/api/query"}
+{"ts": "2026-06-06T07:53:45Z", "stage": "milestones.resolve", "message": "arxiv 2406.08451: GET http://export.arxiv.org/api/query failed after 4 attempts: HTTP 429"}
+{"ts": "2026-06-06T07:54:08Z", "stage": "fetch.arxiv_id", "message": "GET failed: HTTP 429", "url": "http://export.arxiv.org/api/query"}
+{"ts": "2026-06-06T07:54:08Z", "stage": "milestones.resolve", "message": "arxiv 2406.11896: GET http://export.arxiv.org/api/query failed after 4 attempts: HTTP 429"}
+{"ts": "2026-06-06T07:54:24Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-06-06T07:54:24Z", "stage": "milestones.resolve", "message": "s2 'DigiRL: Training In-The-Wild Device-Control Agents with Autonomous Reinforcement Learning': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-06-06T07:54:40Z", "stage": "fetch.arxiv_id", "message": "GET failed: HTTP 429", "url": "http://export.arxiv.org/api/query"}
+{"ts": "2026-06-06T07:54:40Z", "stage": "milestones.resolve", "message": "arxiv 2408.11824: GET http://export.arxiv.org/api/query failed after 4 attempts: HTTP 429"}
+{"ts": "2026-06-06T07:55:12Z", "stage": "fetch.arxiv_id", "message": "GET failed: HTTP 429", "url": "http://export.arxiv.org/api/query"}
+{"ts": "2026-06-06T07:55:12Z", "stage": "milestones.resolve", "message": "arxiv 2410.14803: GET http://export.arxiv.org/api/query failed after 4 attempts: HTTP 429"}
+{"ts": "2026-06-06T07:56:20Z", "stage": "fetch.milestone_batch", "message": "GET failed: HTTP 429", "url": "http://export.arxiv.org/api/query"}

@@ -1,0 +1,78 @@
+canonical_key: arxiv-2408.11824
+version_key: v1
+title: 'AppAgent v2: Advanced Agent for Flexible Mobile Interactions'
+authors:
+- Yanda Li
+- Chi Zhang
+- Wenjia Jiang
+- Wanqi Yang
+- Bin Fu
+- Pei Cheng
+- Xin Chen
+- Ling Chen
+- Yunchao Wei
+abstract: 'With the advancement of Multimodal Large Language Models (MLLM), LLM-driven visual agents are
+  increasingly impacting software interfaces, particularly those with graphical user interfaces. This
+  work introduces a novel LLM-based multimodal agent framework for mobile devices. This framework, capable
+  of navigating mobile devices, emulates human-like interactions. Our agent constructs a flexible action
+  space that enhances adaptability across various applications including parser, text and vision descriptions.
+  The agent operates through two main phases: exploration and deployment. During the exploration phase,
+  functionalities of user interface elements are documented either through agent-driven or manual explorations
+  into a customized structured knowledge base. In the deployment phase, RAG technology enables efficient
+  retrieval and update from this knowledge base, thereby empowering the agent to perform tasks effectively
+  and accurately. This includes performing complex, multi-step operations across various applications,
+  thereby demonstrating the framework''s adaptability and precision in handling customized task workflows.
+  Our experimental results across various benchmarks demonstrate the framework''s superior performance,
+  confirming its effectiveness in real-world scenarios. Our code will be open source soon.'
+venue: arXiv.org
+year: 2024
+source: arxiv
+source_url: https://arxiv.org/abs/2408.11824
+pdf_url: https://arxiv.org/pdf/2408.11824
+pdf_sha256: 9dcc2e21159e478034ff5ac903613aff569709e337ce55a0beb5a611c9530030
+fetched_at: '2026-06-06T07:57:37Z'
+source_updated_at: null
+ids:
+  doi: 10.48550/arXiv.2408.11824
+  arxiv_id: '2408.11824'
+  arxiv_base_id: '2408.11824'
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: 80b113392487e5498207352f3a98a3342274228a
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: recency(1.00), interest_fit(0.73), novelty(0.55) | interests:
+    computer_use_agents:group:computer_use_agents | milestone/foundational floor applied'
+  matched_interests:
+  - computer_use_agents:group:computer_use_agents
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 1.0
+    venue_quality: 0.4
+    harness_relevance: 0.36
+    novelty: 0.55
+    artifact_availability: 0.55
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/appagent-v2-advanced-agent-for-flexible-mobile-240811824/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

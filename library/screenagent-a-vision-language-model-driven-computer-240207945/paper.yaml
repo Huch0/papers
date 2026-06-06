@@ -1,0 +1,65 @@
+canonical_key: arxiv-2402.07945
+slug: screenagent-a-vision-language-model-driven-computer-240207945
+title: 'ScreenAgent: A Vision Language Model-driven Computer Control Agent'
+authors:
+- Runliang Niu
+- Jindong Li
+- Shiqi Wang
+- Yali Fu
+- Xiyu Hu
+- Xueyuan Leng
+- He Kong
+- Yi Chang
+- Qi Wang
+year: 2024
+primary_ids:
+  doi: 10.24963/ijcai.2024/711
+  arxiv_base_id: '2402.07945'
+  openreview_id: null
+  semantic_scholar_id: eb38dcd79e2738daae3f3516d67e85969a2477fa
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2402.07945
+- https://arxiv.org/pdf/2402.07945
+topic_groups:
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: International Joint Conference on Artificial Intelligence
+  tier: unknown
+  status: unknown
+  year: 2024
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: foundational
+  significance: Real-screen VLM control environment + dataset/model with plan-act-reflect; pioneered pixel-level
+    desktop control training.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2402.07945
+  pdf_path: library/screenagent-a-vision-language-model-driven-computer-240207945/v1/paper.pdf
+  summary_path: library/screenagent-a-vision-language-model-driven-computer-240207945/v1/summary.md
+  metadata_path: library/screenagent-a-vision-language-model-driven-computer-240207945/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:28Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: a44180f3bad8ce54553007e721deb8bbb31be6779e1ee6bf80ab257765e7bff4
+  pdf_bytes: 8580433
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-06-06T07:57:28Z'
+  updated_at: '2026-06-06T08:23:07Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

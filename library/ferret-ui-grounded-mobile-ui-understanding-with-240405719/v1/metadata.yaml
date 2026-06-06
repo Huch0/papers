@@ -1,0 +1,81 @@
+canonical_key: arxiv-2404.05719
+version_key: v1
+title: 'Ferret-UI: Grounded Mobile UI Understanding with Multimodal LLMs'
+authors:
+- Keen You
+- Haotian Zhang
+- E. Schoop
+- Floris Weers
+- Amanda Swearngin
+- Jeffrey Nichols
+- Yinfei Yang
+- Zhe Gan
+abstract: Recent advancements in multimodal large language models (MLLMs) have been noteworthy, yet, these
+  general-domain MLLMs often fall short in their ability to comprehend and interact effectively with user
+  interface (UI) screens. In this paper, we present Ferret-UI, a new MLLM tailored for enhanced understanding
+  of mobile UI screens, equipped with referring, grounding, and reasoning capabilities. Given that UI
+  screens typically exhibit a more elongated aspect ratio and contain smaller objects of interest (e.g.,
+  icons, texts) than natural images, we incorporate"any resolution"on top of Ferret to magnify details
+  and leverage enhanced visual features. Specifically, each screen is divided into 2 sub-images based
+  on the original aspect ratio (i.e., horizontal division for portrait screens and vertical division for
+  landscape screens). Both sub-images are encoded separately before being sent to LLMs. We meticulously
+  gather training samples from an extensive range of elementary UI tasks, such as icon recognition, find
+  text, and widget listing. These samples are formatted for instruction-following with region annotations
+  to facilitate precise referring and grounding. To augment the model's reasoning ability, we further
+  compile a dataset for advanced tasks, including detailed description, perception/interaction conversations,
+  and function inference. After training on the curated datasets, Ferret-UI exhibits outstanding comprehension
+  of UI screens and the capability to execute open-ended instructions. For model evaluation, we establish
+  a comprehensive benchmark encompassing all the aforementioned tasks. Ferret-UI excels not only beyond
+  most open-source UI MLLMs, but also surpasses GPT-4V on all the elementary UI tasks.
+venue: European Conference on Computer Vision
+year: 2024
+source: arxiv
+source_url: https://arxiv.org/abs/2404.05719
+pdf_url: https://arxiv.org/pdf/2404.05719
+pdf_sha256: b203b48b05ef3bbfd4dabeed01f1658b37d3abfcbd39567a73452ccf614bac5a
+fetched_at: '2026-06-06T07:57:28Z'
+source_updated_at: null
+ids:
+  doi: 10.48550/arXiv.2404.05719
+  arxiv_id: '2404.05719'
+  arxiv_base_id: '2404.05719'
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: 3687e55cf21c4d0041d9bf0b74988319bfe3402b
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: recency(1.00), interest_fit(0.73), artifact_availability(0.55)
+    | interests: computer_use_agents:group:computer_use_agents | milestone/foundational floor applied'
+  matched_interests:
+  - computer_use_agents:group:computer_use_agents
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 1.0
+    venue_quality: 0.3
+    harness_relevance: 0.36
+    novelty: 0.0
+    artifact_availability: 0.55
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/ferret-ui-grounded-mobile-ui-understanding-with-240405719/v1/paper.pdf
+  extraction: library/ferret-ui-grounded-mobile-ui-understanding-with-240405719/v1/extraction.txt
+  summary: library/ferret-ui-grounded-mobile-ui-understanding-with-240405719/v1/summary.md
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread

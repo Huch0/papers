@@ -1,0 +1,61 @@
+canonical_key: arxiv-2307.10088
+slug: android-in-the-wild-a-large-scale-230710088
+title: 'Android in the Wild: A Large-Scale Dataset for Android Device Control'
+authors:
+- Christopher Rawles
+- Alice Li
+- Daniel Rodríguez
+- Oriana Riva
+- T. Lillicrap
+year: 2023
+primary_ids:
+  doi: 10.48550/arXiv.2307.10088
+  arxiv_base_id: '2307.10088'
+  openreview_id: null
+  semantic_scholar_id: 060e0df71620f1844839f6a993dfa5fb8e4c3bf6
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2307.10088
+- https://arxiv.org/pdf/2307.10088
+topic_groups:
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: Neural Information Processing Systems
+  tier: unknown
+  status: unknown
+  year: 2023
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: foundational
+  significance: AitW; 715k-episode device-control dataset, orders of magnitude larger than predecessors;
+    canonical offline corpus.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2307.10088
+  pdf_path: library/android-in-the-wild-a-large-scale-230710088/v1/paper.pdf
+  summary_path: library/android-in-the-wild-a-large-scale-230710088/v1/summary.md
+  metadata_path: library/android-in-the-wild-a-large-scale-230710088/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:30Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: 3e4ace8fe18dedc903144894cb69a57f5e0dfbb75f7f23de52bff91f08b11e5a
+  pdf_bytes: 4340836
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-06-06T07:57:30Z'
+  updated_at: '2026-06-06T08:13:24Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

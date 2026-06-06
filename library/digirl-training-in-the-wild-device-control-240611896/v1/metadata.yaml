@@ -1,0 +1,80 @@
+canonical_key: arxiv-2406.11896
+version_key: v1
+title: 'DigiRL: Training In-The-Wild Device-Control Agents with Autonomous Reinforcement Learning'
+authors:
+- Hao Bai
+- Yifei Zhou
+- M. Cemri
+- Jiayi Pan
+- Alane Suhr
+- Sergey Levine
+- Aviral Kumar
+abstract: 'Training corpuses for vision language models (VLMs) typically lack sufficient amounts of decision-centric
+  data. This renders off-the-shelf VLMs sub-optimal for decision-making tasks such as in-the-wild device
+  control through graphical user interfaces (GUIs). While training with static demonstrations has shown
+  some promise, we show that such methods fall short for controlling real GUIs due to their failure to
+  deal with real-world stochasticity and non-stationarity not captured in static observational data. This
+  paper introduces a novel autonomous RL approach, called DigiRL, for training in-the-wild device control
+  agents through fine-tuning a pre-trained VLM in two stages: offline RL to initialize the model, followed
+  by offline-to-online RL. To do this, we build a scalable and parallelizable Android learning environment
+  equipped with a VLM-based evaluator and develop a simple yet effective RL approach for learning in this
+  domain. Our approach runs advantage-weighted RL with advantage estimators enhanced to account for stochasticity
+  along with an automatic curriculum for deriving maximal learning signal. We demonstrate the effectiveness
+  of DigiRL using the Android-in-the-Wild (AitW) dataset, where our 1.3B VLM trained with RL achieves
+  a 49.5% absolute improvement -- from 17.7 to 67.2% success rate -- over supervised fine-tuning with
+  static human demonstration data. These results significantly surpass not only the prior best agents,
+  including AppAgent with GPT-4V (8.3% success rate) and the 17B CogAgent trained with AitW data (38.5%),
+  but also the prior best autonomous RL approach based on filtered behavior cloning (57.8%), thereby establishing
+  a new state-of-the-art for digital agents for in-the-wild device control.'
+venue: Neural Information Processing Systems
+year: 2024
+source: arxiv
+source_url: https://arxiv.org/abs/2406.11896
+pdf_url: https://arxiv.org/pdf/2406.11896
+pdf_sha256: edab3b139eeb083a80ce129ac8a37d44c72141f7ce615b9cc5e4951c39eec614
+fetched_at: '2026-06-06T07:57:37Z'
+source_updated_at: null
+ids:
+  doi: 10.48550/arXiv.2406.11896
+  arxiv_id: '2406.11896'
+  arxiv_base_id: '2406.11896'
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: c6e3e5f794233da2b27ea5dd4af19e62b95c863f
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: recency(1.00), novelty(0.80), interest_fit(0.73) | interests:
+    computer_use_agents:group:computer_use_agents | milestone/foundational floor applied'
+  matched_interests:
+  - computer_use_agents:group:computer_use_agents
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 1.0
+    venue_quality: 0.3
+    harness_relevance: 0.52
+    novelty: 0.8
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/digirl-training-in-the-wild-device-control-240611896/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

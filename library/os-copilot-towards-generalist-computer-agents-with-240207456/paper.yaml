@@ -1,0 +1,64 @@
+canonical_key: arxiv-2402.07456
+slug: os-copilot-towards-generalist-computer-agents-with-240207456
+title: 'OS-Copilot: Towards Generalist Computer Agents with Self-Improvement'
+authors:
+- Zhiyong Wu
+- Chengcheng Han
+- Zichen Ding
+- Zhenmin Weng
+- Zhoumianze Liu
+- Shunyu Yao
+- Tao Yu
+- Lingpeng Kong
+year: 2024
+primary_ids:
+  doi: 10.48550/arXiv.2402.07456
+  arxiv_base_id: '2402.07456'
+  openreview_id: null
+  semantic_scholar_id: 8acdc5c7cb5913dab1ceed71c4750838f5cd8cca
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2402.07456
+- https://arxiv.org/pdf/2402.07456
+topic_groups:
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: arXiv.org
+  tier: workshop_or_minor
+  status: unknown
+  year: 2024
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: foundational
+  significance: Generalist OS-interfacing framework (FRIDAY) across web/terminal/files/apps with self-improvement;
+    strong GAIA results.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2402.07456
+  pdf_path: library/os-copilot-towards-generalist-computer-agents-with-240207456/v1/paper.pdf
+  summary_path: library/os-copilot-towards-generalist-computer-agents-with-240207456/v1/summary.md
+  metadata_path: library/os-copilot-towards-generalist-computer-agents-with-240207456/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:28Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: 05cf9834874c837604161eba30ef1ee472836e9f8045d9432aaf65821178d98b
+  pdf_bytes: 2637314
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-06-06T07:57:28Z'
+  updated_at: '2026-06-06T08:22:46Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

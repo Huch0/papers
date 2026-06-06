@@ -1,0 +1,95 @@
+canonical_key: arxiv-2412.14161
+version_key: v1
+title: 'TheAgentCompany: Benchmarking LLM Agents on Consequential Real World Tasks'
+authors:
+- Frank F. Xu
+- Yufan Song
+- Boxuan Li
+- Yuxuan Tang
+- Kritanjali Jain
+- Meng Bao
+- Z. Wang
+- Xuhui Zhou
+- Zhitong Guo
+- Murong Cao
+- Ming-Hsuan Yang
+- Hao Lu
+- Amaad Martin
+- Zhe Su
+- L. Maben
+- Raj Mehta
+- Wayne Chi
+- L. Jang
+- Yiqing Xie
+- Shuyan Zhou
+- Graham Neubig
+abstract: 'We interact with computers on an everyday basis, be it in everyday life or work, and many aspects
+  of work can be done entirely with access to a computer and the Internet. At the same time, thanks to
+  improvements in large language models (LLMs), there has also been a rapid development in AI agents that
+  interact with and affect change in their surrounding environments. But how performant are AI agents
+  at accelerating or even autonomously performing work-related tasks? The answer to this question has
+  important implications both for industry looking to adopt AI into their workflows and for economic policy
+  to understand the effects that adoption of AI may have on the labor market. To measure the progress
+  of these LLM agents''performance on performing real-world professional tasks, in this paper we introduce
+  TheAgentCompany, an extensible benchmark for evaluating AI agents that interact with the world in similar
+  ways to those of a digital worker: by browsing the Web, writing code, running programs, and communicating
+  with other coworkers. We build a self-contained environment with internal web sites and data that mimics
+  a small software company environment, and create a variety of tasks that may be performed by workers
+  in such a company. We test baseline agents powered by both closed API-based and open-weights language
+  models (LMs), and find that the most competitive agent can complete 30% of tasks autonomously. This
+  paints a nuanced picture on task automation with LM agents--in a setting simulating a real workplace,
+  a good portion of simpler tasks could be solved autonomously, but more difficult long-horizon tasks
+  are still beyond the reach of current systems. We release code, data, environment, and experiments on
+  https://the-agent-company.com.'
+venue: arXiv.org
+year: 2024
+source: arxiv
+source_url: https://arxiv.org/abs/2412.14161
+pdf_url: https://arxiv.org/pdf/2412.14161
+pdf_sha256: 9574c7c5d4f1592dd1a0c9615cb3c2f8bd130f18b2c2cde4d0bbace4e80ef620
+fetched_at: '2026-06-06T07:57:36Z'
+source_updated_at: null
+ids:
+  doi: 10.48550/arXiv.2412.14161
+  arxiv_id: '2412.14161'
+  arxiv_base_id: '2412.14161'
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: c13e8d0d00687e8fc04b4e263818abd451d8e4de
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: recency(1.00), interest_fit(0.73), novelty(0.55) | interests:
+    computer_use_agents:group:computer_use_agents | milestone/foundational floor applied'
+  matched_interests:
+  - computer_use_agents:group:computer_use_agents
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 1.0
+    venue_quality: 0.4
+    harness_relevance: 0.36
+    novelty: 0.55
+    artifact_availability: 0.55
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/theagentcompany-benchmarking-llm-agents-on-consequential-real-241214161/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

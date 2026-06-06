@@ -1,0 +1,72 @@
+canonical_key: arxiv-2412.19723
+slug: os-genesis-automating-gui-agent-trajectory-construction-241219723
+title: 'OS-Genesis: Automating GUI Agent Trajectory Construction via Reverse Task Synthesis'
+authors:
+- Qiushi Sun
+- Kanzhi Cheng
+- Zichen Ding
+- Chuanyang Jin
+- Yian Wang
+- Fangzhi Xu
+- Zhenyu Wu
+- Chengyou Jia
+- Liheng Chen
+- Zhoumianze Liu
+- Ben Kao
+- Guohao Li
+- Junxian He
+- Yu Qiao
+- Zhiyong Wu
+year: 2024
+primary_ids:
+  doi: 10.48550/arXiv.2412.19723
+  arxiv_base_id: '2412.19723'
+  openreview_id: null
+  semantic_scholar_id: 285f38de28b79df0bb64a859ab0d79048e860f30
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2412.19723
+- https://arxiv.org/pdf/2412.19723
+topic_groups:
+- agent_harness
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: Annual Meeting of the Association for Computational Linguistics
+  tier: A_star
+  status: unknown
+  year: 2024
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: expansion
+  significance: Reverse-task-synthesis pipeline auto-generating high-quality GUI trajectories without
+    human labels; data engine for desktop/GUI agents.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2412.19723
+  pdf_path: library/os-genesis-automating-gui-agent-trajectory-construction-241219723/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/os-genesis-automating-gui-agent-trajectory-construction-241219723/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:36Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: 65bb449a7e9d433f29b088e0ed5d52f22833572b7a67533b48cf07e88f14292d
+  pdf_bytes: 3202773
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-06-06T07:57:36Z'
+  updated_at: '2026-06-06T07:57:36Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

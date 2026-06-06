@@ -1,0 +1,61 @@
+canonical_key: arxiv-2504.00906
+slug: agent-s2-a-compositional-generalist-specialist-framework-250400906
+title: 'Agent S2: A Compositional Generalist-Specialist Framework for Computer Use Agents'
+authors:
+- Saaket Agashe
+- Kyle Wong
+- Vincent Tu
+- Jiachen Yang
+- Ang Li
+- X. Wang
+year: 2025
+primary_ids:
+  doi: 10.48550/arXiv.2504.00906
+  arxiv_base_id: '2504.00906'
+  openreview_id: null
+  semantic_scholar_id: ff996cf4b98fa59d39966bbfbc756f2f22ba9c1d
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2504.00906
+- https://arxiv.org/pdf/2504.00906
+topic_groups:
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: arXiv.org
+  tier: workshop_or_minor
+  status: unknown
+  year: 2025
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: expansion
+  significance: Mixture-of-Grounding + Proactive Hierarchical Planning; new SOTA on OSWorld/WindowsAgentArena/AndroidWorld.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2504.00906
+  pdf_path: library/agent-s2-a-compositional-generalist-specialist-framework-250400906/v1/paper.pdf
+  summary_path: library/agent-s2-a-compositional-generalist-specialist-framework-250400906/v1/summary.html
+  metadata_path: library/agent-s2-a-compositional-generalist-specialist-framework-250400906/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:31Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: b87310f7b40407c9413d99bbd6cd027bac381cae77ef4d116dc3070012aa3ae5
+  pdf_bytes: 9525681
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-06-06T07:57:31Z'
+  updated_at: '2026-06-06T11:25:09Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

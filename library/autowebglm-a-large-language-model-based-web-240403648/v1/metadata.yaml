@@ -1,0 +1,82 @@
+canonical_key: arxiv-2404.03648
+version_key: v1
+title: 'AutoWebGLM: A Large Language Model-based Web Navigating Agent'
+authors:
+- Hanyu Lai
+- Xiao Liu
+- Iat Long Iong
+- Shuntian Yao
+- Yuxuan Chen
+- Pengbo Shen
+- Hao Yu
+- Hanchen Zhang
+- Xiaohan Zhang
+- Yuxiao Dong
+- Jie Tang
+abstract: 'Large language models (LLMs) have fueled many intelligent web agents, but most existing ones
+  perform far from satisfying in real-world web navigation tasks due to three factors: (1) the complexity
+  of HTML text data (2) versatility of actions on webpages, and (3) task difficulty due to the open-domain
+  nature of the web. In light of these challenges, we develop the open AutoWebGLM based on ChatGLM3-6B.
+  AutoWebGLM can serve as a powerful automated web navigation agent that outperform GPT-4. Inspired by
+  human browsing patterns, we first design an HTML simplification algorithm to represent webpages with
+  vital information preserved succinctly. We then employ a hybrid human-AI method to build web browsing
+  data for curriculum training. Finally, we bootstrap the model by reinforcement learning and rejection
+  sampling to further facilitate webpage comprehension, browser operations, and efficient task decomposition
+  by itself. For comprehensive evaluation, we establish a bilingual benchmark---AutoWebBench---for real-world
+  web navigation tasks. We evaluate AutoWebGLM across diverse web navigation benchmarks, demonstrating
+  its potential to tackle challenging tasks in real environments. Related code, model, and data are released
+  at https://github.com/THUDM/AutoWebGLM.'
+venue: Knowledge Discovery and Data Mining
+year: 2024
+source: arxiv
+source_url: https://arxiv.org/abs/2404.03648
+pdf_url: https://arxiv.org/pdf/2404.03648
+pdf_sha256: ee5100b55bdcc64eca63c5a0f9604a61dcaf60efdeea44838f60ba246cedfa72
+fetched_at: '2026-06-06T07:57:32Z'
+source_updated_at: null
+ids:
+  doi: 10.1145/3637528.3671620
+  arxiv_id: '2404.03648'
+  arxiv_base_id: '2404.03648'
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: 6c00f661c46391642208a5292f38b5a9e0e09cae
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: recency(1.00), interest_fit(0.91), novelty(0.55) | interests:
+    computer_use_agents:web agent, computer_use_agents:group:computer_use_agents | milestone/foundational
+    floor applied'
+  matched_interests:
+  - computer_use_agents:web agent
+  - computer_use_agents:group:computer_use_agents
+  negative_signals: []
+  subscores:
+    interest_fit: 0.91
+    recency: 1.0
+    venue_quality: 0.3
+    harness_relevance: 0.36
+    novelty: 0.55
+    artifact_availability: 0.55
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/autowebglm-a-large-language-model-based-web-240403648/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

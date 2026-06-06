@@ -1,0 +1,67 @@
+canonical_key: arxiv-2410.23218
+slug: os-atlas-a-foundation-action-model-for-241023218
+title: 'OS-ATLAS: A Foundation Action Model for Generalist GUI Agents'
+authors:
+- Zhiyong Wu
+- Zhenyu Wu
+- Fangzhi Xu
+- Yian Wang
+- Qiushi Sun
+- Chengyou Jia
+- Kanzhi Cheng
+- Zichen Ding
+- Liheng Chen
+- Paul Pu Liang
+- Yu Qiao
+year: 2024
+primary_ids:
+  doi: 10.48550/arXiv.2410.23218
+  arxiv_base_id: '2410.23218'
+  openreview_id: null
+  semantic_scholar_id: 9ceadd197cea2cd1b45e12983d528daf2b24efaa
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2410.23218
+- https://arxiv.org/pdf/2410.23218
+topic_groups:
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: arXiv.org
+  tier: workshop_or_minor
+  status: unknown
+  year: 2024
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: expansion
+  significance: Largest open cross-platform grounding corpus (13M+ elements) + foundation action model
+    with unified action space; key open backbone.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2410.23218
+  pdf_path: library/os-atlas-a-foundation-action-model-for-241023218/v1/paper.pdf
+  summary_path: library/os-atlas-a-foundation-action-model-for-241023218/v1/summary.html
+  metadata_path: library/os-atlas-a-foundation-action-model-for-241023218/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:34Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: ed7ba8eb36d50e36b14e480a3cb89ac9f8fe825d28f763acd8210dcb7ade8bd0
+  pdf_bytes: 2726914
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-06-06T07:57:34Z'
+  updated_at: '2026-06-06T11:25:00Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

@@ -1,0 +1,126 @@
+# Research interest profile.
+# Edit this file to change what /daily-papers fetches and how papers are scored.
+# Each topic group has a priority and a set of keywords. Keywords are matched
+# (case-insensitive, substring) against title + abstract during scoring and
+# query construction. `notes` are read by Claude when summarizing/triaging.
+#
+# priority levels: very_high | high | medium | low
+# These map to numeric weights in scoring (see scripts/score_paper.py / paperlib.py):
+#   very_high -> 1.0, high -> 0.8, medium -> 0.55, low -> 0.3
+
+version: 1
+
+topic_groups:
+  agent_harness:
+    priority: very_high
+    keywords:
+      - agent harness
+      - model harness
+      - meta-harness
+      - agent-computer interface
+      - agent environment
+      - tool use
+      - execution-based evaluation
+      - persistent workspace
+      - planner executor verifier
+      - inference-time search
+      - agent trajectory
+      - benchmark harness
+    notes:
+      - Focus on harness methods, not only model architecture.
+      - Include systems that optimize prompts, tools, policies, wrappers, verifiers, search, or environment interfaces around a model.
+      - Treat "Meta-Harness: End-to-End Optimization of Model Harnesses" as the intended meaning of meta-harness, not merely benchmark aggregation.
+
+  computer_use_agents:
+    priority: very_high
+    keywords:
+      - computer use agent
+      - GUI agent
+      - CLI agent
+      - API-based agent
+      - desktop agent
+      - web agent
+      - browser agent
+      - OS agent
+      - terminal agent
+      - persistent workspace
+      - workspace automation
+      - long-horizon computer task
+      - file system agent
+      - operating system environment
+    notes:
+      - Computer use includes GUI, CLI, API, shell, browser, file system, IDE, and workspace interfaces.
+      - Do not reduce this category to GUI-only papers.
+      - Prefer recent 2025-2026 papers unless older papers are foundational.
+
+  software_engineering_agents:
+    priority: very_high
+    keywords:
+      - SWE agent
+      - software engineering agent
+      - coding agent
+      - repository-level bug fixing
+      - issue resolution
+      - program repair
+      - test-based evaluation
+      - codebase agent
+      - terminal coding agent
+      - IDE agent
+      - patch validation
+      - verifier
+      - SWE-bench
+    notes:
+      - Track benchmarks, training environments, search methods, ACI/interface methods, and evaluation harnesses.
+
+  document_agents:
+    priority: high
+    keywords:
+      - document editing agent
+      - office automation agent
+      - spreadsheet agent
+      - PowerPoint agent
+      - PDF agent
+      - Word agent
+      - document management
+      - office workflow
+      - presentation editing
+      - spreadsheet manipulation
+      - multi-application workflow
+    notes:
+      - Focus on document editing/management, office workflows, artifact generation, and persistent document workspaces.
+
+  general_agent_methods:
+    priority: medium
+    keywords:
+      - tool learning
+      - toolformer
+      - verifier
+      - reflection
+      - agent search
+      - agent memory
+      - multi-agent workflow
+      - benchmark design
+      - agent evaluation
+      - environment design
+    notes:
+      - Include papers outside my main domains only if they illuminate harness design.
+
+# Authors / labs whose work should get a small positive signal (matched on author list).
+watch_authors: []
+watch_labs:
+  - OpenAI
+  - Anthropic
+  - Google DeepMind
+  - Meta AI
+  - Microsoft Research
+  - Allen Institute for AI
+
+# Benchmarks worth tracking explicitly (matched in title/abstract for trend signal).
+watch_benchmarks:
+  - SWE-bench
+  - WebArena
+  - OSWorld
+  - GAIA
+  - AgentBench
+  - tau-bench
+  - terminal-bench

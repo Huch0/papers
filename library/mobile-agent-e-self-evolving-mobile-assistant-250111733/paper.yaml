@@ -1,0 +1,64 @@
+canonical_key: arxiv-2501.11733
+slug: mobile-agent-e-self-evolving-mobile-assistant-250111733
+title: 'Mobile-Agent-E: Self-Evolving Mobile Assistant for Complex Tasks'
+authors:
+- Zhenhailong Wang
+- Haiyang Xu
+- Junyang Wang
+- Xi Zhang
+- Mingshi Yan
+- Ji Zhang
+- Fei Huang
+- Heng Ji
+year: 2025
+primary_ids:
+  doi: 10.48550/arXiv.2501.11733
+  arxiv_base_id: '2501.11733'
+  openreview_id: null
+  semantic_scholar_id: 52babb057c4c6493bef95ae7a67984d7f365e2a8
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2501.11733
+- https://arxiv.org/pdf/2501.11733
+topic_groups:
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: arXiv.org
+  tier: workshop_or_minor
+  status: unknown
+  year: 2025
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: recent
+  significance: Hierarchical multi-agent framework with self-evolving Tips/Shortcuts memory; ~22% absolute
+    gain on long-horizon mobile tasks.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2501.11733
+  pdf_path: library/mobile-agent-e-self-evolving-mobile-assistant-250111733/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/mobile-agent-e-self-evolving-mobile-assistant-250111733/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:46Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: de85cc958fd92410ffb846d93e89b47c9e88de29a2333517cee9dae9bf65ee0e
+  pdf_bytes: 24913410
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-06-06T07:57:46Z'
+  updated_at: '2026-06-06T07:57:46Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

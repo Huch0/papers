@@ -1,0 +1,85 @@
+canonical_key: arxiv-2502.14282
+version_key: v1
+title: 'PC-Agent: A Hierarchical Multi-Agent Collaboration Framework for Complex Task Automation on PC'
+authors:
+- Haowei Liu
+- Xi Zhang
+- Haiyang Xu
+- Yuyang Wanyan
+- Junyang Wang
+- Ming Yan
+- Ji Zhang
+- Chunfen Yuan
+- Changsheng Xu
+- Weiming Hu
+- Fei Huang
+abstract: In the field of MLLM-based GUI agents, compared to smartphones, the PC scenario not only features
+  a more complex interactive environment, but also involves more intricate intra- and inter-app workflows.
+  To address these issues, we propose a hierarchical agent framework named PC-Agent. Specifically, from
+  the perception perspective, we devise an Active Perception Module (APM) to overcome the inadequate abilities
+  of current MLLMs in perceiving screenshot content. From the decision-making perspective, to handle complex
+  user instructions and interdependent subtasks more effectively, we propose a hierarchical multi-agent
+  collaboration architecture that decomposes decision-making processes into Instruction-Subtask-Action
+  levels. Within this architecture, three agents (i.e., Manager, Progress and Decision) are set up for
+  instruction decomposition, progress tracking and step-by-step decision-making respectively. Additionally,
+  a Reflection agent is adopted to enable timely bottom-up error feedback and adjustment. We also introduce
+  a new benchmark PC-Eval with 25 real-world complex instructions. Empirical results on PC-Eval show that
+  our PC-Agent achieves a 32% absolute improvement of task success rate over previous state-of-the-art
+  methods. The code is available at https://github.com/X-PLUG/MobileAgent/tree/main/PC-Agent.
+venue: arXiv.org
+year: 2025
+source: arxiv
+source_url: https://arxiv.org/abs/2502.14282
+pdf_url: https://arxiv.org/pdf/2502.14282
+pdf_sha256: 58d1ddfb4298d0ea3df39cc57ac079914b262adb75ab38b8313455a1c127e4a6
+fetched_at: '2026-06-06T07:57:31Z'
+source_updated_at: null
+ids:
+  doi: 10.48550/arXiv.2502.14282
+  arxiv_id: '2502.14282'
+  arxiv_base_id: '2502.14282'
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: 3d10ad5856546118177d7551979c50fb9a57cbbf
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+- general_agent_methods
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: recency(1.00), interest_fit(0.91), novelty(0.80) | interests:
+    computer_use_agents:GUI agent, computer_use_agents:group:computer_use_agents, general_agent_methods:reflection,
+    general_agent_methods:group:general_agent_methods | milestone/foundational floor applied'
+  matched_interests:
+  - computer_use_agents:GUI agent
+  - computer_use_agents:group:computer_use_agents
+  - general_agent_methods:reflection
+  - general_agent_methods:group:general_agent_methods
+  negative_signals: []
+  subscores:
+    interest_fit: 0.91
+    recency: 1.0
+    venue_quality: 0.4
+    harness_relevance: 0.36
+    novelty: 0.8
+    artifact_availability: 0.8
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/pc-agent-a-hierarchical-multi-agent-collaboration-250214282/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

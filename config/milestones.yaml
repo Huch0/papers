@@ -1,0 +1,759 @@
+# Curated milestone / landmark papers per field, from a field's emergence to recent.
+# Durable record of "what counts as a milestone". /milestone-papers resolves each seed
+# to a real paper at fetch time (arxiv id when given, else title search), dedupes against
+# the registry, and ingests non-duplicates tagged foundational with a milestone block.
+# A blank/uncertain arxiv id is resolved by search, so it never produces a wrong record.
+#
+# era: emergence | foundational | expansion | recent
+# The computer_use_agents field was expanded by an exhaustive multi-source search
+# (web / gui_grounding / os_desktop / mobile / enabler_benchmark_survey sub-areas).
+
+version: 1
+fields:
+  computer_use_agents:
+    topic_group: computer_use_agents
+    emergence_year: 2017
+    description: 'Agents that operate computers through web, GUI, OS/desktop, and mobile interfaces, plus
+      the environments, datasets, grounding models, benchmarks, and surveys that define the field. Sub-areas:
+      web, gui_grounding, os_desktop, mobile, enabler_benchmark_survey.'
+    seeds:
+    - title: 'GAIA: a benchmark for General AI Assistants'
+      year: 2023
+      era: emergence
+      arxiv: '2311.12983'
+      subarea: enabler_benchmark_survey
+      significance: General-assistant benchmark (browsing, files, tools); de facto target for OS/desktop-style
+        autonomous assistants.
+    - title: 'AssistGUI: Task-Oriented Desktop Graphical User Interface Automation'
+      year: 2023
+      era: emergence
+      arxiv: '2312.13108'
+      subarea: os_desktop
+      significance: Early desktop GUI automation benchmark (100 tasks, 9 Windows apps) with Actor-Critic
+        agent; first to stress real productivity software.
+    - title: 'Pix2Struct: Screenshot Parsing as Pretraining for Visual Language Understanding'
+      year: 2022
+      era: emergence
+      arxiv: '2210.03347'
+      subarea: gui_grounding
+      significance: Pretrains image-to-text by parsing masked screenshots into HTML; pioneered pixel-only
+        screen understanding reused by GUI VLMs.
+    - title: 'AndroidEnv: A Reinforcement Learning Platform for Android'
+      year: 2021
+      era: emergence
+      arxiv: '2105.13231'
+      subarea: mobile
+      significance: DeepMind RL environment exposing a real Android device via touchscreen + pixels; foundational
+        device-control platform.
+    - title: Mapping Natural Language Instructions to Mobile UI Action Sequences
+      year: 2020
+      era: emergence
+      arxiv: '2005.03776'
+      subarea: mobile
+      significance: Seq2Act + PixelHelp; first to ground NL instructions to mobile UI action sequences,
+        founding the task.
+    - title: Reinforcement Learning on Web Interfaces Using Workflow-Guided Exploration
+      year: 2018
+      era: emergence
+      arxiv: '1802.08802'
+      subarea: web
+      significance: Introduced MiniWoB++ and workflow-guided exploration; canonical RL-era web benchmark.
+    - title: 'World of Bits: An Open-Domain Platform for Web-Based Agents'
+      year: 2017
+      era: emergence
+      arxiv: ''
+      subarea: web
+      significance: First open-domain platform/benchmark (incl. MiniWoB) for low-level keyboard/mouse
+        web actions; founded the field.
+    - title: 'SeeClick: Harnessing GUI Grounding for Advanced Visual GUI Agents'
+      year: 2024
+      era: foundational
+      arxiv: '2401.10935'
+      subarea: gui_grounding
+      significance: GUI-grounding pretraining for screenshot-only agents; created ScreenSpot, first realistic
+        cross-platform grounding benchmark.
+    - title: 'ScreenAI: A Vision-Language Model for UI and Infographics Understanding'
+      year: 2024
+      era: foundational
+      arxiv: '2402.04615'
+      subarea: gui_grounding
+      significance: Google 5B VLM with screen-annotation pretraining + auto UI QA/nav data; SOTA on multiple
+        UI/infographic benchmarks.
+    - title: 'Ferret-UI: Grounded Mobile UI Understanding with Multimodal LLMs'
+      year: 2024
+      era: foundational
+      arxiv: '2404.05719'
+      subarea: gui_grounding
+      significance: Apple MLLM for mobile screens with any-resolution sub-image splitting for referring/grounding;
+        surpassed GPT-4V on UI tasks.
+    - title: 'UFO: A UI-Focused Agent for Windows OS Interaction'
+      year: 2024
+      era: foundational
+      arxiv: '2402.07939'
+      subarea: os_desktop
+      significance: First UI-focused dual-agent system for Windows, using UI Automation trees to operate
+        native applications.
+    - title: 'OS-Copilot: Towards Generalist Computer Agents with Self-Improvement (FRIDAY)'
+      year: 2024
+      era: foundational
+      arxiv: '2402.07456'
+      subarea: os_desktop
+      significance: Generalist OS-interfacing framework (FRIDAY) across web/terminal/files/apps with self-improvement;
+        strong GAIA results.
+    - title: 'ScreenAgent: A Vision Language Model-driven Computer Control Agent'
+      year: 2024
+      era: foundational
+      arxiv: '2402.07945'
+      subarea: os_desktop
+      significance: Real-screen VLM control environment + dataset/model with plan-act-reflect; pioneered
+        pixel-level desktop control training.
+    - title: 'OmniACT: A Dataset and Benchmark for Multimodal Generalist Autonomous Agents for Desktop
+        and Web'
+      year: 2024
+      era: foundational
+      arxiv: '2402.17553'
+      subarea: os_desktop
+      significance: Large (9.8K task) dataset/benchmark across macOS/Windows/Linux/web evaluating code-to-action
+        on desktop+web.
+    - title: 'Cradle: Empowering Foundation Agents Towards General Computer Control'
+      year: 2024
+      era: foundational
+      arxiv: '2403.03186'
+      subarea: os_desktop
+      significance: Defined General Computer Control (screenshots in, keyboard/mouse out) with modular
+        self-reflective framework across games/apps/OSWorld.
+    - title: 'SpreadsheetBench: Towards Challenging Real World Spreadsheet Manipulation'
+      year: 2024
+      era: foundational
+      arxiv: '2406.14991'
+      subarea: os_desktop
+      significance: 912 real-forum Excel tasks with online-judge evaluation; canonical office/spreadsheet
+        desktop-agent benchmark.
+    - title: 'Windows Agent Arena: Evaluating Multi-Modal OS Agents at Scale'
+      year: 2024
+      era: foundational
+      arxiv: '2409.08264'
+      subarea: os_desktop
+      significance: Adapted OSWorld to real Windows 11 VMs (150+ tasks), Azure-parallelizable in ~20 min;
+        introduced the Navi baseline.
+    - title: 'Mobile-Agent: Autonomous Multi-Modal Mobile Device Agent with Visual Perception'
+      year: 2024
+      era: foundational
+      arxiv: '2401.16158'
+      subarea: mobile
+      significance: Vision-centric agent using visual perception tools (no XML/metadata) + Mobile-Eval
+        benchmark; launched the Mobile-Agent line.
+    - title: 'CoCo-Agent: A Comprehensive Cognitive MLLM Agent for Smartphone GUI Automation'
+      year: 2024
+      era: foundational
+      arxiv: '2402.11941'
+      subarea: mobile
+      significance: Comprehensive environment perception + conditional action prediction; SOTA on AitW
+        and META-GUI among trained MLLM agents.
+    - title: 'Android in the Zoo: Chain-of-Action-Thought for GUI Agents'
+      year: 2024
+      era: foundational
+      arxiv: '2403.02713'
+      subarea: mobile
+      significance: CoAT reasoning formulation + AitZ dataset; advanced semantic reasoning over screens
+        for Android GUI agents.
+    - title: 'Mind2Web: Towards a Generalist Agent for the Web'
+      year: 2023
+      era: foundational
+      arxiv: '2306.06070'
+      subarea: web
+      significance: First large dataset of 2,000+ real trajectories across 137 sites; defined offline
+        generalist-web-agent evaluation.
+    - title: Multimodal Web Navigation with Instruction-Finetuned Foundation Models (WebGUM)
+      year: 2023
+      era: foundational
+      arxiv: '2305.11854'
+      subarea: web
+      significance: Multimodal (HTML+screenshot) instruction-finetuned web agent; large MiniWoB/WebShop
+        gains and transfer to Mind2Web.
+    - title: A Real-World WebAgent with Planning, Long Context Understanding, and Program Synthesis (WebAgent
+        / HTML-T5)
+      year: 2023
+      era: foundational
+      arxiv: '2307.12856'
+      subarea: web
+      significance: HTML-T5 long-context model + plan-then-program-synthesis agent on real sites; foundational
+        LLM web-agent architecture.
+    - title: 'WebArena: A Realistic Web Environment for Building Autonomous Agents'
+      year: 2023
+      era: foundational
+      arxiv: '2307.13854'
+      subarea: web
+      significance: Defining reproducible self-hosted live-website benchmark with functional-correctness
+        eval; central web-agent leaderboard.
+    - title: 'CogAgent: A Visual Language Model for GUI Agents'
+      year: 2023
+      era: foundational
+      arxiv: '2312.08914'
+      subarea: gui_grounding
+      significance: First large (18B) screenshot-only VLM with high-res cross-attention beating HTML methods
+        on Mind2Web/AITW; native GUI-VLM paradigm.
+    - title: 'You Only Look at Screens: Multimodal Chain-of-Action Agents (Auto-GUI)'
+      year: 2023
+      era: foundational
+      arxiv: '2309.11436'
+      subarea: mobile
+      significance: Auto-GUI; screen-only multimodal agent with chain-of-action bypassing HTML/API; early
+        vision-centric mobile control model.
+    - title: 'Android in the Wild: A Large-Scale Dataset for Android Device Control'
+      year: 2023
+      era: foundational
+      arxiv: '2307.10088'
+      subarea: mobile
+      significance: AitW; 715k-episode device-control dataset, orders of magnitude larger than predecessors;
+        canonical offline corpus.
+    - title: 'AutoDroid: LLM-powered Task Automation in Android'
+      year: 2023
+      era: foundational
+      arxiv: '2308.15272'
+      subarea: mobile
+      significance: LLM commonsense + app dynamic analysis + memory injection for general Android automation;
+        early LLM phone-automation system.
+    - title: 'AppAgent: Multimodal Agents as Smartphone Users'
+      year: 2023
+      era: foundational
+      arxiv: '2312.13771'
+      subarea: mobile
+      significance: LLM agent learning apps via exploration/demos into a knowledge base; popularized the
+        smartphone-as-user paradigm.
+    - title: 'AgentBench: Evaluating LLMs as Agents'
+      year: 2023
+      era: foundational
+      arxiv: '2308.03688'
+      subarea: enabler_benchmark_survey
+      significance: First broad multi-environment benchmark spanning OS, web, and games to measure LLM
+        agentic ability.
+    - title: 'The Dawn of LMMs: Preliminary Explorations with GPT-4V(ision)'
+      year: 2023
+      era: foundational
+      arxiv: '2309.17421'
+      subarea: enabler_benchmark_survey
+      significance: Influential probe of GPT-4V that surfaced visual referring prompting for GUI interaction.
+    - title: Set-of-Mark Prompting Unleashes Extraordinary Visual Grounding in GPT-4V
+      year: 2023
+      era: foundational
+      arxiv: '2310.11441'
+      subarea: enabler_benchmark_survey
+      significance: SoM marking of UI regions became the dominant grounding trick letting LMMs click precise
+        screen elements.
+    - title: A Data-Driven Approach for Learning to Control Computers (CC-Net)
+      year: 2022
+      era: foundational
+      arxiv: '2202.08137'
+      subarea: web
+      significance: First agent to reach human-level mean on MiniWoB++ from pixels via demos+RL; capstone
+        of pixel-based RL web control.
+    - title: 'WebShop: Towards Scalable Real-World Web Interaction with Grounded Language Agents'
+      year: 2022
+      era: foundational
+      arxiv: '2207.01206'
+      subarea: web
+      significance: Large-scale simulated e-commerce env (1.18M products); standard instruction-following
+        shopping benchmark + sim-to-real.
+    - title: 'WebGPT: Browser-Assisted Question-Answering with Human Feedback'
+      year: 2021
+      era: foundational
+      arxiv: '2112.09332'
+      subarea: web
+      significance: First LLM fine-tuned via BC+RLHF to browse a text web environment and cite sources;
+        seeded agentic search.
+    - title: Operator / Computer-Using Agent (CUA) System Card (OpenAI)
+      year: 2025
+      era: expansion
+      arxiv: ''
+      subarea: os_desktop
+      significance: OpenAI CUA model + Operator preview combining GPT-4o vision with RL for pixel-level
+        GUI control; major commercial milestone.
+    - title: 'PC-Agent: A Hierarchical Multi-Agent Collaboration Framework for Complex Task Automation
+        on PC'
+      year: 2025
+      era: expansion
+      arxiv: '2502.14282'
+      subarea: os_desktop
+      significance: Hierarchical Manager-Progress-Decision multi-agent framework with active perception
+        for complex multi-app PC workflows.
+    - title: 'Agent S2: A Compositional Generalist-Specialist Framework for Computer Use Agents'
+      year: 2025
+      era: expansion
+      arxiv: '2504.00906'
+      subarea: os_desktop
+      significance: Mixture-of-Grounding + Proactive Hierarchical Planning; new SOTA on OSWorld/WindowsAgentArena/AndroidWorld.
+    - title: 'UFO2: The Desktop AgentOS'
+      year: 2025
+      era: expansion
+      arxiv: '2504.14603'
+      subarea: os_desktop
+      significance: Reframed Windows automation as a Desktop AgentOS (HostAgent/AppAgents, hybrid UIA+vision,
+        native-API/GUI actions, isolated desktop).
+    - title: 'VisualWebArena: Evaluating Multimodal Agents on Realistic Visually Grounded Web Tasks'
+      year: 2024
+      era: expansion
+      arxiv: '2401.13649'
+      subarea: web
+      significance: Extended WebArena with visually grounded tasks; standard benchmark for multimodal/VLM
+        web agents.
+    - title: GPT-4V(ision) is a Generalist Web Agent, if Grounded (SeeAct)
+      year: 2024
+      era: expansion
+      arxiv: '2401.01614'
+      subarea: web
+      significance: Showed GPT-4V as strong generalist web agent once grounded; crystallized perception-then-grounding
+        for VLM web agents.
+    - title: 'WebVoyager: Building an End-to-End Web Agent with Large Multimodal Models'
+      year: 2024
+      era: expansion
+      arxiv: '2401.13919'
+      subarea: web
+      significance: End-to-end multimodal agent on 15 live sites with GPT-4V auto-evaluator; widely used
+        live benchmark and SoM recipe.
+    - title: 'WorkArena: How Capable Are Web Agents at Solving Common Knowledge Work Tasks?'
+      year: 2024
+      era: expansion
+      arxiv: '2403.07718'
+      subarea: web
+      significance: Enterprise (ServiceNow) knowledge-work benchmark; introduced BrowserGym; pushed agents
+        toward workplace automation.
+    - title: 'AutoWebGLM: Bootstrap and Reinforce a Large Language Model-based Web Navigating Agent'
+      year: 2024
+      era: expansion
+      arxiv: '2404.03648'
+      subarea: web
+      significance: Leading open-LLM web agent (ChatGLM3-6B) via curriculum + RL bootstrapping; prior
+        SOTA for trained open web agents.
+    - title: Tree Search for Language Model Agents
+      year: 2024
+      era: expansion
+      arxiv: '2407.01476'
+      subarea: web
+      significance: Brought best-first/MCTS inference-time search to LLM web agents; boosted WebArena/VisualWebArena
+        success.
+    - title: 'Agent-E: From Autonomous Web Navigation to Foundational Design Principles in Agentic Systems'
+      year: 2024
+      era: expansion
+      arxiv: '2407.13032'
+      subarea: web
+      significance: Hierarchical planner-browser agent; SOTA on WebVoyager and reusable design principles
+        for agentic web systems.
+    - title: 'AssistantBench: Can Web Agents Solve Realistic and Time-Consuming Tasks?'
+      year: 2024
+      era: expansion
+      arxiv: '2407.15711'
+      subarea: web
+      significance: 214 realistic time-consuming open-web tasks needing multi-site browsing; exposed poor
+        long-horizon real-web performance.
+    - title: 'WebPilot: A Versatile and Autonomous Multi-Agent System for Web Task Execution with Strategic
+        Exploration'
+      year: 2024
+      era: expansion
+      arxiv: '2408.15978'
+      subarea: web
+      significance: MCTS-driven multi-agent system; WebArena SOTA; advanced strategic exploration/planning
+        for web agents.
+    - title: 'GUICourse: From General Vision Language Models to Versatile GUI Agents'
+      year: 2024
+      era: expansion
+      arxiv: '2406.11317'
+      subarea: gui_grounding
+      significance: Dataset suite (GUIEnv/GUIAct/GUIChat, 10M pairs) to convert general VLMs into GUI
+        agents (OCR, grounding, interaction).
+    - title: OmniParser for Pure Vision Based GUI Agent
+      year: 2024
+      era: expansion
+      arxiv: '2408.00203'
+      subarea: gui_grounding
+      significance: Screen-parsing module converting screenshots into structured labeled elements; lets
+        any VLM act without fine-tuning; widely adopted.
+    - title: 'Navigating the Digital World as Humans Do: Universal Visual Grounding for GUI Agents (UGround)'
+      year: 2024
+      era: expansion
+      arxiv: '2410.05243'
+      subarea: gui_grounding
+      significance: Human-like pixel-only perception; universal grounding model trained on 10M synthesized
+        elements; advanced ScreenSpot + downstream SOTA.
+    - title: 'Ferret-UI 2: Mastering Universal User Interface Understanding Across Platforms'
+      year: 2024
+      era: expansion
+      arxiv: '2410.18967'
+      subarea: gui_grounding
+      significance: Multi-platform (iPhone/Android/iPad/web/AppleTV) adaptive high-res grounding; generalizes
+        UI understanding across ecosystems.
+    - title: 'OS-ATLAS: A Foundation Action Model for Generalist GUI Agents'
+      year: 2024
+      era: expansion
+      arxiv: '2410.23218'
+      subarea: gui_grounding
+      significance: Largest open cross-platform grounding corpus (13M+ elements) + foundation action model
+        with unified action space; key open backbone.
+    - title: 'ShowUI: One Vision-Language-Action Model for GUI Visual Agent'
+      year: 2024
+      era: expansion
+      arxiv: '2411.17465'
+      subarea: gui_grounding
+      significance: Lightweight (2B) VLA with UI-guided visual-token selection + interleaved VLA streaming;
+        strong grounding with little data/tokens.
+    - title: 'Aguvis: Unified Pure Vision Agents for Autonomous GUI Interaction'
+      year: 2024
+      era: expansion
+      arxiv: '2412.04454'
+      subarea: gui_grounding
+      significance: First fully autonomous pure-vision GUI agent (no closed models); unified action space
+        + two-stage grounding-then-reasoning + inner monologue.
+    - title: 'Aria-UI: Visual Grounding for GUI Instructions'
+      year: 2024
+      era: expansion
+      arxiv: '2412.16256'
+      subarea: gui_grounding
+      significance: MoE grounding model (3.9B active) with large synthesized instruction data and context-aware
+        grounding; topped ScreenSpot averages.
+    - title: 'Agent S: An Open Agentic Framework that Uses Computers Like a Human'
+      year: 2024
+      era: expansion
+      arxiv: '2410.08164'
+      subarea: os_desktop
+      significance: Open framework with experience-augmented hierarchical planning + ACI; early OSWorld
+        SOTA; popularized modular GUI scaffolds.
+    - title: Claude 3.5 Sonnet Computer Use (Anthropic)
+      year: 2024
+      era: expansion
+      arxiv: ''
+      subarea: os_desktop
+      significance: First frontier model shipped with general computer use (screenshot + mouse/keyboard)
+        via API; catalyzed the commercial CUA wave.
+    - title: 'TheAgentCompany: Benchmarking LLM Agents on Consequential Real World Tasks'
+      year: 2024
+      era: expansion
+      arxiv: '2412.14161'
+      subarea: os_desktop
+      significance: Self-contained simulated software-company env (web/code/terminal/coworker chat) testing
+        long-horizon digital-worker tasks.
+    - title: 'OS-Genesis: Automating GUI Agent Trajectory Construction via Reverse Task Synthesis'
+      year: 2024
+      era: expansion
+      arxiv: '2412.19723'
+      subarea: os_desktop
+      significance: Reverse-task-synthesis pipeline auto-generating high-quality GUI trajectories without
+        human labels; data engine for desktop/GUI agents.
+    - title: 'AndroidWorld: A Dynamic Benchmarking Environment for Autonomous Agents'
+      year: 2024
+      era: expansion
+      arxiv: '2405.14573'
+      subarea: mobile
+      significance: Live Android env with 116 reward-verified parameterized tasks across 20 apps; de facto
+        online mobile-agent leaderboard.
+    - title: 'Mobile-Agent-v2: Mobile Device Operation Assistant with Effective Navigation via Multi-Agent
+        Collaboration'
+      year: 2024
+      era: expansion
+      arxiv: '2406.01014'
+      subarea: mobile
+      significance: Planning/decision/reflection multi-agent architecture markedly improving long-horizon
+        mobile navigation.
+    - title: On the Effects of Data Scale on UI Control Agents (AndroidControl)
+      year: 2024
+      era: expansion
+      arxiv: '2406.03679'
+      subarea: mobile
+      significance: AndroidControl dataset (15k demos) + definitive study of data-scaling limits for in/out-of-domain
+        UI control.
+    - title: 'GUI Odyssey: A Comprehensive Dataset for Cross-App GUI Navigation on Mobile Devices'
+      year: 2024
+      era: expansion
+      arxiv: '2406.08451'
+      subarea: mobile
+      significance: First large cross-app navigation dataset (7,735 episodes, 201 apps) + OdysseyAgent;
+        established cross-application setting.
+    - title: 'DigiRL: Training In-The-Wild Device-Control Agents with Autonomous Reinforcement Learning'
+      year: 2024
+      era: expansion
+      arxiv: '2406.11896'
+      subarea: mobile
+      significance: Offline-to-online autonomous RL with a VLM evaluator + curriculum; SOTA for in-the-wild
+        Android control; anchored RL-for-device-control.
+    - title: 'AppAgent v2: Advanced Agent for Flexible Mobile Interactions'
+      year: 2024
+      era: expansion
+      arxiv: '2408.11824'
+      subarea: mobile
+      significance: Adds vision-based element parsing + RAG over a structured knowledge base for flexible
+        robust real-app interaction.
+    - title: 'DistRL: An Asynchronous Distributed Reinforcement Learning Framework for On-Device Control
+        Agents'
+      year: 2024
+      era: expansion
+      arxiv: '2410.14803'
+      subarea: mobile
+      significance: Scalable async distributed RL decoupling collection from learning across emulators;
+        improved online mobile-agent RL efficiency.
+    - title: 'AndroidLab: Training and Systematic Benchmarking of Android Autonomous Agents'
+      year: 2024
+      era: expansion
+      arxiv: '2410.24024'
+      subarea: mobile
+      significance: Unified XML/SoM environment + 10.5k-trace dataset enabling systematic training/benchmarking
+        of open and closed Android agents.
+    - title: 'Spider2-V: How Far Are Multimodal Agents From Automating Data Science and Engineering Workflows?'
+      year: 2024
+      era: expansion
+      arxiv: '2407.10956'
+      subarea: enabler_benchmark_survey
+      significance: Enterprise-grade benchmark across 20 professional apps; exposed the gap on knowledge-intensive
+        GUI workflows.
+    - title: Project Mariner (Google DeepMind)
+      year: 2024
+      era: expansion
+      arxiv: ''
+      subarea: enabler_benchmark_survey
+      significance: Google's browser-agent prototype demonstrating multi-task autonomous web use, later
+        folded into Gemini.
+    - title: 'Large Language Model-Brained GUI Agents: A Survey'
+      year: 2024
+      era: expansion
+      arxiv: '2411.18279'
+      subarea: enabler_benchmark_survey
+      significance: Comprehensive survey mapping GUI-agent frameworks, data, large action models, and
+        benchmarks.
+    - title: 'GUI Agents: A Survey'
+      year: 2024
+      era: expansion
+      arxiv: '2412.13501'
+      subarea: enabler_benchmark_survey
+      significance: Widely cited taxonomy of GUI-agent perception, reasoning, and action across web/desktop/mobile.
+    - title: 'WebWalker: Benchmarking LLMs in Web Traversal'
+      year: 2025
+      era: recent
+      arxiv: '2501.07572'
+      subarea: web
+      significance: WebWalkerQA benchmark for deep multi-page traversal and info seeking; first of the
+        Tongyi agentic-search lineage.
+    - title: An Illusion of Progress? Assessing the Current State of Web Agents (Online-Mind2Web)
+      year: 2025
+      era: recent
+      arxiv: '2504.01382'
+      subarea: web
+      significance: Introduced Online-Mind2Web (300 live tasks/136 sites); showed prior progress overstated;
+        leading live leaderboard.
+    - title: 'WebDancer: Towards Autonomous Information Seeking Agency'
+      year: 2025
+      era: recent
+      arxiv: '2505.22648'
+      subarea: web
+      significance: End-to-end native agentic-search model (data synthesis + SFT + RL); template for open
+        Deep-Research-style browsing.
+    - title: 'Mind2Web 2: Evaluating Agentic Search with Agent-as-a-Judge'
+      year: 2025
+      era: recent
+      arxiv: '2506.21506'
+      subarea: web
+      significance: Long-horizon agentic-search eval with rubric-based Agent-as-a-Judge + source attribution;
+        Deep Research benchmark.
+    - title: 'WebSailor: Navigating Super-human Reasoning for Web Agent'
+      year: 2025
+      era: recent
+      arxiv: '2507.02592'
+      subarea: web
+      significance: Open SOTA on hard browsing (BrowseComp, GAIA) via high-uncertainty data synthesis
+        + RL; closed gap to proprietary.
+    - title: 'InfiGUIAgent: A Multimodal Generalist GUI Agent with Native Reasoning and Reflection'
+      year: 2025
+      era: recent
+      arxiv: '2501.04575'
+      subarea: gui_grounding
+      significance: Two-stage SFT giving a generalist GUI agent native hierarchical reasoning + reflection;
+        integrates grounding with deliberative planning.
+    - title: 'UI-TARS: Pioneering Automated GUI Interaction with Native Agents'
+      year: 2025
+      era: recent
+      arxiv: '2501.12326'
+      subarea: gui_grounding
+      significance: End-to-end native agent unifying perception/grounding/memory/System-2 reasoning; trained
+        on 6M+ GUI tutorials; landmark open model.
+    - title: 'ScreenSpot-Pro: GUI Grounding for Professional High-Resolution Computer Use'
+      year: 2025
+      era: recent
+      arxiv: '2504.07981'
+      subarea: gui_grounding
+      significance: Hard expert-annotated benchmark over 23 pro high-res apps (5 industries, 3 OSes);
+        exposed large grounding gap on dense expert UIs.
+    - title: Scaling Computer-Use Grounding via User Interface Decomposition and Synthesis (Jedi / OSWorld-G)
+      year: 2025
+      era: recent
+      arxiv: '2505.13227'
+      subarea: gui_grounding
+      significance: 4M-example Jedi grounding dataset via UI decomposition + OSWorld-G; lifted OSWorld
+        agent success from 23% to 51%.
+    - title: 'GUI-Actor: Coordinate-Free Visual Grounding for GUI Agents'
+      year: 2025
+      era: recent
+      arxiv: '2506.03143'
+      subarea: gui_grounding
+      significance: Attention-based action head over visual patches replacing coordinate text; beats larger
+        models on ScreenSpot-Pro; coordinate-free.
+    - title: 'GTA1: GUI Test-time Scaling Agent'
+      year: 2025
+      era: recent
+      arxiv: '2507.05791'
+      subarea: gui_grounding
+      significance: Test-time scaling for planning + RL (GRPO)-trained grounding; 45.2% on OSWorld; topped
+        OpenAI CUA among open agents.
+    - title: 'UI-TARS-2 Technical Report: Advancing GUI Agent with Multi-Turn Reinforcement Learning'
+      year: 2025
+      era: recent
+      arxiv: '2509.02544'
+      subarea: gui_grounding
+      significance: Scales native GUI agents with stabilized multi-turn RL + unified sandbox; improves
+        long-horizon grounding-and-acting over UI-TARS-1.x.
+    - title: OSWorld-Verified
+      year: 2025
+      era: recent
+      arxiv: ''
+      subarea: os_desktop
+      significance: In-place upgrade fixing 300+ OSWorld task/eval issues with 50x AWS parallelization;
+        default trusted computer-use leaderboard.
+    - title: 'ComputerRL: Scaling End-to-End Online Reinforcement Learning for Computer Use Agents'
+      year: 2025
+      era: recent
+      arxiv: '2508.14040'
+      subarea: os_desktop
+      significance: API-GUI paradigm + distributed RL over thousands of parallel desktops; AutoGLM-OS
+        new open OSWorld SOTA at the time.
+    - title: The Unreasonable Effectiveness of Scaling Agents for Computer Use (Agent S3)
+      year: 2025
+      era: recent
+      arxiv: '2510.02250'
+      subarea: os_desktop
+      significance: Wide-scaling via Behavior Best-of-N with a Behavior Judge; ~69.9% on OSWorld (near
+        human) with fewer LLM calls than Agent S2.
+    - title: 'Surfer 2: The Next Generation of Cross-Platform Computer Use Agents'
+      year: 2025
+      era: recent
+      arxiv: '2510.19949'
+      subarea: os_desktop
+      significance: Unified vision-only architecture with hierarchical context, decoupled planning/execution,
+        self-verification; strong web/desktop/mobile.
+    - title: 'Mobile-Agent-E: Self-Evolving Mobile Assistant for Complex Tasks'
+      year: 2025
+      era: recent
+      arxiv: '2501.11733'
+      subarea: mobile
+      significance: Hierarchical multi-agent framework with self-evolving Tips/Shortcuts memory; ~22%
+        absolute gain on long-horizon mobile tasks.
+    - title: 'LLM-Powered GUI Agents in Phone Automation: Surveying Progress and Prospects'
+      year: 2025
+      era: recent
+      arxiv: '2504.19838'
+      subarea: mobile
+      significance: Definitive survey of phone GUI agents (architectures, SFT, RL, datasets, benchmarks);
+        reference map for the sub-area.
+    - title: 'Towards Trustworthy GUI Agents: A Survey'
+      year: 2025
+      era: recent
+      arxiv: '2503.23434'
+      subarea: enabler_benchmark_survey
+      significance: First survey centering safety, reliability, and the perception-action execution gap
+        for deployed GUI agents.
+    - title: A Survey on (M)LLM-Based GUI Agents
+      year: 2025
+      era: recent
+      arxiv: '2504.13865'
+      subarea: enabler_benchmark_survey
+      significance: Updated survey framing element localization, knowledge retrieval, long-horizon planning,
+        and safe execution.
+    - title: 'OS Agents: A Survey on MLLM-based Agents for Computer, Phone and Browser Use'
+      year: 2025
+      era: recent
+      arxiv: '2508.04482'
+      subarea: enabler_benchmark_survey
+      significance: Unifying survey across computer/phone/browser OS agents covering foundations, capabilities,
+        and benchmarks.
+    - title: 'WebRL: Training LLM Web Agents via Self-Evolving Online Curriculum Reinforcement Learning'
+      year: 2024
+      era: recent
+      arxiv: '2411.02337'
+      subarea: web
+      significance: Self-evolving online curriculum RL lifting open 8-9B models past GPT-4 on WebArena-Lite;
+        modern open web-agent recipe.
+    - title: The BrowserGym Ecosystem for Web Agent Research
+      year: 2024
+      era: recent
+      arxiv: '2412.05467'
+      subarea: web
+      significance: Unified gym/experiment harness consolidating MiniWoB, WebArena, WorkArena, VisualWebArena;
+        standard web-agent infra.
+  software_engineering_agents:
+    topic_group: software_engineering_agents
+    emergence_year: 2021
+    description: 'Agents that resolve real software tasks (issues, bugs, features) in repositories, evaluated
+      by execution/tests.
+
+      '
+    seeds:
+    - title: Evaluating Large Language Models Trained on Code
+      year: 2021
+      era: emergence
+      arxiv: '2107.03374'
+      significance: Codex + HumanEval; function-level code-generation baseline.
+    - title: 'SWE-bench: Can Language Models Resolve Real-World GitHub Issues?'
+      year: 2024
+      era: foundational
+      arxiv: '2310.06770'
+      significance: Repository-level, execution-validated issue-resolution benchmark.
+    - title: 'SWE-agent: Agent-Computer Interfaces Enable Automated Software Engineering'
+      year: 2024
+      era: foundational
+      arxiv: '2405.15793'
+      significance: The ACI concept; agent scaffold that made SWE-bench tractable.
+  agent_harness:
+    topic_group: agent_harness
+    emergence_year: 2022
+    description: 'Methods that optimize the scaffolding around a model: tools, prompts, verifiers, search,
+      memory, and environment interfaces.
+
+      '
+    seeds:
+    - title: 'ReAct: Synergizing Reasoning and Acting in Language Models'
+      year: 2022
+      era: emergence
+      arxiv: '2210.03629'
+      significance: Interleaved reasoning + acting; foundational agent loop.
+    - title: 'Toolformer: Language Models Can Teach Themselves to Use Tools'
+      year: 2023
+      era: foundational
+      arxiv: '2302.04761'
+      significance: Self-supervised tool-use; canonical tool-learning reference.
+    - title: 'Reflexion: Language Agents with Verbal Reinforcement Learning'
+      year: 2023
+      era: foundational
+      arxiv: '2303.11366'
+      significance: Verbal self-reflection as an inference-time improvement loop.
+    - title: 'Tree of Thoughts: Deliberate Problem Solving with Large Language Models'
+      year: 2023
+      era: expansion
+      arxiv: '2305.10601'
+      significance: Inference-time search over reasoning states.
+  document_agents:
+    topic_group: document_agents
+    emergence_year: 2023
+    description: 'Agents that edit/manage documents, spreadsheets, slides, and office workflows.
+
+      '
+    seeds:
+    - title: 'PPTC: A Benchmark for Evaluating the Ability of Large Language Models in PowerPoint Task
+        Completion'
+      year: 2023
+      era: emergence
+      arxiv: '2311.01767'
+      significance: Early presentation-editing task benchmark for LLM agents.
+    - title: 'SheetCopilot: Bringing Software Productivity to the Next Level through Large Language Models'
+      year: 2023
+      era: foundational
+      arxiv: '2305.19308'
+      significance: Spreadsheet manipulation agent over real software operations.
+discovery:
+  per_field_suggestions: 15
+  min_influential_citations: 25
+  min_year: 2016

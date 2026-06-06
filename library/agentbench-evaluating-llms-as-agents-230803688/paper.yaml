@@ -1,0 +1,80 @@
+canonical_key: arxiv-2308.03688
+slug: agentbench-evaluating-llms-as-agents-230803688
+title: 'AgentBench: Evaluating LLMs as Agents'
+authors:
+- Xiao Liu
+- Hao Yu
+- Hanchen Zhang
+- Yifan Xu
+- Xuanyu Lei
+- Hanyu Lai
+- Yu Gu
+- Yuxian Gu
+- Han Ding
+- Kai Men
+- Kejuan Yang
+- Shudan Zhang
+- Xiang Deng
+- Aohan Zeng
+- Zhengxiao Du
+- Chenhui Zhang
+- Shengqi Shen
+- Tianjun Zhang
+- Sheng Shen
+- Yu Su
+- Huan Sun
+- Minlie Huang
+- Yuxiao Dong
+- Jie Tang
+year: 2023
+primary_ids:
+  doi: 10.48550/arXiv.2308.03688
+  arxiv_base_id: '2308.03688'
+  openreview_id: null
+  semantic_scholar_id: 5dbf93a68b7fda600521f046dea35ea8ba9e884f
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2308.03688
+- https://arxiv.org/pdf/2308.03688
+topic_groups:
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: International Conference on Learning Representations
+  tier: A_star
+  status: unknown
+  year: 2023
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: foundational
+  significance: First broad multi-environment benchmark spanning OS, web, and games to measure LLM agentic
+    ability.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2308.03688
+  pdf_path: library/agentbench-evaluating-llms-as-agents-230803688/v1/paper.pdf
+  summary_path: library/agentbench-evaluating-llms-as-agents-230803688/v1/summary.md
+  metadata_path: library/agentbench-evaluating-llms-as-agents-230803688/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:30Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: 9c780e35fc0b2de6c2e21e0572f6aaaadcf7ecdd56d63cfaae2b415bc0dc83c3
+  pdf_bytes: 23017024
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-06-06T07:57:30Z'
+  updated_at: '2026-06-06T08:13:45Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

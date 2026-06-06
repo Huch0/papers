@@ -1,0 +1,83 @@
+canonical_key: arxiv-2112.09332
+version_key: v1
+title: 'WebGPT: Browser-assisted question-answering with human feedback'
+authors:
+- Reiichiro Nakano
+- Jacob Hilton
+- S. Balaji
+- Jeff Wu
+- Ouyang Long
+- Christina Kim
+- Christopher Hesse
+- Shantanu Jain
+- Vineet Kosaraju
+- W. Saunders
+- Xu Jiang
+- K. Cobbe
+- Tyna Eloundou
+- Gretchen Krueger
+- Kevin Button
+- Matthew Knight
+- Benjamin Chess
+- John Schulman
+abstract: We fine-tune GPT-3 to answer long-form questions using a text-based web-browsing environment,
+  which allows the model to search and navigate the web. By setting up the task so that it can be performed
+  by humans, we are able to train models on the task using imitation learning, and then optimize answer
+  quality with human feedback. To make human evaluation of factual accuracy easier, models must collect
+  references while browsing in support of their answers. We train and evaluate our models on ELI5, a dataset
+  of questions asked by Reddit users. Our best model is obtained by fine-tuning GPT-3 using behavior cloning,
+  and then performing rejection sampling against a reward model trained to predict human preferences.
+  This model's answers are preferred by humans 56% of the time to those of our human demonstrators, and
+  69% of the time to the highest-voted answer from Reddit.
+venue: arXiv.org
+year: 2021
+source: arxiv
+source_url: https://arxiv.org/abs/2112.09332
+pdf_url: https://arxiv.org/pdf/2112.09332
+pdf_sha256: acad8d9fd55a30b94de9dfdae413e10b21e07bde54d767b2405b31341739cedb
+fetched_at: '2026-06-06T07:57:31Z'
+source_updated_at: null
+ids:
+  doi: null
+  arxiv_id: '2112.09332'
+  arxiv_base_id: '2112.09332'
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: 2f3efe44083af91cef562c1a3451eee2f8601d22
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: recency(1.00), interest_fit(0.73), evaluation_quality(0.55)
+    | interests: computer_use_agents:group:computer_use_agents | milestone/foundational floor applied'
+  matched_interests:
+  - computer_use_agents:group:computer_use_agents
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 1.0
+    venue_quality: 0.4
+    harness_relevance: 0.36
+    novelty: 0.0
+    artifact_availability: 0.0
+    evaluation_quality: 0.55
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/webgpt-browser-assisted-question-answering-with-human-211209332/v1/paper.pdf
+  extraction: library/webgpt-browser-assisted-question-answering-with-human-211209332/v1/extraction.txt
+  summary: library/webgpt-browser-assisted-question-answering-with-human-211209332/v1/summary.md
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread

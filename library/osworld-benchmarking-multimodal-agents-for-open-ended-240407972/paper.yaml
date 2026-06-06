@@ -1,0 +1,73 @@
+canonical_key: arxiv-2404.07972
+slug: osworld-benchmarking-multimodal-agents-for-open-ended-240407972
+title: 'OSWorld: Benchmarking Multimodal Agents for Open-Ended Tasks in Real Computer Environments'
+authors:
+- Tianbao Xie
+- Danyang Zhang
+- Jixuan Chen
+- Xiaochuan Li
+- Siheng Zhao
+- Ruisheng Cao
+- Toh Jing Hua
+- Zhoujun Cheng
+- Dongchan Shin
+- Fangyu Lei
+- Yitao Liu
+- Yiheng Xu
+- Shuyan Zhou
+- Silvio Savarese
+- Caiming Xiong
+- Victor Zhong
+- Tao Yu
+year: 2024
+primary_ids:
+  doi: null
+  arxiv_base_id: '2404.07972'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2404.07972v2
+- https://arxiv.org/pdf/2404.07972v2
+topic_groups:
+- agent_harness
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2024
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: expansion
+  significance: Real OS-level desktop benchmark across applications.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v2
+  source: arxiv
+  source_url: https://arxiv.org/abs/2404.07972v2
+  pdf_path: library/osworld-benchmarking-multimodal-agents-for-open-ended-240407972/v1/paper.pdf
+  summary_path: library/osworld-benchmarking-multimodal-agents-for-open-ended-240407972/v1/summary.md
+  metadata_path: library/osworld-benchmarking-multimodal-agents-for-open-ended-240407972/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:14:14Z'
+  source_updated_at: '2024-05-30T08:55:12Z'
+  arxiv_version: v2
+  pdf_sha256: d4c6e20dd59467f005561b1e97199f9842fd3b0e9fdd93e66e06ba0ec09edfdb
+  pdf_bytes: 36863784
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-06-06T07:14:14Z'
+  updated_at: '2026-06-06T07:23:40Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

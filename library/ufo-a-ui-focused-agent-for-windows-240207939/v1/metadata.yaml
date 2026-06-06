@@ -1,0 +1,81 @@
+canonical_key: arxiv-2402.07939
+version_key: v1
+title: 'UFO: A UI-Focused Agent for Windows OS Interaction'
+authors:
+- Chaoyun Zhang
+- Liqun Li
+- Shilin He
+- Xu Zhang
+- Bo Qiao
+- Si Qin
+- Ming-Jie Ma
+- Yu Kang
+- Qingwei Lin
+- S. Rajmohan
+- Dongmei Zhang
+- Qi Zhang
+abstract: We introduce UFO, an innovative UI-Focused agent to fulfill user requests tailored to applications
+  on Windows OS, harnessing the capabilities of GPT-Vision. UFO employs a dual-agent framework to meticulously
+  observe and analyze the graphical user interface (GUI) and control information of Windows applications.
+  This enables the agent to seamlessly navigate and operate within individual applications and across
+  them to fulfill user requests, even when spanning multiple applications. The framework incorporates
+  a control interaction module, facilitating action grounding without human intervention and enabling
+  fully automated execution. Consequently, UFO transforms arduous and time-consuming processes into simple
+  tasks achievable solely through natural language commands. We conducted testing of UFO across 9 popular
+  Windows applications, encompassing a variety of scenarios reflective of users' daily usage. The results,
+  derived from both quantitative metrics and real-case studies, underscore the superior effectiveness
+  of UFO in fulfilling user requests. To the best of our knowledge, UFO stands as the first UI agent specifically
+  tailored for task completion within the Windows OS environment. The open-source code for UFO is available
+  on https://github.com/microsoft/UFO.
+venue: North American Chapter of the Association for Computational Linguistics
+year: 2024
+source: arxiv
+source_url: https://arxiv.org/abs/2402.07939
+pdf_url: https://arxiv.org/pdf/2402.07939
+pdf_sha256: 55680fbdd9e98455e4b8c93474e3f367f76d86d170b722433ea2e298fd0a8acf
+fetched_at: '2026-06-06T07:57:28Z'
+source_updated_at: null
+ids:
+  doi: 10.48550/arXiv.2402.07939
+  arxiv_id: '2402.07939'
+  arxiv_base_id: '2402.07939'
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: c8bbce2bd2357932f03a0ae9c96b7b24845af9c2
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: recency(1.00), venue_quality(1.00), novelty(0.80) | interests:
+    computer_use_agents:group:computer_use_agents | milestone/foundational floor applied'
+  matched_interests:
+  - computer_use_agents:group:computer_use_agents
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 1.0
+    venue_quality: 1.0
+    harness_relevance: 0.68
+    novelty: 0.8
+    artifact_availability: 0.8
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/ufo-a-ui-focused-agent-for-windows-240207939/v1/paper.pdf
+  extraction: library/ufo-a-ui-focused-agent-for-windows-240207939/v1/extraction.txt
+  summary: library/ufo-a-ui-focused-agent-for-windows-240207939/v1/summary.md
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread

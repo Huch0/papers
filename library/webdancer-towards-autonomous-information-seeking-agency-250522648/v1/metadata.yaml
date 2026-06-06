@@ -1,0 +1,81 @@
+canonical_key: arxiv-2505.22648
+version_key: v1
+title: 'WebDancer: Towards Autonomous Information Seeking Agency'
+authors:
+- Jialong Wu
+- Baixuan Li
+- Runnan Fang
+- Wenbiao Yin
+- Liwen Zhang
+- Zhengwei Tao
+- Dingchu Zhang
+- Zekun Xi
+- Yong Jiang
+- Pengjun Xie
+- Fei Huang
+- Jingren Zhou
+abstract: 'Addressing intricate real-world problems necessitates in-depth information seeking and multi-step
+  reasoning. Recent progress in agentic systems, exemplified by Deep Research, underscores the potential
+  for autonomous multi-step research. In this work, we present a cohesive paradigm for building end-to-end
+  agentic information seeking agents from a data-centric and training-stage perspective. Our approach
+  consists of four key stages: (1) browsing data construction, (2) trajectories sampling, (3) supervised
+  fine-tuning for effective cold start, and (4) reinforcement learning for enhanced generalisation. We
+  instantiate this framework in a web agent based on the ReAct, WebDancer. Empirical evaluations on the
+  challenging information seeking benchmarks, GAIA and WebWalkerQA, demonstrate the strong performance
+  of WebDancer, achieving considerable results and highlighting the efficacy of our training paradigm.
+  Further analysis of agent training provides valuable insights and actionable, systematic pathways for
+  developing more capable agentic models. The codes and demo will be released in https://github.com/Alibaba-NLP/WebAgent.'
+venue: arXiv.org
+year: 2025
+source: arxiv
+source_url: https://arxiv.org/abs/2505.22648
+pdf_url: https://arxiv.org/pdf/2505.22648
+pdf_sha256: e7ea9dab41d1284d7ddcebc53022e23f14d868f4639469c7122d1f86797c9a51
+fetched_at: '2026-06-06T07:57:41Z'
+source_updated_at: null
+ids:
+  doi: 10.48550/arXiv.2505.22648
+  arxiv_id: '2505.22648'
+  arxiv_base_id: '2505.22648'
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: 84ac4173ac8cd7cfea0262ceedc0796d0ea4b0e2
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: recency(1.00), interest_fit(0.91), trend_signal(0.70) |
+    interests: computer_use_agents:web agent, computer_use_agents:group:computer_use_agents | milestone/foundational
+    floor applied'
+  matched_interests:
+  - computer_use_agents:web agent
+  - computer_use_agents:group:computer_use_agents
+  negative_signals: []
+  subscores:
+    interest_fit: 0.91
+    recency: 1.0
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 0.0
+    artifact_availability: 0.55
+    evaluation_quality: 0.0
+    trend_signal: 0.7
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/webdancer-towards-autonomous-information-seeking-agency-250522648/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

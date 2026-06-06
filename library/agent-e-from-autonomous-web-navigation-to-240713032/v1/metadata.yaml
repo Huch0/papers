@@ -1,0 +1,78 @@
+canonical_key: arxiv-2407.13032
+version_key: v1
+title: 'Agent-E: From Autonomous Web Navigation to Foundational Design Principles in Agentic Systems'
+authors:
+- Tamer Abuelsaad
+- Deepak Akkil
+- Prasenjit Dey
+- Ashish Jagmohan
+- Aditya Vempaty
+- Ravi Kokku
+abstract: AI Agents are changing the way work gets done, both in consumer and enterprise domains. However,
+  the design patterns and architectures to build highly capable agents or multi-agent systems are still
+  developing, and the understanding of the implication of various design choices and algorithms is still
+  evolving. In this paper, we present our work on building a novel web agent, Agent-E \footnote{Our code
+  is available at \url{https://github.com/EmergenceAI/Agent-E}}. Agent-E introduces numerous architectural
+  improvements over prior state-of-the-art web agents such as hierarchical architecture, flexible DOM
+  distillation and denoising method, and the concept of \textit{change observation} to guide the agent
+  towards more accurate performance. We first present the results of an evaluation of Agent-E on WebVoyager
+  benchmark dataset and show that Agent-E beats other SOTA text and multi-modal web agents on this benchmark
+  in most categories by 10-30\%. We then synthesize our learnings from the development of Agent-E into
+  general design principles for developing agentic systems. These include the use of domain-specific primitive
+  skills, the importance of distillation and de-noising of environmental observations, the advantages
+  of a hierarchical architecture, and the role of agentic self-improvement to enhance agent efficiency
+  and efficacy as the agent gathers experience.
+venue: arXiv.org
+year: 2024
+source: arxiv
+source_url: https://arxiv.org/abs/2407.13032
+pdf_url: https://arxiv.org/pdf/2407.13032
+pdf_sha256: 2654ee258924ca4fe233fba735614644fee71e9e402bc96126e5a0add26759ac
+fetched_at: '2026-06-06T07:57:33Z'
+source_updated_at: null
+ids:
+  doi: 10.48550/arXiv.2407.13032
+  arxiv_id: '2407.13032'
+  arxiv_base_id: '2407.13032'
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: 796006ce7b13b13a993802937d091116b3440de9
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: recency(1.00), novelty(1.00), interest_fit(0.91) | interests:
+    computer_use_agents:web agent, computer_use_agents:group:computer_use_agents | milestone/foundational
+    floor applied'
+  matched_interests:
+  - computer_use_agents:web agent
+  - computer_use_agents:group:computer_use_agents
+  negative_signals: []
+  subscores:
+    interest_fit: 0.91
+    recency: 1.0
+    venue_quality: 0.4
+    harness_relevance: 0.36
+    novelty: 1.0
+    artifact_availability: 0.8
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/agent-e-from-autonomous-web-navigation-to-240713032/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

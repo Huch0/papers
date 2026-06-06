@@ -1,0 +1,107 @@
+# Scoring rubric for read-worthiness triage.
+# Used by scripts/score_paper.py. Each dimension produces a 0..1 sub-score which is
+# multiplied by its weight; the weighted sum is normalized to a 0..100 score.
+#
+# To change behavior, edit weights / thresholds / negative_signals here. Do NOT
+# hard-code scoring logic in skills or prompts; this file is the single source of truth.
+
+version: 1
+
+weights:
+  interest_fit: 30
+  recency: 15
+  venue_quality: 15
+  harness_relevance: 20
+  novelty: 10
+  artifact_availability: 8
+  evaluation_quality: 12
+  trend_signal: 10
+  author_or_lab_signal: 5
+  negative_noise_penalty: -20   # applied as a penalty when negative signals fire
+
+# Final-score thresholds -> triage label.
+thresholds:
+  MUST_READ: 80
+  READ_SOON: 65
+  SKIM: 50
+  TRACK_ONLY: 35
+  # below TRACK_ONLY -> SKIP
+
+# Curated landmark papers (a `milestone` block or the `foundational` tag) are wanted by
+# definition and are old on purpose, so the recency decay must not bury them. Their
+# score never drops below this floor (READ_SOON), keeping milestones visible.
+foundational_floor: 65
+
+# Recency model: days since source date -> recency sub-score (linear decay, clamped).
+recency:
+  full_score_within_days: 14     # <= 14 days old -> 1.0
+  zero_score_after_days: 540     # ~18 months -> 0.0
+  # 2025+ floor: very recent-year papers never drop below this recency sub-score.
+  recent_year_floor_year: 2025
+  recent_year_floor: 0.35
+
+# Novelty / evaluation / harness sub-scores are heuristic at fetch time (from
+# title/abstract keyword presence) and refined by Claude during summarization,
+# which writes scoring.rationale + sub-scores back into metadata.yaml.
+heuristics:
+  novelty_positive_terms:
+    - novel
+    - new benchmark
+    - we introduce
+    - first
+    - state-of-the-art
+    - outperforms
+  evaluation_quality_terms:
+    - execution-based
+    - test-based
+    - human evaluation
+    - ablation
+    - statistical significance
+    - reproducib
+  artifact_terms:
+    - github.com
+    - code is available
+    - we release
+    - open-source
+    - open source
+    - huggingface
+    - dataset is available
+
+# Negative signals -> trigger negative_noise_penalty (each adds a fraction of the
+# penalty up to the full weight). Claude refines these during triage.
+negative_signals:
+  old_in_fast_area:
+    description: old paper in a fast-moving area without foundational value
+    weight: 1.0
+  gui_only_misclassified:
+    description: GUI-only paper presented as general computer-use agent
+    weight: 0.6
+  weak_benchmark:
+    description: weak benchmark without a reliable evaluator
+    weight: 0.8
+  no_clear_contribution:
+    description: no clear contribution over prior work
+    weight: 1.0
+  leakage_risk:
+    description: obvious benchmark gaming or contamination/leakage risk
+    weight: 0.9
+  abstract_only:
+    description: missing PDF or abstract-only record
+    weight: 0.5
+  superseded:
+    description: duplicate or superseded version
+    weight: 0.7
+  off_topic:
+    description: not related to configured interests
+    weight: 1.0
+
+# Guardrails the scorer and Claude must honor (documented here so they are durable).
+guardrails:
+  - Do not over-prioritize citation count for very recent papers (< 6 months); cap its influence.
+  - Do not over-prioritize old GUI-agent papers unless foundational or necessary context.
+  - Accepted A* papers outrank equivalent preprints, but remarkable preprints
+    (new benchmark/harness, major-lab, wide adoption) can still reach MUST_READ.
+citation_influence:
+  # Cap on how much raw citation count can lift a paper younger than N months.
+  young_paper_months: 6
+  young_paper_citation_cap_subscore: 0.3

@@ -1,0 +1,77 @@
+canonical_key: arxiv-2504.14603
+slug: ufo2-the-desktop-agentos-250414603
+title: 'UFO2: The Desktop AgentOS'
+authors:
+- Chaoyun Zhang
+- He Huang
+- Chiming Ni
+- Jian Mu
+- Si Qin
+- Shilin He
+- Lu Wang
+- Fangkai Yang
+- Pu Zhao
+- Chao Du
+- Liqun Li
+- Yu Kang
+- Zhaodi Jiang
+- Suzhen Zheng
+- Rujia Wang
+- Jiaxu Qian
+- Ming-Jie Ma
+- Jianjun Lou
+- Qingwei Lin
+- S. Rajmohan
+- Dongmei Zhang
+year: 2025
+primary_ids:
+  doi: 10.48550/arXiv.2504.14603
+  arxiv_base_id: '2504.14603'
+  openreview_id: null
+  semantic_scholar_id: d6215119bf99859669235b5007779265cdde7057
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2504.14603
+- https://arxiv.org/pdf/2504.14603
+topic_groups:
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: arXiv.org
+  tier: workshop_or_minor
+  status: unknown
+  year: 2025
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: expansion
+  significance: Reframed Windows automation as a Desktop AgentOS (HostAgent/AppAgents, hybrid UIA+vision,
+    native-API/GUI actions, isolated desktop).
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2504.14603
+  pdf_path: library/ufo2-the-desktop-agentos-250414603/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/ufo2-the-desktop-agentos-250414603/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:31Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: ceecfb496791b8b101275520066eb69c3289c7c727a9e69cc844219598acece5
+  pdf_bytes: 4405780
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-06-06T07:57:31Z'
+  updated_at: '2026-06-06T07:57:31Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

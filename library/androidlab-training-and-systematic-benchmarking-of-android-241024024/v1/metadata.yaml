@@ -1,0 +1,76 @@
+canonical_key: arxiv-2410.24024
+version_key: v1
+title: 'AndroidLab: Training and Systematic Benchmarking of Android Autonomous Agents'
+authors:
+- Yifan Xu
+- Xiao Liu
+- Xueqiao Sun
+- Siyi Cheng
+- Yun-Hao Liu
+- Hanyu Lai
+- Shudan Zhang
+- Dan Zhang
+- Jie Tang
+- Yuxiao Dong
+abstract: Autonomous agents have become increasingly important for interacting with the real world. Android
+  agents, in particular, have been recently a frequently-mentioned interaction method. However, existing
+  studies for training and evaluating Android agents lack systematic research on both open-source and
+  closed-source models. In this work, we propose AndroidLab as a systematic Android agent framework. It
+  includes an operation environment with different modalities, action space, and a reproducible benchmark.
+  It supports both large language models (LLMs) and multimodal models (LMMs) in the same action space.
+  AndroidLab benchmark includes predefined Android virtual devices and 138 tasks across nine apps built
+  on these devices. By using the AndroidLab environment, we develop an Android Instruction dataset and
+  train six open-source LLMs and LMMs, lifting the average success rates from 4.59% to 21.50% for LLMs
+  and from 1.93% to 13.28% for LMMs. AndroidLab is open-sourced and publicly available at https://github.com/THUDM/Android-Lab.
+venue: arXiv.org
+year: 2024
+source: arxiv
+source_url: https://arxiv.org/abs/2410.24024
+pdf_url: https://arxiv.org/pdf/2410.24024
+pdf_sha256: 70233eb37c74ce4e3973a6d7c86f7b3ea07dff4045b763adcc52f22e2b76df61
+fetched_at: '2026-06-06T07:57:38Z'
+source_updated_at: null
+ids:
+  doi: 10.48550/arXiv.2410.24024
+  arxiv_id: '2410.24024'
+  arxiv_base_id: '2410.24024'
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: 6e9f7bb3f647b31bc907715f3b5dae29cef8a2c5
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: recency(1.00), artifact_availability(0.80), interest_fit(0.73)
+    | interests: computer_use_agents:group:computer_use_agents | milestone/foundational floor applied'
+  matched_interests:
+  - computer_use_agents:group:computer_use_agents
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 1.0
+    venue_quality: 0.4
+    harness_relevance: 0.36
+    novelty: 0.0
+    artifact_availability: 0.8
+    evaluation_quality: 0.55
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/androidlab-training-and-systematic-benchmarking-of-android-241024024/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

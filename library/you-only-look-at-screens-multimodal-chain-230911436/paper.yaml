@@ -1,0 +1,58 @@
+canonical_key: arxiv-2309.11436
+slug: you-only-look-at-screens-multimodal-chain-230911436
+title: 'You Only Look at Screens: Multimodal Chain-of-Action Agents'
+authors:
+- Zhuosheng Zhang
+- Aston Zhang
+year: 2023
+primary_ids:
+  doi: 10.48550/arXiv.2309.11436
+  arxiv_base_id: '2309.11436'
+  openreview_id: null
+  semantic_scholar_id: 6ab33b17cd45e7cbd2cb9b0c5a2d56e5eac1c814
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2309.11436
+- https://arxiv.org/pdf/2309.11436
+topic_groups:
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: Annual Meeting of the Association for Computational Linguistics
+  tier: A_star
+  status: unknown
+  year: 2023
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: foundational
+  significance: Auto-GUI; screen-only multimodal agent with chain-of-action bypassing HTML/API; early
+    vision-centric mobile control model.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2309.11436
+  pdf_path: library/you-only-look-at-screens-multimodal-chain-230911436/v1/paper.pdf
+  summary_path: library/you-only-look-at-screens-multimodal-chain-230911436/v1/summary.md
+  metadata_path: library/you-only-look-at-screens-multimodal-chain-230911436/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:30Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: a2469dee59038a4fb768734f1573b11911d9c4d88ab5e82bf2e1095e62baf3c0
+  pdf_bytes: 6114916
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-06-06T07:57:30Z'
+  updated_at: '2026-06-06T08:17:44Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

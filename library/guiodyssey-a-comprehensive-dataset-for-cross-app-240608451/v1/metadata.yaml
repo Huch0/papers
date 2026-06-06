@@ -1,0 +1,82 @@
+canonical_key: arxiv-2406.08451
+version_key: v1
+title: 'GUIOdyssey: A Comprehensive Dataset for Cross-App GUI Navigation on Mobile Devices'
+authors:
+- Quanfeng Lu
+- Wenqi Shao
+- Zitao Liu
+- Fanqing Meng
+- Boxuan Li
+- Botong Chen
+- Siyuan Huang
+- Kaipeng Zhang
+- Yu Qiao
+- Ping Luo
+abstract: Autonomous Graphical User Interface (GUI) navigation agents can enhance user experience in communication,
+  entertainment, and productivity by streamlining workflows and reducing manual intervention. However,
+  prior GUI agents often trained with datasets comprising tasks that can be completed within a single
+  app, leading to poor performance in cross-app navigation. To address this problem, we present GUIOdyssey,
+  a comprehensive dataset for crossapp mobile GUI navigation. GUIOdyssey comprises 8,334 episodes with
+  an average of 15.3 steps per episode, covering 6 mobile devices, 212 distinct apps, and 1,357 app combinations.
+  Each step is enriched with detailed semantic reasoning annotations, which aid the model in building
+  cognitive processes and enhancing its reasoning abilities for complex cross-app tasks. Building on GUIOdyssey,
+  we develop OdysseyAgent, an exploratory multimodal agent for long-step cross-app navigation equipped
+  with a history resampler module that efficiently attends to historical screenshot tokens, balancing
+  performance and inference speed. Extensive experiments conducted in both in-domain and out-of-domain
+  scenarios validate the effectiveness of our approach. Moreover, we demonstrate that historial information
+  involving actions, screenshots and context in our dataset can significantly enhances OdysseyAgent's
+  performance on complex cross-app tasks.
+venue: IEEE International Conference on Computer Vision
+year: 2024
+source: arxiv
+source_url: https://arxiv.org/abs/2406.08451
+pdf_url: https://arxiv.org/pdf/2406.08451
+pdf_sha256: 3f95681c58642c8b899c3951f940e350b70fb50ece5004520fcd7794759aecb2
+fetched_at: '2026-06-06T07:57:37Z'
+source_updated_at: null
+ids:
+  doi: 10.1109/ICCV51701.2025.02080
+  arxiv_id: '2406.08451'
+  arxiv_base_id: '2406.08451'
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: c443fddfce5b587a11e8074f548633304b4cd9a5
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: recency(1.00), interest_fit(0.91), harness_relevance(0.36)
+    | interests: computer_use_agents:GUI agent, computer_use_agents:group:computer_use_agents | milestone/foundational
+    floor applied'
+  matched_interests:
+  - computer_use_agents:GUI agent
+  - computer_use_agents:group:computer_use_agents
+  negative_signals: []
+  subscores:
+    interest_fit: 0.91
+    recency: 1.0
+    venue_quality: 0.3
+    harness_relevance: 0.36
+    novelty: 0.0
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/guiodyssey-a-comprehensive-dataset-for-cross-app-240608451/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

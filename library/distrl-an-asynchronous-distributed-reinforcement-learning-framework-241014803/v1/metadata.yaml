@@ -1,0 +1,78 @@
+canonical_key: arxiv-2410.14803
+version_key: v1
+title: 'DistRL: An Asynchronous Distributed Reinforcement Learning Framework for On-Device Control Agents'
+authors:
+- Taiyi Wang
+- Zhihao Wu
+- Jianheng Liu
+- Jianye Hao
+- Jun Wang
+- Kun Shao
+abstract: On-device control agents, especially on mobile devices, are responsible for operating mobile
+  devices to fulfill users' requests, enabling seamless and intuitive interactions. Integrating Multimodal
+  Large Language Models (MLLMs) into these agents enhances their ability to understand and execute complex
+  commands, thereby improving user experience. However, fine-tuning MLLMs for on-device control presents
+  significant challenges due to limited data availability and inefficient online training processes. This
+  paper introduces DistRL, a novel framework designed to enhance the efficiency of online RL fine-tuning
+  for mobile device control agents. DistRL employs centralized training and decentralized data acquisition
+  to ensure efficient fine-tuning in the context of dynamic online interactions. Additionally, the framework
+  is backed by our tailor-made RL algorithm, which effectively balances exploration with the prioritized
+  utilization of collected data to ensure stable and robust training. Our experiments show that, on average,
+  DistRL delivers a 3X improvement in training efficiency and enables training data collection 2.4X faster
+  than the leading synchronous multi-machine methods. Notably, after training, DistRL achieves a 20% relative
+  improvement in success rate compared to state-of-the-art methods on general Android tasks from an open
+  benchmark, significantly outperforming existing approaches while maintaining the same training time.
+  These results validate DistRL as a scalable and efficient solution, offering substantial improvements
+  in both training efficiency and agent performance for real-world, in-the-wild device control tasks.
+venue: International Conference on Learning Representations
+year: 2024
+source: arxiv
+source_url: https://arxiv.org/abs/2410.14803
+pdf_url: https://arxiv.org/pdf/2410.14803
+pdf_sha256: 8950ccf1b6ed412e1ecc5e2e52cdd7cd31c79ef322133a06967f129fc5eb2b11
+fetched_at: '2026-06-06T07:57:38Z'
+source_updated_at: null
+ids:
+  doi: 10.48550/arXiv.2410.14803
+  arxiv_id: '2410.14803'
+  arxiv_base_id: '2410.14803'
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: cf925627d69833bedd0c63ec32932bd0e747fcf3
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: recency(1.00), venue_quality(1.00), novelty(0.80) | interests:
+    computer_use_agents:group:computer_use_agents | milestone/foundational floor applied'
+  matched_interests:
+  - computer_use_agents:group:computer_use_agents
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 1.0
+    venue_quality: 1.0
+    harness_relevance: 0.0
+    novelty: 0.8
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/distrl-an-asynchronous-distributed-reinforcement-learning-framework-241014803/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

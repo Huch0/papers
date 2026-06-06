@@ -1,0 +1,85 @@
+canonical_key: arxiv-2504.07981
+version_key: v1
+title: 'ScreenSpot-Pro: GUI Grounding for Professional High-Resolution Computer Use'
+authors:
+- Kaixin Li
+- Ziyang Meng
+- Hongzhan Lin
+- Ziyang Luo
+- Yuchen Tian
+- Jing Ma
+- Zhiyong Huang
+- Tat-Seng Chua
+abstract: Recent advancements in Multi-modal Large Language Models (MLLMs) have led to significant progress
+  in developing GUI agents for general tasks such as web browsing and mobile phone use. However, their
+  application in professional domains remains under-explored. These specialized workflows introduce unique
+  challenges for GUI perception models, including high-resolution displays and complex environments which
+  lead to smaller target sizes. In this paper, we introduce ScreenSpot-Pro, a new benchmark designed to
+  rigorously evaluate the grounding capabilities of MLLMs in high-resolution professional settings. The
+  benchmark comprises authentic high-resolution images from a variety of professional domains with expert
+  annotations. It spans 23 applications across five industries and three operating systems. Existing GUI
+  grounding models perform poorly on this dataset, with the best model achieving only 18.9%. Our experiments
+  reveal that strategically reducing the search area enhances accuracy. Based on this insight, we propose
+  ScreenSeekeR, a visual search method that utilizes the GUI knowledge of a strong planner to guide a
+  cascaded search, achieving state-of-the-art performance with 48.1% without any additional training.
+  We hope that our benchmark and findings will advance the development of GUI agents for professional
+  settings.
+venue: ACM Multimedia
+year: 2025
+source: arxiv
+source_url: https://arxiv.org/abs/2504.07981
+pdf_url: https://arxiv.org/pdf/2504.07981
+pdf_sha256: 4eec6bbf0bba837c66a0d69551cc1567200d7aea85c6ce72650706de637c10c0
+fetched_at: '2026-06-06T07:57:43Z'
+source_updated_at: null
+ids:
+  doi: 10.1145/3746027.3755688
+  arxiv_id: '2504.07981'
+  arxiv_base_id: '2504.07981'
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: df7b286e53d66c6881966b5e6904f7fa5e6d774b
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+- general_agent_methods
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: recency(1.00), novelty(1.00), interest_fit(0.91) | interests:
+    computer_use_agents:GUI agent, computer_use_agents:group:computer_use_agents, general_agent_methods:benchmark
+    design, general_agent_methods:group:general_agent_methods | negatives: gui_only_misclassified | milestone/foundational
+    floor applied'
+  matched_interests:
+  - computer_use_agents:GUI agent
+  - computer_use_agents:group:computer_use_agents
+  - general_agent_methods:benchmark design
+  - general_agent_methods:group:general_agent_methods
+  negative_signals:
+  - gui_only_misclassified
+  subscores:
+    interest_fit: 0.91
+    recency: 1.0
+    venue_quality: 0.3
+    harness_relevance: 0.36
+    novelty: 1.0
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/screenspot-pro-gui-grounding-for-professional-high-250407981/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

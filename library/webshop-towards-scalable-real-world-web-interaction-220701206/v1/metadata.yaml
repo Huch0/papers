@@ -1,0 +1,76 @@
+canonical_key: arxiv-2207.01206
+version_key: v1
+title: 'WebShop: Towards Scalable Real-World Web Interaction with Grounded Language Agents'
+authors:
+- Shunyu Yao
+- Howard Chen
+- John Yang
+- Karthik Narasimhan
+abstract: Existing benchmarks for grounding language in interactive environments either lack real-world
+  linguistic elements, or prove difficult to scale up due to substantial human involvement in the collection
+  of data or feedback signals. To bridge this gap, we develop WebShop -- a simulated e-commerce website
+  environment with $1.18$ million real-world products and $12,087$ crowd-sourced text instructions. Given
+  a text instruction specifying a product requirement, an agent needs to navigate multiple types of webpages
+  and issue diverse actions to find, customize, and purchase an item. WebShop provides several challenges
+  for language grounding including understanding compositional instructions, query (re-)formulation, comprehending
+  and acting on noisy text in webpages, and performing strategic exploration. We collect over $1,600$
+  human demonstrations for the task, and train and evaluate a diverse range of agents using reinforcement
+  learning, imitation learning, and pre-trained image and language models. Our best model achieves a task
+  success rate of $29\%$, which outperforms rule-based heuristics ($9.6\%$) but is far lower than human
+  expert performance ($59\%$). We also analyze agent and human trajectories and ablate various model components
+  to provide insights for developing future agents with stronger language understanding and decision making
+  abilities. Finally, we show that agents trained on WebShop exhibit non-trivial sim-to-real transfer
+  when evaluated on amazon.com and ebay.com, indicating the potential value of WebShop in developing practical
+  web-based agents that can operate in the wild.
+venue: NeurIPS
+year: 2022
+source: arxiv
+source_url: https://arxiv.org/abs/2207.01206v4
+pdf_url: https://arxiv.org/pdf/2207.01206v4
+pdf_sha256: 131e93080bc8d9ff801ff40bf69b7d12bfd9db018c223fdf03e622928f7ec032
+fetched_at: '2026-06-06T07:13:53Z'
+source_updated_at: '2023-02-08T01:39:30Z'
+ids:
+  doi: null
+  arxiv_id: 2207.01206v4
+  arxiv_base_id: '2207.01206'
+  arxiv_version: v4
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+scoring:
+  score: 85.9
+  label: MUST_READ
+  confidence: high
+  rationale: 'score=86 -> MUST_READ | strong: interest_fit(1.00), venue_quality(1.00), trend_signal(1.00)
+    | interests: computer_use_agents:group:computer_use_agents'
+  matched_interests:
+  - computer_use_agents:group:computer_use_agents
+  negative_signals: []
+  subscores:
+    interest_fit: 1.0
+    recency: 0.35
+    venue_quality: 1.0
+    harness_relevance: 0.9
+    novelty: 0.9
+    artifact_availability: 0.9
+    evaluation_quality: 0.95
+    trend_signal: 1.0
+    author_or_lab_signal: 0.3
+artifacts:
+  pdf: library/webshop-towards-scalable-real-world-web-interaction-220701206/v1/paper.pdf
+  extraction: library/webshop-towards-scalable-real-world-web-interaction-220701206/v1/extraction.txt
+  summary: library/webshop-towards-scalable-real-world-web-interaction-220701206/v1/summary.md
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread

@@ -1,0 +1,54 @@
+canonical_key: title-574b6ae0794a
+slug: operator-computer-using-agent-cua-system-card-4b6ae0794a
+title: Operator / Computer-Using Agent (CUA) System Card (OpenAI)
+authors: []
+year: 2025
+primary_ids:
+  doi: null
+  arxiv_base_id: null
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls: []
+topic_groups:
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: tech report
+  tier: unknown
+  status: unknown
+  year: 2025
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: expansion
+  significance: OpenAI CUA model + Operator preview combining GPT-4o vision with RL for pixel-level GUI
+    control; major commercial milestone.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: manual
+  source: manual
+  source_url: null
+  pdf_path: null
+  summary_path: null
+  metadata_path: library/operator-computer-using-agent-cua-system-card-4b6ae0794a/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:48Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: null
+  pdf_bytes: null
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-06-06T07:57:48Z'
+  updated_at: '2026-06-06T07:57:48Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

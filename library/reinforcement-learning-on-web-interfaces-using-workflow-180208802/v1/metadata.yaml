@@ -1,0 +1,75 @@
+canonical_key: arxiv-1802.08802
+version_key: v1
+title: Reinforcement Learning on Web Interfaces Using Workflow-Guided Exploration
+authors:
+- Evan Zheran Liu
+- Kelvin Guu
+- Panupong Pasupat
+- Tianlin Shi
+- Percy Liang
+abstract: 'Reinforcement learning (RL) agents improve through trial-and-error, but when reward is sparse
+  and the agent cannot discover successful action sequences, learning stagnates. This has been a notable
+  problem in training deep RL agents to perform web-based tasks, such as booking flights or replying to
+  emails, where a single mistake can ruin the entire sequence of actions. A common remedy is to "warm-start"
+  the agent by pre-training it to mimic expert demonstrations, but this is prone to overfitting. Instead,
+  we propose to constrain exploration using demonstrations. From each demonstration, we induce high-level
+  "workflows" which constrain the allowable actions at each time step to be similar to those in the demonstration
+  (e.g., "Step 1: click on a textbox; Step 2: enter some text"). Our exploration policy then learns to
+  identify successful workflows and samples actions that satisfy these workflows. Workflows prune out
+  bad exploration directions and accelerate the agent''s ability to discover rewards. We use our approach
+  to train a novel neural policy designed to handle the semi-structured nature of websites, and evaluate
+  on a suite of web tasks, including the recent World of Bits benchmark. We achieve new state-of-the-art
+  results, and show that workflow-guided exploration improves sample efficiency over behavioral cloning
+  by more than 100x.'
+venue: arXiv
+year: 2018
+source: arxiv
+source_url: https://arxiv.org/abs/1802.08802v1
+pdf_url: https://arxiv.org/pdf/1802.08802v1
+pdf_sha256: 7a7ce9d5f8f31c7f7c01a35271c5bdfdf2697dfe17e72ff090a9465d55f7f60d
+fetched_at: '2026-06-06T07:13:52Z'
+source_updated_at: '2018-02-24T05:32:47Z'
+ids:
+  doi: null
+  arxiv_id: 1802.08802v1
+  arxiv_base_id: '1802.08802'
+  arxiv_version: v1
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: novelty(0.80), interest_fit(0.73), venue_quality(0.40) |
+    interests: computer_use_agents:group:computer_use_agents | milestone/foundational floor applied'
+  matched_interests:
+  - computer_use_agents:group:computer_use_agents
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.36
+    novelty: 0.8
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/reinforcement-learning-on-web-interfaces-using-workflow-180208802/v1/paper.pdf
+  extraction: library/reinforcement-learning-on-web-interfaces-using-workflow-180208802/v1/extraction.txt
+  summary: library/reinforcement-learning-on-web-interfaces-using-workflow-180208802/v1/summary.md
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread

@@ -1,0 +1,77 @@
+canonical_key: arxiv-2412.14161
+slug: theagentcompany-benchmarking-llm-agents-on-consequential-real-241214161
+title: 'TheAgentCompany: Benchmarking LLM Agents on Consequential Real World Tasks'
+authors:
+- Frank F. Xu
+- Yufan Song
+- Boxuan Li
+- Yuxuan Tang
+- Kritanjali Jain
+- Meng Bao
+- Z. Wang
+- Xuhui Zhou
+- Zhitong Guo
+- Murong Cao
+- Ming-Hsuan Yang
+- Hao Lu
+- Amaad Martin
+- Zhe Su
+- L. Maben
+- Raj Mehta
+- Wayne Chi
+- L. Jang
+- Yiqing Xie
+- Shuyan Zhou
+- Graham Neubig
+year: 2024
+primary_ids:
+  doi: 10.48550/arXiv.2412.14161
+  arxiv_base_id: '2412.14161'
+  openreview_id: null
+  semantic_scholar_id: c13e8d0d00687e8fc04b4e263818abd451d8e4de
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2412.14161
+- https://arxiv.org/pdf/2412.14161
+topic_groups:
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: arXiv.org
+  tier: workshop_or_minor
+  status: unknown
+  year: 2024
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: expansion
+  significance: Self-contained simulated software-company env (web/code/terminal/coworker chat) testing
+    long-horizon digital-worker tasks.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2412.14161
+  pdf_path: library/theagentcompany-benchmarking-llm-agents-on-consequential-real-241214161/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/theagentcompany-benchmarking-llm-agents-on-consequential-real-241214161/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:36Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: 9574c7c5d4f1592dd1a0c9615cb3c2f8bd130f18b2c2cde4d0bbace4e80ef620
+  pdf_bytes: 2169754
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-06-06T07:57:36Z'
+  updated_at: '2026-06-06T07:57:36Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

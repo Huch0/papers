@@ -1,0 +1,68 @@
+canonical_key: arxiv-2402.07939
+slug: ufo-a-ui-focused-agent-for-windows-240207939
+title: 'UFO: A UI-Focused Agent for Windows OS Interaction'
+authors:
+- Chaoyun Zhang
+- Liqun Li
+- Shilin He
+- Xu Zhang
+- Bo Qiao
+- Si Qin
+- Ming-Jie Ma
+- Yu Kang
+- Qingwei Lin
+- S. Rajmohan
+- Dongmei Zhang
+- Qi Zhang
+year: 2024
+primary_ids:
+  doi: 10.48550/arXiv.2402.07939
+  arxiv_base_id: '2402.07939'
+  openreview_id: null
+  semantic_scholar_id: c8bbce2bd2357932f03a0ae9c96b7b24845af9c2
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2402.07939
+- https://arxiv.org/pdf/2402.07939
+topic_groups:
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: North American Chapter of the Association for Computational Linguistics
+  tier: A_star
+  status: unknown
+  year: 2024
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: foundational
+  significance: First UI-focused dual-agent system for Windows, using UI Automation trees to operate native
+    applications.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2402.07939
+  pdf_path: library/ufo-a-ui-focused-agent-for-windows-240207939/v1/paper.pdf
+  summary_path: library/ufo-a-ui-focused-agent-for-windows-240207939/v1/summary.md
+  metadata_path: library/ufo-a-ui-focused-agent-for-windows-240207939/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:28Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: 55680fbdd9e98455e4b8c93474e3f367f76d86d170b722433ea2e298fd0a8acf
+  pdf_bytes: 11720609
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-06-06T07:57:28Z'
+  updated_at: '2026-06-06T08:27:01Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

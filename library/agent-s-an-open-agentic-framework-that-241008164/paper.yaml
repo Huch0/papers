@@ -1,0 +1,63 @@
+canonical_key: arxiv-2410.08164
+slug: agent-s-an-open-agentic-framework-that-241008164
+title: 'Agent S: An Open Agentic Framework that Uses Computers Like a Human'
+authors:
+- Saaket Agashe
+- Jiuzhou Han
+- Shuyu Gan
+- Jiachen Yang
+- Ang Li
+- X. Wang
+year: 2024
+primary_ids:
+  doi: 10.48550/arXiv.2410.08164
+  arxiv_base_id: '2410.08164'
+  openreview_id: null
+  semantic_scholar_id: 5e6799c927dd3ed46b338801da12115b8236746e
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2410.08164
+- https://arxiv.org/pdf/2410.08164
+topic_groups:
+- agent_harness
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: International Conference on Learning Representations
+  tier: A_star
+  status: unknown
+  year: 2024
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: expansion
+  significance: Open framework with experience-augmented hierarchical planning + ACI; early OSWorld SOTA;
+    popularized modular GUI scaffolds.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2410.08164
+  pdf_path: library/agent-s-an-open-agentic-framework-that-241008164/v1/paper.pdf
+  summary_path: library/agent-s-an-open-agentic-framework-that-241008164/v1/summary.md
+  metadata_path: library/agent-s-an-open-agentic-framework-that-241008164/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:35Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: ee8c9b38e20b5f747bd78828d96beab0b266eb99baaafe44c3936ff0d89cb92b
+  pdf_bytes: 26111150
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-06-06T07:57:35Z'
+  updated_at: '2026-06-06T11:12:06Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

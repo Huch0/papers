@@ -1,0 +1,87 @@
+canonical_key: arxiv-2409.08264
+version_key: v1
+title: 'Windows Agent Arena: Evaluating Multi-Modal OS Agents at Scale'
+authors:
+- Rogerio Bonatti
+- Dan Zhao
+- Francesco Bonacci
+- Dillon Dupont
+- Sara Abdali
+- Yinheng Li
+- Yadong Lu
+- Justin Wagle
+- K. Koishida
+- A. Bucker
+- Lawrence Jang
+- Zack Hui
+abstract: 'Large language models (LLMs) show remarkable potential to act as computer agents, enhancing
+  human productivity and software accessibility in multi-modal tasks that require planning and reasoning.
+  However, measuring agent performance in realistic environments remains a challenge since: (i) most benchmarks
+  are limited to specific modalities or domains (e.g. text-only, web navigation, Q&A, coding) and (ii)
+  full benchmark evaluations are slow (on order of magnitude of days) given the multi-step sequential
+  nature of tasks. To address these challenges, we introduce the Windows Agent Arena: a reproducible,
+  general environment focusing exclusively on the Windows operating system (OS) where agents can operate
+  freely within a real Windows OS and use the same wide range of applications, tools, and web browsers
+  available to human users when solving tasks. We adapt the OSWorld framework (Xie et al., 2024) to create
+  150+ diverse Windows tasks across representative domains that require agent abilities in planning, screen
+  understanding, and tool usage. Our benchmark is scalable and can be seamlessly parallelized in Azure
+  for a full benchmark evaluation in as little as 20 minutes. To demonstrate Windows Agent Arena''s capabilities,
+  we also introduce a new multi-modal agent, Navi. Our agent achieves a success rate of 19.5% in the Windows
+  domain, compared to 74.5% performance of an unassisted human. Navi also demonstrates strong performance
+  on another popular web-based benchmark, Mind2Web. We offer extensive quantitative and qualitative analysis
+  of Navi''s performance, and provide insights into the opportunities for future research in agent development
+  and data generation using Windows Agent Arena. Webpage: https://microsoft.github.io/WindowsAgentArena
+  Code: https://github.com/microsoft/WindowsAgentArena'
+venue: International Conference on Machine Learning
+year: 2024
+source: arxiv
+source_url: https://arxiv.org/abs/2409.08264
+pdf_url: https://arxiv.org/pdf/2409.08264
+pdf_sha256: fbd0821e72620273a47c4c5366bb4283cd88ed2d909ca77c96b58839e95e9b7e
+fetched_at: '2026-06-06T07:57:29Z'
+source_updated_at: null
+ids:
+  doi: 10.48550/arXiv.2409.08264
+  arxiv_id: '2409.08264'
+  arxiv_base_id: '2409.08264'
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: 39c5b07079e3b92aca9629d7cce694f276b9d9c6
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+scoring:
+  score: 73.0
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=73 -> READ_SOON | strong: recency(1.00), venue_quality(1.00), interest_fit(0.91) |
+    interests: computer_use_agents:OS agent, computer_use_agents:group:computer_use_agents'
+  matched_interests:
+  - computer_use_agents:OS agent
+  - computer_use_agents:group:computer_use_agents
+  negative_signals: []
+  subscores:
+    interest_fit: 0.91
+    recency: 1.0
+    venue_quality: 1.0
+    harness_relevance: 0.52
+    novelty: 0.55
+    artifact_availability: 0.55
+    evaluation_quality: 0.55
+    trend_signal: 0.7
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/windows-agent-arena-evaluating-multi-modal-os-240908264/v1/paper.pdf
+  extraction: library/windows-agent-arena-evaluating-multi-modal-os-240908264/v1/extraction.txt
+  summary: library/windows-agent-arena-evaluating-multi-modal-os-240908264/v1/summary.md
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread

@@ -1,0 +1,72 @@
+canonical_key: arxiv-2105.13231
+version_key: v1
+title: 'AndroidEnv: A Reinforcement Learning Platform for Android'
+authors:
+- Daniel Toyama
+- P. Hamel
+- Anita Gergely
+- Gheorghe Comanici
+- A. Glaese
+- Zafarali Ahmed
+- Tyler Jackson
+- Shibl Mourad
+- Doina Precup
+abstract: We introduce AndroidEnv, an open-source platform for Reinforcement Learning (RL) research built
+  on top of the Android ecosystem. AndroidEnv allows RL agents to interact with a wide variety of apps
+  and services commonly used by humans through a universal touchscreen interface. Since agents train on
+  a realistic simulation of an Android device, they have the potential to be deployed on real devices.
+  In this report, we give an overview of the environment, highlighting the significant features it provides
+  for research, and we present an empirical evaluation of some popular reinforcement learning agents on
+  a set of tasks built on this platform.
+venue: arXiv.org
+year: 2021
+source: arxiv
+source_url: https://arxiv.org/abs/2105.13231
+pdf_url: https://arxiv.org/pdf/2105.13231
+pdf_sha256: 2f7316bf778e393e3fd7ffcbed0a49cce94fac49ba11a9e79062176fc54f6a6e
+fetched_at: '2026-06-06T07:57:28Z'
+source_updated_at: null
+ids:
+  doi: null
+  arxiv_id: '2105.13231'
+  arxiv_base_id: '2105.13231'
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: 982f5f3e9c21f252018bb6fe27930e4e7bda74f8
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: recency(1.00), interest_fit(0.73), novelty(0.55) | interests:
+    computer_use_agents:group:computer_use_agents | milestone/foundational floor applied'
+  matched_interests:
+  - computer_use_agents:group:computer_use_agents
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 1.0
+    venue_quality: 0.4
+    harness_relevance: 0.52
+    novelty: 0.55
+    artifact_availability: 0.55
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/androidenv-a-reinforcement-learning-platform-for-android-210513231/v1/paper.pdf
+  extraction: library/androidenv-a-reinforcement-learning-platform-for-android-210513231/v1/extraction.txt
+  summary: library/androidenv-a-reinforcement-learning-platform-for-android-210513231/v1/summary.md
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread

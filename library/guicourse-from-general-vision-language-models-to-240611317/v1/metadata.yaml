@@ -1,0 +1,83 @@
+canonical_key: arxiv-2406.11317
+version_key: v1
+title: 'GUICourse: From General Vision Language Models to Versatile GUI Agents'
+authors:
+- Wentong Chen
+- Junbo Cui
+- Jinyi Hu
+- Yujia Qin
+- Junjie Fang
+- Yue Zhao
+- Chongyi Wang
+- Jun Liu
+- Gui-Fang Chen
+- Yupeng Huo
+- Yuan Yao
+- Yankai Lin
+- Zhiyuan Liu
+- Maosong Sun
+abstract: Utilizing Graphic User Interface (GUI) for human-computer interaction is essential for accessing
+  a wide range of digital tools. Recent advancements in Vision Language Models (VLMs) highlight the compelling
+  potential to develop versatile agents to help humans finish GUI navigation tasks. However, current VLMs
+  are challenged in terms of fundamental abilities (OCR and grounding) and GUI knowledge (the functions
+  and control methods of GUI elements), preventing them from becoming practical GUI agents. To solve these
+  challenges, we contribute GUICourse, a suite of datasets to train visual-based GUI agents from general
+  VLMs. First, we introduce the GUIEnv dataset to strengthen the OCR and grounding capabilities of VLMs.
+  Then, we introduce the GUIAct and GUIChat datasets to enrich their knowledge of GUI components and interactions.
+  Experiments demonstrate that our GUI agents have better performance on common GUI tasks than their baseline
+  VLMs. Even the small-size GUI agent (with 3.1B parameters) can still work well on single-step and multi-step
+  GUI tasks. Finally, we analyze the different varieties in the training stage of this agent by ablation
+  study. Our source codes and datasets are released at https://github.com/yiye3/GUICourse.
+venue: Annual Meeting of the Association for Computational Linguistics
+year: 2024
+source: arxiv
+source_url: https://arxiv.org/abs/2406.11317
+pdf_url: https://arxiv.org/pdf/2406.11317
+pdf_sha256: 20e390da958484935c0537ac14ec54a4dce8baa8c98701e810ce7be70901217b
+fetched_at: '2026-06-06T07:57:33Z'
+source_updated_at: null
+ids:
+  doi: 10.48550/arXiv.2406.11317
+  arxiv_id: '2406.11317'
+  arxiv_base_id: '2406.11317'
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: 0d7ba2bfdef0e780a76212c9d3cc30746d6bd3a1
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+scoring:
+  score: 69.4
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=69 -> READ_SOON | strong: recency(1.00), venue_quality(1.00), interest_fit(0.91) |
+    interests: computer_use_agents:GUI agent, computer_use_agents:group:computer_use_agents'
+  matched_interests:
+  - computer_use_agents:GUI agent
+  - computer_use_agents:group:computer_use_agents
+  negative_signals: []
+  subscores:
+    interest_fit: 0.91
+    recency: 1.0
+    venue_quality: 1.0
+    harness_relevance: 0.52
+    novelty: 0.8
+    artifact_availability: 0.55
+    evaluation_quality: 0.55
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/guicourse-from-general-vision-language-models-to-240611317/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

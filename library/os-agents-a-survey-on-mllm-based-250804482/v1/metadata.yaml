@@ -1,0 +1,103 @@
+canonical_key: arxiv-2508.04482
+version_key: v1
+title: 'OS Agents: A Survey on MLLM-based Agents for General Computing Devices Use'
+authors:
+- Xueyu Hu
+- Tao Xiong
+- Biao Yi
+- Zishu Wei
+- Ruixuan Xiao
+- Yurun Chen
+- Jiasheng Ye
+- Meiling Tao
+- Xiangxin Zhou
+- Ziyu Zhao
+- Yuhuai Li
+- Shengze Xu
+- Shenzhi Wang
+- Xinchen Xu
+- Shuofei Qiao
+- Zhaokai Wang
+- Kun Kuang
+- Tieyong Zeng
+- Liang Wang
+- Jiwei Li
+- Y. Jiang
+- Wangchunshu Zhou
+- Guoyin Wang
+- Keting Yin
+- Zhou Zhao
+- Hongxia Yang
+- Fan Wu
+- Shengyu Zhang
+- Fei Wu
+abstract: The dream to create AI assistants as capable and versatile as the fictional J.A.R.V.I.S from
+  Iron Man has long captivated imaginations. With the evolution of (multi-modal) large language models
+  ((M)LLMs), this dream is closer to reality, as (M)LLM-based Agents using computing devices (e.g., computers
+  and mobile phones) by operating within the environments and interfaces (e.g., Graphical User Interface
+  (GUI)) provided by operating systems (OS) to automate tasks have significantly advanced. This paper
+  presents a comprehensive survey of these advanced agents, designated as OS Agents. We begin by elucidating
+  the fundamentals of OS Agents, exploring their key components including the environment, observation
+  space, and action space, and outlining essential capabilities such as understanding, planning, and grounding.
+  We then examine methodologies for constructing OS Agents, focusing on domain-specific foundation models
+  and agent frameworks. A detailed review of evaluation protocols and benchmarks highlights how OS Agents
+  are assessed across diverse tasks. Finally, we discuss current challenges and identify promising directions
+  for future research, including safety and privacy, personalization and self-evolution. This survey aims
+  to consolidate the state of OS Agents research, providing insights to guide both academic inquiry and
+  industrial development. An open-source GitHub repository is maintained as a dynamic resource to foster
+  further innovation in this field. We present a 9-page version of our work, accepted by ACL 2025, to
+  provide a concise overview to the domain.
+venue: arXiv.org
+year: 2025
+source: arxiv
+source_url: https://arxiv.org/abs/2508.04482
+pdf_url: https://arxiv.org/pdf/2508.04482
+pdf_sha256: 60764631e290b8196378e2953b079eaba174fc91bba5a205fdd7f26fd8939a89
+fetched_at: '2026-06-06T07:57:47Z'
+source_updated_at: null
+ids:
+  doi: 10.48550/arXiv.2508.04482
+  arxiv_id: '2508.04482'
+  arxiv_base_id: '2508.04482'
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: a33c1095a4202ec1333062f49026f5d9ab945f31
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: recency(1.00), interest_fit(0.91), artifact_availability(0.55)
+    | interests: computer_use_agents:OS agent, computer_use_agents:group:computer_use_agents | milestone/foundational
+    floor applied'
+  matched_interests:
+  - computer_use_agents:OS agent
+  - computer_use_agents:group:computer_use_agents
+  negative_signals: []
+  subscores:
+    interest_fit: 0.91
+    recency: 1.0
+    venue_quality: 0.4
+    harness_relevance: 0.52
+    novelty: 0.0
+    artifact_availability: 0.55
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/os-agents-a-survey-on-mllm-based-250804482/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

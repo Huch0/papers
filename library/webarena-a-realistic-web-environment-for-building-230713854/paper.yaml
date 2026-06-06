@@ -1,0 +1,67 @@
+canonical_key: arxiv-2307.13854
+slug: webarena-a-realistic-web-environment-for-building-230713854
+title: 'WebArena: A Realistic Web Environment for Building Autonomous Agents'
+authors:
+- Shuyan Zhou
+- Frank F. Xu
+- Hao Zhu
+- Xuhui Zhou
+- Robert Lo
+- Abishek Sridhar
+- Xianyi Cheng
+- Tianyue Ou
+- Yonatan Bisk
+- Daniel Fried
+- Uri Alon
+- Graham Neubig
+year: 2024
+primary_ids:
+  doi: null
+  arxiv_base_id: '2307.13854'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2307.13854v4
+- https://arxiv.org/pdf/2307.13854v4
+topic_groups:
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: ICLR
+  tier: A_star
+  status: accepted
+  year: 2024
+user:
+  read_status: unread
+  triage_label: MUST_READ
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: foundational
+  significance: Reproducible, self-hostable realistic web environment.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v4
+  source: arxiv
+  source_url: https://arxiv.org/abs/2307.13854v4
+  pdf_path: library/webarena-a-realistic-web-environment-for-building-230713854/v1/paper.pdf
+  summary_path: library/webarena-a-realistic-web-environment-for-building-230713854/v1/summary.md
+  metadata_path: library/webarena-a-realistic-web-environment-for-building-230713854/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:14:00Z'
+  source_updated_at: '2024-04-16T15:13:18Z'
+  arxiv_version: v4
+  pdf_sha256: f9731b92bc3d29a2ea7b5f9cb46b48540c76bc3f84a57e0c48fc37ea73107f95
+  pdf_bytes: 9128123
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-06-06T07:14:00Z'
+  updated_at: '2026-06-06T07:19:08Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

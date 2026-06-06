@@ -1,0 +1,86 @@
+canonical_key: arxiv-2310.06770
+version_key: v1
+title: 'SWE-bench: Can Language Models Resolve Real-World GitHub Issues?'
+authors:
+- Carlos E. Jimenez
+- John Yang
+- Alexander Wettig
+- Shunyu Yao
+- Kexin Pei
+- Ofir Press
+- Karthik Narasimhan
+abstract: Language models have outpaced our ability to evaluate them effectively, but for their future
+  development it is essential to study the frontier of their capabilities. We find real-world software
+  engineering to be a rich, sustainable, and challenging testbed for evaluating the next generation of
+  language models. To this end, we introduce SWE-bench, an evaluation framework consisting of $2,294$
+  software engineering problems drawn from real GitHub issues and corresponding pull requests across $12$
+  popular Python repositories. Given a codebase along with a description of an issue to be resolved, a
+  language model is tasked with editing the codebase to address the issue. Resolving issues in SWE-bench
+  frequently requires understanding and coordinating changes across multiple functions, classes, and even
+  files simultaneously, calling for models to interact with execution environments, process extremely
+  long contexts and perform complex reasoning that goes far beyond traditional code generation tasks.
+  Our evaluations show that both state-of-the-art proprietary models and our fine-tuned model SWE-Llama
+  can resolve only the simplest issues. The best-performing model, Claude 2, is able to solve a mere $1.96$%
+  of the issues. Advances on SWE-bench represent steps towards LMs that are more practical, intelligent,
+  and autonomous.
+venue: ICLR
+year: 2024
+source: arxiv
+source_url: https://arxiv.org/abs/2310.06770v3
+pdf_url: https://arxiv.org/pdf/2310.06770v3
+pdf_sha256: f7e8e1df64129742b8199a21a042734519a823a1dafd6f48f8f3ddcfb48ee296
+fetched_at: '2026-06-06T06:10:51Z'
+source_updated_at: '2024-11-11T23:05:04Z'
+ids:
+  doi: null
+  arxiv_id: 2310.06770v3
+  arxiv_base_id: '2310.06770'
+  arxiv_version: v3
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+- benchmark
+- swe-agent
+- execution-based-eval
+- test-based-eval
+- environment
+- evaluation-harness
+topic_groups:
+- agent_harness
+- software_engineering_agents
+scoring:
+  score: 87.0
+  label: MUST_READ
+  confidence: high
+  rationale: 'score=87 -> MUST_READ | strong: interest_fit(1.00), venue_quality(1.00), artifact_availability(1.00)
+    | interests: agent_harness:group:agent_harness, software_engineering_agents:SWE-bench, software_engineering_agents:group:software_engineering_agents'
+  matched_interests:
+  - agent_harness:group:agent_harness
+  - software_engineering_agents:SWE-bench
+  - software_engineering_agents:group:software_engineering_agents
+  negative_signals: []
+  subscores:
+    interest_fit: 1.0
+    recency: 0.35
+    venue_quality: 1.0
+    harness_relevance: 0.9
+    novelty: 0.9
+    artifact_availability: 1.0
+    evaluation_quality: 1.0
+    trend_signal: 1.0
+    author_or_lab_signal: 0.3
+artifacts:
+  pdf: library/swe-bench-can-language-models-resolve-real-231006770/v1/paper.pdf
+  extraction: library/swe-bench-can-language-models-resolve-real-231006770/v1/extraction.txt
+  summary: library/swe-bench-can-language-models-resolve-real-231006770/v1/summary.md
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread

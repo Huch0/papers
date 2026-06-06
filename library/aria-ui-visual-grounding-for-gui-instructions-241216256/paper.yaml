@@ -1,0 +1,63 @@
+canonical_key: arxiv-2412.16256
+slug: aria-ui-visual-grounding-for-gui-instructions-241216256
+title: 'Aria-UI: Visual Grounding for GUI Instructions'
+authors:
+- Yuhao Yang
+- Yue Wang
+- Dongxu Li
+- Ziyang Luo
+- Bei Chen
+- Chao Huang
+- Junnan Li
+year: 2024
+primary_ids:
+  doi: 10.48550/arXiv.2412.16256
+  arxiv_base_id: '2412.16256'
+  openreview_id: null
+  semantic_scholar_id: 0c989f2c896e4ad5032b3c87abff8f7ba1f89c7a
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2412.16256
+- https://arxiv.org/pdf/2412.16256
+topic_groups:
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: Annual Meeting of the Association for Computational Linguistics
+  tier: A_star
+  status: unknown
+  year: 2024
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: expansion
+  significance: MoE grounding model (3.9B active) with large synthesized instruction data and context-aware
+    grounding; topped ScreenSpot averages.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2412.16256
+  pdf_path: library/aria-ui-visual-grounding-for-gui-instructions-241216256/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/aria-ui-visual-grounding-for-gui-instructions-241216256/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:35Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: 169bc7694b456530ce8a6f0336b7efc33a32a21a731e1656caf4934e83f59334
+  pdf_bytes: 3843901
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-06-06T07:57:35Z'
+  updated_at: '2026-06-06T07:57:35Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

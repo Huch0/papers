@@ -1,0 +1,69 @@
+canonical_key: arxiv-2312.08914
+slug: cogagent-a-visual-language-model-for-gui-231208914
+title: 'CogAgent: A Visual Language Model for GUI Agents'
+authors:
+- Wenyi Hong
+- Weihan Wang
+- Qingsong Lv
+- Jiazheng Xu
+- Wenmeng Yu
+- Junhui Ji
+- Yan Wang
+- Zihan Wang
+- Yuxuan Zhang
+- Juanzi Li
+- Bin Xu
+- Yuxiao Dong
+- Ming Ding
+- Jie Tang
+year: 2023
+primary_ids:
+  doi: null
+  arxiv_base_id: '2312.08914'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2312.08914v3
+- https://arxiv.org/pdf/2312.08914v3
+topic_groups:
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2023
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: expansion
+  significance: VLM purpose-built for GUI grounding and action.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v3
+  source: arxiv
+  source_url: https://arxiv.org/abs/2312.08914v3
+  pdf_path: library/cogagent-a-visual-language-model-for-gui-231208914/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/cogagent-a-visual-language-model-for-gui-231208914/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:14:04Z'
+  source_updated_at: '2024-12-27T06:56:18Z'
+  arxiv_version: v3
+  pdf_sha256: d9cb086d826eaee9f919e0cbf142193b77f476b0aef6260b34408abe142fe13b
+  pdf_bytes: 15601893
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-06-06T07:14:04Z'
+  updated_at: '2026-06-06T07:14:04Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

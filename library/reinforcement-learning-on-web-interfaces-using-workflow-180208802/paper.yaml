@@ -1,0 +1,60 @@
+canonical_key: arxiv-1802.08802
+slug: reinforcement-learning-on-web-interfaces-using-workflow-180208802
+title: Reinforcement Learning on Web Interfaces Using Workflow-Guided Exploration
+authors:
+- Evan Zheran Liu
+- Kelvin Guu
+- Panupong Pasupat
+- Tianlin Shi
+- Percy Liang
+year: 2018
+primary_ids:
+  doi: null
+  arxiv_base_id: '1802.08802'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/1802.08802v1
+- https://arxiv.org/pdf/1802.08802v1
+topic_groups:
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2018
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: emergence
+  significance: MiniWoB++; workflow-guided exploration for web UI control.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v1
+  source: arxiv
+  source_url: https://arxiv.org/abs/1802.08802v1
+  pdf_path: library/reinforcement-learning-on-web-interfaces-using-workflow-180208802/v1/paper.pdf
+  summary_path: library/reinforcement-learning-on-web-interfaces-using-workflow-180208802/v1/summary.md
+  metadata_path: library/reinforcement-learning-on-web-interfaces-using-workflow-180208802/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:13:53Z'
+  source_updated_at: '2018-02-24T05:32:47Z'
+  arxiv_version: v1
+  pdf_sha256: 7a7ce9d5f8f31c7f7c01a35271c5bdfdf2697dfe17e72ff090a9465d55f7f60d
+  pdf_bytes: 661364
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-06-06T07:13:53Z'
+  updated_at: '2026-06-06T07:18:43Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

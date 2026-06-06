@@ -1,0 +1,65 @@
+canonical_key: arxiv-2411.17465
+slug: showui-one-vision-language-action-model-for-241117465
+title: 'ShowUI: One Vision-Language-Action Model for GUI Visual Agent'
+authors:
+- Kevin Qinghong Lin
+- Linjie Li
+- Difei Gao
+- Zhengyuan Yang
+- Shiwei Wu
+- Zechen Bai
+- Weixian Lei
+- Lijuan Wang
+- Mike Zheng Shou
+year: 2024
+primary_ids:
+  doi: 10.1109/CVPR52734.2025.01816
+  arxiv_base_id: '2411.17465'
+  openreview_id: null
+  semantic_scholar_id: 02128b757f31f1385c9b839201783ceae5cd2088
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2411.17465
+- https://arxiv.org/pdf/2411.17465
+topic_groups:
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: Computer Vision and Pattern Recognition
+  tier: A_star
+  status: unknown
+  year: 2024
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: expansion
+  significance: Lightweight (2B) VLA with UI-guided visual-token selection + interleaved VLA streaming;
+    strong grounding with little data/tokens.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2411.17465
+  pdf_path: library/showui-one-vision-language-action-model-for-241117465/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/showui-one-vision-language-action-model-for-241117465/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:35Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: 8bc023be285e71dab992fb5aeffc2bcbcefe155a67b6ce5e6e7e3a3499bb5db5
+  pdf_bytes: 20140819
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-06-06T07:57:35Z'
+  updated_at: '2026-06-06T07:57:35Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

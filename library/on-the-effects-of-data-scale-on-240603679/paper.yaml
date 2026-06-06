@@ -1,0 +1,63 @@
+canonical_key: arxiv-2406.03679
+slug: on-the-effects-of-data-scale-on-240603679
+title: On the Effects of Data Scale on UI Control Agents
+authors:
+- Wei Li
+- Will Bishop
+- Alice Li
+- Christopher Rawles
+- Folawiyo Campbell-Ajala
+- Divya Tyamagundlu
+- O. Riva
+year: 2024
+primary_ids:
+  doi: 10.52202/079017-2925
+  arxiv_base_id: '2406.03679'
+  openreview_id: null
+  semantic_scholar_id: d8ba1f488269420ed8440c31dfa987b8782c62f1
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2406.03679
+- https://arxiv.org/pdf/2406.03679
+topic_groups:
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: Neural Information Processing Systems
+  tier: unknown
+  status: unknown
+  year: 2024
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: expansion
+  significance: AndroidControl dataset (15k demos) + definitive study of data-scaling limits for in/out-of-domain
+    UI control.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2406.03679
+  pdf_path: library/on-the-effects-of-data-scale-on-240603679/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/on-the-effects-of-data-scale-on-240603679/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:37Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: d4a14ffbe97638159a2003a9b63eff4de21512c9799edcf7754d8705d757c4cf
+  pdf_bytes: 3979497
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-06-06T07:57:37Z'
+  updated_at: '2026-06-06T07:57:37Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

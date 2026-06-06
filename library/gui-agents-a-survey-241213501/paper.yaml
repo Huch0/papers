@@ -1,0 +1,84 @@
+canonical_key: arxiv-2412.13501
+slug: gui-agents-a-survey-241213501
+title: 'GUI Agents: A Survey'
+authors:
+- Dang Nguyen
+- Jian Chen
+- Yu Wang
+- Gang Wu
+- Namyong Park
+- Zhengmian Hu
+- Hanjia Lyu
+- Junda Wu
+- Ryan Aponte
+- Yu Xia
+- Xintong Li
+- Jing Shi
+- Hongjie Chen
+- Viet Dac Lai
+- Zhouhang Xie
+- Sungchul Kim
+- Ruiyi Zhang
+- Tong Yu
+- Md Mehrab Tanjim
+- Nesreen K. Ahmed
+- Puneet Mathur
+- Seunghyun Yoon
+- Lina Yao
+- B. Kveton
+- T. Nguyen
+- Trung Bui
+- Tianyi Zhou
+- Ryan A. Rossi
+- Franck Dernoncourt
+year: 2024
+primary_ids:
+  doi: 10.48550/arXiv.2412.13501
+  arxiv_base_id: '2412.13501'
+  openreview_id: null
+  semantic_scholar_id: 164d8cd4140a231fb1f471f1d75ea96fc4b25253
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2412.13501
+- https://arxiv.org/pdf/2412.13501
+topic_groups:
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: Annual Meeting of the Association for Computational Linguistics
+  tier: A_star
+  status: unknown
+  year: 2024
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: expansion
+  significance: Widely cited taxonomy of GUI-agent perception, reasoning, and action across web/desktop/mobile.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2412.13501
+  pdf_path: library/gui-agents-a-survey-241213501/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/gui-agents-a-survey-241213501/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:40Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: 712ed065b5ef9b78633988f93b3301cd3ba3ed80239f2b1ac59d443c152ff21f
+  pdf_bytes: 427329
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-06-06T07:57:40Z'
+  updated_at: '2026-06-06T07:57:40Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

@@ -1,0 +1,78 @@
+canonical_key: arxiv-2410.18967
+version_key: v1
+title: 'Ferret-UI 2: Mastering Universal User Interface Understanding Across Platforms'
+authors:
+- Zhangheng Li
+- Keen You
+- Haotian Zhang
+- Di Feng
+- Harsh Agrawal
+- Xiujun Li
+- M. Moorthy
+- Jeff Nichols
+- Yinfei Yang
+- Zhe Gan
+abstract: 'Building a generalist model for user interface (UI) understanding is challenging due to various
+  foundational issues, such as platform diversity, resolution variation, and data limitation. In this
+  paper, we introduce Ferret-UI 2, a multimodal large language model (MLLM) designed for universal UI
+  understanding across a wide range of platforms, including iPhone, Android, iPad, Webpage, and AppleTV.
+  Building on the foundation of Ferret-UI, Ferret-UI 2 introduces three key innovations: support for multiple
+  platform types, high-resolution perception through adaptive scaling, and advanced task training data
+  generation powered by GPT-4o with set-of-mark visual prompting. These advancements enable Ferret-UI
+  2 to perform complex, user-centered interactions, making it highly versatile and adaptable for the expanding
+  diversity of platform ecosystems. Extensive empirical experiments on referring, grounding, user-centric
+  advanced tasks (comprising 9 subtasks $\times$ 5 platforms), GUIDE next-action prediction dataset, and
+  GUI-World multi-platform benchmark demonstrate that Ferret-UI 2 significantly outperforms Ferret-UI,
+  and also shows strong cross-platform transfer capabilities.'
+venue: International Conference on Learning Representations
+year: 2024
+source: arxiv
+source_url: https://arxiv.org/abs/2410.18967
+pdf_url: https://arxiv.org/pdf/2410.18967
+pdf_sha256: aaf23ffe93a8b0196ba95c9ae26c33dd8b08fd235ee33dd3afa48a64fc378de8
+fetched_at: '2026-06-06T07:57:34Z'
+source_updated_at: null
+ids:
+  doi: 10.48550/arXiv.2410.18967
+  arxiv_id: '2410.18967'
+  arxiv_base_id: '2410.18967'
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: 4591333ee08f38f2e3f50f99f70f922efb84791d
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: recency(1.00), venue_quality(1.00), novelty(0.80) | interests:
+    computer_use_agents:group:computer_use_agents | milestone/foundational floor applied'
+  matched_interests:
+  - computer_use_agents:group:computer_use_agents
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 1.0
+    venue_quality: 1.0
+    harness_relevance: 0.36
+    novelty: 0.8
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/ferret-ui-2-mastering-universal-user-interface-241018967/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

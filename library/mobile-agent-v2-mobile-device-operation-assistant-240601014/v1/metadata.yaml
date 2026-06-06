@@ -1,0 +1,84 @@
+canonical_key: arxiv-2406.01014
+version_key: v1
+title: 'Mobile-Agent-v2: Mobile Device Operation Assistant with Effective Navigation via Multi-Agent Collaboration'
+authors:
+- Junyang Wang
+- Haiyang Xu
+- Haitao Jia
+- Xi Zhang
+- Ming Yan
+- Weizhou Shen
+- Ji Zhang
+- Fei Huang
+- Jitao Sang
+abstract: 'Mobile device operation tasks are increasingly becoming a popular multi-modal AI application
+  scenario. Current Multi-modal Large Language Models (MLLMs), constrained by their training data, lack
+  the capability to function effectively as operation assistants. Instead, MLLM-based agents, which enhance
+  capabilities through tool invocation, are gradually being applied to this scenario. However, the two
+  major navigation challenges in mobile device operation tasks, task progress navigation and focus content
+  navigation, are significantly complicated under the single-agent architecture of existing work. This
+  is due to the overly long token sequences and the interleaved text-image data format, which limit performance.
+  To address these navigation challenges effectively, we propose Mobile-Agent-v2, a multi-agent architecture
+  for mobile device operation assistance. The architecture comprises three agents: planning agent, decision
+  agent, and reflection agent. The planning agent generates task progress, making the navigation of history
+  operations more efficient. To retain focus content, we design a memory unit that updates with task progress.
+  Additionally, to correct erroneous operations, the reflection agent observes the outcomes of each operation
+  and handles any mistakes accordingly. Experimental results indicate that Mobile-Agent-v2 achieves over
+  a 30% improvement in task completion compared to the single-agent architecture of Mobile-Agent. The
+  code is open-sourced at https://github.com/X-PLUG/MobileAgent.'
+venue: Neural Information Processing Systems
+year: 2024
+source: arxiv
+source_url: https://arxiv.org/abs/2406.01014
+pdf_url: https://arxiv.org/pdf/2406.01014
+pdf_sha256: cc3d977b738a12efbdbc4a5af5161b9881de89ebe83e488ac72e7dcd6e7eb8d1
+fetched_at: '2026-06-06T07:57:36Z'
+source_updated_at: null
+ids:
+  doi: 10.48550/arXiv.2406.01014
+  arxiv_id: '2406.01014'
+  arxiv_base_id: '2406.01014'
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: 085a13ac9dfb4180e3fefbe4f7a426f8081d3a9c
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+- general_agent_methods
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: recency(1.00), artifact_availability(0.80), interest_fit(0.73)
+    | interests: computer_use_agents:group:computer_use_agents, general_agent_methods:reflection, general_agent_methods:group:general_agent_methods
+    | milestone/foundational floor applied'
+  matched_interests:
+  - computer_use_agents:group:computer_use_agents
+  - general_agent_methods:reflection
+  - general_agent_methods:group:general_agent_methods
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 1.0
+    venue_quality: 0.3
+    harness_relevance: 0.36
+    novelty: 0.0
+    artifact_availability: 0.8
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/mobile-agent-v2-mobile-device-operation-assistant-240601014/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

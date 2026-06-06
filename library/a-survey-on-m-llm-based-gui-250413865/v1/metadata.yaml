@@ -1,0 +1,92 @@
+canonical_key: arxiv-2504.13865
+version_key: v1
+title: A Survey on (M)LLM-Based GUI Agents
+authors:
+- Fei Tang
+- Haolei Xu
+- Hang Zhang
+- Siqi Chen
+- Xingyu Wu
+- Yongliang Shen
+- Wenqi Zhang
+- Guiyang Hou
+- Zeqi Tan
+- Yuchen Yan
+- Kaitao Song
+- Jian Shao
+- Weiming Lu
+- Jun Xiao
+- Yueting Zhuang
+abstract: 'Graphical User Interface (GUI) Agents have emerged as a transformative paradigm in human-computer
+  interaction, evolving from rule-based automation scripts to sophisticated AI-driven systems capable
+  of understanding and executing complex interface operations. This survey provides a comprehensive examination
+  of the rapidly advancing field of LLM-based GUI Agents, systematically analyzing their architectural
+  foundations, technical components, and evaluation methodologies. We identify and analyze four fundamental
+  components that constitute modern GUI Agents: (1) perception systems that integrate text-based parsing
+  with multimodal understanding for comprehensive interface comprehension; (2) exploration mechanisms
+  that construct and maintain knowledge bases through internal modeling, historical experience, and external
+  information retrieval; (3) planning frameworks that leverage advanced reasoning methodologies for task
+  decomposition and execution; and (4) interaction systems that manage action generation with robust safety
+  controls. Through rigorous analysis of these components, we reveal how recent advances in large language
+  models and multimodal learning have revolutionized GUI automation across desktop, mobile, and web platforms.
+  We critically examine current evaluation frameworks, highlighting methodological limitations in existing
+  benchmarks while proposing directions for standardization. This survey also identifies key technical
+  challenges, including accurate element localization, effective knowledge retrieval, long-horizon planning,
+  and safety-aware execution control, while outlining promising research directions for enhancing GUI
+  Agents'' capabilities. Our systematic review provides researchers and practitioners with a thorough
+  understanding of the field''s current state and offers insights into future developments in intelligent
+  interface automation.'
+venue: arXiv.org
+year: 2025
+source: arxiv
+source_url: https://arxiv.org/abs/2504.13865
+pdf_url: https://arxiv.org/pdf/2504.13865
+pdf_sha256: 44c8ef9152784d59ea6330c1bfb8d1d0697de4fbb07d23d8c642c5548d9e343d
+fetched_at: '2026-06-06T07:57:47Z'
+source_updated_at: null
+ids:
+  doi: 10.48550/arXiv.2504.13865
+  arxiv_id: '2504.13865'
+  arxiv_base_id: '2504.13865'
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: 7b0a443058e97594677172239f1e4bd7fd60e0a6
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: recency(1.00), interest_fit(0.91), venue_quality(0.40) |
+    interests: computer_use_agents:GUI agent, computer_use_agents:group:computer_use_agents | milestone/foundational
+    floor applied'
+  matched_interests:
+  - computer_use_agents:GUI agent
+  - computer_use_agents:group:computer_use_agents
+  negative_signals: []
+  subscores:
+    interest_fit: 0.91
+    recency: 1.0
+    venue_quality: 0.4
+    harness_relevance: 0.36
+    novelty: 0.0
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/a-survey-on-m-llm-based-gui-250413865/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

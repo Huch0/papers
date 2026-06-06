@@ -1,0 +1,80 @@
+canonical_key: arxiv-2501.04575
+version_key: v1
+title: 'InfiGUIAgent: A Multimodal Generalist GUI Agent with Native Reasoning and Reflection'
+authors:
+- Yuhang Liu
+- Pengxiang Li
+- Zishu Wei
+- Congkai Xie
+- Xueyu Hu
+- Xinchen Xu
+- Shengyu Zhang
+- Xiaotian Han
+- Hongxia Yang
+- Fei Wu
+abstract: Graphical User Interface (GUI) Agents, powered by multimodal large language models (MLLMs),
+  have shown great potential for task automation on computing devices such as computers and mobile phones.
+  However, existing agents face challenges in multi-step reasoning and reliance on textual annotations,
+  limiting their effectiveness. We introduce \textit{InfiGUIAgent}, an MLLM-based GUI Agent trained with
+  a two-stage supervised fine-tuning pipeline. Stage 1 enhances fundamental skills such as GUI understanding
+  and grounding, while Stage 2 integrates hierarchical reasoning and expectation-reflection reasoning
+  skills using synthesized data to enable native reasoning abilities of the agents. \textit{InfiGUIAgent}
+  achieves competitive performance on several GUI benchmarks, highlighting the impact of native reasoning
+  skills in enhancing GUI interaction for automation tasks. Resources are available at \url{https://github.com/Reallm-Labs/InfiGUIAgent}.
+venue: Conference of the European Chapter of the Association for Computational Linguistics
+year: 2025
+source: arxiv
+source_url: https://arxiv.org/abs/2501.04575
+pdf_url: https://arxiv.org/pdf/2501.04575
+pdf_sha256: e4c34d713836630e180656b095a7dfbe7ed7f3b899b09fdb0a72fba2a2237616
+fetched_at: '2026-06-06T07:57:42Z'
+source_updated_at: null
+ids:
+  doi: 10.48550/arXiv.2501.04575
+  arxiv_id: '2501.04575'
+  arxiv_base_id: '2501.04575'
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: 133269ffc2391a2e2bdbab72a2ace89d7e78a107
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+- general_agent_methods
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: recency(1.00), venue_quality(1.00), interest_fit(0.91) |
+    interests: computer_use_agents:GUI agent, computer_use_agents:group:computer_use_agents, general_agent_methods:reflection,
+    general_agent_methods:group:general_agent_methods | milestone/foundational floor applied'
+  matched_interests:
+  - computer_use_agents:GUI agent
+  - computer_use_agents:group:computer_use_agents
+  - general_agent_methods:reflection
+  - general_agent_methods:group:general_agent_methods
+  negative_signals: []
+  subscores:
+    interest_fit: 0.91
+    recency: 1.0
+    venue_quality: 1.0
+    harness_relevance: 0.36
+    novelty: 0.55
+    artifact_availability: 0.55
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/infiguiagent-a-multimodal-generalist-gui-agent-with-250104575/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

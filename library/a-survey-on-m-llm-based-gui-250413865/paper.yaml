@@ -1,0 +1,71 @@
+canonical_key: arxiv-2504.13865
+slug: a-survey-on-m-llm-based-gui-250413865
+title: A Survey on (M)LLM-Based GUI Agents
+authors:
+- Fei Tang
+- Haolei Xu
+- Hang Zhang
+- Siqi Chen
+- Xingyu Wu
+- Yongliang Shen
+- Wenqi Zhang
+- Guiyang Hou
+- Zeqi Tan
+- Yuchen Yan
+- Kaitao Song
+- Jian Shao
+- Weiming Lu
+- Jun Xiao
+- Yueting Zhuang
+year: 2025
+primary_ids:
+  doi: 10.48550/arXiv.2504.13865
+  arxiv_base_id: '2504.13865'
+  openreview_id: null
+  semantic_scholar_id: 7b0a443058e97594677172239f1e4bd7fd60e0a6
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2504.13865
+- https://arxiv.org/pdf/2504.13865
+topic_groups:
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: arXiv.org
+  tier: workshop_or_minor
+  status: unknown
+  year: 2025
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: recent
+  significance: Updated survey framing element localization, knowledge retrieval, long-horizon planning,
+    and safe execution.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2504.13865
+  pdf_path: library/a-survey-on-m-llm-based-gui-250413865/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/a-survey-on-m-llm-based-gui-250413865/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:47Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: 44c8ef9152784d59ea6330c1bfb8d1d0697de4fbb07d23d8c642c5548d9e343d
+  pdf_bytes: 2606089
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-06-06T07:57:47Z'
+  updated_at: '2026-06-06T07:57:47Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

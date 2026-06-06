@@ -1,0 +1,62 @@
+canonical_key: arxiv-2305.11854
+slug: multimodal-web-navigation-with-instruction-finetuned-foundation-230511854
+title: Multimodal Web Navigation with Instruction-Finetuned Foundation Models
+authors:
+- Hiroki Furuta
+- Ofir Nachum
+- Kuang-Huei Lee
+- Yutaka Matsuo
+- S. Gu
+- Izzeddin Gur
+year: 2023
+primary_ids:
+  doi: 10.48550/arXiv.2305.11854
+  arxiv_base_id: '2305.11854'
+  openreview_id: null
+  semantic_scholar_id: 5692501c10d0c1762842f92c66fcf0bffe2c0342
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2305.11854
+- https://arxiv.org/pdf/2305.11854
+topic_groups:
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: International Conference on Learning Representations
+  tier: A_star
+  status: unknown
+  year: 2023
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: foundational
+  significance: Multimodal (HTML+screenshot) instruction-finetuned web agent; large MiniWoB/WebShop gains
+    and transfer to Mind2Web.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2305.11854
+  pdf_path: library/multimodal-web-navigation-with-instruction-finetuned-foundation-230511854/v1/paper.pdf
+  summary_path: library/multimodal-web-navigation-with-instruction-finetuned-foundation-230511854/v1/summary.md
+  metadata_path: library/multimodal-web-navigation-with-instruction-finetuned-foundation-230511854/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:30Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: f05aa0207bea35e88833af3268f5eb1afd8d75154061f55f75583597562a2505
+  pdf_bytes: 1253888
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-06-06T07:57:30Z'
+  updated_at: '2026-06-06T08:18:28Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

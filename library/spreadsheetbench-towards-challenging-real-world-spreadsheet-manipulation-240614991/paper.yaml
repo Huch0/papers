@@ -1,0 +1,66 @@
+canonical_key: arxiv-2406.14991
+slug: spreadsheetbench-towards-challenging-real-world-spreadsheet-manipulation-240614991
+title: 'SpreadsheetBench: Towards Challenging Real World Spreadsheet Manipulation'
+authors:
+- Zeyao Ma
+- Bohan Zhang
+- Jing Zhang
+- Jifan Yu
+- Xiaokang Zhang
+- Xiaohan Zhang
+- Sijia Luo
+- Xi Wang
+- Jie Tang
+year: 2024
+primary_ids:
+  doi: 10.48550/arXiv.2406.14991
+  arxiv_base_id: '2406.14991'
+  openreview_id: null
+  semantic_scholar_id: 744eefb2829e9c1cf2950b7a13b3592323a55f6f
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2406.14991
+- https://arxiv.org/pdf/2406.14991
+topic_groups:
+- computer_use_agents
+- document_agents
+tags:
+- foundational
+venue:
+  name: Neural Information Processing Systems
+  tier: unknown
+  status: unknown
+  year: 2024
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: foundational
+  significance: 912 real-forum Excel tasks with online-judge evaluation; canonical office/spreadsheet
+    desktop-agent benchmark.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2406.14991
+  pdf_path: library/spreadsheetbench-towards-challenging-real-world-spreadsheet-manipulation-240614991/v1/paper.pdf
+  summary_path: library/spreadsheetbench-towards-challenging-real-world-spreadsheet-manipulation-240614991/v1/summary.md
+  metadata_path: library/spreadsheetbench-towards-challenging-real-world-spreadsheet-manipulation-240614991/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:29Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: e3b0d60195c4b1b0298b7a40970132044b6d6fd50aa7c5b43e0c8079f1c5f784
+  pdf_bytes: 7034403
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-06-06T07:57:29Z'
+  updated_at: '2026-06-06T08:27:12Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

@@ -1,0 +1,78 @@
+canonical_key: arxiv-2402.07945
+version_key: v1
+title: 'ScreenAgent: A Vision Language Model-driven Computer Control Agent'
+authors:
+- Runliang Niu
+- Jindong Li
+- Shiqi Wang
+- Yali Fu
+- Xiyu Hu
+- Xueyuan Leng
+- He Kong
+- Yi Chang
+- Qi Wang
+abstract: Large Language Models (LLM) can invoke a variety of tools and APIs to complete complex tasks.
+  The computer, as the most powerful and universal tool, could potentially be controlled by a trained
+  LLM agent. Powered by the computer, we can hopefully build a more generalized agent to assist humans
+  in various daily digital works. In this paper, we construct an environment for a Vision Language Model
+  (VLM) agent to interact with a real computer screen. Within this environment, the agent can observe
+  screenshots and manipulate the Graphical User Interface (GUI) by outputting mouse and keyboard actions.
+  We also design an automated control pipeline that includes planning, acting, and reflecting phases,
+  guiding the agent to continuously interact with the environment and complete multi-step tasks. Additionally,
+  we construct the ScreenAgent Dataset, which collects screenshots and action sequences when completing
+  daily computer tasks. Finally, we train a model, ScreenAgent, which achieves comparable computer control
+  capabilities to GPT-4V and demonstrated more precise UI positioning capabilities. Our attempts could
+  inspire further research on building a generalist LLM agent. The code and more detailed information
+  are at https://github.com/niuzaisheng/ScreenAgent.
+venue: International Joint Conference on Artificial Intelligence
+year: 2024
+source: arxiv
+source_url: https://arxiv.org/abs/2402.07945
+pdf_url: https://arxiv.org/pdf/2402.07945
+pdf_sha256: a44180f3bad8ce54553007e721deb8bbb31be6779e1ee6bf80ab257765e7bff4
+fetched_at: '2026-06-06T07:57:28Z'
+source_updated_at: null
+ids:
+  doi: 10.24963/ijcai.2024/711
+  arxiv_id: '2402.07945'
+  arxiv_base_id: '2402.07945'
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: eb38dcd79e2738daae3f3516d67e85969a2477fa
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: recency(1.00), interest_fit(0.73), harness_relevance(0.68)
+    | interests: computer_use_agents:group:computer_use_agents | milestone/foundational floor applied'
+  matched_interests:
+  - computer_use_agents:group:computer_use_agents
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 1.0
+    venue_quality: 0.3
+    harness_relevance: 0.68
+    novelty: 0.0
+    artifact_availability: 0.55
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/screenagent-a-vision-language-model-driven-computer-240207945/v1/paper.pdf
+  extraction: library/screenagent-a-vision-language-model-driven-computer-240207945/v1/extraction.txt
+  summary: library/screenagent-a-vision-language-model-driven-computer-240207945/v1/summary.md
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread

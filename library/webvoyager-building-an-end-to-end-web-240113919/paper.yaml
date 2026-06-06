@@ -1,0 +1,64 @@
+canonical_key: arxiv-2401.13919
+slug: webvoyager-building-an-end-to-end-web-240113919
+title: 'WebVoyager: Building an End-to-End Web Agent with Large Multimodal Models'
+authors:
+- Hongliang He
+- Wenlin Yao
+- Kaixin Ma
+- Wenhao Yu
+- Yong Dai
+- Hongming Zhang
+- Zhenzhong Lan
+- Dong Yu
+year: 2024
+primary_ids:
+  doi: 10.48550/arXiv.2401.13919
+  arxiv_base_id: '2401.13919'
+  openreview_id: null
+  semantic_scholar_id: 19261c6ad20c6c1e5585a8afcb88196173cbc8a6
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2401.13919
+- https://arxiv.org/pdf/2401.13919
+topic_groups:
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: Annual Meeting of the Association for Computational Linguistics
+  tier: A_star
+  status: unknown
+  year: 2024
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: expansion
+  significance: End-to-end multimodal agent on 15 live sites with GPT-4V auto-evaluator; widely used live
+    benchmark and SoM recipe.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2401.13919
+  pdf_path: library/webvoyager-building-an-end-to-end-web-240113919/v1/paper.pdf
+  summary_path: library/webvoyager-building-an-end-to-end-web-240113919/v1/summary.html
+  metadata_path: library/webvoyager-building-an-end-to-end-web-240113919/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:32Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: 476ed4a064311f93414f5d5d17d90f10d07d2922bc05e09ee89cea26b617a2cb
+  pdf_bytes: 18497629
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-06-06T07:57:32Z'
+  updated_at: '2026-06-06T11:24:54Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

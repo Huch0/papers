@@ -1,0 +1,71 @@
+canonical_key: arxiv-2405.14573
+slug: androidworld-a-dynamic-benchmarking-environment-for-autonomous-240514573
+title: 'AndroidWorld: A Dynamic Benchmarking Environment for Autonomous Agents'
+authors:
+- Christopher Rawles
+- Sarah Clinckemaillie
+- Yifan Chang
+- J. Waltz
+- G. Lau
+- Marybeth Fair
+- Alice Li
+- Will Bishop
+- Wei Li
+- Folawiyo Campbell-Ajala
+- Daniel Toyama
+- Robert Berry
+- Divya Tyamagundlu
+- Timothy P. Lillicrap
+- O. Riva
+year: 2024
+primary_ids:
+  doi: 10.48550/arXiv.2405.14573
+  arxiv_base_id: '2405.14573'
+  openreview_id: null
+  semantic_scholar_id: d1b2eaf7aaebbd3d847272da04be180e35c7b68b
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2405.14573
+- https://arxiv.org/pdf/2405.14573
+topic_groups:
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: International Conference on Learning Representations
+  tier: A_star
+  status: unknown
+  year: 2024
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: expansion
+  significance: Live Android env with 116 reward-verified parameterized tasks across 20 apps; de facto
+    online mobile-agent leaderboard.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2405.14573
+  pdf_path: library/androidworld-a-dynamic-benchmarking-environment-for-autonomous-240514573/v1/paper.pdf
+  summary_path: library/androidworld-a-dynamic-benchmarking-environment-for-autonomous-240514573/v1/summary.html
+  metadata_path: library/androidworld-a-dynamic-benchmarking-environment-for-autonomous-240514573/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:36Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: 5673a60129459d8b8c0efbe3219ffc2ff2b311a3560e50cc488fa03eefcc35d1
+  pdf_bytes: 4367977
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-06-06T07:57:36Z'
+  updated_at: '2026-06-06T11:25:31Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

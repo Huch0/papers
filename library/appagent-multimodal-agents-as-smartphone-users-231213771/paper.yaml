@@ -1,0 +1,65 @@
+canonical_key: arxiv-2312.13771
+slug: appagent-multimodal-agents-as-smartphone-users-231213771
+title: 'AppAgent: Multimodal Agents as Smartphone Users'
+authors:
+- C. Zhang
+- Zhao Yang
+- Jiaxuan Liu
+- Yanda Li
+- Yucheng Han
+- Xin Chen
+- Zebiao Huang
+- Bin Fu
+- Gang Yu
+year: 2023
+primary_ids:
+  doi: 10.1145/3706598.3713600
+  arxiv_base_id: '2312.13771'
+  openreview_id: null
+  semantic_scholar_id: 61c723e7d91ca308b9eeacab35a2fce7548ef9fc
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2312.13771
+- https://arxiv.org/pdf/2312.13771
+topic_groups:
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: International Conference on Human Factors in Computing Systems
+  tier: unknown
+  status: unknown
+  year: 2023
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: foundational
+  significance: LLM agent learning apps via exploration/demos into a knowledge base; popularized the smartphone-as-user
+    paradigm.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2312.13771
+  pdf_path: library/appagent-multimodal-agents-as-smartphone-users-231213771/v1/paper.pdf
+  summary_path: library/appagent-multimodal-agents-as-smartphone-users-231213771/v1/summary.md
+  metadata_path: library/appagent-multimodal-agents-as-smartphone-users-231213771/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:30Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: ce9840204e13889f899e326def62005ed9871a0a6ab5d44f716343c4142ef045
+  pdf_bytes: 3797687
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-06-06T07:57:30Z'
+  updated_at: '2026-06-06T08:13:25Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

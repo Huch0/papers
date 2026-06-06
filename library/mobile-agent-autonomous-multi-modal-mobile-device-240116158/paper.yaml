@@ -1,0 +1,64 @@
+canonical_key: arxiv-2401.16158
+slug: mobile-agent-autonomous-multi-modal-mobile-device-240116158
+title: 'Mobile-Agent: Autonomous Multi-Modal Mobile Device Agent with Visual Perception'
+authors:
+- Junyang Wang
+- Haiyang Xu
+- Jiabo Ye
+- Mingshi Yan
+- Weizhou Shen
+- Ji Zhang
+- Fei Huang
+- Jitao Sang
+year: 2024
+primary_ids:
+  doi: 10.48550/arXiv.2401.16158
+  arxiv_base_id: '2401.16158'
+  openreview_id: null
+  semantic_scholar_id: c5db6c2726911b72d534f97bd4d1ed63f6431340
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2401.16158
+- https://arxiv.org/pdf/2401.16158
+topic_groups:
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: arXiv.org
+  tier: workshop_or_minor
+  status: unknown
+  year: 2024
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: foundational
+  significance: Vision-centric agent using visual perception tools (no XML/metadata) + Mobile-Eval benchmark;
+    launched the Mobile-Agent line.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2401.16158
+  pdf_path: library/mobile-agent-autonomous-multi-modal-mobile-device-240116158/v1/paper.pdf
+  summary_path: library/mobile-agent-autonomous-multi-modal-mobile-device-240116158/v1/summary.md
+  metadata_path: library/mobile-agent-autonomous-multi-modal-mobile-device-240116158/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:29Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: 6b511d598fa2f9bea3692d3acf028ebfe46b36b83181baab60a0152955ebec0d
+  pdf_bytes: 27114964
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-06-06T07:57:29Z'
+  updated_at: '2026-06-06T08:22:23Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

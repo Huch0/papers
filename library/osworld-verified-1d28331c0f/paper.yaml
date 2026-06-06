@@ -1,0 +1,54 @@
+canonical_key: title-0b1d28331c0f
+slug: osworld-verified-1d28331c0f
+title: OSWorld-Verified
+authors: []
+year: 2025
+primary_ids:
+  doi: null
+  arxiv_base_id: null
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls: []
+topic_groups:
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: tech report
+  tier: unknown
+  status: unknown
+  year: 2025
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: recent
+  significance: In-place upgrade fixing 300+ OSWorld task/eval issues with 50x AWS parallelization; default
+    trusted computer-use leaderboard.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: manual
+  source: manual
+  source_url: null
+  pdf_path: null
+  summary_path: null
+  metadata_path: library/osworld-verified-1d28331c0f/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:50Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: null
+  pdf_bytes: null
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-06-06T07:57:50Z'
+  updated_at: '2026-06-06T07:57:50Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

@@ -1,0 +1,75 @@
+canonical_key: arxiv-2503.23434
+version_key: v1
+title: 'Towards Trustworthy GUI Agents: A Survey'
+authors:
+- Yucheng Shi
+- Wenhao Yu
+- Wenlin Yao
+- Wenhu Chen
+- Ninghao Liu
+abstract: 'Graphical User Interface (GUI) agents extend large language models from text generation to
+  action execution in real-world digital environments. Unlike conversational systems, GUI agents perform
+  irreversible operations such as submitting forms, granting permissions, or deleting data, making trustworthiness
+  a core requirement. This survey identifies the execution gap as a key challenge in building trustworthy
+  GUI agents: the misalignment between perception, reasoning, and interaction in dynamic, partially observable
+  interfaces. We introduce a workflow-aligned taxonomy that decomposes trust into Perception Trust, Reasoning
+  Trust, and Interaction Trust, showing how failures propagate across agent pipelines and compound through
+  action/observation loops. We systematically review benign failure modes and adversarial attacks at each
+  stage, together with corresponding defense mechanisms tailored to GUI settings. We further analyze evaluation
+  practices and argue that task completion alone is insufficient for trust assessment. We highlight emerging
+  trust-aware metrics and benchmarks that capture error cascades and the security/utility trade-off, and
+  outline open challenges for deploying GUI agents safely and reliably.'
+venue: arXiv.org
+year: 2025
+source: arxiv
+source_url: https://arxiv.org/abs/2503.23434
+pdf_url: https://arxiv.org/pdf/2503.23434
+pdf_sha256: 7a1d6a9a92de88b8ee442c5c425d38124dbfd8bf9ca992f863bc103c3c8033d3
+fetched_at: '2026-06-06T07:57:46Z'
+source_updated_at: null
+ids:
+  doi: 10.48550/arXiv.2503.23434
+  arxiv_id: '2503.23434'
+  arxiv_base_id: '2503.23434'
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: 95d7d51c97a491f2ad4f9fa81753f22d6ce41953
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: recency(1.00), interest_fit(0.91), novelty(0.55) | interests:
+    computer_use_agents:GUI agent, computer_use_agents:group:computer_use_agents | milestone/foundational
+    floor applied'
+  matched_interests:
+  - computer_use_agents:GUI agent
+  - computer_use_agents:group:computer_use_agents
+  negative_signals: []
+  subscores:
+    interest_fit: 0.91
+    recency: 1.0
+    venue_quality: 0.4
+    harness_relevance: 0.52
+    novelty: 0.55
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/towards-trustworthy-gui-agents-a-survey-250323434/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

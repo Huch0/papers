@@ -1,0 +1,79 @@
+canonical_key: arxiv-2202.08137
+version_key: v1
+title: A data-driven approach for learning to control computers
+authors:
+- P. Humphreys
+- David Raposo
+- Tobias Pohlen
+- Gregory Thornton
+- Rachita Chhaparia
+- Alistair Muldal
+- Josh Abramson
+- Petko Georgiev
+- Alex Goldin
+- Adam Santoro
+- T. Lillicrap
+abstract: It would be useful for machines to use computers as humans do so that they can aid us in everyday
+  tasks. This is a setting in which there is also the potential to leverage large-scale expert demonstrations
+  and human judgements of interactive behaviour, which are two ingredients that have driven much recent
+  success in AI. Here we investigate the setting of computer control using keyboard and mouse, with goals
+  specified via natural language. Instead of focusing on hand-designed curricula and specialized action
+  spaces, we focus on developing a scalable method centered on reinforcement learning combined with behavioural
+  priors informed by actual human-computer interactions. We achieve state-of-the-art and human-level mean
+  performance across all tasks within the MiniWob++ benchmark, a challenging suite of computer control
+  problems, and find strong evidence of cross-task transfer. These results demonstrate the usefulness
+  of a unified human-agent interface when training machines to use computers. Altogether our results suggest
+  a formula for achieving competency beyond MiniWob++ and towards controlling computers, in general, as
+  a human would.
+venue: International Conference on Machine Learning
+year: 2022
+source: arxiv
+source_url: https://arxiv.org/abs/2202.08137
+pdf_url: https://arxiv.org/pdf/2202.08137
+pdf_sha256: 84090859eca84c271e50c27afe0c3bea3800bfef1e68521f144330ee80216195
+fetched_at: '2026-06-06T07:57:31Z'
+source_updated_at: null
+ids:
+  doi: null
+  arxiv_id: '2202.08137'
+  arxiv_base_id: '2202.08137'
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: 44d6c201a4056e260e9844bdbb01461ea9b1a011
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: recency(1.00), venue_quality(1.00), interest_fit(0.73) |
+    interests: computer_use_agents:group:computer_use_agents | milestone/foundational floor applied'
+  matched_interests:
+  - computer_use_agents:group:computer_use_agents
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 1.0
+    venue_quality: 1.0
+    harness_relevance: 0.36
+    novelty: 0.55
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/a-data-driven-approach-for-learning-to-220208137/v1/paper.pdf
+  extraction: library/a-data-driven-approach-for-learning-to-220208137/v1/extraction.txt
+  summary: library/a-data-driven-approach-for-learning-to-220208137/v1/summary.md
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread

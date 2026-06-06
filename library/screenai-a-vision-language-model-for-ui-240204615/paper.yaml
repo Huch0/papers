@@ -1,0 +1,66 @@
+canonical_key: arxiv-2402.04615
+slug: screenai-a-vision-language-model-for-ui-240204615
+title: 'ScreenAI: A Vision-Language Model for UI and Infographics Understanding'
+authors:
+- Gilles Baechler
+- Srinivas Sunkara
+- Maria Wang
+- Fedir Zubach
+- H. Mansoor
+- Vincent Etter
+- Victor Carbune
+- Jason Lin
+- Jindong Chen
+- Abhanshu Sharma
+year: 2024
+primary_ids:
+  doi: 10.48550/arXiv.2402.04615
+  arxiv_base_id: '2402.04615'
+  openreview_id: null
+  semantic_scholar_id: 73619a1084d7e50191cea7d0393ba2604659da31
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2402.04615
+- https://arxiv.org/pdf/2402.04615
+topic_groups:
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: International Joint Conference on Artificial Intelligence
+  tier: unknown
+  status: unknown
+  year: 2024
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: foundational
+  significance: Google 5B VLM with screen-annotation pretraining + auto UI QA/nav data; SOTA on multiple
+    UI/infographic benchmarks.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2402.04615
+  pdf_path: library/screenai-a-vision-language-model-for-ui-240204615/v1/paper.pdf
+  summary_path: library/screenai-a-vision-language-model-for-ui-240204615/v1/summary.md
+  metadata_path: library/screenai-a-vision-language-model-for-ui-240204615/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:28Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: fa5658622389c4c97d1a8a305e4db86548e30919e8aad6b757b9932298030698
+  pdf_bytes: 5126981
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-06-06T07:57:28Z'
+  updated_at: '2026-06-06T08:26:46Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

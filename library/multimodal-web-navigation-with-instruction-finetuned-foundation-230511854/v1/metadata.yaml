@@ -1,0 +1,79 @@
+canonical_key: arxiv-2305.11854
+version_key: v1
+title: Multimodal Web Navigation with Instruction-Finetuned Foundation Models
+authors:
+- Hiroki Furuta
+- Ofir Nachum
+- Kuang-Huei Lee
+- Yutaka Matsuo
+- S. Gu
+- Izzeddin Gur
+abstract: The progress of autonomous web navigation has been hindered by the dependence on billions of
+  exploratory interactions via online reinforcement learning, and domain-specific model designs that make
+  it difficult to leverage generalization from rich out-of-domain data. In this work, we study data-driven
+  offline training for web agents with vision-language foundation models. We propose an instruction-following
+  multimodal agent, WebGUM, that observes both webpage screenshots and HTML pages and outputs web navigation
+  actions, such as click and type. WebGUM is trained by jointly finetuning an instruction-finetuned language
+  model and a vision encoder with temporal and local perception on a large corpus of demonstrations. We
+  empirically demonstrate this recipe improves the agent's ability of grounded multimodal perception,
+  HTML comprehension, and multi-step reasoning, outperforming prior works by a significant margin. On
+  the MiniWoB, we improve over the previous best offline methods by more than 45.8%, even outperforming
+  online-finetuned SoTA, humans, and GPT-4-based agent. On the WebShop benchmark, our 3-billion-parameter
+  model achieves superior performance to the existing SoTA, PaLM-540B. Furthermore, WebGUM exhibits strong
+  positive transfer to the real-world planning tasks on the Mind2Web. We also collect 347K high-quality
+  demonstrations using our trained models, 38 times larger than prior work, and make them available to
+  promote future research in this direction.
+venue: International Conference on Learning Representations
+year: 2023
+source: arxiv
+source_url: https://arxiv.org/abs/2305.11854
+pdf_url: https://arxiv.org/pdf/2305.11854
+pdf_sha256: f05aa0207bea35e88833af3268f5eb1afd8d75154061f55f75583597562a2505
+fetched_at: '2026-06-06T07:57:30Z'
+source_updated_at: null
+ids:
+  doi: 10.48550/arXiv.2305.11854
+  arxiv_id: '2305.11854'
+  arxiv_base_id: '2305.11854'
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: 5692501c10d0c1762842f92c66fcf0bffe2c0342
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: recency(1.00), venue_quality(1.00), interest_fit(0.91) |
+    interests: computer_use_agents:web agent, computer_use_agents:group:computer_use_agents | milestone/foundational
+    floor applied'
+  matched_interests:
+  - computer_use_agents:web agent
+  - computer_use_agents:group:computer_use_agents
+  negative_signals: []
+  subscores:
+    interest_fit: 0.91
+    recency: 1.0
+    venue_quality: 1.0
+    harness_relevance: 0.0
+    novelty: 0.0
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/multimodal-web-navigation-with-instruction-finetuned-foundation-230511854/v1/paper.pdf
+  extraction: library/multimodal-web-navigation-with-instruction-finetuned-foundation-230511854/v1/extraction.txt
+  summary: library/multimodal-web-navigation-with-instruction-finetuned-foundation-230511854/v1/summary.md
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread

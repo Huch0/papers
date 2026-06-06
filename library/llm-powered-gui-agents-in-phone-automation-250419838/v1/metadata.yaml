@@ -1,0 +1,90 @@
+canonical_key: arxiv-2504.19838
+version_key: v1
+title: 'LLM-Powered GUI Agents in Phone Automation: Surveying Progress and Prospects'
+authors:
+- Guangyi Liu
+- Pengxiang Zhao
+- Liang Liu
+- Yaxuan Guo
+- Han Xiao
+- Weifeng Lin
+- Yuxiang Chai
+- Yue Han
+- Shuai Ren
+- Hao Wang
+- Xiaoyu Liang
+- Wenhao Wang
+- Tianze Wu
+- Linghao Li
+- Guanjing Xiong
+- Yong Liu
+- Hongsheng Li
+abstract: 'With the rapid rise of large language models (LLMs), phone automation has undergone transformative
+  changes. This paper systematically reviews LLM-driven phone GUI agents, highlighting their evolution
+  from script-based automation to intelligent, adaptive systems. We first contextualize key challenges,
+  (i) limited generality, (ii) high maintenance overhead, and (iii) weak intent comprehension, and show
+  how LLMs address these issues through advanced language understanding, multimodal perception, and robust
+  decision-making. We then propose a taxonomy covering fundamental agent frameworks (single-agent, multi-agent,
+  plan-then-act), modeling approaches (prompt engineering, training-based), and essential datasets and
+  benchmarks. Furthermore, we detail task-specific architectures, supervised fine-tuning, and reinforcement
+  learning strategies that bridge user intent and GUI operations. Finally, we discuss open challenges
+  such as dataset diversity, on-device deployment efficiency, user-centric adaptation, and security concerns,
+  offering forward-looking insights into this rapidly evolving field. By providing a structured overview
+  and identifying pressing research gaps, this paper serves as a definitive reference for researchers
+  and practitioners seeking to harness LLMs in designing scalable, user-friendly phone GUI agents. The
+  collection of papers reviewed in this survey will be hosted and regularly updated on the GitHub repository:
+  https://github.com/PhoneLLM/Awesome-LLM-Powered-Phone-GUI-Agents'
+venue: Trans. Mach. Learn. Res.
+year: 2025
+source: arxiv
+source_url: https://arxiv.org/abs/2504.19838
+pdf_url: https://arxiv.org/pdf/2504.19838
+pdf_sha256: 8db47089a988c837237549e21894f39dea38ba1e7d9aba81e63de7100198fa98
+fetched_at: '2026-06-06T07:57:46Z'
+source_updated_at: null
+ids:
+  doi: 10.48550/arXiv.2504.19838
+  arxiv_id: '2504.19838'
+  arxiv_base_id: '2504.19838'
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: e81979f38cc5e764a587ca0f66af7b9b33466909
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: recency(1.00), interest_fit(0.91), novelty(0.55) | interests:
+    computer_use_agents:GUI agent, computer_use_agents:group:computer_use_agents | milestone/foundational
+    floor applied'
+  matched_interests:
+  - computer_use_agents:GUI agent
+  - computer_use_agents:group:computer_use_agents
+  negative_signals: []
+  subscores:
+    interest_fit: 0.91
+    recency: 1.0
+    venue_quality: 0.3
+    harness_relevance: 0.36
+    novelty: 0.55
+    artifact_availability: 0.55
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/llm-powered-gui-agents-in-phone-automation-250419838/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

@@ -1,0 +1,98 @@
+# Source definitions for paper discovery.
+# Fetchers (scripts/fetch_*.py) read this file. Disable a source by setting enabled: false.
+
+version: 1
+
+defaults:
+  # Default lookback window for /daily-papers when no date/range is given.
+  since_days: 2
+  # Per-source candidate caps to avoid runaway fetches.
+  max_results_per_source: 60
+  # Politeness / rate limiting.
+  request_timeout_seconds: 30
+  retry:
+    max_attempts: 4
+    backoff_base_seconds: 2.0   # exponential: base * 2**attempt
+  # Contact email used in User-Agent / OpenAlex "mailto" for polite-pool access.
+  contact_email: heochiyeong@gmail.com
+  user_agent: "papers-harness/1.0 (mailto:heochiyeong@gmail.com)"
+
+sources:
+  arxiv:
+    enabled: true
+    kind: arxiv_api
+    base_url: "http://export.arxiv.org/api/query"
+    # Categories to search. Keyword groups from interests.yaml are OR-combined
+    # within each category query.
+    categories:
+      - cs.AI
+      - cs.CL
+      - cs.LG
+      - cs.SE
+      - cs.HC
+      - cs.IR
+      - cs.DC
+      - cs.MA
+      - cs.RO
+    # Fetch both views when possible.
+    sort_views:
+      - submittedDate
+      - lastUpdatedDate
+    # Rate limit: arXiv asks for <= 1 request / 3s.
+    min_seconds_between_requests: 3.0
+
+  arxiv_rss:
+    enabled: true
+    kind: arxiv_atom
+    # Per-category ATOM feeds (recent listings). Used as a lightweight daily view.
+    base_url: "http://export.arxiv.org/api/query"
+    categories:
+      - cs.AI
+      - cs.CL
+      - cs.SE
+
+  openalex:
+    enabled: true
+    kind: openalex
+    base_url: "https://api.openalex.org/works"
+    # Primarily metadata enrichment, venue normalization, citation/influence,
+    # related works, duplicate detection. NOT a PDF source of record.
+    role: enrichment
+    mailto: heochiyeong@gmail.com
+
+  semantic_scholar:
+    enabled: true
+    kind: semantic_scholar
+    base_url: "https://api.semanticscholar.org/graph/v1"
+    role: enrichment
+    # Optional API key via env var SEMANTIC_SCHOLAR_API_KEY for higher rate limits.
+    api_key_env: SEMANTIC_SCHOLAR_API_KEY
+    fields:
+      - paperId
+      - externalIds
+      - title
+      - abstract
+      - year
+      - venue
+      - authors
+      - citationCount
+      - influentialCitationCount
+      - openAccessPdf
+      - publicationVenue
+
+  openreview:
+    enabled: true
+    kind: openreview
+    # API v2 base. Used for ICLR/NeurIPS/ICML/ACL-ARR forums where practical.
+    base_url: "https://api2.openreview.net"
+    venues_of_interest:
+      - ICLR.cc
+      - NeurIPS.cc
+      - ICML.cc
+      - aclweb.org/ACL/ARR
+
+  manual:
+    enabled: true
+    kind: manual
+    # Used by /add-paper for arbitrary URLs / local PDFs / supplied metadata.
+    role: ingestion

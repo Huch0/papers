@@ -1,0 +1,66 @@
+canonical_key: arxiv-2410.18967
+slug: ferret-ui-2-mastering-universal-user-interface-241018967
+title: 'Ferret-UI 2: Mastering Universal User Interface Understanding Across Platforms'
+authors:
+- Zhangheng Li
+- Keen You
+- Haotian Zhang
+- Di Feng
+- Harsh Agrawal
+- Xiujun Li
+- M. Moorthy
+- Jeff Nichols
+- Yinfei Yang
+- Zhe Gan
+year: 2024
+primary_ids:
+  doi: 10.48550/arXiv.2410.18967
+  arxiv_base_id: '2410.18967'
+  openreview_id: null
+  semantic_scholar_id: 4591333ee08f38f2e3f50f99f70f922efb84791d
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2410.18967
+- https://arxiv.org/pdf/2410.18967
+topic_groups:
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: International Conference on Learning Representations
+  tier: A_star
+  status: unknown
+  year: 2024
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: expansion
+  significance: Multi-platform (iPhone/Android/iPad/web/AppleTV) adaptive high-res grounding; generalizes
+    UI understanding across ecosystems.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2410.18967
+  pdf_path: library/ferret-ui-2-mastering-universal-user-interface-241018967/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/ferret-ui-2-mastering-universal-user-interface-241018967/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:34Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: aaf23ffe93a8b0196ba95c9ae26c33dd8b08fd235ee33dd3afa48a64fc378de8
+  pdf_bytes: 15115742
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-06-06T07:57:34Z'
+  updated_at: '2026-06-06T07:57:34Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

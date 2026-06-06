@@ -1,0 +1,76 @@
+canonical_key: arxiv-2312.13771
+version_key: v1
+title: 'AppAgent: Multimodal Agents as Smartphone Users'
+authors:
+- C. Zhang
+- Zhao Yang
+- Jiaxuan Liu
+- Yanda Li
+- Yucheng Han
+- Xin Chen
+- Zebiao Huang
+- Bin Fu
+- Gang Yu
+abstract: Recent advancements in large language models (LLMs) have led to the creation of intelligent
+  agents capable of performing complex tasks. This paper introduces a novel LLM-based multimodal agent
+  framework designed to operate smartphone applications. Our framework allows the agent to mimic human-like
+  interactions such as tapping and swiping through a simplified action space, eliminating the need for
+  system back-end access and enhancing its versatility across various apps. Central to the agent’s functionality
+  is an innovative in-context learning method, where it either autonomously explores or learns from human
+  demonstrations, creating a knowledge base used to execute complex tasks across diverse applications.
+  We conducted extensive testing with our agent on over 50 tasks spanning 10 applications, ranging from
+  social media to sophisticated image editing tools. Additionally, a user study confirmed the agent’s
+  superior performance and practicality in handling a diverse array of high-level tasks, demonstrating
+  its effectiveness in real-world settings. Our project page is available at https://appagent-official.github.io/.
+venue: International Conference on Human Factors in Computing Systems
+year: 2023
+source: arxiv
+source_url: https://arxiv.org/abs/2312.13771
+pdf_url: https://arxiv.org/pdf/2312.13771
+pdf_sha256: ce9840204e13889f899e326def62005ed9871a0a6ab5d44f716343c4142ef045
+fetched_at: '2026-06-06T07:57:30Z'
+source_updated_at: null
+ids:
+  doi: 10.1145/3706598.3713600
+  arxiv_id: '2312.13771'
+  arxiv_base_id: '2312.13771'
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: 61c723e7d91ca308b9eeacab35a2fce7548ef9fc
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: recency(1.00), interest_fit(0.73), novelty(0.55) | interests:
+    computer_use_agents:group:computer_use_agents | milestone/foundational floor applied'
+  matched_interests:
+  - computer_use_agents:group:computer_use_agents
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 1.0
+    venue_quality: 0.3
+    harness_relevance: 0.36
+    novelty: 0.55
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/appagent-multimodal-agents-as-smartphone-users-231213771/v1/paper.pdf
+  extraction: library/appagent-multimodal-agents-as-smartphone-users-231213771/v1/extraction.txt
+  summary: library/appagent-multimodal-agents-as-smartphone-users-231213771/v1/summary.md
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread

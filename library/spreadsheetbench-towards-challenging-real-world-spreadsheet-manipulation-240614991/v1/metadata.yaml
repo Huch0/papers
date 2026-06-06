@@ -1,0 +1,80 @@
+canonical_key: arxiv-2406.14991
+version_key: v1
+title: 'SpreadsheetBench: Towards Challenging Real World Spreadsheet Manipulation'
+authors:
+- Zeyao Ma
+- Bohan Zhang
+- Jing Zhang
+- Jifan Yu
+- Xiaokang Zhang
+- Xiaohan Zhang
+- Sijia Luo
+- Xi Wang
+- Jie Tang
+abstract: We introduce SpreadsheetBench, a challenging spreadsheet manipulation benchmark exclusively
+  derived from real-world scenarios, designed to immerse current large language models (LLMs) in the actual
+  workflow of spreadsheet users. Unlike existing benchmarks that rely on synthesized queries and simplified
+  spreadsheet files, SpreadsheetBench is built from 912 real questions gathered from online Excel forums,
+  which reflect the intricate needs of users. The associated spreadsheets from the forums contain a variety
+  of tabular data such as multiple tables, non-standard relational tables, and abundant non-textual elements.
+  Furthermore, we propose a more reliable evaluation metric akin to online judge platforms, where multiple
+  spreadsheet files are created as test cases for each instruction, ensuring the evaluation of robust
+  solutions capable of handling spreadsheets with varying values. Our comprehensive evaluation of various
+  LLMs under both single-round and multi-round inference settings reveals a substantial gap between the
+  state-of-the-art (SOTA) models and human performance, highlighting the benchmark's difficulty.
+venue: Neural Information Processing Systems
+year: 2024
+source: arxiv
+source_url: https://arxiv.org/abs/2406.14991
+pdf_url: https://arxiv.org/pdf/2406.14991
+pdf_sha256: e3b0d60195c4b1b0298b7a40970132044b6d6fd50aa7c5b43e0c8079f1c5f784
+fetched_at: '2026-06-06T07:57:29Z'
+source_updated_at: null
+ids:
+  doi: 10.48550/arXiv.2406.14991
+  arxiv_id: '2406.14991'
+  arxiv_base_id: '2406.14991'
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: 744eefb2829e9c1cf2950b7a13b3592323a55f6f
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+- document_agents
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: recency(1.00), novelty(0.80), interest_fit(0.73) | interests:
+    computer_use_agents:group:computer_use_agents, document_agents:spreadsheet manipulation, document_agents:group:document_agents
+    | milestone/foundational floor applied'
+  matched_interests:
+  - computer_use_agents:group:computer_use_agents
+  - document_agents:spreadsheet manipulation
+  - document_agents:group:document_agents
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 1.0
+    venue_quality: 0.3
+    harness_relevance: 0.0
+    novelty: 0.8
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/spreadsheetbench-towards-challenging-real-world-spreadsheet-manipulation-240614991/v1/paper.pdf
+  extraction: library/spreadsheetbench-towards-challenging-real-world-spreadsheet-manipulation-240614991/v1/extraction.txt
+  summary: library/spreadsheetbench-towards-challenging-real-world-spreadsheet-manipulation-240614991/v1/summary.md
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread

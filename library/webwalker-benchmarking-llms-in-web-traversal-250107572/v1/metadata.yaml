@@ -1,0 +1,77 @@
+canonical_key: arxiv-2501.07572
+version_key: v1
+title: 'WebWalker: Benchmarking LLMs in Web Traversal'
+authors:
+- Jialong Wu
+- Wenbiao Yin
+- Yong Jiang
+- Zhenglin Wang
+- Zekun Xi
+- Runnan Fang
+- Deyu Zhou
+- Pengjun Xie
+- Fei Huang
+abstract: Retrieval-augmented generation (RAG) demonstrates remarkable performance across tasks in open-domain
+  question-answering. However, traditional search engines may retrieve shallow content, limiting the ability
+  of LLMs to handle complex, multi-layered information. To address it, we introduce WebWalkerQA, a benchmark
+  designed to assess the ability of LLMs to perform web traversal. It evaluates the capacity of LLMs to
+  traverse a website's subpages to extract high-quality data systematically. We propose WebWalker, which
+  is a multi-agent framework that mimics human-like web navigation through an explore-critic paradigm.
+  Extensive experimental results show that WebWalkerQA is challenging and demonstrates the effectiveness
+  of RAG combined with WebWalker, through the horizontal and vertical integration in real-world scenarios.
+venue: Annual Meeting of the Association for Computational Linguistics
+year: 2025
+source: arxiv
+source_url: https://arxiv.org/abs/2501.07572
+pdf_url: https://arxiv.org/pdf/2501.07572
+pdf_sha256: 038f37ada7ad7f358ff9eab7759a6c577fb6b0a228ac9120880847f41bc17b11
+fetched_at: '2026-06-06T07:57:40Z'
+source_updated_at: null
+ids:
+  doi: 10.48550/arXiv.2501.07572
+  arxiv_id: '2501.07572'
+  arxiv_base_id: '2501.07572'
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: eaa6ffc25363ce88d7887f58f5b03a0c26231c36
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+- general_agent_methods
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: recency(1.00), venue_quality(1.00), interest_fit(0.73) |
+    interests: computer_use_agents:group:computer_use_agents, general_agent_methods:benchmark design,
+    general_agent_methods:group:general_agent_methods | milestone/foundational floor applied'
+  matched_interests:
+  - computer_use_agents:group:computer_use_agents
+  - general_agent_methods:benchmark design
+  - general_agent_methods:group:general_agent_methods
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 1.0
+    venue_quality: 1.0
+    harness_relevance: 0.0
+    novelty: 0.55
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/webwalker-benchmarking-llms-in-web-traversal-250107572/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

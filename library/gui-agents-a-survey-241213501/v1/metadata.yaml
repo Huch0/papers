@@ -1,0 +1,97 @@
+canonical_key: arxiv-2412.13501
+version_key: v1
+title: 'GUI Agents: A Survey'
+authors:
+- Dang Nguyen
+- Jian Chen
+- Yu Wang
+- Gang Wu
+- Namyong Park
+- Zhengmian Hu
+- Hanjia Lyu
+- Junda Wu
+- Ryan Aponte
+- Yu Xia
+- Xintong Li
+- Jing Shi
+- Hongjie Chen
+- Viet Dac Lai
+- Zhouhang Xie
+- Sungchul Kim
+- Ruiyi Zhang
+- Tong Yu
+- Md Mehrab Tanjim
+- Nesreen K. Ahmed
+- Puneet Mathur
+- Seunghyun Yoon
+- Lina Yao
+- B. Kveton
+- T. Nguyen
+- Trung Bui
+- Tianyi Zhou
+- Ryan A. Rossi
+- Franck Dernoncourt
+abstract: Graphical User Interface (GUI) agents, powered by Large Foundation Models, have emerged as a
+  transformative approach to automating human-computer interaction. These agents autonomously interact
+  with digital systems or software applications via GUIs, emulating human actions such as clicking, typing,
+  and navigating visual elements across diverse platforms. Motivated by the growing interest and fundamental
+  importance of GUI agents, we provide a comprehensive survey that categorizes their benchmarks, evaluation
+  metrics, architectures, and training methods. We propose a unified framework that delineates their perception,
+  reasoning, planning, and acting capabilities. Furthermore, we identify important open challenges and
+  discuss key future directions. Finally, this work serves as a basis for practitioners and researchers
+  to gain an intuitive understanding of current progress, techniques, benchmarks, and critical open problems
+  that remain to be addressed.
+venue: Annual Meeting of the Association for Computational Linguistics
+year: 2024
+source: arxiv
+source_url: https://arxiv.org/abs/2412.13501
+pdf_url: https://arxiv.org/pdf/2412.13501
+pdf_sha256: 712ed065b5ef9b78633988f93b3301cd3ba3ed80239f2b1ac59d443c152ff21f
+fetched_at: '2026-06-06T07:57:40Z'
+source_updated_at: null
+ids:
+  doi: 10.48550/arXiv.2412.13501
+  arxiv_id: '2412.13501'
+  arxiv_base_id: '2412.13501'
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: 164d8cd4140a231fb1f471f1d75ea96fc4b25253
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: recency(1.00), venue_quality(1.00), interest_fit(0.91) |
+    interests: computer_use_agents:GUI agent, computer_use_agents:group:computer_use_agents | milestone/foundational
+    floor applied'
+  matched_interests:
+  - computer_use_agents:GUI agent
+  - computer_use_agents:group:computer_use_agents
+  negative_signals: []
+  subscores:
+    interest_fit: 0.91
+    recency: 1.0
+    venue_quality: 1.0
+    harness_relevance: 0.36
+    novelty: 0.0
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/gui-agents-a-survey-241213501/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

@@ -1,0 +1,67 @@
+# Controlled tag vocabulary. Keeps tags consistent across papers so BY_TAG.md is useful.
+# Tags are free-form-allowed but validate_registry.py warns on tags not listed here
+# (warning, not error) so the taxonomy can grow organically via /evolve-paper-system.
+
+version: 1
+
+# Grouped for readability; flat set is the union of all values.
+tags:
+  interface:
+    - gui-agent
+    - cli-agent
+    - api-agent
+    - browser-agent
+    - os-agent
+    - terminal-agent
+    - ide-agent
+    - filesystem-agent
+    - persistent-workspace
+  domain:
+    - swe-agent
+    - computer-use
+    - document-agent
+    - office-automation
+    - spreadsheet-agent
+    - slides-agent
+    - web-agent
+  method:
+    - agent-harness
+    - meta-harness
+    - tool-use
+    - planner-executor-verifier
+    - inference-time-search
+    - agent-memory
+    - reflection
+    - multi-agent
+    - verifier
+    - reward-model
+    - rl-for-agents
+    - prompt-optimization
+  artifact:
+    - benchmark
+    - dataset
+    - environment
+    - leaderboard
+    - training-environment
+    - evaluation-harness
+  evaluation:
+    - execution-based-eval
+    - test-based-eval
+    - human-eval
+    - llm-judge
+    - contamination-risk
+    - reliability-concern
+  meta:
+    - foundational
+    - survey
+    - position-paper
+    - industry-report
+    - reproducible
+    - artifacts-released
+
+# Tags that signal a paper should be kept even if score is borderline.
+keep_signals:
+  - foundational
+  - benchmark
+  - meta-harness
+  - evaluation-harness

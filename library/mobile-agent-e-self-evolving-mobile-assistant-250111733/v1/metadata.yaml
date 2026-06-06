@@ -1,0 +1,82 @@
+canonical_key: arxiv-2501.11733
+version_key: v1
+title: 'Mobile-Agent-E: Self-Evolving Mobile Assistant for Complex Tasks'
+authors:
+- Zhenhailong Wang
+- Haiyang Xu
+- Junyang Wang
+- Xi Zhang
+- Mingshi Yan
+- Ji Zhang
+- Fei Huang
+- Heng Ji
+abstract: 'Smartphones have become indispensable in modern life, yet navigating complex tasks on mobile
+  devices often remains frustrating. Recent advancements in large multimodal model (LMM)-based mobile
+  agents have demonstrated the ability to perceive and act in mobile environments. However, current approaches
+  face significant limitations: they fall short in addressing real-world human needs, struggle with reasoning-intensive
+  and long-horizon tasks, and lack mechanisms to learn and improve from prior experiences. To overcome
+  these challenges, we introduce Mobile-Agent-E, a hierarchical multi-agent framework capable of self-evolution
+  through past experience. By hierarchical, we mean an explicit separation of high-level planning and
+  low-level action execution. The framework comprises a Manager, responsible for devising overall plans
+  by breaking down complex tasks into subgoals, and four subordinate agents--Perceptor, Operator, Action
+  Reflector, and Notetaker--which handle fine-grained visual perception, immediate action execution, error
+  verification, and information aggregation, respectively. Mobile-Agent-E also features a novel self-evolution
+  module which maintains a persistent long-term memory comprising Tips and Shortcuts. Tips are general
+  guidance and lessons learned from prior tasks on how to effectively interact with the environment. Shortcuts
+  are reusable, executable sequences of atomic operations tailored for specific subroutines. The inclusion
+  of Tips and Shortcuts facilitates continuous refinement in performance and efficiency. Alongside this
+  framework, we introduce Mobile-Eval-E, a new benchmark featuring complex mobile tasks requiring long-horizon,
+  multi-app interactions. Empirical results show that Mobile-Agent-E achieves a 22% absolute improvement
+  over previous state-of-the-art approaches across three foundation model backbones. Project page: https://x-plug.github.io/MobileAgent.'
+venue: arXiv.org
+year: 2025
+source: arxiv
+source_url: https://arxiv.org/abs/2501.11733
+pdf_url: https://arxiv.org/pdf/2501.11733
+pdf_sha256: de85cc958fd92410ffb846d93e89b47c9e88de29a2333517cee9dae9bf65ee0e
+fetched_at: '2026-06-06T07:57:46Z'
+source_updated_at: null
+ids:
+  doi: 10.48550/arXiv.2501.11733
+  arxiv_id: '2501.11733'
+  arxiv_base_id: '2501.11733'
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: 52babb057c4c6493bef95ae7a67984d7f365e2a8
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: recency(1.00), novelty(1.00), interest_fit(0.73) | interests:
+    computer_use_agents:group:computer_use_agents | milestone/foundational floor applied'
+  matched_interests:
+  - computer_use_agents:group:computer_use_agents
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 1.0
+    venue_quality: 0.4
+    harness_relevance: 0.36
+    novelty: 1.0
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/mobile-agent-e-self-evolving-mobile-assistant-250111733/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

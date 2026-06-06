@@ -1,0 +1,66 @@
+canonical_key: arxiv-2508.14040
+slug: computerrl-scaling-end-to-end-online-reinforcement-250814040
+title: 'ComputerRL: Scaling End-to-End Online Reinforcement Learning for Computer Use Agents'
+authors:
+- Hanyu Lai
+- Xiao Liu
+- Yanxiao Zhao
+- Hang Xu
+- Hanchen Zhang
+- Bohao Jing
+- Yanyu Ren
+- Shuntian Yao
+- Yuxiao Dong
+- Jie Tang
+year: 2025
+primary_ids:
+  doi: 10.48550/arXiv.2508.14040
+  arxiv_base_id: '2508.14040'
+  openreview_id: null
+  semantic_scholar_id: 40a7e877cb4d60599a6dafef5487d75018a70fd7
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2508.14040
+- https://arxiv.org/pdf/2508.14040
+topic_groups:
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: arXiv.org
+  tier: workshop_or_minor
+  status: unknown
+  year: 2025
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: recent
+  significance: API-GUI paradigm + distributed RL over thousands of parallel desktops; AutoGLM-OS new
+    open OSWorld SOTA at the time.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2508.14040
+  pdf_path: library/computerrl-scaling-end-to-end-online-reinforcement-250814040/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/computerrl-scaling-end-to-end-online-reinforcement-250814040/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:44Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: a95adc5d1039637e0ec73fc98c2681409fb7b1d19468d5d6473ec6aede1692ae
+  pdf_bytes: 14734955
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-06-06T07:57:44Z'
+  updated_at: '2026-06-06T07:57:44Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

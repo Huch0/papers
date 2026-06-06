@@ -1,0 +1,72 @@
+canonical_key: arxiv-2309.11436
+version_key: v1
+title: 'You Only Look at Screens: Multimodal Chain-of-Action Agents'
+authors:
+- Zhuosheng Zhang
+- Aston Zhang
+abstract: Autonomous graphical user interface (GUI) agents aim to facilitate task automation by interacting
+  with the user interface without manual intervention. Recent studies have investigated eliciting the
+  capabilities of large language models (LLMs) for effective engagement in diverse environments. To align
+  with the input-output requirement of LLMs, most existing approaches are developed under a sandbox setting
+  where they rely on external tools and application-specific APIs to parse the environment into textual
+  elements and interpret the predicted actions. Consequently, those approaches often grapple with inference
+  inefficiency and error propagation risks. To mitigate the challenges, we introduce Auto-GUI, a multimodal
+  solution that directly interacts with the interface, bypassing the need for environment parsing or reliance
+  on application-dependent APIs. Moreover, we propose a chain-of-action technique -- leveraging a series
+  of intermediate previous action histories and future action plans -- to help the agent decide what action
+  to execute. We evaluate our approach on a new device-control benchmark AITW with 30$K$ unique instructions,
+  spanning multi-step tasks such as application operation, web searching, and web shopping. Experimental
+  results show that Auto-GUI achieves state-of-the-art performance with an action type prediction accuracy
+  of 90\% and an overall action success rate of 74\%. Code is publicly available at https://github.com/cooelf/Auto-GUI.
+venue: Annual Meeting of the Association for Computational Linguistics
+year: 2023
+source: arxiv
+source_url: https://arxiv.org/abs/2309.11436
+pdf_url: https://arxiv.org/pdf/2309.11436
+pdf_sha256: a2469dee59038a4fb768734f1573b11911d9c4d88ab5e82bf2e1095e62baf3c0
+fetched_at: '2026-06-06T07:57:30Z'
+source_updated_at: null
+ids:
+  doi: 10.48550/arXiv.2309.11436
+  arxiv_id: '2309.11436'
+  arxiv_base_id: '2309.11436'
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: 6ab33b17cd45e7cbd2cb9b0c5a2d56e5eac1c814
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: recency(1.00), venue_quality(1.00), novelty(0.80) | interests:
+    computer_use_agents:group:computer_use_agents | milestone/foundational floor applied'
+  matched_interests:
+  - computer_use_agents:group:computer_use_agents
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 1.0
+    venue_quality: 1.0
+    harness_relevance: 0.68
+    novelty: 0.8
+    artifact_availability: 0.55
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/you-only-look-at-screens-multimodal-chain-230911436/v1/paper.pdf
+  extraction: library/you-only-look-at-screens-multimodal-chain-230911436/v1/extraction.txt
+  summary: library/you-only-look-at-screens-multimodal-chain-230911436/v1/summary.md
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread

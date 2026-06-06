@@ -1,0 +1,84 @@
+canonical_key: arxiv-2408.15978
+version_key: v1
+title: 'WebPilot: A Versatile and Autonomous Multi-Agent System for Web Task Execution with Strategic
+  Exploration'
+authors:
+- Yao Zhang
+- Zijian Ma
+- Yunpu Ma
+- Zhen Han
+- Yu Wu
+- Volker Tresp
+abstract: LLM-based autonomous agents often fail to execute complex web tasks that require dynamic interaction,
+  largely due to the inherent uncertainty and complexity of these environments. Existing LLM-based web
+  agents typically rely on rigid, expert-designed policies specific to certain states and actions, lacking
+  the flexibility and generalizability needed to adapt to unseen tasks. In contrast, humans excel by exploring
+  unknowns, continuously adapting strategies based on new observations, and resolving ambiguities through
+  exploration. To emulate human-like adaptability, web agents need strategic exploration and complex decision-making.
+  Monte Carlo Tree Search (MCTS) is well-suited for this, but classical MCTS struggles with vast action
+  spaces, unpredictable state transitions, and incomplete information in web tasks. In light of this,
+  we develop WebPilot, a multi-agent system with a dual optimization strategy that improves MCTS to better
+  handle complex web environments. Specifically, the Global Optimization phase involves generating a high-level
+  plan by breaking down tasks into manageable subtasks, continuously refining this plan through reflective
+  analysis of new observations and previous subtask attempts, thereby focusing the search process and
+  mitigating challenges posed by vast action spaces in classical MCTS. Subsequently, the Local Optimization
+  phase executes each subtask using a tailored MCTS designed for complex environments, effectively addressing
+  uncertainties and managing incomplete information by iteratively refining decisions based on new observations.
+  Experimental results on WebArena and MiniWoB++ demonstrate the effectiveness of WebPilot. Notably, on
+  WebArena, WebPilot achieves SOTA performance with GPT-4, achieving a 93% relative increase in success
+  rate over the concurrent tree search-based method. WebPilot advances autonomous agents, enabling more
+  reliable decision-making in practical environments.
+venue: AAAI Conference on Artificial Intelligence
+year: 2024
+source: arxiv
+source_url: https://arxiv.org/abs/2408.15978
+pdf_url: https://arxiv.org/pdf/2408.15978
+pdf_sha256: 156abc4199413d6a6c1f204c8cac6b00d717d98c4746dc5ea63b4bd267669e2a
+fetched_at: '2026-06-06T07:57:33Z'
+source_updated_at: null
+ids:
+  doi: 10.48550/arXiv.2408.15978
+  arxiv_id: '2408.15978'
+  arxiv_base_id: '2408.15978'
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: bf27f8cc6737700934f214180f5e62e71338b347
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: recency(1.00), venue_quality(1.00), interest_fit(0.91) |
+    interests: computer_use_agents:web agent, computer_use_agents:group:computer_use_agents | milestone/foundational
+    floor applied'
+  matched_interests:
+  - computer_use_agents:web agent
+  - computer_use_agents:group:computer_use_agents
+  negative_signals: []
+  subscores:
+    interest_fit: 0.91
+    recency: 1.0
+    venue_quality: 1.0
+    harness_relevance: 0.36
+    novelty: 0.0
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.7
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/webpilot-a-versatile-and-autonomous-multi-agent-240815978/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

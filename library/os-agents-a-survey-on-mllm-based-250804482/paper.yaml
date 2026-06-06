@@ -1,0 +1,85 @@
+canonical_key: arxiv-2508.04482
+slug: os-agents-a-survey-on-mllm-based-250804482
+title: 'OS Agents: A Survey on MLLM-based Agents for General Computing Devices Use'
+authors:
+- Xueyu Hu
+- Tao Xiong
+- Biao Yi
+- Zishu Wei
+- Ruixuan Xiao
+- Yurun Chen
+- Jiasheng Ye
+- Meiling Tao
+- Xiangxin Zhou
+- Ziyu Zhao
+- Yuhuai Li
+- Shengze Xu
+- Shenzhi Wang
+- Xinchen Xu
+- Shuofei Qiao
+- Zhaokai Wang
+- Kun Kuang
+- Tieyong Zeng
+- Liang Wang
+- Jiwei Li
+- Y. Jiang
+- Wangchunshu Zhou
+- Guoyin Wang
+- Keting Yin
+- Zhou Zhao
+- Hongxia Yang
+- Fan Wu
+- Shengyu Zhang
+- Fei Wu
+year: 2025
+primary_ids:
+  doi: 10.48550/arXiv.2508.04482
+  arxiv_base_id: '2508.04482'
+  openreview_id: null
+  semantic_scholar_id: a33c1095a4202ec1333062f49026f5d9ab945f31
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2508.04482
+- https://arxiv.org/pdf/2508.04482
+topic_groups:
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: arXiv.org
+  tier: workshop_or_minor
+  status: unknown
+  year: 2025
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: recent
+  significance: Unifying survey across computer/phone/browser OS agents covering foundations, capabilities,
+    and benchmarks.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2508.04482
+  pdf_path: library/os-agents-a-survey-on-mllm-based-250804482/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/os-agents-a-survey-on-mllm-based-250804482/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:47Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: 60764631e290b8196378e2953b079eaba174fc91bba5a205fdd7f26fd8939a89
+  pdf_bytes: 3596639
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-06-06T07:57:47Z'
+  updated_at: '2026-06-06T07:57:47Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

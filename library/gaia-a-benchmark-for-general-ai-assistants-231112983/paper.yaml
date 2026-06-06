@@ -1,0 +1,62 @@
+canonical_key: arxiv-2311.12983
+slug: gaia-a-benchmark-for-general-ai-assistants-231112983
+title: 'GAIA: a benchmark for General AI Assistants'
+authors:
+- G. Mialon
+- Clémentine Fourrier
+- Craig Swift
+- Thomas Wolf
+- Yann LeCun
+- Thomas Scialom
+year: 2023
+primary_ids:
+  doi: 10.48550/arXiv.2311.12983
+  arxiv_base_id: '2311.12983'
+  openreview_id: null
+  semantic_scholar_id: ab8169d6e4dfabfe7c30ebec1bb871bf3e1551cd
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2311.12983
+- https://arxiv.org/pdf/2311.12983
+topic_groups:
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: arXiv.org
+  tier: workshop_or_minor
+  status: unknown
+  year: 2023
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: emergence
+  significance: General-assistant benchmark (browsing, files, tools); de facto target for OS/desktop-style
+    autonomous assistants.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2311.12983
+  pdf_path: library/gaia-a-benchmark-for-general-ai-assistants-231112983/v1/paper.pdf
+  summary_path: library/gaia-a-benchmark-for-general-ai-assistants-231112983/v1/summary.md
+  metadata_path: library/gaia-a-benchmark-for-general-ai-assistants-231112983/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:28Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: 5bf6f968d4f5cd20acdfca6e81e3c9f5277bb66061fad7a02e35442dff812ba0
+  pdf_bytes: 4254059
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-06-06T07:57:28Z'
+  updated_at: '2026-06-06T08:09:34Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

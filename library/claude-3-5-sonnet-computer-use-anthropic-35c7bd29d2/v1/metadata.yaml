@@ -1,0 +1,60 @@
+canonical_key: title-4a35c7bd29d2
+version_key: v1
+title: Claude 3.5 Sonnet Computer Use (Anthropic)
+authors: []
+abstract: First frontier model shipped with general computer use (screenshot + mouse/keyboard) via API;
+  catalyzed the commercial CUA wave.
+venue: tech report
+year: 2024
+source: manual
+source_url: null
+pdf_url: null
+pdf_sha256: null
+fetched_at: '2026-06-06T07:57:49Z'
+source_updated_at: null
+ids:
+  doi: null
+  arxiv_id: null
+  arxiv_base_id: null
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: recency(1.00), author_or_lab_signal(1.00), interest_fit(0.73)
+    | interests: computer_use_agents:group:computer_use_agents | negatives: abstract_only | milestone/foundational
+    floor applied'
+  matched_interests:
+  - computer_use_agents:group:computer_use_agents
+  negative_signals:
+  - abstract_only
+  subscores:
+    interest_fit: 0.73
+    recency: 1.0
+    venue_quality: 0.3
+    harness_relevance: 0.0
+    novelty: 0.55
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 1.0
+artifacts:
+  pdf: null
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: false
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

@@ -1,0 +1,66 @@
+canonical_key: arxiv-2406.01014
+slug: mobile-agent-v2-mobile-device-operation-assistant-240601014
+title: 'Mobile-Agent-v2: Mobile Device Operation Assistant with Effective Navigation via Multi-Agent Collaboration'
+authors:
+- Junyang Wang
+- Haiyang Xu
+- Haitao Jia
+- Xi Zhang
+- Ming Yan
+- Weizhou Shen
+- Ji Zhang
+- Fei Huang
+- Jitao Sang
+year: 2024
+primary_ids:
+  doi: 10.48550/arXiv.2406.01014
+  arxiv_base_id: '2406.01014'
+  openreview_id: null
+  semantic_scholar_id: 085a13ac9dfb4180e3fefbe4f7a426f8081d3a9c
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2406.01014
+- https://arxiv.org/pdf/2406.01014
+topic_groups:
+- computer_use_agents
+- general_agent_methods
+tags:
+- foundational
+venue:
+  name: Neural Information Processing Systems
+  tier: unknown
+  status: unknown
+  year: 2024
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: expansion
+  significance: Planning/decision/reflection multi-agent architecture markedly improving long-horizon
+    mobile navigation.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2406.01014
+  pdf_path: library/mobile-agent-v2-mobile-device-operation-assistant-240601014/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/mobile-agent-v2-mobile-device-operation-assistant-240601014/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:36Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: cc3d977b738a12efbdbc4a5af5161b9881de89ebe83e488ac72e7dcd6e7eb8d1
+  pdf_bytes: 30180667
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-06-06T07:57:36Z'
+  updated_at: '2026-06-06T07:57:36Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

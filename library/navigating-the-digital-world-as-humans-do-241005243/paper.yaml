@@ -1,0 +1,64 @@
+canonical_key: arxiv-2410.05243
+slug: navigating-the-digital-world-as-humans-do-241005243
+title: 'Navigating the Digital World as Humans Do: Universal Visual Grounding for GUI Agents'
+authors:
+- Boyu Gou
+- Ruohan Wang
+- Boyuan Zheng
+- Yanan Xie
+- Cheng Chang
+- Yiheng Shu
+- Huan Sun
+- Yu Su
+year: 2024
+primary_ids:
+  doi: 10.48550/arXiv.2410.05243
+  arxiv_base_id: '2410.05243'
+  openreview_id: null
+  semantic_scholar_id: a15a4cabe7653a87efc3302552fbc88b25d19dc1
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2410.05243
+- https://arxiv.org/pdf/2410.05243
+topic_groups:
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: International Conference on Learning Representations
+  tier: A_star
+  status: unknown
+  year: 2024
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: expansion
+  significance: Human-like pixel-only perception; universal grounding model trained on 10M synthesized
+    elements; advanced ScreenSpot + downstream SOTA.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2410.05243
+  pdf_path: library/navigating-the-digital-world-as-humans-do-241005243/v1/paper.pdf
+  summary_path: library/navigating-the-digital-world-as-humans-do-241005243/v1/summary.md
+  metadata_path: library/navigating-the-digital-world-as-humans-do-241005243/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:34Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: b166b8e09f604e64067d12ded4689e7582df106988b28f018651835843b04e68
+  pdf_bytes: 18205895
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-06-06T07:57:34Z'
+  updated_at: '2026-06-06T11:10:51Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

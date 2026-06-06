@@ -1,0 +1,122 @@
+canonical_key: arxiv-2510.19949
+version_key: v1
+title: 'Surfer 2: The Next Generation of Cross-Platform Computer Use Agents'
+authors:
+- Mathieu Andreux
+- Mart Bakler
+- Yanael Barbier
+- Hamza Ben Chekroun
+- Emilien Bir'e
+- Antoine Bonnet
+- Riaz Bordie
+- Nathan Bout
+- Matthias Brunel
+- Aleix Cambray
+- Pierre-Louis Cedoz
+- Antoine Chassang
+- Gautier Cloix
+- Ethan Connelly
+- Alexandra D. Constantinou
+- Ramzi De Coster
+- Hubert de la Jonquiere
+- A. Delfosse
+- Maxime Delpit
+- Alexis Deprez
+- Augustin Derupti
+- Mathieu Diaz
+- S. D'souza
+- J. Dujardin
+- Abai Edmund
+- Michael Eickenberg
+- Armand Fatalot
+- Wissem Felissi
+- Isaac Herring
+- Xavier Koegler
+- Erwan Le Jumeau de Kergaradec
+- Aur'elien Lac
+- Maxime Langevin
+- Corentin Lauverjat
+- Ant'onio Loison
+- Avshalom Manevich
+- Axel Moyal
+- Axel Nguyen Kerbel
+- Marinela Parovic
+- Julien Revelle
+- Guillaume Richard
+- Mats L. Richter
+- Ronan Riochet
+- María Santos
+- Romain Savidan
+- L. Sifre
+- Maxime Theillard
+- M. Thibault
+- Ivan Valentini
+- Tony Wu
+- Laura Yie
+- Kai Yuan
+- Jevgenij Zubovskij
+abstract: Building agents that generalize across web, desktop, and mobile environments remains an open
+  challenge, as prior systems rely on environment-specific interfaces that limit cross-platform deployment.
+  We introduce Surfer 2, a unified architecture operating purely from visual observations that achieves
+  state-of-the-art performance across all three environments. Surfer 2 integrates hierarchical context
+  management, decoupled planning and execution, and self-verification with adaptive recovery, enabling
+  reliable operation over long task horizons. Our system achieves 97.1% accuracy on WebVoyager, 69.6%
+  on WebArena, 60.1% on OSWorld, and 87.1% on AndroidWorld, outperforming all prior systems without task-specific
+  fine-tuning. With multiple attempts, Surfer 2 exceeds human performance on all benchmarks. These results
+  demonstrate that systematic orchestration amplifies foundation model capabilities and enables general-purpose
+  computer control through visual interaction alone, while calling for a next-generation vision language
+  model to achieve Pareto-optimal cost-efficiency.
+venue: arXiv.org
+year: 2025
+source: arxiv
+source_url: https://arxiv.org/abs/2510.19949
+pdf_url: https://arxiv.org/pdf/2510.19949
+pdf_sha256: b513b01d890f1e358e10d09d1ce4ca5da360c0211531cb922f00e733dc129572
+fetched_at: '2026-06-06T07:57:45Z'
+source_updated_at: null
+ids:
+  doi: 10.48550/arXiv.2510.19949
+  arxiv_id: '2510.19949'
+  arxiv_base_id: '2510.19949'
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: 02ab2978f6f7b6cfee15b8f0faf89abdda81bf78
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: recency(1.00), trend_signal(1.00), interest_fit(0.91) |
+    interests: computer_use_agents:computer use agent, computer_use_agents:group:computer_use_agents |
+    milestone/foundational floor applied'
+  matched_interests:
+  - computer_use_agents:computer use agent
+  - computer_use_agents:group:computer_use_agents
+  negative_signals: []
+  subscores:
+    interest_fit: 0.91
+    recency: 1.0
+    venue_quality: 0.4
+    harness_relevance: 0.52
+    novelty: 0.8
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 1.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/surfer-2-the-next-generation-of-cross-251019949/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

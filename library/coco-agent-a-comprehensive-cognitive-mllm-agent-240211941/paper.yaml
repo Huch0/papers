@@ -1,0 +1,59 @@
+canonical_key: arxiv-2402.11941
+slug: coco-agent-a-comprehensive-cognitive-mllm-agent-240211941
+title: 'CoCo-Agent: A Comprehensive Cognitive MLLM Agent for Smartphone GUI Automation'
+authors:
+- Xinbei Ma
+- Zhuosheng Zhang
+- Hai Zhao
+year: 2024
+primary_ids:
+  doi: 10.18653/v1/2024.findings-acl.539
+  arxiv_base_id: '2402.11941'
+  openreview_id: null
+  semantic_scholar_id: 9b63c513d7131433b5d4d4ef5449d63b1a079e96
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2402.11941
+- https://arxiv.org/pdf/2402.11941
+topic_groups:
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: Annual Meeting of the Association for Computational Linguistics
+  tier: A_star
+  status: unknown
+  year: 2024
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: foundational
+  significance: Comprehensive environment perception + conditional action prediction; SOTA on AitW and
+    META-GUI among trained MLLM agents.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2402.11941
+  pdf_path: library/coco-agent-a-comprehensive-cognitive-mllm-agent-240211941/v1/paper.pdf
+  summary_path: library/coco-agent-a-comprehensive-cognitive-mllm-agent-240211941/v1/summary.md
+  metadata_path: library/coco-agent-a-comprehensive-cognitive-mllm-agent-240211941/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:29Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: a9c5450608c37f6ce45097683daba57b288ef09bb69f308bad0b292147278da3
+  pdf_bytes: 4674724
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-06-06T07:57:29Z'
+  updated_at: '2026-06-06T08:17:44Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

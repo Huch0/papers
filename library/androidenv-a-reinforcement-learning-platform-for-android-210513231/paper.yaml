@@ -1,0 +1,65 @@
+canonical_key: arxiv-2105.13231
+slug: androidenv-a-reinforcement-learning-platform-for-android-210513231
+title: 'AndroidEnv: A Reinforcement Learning Platform for Android'
+authors:
+- Daniel Toyama
+- P. Hamel
+- Anita Gergely
+- Gheorghe Comanici
+- A. Glaese
+- Zafarali Ahmed
+- Tyler Jackson
+- Shibl Mourad
+- Doina Precup
+year: 2021
+primary_ids:
+  doi: null
+  arxiv_base_id: '2105.13231'
+  openreview_id: null
+  semantic_scholar_id: 982f5f3e9c21f252018bb6fe27930e4e7bda74f8
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2105.13231
+- https://arxiv.org/pdf/2105.13231
+topic_groups:
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: arXiv.org
+  tier: workshop_or_minor
+  status: unknown
+  year: 2021
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: emergence
+  significance: DeepMind RL environment exposing a real Android device via touchscreen + pixels; foundational
+    device-control platform.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2105.13231
+  pdf_path: library/androidenv-a-reinforcement-learning-platform-for-android-210513231/v1/paper.pdf
+  summary_path: library/androidenv-a-reinforcement-learning-platform-for-android-210513231/v1/summary.md
+  metadata_path: library/androidenv-a-reinforcement-learning-platform-for-android-210513231/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:28Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: 2f7316bf778e393e3fd7ffcbed0a49cce94fac49ba11a9e79062176fc54f6a6e
+  pdf_bytes: 3755035
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-06-06T07:57:28Z'
+  updated_at: '2026-06-06T08:08:38Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

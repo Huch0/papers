@@ -1,0 +1,62 @@
+canonical_key: arxiv-2309.17421
+slug: the-dawn-of-lmms-preliminary-explorations-with-230917421
+title: 'The Dawn of LMMs: Preliminary Explorations with GPT-4V(ision)'
+authors:
+- Zhengyuan Yang
+- Linjie Li
+- Kevin Lin
+- Jianfeng Wang
+- Chung-Ching Lin
+- Zicheng Liu
+- Lijuan Wang
+year: 2023
+primary_ids:
+  doi: 10.48550/arXiv.2309.17421
+  arxiv_base_id: '2309.17421'
+  openreview_id: null
+  semantic_scholar_id: 54814744b42b06c855c97b23de1366e0bcbe775a
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2309.17421
+- https://arxiv.org/pdf/2309.17421
+topic_groups:
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: arXiv.org
+  tier: workshop_or_minor
+  status: unknown
+  year: 2023
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: foundational
+  significance: Influential probe of GPT-4V that surfaced visual referring prompting for GUI interaction.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2309.17421
+  pdf_path: library/the-dawn-of-lmms-preliminary-explorations-with-230917421/v1/paper.pdf
+  summary_path: library/the-dawn-of-lmms-preliminary-explorations-with-230917421/v1/summary.md
+  metadata_path: library/the-dawn-of-lmms-preliminary-explorations-with-230917421/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:31Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: 0789456681582c1bf7bbb3e03c47c022476d4bb723cfe840ed8a183fb67ef198
+  pdf_bytes: 45669728
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-06-06T07:57:31Z'
+  updated_at: '2026-06-06T08:18:40Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

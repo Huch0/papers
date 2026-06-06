@@ -1,0 +1,82 @@
+canonical_key: arxiv-2508.14040
+version_key: v1
+title: 'ComputerRL: Scaling End-to-End Online Reinforcement Learning for Computer Use Agents'
+authors:
+- Hanyu Lai
+- Xiao Liu
+- Yanxiao Zhao
+- Hang Xu
+- Hanchen Zhang
+- Bohao Jing
+- Yanyu Ren
+- Shuntian Yao
+- Yuxiao Dong
+- Jie Tang
+abstract: We introduce ComputerRL, a framework for autonomous desktop intelligence that enables agents
+  to operate complex digital workspaces skillfully. ComputerRL features the API-GUI paradigm, which unifies
+  programmatic API calls and direct GUI interaction to address the inherent mismatch between machine agents
+  and human-centric desktop environments. Scaling end-to-end RL training is crucial for improvement and
+  generalization across diverse desktop tasks; however, it remains challenging due to environmental inefficiency
+  and instability during extended training. To support scalable and robust training, we develop a distributed
+  RL infrastructure capable of orchestrating thousands of parallel virtual desktop environments to accelerate
+  large-scale online RL. Furthermore, we propose Entropulse, a training strategy that alternates reinforcement
+  learning with supervised fine-tuning, effectively mitigating entropy collapse during extended training
+  runs. We employ ComputerRL on open models GLM-4-9B-0414 and GLM-4.1V-9B-Thinking, and evaluate them
+  on the OSWorld benchmark. The AutoGLM-OS-9B achieves a new state-of-the-art accuracy of 48.9%, demonstrating
+  significant improvements for general agents in desktop automation. Our code and the new OfficeWorld
+  benchmark are available at https://github.com/thudm/ComputerRL. The algorithm and framework are adopted
+  in building AutoGLM (Liu et al., 2024b).
+venue: arXiv.org
+year: 2025
+source: arxiv
+source_url: https://arxiv.org/abs/2508.14040
+pdf_url: https://arxiv.org/pdf/2508.14040
+pdf_sha256: a95adc5d1039637e0ec73fc98c2681409fb7b1d19468d5d6473ec6aede1692ae
+fetched_at: '2026-06-06T07:57:44Z'
+source_updated_at: null
+ids:
+  doi: 10.48550/arXiv.2508.14040
+  arxiv_id: '2508.14040'
+  arxiv_base_id: '2508.14040'
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: 40a7e877cb4d60599a6dafef5487d75018a70fd7
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: recency(1.00), interest_fit(0.91), novelty(0.80) | interests:
+    computer_use_agents:computer use agent, computer_use_agents:group:computer_use_agents | milestone/foundational
+    floor applied'
+  matched_interests:
+  - computer_use_agents:computer use agent
+  - computer_use_agents:group:computer_use_agents
+  negative_signals: []
+  subscores:
+    interest_fit: 0.91
+    recency: 1.0
+    venue_quality: 0.4
+    harness_relevance: 0.52
+    novelty: 0.8
+    artifact_availability: 0.55
+    evaluation_quality: 0.0
+    trend_signal: 0.7
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/computerrl-scaling-end-to-end-online-reinforcement-250814040/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

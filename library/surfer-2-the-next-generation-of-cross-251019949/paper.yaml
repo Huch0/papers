@@ -1,0 +1,109 @@
+canonical_key: arxiv-2510.19949
+slug: surfer-2-the-next-generation-of-cross-251019949
+title: 'Surfer 2: The Next Generation of Cross-Platform Computer Use Agents'
+authors:
+- Mathieu Andreux
+- Mart Bakler
+- Yanael Barbier
+- Hamza Ben Chekroun
+- Emilien Bir'e
+- Antoine Bonnet
+- Riaz Bordie
+- Nathan Bout
+- Matthias Brunel
+- Aleix Cambray
+- Pierre-Louis Cedoz
+- Antoine Chassang
+- Gautier Cloix
+- Ethan Connelly
+- Alexandra D. Constantinou
+- Ramzi De Coster
+- Hubert de la Jonquiere
+- A. Delfosse
+- Maxime Delpit
+- Alexis Deprez
+- Augustin Derupti
+- Mathieu Diaz
+- S. D'souza
+- J. Dujardin
+- Abai Edmund
+- Michael Eickenberg
+- Armand Fatalot
+- Wissem Felissi
+- Isaac Herring
+- Xavier Koegler
+- Erwan Le Jumeau de Kergaradec
+- Aur'elien Lac
+- Maxime Langevin
+- Corentin Lauverjat
+- Ant'onio Loison
+- Avshalom Manevich
+- Axel Moyal
+- Axel Nguyen Kerbel
+- Marinela Parovic
+- Julien Revelle
+- Guillaume Richard
+- Mats L. Richter
+- Ronan Riochet
+- María Santos
+- Romain Savidan
+- L. Sifre
+- Maxime Theillard
+- M. Thibault
+- Ivan Valentini
+- Tony Wu
+- Laura Yie
+- Kai Yuan
+- Jevgenij Zubovskij
+year: 2025
+primary_ids:
+  doi: 10.48550/arXiv.2510.19949
+  arxiv_base_id: '2510.19949'
+  openreview_id: null
+  semantic_scholar_id: 02ab2978f6f7b6cfee15b8f0faf89abdda81bf78
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2510.19949
+- https://arxiv.org/pdf/2510.19949
+topic_groups:
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: arXiv.org
+  tier: workshop_or_minor
+  status: unknown
+  year: 2025
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: recent
+  significance: Unified vision-only architecture with hierarchical context, decoupled planning/execution,
+    self-verification; strong web/desktop/mobile.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2510.19949
+  pdf_path: library/surfer-2-the-next-generation-of-cross-251019949/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/surfer-2-the-next-generation-of-cross-251019949/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:45Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: b513b01d890f1e358e10d09d1ce4ca5da360c0211531cb922f00e733dc129572
+  pdf_bytes: 3845869
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-06-06T07:57:45Z'
+  updated_at: '2026-06-06T07:57:45Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

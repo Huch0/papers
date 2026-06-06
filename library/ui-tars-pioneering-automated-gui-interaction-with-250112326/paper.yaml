@@ -1,0 +1,91 @@
+canonical_key: arxiv-2501.12326
+slug: ui-tars-pioneering-automated-gui-interaction-with-250112326
+title: 'UI-TARS: Pioneering Automated GUI Interaction with Native Agents'
+authors:
+- Yujia Qin
+- Yining Ye
+- Junjie Fang
+- Haoming Wang
+- Shihao Liang
+- Shizuo Tian
+- Junda Zhang
+- Jiahao Li
+- Yunxin Li
+- Shijue Huang
+- Wanjun Zhong
+- Kuanye Li
+- Jiale Yang
+- Yu Miao
+- Woyu Lin
+- Longxiang Liu
+- Xu Jiang
+- Qianli Ma
+- Jingyu Li
+- Xiaojun Xiao
+- Kai Cai
+- Chuang Li
+- Yaowei Zheng
+- Chaolin Jin
+- Chen Li
+- Xiao Zhou
+- Minchao Wang
+- Haoli Chen
+- Zhaojian Li
+- Haihua Yang
+- Haifeng Liu
+- Feng Lin
+- Tao Peng
+- Xin Liu
+- Guang Shi
+year: 2025
+primary_ids:
+  doi: null
+  arxiv_base_id: '2501.12326'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2501.12326v1
+- https://arxiv.org/pdf/2501.12326v1
+topic_groups:
+- computer_use_agents
+- general_agent_methods
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2025
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: recent
+  significance: Native end-to-end GUI agent model; strong recent baseline.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v1
+  source: arxiv
+  source_url: https://arxiv.org/abs/2501.12326v1
+  pdf_path: library/ui-tars-pioneering-automated-gui-interaction-with-250112326/v1/paper.pdf
+  summary_path: library/ui-tars-pioneering-automated-gui-interaction-with-250112326/v1/summary.md
+  metadata_path: library/ui-tars-pioneering-automated-gui-interaction-with-250112326/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:14:26Z'
+  source_updated_at: '2025-01-21T17:48:10Z'
+  arxiv_version: v1
+  pdf_sha256: 999d01bdd86eb39df1c322d7ab2a48f9f10d8f8a6cb2af913591612712b3964e
+  pdf_bytes: 34825215
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-06-06T07:14:26Z'
+  updated_at: '2026-06-06T07:24:20Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

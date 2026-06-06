@@ -1,0 +1,84 @@
+canonical_key: arxiv-2402.17553
+version_key: v1
+title: 'OmniACT: A Dataset and Benchmark for Enabling Multimodal Generalist Autonomous Agents for Desktop
+  and Web'
+authors:
+- Raghav Kapoor
+- Yash Butala
+- M. Russak
+- Jing Yu Koh
+- Kiran Kamble
+- Waseem Alshikh
+- Ruslan Salakhutdinov
+abstract: For decades, human-computer interaction has fundamentally been manual. Even today, almost all
+  productive work done on the computer necessitates human input at every step. Autonomous virtual agents
+  represent an exciting step in automating many of these menial tasks. Virtual agents would empower users
+  with limited technical proficiency to harness the full possibilities of computer systems. They could
+  also enable the efficient streamlining of numerous computer tasks, ranging from calendar management
+  to complex travel bookings, with minimal human intervention. In this paper, we introduce OmniACT, the
+  first-of-a-kind dataset and benchmark for assessing an agent's capability to generate executable programs
+  to accomplish computer tasks. Our scope extends beyond traditional web automation, covering a diverse
+  range of desktop applications. The dataset consists of fundamental tasks such as"Play the next song",
+  as well as longer horizon tasks such as"Send an email to John Doe mentioning the time and place to meet".
+  Specifically, given a pair of screen image and a visually-grounded natural language task, the goal is
+  to generate a script capable of fully executing the task. We run several strong baseline language model
+  agents on our benchmark. The strongest baseline, GPT-4, performs the best on our benchmark However,
+  its performance level still reaches only 15% of the human proficiency in generating executable scripts
+  capable of completing the task, demonstrating the challenge of our task for conventional web agents.
+  Our benchmark provides a platform to measure and evaluate the progress of language model agents in automating
+  computer tasks and motivates future work towards building multimodal models that bridge large language
+  models and the visual grounding of computer screens.
+venue: European Conference on Computer Vision
+year: 2024
+source: arxiv
+source_url: https://arxiv.org/abs/2402.17553
+pdf_url: https://arxiv.org/pdf/2402.17553
+pdf_sha256: 1c17f052fc21bf1095cb5a24c96145793d9c41f739cc6bb0e2c3fe3f3d096de4
+fetched_at: '2026-06-06T07:57:29Z'
+source_updated_at: null
+ids:
+  doi: 10.48550/arXiv.2402.17553
+  arxiv_id: '2402.17553'
+  arxiv_base_id: '2402.17553'
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: c7d35995a9a4d49011cf47f130535e1391ebeebc
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: recency(1.00), interest_fit(0.91), novelty(0.80) | interests:
+    computer_use_agents:web agent, computer_use_agents:group:computer_use_agents | milestone/foundational
+    floor applied'
+  matched_interests:
+  - computer_use_agents:web agent
+  - computer_use_agents:group:computer_use_agents
+  negative_signals: []
+  subscores:
+    interest_fit: 0.91
+    recency: 1.0
+    venue_quality: 0.3
+    harness_relevance: 0.36
+    novelty: 0.8
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/omniact-a-dataset-and-benchmark-for-enabling-240217553/v1/paper.pdf
+  extraction: library/omniact-a-dataset-and-benchmark-for-enabling-240217553/v1/extraction.txt
+  summary: library/omniact-a-dataset-and-benchmark-for-enabling-240217553/v1/summary.md
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread

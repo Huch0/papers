@@ -1,0 +1,67 @@
+canonical_key: arxiv-2401.13649
+slug: visualwebarena-evaluating-multimodal-agents-on-realistic-visual-240113649
+title: 'VisualWebArena: Evaluating Multimodal Agents on Realistic Visual Web Tasks'
+authors:
+- Jing Yu Koh
+- Robert Lo
+- L. Jang
+- Vikram Duvvur
+- Ming Chong Lim
+- Po-Yu Huang
+- Graham Neubig
+- Shuyan Zhou
+- Ruslan Salakhutdinov
+- Daniel Fried
+year: 2024
+primary_ids:
+  doi: null
+  arxiv_base_id: '2401.13649'
+  openreview_id: null
+  semantic_scholar_id: 29940eb40e36ba67f0d2ceb5571ebbc299eee11b
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2401.13649
+- https://arxiv.org/pdf/2401.13649
+topic_groups:
+- computer_use_agents
+- general_agent_methods
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2024
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: expansion
+  significance: Extended WebArena with visually grounded tasks; standard benchmark for multimodal/VLM
+    web agents.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2401.13649
+  pdf_path: library/visualwebarena-evaluating-multimodal-agents-on-realistic-visual-240113649/v1/paper.pdf
+  summary_path: library/visualwebarena-evaluating-multimodal-agents-on-realistic-visual-240113649/v1/summary.md
+  metadata_path: library/visualwebarena-evaluating-multimodal-agents-on-realistic-visual-240113649/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:32Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: 8674b4ae17290bb797e5988706f765c75a3310a4e9d14cbd32497e40235ff795
+  pdf_bytes: 4564902
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-06-06T07:57:32Z'
+  updated_at: '2026-06-06T11:09:51Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

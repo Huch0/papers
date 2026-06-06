@@ -1,0 +1,72 @@
+canonical_key: arxiv-2403.03186
+slug: cradle-empowering-foundation-agents-towards-general-computer-240303186
+title: 'Cradle: Empowering Foundation Agents towards General Computer Control'
+authors:
+- Weihao Tan
+- Ziluo Ding
+- Wentao Zhang
+- Boyu Li
+- Bohan Zhou
+- Junpeng Yue
+- Haochong Xia
+- Jiechuan Jiang
+- Longtao Zheng
+- Xinrun Xu
+- Yifei Bi
+- Pengjie Gu
+- Xinrun Wang
+- Börje F. Karlsson
+- Bo An
+- Zongqing Lu
+year: 2024
+primary_ids:
+  doi: null
+  arxiv_base_id: '2403.03186'
+  openreview_id: null
+  semantic_scholar_id: 52976286324d79c3349cf1cd101aa3a8832d2954
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2403.03186
+- https://arxiv.org/pdf/2403.03186
+topic_groups:
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: International Conference on Machine Learning
+  tier: A_star
+  status: unknown
+  year: 2024
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: foundational
+  significance: Defined General Computer Control (screenshots in, keyboard/mouse out) with modular self-reflective
+    framework across games/apps/OSWorld.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2403.03186
+  pdf_path: library/cradle-empowering-foundation-agents-towards-general-computer-240303186/v1/paper.pdf
+  summary_path: library/cradle-empowering-foundation-agents-towards-general-computer-240303186/v1/summary.md
+  metadata_path: library/cradle-empowering-foundation-agents-towards-general-computer-240303186/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:29Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: c397d96784867e3e8d5321bff5094c3224df8eca282ed5ba8790a6923d03cc97
+  pdf_bytes: 34754202
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-06-06T07:57:29Z'
+  updated_at: '2026-06-06T08:22:49Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

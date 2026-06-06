@@ -1,0 +1,80 @@
+canonical_key: arxiv-2309.17421
+version_key: v1
+title: 'The Dawn of LMMs: Preliminary Explorations with GPT-4V(ision)'
+authors:
+- Zhengyuan Yang
+- Linjie Li
+- Kevin Lin
+- Jianfeng Wang
+- Chung-Ching Lin
+- Zicheng Liu
+- Lijuan Wang
+abstract: 'Large multimodal models (LMMs) extend large language models (LLMs) with multi-sensory skills,
+  such as visual understanding, to achieve stronger generic intelligence. In this paper, we analyze the
+  latest model, GPT-4V(ision), to deepen the understanding of LMMs. The analysis focuses on the intriguing
+  tasks that GPT-4V can perform, containing test samples to probe the quality and genericity of GPT-4V''s
+  capabilities, its supported inputs and working modes, and the effective ways to prompt the model. In
+  our approach to exploring GPT-4V, we curate and organize a collection of carefully designed qualitative
+  samples spanning a variety of domains and tasks. Observations from these samples demonstrate that GPT-4V''s
+  unprecedented ability in processing arbitrarily interleaved multimodal inputs and the genericity of
+  its capabilities together make GPT-4V a powerful multimodal generalist system. Furthermore, GPT-4V''s
+  unique capability of understanding visual markers drawn on input images can give rise to new human-computer
+  interaction methods such as visual referring prompting. We conclude the report with in-depth discussions
+  on the emerging application scenarios and the future research directions for GPT-4V-based systems. We
+  hope that this preliminary exploration will inspire future research on the next-generation multimodal
+  task formulation, new ways to exploit and enhance LMMs to solve real-world problems, and gaining better
+  understanding of multimodal foundation models. Finally, we acknowledge that the model under our study
+  is solely the product of OpenAI''s innovative work, and they should be fully credited for its development.
+  Please see the GPT-4V contributions paper for the authorship and credit attribution: https://cdn.openai.com/contributions/gpt-4v.pdf'
+venue: arXiv.org
+year: 2023
+source: arxiv
+source_url: https://arxiv.org/abs/2309.17421
+pdf_url: https://arxiv.org/pdf/2309.17421
+pdf_sha256: 0789456681582c1bf7bbb3e03c47c022476d4bb723cfe840ed8a183fb67ef198
+fetched_at: '2026-06-06T07:57:31Z'
+source_updated_at: null
+ids:
+  doi: 10.48550/arXiv.2309.17421
+  arxiv_id: '2309.17421'
+  arxiv_base_id: '2309.17421'
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: 54814744b42b06c855c97b23de1366e0bcbe775a
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: recency(1.00), author_or_lab_signal(1.00), interest_fit(0.73)
+    | interests: computer_use_agents:group:computer_use_agents | milestone/foundational floor applied'
+  matched_interests:
+  - computer_use_agents:group:computer_use_agents
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 1.0
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 0.0
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 1.0
+artifacts:
+  pdf: library/the-dawn-of-lmms-preliminary-explorations-with-230917421/v1/paper.pdf
+  extraction: library/the-dawn-of-lmms-preliminary-explorations-with-230917421/v1/extraction.txt
+  summary: library/the-dawn-of-lmms-preliminary-explorations-with-230917421/v1/summary.md
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread

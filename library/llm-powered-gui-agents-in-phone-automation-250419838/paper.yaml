@@ -1,0 +1,73 @@
+canonical_key: arxiv-2504.19838
+slug: llm-powered-gui-agents-in-phone-automation-250419838
+title: 'LLM-Powered GUI Agents in Phone Automation: Surveying Progress and Prospects'
+authors:
+- Guangyi Liu
+- Pengxiang Zhao
+- Liang Liu
+- Yaxuan Guo
+- Han Xiao
+- Weifeng Lin
+- Yuxiang Chai
+- Yue Han
+- Shuai Ren
+- Hao Wang
+- Xiaoyu Liang
+- Wenhao Wang
+- Tianze Wu
+- Linghao Li
+- Guanjing Xiong
+- Yong Liu
+- Hongsheng Li
+year: 2025
+primary_ids:
+  doi: 10.48550/arXiv.2504.19838
+  arxiv_base_id: '2504.19838'
+  openreview_id: null
+  semantic_scholar_id: e81979f38cc5e764a587ca0f66af7b9b33466909
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2504.19838
+- https://arxiv.org/pdf/2504.19838
+topic_groups:
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: Trans. Mach. Learn. Res.
+  tier: unknown
+  status: unknown
+  year: 2025
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: recent
+  significance: Definitive survey of phone GUI agents (architectures, SFT, RL, datasets, benchmarks);
+    reference map for the sub-area.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2504.19838
+  pdf_path: library/llm-powered-gui-agents-in-phone-automation-250419838/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/llm-powered-gui-agents-in-phone-automation-250419838/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:46Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: 8db47089a988c837237549e21894f39dea38ba1e7d9aba81e63de7100198fa98
+  pdf_bytes: 15917757
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-06-06T07:57:46Z'
+  updated_at: '2026-06-06T07:57:46Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

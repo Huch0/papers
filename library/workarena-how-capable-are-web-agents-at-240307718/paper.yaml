@@ -1,0 +1,68 @@
+canonical_key: arxiv-2403.07718
+slug: workarena-how-capable-are-web-agents-at-240307718
+title: 'WorkArena: How Capable Are Web Agents at Solving Common Knowledge Work Tasks?'
+authors:
+- Alexandre Drouin
+- Maxime Gasse
+- Massimo Caccia
+- I. Laradji
+- Manuel Del Verme
+- Tom Marty
+- L'eo Boisvert
+- Megh Thakkar
+- Quentin Cappart
+- David Vázquez
+- Nicolas Chapados
+- Alexandre Lacoste
+year: 2024
+primary_ids:
+  doi: 10.48550/arXiv.2403.07718
+  arxiv_base_id: '2403.07718'
+  openreview_id: null
+  semantic_scholar_id: fa96417f8766568ba570088513940bbf14e3b356
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2403.07718
+- https://arxiv.org/pdf/2403.07718
+topic_groups:
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: International Conference on Machine Learning
+  tier: A_star
+  status: unknown
+  year: 2024
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: expansion
+  significance: Enterprise (ServiceNow) knowledge-work benchmark; introduced BrowserGym; pushed agents
+    toward workplace automation.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2403.07718
+  pdf_path: library/workarena-how-capable-are-web-agents-at-240307718/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/workarena-how-capable-are-web-agents-at-240307718/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:32Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: 686792a9085d998be3ac3de3e9c126fd0a9256b6ccb313aa006edb62f7645295
+  pdf_bytes: 7060004
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-06-06T07:57:32Z'
+  updated_at: '2026-06-06T07:57:32Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

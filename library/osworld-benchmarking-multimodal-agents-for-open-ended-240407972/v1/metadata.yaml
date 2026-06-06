@@ -1,0 +1,96 @@
+canonical_key: arxiv-2404.07972
+version_key: v1
+title: 'OSWorld: Benchmarking Multimodal Agents for Open-Ended Tasks in Real Computer Environments'
+authors:
+- Tianbao Xie
+- Danyang Zhang
+- Jixuan Chen
+- Xiaochuan Li
+- Siheng Zhao
+- Ruisheng Cao
+- Toh Jing Hua
+- Zhoujun Cheng
+- Dongchan Shin
+- Fangyu Lei
+- Yitao Liu
+- Yiheng Xu
+- Shuyan Zhou
+- Silvio Savarese
+- Caiming Xiong
+- Victor Zhong
+- Tao Yu
+abstract: Autonomous agents that accomplish complex computer tasks with minimal human interventions have
+  the potential to transform human-computer interaction, significantly enhancing accessibility and productivity.
+  However, existing benchmarks either lack an interactive environment or are limited to environments specific
+  to certain applications or domains, failing to reflect the diverse and complex nature of real-world
+  computer use, thereby limiting the scope of tasks and agent scalability. To address this issue, we introduce
+  OSWorld, the first-of-its-kind scalable, real computer environment for multimodal agents, supporting
+  task setup, execution-based evaluation, and interactive learning across various operating systems such
+  as Ubuntu, Windows, and macOS. OSWorld can serve as a unified, integrated computer environment for assessing
+  open-ended computer tasks that involve arbitrary applications. Building upon OSWorld, we create a benchmark
+  of 369 computer tasks involving real web and desktop apps in open domains, OS file I/O, and workflows
+  spanning multiple applications. Each task example is derived from real-world computer use cases and
+  includes a detailed initial state setup configuration and a custom execution-based evaluation script
+  for reliable, reproducible evaluation. Extensive evaluation of state-of-the-art LLM/VLM-based agents
+  on OSWorld reveals significant deficiencies in their ability to serve as computer assistants. While
+  humans can accomplish over 72.36% of the tasks, the best model achieves only 12.24% success, primarily
+  struggling with GUI grounding and operational knowledge. Comprehensive analysis using OSWorld provides
+  valuable insights for developing multimodal generalist agents that were not possible with previous benchmarks.
+  Our code, environment, baseline models, and data are publicly available at https://os-world.github.io.
+venue: arXiv
+year: 2024
+source: arxiv
+source_url: https://arxiv.org/abs/2404.07972v2
+pdf_url: https://arxiv.org/pdf/2404.07972v2
+pdf_sha256: d4c6e20dd59467f005561b1e97199f9842fd3b0e9fdd93e66e06ba0ec09edfdb
+fetched_at: '2026-06-06T07:14:04Z'
+source_updated_at: '2024-05-30T08:55:12Z'
+ids:
+  doi: null
+  arxiv_id: 2404.07972v2
+  arxiv_base_id: '2404.07972'
+  arxiv_version: v2
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- agent_harness
+- computer_use_agents
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: novelty(1.00), interest_fit(0.91), evaluation_quality(0.80)
+    | interests: agent_harness:execution-based evaluation, agent_harness:group:agent_harness, computer_use_agents:group:computer_use_agents
+    | negatives: gui_only_misclassified | milestone/foundational floor applied'
+  matched_interests:
+  - agent_harness:execution-based evaluation
+  - agent_harness:group:agent_harness
+  - computer_use_agents:group:computer_use_agents
+  negative_signals:
+  - gui_only_misclassified
+  subscores:
+    interest_fit: 0.91
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.52
+    novelty: 1.0
+    artifact_availability: 0.0
+    evaluation_quality: 0.8
+    trend_signal: 0.7
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/osworld-benchmarking-multimodal-agents-for-open-ended-240407972/v1/paper.pdf
+  extraction: library/osworld-benchmarking-multimodal-agents-for-open-ended-240407972/v1/extraction.txt
+  summary: library/osworld-benchmarking-multimodal-agents-for-open-ended-240407972/v1/summary.md
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread

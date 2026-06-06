@@ -1,0 +1,71 @@
+canonical_key: arxiv-2505.13227
+slug: scaling-computer-use-grounding-via-user-interface-250513227
+title: Scaling Computer-Use Grounding via User Interface Decomposition and Synthesis
+authors:
+- Tianbao Xie
+- Jiaqi Deng
+- Xiaochuan Li
+- Junlin Yang
+- Haoyuan Wu
+- Jixuan Chen
+- Wenjing Hu
+- Xinyuan Wang
+- Yuhui Xu
+- Zekun Wang
+- Yiheng Xu
+- Junli Wang
+- Doyen Sahoo
+- Tao Yu
+- Caiming Xiong
+year: 2025
+primary_ids:
+  doi: 10.48550/arXiv.2505.13227
+  arxiv_base_id: '2505.13227'
+  openreview_id: null
+  semantic_scholar_id: a1c9066aab4c408db49982f0975c2ec7c0be47dd
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2505.13227
+- https://arxiv.org/pdf/2505.13227
+topic_groups:
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: arXiv.org
+  tier: workshop_or_minor
+  status: unknown
+  year: 2025
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: recent
+  significance: 4M-example Jedi grounding dataset via UI decomposition + OSWorld-G; lifted OSWorld agent
+    success from 23% to 51%.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2505.13227
+  pdf_path: library/scaling-computer-use-grounding-via-user-interface-250513227/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/scaling-computer-use-grounding-via-user-interface-250513227/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:43Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: 60698468c8c1b38eda2ebe3a77debaea6dd4ac9f0e73f3c1457eef114ebe6e49
+  pdf_bytes: 27920683
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-06-06T07:57:43Z'
+  updated_at: '2026-06-06T07:57:43Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

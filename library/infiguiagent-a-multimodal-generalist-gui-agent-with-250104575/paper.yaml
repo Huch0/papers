@@ -1,0 +1,67 @@
+canonical_key: arxiv-2501.04575
+slug: infiguiagent-a-multimodal-generalist-gui-agent-with-250104575
+title: 'InfiGUIAgent: A Multimodal Generalist GUI Agent with Native Reasoning and Reflection'
+authors:
+- Yuhang Liu
+- Pengxiang Li
+- Zishu Wei
+- Congkai Xie
+- Xueyu Hu
+- Xinchen Xu
+- Shengyu Zhang
+- Xiaotian Han
+- Hongxia Yang
+- Fei Wu
+year: 2025
+primary_ids:
+  doi: 10.48550/arXiv.2501.04575
+  arxiv_base_id: '2501.04575'
+  openreview_id: null
+  semantic_scholar_id: 133269ffc2391a2e2bdbab72a2ace89d7e78a107
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2501.04575
+- https://arxiv.org/pdf/2501.04575
+topic_groups:
+- computer_use_agents
+- general_agent_methods
+tags:
+- foundational
+venue:
+  name: Conference of the European Chapter of the Association for Computational Linguistics
+  tier: A_star
+  status: unknown
+  year: 2025
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: recent
+  significance: Two-stage SFT giving a generalist GUI agent native hierarchical reasoning + reflection;
+    integrates grounding with deliberative planning.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2501.04575
+  pdf_path: library/infiguiagent-a-multimodal-generalist-gui-agent-with-250104575/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/infiguiagent-a-multimodal-generalist-gui-agent-with-250104575/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:42Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: e4c34d713836630e180656b095a7dfbe7ed7f3b899b09fdb0a72fba2a2237616
+  pdf_bytes: 1495172
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-06-06T07:57:42Z'
+  updated_at: '2026-06-06T07:57:42Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

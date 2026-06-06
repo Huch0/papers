@@ -1,0 +1,65 @@
+canonical_key: arxiv-2504.07981
+slug: screenspot-pro-gui-grounding-for-professional-high-250407981
+title: 'ScreenSpot-Pro: GUI Grounding for Professional High-Resolution Computer Use'
+authors:
+- Kaixin Li
+- Ziyang Meng
+- Hongzhan Lin
+- Ziyang Luo
+- Yuchen Tian
+- Jing Ma
+- Zhiyong Huang
+- Tat-Seng Chua
+year: 2025
+primary_ids:
+  doi: 10.1145/3746027.3755688
+  arxiv_base_id: '2504.07981'
+  openreview_id: null
+  semantic_scholar_id: df7b286e53d66c6881966b5e6904f7fa5e6d774b
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2504.07981
+- https://arxiv.org/pdf/2504.07981
+topic_groups:
+- computer_use_agents
+- general_agent_methods
+tags:
+- foundational
+venue:
+  name: ACM Multimedia
+  tier: unknown
+  status: unknown
+  year: 2025
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: recent
+  significance: Hard expert-annotated benchmark over 23 pro high-res apps (5 industries, 3 OSes); exposed
+    large grounding gap on dense expert UIs.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2504.07981
+  pdf_path: library/screenspot-pro-gui-grounding-for-professional-high-250407981/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/screenspot-pro-gui-grounding-for-professional-high-250407981/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:43Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: 4eec6bbf0bba837c66a0d69551cc1567200d7aea85c6ce72650706de637c10c0
+  pdf_bytes: 11160171
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-06-06T07:57:43Z'
+  updated_at: '2026-06-06T07:57:43Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

@@ -1,0 +1,66 @@
+canonical_key: arxiv-2210.03347
+slug: pix2struct-screenshot-parsing-as-pretraining-for-visual-221003347
+title: 'Pix2Struct: Screenshot Parsing as Pretraining for Visual Language Understanding'
+authors:
+- Kenton Lee
+- Mandar Joshi
+- Iulia Turc
+- Hexiang Hu
+- Fangyu Liu
+- Julian Martin Eisenschlos
+- Urvashi Khandelwal
+- Peter Shaw
+- Ming-Wei Chang
+- Kristina Toutanova
+year: 2022
+primary_ids:
+  doi: 10.48550/arXiv.2210.03347
+  arxiv_base_id: '2210.03347'
+  openreview_id: null
+  semantic_scholar_id: e1484706c0fab932fc9804df328044b3cb2f110d
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2210.03347
+- https://arxiv.org/pdf/2210.03347
+topic_groups:
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: International Conference on Machine Learning
+  tier: A_star
+  status: unknown
+  year: 2022
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: emergence
+  significance: Pretrains image-to-text by parsing masked screenshots into HTML; pioneered pixel-only
+    screen understanding reused by GUI VLMs.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2210.03347
+  pdf_path: library/pix2struct-screenshot-parsing-as-pretraining-for-visual-221003347/v1/paper.pdf
+  summary_path: library/pix2struct-screenshot-parsing-as-pretraining-for-visual-221003347/v1/summary.md
+  metadata_path: library/pix2struct-screenshot-parsing-as-pretraining-for-visual-221003347/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:28Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: 0ab4bdae1dedc8e0972e2053b24c252e19dd7305f41108a6819d44d4535c1ad3
+  pdf_bytes: 5226538
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-06-06T07:57:28Z'
+  updated_at: '2026-06-06T08:09:20Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

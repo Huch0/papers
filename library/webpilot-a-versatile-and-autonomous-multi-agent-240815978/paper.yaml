@@ -1,0 +1,63 @@
+canonical_key: arxiv-2408.15978
+slug: webpilot-a-versatile-and-autonomous-multi-agent-240815978
+title: 'WebPilot: A Versatile and Autonomous Multi-Agent System for Web Task Execution with Strategic
+  Exploration'
+authors:
+- Yao Zhang
+- Zijian Ma
+- Yunpu Ma
+- Zhen Han
+- Yu Wu
+- Volker Tresp
+year: 2024
+primary_ids:
+  doi: 10.48550/arXiv.2408.15978
+  arxiv_base_id: '2408.15978'
+  openreview_id: null
+  semantic_scholar_id: bf27f8cc6737700934f214180f5e62e71338b347
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2408.15978
+- https://arxiv.org/pdf/2408.15978
+topic_groups:
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: AAAI Conference on Artificial Intelligence
+  tier: A_star
+  status: unknown
+  year: 2024
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: expansion
+  significance: MCTS-driven multi-agent system; WebArena SOTA; advanced strategic exploration/planning
+    for web agents.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2408.15978
+  pdf_path: library/webpilot-a-versatile-and-autonomous-multi-agent-240815978/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/webpilot-a-versatile-and-autonomous-multi-agent-240815978/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:33Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: 156abc4199413d6a6c1f204c8cac6b00d717d98c4746dc5ea63b4bd267669e2a
+  pdf_bytes: 6232542
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-06-06T07:57:33Z'
+  updated_at: '2026-06-06T07:57:33Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

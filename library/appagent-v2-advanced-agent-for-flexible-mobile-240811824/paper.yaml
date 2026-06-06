@@ -1,0 +1,65 @@
+canonical_key: arxiv-2408.11824
+slug: appagent-v2-advanced-agent-for-flexible-mobile-240811824
+title: 'AppAgent v2: Advanced Agent for Flexible Mobile Interactions'
+authors:
+- Yanda Li
+- Chi Zhang
+- Wenjia Jiang
+- Wanqi Yang
+- Bin Fu
+- Pei Cheng
+- Xin Chen
+- Ling Chen
+- Yunchao Wei
+year: 2024
+primary_ids:
+  doi: 10.48550/arXiv.2408.11824
+  arxiv_base_id: '2408.11824'
+  openreview_id: null
+  semantic_scholar_id: 80b113392487e5498207352f3a98a3342274228a
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2408.11824
+- https://arxiv.org/pdf/2408.11824
+topic_groups:
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: arXiv.org
+  tier: workshop_or_minor
+  status: unknown
+  year: 2024
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: expansion
+  significance: Adds vision-based element parsing + RAG over a structured knowledge base for flexible
+    robust real-app interaction.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2408.11824
+  pdf_path: library/appagent-v2-advanced-agent-for-flexible-mobile-240811824/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/appagent-v2-advanced-agent-for-flexible-mobile-240811824/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:37Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: 9dcc2e21159e478034ff5ac903613aff569709e337ce55a0beb5a611c9530030
+  pdf_bytes: 5262567
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-06-06T07:57:37Z'
+  updated_at: '2026-06-06T07:57:37Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

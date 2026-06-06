@@ -1,0 +1,65 @@
+canonical_key: arxiv-2412.04454
+slug: aguvis-unified-pure-vision-agents-for-autonomous-241204454
+title: 'Aguvis: Unified Pure Vision Agents for Autonomous GUI Interaction'
+authors:
+- Yiheng Xu
+- Zekun Wang
+- Junli Wang
+- Dunjie Lu
+- Tianbao Xie
+- Amrita Saha
+- Doyen Sahoo
+- Tao Yu
+- Caiming Xiong
+year: 2024
+primary_ids:
+  doi: 10.48550/arXiv.2412.04454
+  arxiv_base_id: '2412.04454'
+  openreview_id: null
+  semantic_scholar_id: 58ae4a85ae73095da668d6eac3a8c1f19270c89d
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2412.04454
+- https://arxiv.org/pdf/2412.04454
+topic_groups:
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: International Conference on Machine Learning
+  tier: A_star
+  status: unknown
+  year: 2024
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: expansion
+  significance: First fully autonomous pure-vision GUI agent (no closed models); unified action space
+    + two-stage grounding-then-reasoning + inner monologue.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2412.04454
+  pdf_path: library/aguvis-unified-pure-vision-agents-for-autonomous-241204454/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/aguvis-unified-pure-vision-agents-for-autonomous-241204454/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:35Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: d9f0c31bdae82ae2be8ce1921ba5b23b3898cb61f14ad7755ff8290e7d877a6c
+  pdf_bytes: 27830565
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-06-06T07:57:35Z'
+  updated_at: '2026-06-06T07:57:35Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

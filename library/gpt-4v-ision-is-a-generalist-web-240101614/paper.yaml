@@ -1,0 +1,61 @@
+canonical_key: arxiv-2401.01614
+slug: gpt-4v-ision-is-a-generalist-web-240101614
+title: GPT-4V(ision) is a Generalist Web Agent, if Grounded
+authors:
+- Boyuan Zheng
+- Boyu Gou
+- Jihyung Kil
+- Huan Sun
+- Yu Su
+year: 2024
+primary_ids:
+  doi: 10.48550/arXiv.2401.01614
+  arxiv_base_id: '2401.01614'
+  openreview_id: null
+  semantic_scholar_id: c844694387a89a477e7a8bbf918171cdc3b85672
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2401.01614
+- https://arxiv.org/pdf/2401.01614
+topic_groups:
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: International Conference on Machine Learning
+  tier: A_star
+  status: unknown
+  year: 2024
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: expansion
+  significance: Showed GPT-4V as strong generalist web agent once grounded; crystallized perception-then-grounding
+    for VLM web agents.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2401.01614
+  pdf_path: library/gpt-4v-ision-is-a-generalist-web-240101614/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/gpt-4v-ision-is-a-generalist-web-240101614/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:32Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: ac281a3c5cdbda428e14605e9d96035fd35af82073ce46117c27c34792eea041
+  pdf_bytes: 9044518
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-06-06T07:57:32Z'
+  updated_at: '2026-06-06T07:57:32Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

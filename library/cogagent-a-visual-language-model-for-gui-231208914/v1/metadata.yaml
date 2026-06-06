@@ -1,0 +1,84 @@
+canonical_key: arxiv-2312.08914
+version_key: v1
+title: 'CogAgent: A Visual Language Model for GUI Agents'
+authors:
+- Wenyi Hong
+- Weihan Wang
+- Qingsong Lv
+- Jiazheng Xu
+- Wenmeng Yu
+- Junhui Ji
+- Yan Wang
+- Zihan Wang
+- Yuxuan Zhang
+- Juanzi Li
+- Bin Xu
+- Yuxiao Dong
+- Ming Ding
+- Jie Tang
+abstract: People are spending an enormous amount of time on digital devices through graphical user interfaces
+  (GUIs), e.g., computer or smartphone screens. Large language models (LLMs) such as ChatGPT can assist
+  people in tasks like writing emails, but struggle to understand and interact with GUIs, thus limiting
+  their potential to increase automation levels. In this paper, we introduce CogAgent, an 18-billion-parameter
+  visual language model (VLM) specializing in GUI understanding and navigation. By utilizing both low-resolution
+  and high-resolution image encoders, CogAgent supports input at a resolution of 1120*1120, enabling it
+  to recognize tiny page elements and text. As a generalist visual language model, CogAgent achieves the
+  state of the art on five text-rich and four general VQA benchmarks, including VQAv2, OK-VQA, Text-VQA,
+  ST-VQA, ChartQA, infoVQA, DocVQA, MM-Vet, and POPE. CogAgent, using only screenshots as input, outperforms
+  LLM-based methods that consume extracted HTML text on both PC and Android GUI navigation tasks -- Mind2Web
+  and AITW, advancing the state of the art. The model and codes are available at https://github.com/THUDM/CogVLM,
+  with a new version of CogAgent-9B-20241220 available at https://github.com/THUDM/CogAgent.
+venue: arXiv
+year: 2023
+source: arxiv
+source_url: https://arxiv.org/abs/2312.08914v3
+pdf_url: https://arxiv.org/pdf/2312.08914v3
+pdf_sha256: d9cb086d826eaee9f919e0cbf142193b77f476b0aef6260b34408abe142fe13b
+fetched_at: '2026-06-06T07:14:00Z'
+source_updated_at: '2024-12-27T06:56:18Z'
+ids:
+  doi: null
+  arxiv_id: 2312.08914v3
+  arxiv_base_id: '2312.08914'
+  arxiv_version: v3
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: interest_fit(0.91), novelty(0.80), artifact_availability(0.55)
+    | interests: computer_use_agents:GUI agent, computer_use_agents:group:computer_use_agents | milestone/foundational
+    floor applied'
+  matched_interests:
+  - computer_use_agents:GUI agent
+  - computer_use_agents:group:computer_use_agents
+  negative_signals: []
+  subscores:
+    interest_fit: 0.91
+    recency: 0.027
+    venue_quality: 0.4
+    harness_relevance: 0.36
+    novelty: 0.8
+    artifact_availability: 0.55
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/cogagent-a-visual-language-model-for-gui-231208914/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

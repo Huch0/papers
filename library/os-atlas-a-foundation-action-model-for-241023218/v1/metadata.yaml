@@ -1,0 +1,84 @@
+canonical_key: arxiv-2410.23218
+version_key: v1
+title: 'OS-ATLAS: A Foundation Action Model for Generalist GUI Agents'
+authors:
+- Zhiyong Wu
+- Zhenyu Wu
+- Fangzhi Xu
+- Yian Wang
+- Qiushi Sun
+- Chengyou Jia
+- Kanzhi Cheng
+- Zichen Ding
+- Liheng Chen
+- Paul Pu Liang
+- Yu Qiao
+abstract: Existing efforts in building GUI agents heavily rely on the availability of robust commercial
+  Vision-Language Models (VLMs) such as GPT-4o and GeminiProVision. Practitioners are often reluctant
+  to use open-source VLMs due to their significant performance lag compared to their closed-source counterparts,
+  particularly in GUI grounding and Out-Of-Distribution (OOD) scenarios. To facilitate future research
+  in this area, we developed OS-Atlas - a foundational GUI action model that excels at GUI grounding and
+  OOD agentic tasks through innovations in both data and modeling. We have invested significant engineering
+  effort in developing an open-source toolkit for synthesizing GUI grounding data across multiple platforms,
+  including Windows, Linux, MacOS, Android, and the web. Leveraging this toolkit, we are releasing the
+  largest open-source cross-platform GUI grounding corpus to date, which contains over 13 million GUI
+  elements. This dataset, combined with innovations in model training, provides a solid foundation for
+  OS-Atlas to understand GUI screenshots and generalize to unseen interfaces. Through extensive evaluation
+  across six benchmarks spanning three different platforms (mobile, desktop, and web), OS-Atlas demonstrates
+  significant performance improvements over previous state-of-the-art models. Our evaluation also uncovers
+  valuable insights into continuously improving and scaling the agentic capabilities of open-source VLMs.
+venue: arXiv.org
+year: 2024
+source: arxiv
+source_url: https://arxiv.org/abs/2410.23218
+pdf_url: https://arxiv.org/pdf/2410.23218
+pdf_sha256: ed7ba8eb36d50e36b14e480a3cb89ac9f8fe825d28f763acd8210dcb7ade8bd0
+fetched_at: '2026-06-06T07:57:34Z'
+source_updated_at: null
+ids:
+  doi: 10.48550/arXiv.2410.23218
+  arxiv_id: '2410.23218'
+  arxiv_base_id: '2410.23218'
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: 9ceadd197cea2cd1b45e12983d528daf2b24efaa
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: recency(1.00), interest_fit(0.91), novelty(0.55) | interests:
+    computer_use_agents:GUI agent, computer_use_agents:group:computer_use_agents | milestone/foundational
+    floor applied'
+  matched_interests:
+  - computer_use_agents:GUI agent
+  - computer_use_agents:group:computer_use_agents
+  negative_signals: []
+  subscores:
+    interest_fit: 0.91
+    recency: 1.0
+    venue_quality: 0.4
+    harness_relevance: 0.52
+    novelty: 0.55
+    artifact_availability: 0.55
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/os-atlas-a-foundation-action-model-for-241023218/v1/paper.pdf
+  extraction: library/os-atlas-a-foundation-action-model-for-241023218/v1/extraction.txt
+  summary: library/os-atlas-a-foundation-action-model-for-241023218/v1/summary.html
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread
+  summary_format: html

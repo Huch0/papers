@@ -1,0 +1,74 @@
+canonical_key: arxiv-2112.09332
+slug: webgpt-browser-assisted-question-answering-with-human-211209332
+title: 'WebGPT: Browser-assisted question-answering with human feedback'
+authors:
+- Reiichiro Nakano
+- Jacob Hilton
+- S. Balaji
+- Jeff Wu
+- Ouyang Long
+- Christina Kim
+- Christopher Hesse
+- Shantanu Jain
+- Vineet Kosaraju
+- W. Saunders
+- Xu Jiang
+- K. Cobbe
+- Tyna Eloundou
+- Gretchen Krueger
+- Kevin Button
+- Matthew Knight
+- Benjamin Chess
+- John Schulman
+year: 2021
+primary_ids:
+  doi: null
+  arxiv_base_id: '2112.09332'
+  openreview_id: null
+  semantic_scholar_id: 2f3efe44083af91cef562c1a3451eee2f8601d22
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2112.09332
+- https://arxiv.org/pdf/2112.09332
+topic_groups:
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: arXiv.org
+  tier: workshop_or_minor
+  status: unknown
+  year: 2021
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: foundational
+  significance: First LLM fine-tuned via BC+RLHF to browse a text web environment and cite sources; seeded
+    agentic search.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2112.09332
+  pdf_path: library/webgpt-browser-assisted-question-answering-with-human-211209332/v1/paper.pdf
+  summary_path: library/webgpt-browser-assisted-question-answering-with-human-211209332/v1/summary.md
+  metadata_path: library/webgpt-browser-assisted-question-answering-with-human-211209332/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:31Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: acad8d9fd55a30b94de9dfdae413e10b21e07bde54d767b2405b31341739cedb
+  pdf_bytes: 1486858
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-06-06T07:57:31Z'
+  updated_at: '2026-06-06T08:08:22Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

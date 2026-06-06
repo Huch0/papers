@@ -1,0 +1,84 @@
+canonical_key: arxiv-2507.05791
+version_key: v1
+title: 'GTA1: GUI Test-time Scaling Agent'
+authors:
+- Yan Yang
+- Dongxu Li
+- Yutong Dai
+- Yuhao Yang
+- Ziyang Luo
+- Zirui Zhao
+- Zhiyuan Hu
+- Junzhe Huang
+- Amrita Saha
+- Zeyuan Chen
+- Ran Xu
+- Liyuan Pan
+- Caiming Xiong
+- Junnan Li
+abstract: 'Graphical user interface (GUI) agents autonomously complete tasks across platforms (\eg, Linux)
+  by sequentially decomposing user instructions into action proposals that iteratively interact with visual
+  elements in the evolving environment. However, two main challenges arise: i) planning (\ie, the action
+  proposal sequence) under expansive action space, where selecting an appropriate plan is non-trivial,
+  as many valid ones may exist; ii) accurately grounding actions in complex and high-resolution interfaces,
+  \ie, precisely interacting with visual targets. This paper investigates the aforementioned challenges
+  with our \textbf{G}UI \textbf{T}est-time Scaling \textbf{A}gent, namely GTA1. First, we conduct test-time
+  scaling to select the most appropriate action proposal: at each step, multiple candidate proposals are
+  sampled and evaluated and selected by a judge model. It trades off computation for better decision quality
+  by concurrent sampling. Second, we propose a model that improves grounding of the selected action proposals
+  to its corresponding visual elements. Our key insight is that reinforcement learning (RL) facilitates
+  grounding through inherent objective alignments, rewarding successful clicks on interface elements.
+  Experimentally, GTA1 achieves state-of-the-art performance on both grounding and agent task execution
+  benchmarks. The code and models are released here.'
+venue: arXiv.org
+year: 2025
+source: arxiv
+source_url: https://arxiv.org/abs/2507.05791
+pdf_url: https://arxiv.org/pdf/2507.05791
+pdf_sha256: 5fecff38940c6440c302cb8aee8d8b82e19eecee8bc6d37a064fc12c1bd114fc
+fetched_at: '2026-06-06T07:57:44Z'
+source_updated_at: null
+ids:
+  doi: 10.48550/arXiv.2507.05791
+  arxiv_id: '2507.05791'
+  arxiv_base_id: '2507.05791'
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: 006e8a0cc35d13272c5936003cfb5834f7a88a75
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: recency(1.00), novelty(0.80), interest_fit(0.73) | interests:
+    computer_use_agents:group:computer_use_agents | milestone/foundational floor applied'
+  matched_interests:
+  - computer_use_agents:group:computer_use_agents
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 1.0
+    venue_quality: 0.4
+    harness_relevance: 0.52
+    novelty: 0.8
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/gta1-gui-test-time-scaling-agent-250705791/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

@@ -1,0 +1,77 @@
+canonical_key: arxiv-2408.00203
+version_key: v1
+title: OmniParser for Pure Vision Based GUI Agent
+authors:
+- Yadong Lu
+- Jianwei Yang
+- Yelong Shen
+- Ahmed Awadallah
+abstract: 'The recent success of large vision language models shows great potential in driving the agent
+  system operating on user interfaces. However, we argue that the power multimodal models like GPT-4V
+  as a general agent on multiple operating systems across different applications is largely underestimated
+  due to the lack of a robust screen parsing technique capable of: 1) reliably identifying interactable
+  icons within the user interface, and 2) understanding the semantics of various elements in a screenshot
+  and accurately associate the intended action with the corresponding region on the screen. To fill these
+  gaps, we introduce \textsc{OmniParser}, a comprehensive method for parsing user interface screenshots
+  into structured elements, which significantly enhances the ability of GPT-4V to generate actions that
+  can be accurately grounded in the corresponding regions of the interface. We first curated an interactable
+  icon detection dataset using popular webpages and an icon description dataset. These datasets were utilized
+  to fine-tune specialized models: a detection model to parse interactable regions on the screen and a
+  caption model to extract the functional semantics of the detected elements. \textsc{OmniParser} significantly
+  improves GPT-4V''s performance on ScreenSpot benchmark. And on Mind2Web and AITW benchmark, \textsc{OmniParser}
+  with screenshot only input outperforms the GPT-4V baselines requiring additional information outside
+  of screenshot.'
+venue: arXiv.org
+year: 2024
+source: arxiv
+source_url: https://arxiv.org/abs/2408.00203
+pdf_url: https://arxiv.org/pdf/2408.00203
+pdf_sha256: d3d719b7e5e868b4d92023edfce3d51dd0965b606fdec628de009b9dd495042f
+fetched_at: '2026-06-06T07:57:34Z'
+source_updated_at: null
+ids:
+  doi: 10.48550/arXiv.2408.00203
+  arxiv_id: '2408.00203'
+  arxiv_base_id: '2408.00203'
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: 03cf4ae5ad61f4bc4665cedbd0747c840741e85a
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: recency(1.00), novelty(1.00), interest_fit(0.91) | interests:
+    computer_use_agents:GUI agent, computer_use_agents:group:computer_use_agents | milestone/foundational
+    floor applied'
+  matched_interests:
+  - computer_use_agents:GUI agent
+  - computer_use_agents:group:computer_use_agents
+  negative_signals: []
+  subscores:
+    interest_fit: 0.91
+    recency: 1.0
+    venue_quality: 0.4
+    harness_relevance: 0.36
+    novelty: 1.0
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/omniparser-for-pure-vision-based-gui-agent-240800203/v1/paper.pdf
+  extraction: library/omniparser-for-pure-vision-based-gui-agent-240800203/v1/extraction.txt
+  summary: library/omniparser-for-pure-vision-based-gui-agent-240800203/v1/summary.md
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread

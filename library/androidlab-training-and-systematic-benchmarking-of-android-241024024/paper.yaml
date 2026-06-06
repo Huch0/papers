@@ -1,0 +1,66 @@
+canonical_key: arxiv-2410.24024
+slug: androidlab-training-and-systematic-benchmarking-of-android-241024024
+title: 'AndroidLab: Training and Systematic Benchmarking of Android Autonomous Agents'
+authors:
+- Yifan Xu
+- Xiao Liu
+- Xueqiao Sun
+- Siyi Cheng
+- Yun-Hao Liu
+- Hanyu Lai
+- Shudan Zhang
+- Dan Zhang
+- Jie Tang
+- Yuxiao Dong
+year: 2024
+primary_ids:
+  doi: 10.48550/arXiv.2410.24024
+  arxiv_base_id: '2410.24024'
+  openreview_id: null
+  semantic_scholar_id: 6e9f7bb3f647b31bc907715f3b5dae29cef8a2c5
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2410.24024
+- https://arxiv.org/pdf/2410.24024
+topic_groups:
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: arXiv.org
+  tier: workshop_or_minor
+  status: unknown
+  year: 2024
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: expansion
+  significance: Unified XML/SoM environment + 10.5k-trace dataset enabling systematic training/benchmarking
+    of open and closed Android agents.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2410.24024
+  pdf_path: library/androidlab-training-and-systematic-benchmarking-of-android-241024024/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/androidlab-training-and-systematic-benchmarking-of-android-241024024/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:38Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: 70233eb37c74ce4e3973a6d7c86f7b3ea07dff4045b763adcc52f22e2b76df61
+  pdf_bytes: 6932033
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-06-06T07:57:38Z'
+  updated_at: '2026-06-06T07:57:38Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

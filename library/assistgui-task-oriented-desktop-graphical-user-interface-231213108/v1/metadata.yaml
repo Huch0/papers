@@ -1,0 +1,83 @@
+canonical_key: arxiv-2312.13108
+version_key: v1
+title: 'ASSISTGUI: Task-Oriented Desktop Graphical User Interface Automation'
+authors:
+- Difei Gao
+- Lei Ji
+- Zechen Bai
+- Mingyu Ouyang
+- Peiran Li
+- Dongxing Mao
+- Qinchen Wu
+- Weichen Zhang
+- Peiyi Wang
+- Xiangwu Guo
+- Hengxu Wang
+- Luowei Zhou
+- Mike Zheng Shou
+abstract: Graphical User Interface (GUI) automation holds significant promise for assisting users with
+  complex tasks, thereby boosting human productivity. Existing works leveraging Large Language Model (LLM)
+  or LLM-based AI agents have shown capabilities in automating tasks on Android and Web platforms. However,
+  these tasks are primarily aimed at simple device usage and entertainment operations. This paper presents
+  a novel benchmark, AssistGUI, to evaluate whether models are capable of manipulating the mouse and keyboard
+  on the Windows platform in response to user-requested tasks. We carefully collected a set of 100 tasks
+  from nine widely-used software applications, such as, After Effects and MS Word, each accompanied by
+  the necessary project files for better evaluation. Moreover, we propose an advanced Actor-Critic Embodied
+  Agent framework, which incorporates a sophisticated GUI parser driven by an LLM-agent and an enhanced
+  reasoning mechanism adept at handling lengthy procedural tasks. Our experimental results reveal that
+  our GUI Parser and Reasoning mechanism outshine existing methods in performance. Nevertheless, the potential
+  remains substantial, with the best model attaining only a 46% success rate on our benchmark. We conclude
+  with a thorough analysis of the current methods' limitations, setting the stage for future breakthroughs
+  in this domain.
+venue: arXiv.org
+year: 2023
+source: arxiv
+source_url: https://arxiv.org/abs/2312.13108
+pdf_url: https://arxiv.org/pdf/2312.13108
+pdf_sha256: bd4f1fcdaff8be73eb40b024c934ee2bbe2d62e12926fc66561f51387cdb4fb3
+fetched_at: '2026-06-06T07:57:28Z'
+source_updated_at: null
+ids:
+  doi: 10.48550/arXiv.2312.13108
+  arxiv_id: '2312.13108'
+  arxiv_base_id: '2312.13108'
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: 24fc9ad715372358bd0108eeb7c944b915963293
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: recency(1.00), interest_fit(0.73), novelty(0.55) | interests:
+    computer_use_agents:group:computer_use_agents | milestone/foundational floor applied'
+  matched_interests:
+  - computer_use_agents:group:computer_use_agents
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 1.0
+    venue_quality: 0.4
+    harness_relevance: 0.36
+    novelty: 0.55
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/assistgui-task-oriented-desktop-graphical-user-interface-231213108/v1/paper.pdf
+  extraction: library/assistgui-task-oriented-desktop-graphical-user-interface-231213108/v1/extraction.txt
+  summary: library/assistgui-task-oriented-desktop-graphical-user-interface-231213108/v1/summary.md
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread

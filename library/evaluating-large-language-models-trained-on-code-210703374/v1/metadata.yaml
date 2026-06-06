@@ -1,0 +1,125 @@
+canonical_key: arxiv-2107.03374
+version_key: v1
+title: Evaluating Large Language Models Trained on Code
+authors:
+- Mark Chen
+- Jerry Tworek
+- Heewoo Jun
+- Qiming Yuan
+- Henrique Ponde de Oliveira Pinto
+- Jared Kaplan
+- Harri Edwards
+- Yuri Burda
+- Nicholas Joseph
+- Greg Brockman
+- Alex Ray
+- Raul Puri
+- Gretchen Krueger
+- Michael Petrov
+- Heidy Khlaaf
+- Girish Sastry
+- Pamela Mishkin
+- Brooke Chan
+- Scott Gray
+- Nick Ryder
+- Mikhail Pavlov
+- Alethea Power
+- Lukasz Kaiser
+- Mohammad Bavarian
+- Clemens Winter
+- Philippe Tillet
+- Felipe Petroski Such
+- Dave Cummings
+- Matthias Plappert
+- Fotios Chantzis
+- Elizabeth Barnes
+- Ariel Herbert-Voss
+- William Hebgen Guss
+- Alex Nichol
+- Alex Paino
+- Nikolas Tezak
+- Jie Tang
+- Igor Babuschkin
+- Suchir Balaji
+- Shantanu Jain
+- William Saunders
+- Christopher Hesse
+- Andrew N. Carr
+- Jan Leike
+- Josh Achiam
+- Vedant Misra
+- Evan Morikawa
+- Alec Radford
+- Matthew Knight
+- Miles Brundage
+- Mira Murati
+- Katie Mayer
+- Peter Welinder
+- Bob McGrew
+- Dario Amodei
+- Sam McCandlish
+- Ilya Sutskever
+- Wojciech Zaremba
+abstract: We introduce Codex, a GPT language model fine-tuned on publicly available code from GitHub,
+  and study its Python code-writing capabilities. A distinct production version of Codex powers GitHub
+  Copilot. On HumanEval, a new evaluation set we release to measure functional correctness for synthesizing
+  programs from docstrings, our model solves 28.8% of the problems, while GPT-3 solves 0% and GPT-J solves
+  11.4%. Furthermore, we find that repeated sampling from the model is a surprisingly effective strategy
+  for producing working solutions to difficult prompts. Using this method, we solve 70.2% of our problems
+  with 100 samples per problem. Careful investigation of our model reveals its limitations, including
+  difficulty with docstrings describing long chains of operations and with binding operations to variables.
+  Finally, we discuss the potential broader impacts of deploying powerful code generation technologies,
+  covering safety, security, and economics.
+venue: arXiv
+year: 2021
+source: arxiv
+source_url: https://arxiv.org/abs/2107.03374v2
+pdf_url: https://arxiv.org/pdf/2107.03374v2
+pdf_sha256: ebae72ea0e8a5eb2ecbccdb985aec6cc1254a7c4d29e6d4de7866db1e66c4855
+fetched_at: '2026-06-06T06:49:08Z'
+source_updated_at: '2021-07-14T17:16:02Z'
+ids:
+  doi: null
+  arxiv_id: 2107.03374v2
+  arxiv_base_id: '2107.03374'
+  arxiv_version: v2
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- software_engineering_agents
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: interest_fit(0.73), novelty(0.55), artifact_availability(0.55)
+    | interests: software_engineering_agents:group:software_engineering_agents | milestone/foundational
+    floor applied'
+  matched_interests:
+  - software_engineering_agents:group:software_engineering_agents
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 0.55
+    artifact_availability: 0.55
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/evaluating-large-language-models-trained-on-code-210703374/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

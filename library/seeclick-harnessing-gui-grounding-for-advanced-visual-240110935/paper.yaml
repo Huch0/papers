@@ -1,0 +1,63 @@
+canonical_key: arxiv-2401.10935
+slug: seeclick-harnessing-gui-grounding-for-advanced-visual-240110935
+title: 'SeeClick: Harnessing GUI Grounding for Advanced Visual GUI Agents'
+authors:
+- Kanzhi Cheng
+- Qiushi Sun
+- Yougang Chu
+- Fangzhi Xu
+- Yantao Li
+- Jianbing Zhang
+- Zhiyong Wu
+year: 2024
+primary_ids:
+  doi: 10.48550/arXiv.2401.10935
+  arxiv_base_id: '2401.10935'
+  openreview_id: null
+  semantic_scholar_id: f9b39a6a7e40986b46f7796f3a805d70d7e3931a
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2401.10935
+- https://arxiv.org/pdf/2401.10935
+topic_groups:
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: Annual Meeting of the Association for Computational Linguistics
+  tier: A_star
+  status: unknown
+  year: 2024
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: foundational
+  significance: GUI-grounding pretraining for screenshot-only agents; created ScreenSpot, first realistic
+    cross-platform grounding benchmark.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2401.10935
+  pdf_path: library/seeclick-harnessing-gui-grounding-for-advanced-visual-240110935/v1/paper.pdf
+  summary_path: library/seeclick-harnessing-gui-grounding-for-advanced-visual-240110935/v1/summary.md
+  metadata_path: library/seeclick-harnessing-gui-grounding-for-advanced-visual-240110935/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:28Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: b62bd796d8e6d45e13b41ed41a55d021a9df3329bf500d14efed129e8a1e04e2
+  pdf_bytes: 10795836
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-06-06T07:57:28Z'
+  updated_at: '2026-06-06T08:27:06Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

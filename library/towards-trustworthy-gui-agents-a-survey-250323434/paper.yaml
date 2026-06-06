@@ -1,0 +1,61 @@
+canonical_key: arxiv-2503.23434
+slug: towards-trustworthy-gui-agents-a-survey-250323434
+title: 'Towards Trustworthy GUI Agents: A Survey'
+authors:
+- Yucheng Shi
+- Wenhao Yu
+- Wenlin Yao
+- Wenhu Chen
+- Ninghao Liu
+year: 2025
+primary_ids:
+  doi: 10.48550/arXiv.2503.23434
+  arxiv_base_id: '2503.23434'
+  openreview_id: null
+  semantic_scholar_id: 95d7d51c97a491f2ad4f9fa81753f22d6ce41953
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2503.23434
+- https://arxiv.org/pdf/2503.23434
+topic_groups:
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: arXiv.org
+  tier: workshop_or_minor
+  status: unknown
+  year: 2025
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: recent
+  significance: First survey centering safety, reliability, and the perception-action execution gap for
+    deployed GUI agents.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2503.23434
+  pdf_path: library/towards-trustworthy-gui-agents-a-survey-250323434/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/towards-trustworthy-gui-agents-a-survey-250323434/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:46Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: 7a1d6a9a92de88b8ee442c5c425d38124dbfd8bf9ca992f863bc103c3c8033d3
+  pdf_bytes: 762280
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-06-06T07:57:46Z'
+  updated_at: '2026-06-06T07:57:46Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

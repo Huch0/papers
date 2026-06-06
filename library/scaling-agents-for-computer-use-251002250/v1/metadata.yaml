@@ -1,0 +1,76 @@
+canonical_key: arxiv-2510.02250
+version_key: v1
+title: Scaling Agents for Computer Use
+authors:
+- Gonzalo Gonzalez-Pumariega
+- Vincent Tu
+- Chih-Lun Lee
+- Jiachen Yang
+- Ang Li
+- X. Wang
+abstract: 'Computer-use agents (CUAs) hold promise for automating everyday digital tasks, but their performance
+  on long-horizon, complex problems remains unreliable. Single-rollout execution is brittle, with small
+  errors compounding over time and leading to high variance in outcomes. While prior work has attempted
+  to scale within a single rollout, such approaches have yielded limited gains. Scaling over multiple
+  rollouts offers a more promising alternative but doing so effectively is challenging due to the difficulty
+  of evaluating and selecting among long-horizon agent behaviors. We introduce Behavior Judge (BJudge),
+  which addresses this challenge by representing agent executions as behavior narratives and comparing
+  candidate behaviors at this level, substantially improving robustness and success rates. Using multiple
+  rollouts, BJudge establishes a new state of the art (SoTA) in OSWorld at 72.6%, significantly outperforming
+  prior methods and surpassing human-level performance at 72.36%, with comprehensive ablations validating
+  key design choices. We further demonstrate strong generalization results to different operating systems
+  on WindowsAgentArena and AndroidWorld. Crucially, our results highlight the strong effectiveness of
+  scaling CUAs, when you do it right: effective scaling requires structured trajectory understanding and
+  selection, and BJudge provides a practical framework to achieve this.'
+venue: arXiv
+year: 2025
+source: arxiv
+source_url: https://arxiv.org/abs/2510.02250
+pdf_url: https://arxiv.org/pdf/2510.02250
+pdf_sha256: 674faa605e9732cf928af01d61bee2adf188d8ab2007b77935126ec09dd63617
+fetched_at: '2026-06-06T07:57:45Z'
+source_updated_at: null
+ids:
+  doi: null
+  arxiv_id: '2510.02250'
+  arxiv_base_id: '2510.02250'
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: 1121b26ee51a0765ca5bc2f4df2860254ae9e2d0
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: recency(1.00), interest_fit(0.73), trend_signal(0.70) |
+    interests: computer_use_agents:group:computer_use_agents | milestone/foundational floor applied'
+  matched_interests:
+  - computer_use_agents:group:computer_use_agents
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 1.0
+    venue_quality: 0.4
+    harness_relevance: 0.36
+    novelty: 0.55
+    artifact_availability: 0.0
+    evaluation_quality: 0.55
+    trend_signal: 0.7
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/scaling-agents-for-computer-use-251002250/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

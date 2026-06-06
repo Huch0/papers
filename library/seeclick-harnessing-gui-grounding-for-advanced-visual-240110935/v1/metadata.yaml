@@ -1,0 +1,77 @@
+canonical_key: arxiv-2401.10935
+version_key: v1
+title: 'SeeClick: Harnessing GUI Grounding for Advanced Visual GUI Agents'
+authors:
+- Kanzhi Cheng
+- Qiushi Sun
+- Yougang Chu
+- Fangzhi Xu
+- Yantao Li
+- Jianbing Zhang
+- Zhiyong Wu
+abstract: 'Graphical User Interface (GUI) agents are designed to automate complex tasks on digital devices,
+  such as smartphones and desktops. Most existing GUI agents interact with the environment through extracted
+  structured data, which can be notably lengthy (e.g., HTML) and occasionally inaccessible (e.g., on desktops).
+  To alleviate this issue, we propose a novel visual GUI agent -- SeeClick, which only relies on screenshots
+  for task automation. In our preliminary study, we have discovered a key challenge in developing visual
+  GUI agents: GUI grounding -- the capacity to accurately locate screen elements based on instructions.
+  To tackle this challenge, we propose to enhance SeeClick with GUI grounding pre-training and devise
+  a method to automate the curation of GUI grounding data. Along with the efforts above, we have also
+  created ScreenSpot, the first realistic GUI grounding benchmark that encompasses mobile, desktop, and
+  web environments. After pre-training, SeeClick demonstrates significant improvement in ScreenSpot over
+  various baselines. Moreover, comprehensive evaluations on three widely used benchmarks consistently
+  support our finding that advancements in GUI grounding directly correlate with enhanced performance
+  in downstream GUI agent tasks. The model, data and code are available at https://github.com/njucckevin/SeeClick.'
+venue: Annual Meeting of the Association for Computational Linguistics
+year: 2024
+source: arxiv
+source_url: https://arxiv.org/abs/2401.10935
+pdf_url: https://arxiv.org/pdf/2401.10935
+pdf_sha256: b62bd796d8e6d45e13b41ed41a55d021a9df3329bf500d14efed129e8a1e04e2
+fetched_at: '2026-06-06T07:57:28Z'
+source_updated_at: null
+ids:
+  doi: 10.48550/arXiv.2401.10935
+  arxiv_id: '2401.10935'
+  arxiv_base_id: '2401.10935'
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: f9b39a6a7e40986b46f7796f3a805d70d7e3931a
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+scoring:
+  score: 66.6
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=67 -> READ_SOON | strong: recency(1.00), venue_quality(1.00), interest_fit(0.91) |
+    interests: computer_use_agents:GUI agent, computer_use_agents:group:computer_use_agents'
+  matched_interests:
+  - computer_use_agents:GUI agent
+  - computer_use_agents:group:computer_use_agents
+  negative_signals: []
+  subscores:
+    interest_fit: 0.91
+    recency: 1.0
+    venue_quality: 1.0
+    harness_relevance: 0.68
+    novelty: 0.8
+    artifact_availability: 0.55
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/seeclick-harnessing-gui-grounding-for-advanced-visual-240110935/v1/paper.pdf
+  extraction: library/seeclick-harnessing-gui-grounding-for-advanced-visual-240110935/v1/extraction.txt
+  summary: library/seeclick-harnessing-gui-grounding-for-advanced-visual-240110935/v1/summary.md
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread

@@ -1,0 +1,70 @@
+canonical_key: arxiv-2005.03776
+version_key: v1
+title: Mapping Natural Language Instructions to Mobile UI Action Sequences
+authors:
+- Yang Li
+- Jiacong He
+- Xiaoxia Zhou
+- Yuan Zhang
+- Jason Baldridge
+abstract: 'We present a new problem: grounding natural language instructions to mobile user interface
+  actions, and create three new datasets for it. For full task evaluation, we create PixelHelp, a corpus
+  that pairs English instructions with actions performed by people on a mobile UI emulator. To scale training,
+  we decouple the language and action data by (a) annotating action phrase spans in How-To instructions
+  and (b) synthesizing grounded descriptions of actions for mobile user interfaces. We use a Transformer
+  to extract action phrase tuples from long-range natural language instructions. A grounding Transformer
+  then contextually represents UI objects using both their content and screen position and connects them
+  to object descriptions. Given a starting screen and instruction, our model achieves 70.59% accuracy
+  on predicting complete ground-truth action sequences in PixelHelp.'
+venue: Annual Meeting of the Association for Computational Linguistics
+year: 2020
+source: arxiv
+source_url: https://arxiv.org/abs/2005.03776
+pdf_url: https://arxiv.org/pdf/2005.03776
+pdf_sha256: d697df752276bfeb919a6d80f5d320453eefb9ef61b949ab27fa76e2677e3967
+fetched_at: '2026-06-06T07:57:28Z'
+source_updated_at: null
+ids:
+  doi: 10.18653/v1/2020.acl-main.729
+  arxiv_id: '2005.03776'
+  arxiv_base_id: '2005.03776'
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: d9a8dfe020ee8c1afc94fca6f934876f85ad9c85
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: recency(1.00), venue_quality(1.00), interest_fit(0.73) |
+    interests: computer_use_agents:group:computer_use_agents | milestone/foundational floor applied'
+  matched_interests:
+  - computer_use_agents:group:computer_use_agents
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 1.0
+    venue_quality: 1.0
+    harness_relevance: 0.36
+    novelty: 0.0
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/mapping-natural-language-instructions-to-mobile-ui-200503776/v1/paper.pdf
+  extraction: library/mapping-natural-language-instructions-to-mobile-ui-200503776/v1/extraction.txt
+  summary: library/mapping-natural-language-instructions-to-mobile-ui-200503776/v1/summary.md
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread

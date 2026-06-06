@@ -1,0 +1,80 @@
+canonical_key: arxiv-2405.15793
+version_key: v1
+title: 'SWE-agent: Agent-Computer Interfaces Enable Automated Software Engineering'
+authors:
+- John Yang
+- Carlos E. Jimenez
+- Alexander Wettig
+- Kilian Lieret
+- Shunyu Yao
+- Karthik Narasimhan
+- Ofir Press
+abstract: 'Language model (LM) agents are increasingly being used to automate complicated tasks in digital
+  environments. Just as humans benefit from powerful software applications, such as integrated development
+  environments, for complex tasks like software engineering, we posit that LM agents represent a new category
+  of end users with their own needs and abilities, and would benefit from specially-built interfaces to
+  the software they use. We investigate how interface design affects the performance of language model
+  agents. As a result of this exploration, we introduce SWE-agent: a system that facilitates LM agents
+  to autonomously use computers to solve software engineering tasks. SWE-agent''s custom agent-computer
+  interface (ACI) significantly enhances an agent''s ability to create and edit code files, navigate entire
+  repositories, and execute tests and other programs. We evaluate SWE-agent on SWE-bench and HumanEvalFix,
+  achieving state-of-the-art performance on both with a pass@1 rate of 12.5% and 87.7%, respectively,
+  far exceeding the previous state-of-the-art achieved with non-interactive LMs. Finally, we provide insight
+  on how the design of the ACI can impact agents'' behavior and performance.'
+venue: arXiv
+year: 2024
+source: arxiv
+source_url: https://arxiv.org/abs/2405.15793v3
+pdf_url: https://arxiv.org/pdf/2405.15793v3
+pdf_sha256: d171e0693060b910ceb2cddd0fd4bc7cae302005d42d0d8059bfdbe056c3adba
+fetched_at: '2026-06-06T06:49:09Z'
+source_updated_at: '2024-11-11T20:01:15Z'
+ids:
+  doi: null
+  arxiv_id: 2405.15793v3
+  arxiv_base_id: '2405.15793'
+  arxiv_version: v3
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- agent_harness
+- software_engineering_agents
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: interest_fit(0.91), novelty(0.80), trend_signal(0.70) |
+    interests: agent_harness:agent-computer interface, agent_harness:group:agent_harness, software_engineering_agents:SWE-bench,
+    software_engineering_agents:group:software_engineering_agents | milestone/foundational floor applied'
+  matched_interests:
+  - agent_harness:agent-computer interface
+  - agent_harness:group:agent_harness
+  - software_engineering_agents:SWE-bench
+  - software_engineering_agents:group:software_engineering_agents
+  negative_signals: []
+  subscores:
+    interest_fit: 0.91
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.68
+    novelty: 0.8
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.7
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/swe-agent-agent-computer-interfaces-enable-automated-240515793/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

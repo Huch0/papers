@@ -1,0 +1,80 @@
+canonical_key: arxiv-2210.03347
+version_key: v1
+title: 'Pix2Struct: Screenshot Parsing as Pretraining for Visual Language Understanding'
+authors:
+- Kenton Lee
+- Mandar Joshi
+- Iulia Turc
+- Hexiang Hu
+- Fangyu Liu
+- Julian Martin Eisenschlos
+- Urvashi Khandelwal
+- Peter Shaw
+- Ming-Wei Chang
+- Kristina Toutanova
+abstract: 'Visually-situated language is ubiquitous -- sources range from textbooks with diagrams to web
+  pages with images and tables, to mobile apps with buttons and forms. Perhaps due to this diversity,
+  previous work has typically relied on domain-specific recipes with limited sharing of the underlying
+  data, model architectures, and objectives. We present Pix2Struct, a pretrained image-to-text model for
+  purely visual language understanding, which can be finetuned on tasks containing visually-situated language.
+  Pix2Struct is pretrained by learning to parse masked screenshots of web pages into simplified HTML.
+  The web, with its richness of visual elements cleanly reflected in the HTML structure, provides a large
+  source of pretraining data well suited to the diversity of downstream tasks. Intuitively, this objective
+  subsumes common pretraining signals such as OCR, language modeling, image captioning. In addition to
+  the novel pretraining strategy, we introduce a variable-resolution input representation and a more flexible
+  integration of language and vision inputs, where language prompts such as questions are rendered directly
+  on top of the input image. For the first time, we show that a single pretrained model can achieve state-of-the-art
+  results in six out of nine tasks across four domains: documents, illustrations, user interfaces, and
+  natural images.'
+venue: International Conference on Machine Learning
+year: 2022
+source: arxiv
+source_url: https://arxiv.org/abs/2210.03347
+pdf_url: https://arxiv.org/pdf/2210.03347
+pdf_sha256: 0ab4bdae1dedc8e0972e2053b24c252e19dd7305f41108a6819d44d4535c1ad3
+fetched_at: '2026-06-06T07:57:28Z'
+source_updated_at: null
+ids:
+  doi: 10.48550/arXiv.2210.03347
+  arxiv_id: '2210.03347'
+  arxiv_base_id: '2210.03347'
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: e1484706c0fab932fc9804df328044b3cb2f110d
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: recency(1.00), venue_quality(1.00), novelty(1.00) | interests:
+    computer_use_agents:group:computer_use_agents | milestone/foundational floor applied'
+  matched_interests:
+  - computer_use_agents:group:computer_use_agents
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 1.0
+    venue_quality: 1.0
+    harness_relevance: 0.36
+    novelty: 1.0
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/pix2struct-screenshot-parsing-as-pretraining-for-visual-221003347/v1/paper.pdf
+  extraction: library/pix2struct-screenshot-parsing-as-pretraining-for-visual-221003347/v1/extraction.txt
+  summary: library/pix2struct-screenshot-parsing-as-pretraining-for-visual-221003347/v1/summary.md
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread

@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<!--
+  Rich HTML summary template (experimental, parallel to summary_template.md).
+  Same intellectual structure: Keshav three passes + Kim "Motivation ≠ Novelty" + FOCUS,
+  and the SELF-CONTAINED rule (define every non-universal term inline AND in the Glossary).
+  Placeholders {{...}} are filled by `summarize_paper.py --prepare --format html`.
+  Author (Claude) fills the section bodies from the PDF extraction.
+
+  Use the rich representation purposefully (this is the whole point of the format):
+    • <span class="claim">…</span>      a claim the paper makes
+    • <span class="evidence">…</span>   evidence that supports a claim (with anchor)
+    • <span class="weak">…</span>       unclear / weak / caveated
+    • <span class="limit">…</span>      a limitation / risk
+    • <dfn title="definition">Term</dfn> inline term with hover-definition (self-contained)
+    • <table> for results; the claim→evidence two-column table in Pass 3
+    • <details> to collapse Pass 3 so triage stays fast
+  WRITING RULES: English, declarative (not "the authors state…"), specific numbers + short
+  quotes with (p.X,§Y) anchors, "Not reported"/"Unclear" for gaps, never invent.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>UI-TARS-2 Technical Report: Advancing GUI Agent with Multi-Turn Reinforcement Learning</title>
+<style>
+  :root{--ink:#1a1a1a;--mut:#666;--line:#e2e2e2;--claim:#0b6b3a;--claimbg:#e8f6ee;
+        --eviden:#0b4f8a;--evidenbg:#e8f1fb;--weak:#8a5a0b;--weakbg:#fbf3e3;
+        --limit:#a11;--limitbg:#fbeaea;--defbg:#f0eefb;}
+  body{font:15px/1.55 -apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:var(--ink);
+       max-width:860px;margin:2rem auto;padding:0 1.2rem;}
+  h1{font-size:1.5rem;line-height:1.25;margin:.2rem 0 1rem;}
+  h2{font-size:1.15rem;margin:1.6rem 0 .4rem;border-bottom:2px solid var(--line);padding-bottom:.2rem;}
+  h3{font-size:1rem;margin:1rem 0 .3rem;color:#333;}
+  .pass{color:#fff;background:#333;border-radius:4px;padding:.05rem .5rem;font-size:.8rem;vertical-align:middle;}
+  .card{border:1px solid var(--line);border-radius:8px;padding:.8rem 1rem;background:#fafafa;position:sticky;top:0;}
+  .meta{display:grid;grid-template-columns:auto 1fr;gap:.1rem .8rem;font-size:.85rem;margin:0;}
+  .meta dt{color:var(--mut);} .meta dd{margin:0;font-weight:500;}
+  .badge{display:inline-block;font-weight:700;border-radius:4px;padding:.1rem .5rem;color:#fff;}
+  .MUST_READ{background:#a11;} .READ_SOON{background:#c70;} .SKIM{background:#0b6b3a;}
+  .TRACK_ONLY{background:#555;} .SKIP{background:#999;}
+  .claim{background:var(--claimbg);border-bottom:1px solid var(--claim);}
+  .evidence{background:var(--evidenbg);border-bottom:1px solid var(--eviden);}
+  .weak{background:var(--weakbg);border-bottom:1px dashed var(--weak);}
+  .limit{background:var(--limitbg);}
+  dfn{font-style:normal;border-bottom:1px dotted var(--mut);cursor:help;background:var(--defbg);}
+  table{border-collapse:collapse;width:100%;font-size:.88rem;margin:.5rem 0;}
+  th,td{border:1px solid var(--line);padding:.35rem .5rem;text-align:left;vertical-align:top;}
+  th{background:#f2f2f2;}
+  .takeaway{font-size:1.05rem;font-weight:600;border-left:4px solid var(--eviden);padding:.4rem .8rem;background:var(--evidenbg);}
+  dl.glossary dt{font-weight:700;margin-top:.4rem;} dl.glossary dd{margin:0 0 .2rem;color:#333;}
+  details{border:1px solid var(--line);border-radius:6px;padding:.3rem .8rem;margin:.6rem 0;}
+  summary{font-weight:600;cursor:pointer;}
+  .anchor{color:var(--mut);font-size:.82rem;}
+  footer{color:var(--mut);font-size:.8rem;margin-top:2rem;border-top:1px solid var(--line);padding-top:.5rem;}
+</style>
+</head>
+<body>
+
+<h1>UI-TARS-2 Technical Report: Advancing GUI Agent with Multi-Turn Reinforcement Learning</h1>
+
+<div class="card">
+  <dl class="meta">
+    <dt>Canonical key</dt><dd>arxiv-2509.02544</dd>
+    <dt>Version</dt><dd>v1</dd>
+    <dt>Venue · Year</dt><dd>arXiv.org · 2025</dd>
+    <dt>Authors</dt><dd>Haoming Wang, Haoyang Zou, Huatong Song, Jiazhan Feng, Junjie Fang, Junting Lu, Longxiang Liu, Qinyu Luo, Shihao Liang, Shijue Huang, Wanjun Zhong, Yining Ye, Yujia Qin, Yuwen Xiong, Yuxin Song, Zhiyong Wu, Bo Li, Chen Dun, Chong Liu, Fuxing Leng, Han-rui Wang, Hao Yu, Haobin Chen, Hongyi Guo, Jing Su, Jingjia Huang, Kai Shen, Kaiyu Shi, Lin Yan, Pei-Xiong Zhao, Pengfei Liu, Qinghao Ye, Renjie Zheng, Wayne Xin Zhao, Wen Heng, Wenhao Huang, Wenqian Wang, Xiao-jun Qin, Yi Lin, Youbing Wu, Zehui Chen, Zihao Wang, B. Zhong, Xinchun Zhang, Xujing Li, YuanFang Li, Zhongkai Zhao, Chengquan Jiang, Faming Wu, Hao Zhou, Jinlin Pang, Li Han, Qianli Ma, Siyao Liu, Songhua Cai, Wenqi Fu, Xin Liu, Zhi Zhang, Bo Zhou, Guoliang Li, Jiajun Shi, Jiale Yang, Jie Tang, Li Li, Taoran Lu, Woyu Lin, Xiao Tong, Xinyao Li, Yichi Zhang, Yu Miao, Zheng-Wang Jiang, Zili Li, Zi-Hao Zhao, Chenxi Li, Dehua Ma, Feng Lin, Ge Zhang, Haihua Yang, Hangyu Guo, Hongda Zhu, Jiaheng Liu, Jun-Yan Du, Kai Cai, Kuanye Li, Lichen Yuan, Mei Han, Minchao Wang, Shuyu Guo, Tianhao Cheng, Xiaobo Ma, Xiao Xiao, Xiaolong Huang, Xinjie Chen, Yi-Zhen Du, Yilin Chen, Yiwen Wang, Zhaojian Li, Zhen Yang, Zhiyuan Zeng, Chaolin Jin, Chen Li, Haolin Chen, Haolin Chen, Jian Chen, Qinghao Zhao, Guang Shi</dd>
+    <dt>Source</dt><dd>arxiv</dd>
+    <dt>PDF</dt><dd>library/ui-tars-2-technical-report-advancing-gui-250902544/v1/paper.pdf</dd>
+    <dt>Tags</dt><dd>foundational</dd>
+    <dt>Fetch date</dt><dd>2026-06-06T07:57:44Z</dd>
+    <dt>User status</dt><dd>unread</dd>
+    <dt>Triage</dt><dd><span class="badge READ_SOON">READ_SOON</span> · confidence high</dd>
+  </dl>
+</div>
+
+<!-- ===================== PASS 1 — TRIAGE ===================== -->
+<h2><span class="pass">PASS 1</span> Triage</h2>
+
+<p class="takeaway">A ByteDance technical report on UI-TARS-2, a 230B-total / 23B-active MoE native GUI agent trained by a model–data co-evolution loop (a <dfn title="A self-reinforcing cycle: the latest model generates trajectories that are filtered and routed back to continual-pretraining, SFT, and RL stages, so better models yield better data and vice versa.">data flywheel</dfn>) plus a stabilized multi-turn <dfn title="Reinforcement learning where the agent takes many sequential actions in a live environment before a (usually sparse) reward, requiring credit assignment across the whole trajectory.">multi-turn RL</dfn> recipe and a unified sandbox spanning GUI, terminal, file system, and tools — reaching <span class="evidence">47.5 OSWorld, 50.6 WindowsAgentArena, 73.3 AndroidWorld, 88.2 Online-Mind2Web (Tab.1, p.15)</span>.</p>
+
+<h3>The Five Cs</h3>
+<table>
+  <tr><th>Category</th><td>Method + system + measurement <b>technical report</b> (not peer-reviewed). Contributes a training methodology (data flywheel + multi-turn PPO recipe), an infrastructure platform (all-in-one sandbox), and a broad benchmark sweep; analysis sections add training-dynamics observations.</td></tr>
+  <tr><th>Context</th><td>Builds directly on <dfn title="The predecessor native GUI agent line from ByteDance.">UI-TARS / UI-TARS-1.5</dfn> (Qin et al. 2025) and the ReAct paradigm; RL machinery imports <dfn title="Proximal Policy Optimization: an actor–critic RL algorithm that clips the policy-update ratio for stability.">PPO</dfn> with VAPO/VC-PPO/DAPO enhancements (decoupled & length-adaptive GAE, value pretraining, clip-higher). Competes against Claude 4, OpenAI o3, OpenAI CUA-o3, Gemini-2.5 Pro. Initialized from Seed-thinking-1.6.</td></tr>
+  <tr><th>Correctness</th><td>Core empirical claims look internally consistent (e.g., abstract's "2.4×/2.8×" matches 59.8/24.7 and 59.8/21.6 in Tab.2). <span class="weak">But as a tech report many comparisons are not head-to-head: key baseline cells are "-" or ✗ (e.g., Claude/OpenAI have no OSWorld/AndroidWorld numbers in Tab.1), and several headline games/SWE numbers use a GUI-SDK action space not available to baselines.</span></td></tr>
+  <tr><th>Contributions</th><td>(1) Data flywheel co-evolving CT/SFT/RL data; (2) stabilized long-horizon multi-turn PPO recipe + asynchronous stateful rollout infra; (3) hybrid GUI+terminal+file+tool sandbox and unified action space; plus parameter-interpolation merging of vertical agents.</td></tr>
+  <tr><th>Clarity</th><td>Well organized and richly illustrated; method is described at a recipe level. <span class="weak">Hyperparameters, data volumes, and exact mixing ratios are largely omitted; figures report curves without axis values, so quantitative training claims are hard to verify.</span></td></tr>
+</table>
+
+<h3>Why this matters to me now</h3>
+<p>Directly relevant to computer-use / GUI-agent interests: it is the most detailed public account so far of <em>scaling online multi-turn RL</em> for a production GUI agent, and of unifying GUI with terminal/file/tool actions in one sandbox. The training-dynamics analyses (rising entropy, declining think length, PPO&gt;GRPO, value pretraining) are reusable insights even if the model weights are closed.</p>
+
+<!-- ===================== PASS 2 — CONTENT ===================== -->
+<h2><span class="pass">PASS 2</span> Content</h2>
+
+<h3>Motivation — the problem (NOT the novelty)</h3>
+<p>Native GUI agents face four open problems (p.3, §1), all about <em>scaling</em> rather than any single new idea. (1) <b>Data scarcity</b>: large-scale long-horizon trajectories that capture reasoning + action + environment state + feedback are far rarer and costlier than text/code corpora. (2) <b>Unstable multi-turn online RL</b>: rewards are sparse/delayed, optimization is unstable, and credit assignment across long action sequences is hard, so training does not scale past short-horizon demos. (3) <b>GUI-only operation is insufficient</b>: realistic workflows (data processing, software dev, sysadmin) are more naturally done through file systems, terminals, and tools than by simulating clicks. (4) <b>Environment instability at scale</b>: rollouts across browsers/VMs/simulators must be reproducible and fault-tolerant for millions of episodes, but such environments are fragile and crash-prone. The motivation ends here — it describes what breaks, not the fix.</p>
+
+<h3>Novelty — the genuine delta ★</h3>
+<ul>
+  <li><b>Delta in one sentence</b> (survives deleting "we propose"): a GUI agent improves stably at scale when (a) data and model co-evolve through a routing loop that recycles every generated trajectory to the training stage it best fits, (b) long-horizon online PPO is stabilized with value pretraining + decoupled/length-adaptive GAE + clip-higher and asynchronous <dfn title="A rollout that preserves environment execution state across tool calls, so the agent's later actions see the consequences of earlier ones.">stateful rollouts</dfn>, and (c) GUI, terminal, file system, and tools share one containerized sandbox and one action space.</li>
+  <li><b>Mechanistic reason</b> the design must take this form: naive scaling fails because (i) human GUI traces are off-policy, so the model never corrects its own mistakes — fixed by on-policy interactive annotation + flywheel recycling; (ii) plain PPO's value estimates decay/are mis-calibrated over long token sequences (the paper reports value estimates were <em>negatively</em> correlated with rewards), so value pretraining and decoupled GAE are needed before policy learning is reliable; (iii) batch rollouts stall on long-tail trajectories, so streaming partially-filled pools keep updates flowing; (iv) a shared file system lets a browser-downloaded file be processed by shell in the same instance, which GUI-only environments cannot express.</li>
+  <li><b>Closest prior work &amp; precise difference</b>: UI-TARS / UI-TARS-1.5 (same line, but offline correction of pre-collected traces and GUI-only); Kimi-Researcher (streaming partially-filled pools — explicitly credited as conceptually similar); VAPO/VC-PPO/DAPO (source of the GAE/clip tricks, here applied to multi-turn GUI rather than long-CoT reasoning); parameter merging via mode-connectivity (Qin et al. 2022) reused to fuse vertical agents.</li>
+  <li><b>Motivation-vs-novelty check</b>: passes — the motivation stops at "prior GUI agents are off-policy, GUI-only, and unstable under online RL"; the novelty is the specific flywheel + stabilized-PPO + unified-sandbox combination, plus the mechanistic claim that value mis-calibration is what breaks long-horizon PPO.</li>
+  <li><b>30-second test</b>: an engineering-grade recipe + infrastructure for scaling on-policy multi-turn RL on a unified GUI/terminal/file/tool sandbox, not a new algorithm; the deltas are systems-level (flywheel, sandbox, stabilized rollout) rather than a novel objective.</li>
+</ul>
+
+<h3>Core idea / method</h3>
+<p>UI-TARS-2 follows the ReAct loop (thought <i>t</i>, action <i>a</i>, observation <i>o</i>) with a hierarchical memory state (working memory of the last N steps + compressed episodic memory) (p.4–5, §2.1). The action space unifies GUI primitives (click/type/scroll) with pre-defined SDK functions (terminal commands, MCP tool calls). Training runs the <dfn title="continual pre-training">CT</dfn> → <dfn title="supervised fine-tuning">SFT</dfn> → RL flywheel from a Seed-thinking-1.6 checkpoint: each RL model generates trajectories scored by a validator V(s)∈{0,1}; high-quality ones are appended to SFT, low-quality ones routed to CT, so no data is wasted (p.7, §2.3). SFT data is collected <em>on-policy</em> via interactive human-in-the-loop annotation where annotators accept/override the live model's proposed thought+action; CT data uses an in-situ think-aloud protocol that aligns verbalized reasoning with UI interactions (§2.4). Multi-turn RL uses <dfn title="Reinforcement Learning with Verifiable Rewards: rewards come from automatic verifiers (e.g., game scripts) or reference-answer matching rather than a learned reward model alone.">RLVR</dfn> across GUI-Browsing (obfuscated multi-hop info-seeking, LLM-as-Judge reward), GUI-General (690 websites, scored by UI-TARS-2 as a generative <dfn title="Outcome Reward Model: a model that scores whether a full trajectory achieved the task, used when no formal verifier exists.">ORM</dfn> on the last five screenshots), and Gameplay (JS verifiers on HTML5/WebGL mini-games). RL = PPO + value pretraining + Decoupled-GAE + Length-Adaptive GAE (α=0.05) + clip-higher (§2.5.4). Specialized per-domain RL models are then fused by convex parameter interpolation θ(merge)=Σ αₖθ(k) (§2.6). Infrastructure: thousands of cloud VMs (Windows/Ubuntu/Android, PyAutoGUI+ADB) and a hardware-accelerated browser sandbox with fake-clock time control, driven by asynchronous server-based inference and streaming partially-filled rollout pools.</p>
+
+<h3>Harness relevance</h3>
+<table>
+  <tr><th>Environment / workspace</th><td>All-in-One GUI Sandbox: cloud VMs (Windows, Ubuntu, Android) + hardware-accelerated browser sandbox for games; a <b>shared file system</b> lets browser, shell, and tools interoperate in one container (p.5–7, §2.2).</td></tr>
+  <tr><th>Observation interface</th><td>Screenshots (screenshot-only for games), plus recordings; ORM conditions on the last five screenshots + text history. VNC/RTC for monitoring.</td></tr>
+  <tr><th>Action interface</th><td>Unified: GUI primitives (click/type/scroll via PyAutoGUI/ADB) <em>and</em> GUI-SDK functions (terminal/shell commands, MCP tool calls). Games use the same human-like GUI action space.</td></tr>
+  <tr><th>Planner/executor/verifier/search</th><td>Single end-to-end ReAct policy (no separate planner). Verifiers: function-based (games), LLM-as-Judge / reference matching (GUI-Browsing), generative ORM (GUI-General). Info-seeking via on-screen browsing, not search APIs.</td></tr>
+  <tr><th>Evaluation harness</th><td>OSWorld (369 tasks), WindowsAgentArena (&gt;150), AndroidWorld (116 / 20 apps), Online-Mind2Web (300 / 136 sites), BrowseComp-en/zh, Terminal Bench (75/80 run), SWE-Bench Verified, in-house 15 Games Collection, LMGame-Bench (OOD).</td></tr>
+  <tr><th>Training harness</th><td>Data flywheel (CT/SFT/RL) from Seed-thinking-1.6; multi-turn PPO with value pretraining, decoupled & length-adaptive GAE, clip-higher; asynchronous server-based rollout with streaming partially-filled pools and stateful environments; W4A8 quantization for deployment.</td></tr>
+  <tr><th>Repro / logging / safety</th><td>Lease-based VM lifecycle, session IDs, crash recovery, checkpointing, fake-clock determinism for games. <span class="limit">No model/data/code release stated in the report; safety of autonomous computer use not discussed.</span></td></tr>
+</table>
+
+<h3>Experimental setup</h3>
+<p><b>Model</b>: 532M-param vision encoder + MoE LLM with 23B active / 230B total params, initialized from Seed-thinking-1.6 (p.14, §3.1). <b>Baselines</b>: Claude-4-Sonnet/Opus, OpenAI o3, OpenAI CUA-o3, Gemini-2.5 Pro, Claude 3.7/4 (games), and prior UI-TARS / UI-TARS-1.5. <b>Metrics</b>: task success rate (GUI), raw per-game score and mean normalized score (= score / human, averaged) for games. <b>Caveats</b>: GUI benchmarks allow either GUI-only or GUI-SDK actions; † cells in Tab.1 use the extended GUI-SDK action space. Game numbers are screenshot-only, human-like actions. <span class="weak">No training compute, data volume, run counts (except LMGame's 3 runs), or hyperparameters reported.</span></p>
+
+<h3>Key results <span class="anchor">(read the figures, not just the prose)</span></h3>
+<table>
+  <tr><th>Result</th><th>Number</th><th>Baseline / human</th><th>Anchor</th></tr>
+  <tr><td>OSWorld (computer use)</td><td>47.5</td><td>UI-TARS-1.5 42.5; CUA-o3 42.9; Claude-4-Sonnet 43.9</td><td>Tab.1, p.15</td></tr>
+  <tr><td>WindowsAgentArena</td><td>50.6</td><td>UI-TARS-1.5 42.1; Claude/OpenAI "-" (not reported)</td><td>Tab.1, p.15</td></tr>
+  <tr><td>AndroidWorld (mobile)</td><td>73.3</td><td>UI-TARS-1.5 64.2; CUA-o3 52.5; Claude/o3 "-"/✗</td><td>Tab.1, p.15</td></tr>
+  <tr><td>Online-Mind2Web (browser)</td><td>88.2</td><td>UI-TARS-1.5 75.8; CUA-o3 71.0</td><td>Tab.1, p.15</td></tr>
+  <tr><td>Terminal Bench (GUI-SDK†)</td><td>45.3†</td><td>Claude-4-Opus 43.2; o3 30.2 <span class="weak">(75/80 tasks only)</span></td><td>Tab.1, p.15</td></tr>
+  <tr><td>SWE-Bench Verified (GUI-SDK†)</td><td>68.7†</td><td><span class="weak">below Claude-4-Sonnet 72.7 / Opus 72.5; ≈ o3 69.1</span></td><td>Tab.1, p.15</td></tr>
+  <tr><td>BrowseComp-en (GUI-SDK† vs GUI-only)</td><td>29.6† (7.0 GUI-only)</td><td>o3 49.7 <span class="weak">(higher than UI-TARS-2)</span></td><td>Tab.1, p.15</td></tr>
+  <tr><td>BrowseComp-zh (GUI-SDK† vs GUI-only)</td><td>50.5† (32.1 GUI-only)</td><td>Claude-4-Opus 37.4</td><td>Tab.1, p.15</td></tr>
+  <tr><td>15 Games mean normalized</td><td>59.77 (RL)</td><td>SFT 44.27; OpenAI CUA 24.73; Claude CU 21.61; Human 100</td><td>Tab.2, p.15</td></tr>
+  <tr><td>RL transfer (Online-Mind2Web)</td><td>83.7 → 88.2</td><td>SFT (final iter) → RL</td><td>p.14, §3.2</td></tr>
+  <tr><td>RL transfer (OSWorld / AndroidWorld)</td><td>43.0→47.5 / 64.6→73.3</td><td>SFT → RL (OOD gains)</td><td>p.14, §3.2</td></tr>
+</table>
+<p>RL transfers OOD: domains not the primary RL focus still improve (OSWorld +4.5 absolute, framed as "nearly 10.5%" relative; AndroidWorld +8.7 absolute). Games show <span class="evidence">+35.0 over OpenAI CUA and +38.2 over Claude Computer Use (≈2.4× and 2.8×, matching the abstract)</span>, surpassing human on Shapes (108.9). On OOD LMGame-Bench the picture is <span class="weak">mixed and single-config: UI-TARS-2 leads Candy Crush (163.2) but trails o3 on 2048 (117.1 vs 128.2), Super Mario (1783.2 vs 1955.0), and is weak on Tetris/Sokoban</span> (Tab.3, p.16). <span class="weak">Head-to-head completeness is limited: in Tab.1 Claude/OpenAI have no OSWorld/AndroidWorld/Online-Mind2Web numbers (cells "-" or ✗), so several "outperforms Claude/OpenAI" claims rest on non-comparable cells; SWE-Bench and BrowseComp-en actually trail the strongest proprietary baselines.</span> Training-dynamics analyses (single curves, no error bars): rising entropy during GUI/game RL, <em>declining</em> average think length, PPO &gt; GRPO in reward and stability (Fig.12), and value pretraining lifting rewards (Fig.10b). ORM F1 = 83.8 on 300 human-annotated traces with a high false-positive rate, yet still effective for RL.</p>
+
+<!-- ===================== PASS 3 — CRITIQUE ===================== -->
+<h2><span class="pass">PASS 3</span> Critique</h2>
+<details open>
+  <summary>Evidence, assumptions, reproducibility, strengths &amp; weaknesses</summary>
+
+  <h3>Do the claims hold? (claim → evidence)</h3>
+  <table>
+    <tr><th>Claim</th><th>Supporting evidence</th><th>Verdict</th></tr>
+    <tr><td><span class="claim">Improves over predecessor UI-TARS-1.5 on all reported GUI benchmarks</span></td><td><span class="evidence">47.5 vs 42.5 OSWorld; 50.6 vs 42.1 WAA; 73.3 vs 64.2 AndroidWorld; 88.2 vs 75.8 Mind2Web (Tab.1)</span></td><td>holds (same-line, head-to-head)</td></tr>
+    <tr><td><span class="claim">Outperforms strong baselines such as Claude and OpenAI agents</span></td><td>Beats CUA-o3 on AndroidWorld (73.3 vs 52.5) and Mind2Web (88.2 vs 71.0); leads on games</td><td><span class="weak">partial — many baseline cells are "-"/✗ (no OSWorld/AndroidWorld for Claude/o3), and it trails on SWE-Bench & BrowseComp-en</span></td></tr>
+    <tr><td><span class="claim">RL induces broadly transferable, OOD skills</span></td><td><span class="evidence">SFT→RL lifts OSWorld 43.0→47.5 and AndroidWorld 64.6→73.3 though browser tasks dominated RL (p.14)</span></td><td>holds (verifies the novelty)</td></tr>
+    <tr><td><span class="claim">Stabilized PPO recipe is necessary; PPO &gt; GRPO; value pretraining helps</span></td><td><span class="evidence">Fig.12 PPO higher reward & lower volatility; Fig.10b value-pretrain higher reward</span></td><td><span class="weak">partial — curves without axis values, single runs, no ablation table</span></td></tr>
+    <tr><td><span class="claim">GUI-SDK augmentation enables harder reasoning/tool-use</span></td><td><span class="evidence">BC-en 7.0→29.6, BC-zh 32.1→50.5 with SDK (Tab.1)</span></td><td>holds, but confounds the cross-model comparison (baselines lack SDK)</td></tr>
+    <tr><td><span class="claim">VLM-as-verifier is feasible without major reward hacking</span></td><td><span class="evidence">ORM F1 83.8 on 300 traces; manual inspection found no substantial hacking (p.16)</span></td><td><span class="weak">partial — high false-positive rate acknowledged; "no substantial hacking" is qualitative</span></td></tr>
+  </table>
+  <p><b>Novelty-verifying</b> experiments: SFT→RL OOD transfer, PPO-vs-GRPO, value-pretraining, hybrid-vs-interpolation, inference-time scaling. <b>Motivation-confirming</b>: the raw benchmark sweep mostly confirms the agent is strong, not that the specific recipe is responsible.</p>
+
+  <h3>Hidden assumptions &amp; failure modes</h3>
+  <p>Assumes (i) agent success is concretely verifiable, making a VLM/ORM reward safe — plausible for games and reference-answer browsing, riskier for open-ended GUI-General where the model judges itself; (ii) specialized RL models from one SFT init stay <dfn title="Two fine-tuned models can be linearly interpolated in weight space without a loss barrier.">linearly mode-connected</dfn>, so interpolation preserves skills — empirically supported here but domain-dependent. Likely failure modes: very long-horizon planning (Tetris/Sokoban weak), tasks needing precise external search (BrowseComp-en below o3), and reward hacking surfacing as the policy explores (entropy is rising, not collapsing).</p>
+
+  <h3>Could I reconstruct it?</h3>
+  <table>
+    <tr><th>Code</th><td>Project/desktop repos linked (github.com/bytedance/ui-tars, UI-TARS-desktop) but the training/RL/sandbox code is <span class="limit">not released in this report</span>.</td></tr><tr><th>Data</th><td>Flywheel/CT/SFT/RL datasets, 690-website pool, 15 Games suite — none released; collection protocols described qualitatively.</td></tr>
+    <tr><th>Models</th><td>UI-TARS-2 weights not released here; built on closed Seed-thinking-1.6.</td></tr><tr><th>Environment</th><td>Sandbox architecture described (VM cluster, browser sandbox) but not provided as runnable infra.</td></tr>
+    <tr><th>License</th><td>Not stated.</td></tr><tr><th>Missing details</th><td>Hyperparameters, data volumes, mixing ratios, compute, GAE λ values (only α=0.05 given), interpolation weights αₖ, ORM training data size — all omitted; figures lack axis scales.</td></tr>
+  </table>
+
+  <h3>Strengths</h3><ul>
+    <li>Unusually concrete systems account of scaling online multi-turn RL for GUI agents (asynchronous stateful rollouts, streaming pools, value pretraining) — reusable engineering knowledge.</li>
+    <li>Genuine unification of GUI + terminal + file + tools in one sandbox with a shared action space and file system.</li>
+    <li>Strong, consistent gains over its own predecessor across computer/mobile/browser, plus OOD transfer evidence.</li>
+    <li>Useful negative/empirical findings: PPO &gt; GRPO here, rising (not collapsing) entropy, declining think length, imperfect ORM still trains well.</li>
+  </ul>
+  <h3>Weaknesses &amp; limitations</h3><ul>
+    <li><span class="limit">Tech-report rigor: single runs, no error bars (except LMGame's 3 runs), no ablations isolating flywheel vs sandbox vs RL-recipe contributions.</span></li>
+    <li><span class="limit">Cross-model comparisons are not head-to-head — many Claude/OpenAI cells missing, and headline † numbers use a GUI-SDK action space baselines lack; SWE-Bench and BrowseComp-en actually trail the best proprietary models.</span></li>
+    <li><span class="limit">Closed: no weights, training code, or data; figures without axis values make quantitative training claims unverifiable.</span></li>
+    <li><span class="limit">Self-judged rewards (ORM/LLM-as-Judge) on open-ended tasks risk reward hacking; high ORM false-positive rate noted.</span></li>
+    <li><span class="limit">Long-horizon planning ceiling (Tetris/Sokoban) attributed to the backbone, not addressed.</span></li>
+  </ul>
+  <h3>Relationship to prior work</h3><p>Incremental as an <em>algorithm</em> (RL machinery is imported from VAPO/VC-PPO/DAPO; merging from mode-connectivity work; streaming pools from Kimi-Researcher), but a genuinely new <em>integration and scaling</em> over UI-TARS-1.5: on-policy flywheel data collection, a unified GUI+system sandbox, and a stabilized long-horizon RL stack assembled into one production agent. The contribution is breadth, infrastructure, and empirical recipe rather than a new learning principle.</p>
+</details>
+
+<!-- ===================== GLOSSARY (self-contained) ===================== -->
+<h2>Glossary / key terms</h2>
+<dl class="glossary">
+  <dt>Multi-turn RL</dt><dd>RL where the agent takes many sequential actions in a live environment before receiving a (usually sparse) reward; the central challenge is credit assignment and stability over long trajectories. Core to UI-TARS-2's training.</dd>
+  <dt>Data flywheel</dt><dd>A self-reinforcing loop: the latest model generates trajectories, a validator V(s)∈{0,1} routes high-quality ones to SFT and low-quality ones to CT, so model and data co-improve each cycle with no data wasted (§2.3).</dd>
+  <dt>Sandbox</dt><dd>The containerized execution environment the agent acts in. UI-TARS-2's "all-in-one" sandbox merges cloud VMs (Win/Ubuntu/Android) and a browser game sandbox with a shared file system, so GUI, terminal, and tool actions interoperate.</dd>
+  <dt>Rollout</dt><dd>One episode of the agent interacting with the environment to produce a trajectory for training/eval. Here rollouts are asynchronous and stateful (execution state persists across tool calls), pooled in streaming partially-filled batches.</dd>
+  <dt>OSWorld</dt><dd>369-task execution-based desktop benchmark (Ubuntu/Windows/macOS) for computer-use agents. UI-TARS-2: 47.5.</dd>
+  <dt>WindowsAgentArena (WAA)</dt><dd>&gt;150 Windows-specific tasks adapting the OSWorld framework. UI-TARS-2: 50.6.</dd>
+  <dt>AndroidWorld</dt><dd>116 mobile tasks across 20 apps in a live Android emulator with randomized parameters. UI-TARS-2: 73.3.</dd>
+  <dt>Online-Mind2Web</dt><dd>300 realistic live-web tasks across 136 sites for browser agents (the "illusion of progress" re-assessment of web agents). UI-TARS-2: 88.2.</dd>
+  <dt>BrowseComp (en/zh)</dt><dd>High-difficulty multi-hop browsing benchmarks where the answer is deliberately obfuscated across pages. UI-TARS-2: 29.6 en / 50.5 zh with GUI-SDK.</dd>
+  <dt>Terminal Bench</dt><dd>Benchmark of command-line proficiency for AI agents in terminal environments. UI-TARS-2: 45.3 (75/80 tasks).</dd>
+  <dt>SWE-Bench (Verified)</dt><dd>Repository-level software-engineering benchmark: resolve real GitHub issues. UI-TARS-2: 68.7 with GUI-SDK.</dd>
+  <dt>LMGame-Bench</dt><dd>OOD benchmark of LLM/VLM game play across six classic titles via a Gym-style interface, with optional perception/memory scaffolds (harnessed vs unharnessed).</dd>
+  <dt>PPO</dt><dd>Proximal Policy Optimization: actor–critic RL that clips the policy-update ratio to keep updates stable. UI-TARS-2's chosen optimizer, augmented with decoupled/length-adaptive GAE, value pretraining, and clip-higher.</dd>
+  <dt>GRPO</dt><dd>Group Relative Policy Optimization: a critic-free RL method that normalizes rewards within a sampled group; effective for reasoning tasks but here found to underperform PPO in reward and stability (Fig.12).</dd>
+  <dt>GAE</dt><dd>Generalized Advantage Estimation: a bias–variance-tunable advantage estimator (param λ). UI-TARS-2 decouples λ for policy vs critic and adapts λ to sequence length to stabilize long-horizon training.</dd>
+  <dt>ReAct</dt><dd>Reasoning+Acting paradigm interleaving thought, action, and observation each step — the agent's per-step loop.</dd>
+  <dt>RLVR</dt><dd>Reinforcement Learning with Verifiable Rewards: rewards from automatic verifiers or reference matching rather than purely learned reward models.</dd>
+  <dt>ORM</dt><dd>Outcome Reward Model: scores whether a full trajectory succeeded. UI-TARS-2 is used as a generative ORM (last 5 screenshots + text), F1 83.8 on 300 traces.</dd>
+  <dt>GUI-SDK</dt><dd>The extended action space beyond GUI clicks: terminal commands and MCP tool calls. Results marked † use it; baselines generally do not.</dd>
+  <dt>MoE</dt><dd>Mixture-of-Experts: only a subset of parameters activate per token. UI-TARS-2 has 23B active / 230B total params + a 532M vision encoder.</dd>
+  <dt>Parameter interpolation</dt><dd>Convex blending θ(merge)=Σαₖθ(k) of per-domain RL models from a shared SFT init, exploiting linear mode connectivity to fuse skills without joint RL.</dd>
+</dl>
+
+<!-- ===================== DECISION ===================== -->
+<h2>Decision</h2>
+<h3>What I should read</h3>
+<ul>
+  <li><b>Must read:</b> §2.5 Multi-turn RL (task/reward design, asynchronous stateful rollout, PPO+GAE+value-pretraining recipe) and §3.3 Detailed Analyses (entropy, think-length, PPO-vs-GRPO, value pretraining, inference-time scaling) — the transferable methodology.</li>
+  <li><b>Skim:</b> §2.2 sandbox architecture, §2.3 flywheel, §2.6 parameter interpolation, Tab.1–3 results.</li>
+  <li><b>Can skip:</b> §4 Related Work and the contributor list unless tracing lineage.</li>
+  <li><b>Follow-ups / references to chase:</b> UI-TARS-1.5, VAPO/VC-PPO (value optimization in long-CoT PPO), DAPO (clip-higher), Kimi-Researcher (streaming rollout), mode-connectivity (Qin 2022), Online-Mind2Web ("illusion of progress"), Terminal Bench, BrowseComp.</li>
+</ul>
+
+<h3>Triage decision</h3>
+<p><b>Label:</b> <span class="badge READ_SOON">READ_SOON</span><br>
+   <b>Rationale:</b> Highly relevant systems+method report on scaling multi-turn RL for GUI agents with a unified GUI/terminal/tool sandbox; strong same-line gains and reusable training-dynamics insights make the method sections worth reading. Not MUST_READ because it is a closed, single-run technical report whose cross-model comparisons are partly non-head-to-head and whose contributions are integration/scaling rather than a new learning principle.<br>
+   <b>Confidence:</b> high &nbsp; <b>Reading time:</b> ~45–60 min for §2.5 + §3.3; ~15 min skim of the rest.</p>
+
+<section id="personal-notes">
+<!--PERSONAL_NOTES_START-->
+<h3>Personal notes</h3>
+<p>Free-form notes for later.</p>
+<!--PERSONAL_NOTES_END-->
+</section>
+
+<h3>Follow-up actions</h3>
+<ul>
+  <li>Compare the stabilized-PPO recipe (value pretraining, decoupled/length-adaptive GAE, clip-higher) against my notes on VAPO/VC-PPO/DAPO to see what is GUI-specific vs imported.</li>
+  <li>Add UI-TARS-1.5 to the library as the direct baseline; track whether UI-TARS-2 weights/code are ever released.</li>
+  <li>Check the OSWorld / AndroidWorld / Online-Mind2Web leaderboards for true head-to-head Claude/OpenAI numbers the report leaves as "-".</li>
+  <li>Note the PPO&gt;GRPO and rising-entropy findings as data points for the agent-RL knowledge base.</li>
+</ul>
+
+<footer>Generated from config/summary_template.html · three-pass · Motivation≠Novelty · self-contained.</footer>
+</body>
+</html>

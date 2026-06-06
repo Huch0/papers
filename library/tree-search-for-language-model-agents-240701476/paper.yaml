@@ -1,0 +1,61 @@
+canonical_key: arxiv-2407.01476
+slug: tree-search-for-language-model-agents-240701476
+title: Tree Search for Language Model Agents
+authors:
+- Jing Yu Koh
+- S. McAleer
+- Daniel Fried
+- Ruslan Salakhutdinov
+year: 2024
+primary_ids:
+  doi: 10.48550/arXiv.2407.01476
+  arxiv_base_id: '2407.01476'
+  openreview_id: null
+  semantic_scholar_id: 9345e55a21959948499cee997522aa5eac7ed588
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2407.01476
+- https://arxiv.org/pdf/2407.01476
+topic_groups:
+- agent_harness
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: Trans. Mach. Learn. Res.
+  tier: unknown
+  status: unknown
+  year: 2024
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: expansion
+  significance: Brought best-first/MCTS inference-time search to LLM web agents; boosted WebArena/VisualWebArena
+    success.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2407.01476
+  pdf_path: library/tree-search-for-language-model-agents-240701476/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/tree-search-for-language-model-agents-240701476/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:33Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: 0b21710f26db2e9383f768cdaea5755f1a39fb0b5eafffdfa5451a33d106e130
+  pdf_bytes: 3312735
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-06-06T07:57:33Z'
+  updated_at: '2026-06-06T07:57:33Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

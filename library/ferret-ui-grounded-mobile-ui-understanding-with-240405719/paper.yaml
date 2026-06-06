@@ -1,0 +1,64 @@
+canonical_key: arxiv-2404.05719
+slug: ferret-ui-grounded-mobile-ui-understanding-with-240405719
+title: 'Ferret-UI: Grounded Mobile UI Understanding with Multimodal LLMs'
+authors:
+- Keen You
+- Haotian Zhang
+- E. Schoop
+- Floris Weers
+- Amanda Swearngin
+- Jeffrey Nichols
+- Yinfei Yang
+- Zhe Gan
+year: 2024
+primary_ids:
+  doi: 10.48550/arXiv.2404.05719
+  arxiv_base_id: '2404.05719'
+  openreview_id: null
+  semantic_scholar_id: 3687e55cf21c4d0041d9bf0b74988319bfe3402b
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2404.05719
+- https://arxiv.org/pdf/2404.05719
+topic_groups:
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: European Conference on Computer Vision
+  tier: unknown
+  status: unknown
+  year: 2024
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: foundational
+  significance: Apple MLLM for mobile screens with any-resolution sub-image splitting for referring/grounding;
+    surpassed GPT-4V on UI tasks.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2404.05719
+  pdf_path: library/ferret-ui-grounded-mobile-ui-understanding-with-240405719/v1/paper.pdf
+  summary_path: library/ferret-ui-grounded-mobile-ui-understanding-with-240405719/v1/summary.md
+  metadata_path: library/ferret-ui-grounded-mobile-ui-understanding-with-240405719/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:28Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: b203b48b05ef3bbfd4dabeed01f1658b37d3abfcbd39567a73452ccf614bac5a
+  pdf_bytes: 23832886
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-06-06T07:57:28Z'
+  updated_at: '2026-06-06T08:22:35Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

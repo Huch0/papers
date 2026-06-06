@@ -1,0 +1,91 @@
+canonical_key: arxiv-2403.03186
+version_key: v1
+title: 'Cradle: Empowering Foundation Agents towards General Computer Control'
+authors:
+- Weihao Tan
+- Ziluo Ding
+- Wentao Zhang
+- Boyu Li
+- Bohan Zhou
+- Junpeng Yue
+- Haochong Xia
+- Jiechuan Jiang
+- Longtao Zheng
+- Xinrun Xu
+- Yifei Bi
+- Pengjie Gu
+- Xinrun Wang
+- Börje F. Karlsson
+- Bo An
+- Zongqing Lu
+abstract: 'Despite the success in specific scenarios, existing foundation agents still struggle to generalize
+  across various virtual scenarios, mainly due to the dramatically different encapsulations of environments
+  with manually designed observation and action spaces. To handle this issue, we propose the General Computer
+  Control (GCC) setting to restrict foundation agents to interact with software through the most unified
+  and standardized interface, i.e., using screenshots as input and keyboard and mouse actions as output.
+  We introduce Cradle, a modular and flexible LMM-powered framework, as a preliminary attempt towards
+  GCC. Enhanced by six key modules, Cradle can understand input screenshots and output executable code
+  for low-level keyboard and mouse control after high-level planning, so that Cradle can interact with
+  any software and complete long-horizon complex tasks without relying on any built-in APIs. Experimental
+  results show that Cradle exhibits remarkable generalizability and impressive performance across four
+  previously unexplored commercial video games, five software applications, and a comprehensive benchmark,
+  OSWorld. Cradle is the first to enable foundation agents to follow the main storyline and complete 40-minute-long
+  real missions in the complex AAA game Red Dead Redemption 2 (RDR2). Cradle can also create a city of
+  a thousand people in Cities: Skylines, farm and harvest parsnips in Stardew Valley, and trade and bargain
+  with a maximal weekly total profit of 87% in Dealer''s Life 2. Cradle can not only operate daily software,
+  like Chrome, Outlook, and Feishu, but also edit images and videos using Meitu and CapCut. Cradle greatly
+  extends the reach of foundation agents by enabling the easy conversion of any software, especially complex
+  games, into benchmarks to evaluate agents'' various abilities and facilitate further data collection,
+  thus paving the way for generalist agents.'
+venue: International Conference on Machine Learning
+year: 2024
+source: arxiv
+source_url: https://arxiv.org/abs/2403.03186
+pdf_url: https://arxiv.org/pdf/2403.03186
+pdf_sha256: c397d96784867e3e8d5321bff5094c3224df8eca282ed5ba8790a6923d03cc97
+fetched_at: '2026-06-06T07:57:29Z'
+source_updated_at: null
+ids:
+  doi: null
+  arxiv_id: '2403.03186'
+  arxiv_base_id: '2403.03186'
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: 52976286324d79c3349cf1cd101aa3a8832d2954
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: recency(1.00), venue_quality(1.00), novelty(0.80) | interests:
+    computer_use_agents:group:computer_use_agents | milestone/foundational floor applied'
+  matched_interests:
+  - computer_use_agents:group:computer_use_agents
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 1.0
+    venue_quality: 1.0
+    harness_relevance: 0.52
+    novelty: 0.8
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.7
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/cradle-empowering-foundation-agents-towards-general-computer-240303186/v1/paper.pdf
+  extraction: library/cradle-empowering-foundation-agents-towards-general-computer-240303186/v1/extraction.txt
+  summary: library/cradle-empowering-foundation-agents-towards-general-computer-240303186/v1/summary.md
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread

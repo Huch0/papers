@@ -1,0 +1,76 @@
+canonical_key: arxiv-2412.05467
+slug: the-browsergym-ecosystem-for-web-agent-research-241205467
+title: The BrowserGym Ecosystem for Web Agent Research
+authors:
+- Thibault Le Sellier de Chezelles
+- Maxime Gasse
+- Alexandre Lacoste
+- Alexandre Drouin
+- Massimo Caccia
+- L'eo Boisvert
+- Megh Thakkar
+- Tom Marty
+- Rim Assouel
+- Sahar Omidi Shayegan
+- L. Jang
+- Xing Han Lù
+- Ori Yoran
+- Dehan Kong
+- Frank F. Xu
+- Siva Reddy
+- Quentin Cappart
+- Graham Neubig
+- Ruslan Salakhutdinov
+- Nicolas Chapados
+year: 2024
+primary_ids:
+  doi: 10.48550/arXiv.2412.05467
+  arxiv_base_id: '2412.05467'
+  openreview_id: null
+  semantic_scholar_id: cdee27ca18f11adae733aa9baf1b1377b864cfa1
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2412.05467
+- https://arxiv.org/pdf/2412.05467
+topic_groups:
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: Trans. Mach. Learn. Res.
+  tier: unknown
+  status: unknown
+  year: 2024
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: recent
+  significance: Unified gym/experiment harness consolidating MiniWoB, WebArena, WorkArena, VisualWebArena;
+    standard web-agent infra.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2412.05467
+  pdf_path: library/the-browsergym-ecosystem-for-web-agent-research-241205467/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/the-browsergym-ecosystem-for-web-agent-research-241205467/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:48Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: 98d4d9b8088ca6bc5e0efd613389622b53ffedcb36cb285f093f7e6045499491
+  pdf_bytes: 10876140
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-06-06T07:57:48Z'
+  updated_at: '2026-06-06T07:57:48Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

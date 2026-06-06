@@ -1,0 +1,76 @@
+canonical_key: arxiv-2412.04454
+version_key: v1
+title: 'Aguvis: Unified Pure Vision Agents for Autonomous GUI Interaction'
+authors:
+- Yiheng Xu
+- Zekun Wang
+- Junli Wang
+- Dunjie Lu
+- Tianbao Xie
+- Amrita Saha
+- Doyen Sahoo
+- Tao Yu
+- Caiming Xiong
+abstract: Automating GUI tasks remains challenging due to reliance on textual representations, platform-specific
+  action spaces, and limited reasoning capabilities. We introduce Aguvis, a unified vision-based framework
+  for autonomous GUI agents that directly operates on screen images, standardizes cross-platform interactions
+  and incorporates structured reasoning via inner monologue. To enable this, we construct Aguvis Data
+  Collection, a large-scale dataset with multimodal grounding and reasoning annotations, and develop a
+  two-stage training pipeline that separates GUI grounding from planning and reasoning. Experiments show
+  that Aguvis achieves state-of-the-art performance across offline and real-world online benchmarks, marking
+  the first fully autonomous vision-based GUI agent that operates without closed-source models. We open-source
+  all datasets, models, and training recipes at https://aguvis-project.github.io to advance future research.
+venue: International Conference on Machine Learning
+year: 2024
+source: arxiv
+source_url: https://arxiv.org/abs/2412.04454
+pdf_url: https://arxiv.org/pdf/2412.04454
+pdf_sha256: d9f0c31bdae82ae2be8ce1921ba5b23b3898cb61f14ad7755ff8290e7d877a6c
+fetched_at: '2026-06-06T07:57:35Z'
+source_updated_at: null
+ids:
+  doi: 10.48550/arXiv.2412.04454
+  arxiv_id: '2412.04454'
+  arxiv_base_id: '2412.04454'
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: 58ae4a85ae73095da668d6eac3a8c1f19270c89d
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: recency(1.00), venue_quality(1.00), novelty(1.00) | interests:
+    computer_use_agents:GUI agent, computer_use_agents:group:computer_use_agents | milestone/foundational
+    floor applied'
+  matched_interests:
+  - computer_use_agents:GUI agent
+  - computer_use_agents:group:computer_use_agents
+  negative_signals: []
+  subscores:
+    interest_fit: 0.91
+    recency: 1.0
+    venue_quality: 1.0
+    harness_relevance: 0.0
+    novelty: 1.0
+    artifact_availability: 0.55
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/aguvis-unified-pure-vision-agents-for-autonomous-241204454/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

@@ -1,0 +1,6 @@
+# papers/ research harness dependencies.
+# All are widely-used; the harness degrades gracefully when optional ones are missing.
+PyYAML>=6.0          # required: YAML metadata I/O
+requests>=2.28       # recommended: HTTP fetching/downloads (falls back to urllib)
+PyMuPDF>=1.23        # recommended: PDF text/structure extraction (module name: fitz)
+# sqlite3 is in the Python standard library (used for the optional catalog cache).

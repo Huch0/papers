@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<!--
+  Rich HTML summary. Structure: Keshav three passes + Kim "Motivation != Novelty" + Five Cs,
+  self-contained (terms defined inline as <dfn> and in the Glossary).
+  Spans: claim / evidence / weak / limit. Anchors as (Tab.X / Fig.Y / p.Z, sec).
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Agent S2: A Compositional Generalist-Specialist Framework for Computer Use Agents</title>
+<style>
+  :root{--ink:#1a1a1a;--mut:#666;--line:#e2e2e2;--claim:#0b6b3a;--claimbg:#e8f6ee;
+        --eviden:#0b4f8a;--evidenbg:#e8f1fb;--weak:#8a5a0b;--weakbg:#fbf3e3;
+        --limit:#a11;--limitbg:#fbeaea;--defbg:#f0eefb;}
+  body{font:15px/1.55 -apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:var(--ink);
+       max-width:860px;margin:2rem auto;padding:0 1.2rem;}
+  h1{font-size:1.5rem;line-height:1.25;margin:.2rem 0 1rem;}
+  h2{font-size:1.15rem;margin:1.6rem 0 .4rem;border-bottom:2px solid var(--line);padding-bottom:.2rem;}
+  h3{font-size:1rem;margin:1rem 0 .3rem;color:#333;}
+  .pass{color:#fff;background:#333;border-radius:4px;padding:.05rem .5rem;font-size:.8rem;vertical-align:middle;}
+  .card{border:1px solid var(--line);border-radius:8px;padding:.8rem 1rem;background:#fafafa;position:sticky;top:0;}
+  .meta{display:grid;grid-template-columns:auto 1fr;gap:.1rem .8rem;font-size:.85rem;margin:0;}
+  .meta dt{color:var(--mut);} .meta dd{margin:0;font-weight:500;}
+  .badge{display:inline-block;font-weight:700;border-radius:4px;padding:.1rem .5rem;color:#fff;}
+  .MUST_READ{background:#a11;} .READ_SOON{background:#c70;} .SKIM{background:#0b6b3a;}
+  .TRACK_ONLY{background:#555;} .SKIP{background:#999;}
+  .claim{background:var(--claimbg);border-bottom:1px solid var(--claim);}
+  .evidence{background:var(--evidenbg);border-bottom:1px solid var(--eviden);}
+  .weak{background:var(--weakbg);border-bottom:1px dashed var(--weak);}
+  .limit{background:var(--limitbg);}
+  dfn{font-style:normal;border-bottom:1px dotted var(--mut);cursor:help;background:var(--defbg);}
+  table{border-collapse:collapse;width:100%;font-size:.88rem;margin:.5rem 0;}
+  th,td{border:1px solid var(--line);padding:.35rem .5rem;text-align:left;vertical-align:top;}
+  th{background:#f2f2f2;}
+  .takeaway{font-size:1.05rem;font-weight:600;border-left:4px solid var(--eviden);padding:.4rem .8rem;background:var(--evidenbg);}
+  dl.glossary dt{font-weight:700;margin-top:.4rem;} dl.glossary dd{margin:0 0 .2rem;color:#333;}
+  details{border:1px solid var(--line);border-radius:6px;padding:.3rem .8rem;margin:.6rem 0;}
+  summary{font-weight:600;cursor:pointer;}
+  .anchor{color:var(--mut);font-size:.82rem;}
+  footer{color:var(--mut);font-size:.8rem;margin-top:2rem;border-top:1px solid var(--line);padding-top:.5rem;}
+</style>
+</head>
+<body>
+
+<h1>Agent S2: A Compositional Generalist-Specialist Framework for Computer Use Agents</h1>
+
+<div class="card">
+  <dl class="meta">
+    <dt>Canonical key</dt><dd>arxiv-2504.00906</dd>
+    <dt>Version</dt><dd>v1</dd>
+    <dt>Venue · Year</dt><dd>arXiv.org (later COLM 2025) · 2025</dd>
+    <dt>Authors</dt><dd>Saaket Agashe, Kyle Wong, Vincent Tu, Jiachen Yang, Ang Li, X. Wang</dd>
+    <dt>Source</dt><dd>arxiv</dd>
+    <dt>PDF</dt><dd>library/agent-s2-a-compositional-generalist-specialist-framework-250400906/v1/paper.pdf</dd>
+    <dt>Tags</dt><dd>foundational</dd>
+    <dt>Fetch date</dt><dd>2026-06-06T07:57:31Z</dd>
+    <dt>User status</dt><dd>unread</dd>
+    <dt>Triage</dt><dd><span class="badge READ_SOON">READ_SOON</span> · confidence high</dd>
+  </dl>
+</div>
+
+<!-- ===================== PASS 1 — TRIAGE ===================== -->
+<h2><span class="pass">PASS 1</span> Triage</h2>
+
+<p class="takeaway">A compositional <dfn title="An autonomous agent that completes user tasks by directly driving a graphical user interface with keyboard and mouse, rather than via APIs.">computer-use agent</dfn> that splits cognition across a generalist planner/worker and specialist grounding experts, adding two mechanisms &mdash; <dfn title="The Worker reasons about a subgoal, then routes each action's localization to a dedicated grounding expert (visual / textual-OCR / structural-spreadsheet) instead of doing it itself.">Mixture-of-Grounding</dfn> routing and <dfn title="The Manager re-plans the remaining subgoals after every completed subgoal using fresh observations, instead of only revising on failure.">Proactive Hierarchical Planning</dfn> &mdash; to set new SOTA on OSWorld, WindowsAgentArena, and AndroidWorld.</p>
+
+<h3>The Five Cs</h3>
+<table>
+  <tr><th>Category</th><td>Method + system paper (agent framework), with benchmark evaluation and ablations. Not a new model or dataset.</td></tr>
+  <tr><th>Context</th><td>Builds directly on Agent S (Agashe et al., 2024) and its knowledge base; competes with monolithic native agents (UI-TARS, Claude Computer Use, OpenAI CUA/Operator) and modular planner+grounder pipelines (UGround, Aria-UI, OmniParser/NAVI). Conceptual root: <dfn title="Adaptive Mixtures of Local Experts (Jacobs et al., 1991): a gating network routes each input to specialized expert sub-models.">Mixture-of-Experts</dfn>.</td></tr>
+  <tr><th>Correctness</th><td>Core claims are benchmark-supported with ablations. Main caveats: <span class="weak">no error bars / single-run results, ablations on a 65-example OSWorld subset, and a small abstract-vs-table discrepancy on the headline 15/50-step relative gains.</span></td></tr>
+  <tr><th>Contributions</th><td>(1) The compositional generalist-specialist framework; (2) Mixture-of-Grounding + Proactive Hierarchical Planning; (3) SOTA across three OS/mobile benchmarks; (4) ablations showing each piece helps and that small specialist grounders beat large generalists inside the framework.</td></tr>
+  <tr><th>Clarity</th><td>Clear and well structured; method (sec.3), results (sec.4), and appendix case studies are easy to follow. Some headline numbers in the abstract need cross-checking against tables.</td></tr>
+</table>
+
+<h3>Why this matters to me now</h3>
+<p>Computer-use / GUI agents are a central, fast-moving area, and this is the lineage successor to Agent S from a group that ships open code. The "compose suboptimal specialists to beat the best monolith" thesis is directly relevant to harness design (routing, planner/worker/grounder separation) and to deciding whether to invest in monolithic native agents vs. modular pipelines.</p>
+
+<!-- ===================== PASS 2 — CONTENT ===================== -->
+<h2><span class="pass">PASS 2</span> Content</h2>
+
+<h3>Motivation &mdash; the problem (NOT the novelty)</h3>
+<p>Computer-use agents must do three cognitively distinct things at once &mdash; long-horizon planning, action generation, and pixel-precise <dfn title="Mapping a textual description of a UI element to exact pixel coordinates (or a specific accessibility-tree element) so the agent can click/type on it.">grounding</dfn> &mdash; and prior work tends to push all three through a single model. The paper argues this monolithic setup fails on two fronts simultaneously (p.2, sec.1): models <span class="claim">imprecisely ground GUI elements to pixel coordinates</span>, and they <span class="claim">struggle on long-horizon tasks amid pop-ups, background apps, and evolving observations</span>. A stated structural reason is that <span class="claim">fine-tuning a single model to specialize on one sub-skill tends to erode its broader capabilities</span> (catastrophic forgetting; Yosinski 2014, Luo 2023, p.3), so a single generalist is bottlenecked by whichever sub-skill it is weakest at. The best agents still lag humans by roughly a 40% gap on OSWorld (p.1) &mdash; so the problem is real and unsolved. This subsection is problem-only: it does not yet say what Agent S2 does differently.</p>
+
+<h3>Novelty &mdash; the genuine delta &#9733;</h3>
+<ul>
+  <li><b>Delta in one sentence</b> (survives deleting "we propose"): grounding should not be one monolithic skill &mdash; route each action to a <em>specialist</em> grounder (visual model, OCR for text spans, a spreadsheet/UNO API for cells), and re-plan the remaining subgoals after <em>every</em> subgoal using fresh observations rather than only after a failure.</li>
+  <li><b>Mechanistic reason</b> each piece is needed:
+    <ul>
+      <li><b>Mixture-of-Grounding</b> &mdash; visual grounding models miss fine-grained targets like the exact edge of a word or an arbitrarily-resized spreadsheet cell (p.5, sec.3.1). Those failure classes have <em>better non-MLLM tools</em>: OCR pinpoints character spans, and a programmatic table interface (UNO) sets cell values directly. So letting the Worker route to the right tool removes failure modes a single visual grounder cannot fix, and frees the Worker to focus on reasoning.</li>
+      <li><b>Proactive Hierarchical Planning</b> &mdash; the initial observation is only partial and the screen evolves (pop-ups, noise). A <dfn title="Plan-and-execute that keeps the fixed plan and only revises a subgoal after it fails.">reactive</dfn> plan only changes on failure, so it cannot incorporate information learned from a <em>successful</em> subgoal. <dfn title="The Manager regenerates the remaining subgoals after each completed subgoal, conditioned on the latest observation plus prior subgoals.">Proactive</dfn> re-planning lets the Manager recontextualize the user query as the state is revealed, which is what enables backward correction and adaptive exploration (Fig.3, Fig.7).</li>
+    </ul>
+  </li>
+  <li><b>Closest prior work &amp; precise difference</b>: <em>Agent S</em> (same group) already used hierarchical Manager/Worker + a knowledge base, but the Worker did its own grounding and planning was not re-run every subgoal; Agent S2 adds the grounding router and proactive re-planning. <em>Modular planner+grounder</em> pipelines (UGround, Aria-UI, OmniParser/NAVI) use a single grounder paired with an LLM planner; Agent S2 uses a <em>mixture</em> of grounders chosen per-action. <em>Monolithic native agents</em> (UI-TARS, Claude Computer Use, OpenAI CUA) fold all skills into one model; Agent S2 deliberately composes separate ones.</li>
+  <li><b>Motivation-vs-novelty check</b>: passes &mdash; the contribution is not merely "monolithic agents fail" (that is the motivation) but a specific architecture (per-action grounding routing + per-subgoal re-planning) plus the empirical claim that <span class="claim">composing individually-suboptimal specialists can beat the best monolithic model</span> (p.2). Litmus: ablations <em>verify the novelty</em> (MoG on/off, PHP on/off, swapping grounders), not just confirm the motivation.</li>
+  <li><b>30-second test</b>: "Treat grounding as a routing problem to expert tools, and re-plan after every subgoal &mdash; a stack of cheap specialists beats one big generalist on computer use."</li>
+</ul>
+
+<h3>Core idea / method</h3>
+<p>Three components (sec.3). A <b>Manager M</b> decomposes the instruction into high-level subgoals. A <b>Worker W</b> executes the top subgoal by emitting atomic actions, each tagged with a language descriptor of its target location. Instead of grounding that target itself, the Worker acts as a gate and routes to one of the <b>grounding experts</b>: a <em>visual</em> expert (description &rarr; &lang;x,y&rang; pixel coordinate, screenshot-only, UI-TARS-72B-DPO in their setup), a <em>textual</em> expert (Tesseract OCR returning start/end coordinates of a word span given two boundary phrases), and a <em>structural</em> expert (UNO interface that programmatically writes spreadsheet cells from a {cell:value} dict). On the planning side, after each subgoal returns SUCCESS/FAILURE, the Manager regenerates the remaining subgoals from prior subgoals + latest observation + original instruction (Proactive Hierarchical Planning). The framework reuses the Agent S knowledge base (task/subgoal experience + web knowledge). The action space (Tab.8, appendix) is a function-call-style interface including <code>highlight_text_span</code> and <code>set_cell_values</code> that surface the textual/structural experts.</p>
+
+<h3>Harness relevance</h3>
+<table>
+  <tr><th>Environment / workspace</th><td>Real desktop OSes and mobile: OSWorld (Ubuntu, 369 tasks), WindowsAgentArena (Windows, 154 tasks), AndroidWorld (Android, 116 tasks / 20 apps).</td></tr>
+  <tr><th>Observation interface</th><td>Screenshot-only + action history (no accessibility tree / HTML needed). Notably their WindowsAgentArena baselines (Agent S, NAVI) used a11y tree + screenshot; Agent S2 uses screenshots only.</td></tr>
+  <tr><th>Action interface</th><td>GUI via keyboard/mouse atomic actions (click, type, scroll, hotkey, drag_and_drop, switch_applications, etc.) plus span-highlight and cell-set; mobile open/touch/type. POMDP framing (p.3).</td></tr>
+  <tr><th>Planner/executor/verifier/search</th><td>Manager (planner, re-plans per subgoal), Worker (executor + gating/router), grounding experts (specialist localizers). No explicit tree search; Worker self-corrects by refining descriptions. AndroidWorld uses Worker-only mode (short horizons).</td></tr>
+  <tr><th>Evaluation harness</th><td>Online functional success-rate scripts from each benchmark; 15-step and 50-step caps on OSWorld; 15-step on WindowsAgentArena. Reaching the step cap without a done signal counts as failure.</td></tr>
+  <tr><th>Training harness</th><td>None &mdash; no fine-tuning by this work; it composes off-the-shelf backbones (Claude-3.7/3.5-Sonnet, GPT-4o) and pretrained grounders. That is the point of the compositional thesis.</td></tr>
+  <tr><th>Repro / logging / safety</th><td>Code released (github.com/simular-ai/Agent-S). Backbones include closed APIs; grounders/OCR/UNO are open. No safety/guardrail discussion. Error analysis provided (Fig.8).</td></tr>
+</table>
+
+<h3>Experimental setup</h3>
+<p><b>Benchmarks:</b> OSWorld (main, 369 tasks; ablations on a 65-example stratified subset), WindowsAgentArena (154), AndroidWorld (116). <b>Baselines:</b> screenshot-input agents &mdash; OpenAI CUA/Operator, Claude Computer Use (3.5 and 3.7-Sonnet), UI-TARS-72B-DPO for OSWorld; NAVI + OmniParser for WindowsAgentArena; UI-TARS-72B-SFT and GPT-4o+Aria-UI/UGround for AndroidWorld. <b>Backbones (Manager/Worker):</b> Claude-3.7-Sonnet (best, thinking mode on), Claude-3.5-Sonnet (new), GPT-4o. <b>Grounders:</b> UI-TARS-72B-DPO (visual), Tesseract (textual), UNO (structural). <b>Metric:</b> task success rate (%). <b>Compute:</b> not reported; <span class="weak">no run counts, seeds, or variance reported.</span></p>
+
+<h3>Key results <span class="anchor">(read the figures, not just the prose)</span></h3>
+<table>
+  <tr><th>Result</th><th>Agent S2 number</th><th>Best baseline</th><th>Anchor</th></tr>
+  <tr><td>OSWorld 15-step (Claude-3.7)</td><td>27.0%</td><td>UI-TARS-72B-DPO 22.7% · OpenAI CUA 19.7% · Agent S 20.6%</td><td>Tab.1, p.6</td></tr>
+  <tr><td>OSWorld 50-step (Claude-3.7)</td><td>34.5%</td><td>OpenAI CUA 32.6% · CCU-3.7 26.0% · UI-TARS-DPO 24.6%</td><td>Tab.1, p.6</td></tr>
+  <tr><td>OSWorld 15/50-step (Claude-3.5 new)</td><td>24.5% / 33.7%</td><td>CCU-3.7 15.5% / 26.0%</td><td>Tab.1, p.6</td></tr>
+  <tr><td>Abstract headline relative gain</td><td>+18.9% (15-step), +32.7% (50-step)</td><td>vs UI-TARS / Claude Computer Use</td><td>Abstract / p.2 footnote 1</td></tr>
+  <tr><td>WindowsAgentArena (15-step, Claude-3.7)</td><td>29.8% (+52.8% rel.)</td><td>NAVI 19.5% · Agent S 18.2% (both use a11y tree+screenshot)</td><td>Tab.3, p.7</td></tr>
+  <tr><td>AndroidWorld</td><td>54.3% (+16.5% rel.)</td><td>UI-TARS-72B-SFT 46.6% · GPT-4o+Aria-UI 44.8%</td><td>Tab.4, p.9</td></tr>
+  <tr><td>Ablation: Mixture-of-Grounding (65-subset)</td><td>27.69&rarr;30.77% (15-step); 33.85&rarr;38.46% (50-step)</td><td>w/o MoG</td><td>Fig.5, p.8</td></tr>
+  <tr><td>Ablation: Proactive Planning (65-subset)</td><td>+4.62% (15-step), +6.15% (50-step)</td><td>vs reactive</td><td>Fig.5, p.8</td></tr>
+  <tr><td>Small specialist grounder beats big generalist (in-framework, 15-step)</td><td>UI-TARS-7B-DPO 29.23% &amp; UGround-V1-7B 24.61% vs Claude-3.7 24.61%</td><td>&mdash;</td><td>Fig.6, p.8</td></tr>
+</table>
+<p>The relative-gain framing needs care. The abstract's headline <span class="weak">"18.9% and 32.7% relative improvements over &hellip; Claude Computer Use and UI-TARS" reads against the best Claude-3.7 numbers, while p.2 instead foregrounds Claude-3.5-Sonnet (new) outperforming CCU-3.7 by 58.1% (15-step) and 29.6% (50-step) &mdash; different reference points, so the single "18.9%/32.7%" sentence is easy to misread.</span> On 50-step OSWorld the absolute gap over OpenAI CUA is modest (34.5 vs 32.6 = 1.9 points). Error analysis (Fig.8) is a useful qualitative result: planning is now the top failure (41.0%), grounding only 20.5% &mdash; evidence that MoG shifted the bottleneck away from grounding. All headline and ablation numbers appear to be <span class="weak">single runs with no variance reported</span>, and ablations are on a 65-task subset, not the full 369.</p>
+
+<!-- ===================== PASS 3 — CRITIQUE ===================== -->
+<h2><span class="pass">PASS 3</span> Critique</h2>
+<details open>
+  <summary>Evidence, assumptions, reproducibility, strengths &amp; weaknesses</summary>
+
+  <h3>Do the claims hold? (claim &rarr; evidence)</h3>
+  <table>
+    <tr><th>Claim</th><th>Supporting evidence</th><th>Verdict</th></tr>
+    <tr><td><span class="claim">New SOTA on three benchmarks</span></td><td><span class="evidence">OSWorld 27.0/34.5 &gt; all baselines (Tab.1); WAA 29.8 &gt; NAVI 19.5 (Tab.3); AndroidWorld 54.3 &gt; 46.6 (Tab.4)</span></td><td>holds (within single-run, screenshot-input comparison)</td></tr>
+    <tr><td><span class="claim">Composing suboptimal specialists beats the best monolith</span></td><td><span class="evidence">UI-TARS-7B-DPO as in-framework grounder gives 29.23% &gt; Claude-3.7 generalist 24.61% (Fig.6); framework beats CCU-3.7 (Tab.1)</span></td><td>holds &mdash; this experiment directly verifies the novelty</td></tr>
+    <tr><td><span class="claim">Mixture-of-Grounding improves success</span></td><td><span class="evidence">+3.08 (15-step), +4.61 (50-step) on 65-subset (Fig.5); removing textual expert drops subtask SR 70.6&rarr;65.2, structural 73.7&rarr;69.4</span></td><td><span class="weak">holds on a 65-task subset; full-set effect not isolated</span></td></tr>
+    <tr><td><span class="claim">Proactive &gt; reactive planning</span></td><td><span class="evidence">+4.62 (15-step), +6.15 (50-step) on 65-subset (Fig.5); scaling analysis attributes backward correction / adaptive nav to PHP (Fig.7)</span></td><td><span class="weak">holds on subset; gains grow with steps, consistent with the mechanism</span></td></tr>
+    <tr><td><span class="claim">+18.9% / +32.7% relative over leading baselines (abstract)</span></td><td><span class="evidence">footnote 1 defines the references (UI-TARS &amp; CCU for OSWorld); Tab.1 numbers</span></td><td><span class="weak">partial &mdash; abstract vs p.2 use different baselines/variants for the relative framing; verify which before quoting</span></td></tr>
+    <tr><td><span class="claim">Screenshot-only suffices (no a11y tree)</span></td><td><span class="evidence">Beats a11y-tree-using NAVI/Agent S on WAA (Tab.3)</span></td><td>holds, and is a fairer-to-harder comparison</td></tr>
+  </table>
+  <p>Novelty-verifying experiments (Fig.5 MoG/PHP ablations, Fig.6 grounder swap) are separated from motivation-confirming ones (the main SOTA tables, which mainly confirm the "monolithic is bottlenecked" premise).</p>
+
+  <h3>Hidden assumptions &amp; failure modes</h3>
+  <p>Assumes the Worker can reliably <em>choose</em> the right grounding expert (routing is itself an LLM decision and can misroute); assumes language descriptors are unambiguous enough for the visual grounder; the structural expert assumes a UNO-controllable app (LibreOffice/soffice), so it does not generalize to arbitrary spreadsheets. <span class="limit">Proactive re-planning runs the Manager after every subgoal, adding LLM calls/latency/cost that are never quantified.</span> Per the authors' own error analysis, <span class="limit">planning is now the dominant failure (41.0%, Fig.8)</span> &mdash; the framework moves the bottleneck rather than removing it. Performance still trails humans substantially (~40% gap, p.1).</p>
+
+  <h3>Could I reconstruct it?</h3>
+  <table>
+    <tr><th>Code</th><td>Released: github.com/simular-ai/Agent-S (Agent S2 included).</td></tr><tr><th>Data</th><td>No new data; uses public benchmarks (OSWorld, WindowsAgentArena, AndroidWorld).</td></tr>
+    <tr><th>Models</th><td>Backbones: Claude-3.7/3.5-Sonnet, GPT-4o (closed APIs). Grounders: UI-TARS-72B-DPO, Tesseract OCR, UNO (open).</td></tr><tr><th>Environment</th><td>Three public benchmark harnesses; OSWorld Ubuntu VM, WAA Windows, AndroidWorld emulator.</td></tr>
+    <tr><th>License</th><td>Code license not stated in paper; OCR/UNO are open-source.</td></tr><tr><th>Missing details</th><td><span class="weak">No run count/seeds/variance, no compute or cost/latency, exact prompts for Manager/Worker routing not in the paper text, and the ablation subset selection (65 of 369) is only described as stratified.</span></td></tr>
+  </table>
+
+  <h3>Strengths</h3>
+  <ul>
+    <li>Clean, testable thesis (compose specialists) backed by a direct grounder-swap experiment, not just headline SOTA.</li>
+    <li>Generalizes across Ubuntu, Windows, and Android with the same framework &mdash; strong evidence of modularity.</li>
+    <li>Screenshot-only, yet beats a11y-tree-using baselines on Windows.</li>
+    <li>Honest error analysis that names the new bottleneck (planning) and shows test-time-scaling behaviors.</li>
+    <li>Open code; reuses commodity OCR/UNO tools, lowering the barrier to adopt.</li>
+  </ul>
+  <h3>Weaknesses &amp; limitations</h3>
+  <ul>
+    <li><span class="limit">No variance/error bars; headline and ablation numbers appear to be single runs &mdash; SOTA margins (e.g. +1.9 pts on 50-step OSWorld) could be within noise.</span></li>
+    <li><span class="limit">Ablations are on a 65-task subset, not the full benchmark, weakening the strength of the MoG/PHP claims.</span></li>
+    <li><span class="limit">Cost/latency of per-subgoal re-planning and per-action routing is unquantified, despite being the obvious price of the design.</span></li>
+    <li><span class="limit">Abstract's relative-improvement framing is ambiguous vs the body text (different baselines/variants), inviting overstatement.</span></li>
+    <li><span class="limit">Structural grounding is tied to UNO-controllable office apps; not a general mechanism.</span></li>
+  </ul>
+  <h3>Relationship to prior work</h3>
+  <p>Genuinely incremental-but-meaningful over Agent S (same lab): the hierarchical Manager/Worker + knowledge base is inherited; the new, transferable ideas are the per-action grounding router (MoG) and per-subgoal proactive re-planning (PHP). Versus modular planner+grounder pipelines the delta is "a mixture of grounders chosen per action" rather than one grounder; versus monolithic native agents it is a position (compose, don't fine-tune one model) with empirical backing.</p>
+</details>
+
+<!-- ===================== GLOSSARY (self-contained) ===================== -->
+<h2>Glossary / key terms</h2>
+<dl class="glossary">
+  <dt>Computer-use agent</dt><dd>An autonomous agent that completes user tasks by directly operating a GUI (keyboard/mouse), usable across apps without app-specific APIs.</dd>
+  <dt>Grounding</dt><dd>Mapping a textual description of a UI element ("the OK button") to exact pixel coordinates (or a specific accessibility-tree node) so the agent can act on it. A core bottleneck for GUI agents.</dd>
+  <dt>Mixture-of-Grounding (MoG)</dt><dd>Agent S2's mechanism where the Worker, acting as a gating function (analogous to Mixture-of-Experts), routes each action's localization to a specialist grounder: visual (image&rarr;coordinate), textual (OCR for word spans), or structural (programmatic spreadsheet cells via UNO).</dd>
+  <dt>Generalist vs specialist model</dt><dd>Generalist = one broadly-capable model doing planning/execution/grounding; specialist = a model/tool tuned for one sub-skill. The paper's thesis: composing specialists (even individually suboptimal) can beat the best single generalist.</dd>
+  <dt>Proactive vs reactive planning</dt><dd>Reactive = keep a fixed plan and revise a subgoal only after it fails. Proactive (this paper) = re-generate the remaining subgoals after <em>every</em> completed subgoal using the latest observation, enabling recontextualization and backward correction.</dd>
+  <dt>Proactive Hierarchical Planning (PHP)</dt><dd>Two-level proactive planning: the Manager re-plans subgoals per subgoal and the Worker re-routes its grounder per action, adapting at multiple temporal scales.</dd>
+  <dt>Manager / Worker</dt><dd>Hierarchical roles: Manager generates high-level subgoals; Worker executes the current subgoal as atomic actions and routes their grounding.</dd>
+  <dt>Mixture-of-Experts (MoE)</dt><dd>Classic architecture (Jacobs et al., 1991) where a gating network sends each input to specialized expert sub-models; the conceptual inspiration for MoG (here the Worker is the gate).</dd>
+  <dt>OSWorld</dt><dd>Benchmark of 369 real desktop tasks on Ubuntu (OS, office, daily, professional, multi-app), evaluated with functional success scripts; main benchmark here, run at 15- and 50-step caps.</dd>
+  <dt>WindowsAgentArena (WAA)</dt><dd>Parallelizable Windows benchmark (154 tasks) extending OSWorld-style desktop control to Windows apps.</dd>
+  <dt>AndroidWorld</dt><dd>Dynamic Android benchmark (116 mobile UI tasks across 20 apps) used to test cross-platform generalization.</dd>
+  <dt>Accessibility (a11y) tree</dt><dd>A structured, machine-readable representation of on-screen UI elements; some baselines feed it to the agent. Agent S2 deliberately avoids it, using screenshots only.</dd>
+  <dt>UNO</dt><dd>Universal Network Objects: a programmatic interface to LibreOffice used by the structural grounding expert to set spreadsheet cell values directly.</dd>
+  <dt>Native / monolithic agent</dt><dd>A single model post-trained to do planning + grounding + execution end-to-end (e.g. UI-TARS, Claude Computer Use, OpenAI CUA); the foil for the compositional approach.</dd>
+</dl>
+
+<!-- ===================== DECISION ===================== -->
+<h2>Decision</h2>
+<h3>What I should read</h3>
+<ul>
+  <li><b>Must read:</b> Sec.3 (method &mdash; MoG routing and Proactive Hierarchical Planning), Tab.1, and Fig.5/Fig.6 ablations (the load-bearing evidence).</li>
+  <li><b>Skim:</b> Sec.2 background, Tab.2/3/4 (results breakdowns), Fig.7/8 (scaling + error analysis).</li>
+  <li><b>Can skip:</b> Appendix domain/app tables (5&ndash;7) and case-study figures (9&ndash;13) unless reproducing.</li>
+  <li><b>Follow-ups / references to chase:</b> Agent S (Agashe 2024); UI-TARS (Qin 2025); OSWorld (Xie 2024); UGround (Gou 2024); OmniParser/NAVI (Lu/Bonatti 2024); the github code for prompts.</li>
+</ul>
+
+<h3>Triage decision</h3>
+<p><b>Label:</b> <span class="badge READ_SOON">READ_SOON</span><br>
+   <b>Rationale:</b> Strong, transferable architectural ideas (grounding-as-routing, per-subgoal proactive re-planning) with a clean novelty-verifying experiment and cross-platform SOTA; weakened by single-run results, subset ablations, and ambiguous abstract framing, which keep it below MUST_READ but clearly worth reading soon for anyone building GUI-agent harnesses.<br>
+   <b>Confidence:</b> high &nbsp; <b>Reading time:</b> ~35&ndash;45 min for sec.3 + key tables/figures.</p>
+
+<section id="personal-notes">
+<!--PERSONAL_NOTES_START-->
+<h3>Personal notes</h3>
+<p>Free-form notes for later.</p>
+<!--PERSONAL_NOTES_END-->
+</section>
+
+<h3>Follow-up actions</h3>
+<ul>
+  <li>Compare directly with the original Agent S summary to isolate the v1&rarr;S2 delta.</li>
+  <li>Check the github repo for the Manager/Worker/router prompts and the 65-task ablation subset.</li>
+  <li>Cross-check the abstract's "18.9%/32.7%" framing against Tab.1 before citing.</li>
+  <li>Watch for whether later versions add variance/error bars and cost/latency numbers.</li>
+</ul>
+
+<footer>Generated from config/summary_template.html · three-pass · Motivation&ne;Novelty · self-contained.</footer>
+</body>
+</html>

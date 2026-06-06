@@ -1,0 +1,66 @@
+canonical_key: arxiv-2308.15272
+slug: autodroid-llm-powered-task-automation-in-android-230815272
+title: 'AutoDroid: LLM-powered Task Automation in Android'
+authors:
+- Hao Wen
+- Yuanchun Li
+- Guohong Liu
+- Shanhui Zhao
+- Tao Yu
+- Toby Jia-Jun Li
+- Shiqi Jiang
+- Yunhao Liu
+- Yaqin Zhang
+- Yunxin Liu
+year: 2023
+primary_ids:
+  doi: 10.1145/3636534.3649379
+  arxiv_base_id: '2308.15272'
+  openreview_id: null
+  semantic_scholar_id: cb23a59fdf3ade707600f076df4ff27a03941fba
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2308.15272
+- https://arxiv.org/pdf/2308.15272
+topic_groups:
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: ACM/IEEE International Conference on Mobile Computing and Networking
+  tier: unknown
+  status: unknown
+  year: 2023
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: foundational
+  significance: LLM commonsense + app dynamic analysis + memory injection for general Android automation;
+    early LLM phone-automation system.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2308.15272
+  pdf_path: library/autodroid-llm-powered-task-automation-in-android-230815272/v1/paper.pdf
+  summary_path: library/autodroid-llm-powered-task-automation-in-android-230815272/v1/summary.md
+  metadata_path: library/autodroid-llm-powered-task-automation-in-android-230815272/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:30Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: a09ac91037fb4df367c556e05a4568ebd324932e933c58adfcf34963733b6601
+  pdf_bytes: 1430028
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-06-06T07:57:30Z'
+  updated_at: '2026-06-06T08:14:04Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

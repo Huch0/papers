@@ -1,0 +1,82 @@
+canonical_key: arxiv-2506.21506
+slug: mind2web-2-evaluating-agentic-search-with-agent-250621506
+title: 'Mind2Web 2: Evaluating Agentic Search with Agent-as-a-Judge'
+authors:
+- Boyu Gou
+- Zanming Huang
+- Yuting Ning
+- Yu Gu
+- Michael Lin
+- Weijian Qi
+- Andrei Kopanev
+- Botao Yu
+- Bernal Jiménez Gutiérrez
+- Yiheng Shu
+- Chan Hee Song
+- Jiaman Wu
+- Shijie Chen
+- Hanane Nour Moussa
+- Tianshu Zhang
+- Jian Xie
+- Yifei Li
+- Tianci Xue
+- Zeyi Liao
+- Kai Zhang
+- Boyuan Zheng
+- Zhao Cai
+- Viktor Rozgic
+- Morteza Ziyadi
+- Huan Sun
+- Yu Su
+year: 2025
+primary_ids:
+  doi: 10.48550/arXiv.2506.21506
+  arxiv_base_id: '2506.21506'
+  openreview_id: null
+  semantic_scholar_id: 87e0d4f6e4fb8c16d69c4444de7319d7698b1711
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2506.21506
+- https://arxiv.org/pdf/2506.21506
+topic_groups:
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: arXiv.org
+  tier: workshop_or_minor
+  status: unknown
+  year: 2025
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: recent
+  significance: Long-horizon agentic-search eval with rubric-based Agent-as-a-Judge + source attribution;
+    Deep Research benchmark.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2506.21506
+  pdf_path: library/mind2web-2-evaluating-agentic-search-with-agent-250621506/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/mind2web-2-evaluating-agentic-search-with-agent-250621506/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:41Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: 1aaba4b08b43f832e2f55d6273475d958c3615b376e7f354eafd5ba31ee9449e
+  pdf_bytes: 10010725
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-06-06T07:57:41Z'
+  updated_at: '2026-06-06T07:57:41Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

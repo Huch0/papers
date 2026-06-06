@@ -1,0 +1,62 @@
+canonical_key: arxiv-2407.13032
+slug: agent-e-from-autonomous-web-navigation-to-240713032
+title: 'Agent-E: From Autonomous Web Navigation to Foundational Design Principles in Agentic Systems'
+authors:
+- Tamer Abuelsaad
+- Deepak Akkil
+- Prasenjit Dey
+- Ashish Jagmohan
+- Aditya Vempaty
+- Ravi Kokku
+year: 2024
+primary_ids:
+  doi: 10.48550/arXiv.2407.13032
+  arxiv_base_id: '2407.13032'
+  openreview_id: null
+  semantic_scholar_id: 796006ce7b13b13a993802937d091116b3440de9
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2407.13032
+- https://arxiv.org/pdf/2407.13032
+topic_groups:
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: arXiv.org
+  tier: workshop_or_minor
+  status: unknown
+  year: 2024
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: expansion
+  significance: Hierarchical planner-browser agent; SOTA on WebVoyager and reusable design principles
+    for agentic web systems.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2407.13032
+  pdf_path: library/agent-e-from-autonomous-web-navigation-to-240713032/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/agent-e-from-autonomous-web-navigation-to-240713032/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:33Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: 2654ee258924ca4fe233fba735614644fee71e9e402bc96126e5a0add26759ac
+  pdf_bytes: 5000572
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-06-06T07:57:33Z'
+  updated_at: '2026-06-06T07:57:33Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

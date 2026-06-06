@@ -1,0 +1,28 @@
+# === Derived artifacts (generated in CI / locally; never committed) — see ADR-0003 ===
+registry/papers.jsonl
+registry/catalog.sqlite
+indexes/*.md
+inbox/
+logs/migrations/
+
+# === Not shared: PDFs stay local-only Harness inputs; the site links to source URLs ===
+library/**/paper.pdf
+# Extraction text is regenerated from the PDF locally for summarizing
+library/**/extraction.txt
+library/**/extraction.structure.json
+library/**/summary.scaffold.*
+
+# === Site build / deps ===
+site/dist/
+site/.astro/
+site/node_modules/
+node_modules/
+**/.DS_Store
+
+# === Python ===
+__pycache__/
+*.pyc
+
+# Local scratch
+*.tmp
+*.part

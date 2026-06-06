@@ -1,0 +1,59 @@
+canonical_key: s2-298a55ddc9777e39c5bad92a750827e1cae98ac1
+slug: world-of-bits-an-open-domain-platform-e1cae98ac1
+title: 'World of Bits: An Open-Domain Platform for Web-Based Agents'
+authors:
+- Tianlin Shi
+- A. Karpathy
+- Linxi (Jim) Fan
+- J. Hernández
+- Percy Liang
+year: 2017
+primary_ids:
+  doi: null
+  arxiv_base_id: null
+  openreview_id: null
+  semantic_scholar_id: 298a55ddc9777e39c5bad92a750827e1cae98ac1
+  openalex_id: null
+canonical_urls:
+- https://www.semanticscholar.org/paper/298a55ddc9777e39c5bad92a750827e1cae98ac1
+topic_groups:
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: International Conference on Machine Learning
+  tier: A_star
+  status: unknown
+  year: 2017
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: emergence
+  significance: First open-domain web-interaction RL platform (MiniWoB lineage).
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: semantic_scholar
+  source: semantic_scholar
+  source_url: https://www.semanticscholar.org/paper/298a55ddc9777e39c5bad92a750827e1cae98ac1
+  pdf_path: null
+  summary_path: library/world-of-bits-an-open-domain-platform-e1cae98ac1/v1/summary.md
+  metadata_path: library/world-of-bits-an-open-domain-platform-e1cae98ac1/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:13:52Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: null
+  pdf_bytes: null
+  summary_status: triage_only
+  extraction_status: none
+  created_at: '2026-06-06T07:13:52Z'
+  updated_at: '2026-06-06T07:25:40Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

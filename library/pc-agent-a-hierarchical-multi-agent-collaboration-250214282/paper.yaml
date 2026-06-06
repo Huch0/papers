@@ -1,0 +1,68 @@
+canonical_key: arxiv-2502.14282
+slug: pc-agent-a-hierarchical-multi-agent-collaboration-250214282
+title: 'PC-Agent: A Hierarchical Multi-Agent Collaboration Framework for Complex Task Automation on PC'
+authors:
+- Haowei Liu
+- Xi Zhang
+- Haiyang Xu
+- Yuyang Wanyan
+- Junyang Wang
+- Ming Yan
+- Ji Zhang
+- Chunfen Yuan
+- Changsheng Xu
+- Weiming Hu
+- Fei Huang
+year: 2025
+primary_ids:
+  doi: 10.48550/arXiv.2502.14282
+  arxiv_base_id: '2502.14282'
+  openreview_id: null
+  semantic_scholar_id: 3d10ad5856546118177d7551979c50fb9a57cbbf
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2502.14282
+- https://arxiv.org/pdf/2502.14282
+topic_groups:
+- computer_use_agents
+- general_agent_methods
+tags:
+- foundational
+venue:
+  name: arXiv.org
+  tier: workshop_or_minor
+  status: unknown
+  year: 2025
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: expansion
+  significance: Hierarchical Manager-Progress-Decision multi-agent framework with active perception for
+    complex multi-app PC workflows.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2502.14282
+  pdf_path: library/pc-agent-a-hierarchical-multi-agent-collaboration-250214282/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/pc-agent-a-hierarchical-multi-agent-collaboration-250214282/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:31Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: 58d1ddfb4298d0ea3df39cc57ac079914b262adb75ab38b8313455a1c127e4a6
+  pdf_bytes: 18384146
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-06-06T07:57:31Z'
+  updated_at: '2026-06-06T07:57:31Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

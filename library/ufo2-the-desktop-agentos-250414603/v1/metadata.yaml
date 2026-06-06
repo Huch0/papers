@@ -1,0 +1,94 @@
+canonical_key: arxiv-2504.14603
+version_key: v1
+title: 'UFO2: The Desktop AgentOS'
+authors:
+- Chaoyun Zhang
+- He Huang
+- Chiming Ni
+- Jian Mu
+- Si Qin
+- Shilin He
+- Lu Wang
+- Fangkai Yang
+- Pu Zhao
+- Chao Du
+- Liqun Li
+- Yu Kang
+- Zhaodi Jiang
+- Suzhen Zheng
+- Rujia Wang
+- Jiaxu Qian
+- Ming-Jie Ma
+- Jianjun Lou
+- Qingwei Lin
+- S. Rajmohan
+- Dongmei Zhang
+abstract: Recent Computer-Using Agents (CUAs), powered by multimodal large language models (LLMs), offer
+  a promising direction for automating complex desktop workflows through natural language. However, most
+  existing CUAs remain conceptual prototypes, hindered by shallow OS integration, fragile screenshot-based
+  interaction, and disruptive execution. We present UFO2, a multiagent AgentOS for Windows desktops that
+  elevates CUAs into practical, system-level automation. UFO2 features a centralized HostAgent for task
+  decomposition and coordination, alongside a collection of application-specialized AppAgent equipped
+  with native APIs, domain-specific knowledge, and a unified GUI--API action layer. This architecture
+  enables robust task execution while preserving modularity and extensibility. A hybrid control detection
+  pipeline fuses Windows UI Automation (UIA) with vision-based parsing to support diverse interface styles.
+  Runtime efficiency is further enhanced through speculative multi-action planning, reducing per-step
+  LLM overhead. Finally, a Picture-in-Picture (PiP) interface enables automation within an isolated virtual
+  desktop, allowing agents and users to operate concurrently without interference. We evaluate UFO2 across
+  over 20 real-world Windows applications, demonstrating substantial improvements in robustness and execution
+  accuracy over prior CUAs. Our results show that deep OS integration unlocks a scalable path toward reliable,
+  user-aligned desktop automation.
+venue: arXiv.org
+year: 2025
+source: arxiv
+source_url: https://arxiv.org/abs/2504.14603
+pdf_url: https://arxiv.org/pdf/2504.14603
+pdf_sha256: ceecfb496791b8b101275520066eb69c3289c7c727a9e69cc844219598acece5
+fetched_at: '2026-06-06T07:57:31Z'
+source_updated_at: null
+ids:
+  doi: 10.48550/arXiv.2504.14603
+  arxiv_id: '2504.14603'
+  arxiv_base_id: '2504.14603'
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: d6215119bf99859669235b5007779265cdde7057
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: recency(1.00), interest_fit(0.91), venue_quality(0.40) |
+    interests: computer_use_agents:desktop agent, computer_use_agents:group:computer_use_agents | milestone/foundational
+    floor applied'
+  matched_interests:
+  - computer_use_agents:desktop agent
+  - computer_use_agents:group:computer_use_agents
+  negative_signals: []
+  subscores:
+    interest_fit: 0.91
+    recency: 1.0
+    venue_quality: 0.4
+    harness_relevance: 0.36
+    novelty: 0.0
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/ufo2-the-desktop-agentos-250414603/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

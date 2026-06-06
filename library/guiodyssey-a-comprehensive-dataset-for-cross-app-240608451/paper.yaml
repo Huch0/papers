@@ -1,0 +1,66 @@
+canonical_key: arxiv-2406.08451
+slug: guiodyssey-a-comprehensive-dataset-for-cross-app-240608451
+title: 'GUIOdyssey: A Comprehensive Dataset for Cross-App GUI Navigation on Mobile Devices'
+authors:
+- Quanfeng Lu
+- Wenqi Shao
+- Zitao Liu
+- Fanqing Meng
+- Boxuan Li
+- Botong Chen
+- Siyuan Huang
+- Kaipeng Zhang
+- Yu Qiao
+- Ping Luo
+year: 2024
+primary_ids:
+  doi: 10.1109/ICCV51701.2025.02080
+  arxiv_base_id: '2406.08451'
+  openreview_id: null
+  semantic_scholar_id: c443fddfce5b587a11e8074f548633304b4cd9a5
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2406.08451
+- https://arxiv.org/pdf/2406.08451
+topic_groups:
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: IEEE International Conference on Computer Vision
+  tier: unknown
+  status: unknown
+  year: 2024
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: expansion
+  significance: First large cross-app navigation dataset (7,735 episodes, 201 apps) + OdysseyAgent; established
+    cross-application setting.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2406.08451
+  pdf_path: library/guiodyssey-a-comprehensive-dataset-for-cross-app-240608451/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/guiodyssey-a-comprehensive-dataset-for-cross-app-240608451/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:37Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: 3f95681c58642c8b899c3951f940e350b70fb50ece5004520fcd7794759aecb2
+  pdf_bytes: 15981954
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-06-06T07:57:37Z'
+  updated_at: '2026-06-06T07:57:37Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

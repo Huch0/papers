@@ -1,0 +1,79 @@
+canonical_key: arxiv-2406.03679
+version_key: v1
+title: On the Effects of Data Scale on UI Control Agents
+authors:
+- Wei Li
+- Will Bishop
+- Alice Li
+- Christopher Rawles
+- Folawiyo Campbell-Ajala
+- Divya Tyamagundlu
+- O. Riva
+abstract: Autonomous agents that control computer interfaces to accomplish human tasks are emerging. Leveraging
+  LLMs to power such agents has been of special interest, but unless fine-tuned on human-collected task
+  demonstrations, performance is still relatively low. In this work we study whether fine-tuning alone
+  is a viable approach for building real-world computer control agents. In particularly, we investigate
+  how performance measured on both high and low-level tasks in domain and out of domain scales as more
+  training data is collected. To this end we collect and release a new dataset, AndroidControl, consisting
+  of 15,283 demonstrations of everyday tasks with Android apps. Compared to existing datasets, each AndroidControl
+  task instance includes both high and low-level human-generated instructions, allowing us to explore
+  the level of task complexity an agent can handle. Moreover, AndroidControl is the most diverse computer
+  control dataset to date, including 14,548 unique tasks over 833 Android apps, thus allowing us to conduct
+  in-depth analysis of the model performance in and out of the domain of the training data. Using the
+  dataset, we find that when tested in domain fine-tuned models outperform zero and few-shot baselines
+  and scale in such a way that robust performance might feasibly be obtained simply by collecting more
+  data. Out of domain, performance scales significantly more slowly and suggests that in particular for
+  high-level tasks, fine-tuning on more data alone may be insufficient for achieving robust out-of-domain
+  performance.
+venue: Neural Information Processing Systems
+year: 2024
+source: arxiv
+source_url: https://arxiv.org/abs/2406.03679
+pdf_url: https://arxiv.org/pdf/2406.03679
+pdf_sha256: d4a14ffbe97638159a2003a9b63eff4de21512c9799edcf7754d8705d757c4cf
+fetched_at: '2026-06-06T07:57:37Z'
+source_updated_at: null
+ids:
+  doi: 10.52202/079017-2925
+  arxiv_id: '2406.03679'
+  arxiv_base_id: '2406.03679'
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: d8ba1f488269420ed8440c31dfa987b8782c62f1
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: recency(1.00), interest_fit(0.73), harness_relevance(0.36)
+    | interests: computer_use_agents:group:computer_use_agents | milestone/foundational floor applied'
+  matched_interests:
+  - computer_use_agents:group:computer_use_agents
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 1.0
+    venue_quality: 0.3
+    harness_relevance: 0.36
+    novelty: 0.0
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/on-the-effects-of-data-scale-on-240603679/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

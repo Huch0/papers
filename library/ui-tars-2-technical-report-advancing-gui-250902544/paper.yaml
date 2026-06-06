@@ -1,0 +1,162 @@
+canonical_key: arxiv-2509.02544
+slug: ui-tars-2-technical-report-advancing-gui-250902544
+title: 'UI-TARS-2 Technical Report: Advancing GUI Agent with Multi-Turn Reinforcement Learning'
+authors:
+- Haoming Wang
+- Haoyang Zou
+- Huatong Song
+- Jiazhan Feng
+- Junjie Fang
+- Junting Lu
+- Longxiang Liu
+- Qinyu Luo
+- Shihao Liang
+- Shijue Huang
+- Wanjun Zhong
+- Yining Ye
+- Yujia Qin
+- Yuwen Xiong
+- Yuxin Song
+- Zhiyong Wu
+- Bo Li
+- Chen Dun
+- Chong Liu
+- Fuxing Leng
+- Han-rui Wang
+- Hao Yu
+- Haobin Chen
+- Hongyi Guo
+- Jing Su
+- Jingjia Huang
+- Kai Shen
+- Kaiyu Shi
+- Lin Yan
+- Pei-Xiong Zhao
+- Pengfei Liu
+- Qinghao Ye
+- Renjie Zheng
+- Wayne Xin Zhao
+- Wen Heng
+- Wenhao Huang
+- Wenqian Wang
+- Xiao-jun Qin
+- Yi Lin
+- Youbing Wu
+- Zehui Chen
+- Zihao Wang
+- B. Zhong
+- Xinchun Zhang
+- Xujing Li
+- YuanFang Li
+- Zhongkai Zhao
+- Chengquan Jiang
+- Faming Wu
+- Hao Zhou
+- Jinlin Pang
+- Li Han
+- Qianli Ma
+- Siyao Liu
+- Songhua Cai
+- Wenqi Fu
+- Xin Liu
+- Zhi Zhang
+- Bo Zhou
+- Guoliang Li
+- Jiajun Shi
+- Jiale Yang
+- Jie Tang
+- Li Li
+- Taoran Lu
+- Woyu Lin
+- Xiao Tong
+- Xinyao Li
+- Yichi Zhang
+- Yu Miao
+- Zheng-Wang Jiang
+- Zili Li
+- Zi-Hao Zhao
+- Chenxi Li
+- Dehua Ma
+- Feng Lin
+- Ge Zhang
+- Haihua Yang
+- Hangyu Guo
+- Hongda Zhu
+- Jiaheng Liu
+- Jun-Yan Du
+- Kai Cai
+- Kuanye Li
+- Lichen Yuan
+- Mei Han
+- Minchao Wang
+- Shuyu Guo
+- Tianhao Cheng
+- Xiaobo Ma
+- Xiao Xiao
+- Xiaolong Huang
+- Xinjie Chen
+- Yi-Zhen Du
+- Yilin Chen
+- Yiwen Wang
+- Zhaojian Li
+- Zhen Yang
+- Zhiyuan Zeng
+- Chaolin Jin
+- Chen Li
+- Haolin Chen
+- Haolin Chen
+- Jian Chen
+- Qinghao Zhao
+- Guang Shi
+year: 2025
+primary_ids:
+  doi: 10.48550/arXiv.2509.02544
+  arxiv_base_id: '2509.02544'
+  openreview_id: null
+  semantic_scholar_id: b9b5338f512c544faef4651364054570a0deaf36
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2509.02544
+- https://arxiv.org/pdf/2509.02544
+topic_groups:
+- computer_use_agents
+tags:
+- foundational
+venue:
+  name: arXiv.org
+  tier: workshop_or_minor
+  status: unknown
+  year: 2025
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: computer_use_agents
+  era: recent
+  significance: Scales native GUI agents with stabilized multi-turn RL + unified sandbox; improves long-horizon
+    grounding-and-acting over UI-TARS-1.x.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arxiv
+  source: arxiv
+  source_url: https://arxiv.org/abs/2509.02544
+  pdf_path: library/ui-tars-2-technical-report-advancing-gui-250902544/v1/paper.pdf
+  summary_path: library/ui-tars-2-technical-report-advancing-gui-250902544/v1/summary.html
+  metadata_path: library/ui-tars-2-technical-report-advancing-gui-250902544/v1/metadata.yaml
+  fetched_at: '2026-06-06T07:57:44Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: 6a2df5206955e0eab044e1bc4e0ed9239439e0377f79d179044da41a0bd5c603
+  pdf_bytes: 17410516
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-06-06T07:57:44Z'
+  updated_at: '2026-06-06T11:26:21Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

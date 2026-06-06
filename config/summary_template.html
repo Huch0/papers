@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<!--
+  Rich HTML summary template (experimental, parallel to summary_template.md).
+  Same intellectual structure: Keshav three passes + Kim "Motivation ≠ Novelty" + FOCUS,
+  and the SELF-CONTAINED rule (define every non-universal term inline AND in the Glossary).
+  Placeholders {{...}} are filled by `summarize_paper.py --prepare --format html`.
+  Author (Claude) fills the section bodies from the PDF extraction.
+
+  Use the rich representation purposefully (this is the whole point of the format):
+    • <span class="claim">…</span>      a claim the paper makes
+    • <span class="evidence">…</span>   evidence that supports a claim (with anchor)
+    • <span class="weak">…</span>       unclear / weak / caveated
+    • <span class="limit">…</span>      a limitation / risk
+    • <dfn title="definition">Term</dfn> inline term with hover-definition (self-contained)
+    • <table> for results; the claim→evidence two-column table in Pass 3
+    • <details> to collapse Pass 3 so triage stays fast
+  WRITING RULES: English, declarative (not "the authors state…"), specific numbers + short
+  quotes with (p.X,§Y) anchors, "Not reported"/"Unclear" for gaps, never invent.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>{{TITLE}}</title>
+<style>
+  :root{--ink:#1a1a1a;--mut:#666;--line:#e2e2e2;--claim:#0b6b3a;--claimbg:#e8f6ee;
+        --eviden:#0b4f8a;--evidenbg:#e8f1fb;--weak:#8a5a0b;--weakbg:#fbf3e3;
+        --limit:#a11;--limitbg:#fbeaea;--defbg:#f0eefb;}
+  body{font:15px/1.55 -apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:var(--ink);
+       max-width:860px;margin:2rem auto;padding:0 1.2rem;}
+  h1{font-size:1.5rem;line-height:1.25;margin:.2rem 0 1rem;}
+  h2{font-size:1.15rem;margin:1.6rem 0 .4rem;border-bottom:2px solid var(--line);padding-bottom:.2rem;}
+  h3{font-size:1rem;margin:1rem 0 .3rem;color:#333;}
+  .pass{color:#fff;background:#333;border-radius:4px;padding:.05rem .5rem;font-size:.8rem;vertical-align:middle;}
+  .card{border:1px solid var(--line);border-radius:8px;padding:.8rem 1rem;background:#fafafa;position:sticky;top:0;}
+  .meta{display:grid;grid-template-columns:auto 1fr;gap:.1rem .8rem;font-size:.85rem;margin:0;}
+  .meta dt{color:var(--mut);} .meta dd{margin:0;font-weight:500;}
+  .badge{display:inline-block;font-weight:700;border-radius:4px;padding:.1rem .5rem;color:#fff;}
+  .MUST_READ{background:#a11;} .READ_SOON{background:#c70;} .SKIM{background:#0b6b3a;}
+  .TRACK_ONLY{background:#555;} .SKIP{background:#999;}
+  .claim{background:var(--claimbg);border-bottom:1px solid var(--claim);}
+  .evidence{background:var(--evidenbg);border-bottom:1px solid var(--eviden);}
+  .weak{background:var(--weakbg);border-bottom:1px dashed var(--weak);}
+  .limit{background:var(--limitbg);}
+  dfn{font-style:normal;border-bottom:1px dotted var(--mut);cursor:help;background:var(--defbg);}
+  table{border-collapse:collapse;width:100%;font-size:.88rem;margin:.5rem 0;}
+  th,td{border:1px solid var(--line);padding:.35rem .5rem;text-align:left;vertical-align:top;}
+  th{background:#f2f2f2;}
+  .takeaway{font-size:1.05rem;font-weight:600;border-left:4px solid var(--eviden);padding:.4rem .8rem;background:var(--evidenbg);}
+  dl.glossary dt{font-weight:700;margin-top:.4rem;} dl.glossary dd{margin:0 0 .2rem;color:#333;}
+  details{border:1px solid var(--line);border-radius:6px;padding:.3rem .8rem;margin:.6rem 0;}
+  summary{font-weight:600;cursor:pointer;}
+  .anchor{color:var(--mut);font-size:.82rem;}
+  footer{color:var(--mut);font-size:.8rem;margin-top:2rem;border-top:1px solid var(--line);padding-top:.5rem;}
+</style>
+</head>
+<body>
+
+<h1>{{TITLE}}</h1>
+
+<div class="card">
+  <dl class="meta">
+    <dt>Canonical key</dt><dd>{{CANONICAL_KEY}}</dd>
+    <dt>Version</dt><dd>{{VERSION}}</dd>
+    <dt>Venue · Year</dt><dd>{{VENUE}} · {{YEAR}}</dd>
+    <dt>Authors</dt><dd>{{AUTHORS}}</dd>
+    <dt>Source</dt><dd>{{SOURCE}}</dd>
+    <dt>PDF</dt><dd>{{PDF}}</dd>
+    <dt>Tags</dt><dd>{{TAGS}}</dd>
+    <dt>Fetch date</dt><dd>{{FETCH_DATE}}</dd>
+    <dt>User status</dt><dd>{{USER_STATUS}}</dd>
+    <dt>Triage</dt><dd><span class="badge {{TRIAGE_LABEL}}">{{TRIAGE_LABEL}}</span> · confidence {{TRIAGE_CONFIDENCE}}</dd>
+  </dl>
+</div>
+
+<!-- ===================== PASS 1 — TRIAGE ===================== -->
+<h2><span class="pass">PASS 1</span> Triage</h2>
+
+<p class="takeaway"><!-- one-sentence core contribution --></p>
+
+<h3>The Five Cs</h3>
+<table>
+  <tr><th>Category</th><td><!-- measurement / method / benchmark / analysis / position / survey --></td></tr>
+  <tr><th>Context</th><td><!-- prior work + theoretical bases it builds on/competes with --></td></tr>
+  <tr><th>Correctness</th><td><!-- do core assumptions look valid? flag dubious --></td></tr>
+  <tr><th>Contributions</th><td><!-- 1–3 claimed contributions --></td></tr>
+  <tr><th>Clarity</th><td><!-- well written / well evidenced? --></td></tr>
+</table>
+
+<h3>Why this matters to me now</h3>
+<p><!-- relevance to interest profile + current trends --></p>
+
+<!-- ===================== PASS 2 — CONTENT ===================== -->
+<h2><span class="pass">PASS 2</span> Content</h2>
+
+<h3>Motivation — the problem (NOT the novelty)</h3>
+<p><!-- the problem and why it matters / what breaks in prior work. Problem only. --></p>
+
+<h3>Novelty — the genuine delta ★</h3>
+<ul>
+  <li><b>Delta in one sentence</b> (survives deleting "we propose" — state the insight): <!-- … --></li>
+  <li><b>Mechanistic reason</b> the design must take this form (from why the baseline fails): <!-- … --></li>
+  <li><b>Closest prior work &amp; precise difference</b>: <!-- name each --></li>
+  <li><b>Motivation-vs-novelty check</b>: <!-- does it end at "prior X fails in case Y"? --></li>
+  <li><b>30-second test</b>: <!-- what is novel, in one breath --></li>
+</ul>
+
+<h3>Core idea / method</h3>
+<p><!-- main technical idea, grounded in sections --></p>
+
+<h3>Harness relevance</h3>
+<table>
+  <tr><th>Environment / workspace</th><td><!-- … --></td></tr>
+  <tr><th>Observation interface</th><td><!-- … --></td></tr>
+  <tr><th>Action interface</th><td><!-- GUI/CLI/API/shell/OS/mobile … --></td></tr>
+  <tr><th>Planner/executor/verifier/search</th><td><!-- … --></td></tr>
+  <tr><th>Evaluation harness</th><td><!-- … --></td></tr>
+  <tr><th>Training harness</th><td><!-- if any --></td></tr>
+  <tr><th>Repro / logging / safety</th><td><!-- … --></td></tr>
+</table>
+<!-- For non-agent papers, replace rows with the paper's central system aspects. -->
+
+<h3>Experimental setup</h3>
+<p><!-- datasets/benchmarks · baselines · models · metrics · compute · artifacts --></p>
+
+<h3>Key results <span class="anchor">(read the figures, not just the prose)</span></h3>
+<table>
+  <tr><th>Result</th><th>Number</th><th>Baseline / human</th><th>Anchor</th></tr>
+  <!-- <tr><td>…</td><td>…</td><td>…</td><td>(Tab.X, p.Y)</td></tr> -->
+</table>
+<p><!-- qualitative results; flag error bars/variance/significance, single-run or abstract-vs-table mismatches with <span class="weak">…</span> --></p>
+
+<!-- ===================== PASS 3 — CRITIQUE ===================== -->
+<h2><span class="pass">PASS 3</span> Critique</h2>
+<details open>
+  <summary>Evidence, assumptions, reproducibility, strengths &amp; weaknesses</summary>
+
+  <h3>Do the claims hold? (claim → evidence)</h3>
+  <table>
+    <tr><th>Claim</th><th>Supporting evidence</th><th>Verdict</th></tr>
+    <!-- <tr><td><span class="claim">…</span></td><td><span class="evidence">… (Tab.X)</span></td><td>holds / partial / <span class="weak">unclear</span></td></tr> -->
+  </table>
+  <p>Separate experiments that <b>verify the novelty</b> from those that <b>merely confirm the motivation</b>.</p>
+
+  <h3>Hidden assumptions &amp; failure modes</h3>
+  <p><!-- stated + unstated assumptions; when would it break? --></p>
+
+  <h3>Could I reconstruct it?</h3>
+  <table>
+    <tr><th>Code</th><td><!-- --></td></tr><tr><th>Data</th><td><!-- --></td></tr>
+    <tr><th>Models</th><td><!-- --></td></tr><tr><th>Environment</th><td><!-- --></td></tr>
+    <tr><th>License</th><td><!-- --></td></tr><tr><th>Missing details</th><td><!-- what blocks reconstruction --></td></tr>
+  </table>
+
+  <h3>Strengths</h3><ul><li><!-- --></li></ul>
+  <h3>Weaknesses &amp; limitations</h3><ul><li><span class="limit"><!-- --></span></li></ul>
+  <h3>Relationship to prior work</h3><p><!-- genuinely new vs incremental --></p>
+</details>
+
+<!-- ===================== GLOSSARY (self-contained) ===================== -->
+<h2>Glossary / key terms</h2>
+<dl class="glossary">
+  <!-- Define every non-universal term/acronym/dataset/metric/method used above. -->
+  <!-- <dt>Term</dt><dd>plain-language definition; why it matters here.</dd> -->
+</dl>
+
+<!-- ===================== DECISION ===================== -->
+<h2>Decision</h2>
+<h3>What I should read</h3>
+<ul>
+  <li><b>Must read:</b> <!-- --></li>
+  <li><b>Skim:</b> <!-- --></li>
+  <li><b>Can skip:</b> <!-- --></li>
+  <li><b>Follow-ups / references to chase:</b> <!-- --></li>
+</ul>
+
+<h3>Triage decision</h3>
+<p><b>Label:</b> <span class="badge {{TRIAGE_LABEL}}">{{TRIAGE_LABEL}}</span><br>
+   <b>Rationale:</b> <!-- grounded in Five Cs + novelty + evidence --><br>
+   <b>Confidence:</b> {{TRIAGE_CONFIDENCE}} &nbsp; <b>Reading time:</b> <!-- est --></p>
+
+<section id="personal-notes">
+<!--PERSONAL_NOTES_START-->
+<h3>Personal notes</h3>
+<p>Free-form notes for later.</p>
+<!--PERSONAL_NOTES_END-->
+</section>
+
+<h3>Follow-up actions</h3>
+<ul><li><!-- add related / compare with / re-run / check code / read benchmark --></li></ul>
+
+<footer>Generated from config/summary_template.html · three-pass · Motivation≠Novelty · self-contained.</footer>
+</body>
+</html>

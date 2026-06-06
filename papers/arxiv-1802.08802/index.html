@@ -1,0 +1,140 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Reinforcement Learning on Web Interfaces Using Workflow-Guided Exploration</title><link rel="stylesheet" href="/papers/_astro/index.CkSj5fko.css"></head> <body> <header class="site"> <div class="wrap"> <h1><a href="/papers/">📚 Paper Library</a></h1> <nav><a href="/papers/">Catalog</a> <style>astro-island,astro-slot,astro-static-slot{display:contents}</style><script>(()=>{var e=async t=>{await(await t())()};(self.Astro||(self.Astro={})).load=e;window.dispatchEvent(new Event("astro:load"));})();</script><script>(()=>{var A=Object.defineProperty;var g=(i,o,a)=>o in i?A(i,o,{enumerable:!0,configurable:!0,writable:!0,value:a}):i[o]=a;var d=(i,o,a)=>g(i,typeof o!="symbol"?o+"":o,a);{let i={0:t=>m(t),1:t=>a(t),2:t=>new RegExp(t),3:t=>new Date(t),4:t=>new Map(a(t)),5:t=>new Set(a(t)),6:t=>BigInt(t),7:t=>new URL(t),8:t=>new Uint8Array(t),9:t=>new Uint16Array(t),10:t=>new Uint32Array(t),11:t=>1/0*t},o=t=>{let[l,e]=t;return l in i?i[l](e):void 0},a=t=>t.map(o),m=t=>typeof t!="object"||t===null?t:Object.fromEntries(Object.entries(t).map(([l,e])=>[l,o(e)]));class y extends HTMLElement{constructor(){super(...arguments);d(this,"Component");d(this,"hydrator");d(this,"hydrate",async()=>{var b;if(!this.hydrator||!this.isConnected)return;let e=(b=this.parentElement)==null?void 0:b.closest("astro-island[ssr]");if(e){e.addEventListener("astro:hydrate",this.hydrate,{once:!0});return}let c=this.querySelectorAll("astro-slot"),n={},h=this.querySelectorAll("template[data-astro-template]");for(let r of h){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("data-astro-template")||"default"]=r.innerHTML,r.remove())}for(let r of c){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("name")||"default"]=r.innerHTML)}let p;try{p=this.hasAttribute("props")?m(JSON.parse(this.getAttribute("props"))):{}}catch(r){let s=this.getAttribute("component-url")||"<unknown>",v=this.getAttribute("component-export");throw v&&(s+=` (export ${v})`),console.error(`[hydrate] Error parsing props for component ${s}`,this.getAttribute("props"),r),r}let u;await this.hydrator(this)(this.Component,p,n,{client:this.getAttribute("client")}),this.removeAttribute("ssr"),this.dispatchEvent(new CustomEvent("astro:hydrate"))});d(this,"unmount",()=>{this.isConnected||this.dispatchEvent(new CustomEvent("astro:unmount"))})}disconnectedCallback(){document.removeEventListener("astro:after-swap",this.unmount),document.addEventListener("astro:after-swap",this.unmount,{once:!0})}connectedCallback(){if(!this.hasAttribute("await-children")||document.readyState==="interactive"||document.readyState==="complete")this.childrenConnectedCallback();else{let e=()=>{document.removeEventListener("DOMContentLoaded",e),c.disconnect(),this.childrenConnectedCallback()},c=new MutationObserver(()=>{var n;((n=this.lastChild)==null?void 0:n.nodeType)===Node.COMMENT_NODE&&this.lastChild.nodeValue==="astro:end"&&(this.lastChild.remove(),e())});c.observe(this,{childList:!0}),document.addEventListener("DOMContentLoaded",e)}}async childrenConnectedCallback(){let e=this.getAttribute("before-hydration-url");e&&await import(e),this.start()}async start(){let e=JSON.parse(this.getAttribute("opts")),c=this.getAttribute("client");if(Astro[c]===void 0){window.addEventListener(`astro:${c}`,()=>this.start(),{once:!0});return}try{await Astro[c](async()=>{let n=this.getAttribute("renderer-url"),[h,{default:p}]=await Promise.all([import(this.getAttribute("component-url")),n?import(n):()=>()=>{}]),u=this.getAttribute("component-export")||"default";if(!u.includes("."))this.Component=h[u];else{this.Component=h;for(let f of u.split("."))this.Component=this.Component[f]}return this.hydrator=p,this.hydrate},e,this)}catch(n){console.error(`[astro-island] Error hydrating ${this.getAttribute("component-url")}`,n)}}attributeChangedCallback(){this.hydrate()}}d(y,"observedAttributes",["props"]),customElements.get("astro-island")||customElements.define("astro-island",y)}})();</script><astro-island uid="ZydoQf" prefix="r1" component-url="/papers/_astro/ThemeToggle.B8P56gw_.js" component-export="default" renderer-url="/papers/_astro/client.CoywhCtL.js" props="{}" ssr client="load" opts="{&quot;name&quot;:&quot;ThemeToggle&quot;,&quot;value&quot;:true}" await-children><button aria-label="Toggle dark mode" class="text-sm border rounded px-2 py-1">🌙</button><!--astro:end--></astro-island></nav> </div> </header> <main class="wrap"> <h1 class="title">Reinforcement Learning on Web Interfaces Using Workflow-Guided Exploration</h1> <div class="meta-card" data-pagefind-ignore> <dl> <dt>Authors</dt><dd>Evan Zheran Liu, Kelvin Guu, Panupong Pasupat, Tianlin Shi, Percy Liang</dd> <dt>Venue · Year</dt><dd>arXiv · 2018</dd> <dt>Tags</dt><dd>foundational</dd> <dt>Triage</dt><dd><span class="badge READ_SOON">READ_SOON · high</span></dd> <dt>Source</dt><dd><a href="https://arxiv.org/abs/1802.08802v1" target="_blank" rel="noopener">paper ↗</a></dd> <dt>Key</dt><dd><code>arxiv-1802.08802</code></dd> </dl> </div> <article data-pagefind-body> <h1 id="reinforcement-learning-on-web-interfaces-using-workflow-guided-exploration">Reinforcement Learning on Web Interfaces Using Workflow-Guided Exploration</h1>
+<h2 id="metadata">Metadata</h2>
+<ul>
+<li>Canonical key: arxiv-1802.08802</li>
+<li>Version: v1</li>
+<li>Fetch date: 2026-06-06T07:13:52Z</li>
+<li>Source: arxiv</li>
+<li>PDF: library/reinforcement-learning-on-web-interfaces-using-workflow-180208802/v1/paper.pdf</li>
+<li>Venue: ICLR 2018 (conference paper; arXiv preprint 1802.08802)</li>
+<li>Year: 2018</li>
+<li>Authors: Evan Zheran Liu, Kelvin Guu, Panupong Pasupat, Tianlin Shi, Percy Liang</li>
+<li>Tags: foundational</li>
+<li>User status: unread</li>
+<li>Triage label: READ_SOON</li>
+<li>Triage confidence: high</li>
+</ul>
+<h2 id="one-sentence-takeaway">One-sentence takeaway</h2>
+<p>The paper trains web-interface agents under sparse reward by using demonstrations not to imitate but to induce high-level “workflows” that constrain exploration, feeding the few discovered successful trajectories into a DOM-structured neural policy — achieving new state-of-the-art on MiniWoB with only 3–10 demonstrations and a claimed >100x demonstration-efficiency gain over behavioral cloning.</p>
+<h2 id="why-this-paper-matters">Why this paper matters</h2>
+<p>This is an emergence-era milestone for computer-use/web agents. It is the source of the MiniWoB++ benchmark (a long-lived standard for web-agent evaluation) and one of the first works to push DOM-aware neural policies plus demonstration-guided RL on browser tasks. The central methodological insight — constrain <em>exploration</em> with demonstrations rather than <em>imitate</em> them, and define neighborhoods in terms of action similarity rather than state similarity (p.9, §7) — directly anticipates later structured/guided approaches in agent training. For anyone studying the lineage of web/GUI agents, harness design (DOM observation, click/type action spaces), or sample-efficient demonstration use, this is a foundational reference rather than a SOTA-chasing paper.</p>
+<h2 id="problem-and-gap">Problem and gap</h2>
+<ul>
+<li>CLAIMED problem (p.1, §1): RL on web tasks suffers from sparse, delayed reward over large action spaces (the agent can click or type anything), so naive exploration almost never discovers a successful action sequence; a single wrong action can ruin the episode.</li>
+<li>Gap in prior work (p.1, §1): the standard remedy — warm-start via behavioral cloning (BC) on expert demonstrations — overfits because demonstrations cover only a small slice of the diverse web state space, and prior work (Shi et al. 2017) found BC warm-start often fails to improve over pure RL. Regularizing BC to fight overfitting cripples the policy’s needed expressivity.</li>
+<li>The paper’s framing of the gap is well-supported by its own later evidence (the BC+RL failure-mode analysis in §6.3.1) and by citation to Shi et al. 2017.</li>
+</ul>
+<h2 id="core-idea">Core idea</h2>
+<p>Use demonstrations to define an <em>exploration constraint</em>, not a target to imitate. From each demonstration, induce a lattice of “workflows” — environment-blind sequences of high-level steps (e.g. “click a textbox; type some text”), where each step is a function mapping a state to a constrained <em>set</em> of allowable actions (p.3, §3). A workflow exploration policy πw learns (via REINFORCE) which workflow step to use at each time step, then samples actions uniformly from the constrained set (p.4, §4). Successful episodes (reward +1) are stored in a replay buffer used to train an expressive neural policy πn (DOMNET) via A2C with on- and off-policy updates (p.5, §5). Because πn never sees the demonstrations directly — only the buffer of discovered successes — it is protected from BC-style overfitting while still benefiting from the targeted exploration. Key conceptual move: neighborhoods of demonstrations are defined by <em>action</em> similarity, which is intuitive for the web, rather than <em>state</em> similarity, which is ill-defined when two inboxes contain different emails (p.9, §7).</p>
+<h2 id="harness-relevance">Harness relevance</h2>
+<ul>
+<li>Environment / workspace: Three suites (p.5, §6.1). (1) MiniWoB — the benchmark of Shi et al. 2017; the public set has 80 tasks, of which the authors use the 40 that require only clicks and typing-from-goal (p.6, §6.1). (2) MiniWoB++ — a new benchmark the authors constructed and released, adding stochastic environments, natural-language goal variation, and longer horizons. (3) Alaska — a ported Alaska Airlines mobile flight-booking page (a more realistic FormWoB-style task). MiniWoB tasks are 160px x 210px; Alaska is 375px x 667px with >200 DOM elements (p.8, §6.3.3).</li>
+<li>Observation interface: The state is the goal g plus the web page represented as a DOM tree of elements (p.3, §2). DOMNET consumes structured DOM (tag, classes, text, attributes), spatial relations (elements within 30px), and tree relations (least-common-ancestor depth k=3..6) (p.5, §5). NOTE: the prior SHI17 baseline is primarily <em>pixel</em>-based with text-overlap filters (p.6, §6.2); this paper’s policy is DOM-structured, not pixel-based.</li>
+<li>Action interface: Restricted to Click(e) on a leaf DOM element and Type(e,t) where t is a value/token drawn from the goal (p.3, §2). Reward is +1 on correct completion, -1 otherwise (single sparse terminal reward; partial rewards disabled for MiniWoB consistency, but kept for Alaska) (p.6/p.8).</li>
+<li>Tool/GUI layer: The agent acts on the live page via a Selenium web driver interface (p.6, §6.1). Demonstrations were collected on Amazon Mechanical Turk, recording mouse/keyboard events plus DOM state at each event (p.6, §6.1).</li>
+<li>Workflow-guided exploration mechanism (the core “search/exploration” structure): For each demonstration, enumerate at each step t all workflow steps z such that the demonstrated action lies in z’s allowed set; the cross product forms a workflow lattice (p.3, §3). Shortcut steps handle noisy/unnecessary actions and collapse equivalent consecutive actions. A compact constraint language (Appendix A, p.13) defines steps via element selectors (Tag, Text, Like, Near, SameRow, SameCol, And/Class), with nesting limited to depth 3. πw selects a demonstration by goal-key similarity, then samples a workflow path, then samples actions uniformly within the constrained set (p.4, §4, Eqs. 1–4). πw is <em>environment-blind</em> (its parameters ψ depend only on demonstration and time t), giving it few parameters and fast, overfitting-resistant learning — at the cost of being unable to solve tasks itself (p.4, §4; p.7, §6.3.1).</li>
+<li>Planner/executor/verifier: No explicit planner. The “verifier” is just the terminal environment reward gating which episodes enter the replay buffer. πw is the exploration generator; πn is the deployed executor.</li>
+<li>Training harness: πw trained with a REINFORCE variant (baseline term vd,t for variance reduction, p.4–5, Eq. 5). πn (DOMNET) trained with A2C (synchronous advantage actor-critic, Mnih et al. 2016), mixing on-policy rollouts and off-policy replay of reward-+1 episodes; off-policy updates behave like supervised learning on optimal trajectories (p.5, §5).</li>
+<li>Evaluation harness: Metric is success rate = percentage of test episodes with reward +1 (equivalent to Shi et al. 2017’s definition); for Alaska, test <em>reward</em> is reported instead because partial reward inflates success rate (p.6/p.8). BC+RL and WGE results reported at the validation-success-maximizing checkpoint (p.7, §6.2).</li>
+<li>Logging/reproducibility: Code and data released at github.com/stanfordnlp/wge; reproducible experiments on CodaLab worksheets (p.10, §7). Demonstration traces capture full event + DOM state streams.</li>
+<li>Safety/permission mechanism: Not reported (no discussion of action gating, sandboxing risks, or harmful-action prevention beyond the restricted Click/Type action space).</li>
+</ul>
+<h2 id="method">Method</h2>
+<ol>
+<li>Workflow induction (p.3, §3): per demonstration, build a lattice of candidate workflows consistent with each demonstrated action; constraint language in Appendix A.</li>
+<li>Workflow exploration policy πw (p.4, §4): environment-blind per-step scalar parameters ψ_{z,t,d}; selects demonstration by goal-key match, samples workflow step, samples action uniformly from the constrained set; trained with REINFORCE + baseline.</li>
+<li>Replay buffer: only reward-+1 episodes are stored (from both πw exploration and πn on-policy rollouts) (p.5, §5).</li>
+<li>Neural policy DOMNET πn (p.5, §5; Appendix C, p.14–15): a DOM embedder concatenating base, spatial-neighbor, tree-neighbor, and goal-matching embeddings, followed by a series of attentions (DOM self-attention context, two-head sentinel goal attention, hard two-head DOM-element selection, then typed-string/action-type selection) producing π(a|s) and value V(s). Goals embedded as summed word embeddings (structured) or via LSTM (natural language).</li>
+<li>Training: A2C with on- and off-policy (replay) updates.</li>
+</ol>
+<h2 id="experimental-setup">Experimental setup</h2>
+<ul>
+<li>Benchmarks: MiniWoB (40 of 80 tasks used), MiniWoB++ (new tasks, Table 1), Alaska / Alaska-Shi17 (p.5–8).</li>
+<li>Demonstrations: 10 collected per MiniWoB task via MTurk; the headline efficiency claim uses 3–10 demonstrations per task (p.2–3, §1; p.6).</li>
+<li>Baselines: SHI17 (Shi et al. 2017, pixel-based, BC on ~200 demos + RL); DOMNET+BC+RL (same DOMNET architecture, BC on 10 demos + RL, with early stopping on validation reward); DOMNET+WGE (DOMNET trained via workflow-guided exploration on 10 demos); and πw-only (workflow policy alone) for ablation (Table 1, p.6).</li>
+<li>Models: DOMNET for both ablation arms; SHI17’s own model for the external baseline.</li>
+<li>Metrics: success rate (% reward +1) for MiniWoB/MiniWoB++; test reward for Alaska and the sample-efficiency comparison.</li>
+<li>Compute/cost: Not reported (no GPU hours, wall-clock, or environment-step counts given).</li>
+<li>Artifacts: code + data on GitHub; CodaLab reproducible experiments (p.10).</li>
+</ul>
+<h2 id="key-results">Key results</h2>
+<ul>
+<li>MiniWoB (Figure 3, p.6): DOMNET+WGE outperforms SHI17 on all but two of the evaluated tasks and “effectively solves a vast majority.” The figure shows many WGE bars at or near 100. (Per-task numbers in the extraction are an unlabeled flattened list — I do not attribute specific values to specific tasks.)</li>
+<li>MiniWoB++ (Table 1, p.6): WGE beats BC+RL by an average of 42% absolute success rate (stated p.7, §6.3.1). Verified individual rows include: social-media 100 (WGE) vs 15 (BC+RL) vs 2 (πw only); email-inbox 99 vs 43 vs 3; email-inbox-nl 93 vs 28 vs 0; multi-ordering 100 vs 5 vs 78; multi-layout 100 vs 99 vs 9; click-checkboxes-soft 94 vs 51 vs 34; click-checkboxes-large 84 vs 0 vs 43. Notable failure: social-media-all 0 (WGE) vs 1 (BC+RL) vs 0 — WGE does not solve this 12-step task.</li>
+<li>Natural language: email-inbox-nl reaches 93% success with πn receiving only the NL utterance (p.7–8, §6.3.2).</li>
+<li>Alaska-Shi17 (p.8, §6.3.3): WGE with 1 demonstration achieves average reward 0.97 vs Shi et al.’s best 0.57 using ~80 demonstrations.</li>
+<li>Harder Alaska (additional widgets): average reward 0.86 with 10 demonstrations (p.8). The random-agent success probability is stated as &#x3C; 10^-20, underscoring reward sparsity.</li>
+<li>Sample efficiency (Figure 4, p.8): WGE with 10 demonstrations outperforms BC+RL with 1000 demonstrations on every evaluated hard task (alaska, click-checkboxes-large, email-inbox-nl, social-media), supporting the headline “>100x sample efficiency over behavioral cloning” claim (p.9, §6.3.4).</li>
+</ul>
+<p>VERIFIED headline number: >100x demonstration-efficiency improvement over BC — grounded in Figure 4 showing WGE@10 demos beating BC+RL@1000 demos on all four evaluated hard tasks.</p>
+<h2 id="evidence-quality">Evidence quality</h2>
+<ul>
+<li>The core efficiency claim is reasonably supported: Figure 4 gives a concrete, per-task comparison (WGE@10 > BC+RL@1000) on the hardest tasks, which is stronger than a single aggregate number. CAVEAT: “100x” is an inference from the 10-vs-1000 demo span on a <em>subset</em> of hard tasks, not a measured continuous efficiency curve; it is a lower-bound-style claim (“more than 100x”).</li>
+<li>Ablation design is clean: SHI17 vs DOMNET+BC+RL isolates the architecture contribution (shared BC+RL training), and DOMNET+BC+RL vs DOMNET+WGE isolates the WGE contribution (shared architecture) (p.7, §6.2). The πw-only column further isolates how much the workflow policy alone contributes — and crucially shows πw alone is often poor (e.g. social-media 2, email-inbox 3), demonstrating the neural policy does the heavy lifting.</li>
+<li>WEAK / UNCLEAR points:
+<ul>
+<li>No variance/standard deviation or seeds reported anywhere; all success rates are point estimates. No statistical significance testing.</li>
+<li>The MiniWoB evaluation uses only 40 of 80 tasks (those fitting the click/type action space). This is a reasonable scoping choice but means the comparison excludes tasks needing other reasoning; SOTA is “new SOTA on the evaluated subset.”</li>
+<li>Per-task MiniWoB numbers in Figure 3 are not legible as a clean table in the extraction (flattened OCR), so the “all but two tasks” claim is taken at the authors’ word from the figure caption.</li>
+<li>Compute cost and environment-step counts are not reported, so “sample efficiency” is measured in <em>demonstrations</em>, not environment interactions — WGE may consume many more environment rollouts during exploration than BC, which is not quantified.</li>
+<li>social-media-all (0% for WGE) shows the method has a real ceiling on longer multi-target tasks; not deeply analyzed.</li>
+</ul>
+</li>
+</ul>
+<h2 id="reproducibility-and-artifacts">Reproducibility and artifacts</h2>
+<ul>
+<li>Code: github.com/stanfordnlp/wge (p.10).</li>
+<li>Data: released with code; MiniWoB++ benchmark released by the authors.</li>
+<li>Models: DOMNET architecture described in §5 + Appendix C; full hyperparameters Not reported in the extraction (deferred to appendices/code).</li>
+<li>Environment: MiniWoB framework via Selenium web driver; Alaska page ported into MiniWoB with surrogate JS backend and date clamped to 2017-03-01 (p.8).</li>
+<li>License: Not reported in the extraction.</li>
+<li>Exact commands or setup: CodaLab worksheet provides reproducible experiments (p.10); exact commands Not reported in text.</li>
+<li>Missing details: compute budget, seeds/variance, full hyperparameters, exact per-task demo counts (3–10 range given as a span).</li>
+</ul>
+<h2 id="strengths">Strengths</h2>
+<ul>
+<li>Genuinely novel framing: demonstrations as exploration constraints (action-similarity neighborhoods) rather than imitation targets — a clean idea with strong empirical payoff.</li>
+<li>Strong, well-isolated ablations (SHI17 / DOMNET+BC+RL / DOMNET+WGE / πw-only).</li>
+<li>Extreme demonstration efficiency (1 demo beats ~80 demos on Alaska-Shi17; 10 demos beat 1000 on hard tasks).</li>
+<li>Lasting infrastructure contribution: MiniWoB++ benchmark and the DOMNET DOM-aware architecture.</li>
+<li>Released code, data, and CodaLab reproducible experiments.</li>
+<li>Honest self-analysis of BC+RL failure modes (premature submission, cyclic check/uncheck) and of πw’s intrinsic limitations.</li>
+</ul>
+<h2 id="weaknesses-and-limitations">Weaknesses and limitations</h2>
+<ul>
+<li>Author-stated (p.7, §6.3.1–6.3.2): πw is environment-blind (cannot adapt to layout variation), the constraint language lacks expressivity (e.g. synonyms in click-checkboxes-soft), and πw cannot always select the correct workflow for a goal. The constraint language operates on structured inputs, so NL tasks still require structured goals at training time for πw (p.8).</li>
+<li>Inferred: no variance/seed reporting; “100x” is an inference from a discrete demo grid; environment-step cost of exploration not quantified; MiniWoB evaluated on a 40/80 action-compatible subset; clear failure on social-media-all (12-step, 0%).</li>
+<li>Action space restricted to Click/Type-from-goal — excludes free-form text, drag, scroll, and other interactions, limiting generality to real websites.</li>
+<li>No safety/permission discussion for acting on live web pages.</li>
+</ul>
+<h2 id="relationship-to-prior-work">Relationship to prior work</h2>
+<ul>
+<li>Closest precedent: Shi et al. 2017 (“World of Bits”, MiniWoB/FormWoB) — the direct baseline and benchmark origin; this paper overcomes the sparse-reward failure that blocked Shi et al. even with moderate demonstration counts (p.9, §7).</li>
+<li>Imitation/demonstration-RL line: behavioral cloning (Pomerleau 1991), DQfD (Hester et al. 2018), DDPGfD/Vecerik et al. 2017, Nair et al. 2017 — all pre-train or mix demos into RL; this work differs by using demos only to <em>shape exploration</em>, never exposing πn to them directly.</li>
+<li>Demonstration-neighborhood exploration: Brys et al. 2015, Hussein et al. 2017 (reward shaping), Levine &#x26; Koltun 2013 (off-policy) — distinction is action-similarity vs state-similarity neighborhoods (p.9, §7).</li>
+<li>Hierarchical RL / partial policies: closest to Parr &#x26; Russell 1998 (HAM) and robotics constraint-learning (Phillips et al. 2016; Perez-D’Arpino &#x26; Shah 2017) — but workflows are <em>automatically induced</em> from demonstrations rather than hand-specified, and used for exploration rather than planning/test-time (p.9–10, §7).</li>
+<li>DOMNET embedder relates to graph embeddings (Kipf &#x26; Welling 2017; Hamilton et al. 2017; Pham et al. 2017).</li>
+<li>Genuinely new: the WGE framework + induced workflow lattices + action-similarity exploration; the MiniWoB++ benchmark. Incremental: the A2C training and the attention-based policy components are standard building blocks.</li>
+</ul>
+<h2 id="what-i-should-read">What I should read</h2>
+<ul>
+<li>Must read: §3 (workflow induction) and §4 (workflow exploration policy, Eqs. 1–5) — the conceptual core; §6.3.4 + Figure 4 (sample efficiency, the load-bearing claim); §6.3.1 (BC+RL failure-mode analysis); §7 Discussion (action- vs state-similarity argument).</li>
+<li>Skim: §5 + Appendix C (DOMNET architecture) for the DOM-embedding design; Appendix A (constraint language) and Appendix B (learned workflow examples) to see what workflows actually look like.</li>
+<li>Can skip: the related-work subsections on HRL and robotics constraints unless tracing lineage.</li>
+<li>Follow-up papers: Shi et al. 2017 (World of Bits) for benchmark origin; later MiniWoB++ web-agent papers (CC-Net / Humphreys et al. 2022, WebGUM, WebShop) to see how this benchmark and DOM-vs-pixel debate evolved.</li>
+</ul>
+<h2 id="triage-decision">Triage decision</h2>
+<p>Label: READ_SOON
+Rationale: A curated emergence-era milestone for computer-use/web agents. It introduces MiniWoB++ (a durable benchmark), a DOM-aware neural policy, and a conceptually clean demonstration-guided-exploration method whose action-similarity framing remains relevant to modern agent training. Evidence quality is solid (clean ablations, strong efficiency demonstration) with only modest weaknesses (no variance reporting, demo-grid efficiency inference, restricted action space) — none strong enough to downgrade from the curated READ_SOON. Not MUST_READ only because the specific WGE mechanism is somewhat superseded by later LLM-based agents; its value now is foundational/lineage understanding.
+Confidence: high
+Reading time estimate: 60–90 minutes for a careful read of §3–§6 plus appendices A–C.</p>
+<h2 id="personal-notes">Personal notes</h2>
+<p>The most transferable idea is the inversion of how demonstrations are used: constrain <em>where to explore</em> (by action similarity) instead of <em>what to output</em> (imitation). The environment-blind πw with per-(step,time) scalar parameters is almost embarrassingly simple yet sufficient to seed the replay buffer — a reminder that the exploration helper need not be expressive, only well-constrained. Watch the gap: sample efficiency is in demonstrations, not environment steps; exploration cost is unquantified.</p>
+<h2 id="follow-up-actions">Follow-up actions</h2>
+<ul>
+<li>Add related paper: Shi et al. 2017 “World of Bits”; Humphreys et al. 2022 (CC-Net, MiniWoB at scale).</li>
+<li>Compare with: later DOM-based vs pixel-based web agents; LLM-driven MiniWoB++ agents.</li>
+<li>Re-run after new version: n/a (ICLR 2018 final).</li>
+<li>Check code: github.com/stanfordnlp/wge; CodaLab worksheet for reproducibility.</li>
+<li>Read benchmark details: MiniWoB++ task definitions (Table 1) and constraint language (Appendix A).</li>
+</ul> </article> </main> </body></html>

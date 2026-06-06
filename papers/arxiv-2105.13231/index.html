@@ -1,0 +1,121 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>AndroidEnv: A Reinforcement Learning Platform for Android</title><link rel="stylesheet" href="/papers/_astro/index.CkSj5fko.css"></head> <body> <header class="site"> <div class="wrap"> <h1><a href="/papers/">📚 Paper Library</a></h1> <nav><a href="/papers/">Catalog</a> <style>astro-island,astro-slot,astro-static-slot{display:contents}</style><script>(()=>{var e=async t=>{await(await t())()};(self.Astro||(self.Astro={})).load=e;window.dispatchEvent(new Event("astro:load"));})();</script><script>(()=>{var A=Object.defineProperty;var g=(i,o,a)=>o in i?A(i,o,{enumerable:!0,configurable:!0,writable:!0,value:a}):i[o]=a;var d=(i,o,a)=>g(i,typeof o!="symbol"?o+"":o,a);{let i={0:t=>m(t),1:t=>a(t),2:t=>new RegExp(t),3:t=>new Date(t),4:t=>new Map(a(t)),5:t=>new Set(a(t)),6:t=>BigInt(t),7:t=>new URL(t),8:t=>new Uint8Array(t),9:t=>new Uint16Array(t),10:t=>new Uint32Array(t),11:t=>1/0*t},o=t=>{let[l,e]=t;return l in i?i[l](e):void 0},a=t=>t.map(o),m=t=>typeof t!="object"||t===null?t:Object.fromEntries(Object.entries(t).map(([l,e])=>[l,o(e)]));class y extends HTMLElement{constructor(){super(...arguments);d(this,"Component");d(this,"hydrator");d(this,"hydrate",async()=>{var b;if(!this.hydrator||!this.isConnected)return;let e=(b=this.parentElement)==null?void 0:b.closest("astro-island[ssr]");if(e){e.addEventListener("astro:hydrate",this.hydrate,{once:!0});return}let c=this.querySelectorAll("astro-slot"),n={},h=this.querySelectorAll("template[data-astro-template]");for(let r of h){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("data-astro-template")||"default"]=r.innerHTML,r.remove())}for(let r of c){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("name")||"default"]=r.innerHTML)}let p;try{p=this.hasAttribute("props")?m(JSON.parse(this.getAttribute("props"))):{}}catch(r){let s=this.getAttribute("component-url")||"<unknown>",v=this.getAttribute("component-export");throw v&&(s+=` (export ${v})`),console.error(`[hydrate] Error parsing props for component ${s}`,this.getAttribute("props"),r),r}let u;await this.hydrator(this)(this.Component,p,n,{client:this.getAttribute("client")}),this.removeAttribute("ssr"),this.dispatchEvent(new CustomEvent("astro:hydrate"))});d(this,"unmount",()=>{this.isConnected||this.dispatchEvent(new CustomEvent("astro:unmount"))})}disconnectedCallback(){document.removeEventListener("astro:after-swap",this.unmount),document.addEventListener("astro:after-swap",this.unmount,{once:!0})}connectedCallback(){if(!this.hasAttribute("await-children")||document.readyState==="interactive"||document.readyState==="complete")this.childrenConnectedCallback();else{let e=()=>{document.removeEventListener("DOMContentLoaded",e),c.disconnect(),this.childrenConnectedCallback()},c=new MutationObserver(()=>{var n;((n=this.lastChild)==null?void 0:n.nodeType)===Node.COMMENT_NODE&&this.lastChild.nodeValue==="astro:end"&&(this.lastChild.remove(),e())});c.observe(this,{childList:!0}),document.addEventListener("DOMContentLoaded",e)}}async childrenConnectedCallback(){let e=this.getAttribute("before-hydration-url");e&&await import(e),this.start()}async start(){let e=JSON.parse(this.getAttribute("opts")),c=this.getAttribute("client");if(Astro[c]===void 0){window.addEventListener(`astro:${c}`,()=>this.start(),{once:!0});return}try{await Astro[c](async()=>{let n=this.getAttribute("renderer-url"),[h,{default:p}]=await Promise.all([import(this.getAttribute("component-url")),n?import(n):()=>()=>{}]),u=this.getAttribute("component-export")||"default";if(!u.includes("."))this.Component=h[u];else{this.Component=h;for(let f of u.split("."))this.Component=this.Component[f]}return this.hydrator=p,this.hydrate},e,this)}catch(n){console.error(`[astro-island] Error hydrating ${this.getAttribute("component-url")}`,n)}}attributeChangedCallback(){this.hydrate()}}d(y,"observedAttributes",["props"]),customElements.get("astro-island")||customElements.define("astro-island",y)}})();</script><astro-island uid="ZydoQf" prefix="r1" component-url="/papers/_astro/ThemeToggle.B8P56gw_.js" component-export="default" renderer-url="/papers/_astro/client.CoywhCtL.js" props="{}" ssr client="load" opts="{&quot;name&quot;:&quot;ThemeToggle&quot;,&quot;value&quot;:true}" await-children><button aria-label="Toggle dark mode" class="text-sm border rounded px-2 py-1">🌙</button><!--astro:end--></astro-island></nav> </div> </header> <main class="wrap"> <h1 class="title">AndroidEnv: A Reinforcement Learning Platform for Android</h1> <div class="meta-card" data-pagefind-ignore> <dl> <dt>Authors</dt><dd>Daniel Toyama, P. Hamel, Anita Gergely, Gheorghe Comanici, A. Glaese, Zafarali Ahmed +3</dd> <dt>Venue · Year</dt><dd>arXiv.org · 2021</dd> <dt>Tags</dt><dd>foundational</dd> <dt>Triage</dt><dd><span class="badge READ_SOON">READ_SOON · high</span></dd> <dt>Source</dt><dd><a href="https://arxiv.org/abs/2105.13231" target="_blank" rel="noopener">paper ↗</a></dd> <dt>Key</dt><dd><code>arxiv-2105.13231</code></dd> </dl> </div> <article data-pagefind-body> <h1 id="androidenv-a-reinforcement-learning-platform-for-android">AndroidEnv: A Reinforcement Learning Platform for Android</h1>
+<h2 id="metadata">Metadata</h2>
+<ul>
+<li>Canonical key: arxiv-2105.13231</li>
+<li>Version: v1</li>
+<li>Fetch date: 2026-06-06T07:57:28Z</li>
+<li>Source: arxiv</li>
+<li>PDF: library/androidenv-a-reinforcement-learning-platform-for-android-210513231/v1/paper.pdf</li>
+<li>Venue: arXiv.org (DeepMind technical report)</li>
+<li>Year: 2021</li>
+<li>Authors: Daniel Toyama, P. Hamel, Anita Gergely, Gheorghe Comanici, A. Glaese, Zafarali Ahmed, Tyler Jackson, Shibl Mourad, Doina Precup</li>
+<li>Tags: foundational</li>
+<li>User status: unread</li>
+<li>Triage label: READ_SOON</li>
+<li>Triage confidence: high</li>
+</ul>
+<h2 id="one-sentence-takeaway">One-sentence takeaway</h2>
+<p>AndroidEnv is an open-source RL platform that wraps a real emulated Android device behind the <code>dm_env</code> API, exposing screen pixels as observations and a universal touchscreen gesture interface as actions, so agents can learn to operate arbitrary Android apps in real time (p.1, abstract; p.2, §2).</p>
+<h2 id="why-this-paper-matters">Why this paper matters</h2>
+<p>This is a foundational, pre-LLM milestone for the <em>device-control / GUI-agent</em> lineage. It is widely cited as the substrate that later mobile/GUI agent benchmarks (e.g., AndroidWorld, Android-in-the-Wild, MobileEnv) build on or react against. For the harness interest profile it is directly on-target: a concrete, reusable environment where the action interface is raw touchscreen gestures over real Android UIs and the observation is raw pixels — the same interface modern computer-use agents must master. It predates the LLM-agent wave, so it frames the problem purely as an RL exploration/control challenge rather than as language-grounded task solving; that contrast is itself useful context.</p>
+<h2 id="problem-and-gap">Problem and gap</h2>
+<p>CLAIMED problem (p.1, §1): RL agents over-specialise to single domains, so the field needs platforms that expose <em>diverse</em> tasks through a <em>unified</em> interface to evaluate general-purpose algorithms. Prior platforms each have gaps the paper enumerates (p.8-10, §6):</p>
+<ul>
+<li>Atari/ALE: small discrete action space (18 actions), lock-step, deterministic, no auxiliary signals, hard to author new tasks, no continuous/real-time challenge.</li>
+<li>DeepMind Lab / Minecraft: confined to a single simulated 3D world.</li>
+<li>dm_control/MuJoCo: continuous control but synthetic robotics bodies, pausable simulation.</li>
+<li>OpenAI Universe / World of Bits: closest in spirit (pixel observations, universal interface) but reward is typically extracted from images via a CNN (Universe) or limited to web pages/DOM (WoB).</li>
+</ul>
+<p>The gap AndroidEnv claims to fill (Table 1, p.10): a platform that is simultaneously universal-interface, extensible-task-suite, real-time, AND continuous-action — the only row in Table 1 marked on all four axes (note: the extraction renders the checkmark glyphs as blanks, so the exact per-cell pattern for other platforms is Unclear from text alone, but AndroidEnv is described as covering all four).</p>
+<h2 id="core-idea">Core idea</h2>
+<p>Run a real (emulated) Android OS and let the OS itself generate environment dynamics, then bolt a thin RL interface onto it (p.2, §2). The agent sees what a human sees (RGB screen frames) and acts as a human would (touch the screen at a point, lift, or repeat). Because Android is a real OS with ~2M+ apps and 2B+ users (p.1, §1), the task supply is effectively unbounded and grounded in real software rather than research-tailored toy worlds. The intellectual core is the <em>gap between the raw action space and meaningful app behaviour</em>: single raw touches rarely do anything; agents must compose them into gestures (tap, swipe, scroll, long-press, drag-and-drop), which makes exploration genuinely hard (p.3, §2.2).</p>
+<h2 id="harness-relevance">Harness relevance</h2>
+<ul>
+<li>Environment / workspace: a real Android OS running on the Android Emulator (Android Studio’s default simulator) via a user-specified Android Virtual Device (AVD), so dynamics come from the actual OS, not a research simulator (p.2 §2; p.7 §5 “Simulator”). Not a real physical phone in the experiments, but the paper argues sim-to-real transfer to real devices is plausible (p.1, abstract; p.7).</li>
+<li>Observation interface: pixels (RGB frame, device-native resolution), plus <code>timedelta</code> (time since last observation) and <code>orientation</code> (p.3-4, §2.3). Optional, task-specific “task extras” (structured signals such as button-press events or on-screen text in string form) returned only on explicit request, not part of default observation (p.4, §2.3).</li>
+<li>Action interface: raw action = a continuous screen position (x,y) in [0,1]x[0,1] plus a discrete ActionType in {TOUCH, LIFT, REPEAT} (p.2, §2.2, Fig.1). Identical across all tasks/apps. Higher-level gestures emerge from sequences of raw actions interpreted by Android (p.3, §2.2). So the action interface is hybrid discrete+continuous.</li>
+<li>Tool / API / shell / GUI layer: the GUI is the Android screen itself. Control plane is Android Debug Bridge (ADB): used for launching apps, querying current activity, resetting episodes, and listening for task extras (p.7, §5 “ADB-based communication”). The whole environment implements the <code>dm_env</code> Python API (p.2, §2).</li>
+<li>Planner / executor / verifier / search structure: None — AndroidEnv is the <em>environment</em>, not an agent. Planning/execution is left entirely to whatever RL agent is plugged in. (The “verifier” analogue is the per-task reward/termination logic; see below.)</li>
+<li>Evaluation harness: tasks are defined via a Task protocol-buffer message specifying environment init (e.g., install apps), episode reset conditions, reset events (launch app, clear cache, pin screen to one app), and reward derivation from Android signals such as the accessibility service or app log messages (p.4-5, §3). Reward/episode logic is what turns a reward-less OS into an RL problem. >100 tasks across ~30 apps ship with the release (p.5, §3), but the authors explicitly say this is “a starting point and not a definitive benchmark.”</li>
+<li>Training harness: experiments use the Acme framework with TensorFlow agents, 128 distributed actors, 4 seeds per config (p.5-6, §4). Wrappers (ImageRescale, DiscreteAction, GymWrapper) adapt observation/action/interface (p.8, §5 “Wrappers”).</li>
+<li>Logging / trace / reproducibility: ADB-based extras channel and <code>timedelta</code> give some logging hooks; no dedicated trajectory-logging/replay system is described (Not reported beyond Acme’s own machinery).</li>
+<li>Safety / permissions: simulation is framed as the safety mechanism — agents can make mistakes “without any real world impact” (p.7, §5 “Simulator”). No sandboxing/permission model beyond the emulator boundary is detailed in the text (the acknowledgements mention someone “setting up benchmarks and sandboxing,” p.13, but no design detail is given — Unclear).</li>
+</ul>
+<h2 id="method">Method</h2>
+<p>This is a systems/platform paper, not an algorithm paper. The “method” is the environment design:</p>
+<ol>
+<li>Universal interface (pixels in, touch gestures out) identical across all apps so policies can generalise (p.2-4).</li>
+<li>Real-time asynchronous execution: the OS never pauses for the agent; observation and action rates are user-configurable but the OS clock is not (p.2, §2.1). Screen refresh is 60-120 Hz; capturing faster yields no new information (p.2, §2.1). An optional fixed wait (dt = 1/max_steps_per_second) can stabilise the interaction rate and prevent, e.g., an over-long deliberation turning an intended tap into a long-press (p.7-8, §5, Figs.7-8).</li>
+<li>Task abstraction via protocol buffers layering rewards/termination onto the OS (p.4-5, §3).</li>
+<li>Wrappers to reshape the hybrid action space (e.g., discretise into a grid) and observation space without changing how Android interprets raw actions (p.3 §2.2; p.8 §5).</li>
+</ol>
+<h2 id="experimental-setup">Experimental setup</h2>
+<ul>
+<li>Benchmark/tasks evaluated: a small subset — catch, rocket_sleigh, press_button, apple_flinger, 2048, blockinger — chosen to span action interfaces and difficulty (p.5, §4). This is 6 of the 100+ shipped tasks.</li>
+<li>Baselines (agents): continuous-control — DDPG, D4PG, MPO (act with a continuous ActionType in [0,1] that AndroidEnv rounds to a discrete type); finite-action — DQN, IMPALA, R2D2 over a discretised 6x9 grid giving 108 actions (= {LIFT,TOUCH} x 54 cells) (p.5, §4). For memoryless agents the observation is augmented with a one-hot of the last action’s location (p.5, §4).</li>
+<li>Models/architectures: the per-agent network architectures “reported by the authors of each corresponding agent” were reused, enabled by down-sampling observations to 80x120 (comparable to ALE resolution) (p.6, §4).</li>
+<li>Metric: human-normalised score, 1.0 = average human performance, averaged over 4 seeds per config (p.6, §4, Fig.6).</li>
+<li>Compute: 128 distributed actors; 4 seeds. No GPU/TPU count, wall-clock, or sample-count budget reported (Not reported).</li>
+<li>Artifacts: open-source library, docs, and tasks on GitHub (github.com/deepmind/android_env, p.1); agents from Acme’s TF repo (p.5).</li>
+</ul>
+<h2 id="key-results">Key results</h2>
+<ul>
+<li>EVIDENCE (qualitative, from Fig.6 description, p.6): difficulty varies sharply across tasks. catch is “solved by almost all agents”; blockinger has “no agents [able to] generate useful behavior.” This is the paper’s headline empirical point — the same agents span the full range from solved to unsolved, demonstrating the platform’s difficulty spread.</li>
+<li>EVIDENCE: continuous-control agents (DDPG/D4PG/MPO) perform well only where the interface does not require complex gestures and “fail to achieve reasonable performance otherwise”; discrete-control agents (DQN/IMPALA/R2D2) show “better overall performance” (Fig.6 caption, p.6).</li>
+<li>UNCLEAR: no per-task numeric scores appear in the extracted text — all quantitative results live in Figure 6, which the text extraction cannot render. So exact human-normalised numbers per agent/task are Not reported in text (would need the figure). VERIFY: the only numbers I can confirm against the extraction are structural — 6x9 grid -> 108 actions (= 54 cells x 2 ActionTypes), 80x120 observation, 128 actors, 4 seeds, >100 tasks / ~30 apps, 60-120 Hz refresh, 2B+ users / 2M+ apps. All check out.</li>
+</ul>
+<h2 id="evidence-quality">Evidence quality</h2>
+<ul>
+<li>The empirical section is deliberately a <em>demonstration</em>, not a rigorous benchmark study — the authors explicitly disclaim the task set as “a starting point and not a definitive benchmark” (p.5). Judge accordingly.</li>
+<li>Weaknesses for evidence: only 6 tasks evaluated; all quantitative content is in a single figure with no tables, no confidence intervals/standard errors reported (only “averaging 4 seeds”), no human-baseline collection methodology described despite using human-normalised scores. No ablations on the optional wait-time mechanism or on the one-hot last-action augmentation, even though both are presented as design choices. Real-time effects (deliberation-time sensitivity) are argued conceptually (Figs.7-8) but not measured.</li>
+<li>The platform claims (universality, real-time, extensibility) are well-supported by construction; the <em>agent-performance</em> claims are supportive but coarse. That asymmetry is fine for a platform-release report but means this paper proves “the environment is hard and varied,” not “algorithm X beats Y.”</li>
+</ul>
+<h2 id="reproducibility-and-artifacts">Reproducibility and artifacts</h2>
+<ul>
+<li>Code: Yes — github.com/deepmind/android_env (open source), plus Acme TF agents (p.1, p.5).</li>
+<li>Data: tasks ship with the repo (100+ tasks, ~30 apps); task definitions are protocol-buffer messages (p.4-5).</li>
+<li>Models: standard published agents (DQN/IMPALA/R2D2/DDPG/D4PG/MPO); architectures from original papers (p.6).</li>
+<li>Environment: Android Emulator via Android Studio AVD; communication over ADB; <code>dm_env</code> API (p.2, p.7).</li>
+<li>License: Not reported in the text (repo-level; Unclear from paper).</li>
+<li>Exact commands/setup: Not reported in paper (deferred to repo docs).</li>
+<li>Missing details: precise hyperparameters, exact app versions/AVD configs, per-task scores, compute budget, human-score collection protocol.</li>
+</ul>
+<h2 id="strengths">Strengths</h2>
+<ul>
+<li>Genuinely novel substrate at the time: a real OS with a real-app ecosystem behind a clean RL API, hitting universal-interface + real-time + continuous-action + extensible simultaneously (Table 1, p.10).</li>
+<li>The raw-action-to-gesture gap is a principled, hard exploration challenge distinct from Atari/MuJoCo.</li>
+<li>Real-time / asynchronous design is unusually faithful to deployment conditions and is treated thoughtfully (deliberation-time analysis, optional rate stabiliser, Figs.7-8).</li>
+<li>Open-source with a non-trivial starter task suite; strong sim-to-real motivation (deployment on real devices).</li>
+<li>Reward sourced from real Android signals (accessibility service, app logs) rather than image-derived CNN rewards (contrast with Universe, p.9).</li>
+</ul>
+<h2 id="weaknesses-and-limitations">Weaknesses and limitations</h2>
+<ul>
+<li>Author-stated: not a definitive benchmark; timings are inherently unpredictable in real time; large observations and complex gestures make tasks hard for then-current agents (p.5, p.7, p.10).</li>
+<li>Inferred: thin empirical validation (6 tasks, figure-only results); no language/instruction grounding (pre-LLM framing — tasks are reward-defined, not natural-language-specified), which limits relevance to today’s instruction-following GUI agents; no standardized leaderboard/evaluator reliability analysis; reproducibility depends heavily on emulator/host performance, which the paper admits affects observation rate (p.7).</li>
+<li>Aging risk (benchmark/harness lens): the <em>interface</em> (pixels + touch over real Android) ages very well and remains the canonical mobile-control setup; the <em>task suite and agents</em> age fast — modern work uses LLM-driven agents and richer task definitions, and several successor benchmarks now layer NL goals and accessibility-tree observations on top of comparable Android stacks.</li>
+</ul>
+<h2 id="relationship-to-prior-work">Relationship to prior work</h2>
+<p>Closest prior platforms (p.8-10, §6): OpenAI Universe and World of Bits / MiniWoB++ share the “universal pixel interface + author arbitrary tasks” vision; AndroidEnv differentiates by (a) targeting the full Android OS and its app store rather than web pages, and (b) deriving rewards from OS/app signals instead of CNN-on-pixels. Versus Atari/ALE it adds continuous action, real-time/async dynamics, and easy task authoring. Versus DeepMind Lab/Minecraft it is not confined to one simulated world. Genuinely new: the <em>real-OS-as-environment</em> approach with touchscreen-gesture composition as the core challenge. Incremental relative to Universe: the universal-pixel-interface idea itself is inherited; AndroidEnv’s novelty is the substrate choice and reward sourcing.</p>
+<h2 id="what-i-should-read">What I should read</h2>
+<ul>
+<li>Must read: §2 (Environment Features, p.2-4) and §2.2 action interface — the interface definition is the load-bearing content; §3 Tasks (p.4-5) for the protobuf task abstraction.</li>
+<li>Skim: §5 Technical Details (p.7-8) for ADB/real-time mechanics; §6 (p.8-10) for the platform comparison and Table 1.</li>
+<li>Can skip: §1 intro RL history; the reference list.</li>
+<li>Look at the actual paper Figure 6 (not in text extraction) if exact per-task scores matter.</li>
+<li>Follow-up papers: successor Android/GUI benchmarks (AndroidWorld, Android-in-the-Wild, MobileEnv) and MiniWoB++/World of Bits for the web analogue.</li>
+</ul>
+<h2 id="triage-decision">Triage decision</h2>
+<p>Label: READ_SOON
+Rationale: Foundational, directly on-interest substrate for device-control / GUI-agent harnesses; the interface design (pixels + universal touchscreen gestures over real Android, dm_env API, ADB control plane) is exactly the harness layer of interest and is worth understanding firsthand. Empirical thinness keeps it below MUST_READ — its value is conceptual/architectural, not results-driven. Evidence read does not contradict the prior label, so it stays READ_SOON.
+Confidence: high
+Reading time estimate: ~30-40 min for the load-bearing sections (§2, §3, §5, Table 1); the full report is short (10 pages of body).</p>
+<h2 id="personal-notes">Personal notes</h2>
+<p>Free-form notes for later.</p>
+<h2 id="follow-up-actions">Follow-up actions</h2>
+<ul>
+<li>Add related paper: AndroidWorld; Android-in-the-Wild; MiniWoB++ (Liu et al., 2018); World of Bits (Shi et al., 2017).</li>
+<li>Compare with: OpenAI Universe (reward sourcing), ALE (interface/lock-step contrast).</li>
+<li>Re-run after new version: n/a (v1 technical report).</li>
+<li>Check code: github.com/deepmind/android_env — confirm license, AVD setup, full task list, reward signal mechanics.</li>
+<li>Read benchmark details: §3 protobuf Task spec; verify per-task scores from Figure 6 in the PDF.</li>
+</ul> </article> </main> </body></html>

@@ -1,0 +1,134 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Android in the Zoo: Chain-of-Action-Thought for GUI Agents</title><link rel="stylesheet" href="/papers/_astro/index.CkSj5fko.css"></head> <body> <header class="site"> <div class="wrap"> <h1><a href="/papers/">📚 Paper Library</a></h1> <nav><a href="/papers/">Catalog</a> <style>astro-island,astro-slot,astro-static-slot{display:contents}</style><script>(()=>{var e=async t=>{await(await t())()};(self.Astro||(self.Astro={})).load=e;window.dispatchEvent(new Event("astro:load"));})();</script><script>(()=>{var A=Object.defineProperty;var g=(i,o,a)=>o in i?A(i,o,{enumerable:!0,configurable:!0,writable:!0,value:a}):i[o]=a;var d=(i,o,a)=>g(i,typeof o!="symbol"?o+"":o,a);{let i={0:t=>m(t),1:t=>a(t),2:t=>new RegExp(t),3:t=>new Date(t),4:t=>new Map(a(t)),5:t=>new Set(a(t)),6:t=>BigInt(t),7:t=>new URL(t),8:t=>new Uint8Array(t),9:t=>new Uint16Array(t),10:t=>new Uint32Array(t),11:t=>1/0*t},o=t=>{let[l,e]=t;return l in i?i[l](e):void 0},a=t=>t.map(o),m=t=>typeof t!="object"||t===null?t:Object.fromEntries(Object.entries(t).map(([l,e])=>[l,o(e)]));class y extends HTMLElement{constructor(){super(...arguments);d(this,"Component");d(this,"hydrator");d(this,"hydrate",async()=>{var b;if(!this.hydrator||!this.isConnected)return;let e=(b=this.parentElement)==null?void 0:b.closest("astro-island[ssr]");if(e){e.addEventListener("astro:hydrate",this.hydrate,{once:!0});return}let c=this.querySelectorAll("astro-slot"),n={},h=this.querySelectorAll("template[data-astro-template]");for(let r of h){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("data-astro-template")||"default"]=r.innerHTML,r.remove())}for(let r of c){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("name")||"default"]=r.innerHTML)}let p;try{p=this.hasAttribute("props")?m(JSON.parse(this.getAttribute("props"))):{}}catch(r){let s=this.getAttribute("component-url")||"<unknown>",v=this.getAttribute("component-export");throw v&&(s+=` (export ${v})`),console.error(`[hydrate] Error parsing props for component ${s}`,this.getAttribute("props"),r),r}let u;await this.hydrator(this)(this.Component,p,n,{client:this.getAttribute("client")}),this.removeAttribute("ssr"),this.dispatchEvent(new CustomEvent("astro:hydrate"))});d(this,"unmount",()=>{this.isConnected||this.dispatchEvent(new CustomEvent("astro:unmount"))})}disconnectedCallback(){document.removeEventListener("astro:after-swap",this.unmount),document.addEventListener("astro:after-swap",this.unmount,{once:!0})}connectedCallback(){if(!this.hasAttribute("await-children")||document.readyState==="interactive"||document.readyState==="complete")this.childrenConnectedCallback();else{let e=()=>{document.removeEventListener("DOMContentLoaded",e),c.disconnect(),this.childrenConnectedCallback()},c=new MutationObserver(()=>{var n;((n=this.lastChild)==null?void 0:n.nodeType)===Node.COMMENT_NODE&&this.lastChild.nodeValue==="astro:end"&&(this.lastChild.remove(),e())});c.observe(this,{childList:!0}),document.addEventListener("DOMContentLoaded",e)}}async childrenConnectedCallback(){let e=this.getAttribute("before-hydration-url");e&&await import(e),this.start()}async start(){let e=JSON.parse(this.getAttribute("opts")),c=this.getAttribute("client");if(Astro[c]===void 0){window.addEventListener(`astro:${c}`,()=>this.start(),{once:!0});return}try{await Astro[c](async()=>{let n=this.getAttribute("renderer-url"),[h,{default:p}]=await Promise.all([import(this.getAttribute("component-url")),n?import(n):()=>()=>{}]),u=this.getAttribute("component-export")||"default";if(!u.includes("."))this.Component=h[u];else{this.Component=h;for(let f of u.split("."))this.Component=this.Component[f]}return this.hydrator=p,this.hydrate},e,this)}catch(n){console.error(`[astro-island] Error hydrating ${this.getAttribute("component-url")}`,n)}}attributeChangedCallback(){this.hydrate()}}d(y,"observedAttributes",["props"]),customElements.get("astro-island")||customElements.define("astro-island",y)}})();</script><astro-island uid="ZydoQf" prefix="r1" component-url="/papers/_astro/ThemeToggle.B8P56gw_.js" component-export="default" renderer-url="/papers/_astro/client.CoywhCtL.js" props="{}" ssr client="load" opts="{&quot;name&quot;:&quot;ThemeToggle&quot;,&quot;value&quot;:true}" await-children><button aria-label="Toggle dark mode" class="text-sm border rounded px-2 py-1">🌙</button><!--astro:end--></astro-island></nav> </div> </header> <main class="wrap"> <h1 class="title">Android in the Zoo: Chain-of-Action-Thought for GUI Agents</h1> <div class="meta-card" data-pagefind-ignore> <dl> <dt>Authors</dt><dd>Jiwen Zhang, Jihao Wu, Yihua Teng, Minghui Liao, Nuo Xu, Xiaojun Xiao +2</dd> <dt>Venue · Year</dt><dd>Conference on Empirical Methods in Natural Language Processing · 2024</dd> <dt>Tags</dt><dd>foundational</dd> <dt>Triage</dt><dd><span class="badge READ_SOON">READ_SOON · high</span></dd> <dt>Source</dt><dd><a href="https://arxiv.org/abs/2403.02713" target="_blank" rel="noopener">paper ↗</a></dd> <dt>Key</dt><dd><code>arxiv-2403.02713</code></dd> </dl> </div> <article data-pagefind-body> <h1 id="android-in-the-zoo-chain-of-action-thought-for-gui-agents">Android in the Zoo: Chain-of-Action-Thought for GUI Agents</h1>
+<h2 id="metadata">Metadata</h2>
+<ul>
+<li>Canonical key: arxiv-2403.02713</li>
+<li>Version: v1</li>
+<li>Fetch date: 2026-06-06T07:57:29Z</li>
+<li>Source: arxiv</li>
+<li>PDF: library/android-in-the-zoo-chain-of-action-240302713/v1/paper.pdf</li>
+<li>Venue: EMNLP 2024 Findings (extraction header lists “Conference on Empirical Methods in Natural Language Processing”; arXiv id 2403.02713v2, 13 Jul 2024)</li>
+<li>Year: 2024</li>
+<li>Authors: Jiwen Zhang, Jihao Wu, Yihua Teng, Minghui Liao, Nuo Xu, Xiao Xiao, Zhongyu Wei, Duyu Tang (Fudan University; Huawei Inc.)</li>
+<li>Tags: foundational</li>
+<li>User status: unread</li>
+<li>Triage label: READ_SOON</li>
+<li>Triage confidence: high</li>
+</ul>
+<h2 id="one-sentence-takeaway">One-sentence takeaway</h2>
+<p>The paper introduces Chain-of-Action-Thought (CoAT) — a prompting/annotation scheme that interleaves screen description, action thinking, next-action description, and action result — and the Android-In-The-Zoo (AitZ) dataset (18,643 screen-action pairs over 2,504 instructions, derived from AitW) that operationalizes it, showing CoAT improves zero-shot action prediction and lets a ~1B fine-tuned model rival an 18B GUI agent.</p>
+<h2 id="why-this-paper-matters">Why this paper matters</h2>
+<p>For a GUI-agent harness, the central artifact here is not a model but an <em>interface design</em>: it argues that an Android navigation agent should not emit raw <code>click (x,y)</code> coordinates conditioned only on a screenshot, but should pass through an explicit intermediate semantic chain (what is on the screen -> why this action -> which UI element -> what the action will produce). This is a concrete, reusable observation/reasoning schema for AitW-style mobile agents, and the AitZ dataset is the labeled supervision that makes the schema trainable for small models. The data-curation critique of AitW (template redundancy, train/test leakage, and many episodes that do not actually complete their instruction) is independently useful for anyone using AitW as a benchmark. CLAIMED relevance is high; the evidence is mid-scale (single dataset, two agents fine-tuned/evaluated, three proprietary LMMs zero-shot), so READ_SOON rather than MUST_READ.</p>
+<h2 id="problem-and-gap">Problem and gap</h2>
+<p>CLAIMED problem (p1, Intro): existing LLM/LMM GUI agents predict an action sequence while ignoring the semantics of intermediate screenshots and operations — prior methods (e.g. AUTO-UI / Chain-of-Action, SeeClick) concentrate on action <em>coordinates</em> like “click on (0.17, 0.89)” and ignore the logic behind the action (p1). The authors decompose the missing semantics into four questions: Screen Context, Action Think, Action Target, Action Result (p1).
+Second gap (p2): complex context modeling “emerges at a large model scale,” so small models cannot acquire this ability by fine-tuning without high-quality CoAT-style data — and such data did not exist. UNCLEAR: the “emerges at scale” claim is asserted with a citation (Zhang et al., 2023), not demonstrated within this paper.
+Third gap (p4, Fig 4): AitW itself has substantial label noise — for the instruction “check the settings for the spotify app,” 13 of 15 episodes never open Spotify — motivating data validation. This is EVIDENCE for the data-cleaning contribution, shown via a concrete count.</p>
+<h2 id="core-idea">Core idea</h2>
+<p>CoAT reframes the policy. A standard agent learns pi(a_t | o_t, h_{t-1}, u) directly (p3, Sec 2.1). The paper argues this is hard because the relation between history, observation, and action is implicit, and inserts an intermediate textual chain so the decision factors through interpretable states. The four components (p3):</p>
+<ul>
+<li>Screen Description (SD): textual description of screen type and primary apps/widgets — query-independent context.</li>
+<li>Action Think (AT): reasons over query + current screen + history to infer candidate actions; framed as p(AT | o_t, u, h_{t-1}), with the decision then approximable as p(a_t | AT).</li>
+<li>Next Action Description (AD): natural-language description of the operated UI element (“click on the shopping cart icon”), used to build a readable action history.</li>
+<li>Action Result (AR): synthesizes the outcome by comparing screenshots before/after the action, linking o_t and a_t to o_{t+1}; AR_{t-1} is folded into the next step’s history.
+Components are composable (“free to combine them according to language models used,” p3), which the ablation (Table 6) exploits by routing SD and previous-AR to model <em>input</em> and AT/AD to model <em>output</em>.</li>
+</ul>
+<h2 id="harness-relevance">Harness relevance</h2>
+<ul>
+<li>Environment / workspace: Android GUI navigation, <strong>static/offline</strong> — episodes are pre-collected screenshot sequences sampled from AitW (Rawles et al., 2023), not a live device. Evaluation is screen-wise action matching against gold trajectories, not live execution.</li>
+<li>Observation interface: a single screenshot per step o_t. UI elements are additionally exposed either as set-of-mark tags drawn on the image or as a textual list of element type + bounding box (Fig 10, p15). In the zero-shot prompting study, CoAT adds a generated screen description to the observation.</li>
+<li>Action interface: a simplified 5-action space (Appendix A.2/A.3, p13): CLICK(coord_y, coord_x) in relative [0,1] coordinates, SCROLL(direction in {up,down,left,right}, purely textual), TYPE(text), PRESS(button in back/home/enter), STOP(task_state). AitW’s <code>DUAL_POINT</code> is manually split into CLICK and SCROLL. AUTO-UI and CogAgent outputs are mapped into this space for comparison.</li>
+<li>Tool/API/GUI layer: pure GUI (pixel + coordinate). No shell/API tools. Set-of-mark tagging (Yan et al., 2023) and an icon-detection model (Liu et al., 2018) annotate clickable UI elements.</li>
+<li>Planner/executor/verifier structure: the CoAT chain itself is the planner/reasoner (Action Think = plan, Action Result = self-reflection). There is no search and no separate runtime verifier; “verification” is offline human checking of GPT-4V-generated annotations.</li>
+<li>Evaluation harness: atomic action-matching score (“match”: correct iff action type AND details match gold) and episodic <strong>goal progress</strong> (GP = relative position of first error in the episode). For CLICK/TYPE, action-type accuracy is reported separately (Table 5).</li>
+<li>Training harness: AUTO-UI fine-tuned from the original weight-init strategy for up to 10 epochs, lr 1e-4, on the AitZ train split; CogAgent used zero-shot only (its training data is not public). Ablation places SD/previous-AR in input, AT/AD in output.</li>
+<li>Logging/trace/reproducibility: the AitZ annotations themselves are the trace (each step carries SD/AT/AD/AR). Generation prompts for all four annotation types are given in Appendix Fig 8 (p12). Code/data repo: github.com/IMNearth/CoAT.</li>
+<li>Safety/permission: none as an agent mechanism. Ethics section notes AitW is academic-use-licensed and sampled data contains no real personal info.</li>
+</ul>
+<h2 id="method">Method</h2>
+<p>Two contributions: the CoAT schema (above) and the AitZ dataset built to supply it.
+Data collection (Sec 3.1, p4-5):</p>
+<ol>
+<li>Instruction sampling from AitW (715k episodes, 30k unique instructions) using per-subset strategies — uniform sampling per instruction for GENERAL/GOOGLEAPPS/INSTALL (x = 3/5/3), balanced sampling over shopping site x object for WEBSHOPPING, and verb-grouping + tf-idf clustering + balanced sampling for SINGLE. This yields 3,461 unique instructions / 7,180 episodes; 10 annotators verify task completion; 5,147 successful episodes remain, and one episode is kept per unique instruction. (Note: the relationship between 3,461 sampled instructions and the final 2,504 is not explicitly reconciled in the text — UNCLEAR.)</li>
+<li>Semantic annotation: GPT-4V (via Azure API) generates SD, AT, AD, AR; an icon-detection model marks clicked elements; SCROLL/PRESS/etc. descriptions use templates. Three UI-expert annotators check AD against gold actions and, on mismatch, revise AD and force GPT-4V to regenerate AT/AR. Information given to GPT-4V varies by task (SD is query-independent; AD gets query + gold coordinate) — see prompts in Fig 8.
+Dataset analysis (Sec 3.2): SD typically 80-120 words, AT 30-70, AR 20-80 (Fig 5). Table 1 positions AitZ as the only Android dataset with all four annotation types (screen desc, action coord, action desc, action thinking) plus episode-feasibility verification.</li>
+</ol>
+<h2 id="experimental-setup">Experimental setup</h2>
+<ul>
+<li>Datasets/benchmarks: (a) preliminary zero-shot study on 50 episodes randomly sampled from AitW (p3); (b) main study on AitZ train/test split — 1,998 train / 506 test episodes (~70/30), 13,919 train / 4,724 test screens (Table 4, p5; SINGLE’s 844 episodes / 2,594 screens are all placed in train because they are single-step). Authors stress no instruction overlap -> no leakage.</li>
+<li>Baselines / agents: zero-shot — Qwen-VL-Max, Gemini-1.0-Pro-Vision, GPT-4V (prompting-method comparison); CogAgent-Chat-18B (zero-shot, +/-CoAT). Fine-tuned — AUTO-UI-base (~1.2B; BLIP2-opt-2.7b encoder, FLAN-Alpaca-base decoder, 224x224), +/-CoAT, trained from scratch on AitZ. Architecture/data comparison of the two agents in Table 7 (p14).</li>
+<li>Metrics: format hit rate, atomic action-matching accuracy (overall + per action type), goal progress.</li>
+<li>Compute/cost: Not reported (no GPU-hours, no API cost).</li>
+<li>Artifacts: code/data at github.com/IMNearth/CoAT. License of AitZ not explicitly stated beyond inheriting AitW academic-use permission.</li>
+</ul>
+<h2 id="key-results">Key results</h2>
+<p>VERIFIED against extraction.
+Zero-shot prompting comparison, action accuracy (Table 2, p3), CoA -> CoT -> CoAT:</p>
+<ul>
+<li>Qwen-VL-Max: 44.4 -> 49.4 -> <strong>52.4</strong></li>
+<li>Gemini-1.0-PV: 47.7 -> 52.0 -> <strong>54.5</strong></li>
+<li>GPT-4V: 62.8 -> 64.1 -> <strong>73.5</strong>
+So CoAT beats the better of CoA/CoT by +3.0 (Qwen), +2.5 (Gemini), and <strong>+9.4</strong> (GPT-4V over CoT; +10.7 over CoA). Format hit rates stay high (94.5-99.8). The largest gain is on the strongest model, consistent with the “emerges at scale” framing; on Gemini the CoAT hit rate (96.4) is slightly below CoT (97.5).
+Main results (Table 5, p6), Total action-match / Goal Progress:</li>
+<li>CogAgent (ZS): 44.52 / 13.82 -> +CoAT <strong>53.28 / 17.13</strong> (GP +3.31). Mixed per-type: CLICK match 67.40 -> 45.80 <em>drops</em>, but STOP 4.76 -> 24.60 and SCROLL type 56.41 -> 70.22 rise.</li>
+<li>AUTO-UI (FT): 34.46 / 6.59 -> +CoAT <strong>47.69 / 14.51</strong> (GP +7.92, more than doubled). STOP match 60.12 -> 74.40, CLICK match 67.80 -> 81.40.
+Headline cross-model claim (Abstract; Sec 5.1; Appendix B.2): AUTO-UI(~1.2B)+CoAT achieves on-par performance with CogAgent-Chat-18B — supported on goal progress (AUTO-UI+CoAT 14.51 vs CogAgent+CoAT 17.13, and 14.51 > CogAgent-no-CoAT 13.82). EVIDENCE is on the AitZ test set only; “on-par” is most defensible on GP and overall match, less so per-action-type.
+Ablation (Table 6, p6-7): previous-AR, especially with AT+AD, drives the biggest gains; STOP match rises 60.12 -> 79.17 when AR-style coherence is added (row 3). Learning AT as output <em>without</em> input SD/AR is hard (rows 5-7). Adding SD to input slightly <em>hurts</em> AUTO-UI (rows 9 vs 10), attributed to its low 224x224 resolution — an honest negative result. Best overall AUTO-UI config (row 9: PAR+AT+AD) = 82.98 total / 14.51 GP. Fig 6 shows CoAT also improves training efficiency over epochs.
+Complete prompting table (Table 8, p15): set-of-mark tagging generally beats textual UI representation; GPT-4V+CoAT+tag leads.</li>
+</ul>
+<h2 id="evidence-quality">Evidence quality</h2>
+<p>The two headline claims (CoAT > CoA/CoT zero-shot; small-model-rivals-large) are each supported by direct numbers that reconcile with the tables. Strengths of the evidence: per-action-type breakdowns, an ablation that isolates input-vs-output placement and reports a negative (SD hurts AUTO-UI), and explicit motivation of the data-cleaning step with a concrete leakage/noise example. Weaknesses: (1) the zero-shot prompting study uses only <strong>50 AitW episodes</strong> — small, and no variance/seeds reported; no statistical significance anywhere. (2) Evaluation is offline action-matching, not live device execution, so real task success is not measured. (3) On the +CoAT rows CogAgent actually leads on total atomic match (53.28 vs 47.69) while AUTO-UI leads on goal progress is the reverse (AUTO-UI 14.51 vs CogAgent 17.13 — CogAgent higher); so “on-par with 18B” is framing that mixes metrics and slightly favors the authors’ model. (4) CogAgent is evaluated zero-shot while AUTO-UI is fine-tuned on AitZ — an asymmetric comparison the authors acknowledge (Limitations: differing architecture/training data make comparison “less intuitive”). (5) Annotation quality depends on GPT-4V + a small human-expert pass (three annotators); inter-annotator agreement is Not reported. (6) Resolution/pretraining confounds are explicitly left unmeasured (Limitations).</p>
+<h2 id="reproducibility-and-artifacts">Reproducibility and artifacts</h2>
+<ul>
+<li>Code: github.com/IMNearth/CoAT (linked p1). Not inspected here.</li>
+<li>Data: AitZ — 2,504 instructions / 18,643 screen-action pairs; train/test split in Table 4. Built on AitW.</li>
+<li>Models: AUTO-UI-base (~1.2B) reused; CogAgent-Chat-18B reused zero-shot; GPT-4V / Gemini-1.0-Pro-Vision / Qwen-VL-Max via APIs.</li>
+<li>Environment: offline screenshot trajectories (AitW-derived); no live emulator harness described.</li>
+<li>License: AitW academic-use is inherited; explicit AitZ license Not reported in the paper body.</li>
+<li>Exact commands/setup: AUTO-UI fine-tuning hyperparameters given (&#x3C;=10 epochs, lr 1e-4, original weight init); annotation prompts in Fig 8. No run scripts in the paper.</li>
+<li>Missing details: API costs, GPT-4V version/date, annotator agreement, seed/variance, reconciliation of 3,461->2,504 instruction counts.</li>
+</ul>
+<h2 id="strengths">Strengths</h2>
+<ul>
+<li>Clear, reusable interface abstraction (SD/AT/AD/AR) that is composable and maps cleanly onto an offline GUI agent’s input/output.</li>
+<li>A genuinely new dataset filling a real gap (Table 1): first Android nav dataset combining screen description + action coordinate + action description + action thinking + episode feasibility.</li>
+<li>Useful, evidence-backed critique of AitW data quality (template redundancy, train/test leakage, non-completing episodes) with a concrete 13/15 example.</li>
+<li>Honest ablation including a negative result (SD hurts low-res AUTO-UI) and an explicit limitations section on resolution/pretraining confounds.</li>
+</ul>
+<h2 id="weaknesses-and-limitations">Weaknesses and limitations</h2>
+<ul>
+<li>Offline action-matching only; no live execution / true task-success metric.</li>
+<li>Asymmetric main comparison (fine-tuned 1.2B vs zero-shot 18B); “on-par” framing depends on which metric is chosen.</li>
+<li>Tiny (50-episode) zero-shot prompting study; no variance, no significance testing anywhere.</li>
+<li>Annotation pipeline relies on GPT-4V with limited human verification (3 experts); no agreement metric.</li>
+<li>Some count reconciliation gaps (3,461 sampled vs 2,504 final instructions) left implicit.</li>
+<li>Author-stated: architecture/data differences make agent comparison less intuitive; impact of image resolution, text-recognition, and GUI-grounding pretraining on navigation left unmeasured.</li>
+</ul>
+<h2 id="relationship-to-prior-work">Relationship to prior work</h2>
+<ul>
+<li>AitW (Rawles et al., 2023): the source of AitZ’s episodes and the “Standard” prompting baseline; AitZ is a cleaned, re-sampled, semantically-annotated subset.</li>
+<li>AUTO-UI / Chain-of-Action (Zhan and Zhang, 2023): the coordinate-only baseline CoAT is positioned against, and the fine-tuned backbone.</li>
+<li>Chain-of-Thought (Wei et al., 2022): CoAT generalizes CoT by adding screen/action-specific structure (history, screen desc, action result) rather than free-form reasoning.</li>
+<li>CogAgent (Hong et al., 2023): the high-resolution 18B GUI agent used as the strong reference.</li>
+<li>SeeClick (Cheng et al., 2024), AppAgent (Yang et al., 2023a), GPT-4V smartphone navigation (Yan et al., 2023): related LMM-as-GUI-agent lines. Genuinely new: the four-part action-thought annotation schema and the dataset that makes it trainable for small models; the agents and base CoT idea are reused.</li>
+</ul>
+<h2 id="what-i-should-read">What I should read</h2>
+<ul>
+<li>Must read: Sec 2 (CoAT definition, p3) and Table 2; Sec 3.1 data collection + Fig 4 leakage example (p4-5); Table 5 main results.</li>
+<li>Skim: Ablation Table 6 and Fig 6; Appendix A.3 action space (p13); Table 7 agent comparison.</li>
+<li>Can skip: Related Work (Sec 6), reference list, Fig 8 prompt verbatim (read once if reproducing annotations).</li>
+<li>Follow-up papers: AitW (Rawles 2023), AUTO-UI (Zhan &#x26; Zhang 2023), CogAgent (Hong 2023), SeeClick (Cheng 2024).</li>
+</ul>
+<h2 id="triage-decision">Triage decision</h2>
+<p>Label: READ_SOON
+Rationale: High harness relevance — a concrete, reusable observation/reasoning interface for Android GUI agents plus a labeled dataset, with an actionable AitW data-quality critique. Held below MUST_READ because evaluation is offline action-matching only, the cross-model “on-par” claim mixes metrics, and the zero-shot study is small. Evidence does not strongly contradict the claims, so the prior READ_SOON label stands.
+Confidence: high
+Reading time estimate: 35-45 min for the core (Sec 2-3, Tables 2/5/6), +20 min for appendices if reproducing.</p>
+<h2 id="personal-notes">Personal notes</h2>
+<p>The most portable idea for harness design: factor a GUI policy through SD -> AT -> AD -> AR and route context-providing pieces (SD, previous AR) to <em>input</em> and reasoning pieces (AT, AD) to <em>output</em>. The negative SD-on-low-res result is a useful caution: textual screen descriptions help only if the visual encoder can ground them; on a 224x224 encoder they add noise.</p>
+<h2 id="follow-up-actions">Follow-up actions</h2>
+<ul>
+<li>Add related paper: Android in the Wild (AitW), AUTO-UI, CogAgent, SeeClick</li>
+<li>Compare with: AitW (as benchmark, given the leakage critique)</li>
+<li>Re-run after new version: arXiv v2 already extracted; check if camera-ready EMNLP Findings adds live-execution results</li>
+<li>Check code: github.com/IMNearth/CoAT (dataset format, annotation prompts)</li>
+<li>Read benchmark details: AitZ train/test split (Table 4), action-space mapping (Appendix A.3)</li>
+</ul> </article> </main> </body></html>

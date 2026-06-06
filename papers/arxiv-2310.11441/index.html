@@ -1,0 +1,128 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Set-of-Mark Prompting Unleashes Extraordinary Visual Grounding in GPT-4V</title><link rel="stylesheet" href="/papers/_astro/index.CkSj5fko.css"></head> <body> <header class="site"> <div class="wrap"> <h1><a href="/papers/">📚 Paper Library</a></h1> <nav><a href="/papers/">Catalog</a> <style>astro-island,astro-slot,astro-static-slot{display:contents}</style><script>(()=>{var e=async t=>{await(await t())()};(self.Astro||(self.Astro={})).load=e;window.dispatchEvent(new Event("astro:load"));})();</script><script>(()=>{var A=Object.defineProperty;var g=(i,o,a)=>o in i?A(i,o,{enumerable:!0,configurable:!0,writable:!0,value:a}):i[o]=a;var d=(i,o,a)=>g(i,typeof o!="symbol"?o+"":o,a);{let i={0:t=>m(t),1:t=>a(t),2:t=>new RegExp(t),3:t=>new Date(t),4:t=>new Map(a(t)),5:t=>new Set(a(t)),6:t=>BigInt(t),7:t=>new URL(t),8:t=>new Uint8Array(t),9:t=>new Uint16Array(t),10:t=>new Uint32Array(t),11:t=>1/0*t},o=t=>{let[l,e]=t;return l in i?i[l](e):void 0},a=t=>t.map(o),m=t=>typeof t!="object"||t===null?t:Object.fromEntries(Object.entries(t).map(([l,e])=>[l,o(e)]));class y extends HTMLElement{constructor(){super(...arguments);d(this,"Component");d(this,"hydrator");d(this,"hydrate",async()=>{var b;if(!this.hydrator||!this.isConnected)return;let e=(b=this.parentElement)==null?void 0:b.closest("astro-island[ssr]");if(e){e.addEventListener("astro:hydrate",this.hydrate,{once:!0});return}let c=this.querySelectorAll("astro-slot"),n={},h=this.querySelectorAll("template[data-astro-template]");for(let r of h){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("data-astro-template")||"default"]=r.innerHTML,r.remove())}for(let r of c){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("name")||"default"]=r.innerHTML)}let p;try{p=this.hasAttribute("props")?m(JSON.parse(this.getAttribute("props"))):{}}catch(r){let s=this.getAttribute("component-url")||"<unknown>",v=this.getAttribute("component-export");throw v&&(s+=` (export ${v})`),console.error(`[hydrate] Error parsing props for component ${s}`,this.getAttribute("props"),r),r}let u;await this.hydrator(this)(this.Component,p,n,{client:this.getAttribute("client")}),this.removeAttribute("ssr"),this.dispatchEvent(new CustomEvent("astro:hydrate"))});d(this,"unmount",()=>{this.isConnected||this.dispatchEvent(new CustomEvent("astro:unmount"))})}disconnectedCallback(){document.removeEventListener("astro:after-swap",this.unmount),document.addEventListener("astro:after-swap",this.unmount,{once:!0})}connectedCallback(){if(!this.hasAttribute("await-children")||document.readyState==="interactive"||document.readyState==="complete")this.childrenConnectedCallback();else{let e=()=>{document.removeEventListener("DOMContentLoaded",e),c.disconnect(),this.childrenConnectedCallback()},c=new MutationObserver(()=>{var n;((n=this.lastChild)==null?void 0:n.nodeType)===Node.COMMENT_NODE&&this.lastChild.nodeValue==="astro:end"&&(this.lastChild.remove(),e())});c.observe(this,{childList:!0}),document.addEventListener("DOMContentLoaded",e)}}async childrenConnectedCallback(){let e=this.getAttribute("before-hydration-url");e&&await import(e),this.start()}async start(){let e=JSON.parse(this.getAttribute("opts")),c=this.getAttribute("client");if(Astro[c]===void 0){window.addEventListener(`astro:${c}`,()=>this.start(),{once:!0});return}try{await Astro[c](async()=>{let n=this.getAttribute("renderer-url"),[h,{default:p}]=await Promise.all([import(this.getAttribute("component-url")),n?import(n):()=>()=>{}]),u=this.getAttribute("component-export")||"default";if(!u.includes("."))this.Component=h[u];else{this.Component=h;for(let f of u.split("."))this.Component=this.Component[f]}return this.hydrator=p,this.hydrate},e,this)}catch(n){console.error(`[astro-island] Error hydrating ${this.getAttribute("component-url")}`,n)}}attributeChangedCallback(){this.hydrate()}}d(y,"observedAttributes",["props"]),customElements.get("astro-island")||customElements.define("astro-island",y)}})();</script><astro-island uid="ZydoQf" prefix="r1" component-url="/papers/_astro/ThemeToggle.B8P56gw_.js" component-export="default" renderer-url="/papers/_astro/client.CoywhCtL.js" props="{}" ssr client="load" opts="{&quot;name&quot;:&quot;ThemeToggle&quot;,&quot;value&quot;:true}" await-children><button aria-label="Toggle dark mode" class="text-sm border rounded px-2 py-1">🌙</button><!--astro:end--></astro-island></nav> </div> </header> <main class="wrap"> <h1 class="title">Set-of-Mark Prompting Unleashes Extraordinary Visual Grounding in GPT-4V</h1> <div class="meta-card" data-pagefind-ignore> <dl> <dt>Authors</dt><dd>Jianwei Yang, Hao Zhang, Feng Li, Xueyan Zou, Chun-yue Li, Jianfeng Gao</dd> <dt>Venue · Year</dt><dd>arXiv.org · 2023</dd> <dt>Tags</dt><dd>foundational</dd> <dt>Triage</dt><dd><span class="badge READ_SOON">READ_SOON · high</span></dd> <dt>Source</dt><dd><a href="https://arxiv.org/abs/2310.11441" target="_blank" rel="noopener">paper ↗</a></dd> <dt>Key</dt><dd><code>arxiv-2310.11441</code></dd> </dl> </div> <article data-pagefind-body> <h1 id="set-of-mark-prompting-unleashes-extraordinary-visual-grounding-in-gpt-4v">Set-of-Mark Prompting Unleashes Extraordinary Visual Grounding in GPT-4V</h1>
+<h2 id="metadata">Metadata</h2>
+<ul>
+<li>Canonical key: arxiv-2310.11441</li>
+<li>Version: v1</li>
+<li>Fetch date: 2026-06-06T07:57:31Z</li>
+<li>Source: arxiv</li>
+<li>PDF: library/set-of-mark-prompting-unleashes-extraordinary-visual-231011441/v1/paper.pdf</li>
+<li>Venue: arXiv.org</li>
+<li>Year: 2023</li>
+<li>Authors: Jianwei Yang, Hao Zhang, Feng Li, Xueyan Zou, Chunyuan Li, Jianfeng Gao</li>
+<li>Tags: foundational</li>
+<li>User status: unread</li>
+<li>Triage label: READ_SOON</li>
+<li>Triage confidence: high</li>
+</ul>
+<h2 id="one-sentence-takeaway">One-sentence takeaway</h2>
+<p>Set-of-Mark (SoM) is an image-side prompting trick that segments an image into regions and overlays each with a “speakable” symbolic mark (numbers/letters/boxes/masks), so GPT-4V can ground answers by naming a mark instead of emitting coordinates — turning visual grounding into a discrete pick-a-label problem.</p>
+<h2 id="why-this-paper-matters">Why this paper matters</h2>
+<p>CLAIMED: this is “the first study to demonstrate that the emergent visual grounding ability of GPT-4V can be unleashed by visual prompting” (page 2). WHY-read for the harness: although the paper frames itself as a vision-grounding study, its real downstream impact is as the standard click-target mechanism for GUI agents. By converting “where do I act?” into “which numbered mark do I pick?”, SoM sidesteps the fact that LMMs cannot reliably emit pixel coordinates (the paper measures GPT-4V’s raw coordinate REC accuracy at 25.7 vs 86.4 with SoM — page 9). That single reframing is the conceptual seed behind set-of-mark style accessibility-tree / segment overlays in later GUI/computer-use agents. The paper itself never builds a GUI agent, but page 21-23 already shows SoM applied to a game controller, a 2D platformer, and an apartment floor-plan navigation — i.e. it gestures directly at the agentic use case.</p>
+<h2 id="problem-and-gap">Problem and gap</h2>
+<p>CLAIMED (page 2): GPT-4V has strong vision-language understanding but weak fine-grained grounding — “GPT-4V can hardly produce a sequence of accurate coordinates for a dog … or a few traffic lights.” The authors argue (citing Pix2Seq [7]) that forcing an LMM to emit textual descriptions interleaved with numeric coordinates both hurts LLM fluency and discards the spatial structure of the underlying vision encoder.
+Gap in prior visual prompting (page 2): existing overlays (red circle [41], highlighted region [48], circles+arrows [49]) refer to only one or a few objects and use marks that are not “speakable” by an LLM, so they cannot scale to dense, multi-object grounding.</p>
+<h2 id="core-idea">Core idea</h2>
+<p>EVIDENCE (pages 3-5): Two properties are required: (1) partition the image into semantically meaningful regions (grounding); (2) overlay marks that are both interpretable and “speakable” so the LMM can refer to them in text. SoM augments the image I into a marked image I_m and feeds (I_m, T_i) to the LMM, leaving the text query unchanged (Eq. 2, page 3). Because each mark m_k is bijectively tied to a region mask r_k, any mark named in the text output can be traced back to a mask, yielding triplets &#x3C;r_k, m_k, text_k> (page 6) — this is what lets a pure-text LMM produce mask/box outputs.
+UNCLEAR / notable: the mechanism is empirical — the authors explicitly state in the Discussion (page 11) that it is “still mysterious why” SoM works on GPT-4V, and that LLaVA-1.5 and MiniGPT-v2 “can hardly interpret the marks,” so SoM is not a general LMM technique in this paper, only a GPT-4V one.</p>
+<h2 id="harness-relevance">Harness relevance</h2>
+<p>This is a PROMPTING METHOD, not an agent system, but it is the key enabler that later GUI agents adopt. Adapting the harness lens:</p>
+<ul>
+<li>Environment / workspace: a single static image (or two images for video / cross-frame). No interactive environment, no episodic loop. The “GUI-agent” framing is the reader’s extrapolation; the paper’s own agentic gestures are one-shot Q&#x26;A over screenshots/floor-plans (pages 21-23).</li>
+<li>Observation interface: the marked image I_m. The segmentation+numbering overlay IS the observation transform — it converts raw pixels into a finite menu of labeled regions. This is the load-bearing idea for GUI agents: a screenshot becomes an enumerated set of clickable candidates.</li>
+<li>Action interface: “pick a mark.” The model outputs a mark id (e.g. “the laptop turned on: 2”, page 7), which dereferences to a region/mask. For a GUI agent this becomes “click element N” — grounding collapses to discrete selection over a candidate set rather than coordinate regression.</li>
+<li>Tool / API / GUI layer: an off-the-shelf segmentation toolbox (SEEM [65], SAM [19], Semantic-SAM [21], MaskDINO [24]) proposes regions at selectable granularity, automatic or interactive (page 4). A mark-allocation algorithm (page 5) places each id via distance transform on the area-sorted, overlap-excluded mask, so marks do not collide — the practical detail that makes dense overlays usable as click targets.</li>
+<li>Planner / executor / verifier / search: none. Single forward call per question; “for each question, we use a new chat window to avoid context leakage” (page 5, page 8) — no memory, no multi-step planning.</li>
+<li>Evaluation harness: manual. No API; authors “exhaustively send the SoM augmented images to the ChatGPT interface” with a “divide-and-conquer strategy” (page 8). Subsampled benchmarks (Table 1, page 8).</li>
+<li>Training harness: none. “We do not need to train any models” (page 8); all results zero-shot.</li>
+<li>Logging / trace / reproducibility: the region&#x3C;->mark&#x3C;->text triplet is itself the trace linking a textual decision back to a pixel region. No automated logging framework.</li>
+<li>Safety / permission: none. (Notably page 18 shows SoM helping GPT-4V solve a CAPTCHA, which is a latent safety concern the paper does not discuss.)</li>
+</ul>
+<h2 id="method">Method</h2>
+<ol>
+<li>Image partition (page 3-4): segment I (H x W) into K binary masks R = [r_1..r_K] using a suite of segmentation models chosen for strong performance (MaskDINO), open vocabulary (SEEM), and granularity incl. parts (SAM, Semantic-SAM). Granularity and automatic/interactive mode are user-selectable.</li>
+<li>Mark generation (page 4-5): pick a mark TYPE (alphanumeric primarily, read via GPT-4V OCR; optionally box and mask-boundary), chosen image-dependently to avoid conflicts (e.g. avoid numeric marks on arithmetic images). Pick mark LOCATION via the Mark_Allocation algorithm (Fig. 5): sort regions ascending by area, exclude area covered by earlier masks, then distance-transform to place the mark at the point maximally far from boundaries; nudge off tiny regions.</li>
+<li>Interleaved prompt (page 5): either a plain text prompt (GPT-4V auto-grounds on marks with no mark mentioned in text) or an interleaved prompt that injects mark ids directly as symbolic references.</li>
+<li>SoM for vision (page 6-7): trace marks back to masks to support open-vocab segmentation, referring expression segmentation/comprehension, phrase grounding, and video object segmentation.</li>
+</ol>
+<h2 id="experimental-setup">Experimental setup</h2>
+<ul>
+<li>Datasets (Table 1, page 8), all SUBSAMPLED due to GPT-4V quota: COCO (100 img / 567 inst, generic seg, Precision), ADE20K (100 / 488, OV seg, Precision), Flickr30K (100 / 274, phrase grounding, Recall@1), RefCOCO (100 / 177, RES mIoU and REC ACC@0.5), DAVIS (71 / 157, VOS, J&#x26;F). Note Table 1 says RefCOCO while the results table and text say RefCOCOg — minor inconsistency (page 8 vs page 9).</li>
+<li>Baselines (page 8): GPT-4V predicting raw coordinates; specialist SOTA (MaskDINO, OpenSeeD, Grounding DINO, GLIPv2, PolyFormer, SEEM, SegGPT); open/closed LMMs (LLaVA-1.5, MiniGPT-v2, Shikra, Ferret, RedCircle, FGVP). Specialist numbers marked with * are from original papers on FULL val sets; SoM numbers are on the subsampled sets — so the comparisons are NOT strictly apples-to-apples except where the authors re-ran the baseline on their subset.</li>
+<li>Model: GPT-4V via the ChatGPT web interface, numeric marks for main results, zero-shot.</li>
+<li>Metrics: per task above. No variance / repeated-trial reporting.</li>
+</ul>
+<h2 id="key-results">Key results</h2>
+<p>VERIFIED against Table 2 (page 9), GPT-4V + SoM:</p>
+<ul>
+<li>OV/Generic Segmentation: COCO Precision 75.7 (vs fine-tuned MaskDINO 80.7 — close, page 9); ADE20K 63.4 (vs zero-shot OpenSeeD 23.4 — much higher).</li>
+<li>RefCOCOg REC (ACC@0.5): GPT-4V raw coordinates 25.7 -> SoM 86.4. This is the headline gain (+60.7 absolute) and beats specialists GDINO 86.1 and PolyFormer 85.8 and LMMs Shikra 82.6, MiniGPT-v2 84.4, Ferret 85.8, LLaVA-1.5 63.3.</li>
+<li>RefCOCOg RES (mIoU): SoM 75.6, vs PolyFormer 67.2 and SEEM 65.7 (re-run on the authors’ subset). CLAIMED “outperforms PolyFormer by a large margin” (page 9) — supports the abstract’s claim of beating a fully-finetuned referring-segmentation model in zero-shot.</li>
+<li>Phrase Grounding Flickr30K (R@1): SoM 89.2, “comparable” to GLIPv2 87.7* and below GDINO 90.5 (page 9).</li>
+<li>VOS DAVIS2017 (J&#x26;F): SoM 78.8, best among generalist vision models, vs SegGPT 75.6 (page 10).
+Ablations:</li>
+<li>Mark type (Table 3, page 9): Number+Mask 84.4 -> Number+Mask+Box 89.2 on Flickr30K (R@1) — adding boxes “improves significantly.”</li>
+<li>Golden mark location (Table 4, page 9-10): replacing predicted masks with GT masks raises RefCOCOg RES from 75.6 (MaskDINO masks) to 90.1 (GT masks), i.e. +14.5 mIoU — shows much of the residual error is segmentation-proposal quality, not GPT-4V grounding.
+Qualitative (page 10): GPT-4V+SoM corrects some erroneous “golden” dataset annotations (Fig. 8), and the center-of-region mark placement is “not always best.”</li>
+</ul>
+<h2 id="evidence-quality">Evidence quality</h2>
+<ul>
+<li>Strong directional signal: the 25.7 -> 86.4 REC jump is large and internally consistent (same model, same subset), and the GT-mask ablation cleanly attributes residual error to proposals. These two are the most trustworthy results.</li>
+<li>Weak statistical rigor: all benchmarks are tiny subsamples (71-100 images) run manually through a web UI, no API, no seeds, no repeated trials, no confidence intervals. CLAIMED SOTA-beating comparisons mix subset numbers (SoM) with full-val numbers (* baselines from papers), so several head-to-head wins are not strictly comparable; the authors flag this with * but the abstract states the win unqualified.</li>
+<li>Selection / construction risk: the authors choose segmentation tools and mark types per task and per image (“dynamically determining which type of mark to use is important,” page 10), which is human-in-the-loop tuning that inflates zero-shot framing.</li>
+<li>No ablation on number of regions K, on plain vs interleaved prompt quantitatively, or on why GPT-4V works but open LMMs do not (left as hypotheses: scale + data curation, page 11-12).</li>
+</ul>
+<h2 id="reproducibility-and-artifacts">Reproducibility and artifacts</h2>
+<ul>
+<li>Code: CLAIMED public at <a href="https://github.com/microsoft/SoM">https://github.com/microsoft/SoM</a> (page 1). Playground: <a href="https://som-gpt4v.github.io/">https://som-gpt4v.github.io/</a>.</li>
+<li>Data: subsampled COCO/ADE20K/Flickr30K/RefCOCOg/DAVIS; exact image ids Not reported in extraction.</li>
+<li>Models: GPT-4V (ChatGPT web UI, no API at the time); segmentation tools SEEM, SAM, Semantic-SAM, MaskDINO, Grounding DINO publicly available.</li>
+<li>Environment: manual ChatGPT interface, “divide-and-conquer” across authors (page 8).</li>
+<li>License: Not reported.</li>
+<li>Exact commands or setup: thresholds given for phrase grounding (GDINO box threshold 0.27, then SAM mask per box; alpha=0.4/0.2 for COCO/ADE20K overlays, page 9). Prompt templates shown by example (Fig. 7) but no full prompt logs in extraction.</li>
+<li>Missing details: per-image prompts, exact subset composition, run-to-run variance.</li>
+</ul>
+<h2 id="strengths">Strengths</h2>
+<ul>
+<li>A genuinely simple, training-free idea with a large measured effect on the hardest capability gap of GPT-4V.</li>
+<li>The pick-a-mark formulation is the right abstraction: it decouples grounding into (segmentation proposals) + (discrete selection), each independently improvable — evidenced by the GT-mask ablation.</li>
+<li>Broad task coverage (segmentation, REC/RES, phrase grounding, VOS) plus a rich appendix of agentic/embodied use cases (controller, platformer, floor-plan navigation, CAPTCHA).</li>
+<li>Mark-allocation algorithm is a small but real engineering contribution enabling dense overlays.</li>
+</ul>
+<h2 id="weaknesses-and-limitations">Weaknesses and limitations</h2>
+<ul>
+<li>Tiny, manually-run, subsampled benchmarks; comparisons partly non-apples-to-apples (authors’ own caveat, Table 2 footnote).</li>
+<li>GPT-4V-specific and unexplained; does not transfer to the open LMMs tested (page 11).</li>
+<li>Human-in-the-loop mark/tool selection undercuts the “zero-shot” framing.</li>
+<li>Depends entirely on external segmentation quality; degrades when proposals miss regions (Table 4).</li>
+<li>No safety analysis despite demonstrating CAPTCHA solving (page 18).</li>
+<li>Not an agent: no closed-loop action, no environment, no planning/verification — the GUI-agent value is potential, realized by later work, not by this paper.</li>
+</ul>
+<h2 id="relationship-to-prior-work">Relationship to prior work</h2>
+<ul>
+<li>Closest visual-prompting predecessors: RedCircle [41] and FGVP [48] (single-object overlays for CLIP) and the GPT-4V “dawn of LMMs” report [49] (hand-drawn circles/arrows). SoM’s genuine novelty is many speakable, automatically-placed marks enabling dense multi-object grounding, vs the one/few-object, non-speakable marks of prior work (page 2, page 11). Table 2 shows SoM REC 86.4 vs RedCircle 59.4 and FGVP 63.3.</li>
+<li>Builds directly on the authors’ own segmentation lineage (SEEM, Semantic-SAM, MaskDINO, X-Decoder, OpenSeeD) — SoM is a way to wire those into GPT-4V without training.</li>
+<li>Conceptually links text prompting (CoT/ToT [46,52]) to visual prompting: “prompting the model to look location-by-location” but with no in-context examples (page 11).</li>
+</ul>
+<h2 id="what-i-should-read">What I should read</h2>
+<ul>
+<li>Must read: Section 2 (pages 3-5, the method + mark-allocation algorithm) and Table 2 (page 9, the numbers).</li>
+<li>Skim: Section 4.3 ablations (Tables 3-4) and the Discussion (pages 11-12) on why it works.</li>
+<li>Skim for harness relevance: Appendix use cases pages 21-23 (controller, platformer, navigation) — these prefigure the GUI-agent application.</li>
+<li>Can skip: the reference list and the many full-page qualitative dialogues (pages 17-20) once the pattern is clear.</li>
+<li>Follow-up papers: SEEM [65], Semantic-SAM [21], SAM [19] for the segmentation side; and later GUI/computer-use agents that adopt set-of-mark click targets (not in this paper’s refs).</li>
+</ul>
+<h2 id="triage-decision">Triage decision</h2>
+<p>Label: READ_SOON
+Rationale: Foundational, widely-adopted prompting primitive whose pick-a-mark grounding became the standard click-target mechanism for GUI/computer-use agents. Method is short and high-leverage to understand. Evidence is directionally strong (25.7 -> 86.4 REC) but methodologically light (tiny manual benchmarks, mixed comparisons), so it warrants reading but not MUST_READ-level deep scrutiny. Evidence does not strongly differ from the prior label.
+Confidence: high
+Reading time estimate: 35-45 min (method + Table 2 + appendix use cases).</p>
+<h2 id="personal-notes">Personal notes</h2>
+<p>The single most reusable abstraction here for the harness: segmentation+numbering turns grounding into discrete selection over an enumerated candidate set, removing the LMM’s coordinate-regression weakness. For GUI agents the analogue is overlaying ids on accessibility-tree elements / detected UI components and having the model output “click N.” Watch the GT-mask ablation (75.6 -> 90.1): in a GUI setting the equivalent ceiling lift comes from a clean element detector, so candidate-set quality, not the LLM, is often the bottleneck.</p>
+<h2 id="follow-up-actions">Follow-up actions</h2>
+<ul>
+<li>Add related paper: SEEM (2304.06718), Semantic-SAM (2307.04767), SAM (Kirillov 2023).</li>
+<li>Compare with: later GUI-agent papers using set-of-mark click targets.</li>
+<li>Re-run after new version: v2 already the fetched version (6 Nov 2023); watch for journal/CVPR extension.</li>
+<li>Check code: <a href="https://github.com/microsoft/SoM">https://github.com/microsoft/SoM</a>.</li>
+<li>Read benchmark details: exact subset composition for RefCOCOg REC/RES and Flickr30K.</li>
+</ul> </article> </main> </body></html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Android in the Wild: A Large-Scale Dataset for Android Device Control</title><link rel="stylesheet" href="/papers/_astro/index.CkSj5fko.css"></head> <body> <header class="site"> <div class="wrap"> <h1><a href="/papers/">📚 Paper Library</a></h1> <nav><a href="/papers/">Catalog</a> <style>astro-island,astro-slot,astro-static-slot{display:contents}</style><script>(()=>{var e=async t=>{await(await t())()};(self.Astro||(self.Astro={})).load=e;window.dispatchEvent(new Event("astro:load"));})();</script><script>(()=>{var A=Object.defineProperty;var g=(i,o,a)=>o in i?A(i,o,{enumerable:!0,configurable:!0,writable:!0,value:a}):i[o]=a;var d=(i,o,a)=>g(i,typeof o!="symbol"?o+"":o,a);{let i={0:t=>m(t),1:t=>a(t),2:t=>new RegExp(t),3:t=>new Date(t),4:t=>new Map(a(t)),5:t=>new Set(a(t)),6:t=>BigInt(t),7:t=>new URL(t),8:t=>new Uint8Array(t),9:t=>new Uint16Array(t),10:t=>new Uint32Array(t),11:t=>1/0*t},o=t=>{let[l,e]=t;return l in i?i[l](e):void 0},a=t=>t.map(o),m=t=>typeof t!="object"||t===null?t:Object.fromEntries(Object.entries(t).map(([l,e])=>[l,o(e)]));class y extends HTMLElement{constructor(){super(...arguments);d(this,"Component");d(this,"hydrator");d(this,"hydrate",async()=>{var b;if(!this.hydrator||!this.isConnected)return;let e=(b=this.parentElement)==null?void 0:b.closest("astro-island[ssr]");if(e){e.addEventListener("astro:hydrate",this.hydrate,{once:!0});return}let c=this.querySelectorAll("astro-slot"),n={},h=this.querySelectorAll("template[data-astro-template]");for(let r of h){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("data-astro-template")||"default"]=r.innerHTML,r.remove())}for(let r of c){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("name")||"default"]=r.innerHTML)}let p;try{p=this.hasAttribute("props")?m(JSON.parse(this.getAttribute("props"))):{}}catch(r){let s=this.getAttribute("component-url")||"<unknown>",v=this.getAttribute("component-export");throw v&&(s+=` (export ${v})`),console.error(`[hydrate] Error parsing props for component ${s}`,this.getAttribute("props"),r),r}let u;await this.hydrator(this)(this.Component,p,n,{client:this.getAttribute("client")}),this.removeAttribute("ssr"),this.dispatchEvent(new CustomEvent("astro:hydrate"))});d(this,"unmount",()=>{this.isConnected||this.dispatchEvent(new CustomEvent("astro:unmount"))})}disconnectedCallback(){document.removeEventListener("astro:after-swap",this.unmount),document.addEventListener("astro:after-swap",this.unmount,{once:!0})}connectedCallback(){if(!this.hasAttribute("await-children")||document.readyState==="interactive"||document.readyState==="complete")this.childrenConnectedCallback();else{let e=()=>{document.removeEventListener("DOMContentLoaded",e),c.disconnect(),this.childrenConnectedCallback()},c=new MutationObserver(()=>{var n;((n=this.lastChild)==null?void 0:n.nodeType)===Node.COMMENT_NODE&&this.lastChild.nodeValue==="astro:end"&&(this.lastChild.remove(),e())});c.observe(this,{childList:!0}),document.addEventListener("DOMContentLoaded",e)}}async childrenConnectedCallback(){let e=this.getAttribute("before-hydration-url");e&&await import(e),this.start()}async start(){let e=JSON.parse(this.getAttribute("opts")),c=this.getAttribute("client");if(Astro[c]===void 0){window.addEventListener(`astro:${c}`,()=>this.start(),{once:!0});return}try{await Astro[c](async()=>{let n=this.getAttribute("renderer-url"),[h,{default:p}]=await Promise.all([import(this.getAttribute("component-url")),n?import(n):()=>()=>{}]),u=this.getAttribute("component-export")||"default";if(!u.includes("."))this.Component=h[u];else{this.Component=h;for(let f of u.split("."))this.Component=this.Component[f]}return this.hydrator=p,this.hydrate},e,this)}catch(n){console.error(`[astro-island] Error hydrating ${this.getAttribute("component-url")}`,n)}}attributeChangedCallback(){this.hydrate()}}d(y,"observedAttributes",["props"]),customElements.get("astro-island")||customElements.define("astro-island",y)}})();</script><astro-island uid="ZydoQf" prefix="r1" component-url="/papers/_astro/ThemeToggle.B8P56gw_.js" component-export="default" renderer-url="/papers/_astro/client.CoywhCtL.js" props="{}" ssr client="load" opts="{&quot;name&quot;:&quot;ThemeToggle&quot;,&quot;value&quot;:true}" await-children><button aria-label="Toggle dark mode" class="text-sm border rounded px-2 py-1">🌙</button><!--astro:end--></astro-island></nav> </div> </header> <main class="wrap"> <h1 class="title">Android in the Wild: A Large-Scale Dataset for Android Device Control</h1> <div class="meta-card" data-pagefind-ignore> <dl> <dt>Authors</dt><dd>Christopher Rawles, Alice Li, Daniel Rodríguez, Oriana Riva, T. Lillicrap</dd> <dt>Venue · Year</dt><dd>Neural Information Processing Systems · 2023</dd> <dt>Tags</dt><dd>foundational</dd> <dt>Triage</dt><dd><span class="badge READ_SOON">READ_SOON · high</span></dd> <dt>Source</dt><dd><a href="https://arxiv.org/abs/2307.10088" target="_blank" rel="noopener">paper ↗</a></dd> <dt>Key</dt><dd><code>arxiv-2307.10088</code></dd> </dl> </div> <article data-pagefind-body> <h1 id="android-in-the-wild-a-large-scale-dataset-for-android-device-control">Android in the Wild: A Large-Scale Dataset for Android Device Control</h1>
+<h2 id="metadata">Metadata</h2>
+<ul>
+<li>Canonical key: arxiv-2307.10088</li>
+<li>Version: v1</li>
+<li>Fetch date: 2026-06-06T07:57:30Z</li>
+<li>Source: arxiv</li>
+<li>PDF: library/android-in-the-wild-a-large-scale-230710088/v1/paper.pdf</li>
+<li>Venue: Neural Information Processing Systems (NeurIPS 2023, Datasets &#x26; Benchmarks Track)</li>
+<li>Year: 2023</li>
+<li>Authors: Christopher Rawles, Alice Li, Daniel Rodríguez, Oriana Riva, T. Lillicrap</li>
+<li>Tags: foundational</li>
+<li>User status: unread</li>
+<li>Triage label: READ_SOON</li>
+<li>Triage confidence: high</li>
+</ul>
+<h2 id="one-sentence-takeaway">One-sentence takeaway</h2>
+<p>AITW is a 715k-episode, ~30k-instruction Android device-control dataset whose defining design choice is to drop UI-tree metadata in favor of pixel-only observations and a precise dual-point gesture action space, paired with OOD splits and an offline action-matching metric for evaluating GUI agents.</p>
+<h2 id="why-this-paper-matters">Why this paper matters</h2>
+<p>This is a foundational data artifact for pixel-based mobile GUI agents. Almost every later Android-agent benchmark and model (the action-matching metric, the four-subset structure, the OOD generalization splits) is downstream of or reacting to AITW. For anyone building or evaluating device-control agents, AITW is the reference dataset that established (a) the assumption that agents must infer affordances from pixels rather than View Hierarchy metadata, and (b) the now-widely-copied offline action-matching evaluation. Understanding both its construction and its metric’s limits is necessary to read the literature it spawned.</p>
+<h2 id="problem-and-gap">Problem and gap</h2>
+<p>CLAIMED problem (p1-2): build device-control systems that map high-level natural-language goals to UI actions executed directly on-screen, “exactly as a human does,” without app-specific APIs. EVIDENCE of the gap (p2, Table 1, p3): prior datasets are (i) orders of magnitude smaller — MoTIF, the largest predecessor, has ~4.7k feasible demos vs AITW’s 715k; (ii) reliant on platform UI-tree metadata (View Hierarchy / DOM), which the authors argue is “poor quality or missing altogether” for real apps (WebViews, Canvas, Electron, Accessibility-gated VH); (iii) often phrased as low-level step commands (“Click the button labeled Cancel”) rather than high-level goals. WHY-read: the gap framing is the paper’s main intellectual move — it deliberately makes the problem <em>harder</em> (pixels only, arbitrary gestures) to be more realistic, which is the lens through which all results should be read.</p>
+<h2 id="core-idea">Core idea</h2>
+<p>Two coupled design decisions distinguish AITW from prior work:</p>
+<ol>
+<li>Pixel-only observation. Episodes store screenshots plus <em>pixel-derived</em> features (OCR text + IconNet icon-class labels, one of 96 icon types, p5), explicitly NOT the View Hierarchy. The authors expect users to swap these noisy features for stronger screen-understanding models.</li>
+<li>Dual-point gesture action space (p4-5). Each gesture is a (touch_point, lift_point) pair at arbitrary normalized &#x3C;x,y>; a tap is the degenerate case where the two points are within 0.04 Euclidean distance, a scroll is a longer drag. This lets the data represent precise drags (carousels, sliders, month-switching) that element-based action spaces cannot. Action types: dual-point gesture, type, go_back, go_home, enter, task_complete, task_impossible.
+The dataset is organized into OOD splits (unseen Android version, unseen subject, unseen verb, unseen domain) to turn it into a generalization benchmark, not just a training corpus.</li>
+</ol>
+<h2 id="harness-relevance">Harness relevance</h2>
+<p>This is a DATASET paper, so harness elements are adapted to how episodes/screens/actions are represented and evaluated.</p>
+<ul>
+<li>Environment / workspace: Android Emulator driven via AndroidEnv [40] (p2, p4). Raters used mouse+keyboard on a desktop; clicks logged as touch events. Four Android versions (v10-13), eight device types (Pixel 2 XL -> Pixel 6), varying resolutions.</li>
+<li>Observation interface: RGB screenshot + post-processed UI elements, each a bounding box with either OCR text or one of 96 IconNet icon classes (p5). Stored per-step as TFRecord fields (Appendix C, p20): image/encoded, image/ui_annotations_positions (y,x,h,w), ui_annotations_text, ui_annotations_ui_types, current_activity, android_api_level. Crucially NO View Hierarchy is provided.</li>
+<li>Action interface: dual-point gesture (touch_point, lift_point as (y,x)), plus type (typed_text), go_back, go_home, enter, task_complete, task_impossible (p5). Captured at 10 Hz; LIFT actions dropped after gesture extraction. This is the “precise gesture” action space that is the paper’s signature.</li>
+<li>Tool/API/GUI layer: pure GUI / pixel layer; the explicit thesis is to avoid API and accessibility-tree dependence.</li>
+<li>Planner/executor/verifier structure: not part of the dataset; two baseline agents are provided (BC Transformer; PaLM-2 LLM over an HTML-ified screen). No search.</li>
+<li>Evaluation harness: offline <strong>action matching</strong> (p8) — two actions match if action types are equal AND, for taps, fall within 14% screen distance OR within the same detected bounding box (inflated to 240% size); two scrolls match if they share the primary axis (vertical/horizontal). Yields partial match (correct actions / episode length) and complete match (partial = 1.0), following Li et al. [28]. Code released.</li>
+<li>Training harness: BC agent trained with cross-entropy on a 2x2 V2 TPU slice, Acme/Haiku/JAX, 4-layer Transformer, lr 1e-4, batch 128, dropout 0.1; grid-search HP on val (Appendix B.1, p14, p18-19).</li>
+<li>Logging/trace/reproducibility: per-step TFRecords (GZIP) with episode_id, step_id, episode_length, goal_info, current_activity, action fields. Dataset + action-matching code public on GitHub.</li>
+<li>Safety / permission: ethical section (p10) — raters told to enter no PII; no real-user data; authors flag malicious-use risks (CAPTCHA bypass, prompt/screen manipulation). No in-dataset permission mechanism.</li>
+</ul>
+<p>Limits of the proposed metric (load-bearing for harness users): action matching is a distance heuristic that penalizes functionally-equivalent alternatives (e.g., nav-bar back vs in-app back), so complete-match is a <strong>lower bound</strong> on true success (p8). The authors validate it with human evaluation only on a small GOOGLEAPPS subset (~86.5 episodes/split, Figure 3, p8-9) and find partial match correlates with true completion “especially if the number of steps is small.” This is a weak validation base and a known source of metric noise in downstream work.</p>
+<h2 id="method-dataset-construction">Method (dataset construction)</h2>
+<p>Two-stage pipeline (Figure 1, p2; section 3, p4-5):</p>
+<ol>
+<li>Multi-step collection. Instructions sourced from (a) the authors, (b) achievable subset of PixelHelp [28], (c) LLM-generated prompts. Raters execute end-to-end on a randomized starting screen (“Imagine a friend is asking you to perform the task on their phone”), ending with task_complete or task_impossible. Verification-style tasks already in target state are marked complete.</li>
+<li>Hindsight language relabeling [31,32] (section 3.2). Raters review collected multi-step trajectories and annotate short 2-5 frame subsequences (>=3 per video) with result-describing phrases, explicitly avoiding “click/tap/scroll” wording. This produces the SINGLE single-step set without re-collection.
+Composition (Table 2, p4): 715,142 episodes / 5,689,993 screens / 30,378 unique prompts, split as GOOGLEAPPS (625,542 ep; 306 prompts), INSTALL (25,760 ep; 688 prompts; 88 apps), WEBSHOPPING (28,061 ep; 13,473 prompts), GENERAL (9,476 ep; 545 prompts), SINGLE (26,303 ep; 15,366 prompts). Figure 1 annotates the pipeline as ~15K multi-step prompts -> 689K multi-step demos + 26K hindsight-relabeled episodes. Coverage: 357+ apps/websites headline (Table 1); finer breakdown 159 Android apps + 198+ websites (p6, “conservative estimate”). Episode lengths 2-16 (5th-95th pct); WEBSHOPPING longest; Chrome/Google apps most frequent.</li>
+</ol>
+<h2 id="experimental-setup">Experimental setup</h2>
+<ul>
+<li>Splits (section 4, p6-7): Standard (per-subset 80/10/10 episode-wise, averaged across subsets); Unseen Android version (train/val on v10-12 at 90/10, test entirely on v13); Unseen subject and Unseen verb (instructions templated by masking subject/verb phrases via a few-shot LLM — 6,111 subject templates, 22,122 verb templates — then templates split 80/10/10 so paraphrases don’t leak); Unseen domain (split by web domain / app name; excludes SINGLE and GOOGLEAPPS).</li>
+<li>Baselines / models (section 5.1, p7-8): BC-single and BC-history (2 prior steps) Transformer behavioral-cloning agents that output the full dual-point action space; LLM-0 (PaLM-2 zero-shot, HTML-ified screen, click-on-element only) and LLM-hist-5-CoT (5-shot chain-of-thought with action history), adapted from Wang et al. [43].</li>
+<li>Metric: partial / complete action-matching score (above). BC evaluated on full test sets; LLM evaluated on 288 sampled episodes per split (compute cost), with binomial 95% CIs.</li>
+<li>Compute: 2x2 V2 TPU slice for BC training; LLM inference cost cited as the reason for the 288-episode sampling.</li>
+<li>Artifacts: dataset + action-matching code at the google-research GitHub.</li>
+</ul>
+<h2 id="key-results-verified-against-extraction-table-4-p9-table-5-p17">Key results (VERIFIED against extraction, Table 4 p9; Table 5 p17)</h2>
+<p>Standard-split partial match: BC-history <strong>73.1</strong>, BC-single 68.7, LLM-hist-5-CoT 39.6, LLM-0 30.9.
+OOD partial match (BC-history / LLM-hist-5-CoT): Version 63.2 / 29.5; Subject 68.5 / 44.4; Verb 70.4 / 41.7; Domain 59.7 / 35.8.</p>
+<ul>
+<li>BC-history is best across every split; history helps (+~4 pts over BC-single on Standard).</li>
+<li>The LLM’s element-only action space is a structural handicap: 33% of standard-set episodes contain non-element taps that are simply infeasible for it; on the feasible subset LLM-hist-5-CoT reaches 58% partial match (p8).</li>
+<li>BC-history per-subset (Table 5, p17): Standard ranges 63.7 (GENERAL) to 80.3 (SINGLE); Domain only available for WEBSHOPPING (49.6) and INSTALL (66.9). GOOGLEAPPS is easy on Standard (75.7) but hard on Subject/Verb (48.4/57.4) because it has few unique prompts but many demos each.</li>
+<li>Human-eval validation (Figure 3, p8): partial match correlates with true complete-match; automated complete-match is a lower bound. Validated only on a small GOOGLEAPPS subset.</li>
+</ul>
+<h2 id="evidence-quality">Evidence quality</h2>
+<p>The dataset-scale and diversity claims are well supported (Tables 1-2, statistics in Figure 2). The baselines are explicitly framed as reference points, not strong agents, so absolute numbers are less important than the relative story (custom pixel BC >> adapted element-based LLM). UNCLEAR / weak spots: (1) the central metric’s fidelity is validated on a single subset (~86.5 episodes/split) and only argued to hold for short episodes — a thin basis for a metric the whole field adopted; (2) the LLM baseline is handicapped by an action-space mismatch the authors themselves introduced (element-only vs the dataset’s gesture space), so the BC-vs-LLM gap partly measures interface fit, not model capability; (3) no fine-tuned-LLM baseline (acknowledged as future work); (4) prompt-template OOD splits rely on an LLM extractor whose error rate is not reported. Statistical reporting is reasonable (binomial CIs for LLM; BC CIs stated &#x3C;0.1% and omitted).</p>
+<h2 id="reproducibility-and-artifacts">Reproducibility and artifacts</h2>
+<ul>
+<li>Code: action-matching evaluation + agent code referenced on google-research GitHub (p1).</li>
+<li>Data: 715k episodes as GZIP TFRecords, per-step schema in Appendix C (p20). Public.</li>
+<li>Models: BC architecture/hyperparameters fully specified (Appendix B.1); LLM prompts given verbatim (Appendix B.2, p17-20). Model weights: Not reported as released.</li>
+<li>Environment: AndroidEnv + Android Emulator; AITW agents “can be evaluated using AndroidEnv” (p2).</li>
+<li>License: Not reported in extraction.</li>
+<li>Exact commands/setup: training recipe given; no command lines.</li>
+<li>Missing details: rater count, hourly wage, total annotation cost (“cannot include … due to global privacy concerns”, Appendix A.1); IconNet/OCR error rates; template-extraction accuracy.</li>
+</ul>
+<h2 id="strengths">Strengths</h2>
+<ul>
+<li>Two orders of magnitude larger than prior device-control datasets, with real (non-synthetic) screens and genuine high-level goal instructions.</li>
+<li>Pixel-only + dual-point gesture design is realistic and harder than VH/element-based setups; representative of deployment conditions.</li>
+<li>Purpose-built OOD splits (version / subject / verb / domain) make it a generalization benchmark, not just a corpus.</li>
+<li>Reusable offline metric (action matching) with released code — a major reason for its adoption.</li>
+<li>Clean, well-documented per-step record format enabling reuse.</li>
+</ul>
+<h2 id="weaknesses-and-limitations">Weaknesses and limitations</h2>
+<ul>
+<li>Metric is a distance heuristic that under-credits valid alternative actions; complete-match is only a lower bound and validated narrowly (authors acknowledge, section 5.2, Future Work).</li>
+<li>English-only prompts; raters not globally representative; dynamic Internet content not representative (section 6.1).</li>
+<li>Raters used mouse/keyboard, not native touch — interaction patterns may differ (section 6.1).</li>
+<li>Phone form factor only; no tablets/other factors.</li>
+<li>UI drift over time only partially captured (via Android-version split); continuous per-app UI evolution and dataset <em>aging</em> are not modeled — a real contamination/staleness concern as apps/websites change after collection.</li>
+<li>Class imbalance: GOOGLEAPPS is 87% of episodes but only 306 prompts, skewing aggregate numbers and standard-split difficulty.</li>
+<li>LLM baseline underpowered by interface mismatch; no fine-tuned multimodal baseline.</li>
+</ul>
+<h2 id="relationship-to-prior-work">Relationship to prior work</h2>
+<p>Closest predecessors (Table 1, p3): MoTIF [9] (largest prior Android goal dataset, ~4.7k feasible demos), PixelHelp [28] (187 Pixel-Help tasks; source of the action-matching metric and a prompt subset), UGIF [42] (multilingual), Mind2Web [14] (web), RicoSCA/UIBert/MiniWoB++ (element-grounding or synthetic). Genuinely new: scale (715k), pixel-only observation by design, arbitrary dual-point gesture action space, and the OOD-split organization. Incremental/borrowed: the action-matching metric (from [28]) and the LLM-over-HTML-screen baseline (from Wang et al. [43]).</p>
+<h2 id="what-i-should-read">What I should read</h2>
+<ul>
+<li>Must read: section 3 (data pipeline, action space, screen features, p4-5); section 5.2 evaluation methodology / action matching (p8); Table 2 (p4); Appendix C dataset format (p20).</li>
+<li>Skim: section 4 OOD splits (p6-7); section 5.3 results + Tables 4-5; section 6 limitations.</li>
+<li>Can skip: full reference list; Appendix B.2 verbatim LLM prompt (read once for prompt format only).</li>
+<li>Follow-up papers: AndroidEnv [40]; Wang et al. CHI’23 LLM-UI [43]; MoTIF [9]; PixelHelp/Li et al. ACL’20 [28]; Mind2Web [14]; and later AITW-derived benchmarks (AndroidControl, AndroidWorld) for how the metric/splits evolved.</li>
+</ul>
+<h2 id="triage-decision">Triage decision</h2>
+<p>Label: READ_SOON
+Rationale: Foundational dataset for pixel-based mobile GUI agents; defines the action space, observation format, OOD splits, and the action-matching metric that downstream work builds on. Evidence broadly supports the dataset claims; the metric’s narrow human validation is the main caveat but does not undercut the artifact’s importance. Keeping READ_SOON per the scaffold; evidence does not strongly differ.
+Confidence: high
+Reading time estimate: ~45-60 min for the core sections above.</p>
+<h2 id="personal-notes">Personal notes</h2>
+<p>Key verified numbers: 715,142 episodes; 5,689,993 screens; 30,378 unique prompts; subsets GOOGLEAPPS 625,542 / INSTALL 25,760 / WEBSHOPPING 28,061 / GENERAL 9,476 / SINGLE 26,303; coverage 357+ apps+websites (159 apps + 198+ websites); INSTALL spans 88 apps. Action match: tap within 14% screen distance or same bbox @240%; scroll by axis. Baselines (Standard partial match): BC-history 73.1, BC-single 68.7, LLM-hist-5-CoT 39.6, LLM-0 30.9. Watch the contamination/aging angle: real web/app screens captured 2023 on Android v10-13 — already drifting.</p>
+<h2 id="follow-up-actions">Follow-up actions</h2>
+<ul>
+<li>Add related paper: AndroidEnv [40]; later AITW-derived benchmarks (AndroidControl, AndroidWorld).</li>
+<li>Compare with: MoTIF, Mind2Web, PixelHelp for dataset/metric lineage.</li>
+<li>Re-run after new version: check if a v2/erratum adjusts the action-matching thresholds.</li>
+<li>Check code: action-matching implementation (14% / 240% constants) on google-research GitHub.</li>
+<li>Read benchmark details: how downstream papers report online vs offline AITW scores.</li>
+</ul> </article> </main> </body></html>

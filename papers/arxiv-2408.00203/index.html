@@ -1,0 +1,155 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>OmniParser for Pure Vision Based GUI Agent</title><link rel="stylesheet" href="/papers/_astro/index.CkSj5fko.css"></head> <body> <header class="site"> <div class="wrap"> <h1><a href="/papers/">📚 Paper Library</a></h1> <nav><a href="/papers/">Catalog</a> <style>astro-island,astro-slot,astro-static-slot{display:contents}</style><script>(()=>{var e=async t=>{await(await t())()};(self.Astro||(self.Astro={})).load=e;window.dispatchEvent(new Event("astro:load"));})();</script><script>(()=>{var A=Object.defineProperty;var g=(i,o,a)=>o in i?A(i,o,{enumerable:!0,configurable:!0,writable:!0,value:a}):i[o]=a;var d=(i,o,a)=>g(i,typeof o!="symbol"?o+"":o,a);{let i={0:t=>m(t),1:t=>a(t),2:t=>new RegExp(t),3:t=>new Date(t),4:t=>new Map(a(t)),5:t=>new Set(a(t)),6:t=>BigInt(t),7:t=>new URL(t),8:t=>new Uint8Array(t),9:t=>new Uint16Array(t),10:t=>new Uint32Array(t),11:t=>1/0*t},o=t=>{let[l,e]=t;return l in i?i[l](e):void 0},a=t=>t.map(o),m=t=>typeof t!="object"||t===null?t:Object.fromEntries(Object.entries(t).map(([l,e])=>[l,o(e)]));class y extends HTMLElement{constructor(){super(...arguments);d(this,"Component");d(this,"hydrator");d(this,"hydrate",async()=>{var b;if(!this.hydrator||!this.isConnected)return;let e=(b=this.parentElement)==null?void 0:b.closest("astro-island[ssr]");if(e){e.addEventListener("astro:hydrate",this.hydrate,{once:!0});return}let c=this.querySelectorAll("astro-slot"),n={},h=this.querySelectorAll("template[data-astro-template]");for(let r of h){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("data-astro-template")||"default"]=r.innerHTML,r.remove())}for(let r of c){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("name")||"default"]=r.innerHTML)}let p;try{p=this.hasAttribute("props")?m(JSON.parse(this.getAttribute("props"))):{}}catch(r){let s=this.getAttribute("component-url")||"<unknown>",v=this.getAttribute("component-export");throw v&&(s+=` (export ${v})`),console.error(`[hydrate] Error parsing props for component ${s}`,this.getAttribute("props"),r),r}let u;await this.hydrator(this)(this.Component,p,n,{client:this.getAttribute("client")}),this.removeAttribute("ssr"),this.dispatchEvent(new CustomEvent("astro:hydrate"))});d(this,"unmount",()=>{this.isConnected||this.dispatchEvent(new CustomEvent("astro:unmount"))})}disconnectedCallback(){document.removeEventListener("astro:after-swap",this.unmount),document.addEventListener("astro:after-swap",this.unmount,{once:!0})}connectedCallback(){if(!this.hasAttribute("await-children")||document.readyState==="interactive"||document.readyState==="complete")this.childrenConnectedCallback();else{let e=()=>{document.removeEventListener("DOMContentLoaded",e),c.disconnect(),this.childrenConnectedCallback()},c=new MutationObserver(()=>{var n;((n=this.lastChild)==null?void 0:n.nodeType)===Node.COMMENT_NODE&&this.lastChild.nodeValue==="astro:end"&&(this.lastChild.remove(),e())});c.observe(this,{childList:!0}),document.addEventListener("DOMContentLoaded",e)}}async childrenConnectedCallback(){let e=this.getAttribute("before-hydration-url");e&&await import(e),this.start()}async start(){let e=JSON.parse(this.getAttribute("opts")),c=this.getAttribute("client");if(Astro[c]===void 0){window.addEventListener(`astro:${c}`,()=>this.start(),{once:!0});return}try{await Astro[c](async()=>{let n=this.getAttribute("renderer-url"),[h,{default:p}]=await Promise.all([import(this.getAttribute("component-url")),n?import(n):()=>()=>{}]),u=this.getAttribute("component-export")||"default";if(!u.includes("."))this.Component=h[u];else{this.Component=h;for(let f of u.split("."))this.Component=this.Component[f]}return this.hydrator=p,this.hydrate},e,this)}catch(n){console.error(`[astro-island] Error hydrating ${this.getAttribute("component-url")}`,n)}}attributeChangedCallback(){this.hydrate()}}d(y,"observedAttributes",["props"]),customElements.get("astro-island")||customElements.define("astro-island",y)}})();</script><astro-island uid="ZydoQf" prefix="r1" component-url="/papers/_astro/ThemeToggle.B8P56gw_.js" component-export="default" renderer-url="/papers/_astro/client.CoywhCtL.js" props="{}" ssr client="load" opts="{&quot;name&quot;:&quot;ThemeToggle&quot;,&quot;value&quot;:true}" await-children><button aria-label="Toggle dark mode" class="text-sm border rounded px-2 py-1">🌙</button><!--astro:end--></astro-island></nav> </div> </header> <main class="wrap"> <h1 class="title">OmniParser for Pure Vision Based GUI Agent</h1> <div class="meta-card" data-pagefind-ignore> <dl> <dt>Authors</dt><dd>Yadong Lu, Jianwei Yang, Yelong Shen, Ahmed Awadallah</dd> <dt>Venue · Year</dt><dd>arXiv.org · 2024</dd> <dt>Tags</dt><dd>foundational</dd> <dt>Triage</dt><dd><span class="badge READ_SOON">READ_SOON · high</span></dd> <dt>Source</dt><dd><a href="https://arxiv.org/abs/2408.00203" target="_blank" rel="noopener">paper ↗</a></dd> <dt>Key</dt><dd><code>arxiv-2408.00203</code></dd> </dl> </div> <article data-pagefind-body> <h1 id="omniparser-for-pure-vision-based-gui-agent">OmniParser for Pure Vision Based GUI Agent</h1>
+<h2 id="metadata">Metadata</h2>
+<ul>
+<li>Canonical key: arxiv-2408.00203</li>
+<li>Version: v1</li>
+<li>Fetch date: 2026-06-06T07:57:34Z</li>
+<li>Source: arxiv</li>
+<li>PDF: library/omniparser-for-pure-vision-based-gui-agent-240800203/v1/paper.pdf</li>
+<li>Venue: arXiv.org</li>
+<li>Year: 2024</li>
+<li>Authors: Yadong Lu, Jianwei Yang, Yelong Shen, Ahmed Awadallah</li>
+<li>Tags: foundational</li>
+<li>User status: unread</li>
+<li>Triage label: READ_SOON</li>
+<li>Triage confidence: high</li>
+</ul>
+<hr>
+<h1 id="pass-1--triage-birds-eye-5-min">PASS 1 — Triage (bird’s-eye, ~5 min)</h1>
+<h2 id="one-sentence-takeaway">One-sentence takeaway</h2>
+<p>OmniParser is a vision-only screen-parsing front-end (a finetuned interactable-icon detector + a finetuned icon-functionality captioner + OCR) that converts any UI screenshot into a structured, Set-of-Mark-labeled list of interactable elements with text descriptions, so an off-the-shelf GPT-4V can ground actions without any HTML or accessibility-tree input (p.1 Abstract; p.3 §3).</p>
+<h2 id="the-five-cs">The Five Cs</h2>
+<ul>
+<li><strong>Category:</strong> New method/system plus two curated datasets — a screen-parsing module (not an agent policy, not a benchmark). It is an observation-interface component for GUI agents (p.2 §1 contributions).</li>
+<li><strong>Context:</strong> Builds directly on Set-of-Mark prompting [YZL+23] and on SoM-based web agents that rely on DOM/HTML to obtain box locations: SeeAct [ZGK+24], Mind2Web/MindAct [DGZ+23], GPT-4V-in-Wonderland [YYZ+23]. Competes against models specifically finetuned for GUI grounding: SeeClick [CSC+24], CogAgent [HWL+23], Fuyu [BEH+23], Ferret-UI [YZS+24]. Uses YOLOv8 for detection and BLIP-2 [LLSH23] for captioning (p.2 §2; p.11 §7.2; p.3 §3.2).</li>
+<li><strong>Correctness:</strong> Core assumptions look valid on a first read. The central claim — that GPT-4V’s UI understanding is “underestimated” because grounding fails, not reasoning — is supported by the SeeAssign experiment (label-assignment accuracy 0.705 -> 0.938 when local semantics are added, Table 1, p.5). One caveat: all numbers appear to be single-run with no variance reported, and the icon-description finetuning data is GPT-4o-generated, raising distillation/contamination questions (p.11 §7.1).</li>
+<li><strong>Contributions:</strong> (1) A 67k-screenshot interactable-region detection dataset with boxes pulled from webpage DOM trees (p.3 §3.1; p.11 §7.2 reports 66,990 samples). (2) OmniParser, a pure-vision parsing method combining a finetuned detector, a finetuned icon-description model, and OCR (p.2 §1; p.3 §3). (3) Evaluation on ScreenSpot, Mind2Web, and AITW showing large gains over the GPT-4V baseline without extra input (p.2 §1; §4.2–4.4).</li>
+<li><strong>Clarity:</strong> Generally clear and well-organized; the motivating SeeAssign experiment is a nice diagnostic. Weakened by typos, a missing % sign in one ScreenSpot cell, and thin reporting of variance/seeds. Tables are readable and the headline ScreenSpot/AITW numbers match the prose.</li>
+</ul>
+<h2 id="why-this-matters-to-me-now">Why this matters to me now</h2>
+<p>Directly relevant to computer-use / GUI-agent harnesses: OmniParser is the canonical “screenshot -> structured interactable elements” perception layer that decouples grounding from a specific platform’s accessibility API. Understanding it clarifies how to build observation interfaces for vision-only agents and why DOM-free parsing is attractive for cross-platform (Windows/macOS/Android/iOS) control.</p>
+<hr>
+<h1 id="pass-2--content-what-it-actually-does-section-grounded">PASS 2 — Content (what it actually does; section-grounded)</h1>
+<h2 id="motivation--the-problem-not-the-novelty">Motivation — the problem (NOT the novelty)</h2>
+<p>Pure-vision GUI agents that feed a raw screenshot to a VLM like GPT-4V fail at <strong>action grounding</strong>: GPT-4V cannot reliably emit the exact x-y coordinate of a target widget (p.1 §1). Set-of-Mark prompting partly fixes this by overlaying numbered bounding boxes so the model only has to name a box ID, but every existing SoM pipeline obtains those boxes from privileged structure — DOM/HTML in the browser [ZGK+24, KLJ+24] or view hierarchies / dataset labels on mobile [YYZ+23] (p.1–3 §1, §2.2). That dependency confines reliable agents to platforms that expose such structure (mostly web browsers), so there is no robust way to get high-quality interactable-element boxes on arbitrary OSes and apps (Office365, Photoshop, native desktop, etc.) (p.1–2 §1). Why it matters: without platform-agnostic grounding, GPT-4V’s actual UI-reasoning ability is masked by perception failures and general cross-platform agents cannot be built (p.2 §1).</p>
+<h2 id="novelty--the-genuine-delta---the-core-of-a-good-summary">Novelty — the genuine delta  ★ the core of a good summary</h2>
+<ul>
+<li><strong>Delta in one sentence:</strong> A finetuned vision-only parser can supply interactable-element boxes <em>and</em> per-element functional-semantics text good enough that GPT-4V grounds actions as well as or better than agents fed ground-truth DOM/HTML — i.e. the privileged structure SoM pipelines depend on is replaceable by learned perception. (Survives deleting “we propose”: the standing claim is that learned vision parsing substitutes for DOM grounding.)</li>
+<li><strong>Mechanistic reason the design must be this way:</strong> The diagnosis is that GPT-4V overloads when forced to <em>simultaneously</em> (a) figure out what each marked icon means and (b) choose the next action (p.3 §3.2; p.4 §3.2). The fix follows from that diagnosis: offload (a) into the parsing stage. Hence two separate learned components are required, not one. (i) A detector is needed because, without DOM, <em>which</em> pixels are interactable is itself unknown — and a generic open-vocab detector (raw Grounding DINO) is not enough (finetuned ID model adds +4.3% on ScreenSpot over raw GD, p.6 §4.2). (ii) A captioner is needed because boxes alone are “misleading to GPT-4V” — supplying each icon’s textual function lets GPT-4V match the instruction’s referent to the right ID by text rather than by visually re-reading every icon (SeeAssign 0.705 -> 0.938, Table 1, p.5). The design is therefore “move semantics extraction out of the action call,” not merely “bolt on a parser.”</li>
+<li><strong>Closest prior work and the precise difference:</strong>
+<ul>
+<li>Set-of-Mark [YZL+23]: OmniParser uses the same overlay-numbered-boxes idea but <em>generates</em> the boxes from vision rather than assuming they are given.</li>
+<li>SeeAct / GPT-4V-is-a-generalist-web-agent [ZGK+24]: SeeAct’s SoM boxes come from a DOM-based element-proposal model and ground-truth HTML locations; OmniParser uses neither (HTML-free), yet outperforms SeeAct’s GPT-4V+SOM and beats GPT-4V+textual-choice in 2 of 3 Mind2Web splits (p.6–7 §4.3; Table 3).</li>
+<li>GPT-4V-in-Wonderland [YYZ+23] on AITW: uses IconNet [SWL+22] (96 fixed icon classes, mobile) for SoM; OmniParser replaces IconNet with its web-trained ID model + LS and gains +4.7% overall (p.7–8 §4.4; Table 4).</li>
+<li>GUI-finetuned VLMs (SeeClick, CogAgent, Fuyu): these finetune the <em>policy/VLM</em> itself; OmniParser leaves GPT-4V untouched and instead upgrades its <em>input</em>, surpassing them on ScreenSpot “by a large margin” (p.5–6 §4.2; Table 2).</li>
+</ul>
+</li>
+<li><strong>Motivation-vs-novelty check:</strong> The contribution does NOT end at “DOM-based SoM fails off-web.” It demonstrates a positive, transferable result — learned parsing matches/exceeds DOM-grounded agents, and the web-trained detector generalizes to mobile (p.7 §4.4). That is novelty, not motivation dressed up. The one place to watch: “we curated a dataset” alone would be motivation-adjacent, but the dataset is the enabling mechanism for the grounding claim, so it counts.</li>
+<li><strong>30-second test:</strong> Replace privileged DOM/accessibility structure with a finetuned icon detector plus an icon-function captioner, feed GPT-4V the resulting Set-of-Mark boxes <em>and</em> per-element semantic text, and a frozen GPT-4V grounds actions as well as agents that get ground-truth HTML — across web, desktop, and mobile.</li>
+</ul>
+<h2 id="core-idea--method">Core idea / method</h2>
+<p>OmniParser turns a screenshot into a “DOM-like” structured representation purely from pixels, in two parsing sub-stages whose outputs become GPT-4V’s prompt (p.3 §3):</p>
+<ol>
+<li><strong>Interactable Region Detection (§3.1):</strong> A YOLOv8 detector finetuned on the curated 67k-screenshot dataset predicts boxes for clickable icons/buttons. An OCR module separately detects text boxes. The two box sets are merged, removing boxes with >90% overlap; each surviving box gets a unique numeric ID placed to minimize label-on-box overlap (p.3 §3.1). Output: the original screenshot overlaid with numbered boxes (Set-of-Mark).</li>
+<li><strong>Local Semantics of Functionality (§3.2):</strong> A BLIP-2 model finetuned on 7,185 GPT-4o-generated icon-description pairs produces a one-sentence functional description per detected icon; OCR text is attached to text boxes. These descriptions plus texts are concatenated into the text prompt alongside the SoM image (p.3–4 §3.2; p.11 §7.1).</li>
+</ol>
+<p>GPT-4V then receives: user task + SoM-overlaid screenshot + the parsed local-semantics list, and predicts which box ID to act on (prompt templates, p.11–12 §7.3.1). The key design choice is splitting “understand the screen” from “predict the action” so GPT-4V spends its call on action selection (p.3 §3 opening).</p>
+<p><strong>Dataset construction.</strong> Detection: 100k uniform sample of popular URLs from ClueWeb22 [OXL+22]; interactable-region boxes harvested from each page’s DOM tree (pipeline adapted from AutoGen multimodal websurfer, p.9 Ack); final 66,990 samples, 95% train (63,641) / 5% val (3,349) (p.3 §3.1; p.11 §7.2). Icon description: icons cropped from ScreenSpot screenshots, labeled by GPT-4o (“is this an icon? if so describe its functionality, else ‘this is not an icon’”), 7,185 pairs (p.11 §7.1).</p>
+<h2 id="harness-relevance">Harness relevance</h2>
+<p>This is fundamentally an <strong>observation-interface module</strong> for GUI agents, not a full agent. Mapping to harness components:</p>
+<ul>
+<li><strong>Environment / workspace:</strong> Not an environment itself; it is plugged into web (Mind2Web), mobile (AITW), and cross-platform grounding (ScreenSpot) settings. Aims at any OS/app because it needs only pixels (p.1–2 §1).</li>
+<li><strong>Observation interface (its core):</strong> Input = task string + raw RGB screenshot. Output = (1) a screenshot overlaid with numbered interactable bounding boxes (Set-of-Mark image) and (2) a structured text list of local semantics — OCR text per text box and a one-sentence function description per icon (Fig.1, p.4; §3). This is the entire contribution’s locus.</li>
+<li><strong>Action interface:</strong> OmniParser does not act. It exposes a discrete action space to the downstream model by reducing grounding to “pick a box ID”; the click point is computed as the <strong>center of the chosen box</strong> (a stated failure mode for boxes wider than the clickable region, p.7 §5). GPT-4V supplies the actual action semantics (click/type/scroll) following the [YYZ+23]/[ZGK+24] prompt formats (p.6 §4.3).</li>
+<li><strong>Tool / API / GUI layer:</strong> Three internal tools composed — finetuned YOLOv8 icon detector, OCR module, finetuned BLIP-2 icon captioner — merged via the >90% overlap-dedup + ID-labeling algorithm (§3.1–3.2).</li>
+<li><strong>Planner / executor / verifier / search:</strong> None internal. The “planner/executor” is the frozen GPT-4V it feeds; no search, no verifier, no replanning is part of OmniParser.</li>
+<li><strong>Evaluation harness:</strong> Plugs into existing harnesses unchanged: SeeAssign (112 handcrafted label-assignment tasks across mobile/desktop/web, screenshots from ScreenSpot, split easy/medium/hard by box count, p.4–5 §4.1); ScreenSpot (>600 screenshots, mobile/desktop/web, element-pointing accuracy, p.5 §4.2); Mind2Web (offline element accuracy / Operation-F1 / step success rate; cleaned test = 867 cross-domain, 167 cross-website, 242 cross-task, p.6 §4.3); AITW (mobile, 30k instructions / 715k trajectories, same instruction-based train/test split as SeeClick, test-only since no finetuning, p.7 §4.4).</li>
+<li><strong>Training harness:</strong> Detector — YOLOv8, 20 epochs, batch 256, lr 1e-3, Adam, 4 GPUs (p.11 §7.2). Captioner — BLIP-2, 1 epoch, constant lr 1e-5, no weight decay, Adam (p.11 §7.1). GPT-4V is <strong>not</strong> trained.</li>
+<li><strong>Logging / trace / reproducibility:</strong> Failure analysis comes from inspecting “GPT-4V’s response log” (p.7 §5), but no released traces, no code/checkpoint release stated in this v1 report. Hyperparameters and dataset sizes are given; seeds and exact OCR engine are not.</li>
+<li><strong>Safety / permission mechanism:</strong> None reported.</li>
+</ul>
+<h2 id="experimental-setup">Experimental setup</h2>
+<ul>
+<li><strong>Benchmarks:</strong> SeeAssign (custom, 112 tasks), ScreenSpot [CSC+24], Mind2Web [DGZ+23], AITW [RLR+23].</li>
+<li><strong>Baselines:</strong> GPT-4V (raw / +SoM / +textual-choice / +history / image-only), GUI-finetuned VLMs (Fuyu 8B, CogAgent 18B, SeeClick 9.6B, MiniGPT-v2 7B, Qwen-VL 9.6B), MindAct(gen)/MindAct, GPT-3.5-Turbo, GPT-4, ChatGPT-CoT, PaLM2-CoT (Tables 2–4). Ablation baseline: OmniParser with raw Grounding DINO (GD) vs finetuned ID model, and with/without local semantics (LS).</li>
+<li><strong>Models:</strong> GPT-4V (frozen, downstream); YOLOv8 (detector); BLIP-2 (captioner); GPT-4o (label generator for caption data).</li>
+<li><strong>Metrics:</strong> label-assignment accuracy (SeeAssign); element-pointing accuracy by platform/text-vs-icon (ScreenSpot); Element Accuracy, Operation F1, Step Success Rate (Mind2Web); per-category and overall success (AITW).</li>
+<li><strong>Compute/cost:</strong> Detector 4 GPUs / 20 epochs; otherwise GPU type, wall-clock, and GPT-4V API cost Not reported.</li>
+<li><strong>Artifacts:</strong> Datasets described but no release link in this v1 text; no code/weights link stated. License: Not reported.</li>
+</ul>
+<h2 id="key-results--read-the-figures-not-just-the-prose">Key results — read the figures, not just the prose</h2>
+<ul>
+<li><strong>SeeAssign (Table 1, p.5):</strong> Adding local semantics lifts GPT-4V label-assignment accuracy from <strong>0.705 -> 0.938</strong> overall; the gain is largest on hard screens (>40 boxes): <strong>0.620 -> 0.900</strong>. This is the diagnostic that motivates the captioner mechanistically. Single-run, 112 tasks — small sample, no variance.</li>
+<li><strong>ScreenSpot (Table 2, p.6):</strong> Average element-pointing accuracy: GPT-4V baseline <strong>16.2%</strong> -> OmniParser (w. LS + ID) <strong>73.0%</strong>, beating finetuned SeeClick (53.4%), CogAgent (47.4%), Fuyu (19.5%). Ablation: w.o. LS + GD = 58.38%; w. LS + GD = 68.7%; w. LS + ID = 73.0% — so local semantics adds ~+10–14 pts and the finetuned ID model adds the stated <strong>+4.3%</strong> over raw Grounding DINO. (Table has a likely typo: Web/Text for “w. LS + ID” reads “81.3” with no % sign.)</li>
+<li><strong>Mind2Web (Table 3, p.6–7):</strong> HTML-free, image-only OmniParser (w. LS + ID) gets Step SR of 36.5 (cross-website), 42.0 (cross-domain), 39.4 (cross-task). It beats GPT-4V+SOM (32.7 / 23.7 / 20.3) by a large margin, and beats GPT-4V+textual-choice on cross-website <strong>+4.1%</strong> and cross-domain <strong>+5.2%</strong> while <em>underperforming</em> cross-task by <strong>-0.8%</strong> — an honest, non-uniform result (p.7 §4.3). Note GPT-4V+textual-choice uses ground-truth DOM elements, so OmniParser is winning against a privileged-input baseline.</li>
+<li><strong>AITW (Table 4, p.8):</strong> OmniParser (w. LS + ID) overall <strong>57.7</strong> vs best GPT-4V+history baseline <strong>53.0</strong>, a <strong>+4.7%</strong> gain, with sub-category wins in General (48.3 vs 43.0), Install (57.8 vs 46.1), GoogleApps (51.6 vs 49.2), WebShopping (52.9 vs 48.2); it <em>loses</em> slightly on Single (77.4 vs 78.3). The web-trained ID detector transferring to mobile screens is the notable qualitative finding (p.7 §4.4).</li>
+<li><strong>Abstract vs tables:</strong> The abstract’s qualitative claims (“significantly improves on ScreenSpot,” “outperforms GPT-4V baselines requiring extra input on Mind2Web/AITW”) are consistent with Tables 2–4. No inflated headline number detected; the one nuance the abstract omits is the cross-task Mind2Web -0.8% and AITW Single -0.9% regressions.</li>
+<li><strong>Failure modes (Fig.7–8, §5):</strong> repeated identical icons/texts confuse ID selection; coarse OCR boxes put the box-center click outside the true target (the “MORE” example); the cropped-icon captioner misreads context-dependent icons (three-dots read as “loading/buffering indicator”).</li>
+</ul>
+<hr>
+<h1 id="pass-3--critique-challenge-every-assumption">PASS 3 — Critique (challenge every assumption)</h1>
+<h2 id="does-the-evidence-actually-support-the-claims">Does the evidence actually support the claims?</h2>
+<ul>
+<li><strong>Claim: GPT-4V’s UI ability is underestimated; grounding, not reasoning, is the bottleneck.</strong> Supported by SeeAssign (Table 1): with the <em>same</em> GPT-4V, only the input changes and accuracy jumps 0.705 -> 0.938. This experiment <strong>verifies the novelty</strong> (the semantics-offloading insight), not merely the motivation.</li>
+<li><strong>Claim: vision parsing replaces DOM/HTML grounding.</strong> Supported by Mind2Web where HTML-free OmniParser beats HTML-using GPT-4V+textual-choice in 2/3 splits (Table 3). This is the strongest evidence and it is against a <em>privileged-input</em> baseline, which is the right comparison.</li>
+<li><strong>Claim: finetuned detector matters.</strong> Supported by the +4.3% ID-vs-GD ablation on ScreenSpot (p.6) and ID-vs-IconNet on AITW (+4.7%, p.8).</li>
+<li><strong>Experiments that merely confirm the motivation:</strong> the “GPT-4V without local semantics” rows and the raw-GPT-4V ScreenSpot baseline re-show that the grounding problem exists — useful but not novelty-verifying.</li>
+<li><strong>Weak spots:</strong> No variance/seeds anywhere; all single-run. SeeAssign is only 112 handcrafted tasks and its screenshots come from ScreenSpot, on which the captioner’s training icons were also cropped — a potential <strong>data overlap</strong> between caption-finetuning source and the SeeAssign/ScreenSpot evaluation (p.5 §4.1 vs p.11 §7.1). Mind2Web evaluation is <em>offline</em> (teacher-forced action history), not full rollout, so step-SR is optimistic relative to live execution. No latency/cost comparison, which matters for a perception layer that runs three models per step.</li>
+</ul>
+<h2 id="hidden-assumptions--failure-modes">Hidden assumptions &#x26; failure modes</h2>
+<ul>
+<li>Assumes “interactable” can be learned from web DOM-derived boxes and transfers to desktop/mobile; AITW results suggest partial transfer but the detector never saw native desktop app chrome at scale.</li>
+<li>Assumes a box’s <strong>center</strong> is the correct click point — breaks for wide text boxes / hyperlinks (the “MORE” failure, p.7 §5).</li>
+<li>Assumes per-icon crops carry enough context for the captioner — breaks for context-dependent symbols (three-dots, p.8 §5).</li>
+<li>Assumes unique referents — repeated identical elements (7 alarm toggles) defeat ID selection (Fig.7 left).</li>
+<li>Distillation assumption: caption labels are GPT-4o outputs, so the captioner inherits GPT-4o’s icon-naming errors; evaluating downstream with GPT-4V partly launders this.</li>
+<li>Would press on: live (online) Mind2Web/AITW numbers; cost/latency; variance; and an apples-to-apples comparison where competitors also get OmniParser boxes.</li>
+</ul>
+<h2 id="could-i-reconstruct-it-reproducibility">Could I reconstruct it? (reproducibility)</h2>
+<ul>
+<li><strong>Code:</strong> Not reported in this v1 text (no repo link given). Pipeline references AutoGen websurfer for DOM extraction (p.9).</li>
+<li><strong>Data:</strong> Construction described (ClueWeb22 seed URLs; DOM-derived boxes; GPT-4o icon labels) but the curated datasets are not linked here; raw URL list governed by ClueWeb22 access.</li>
+<li><strong>Models:</strong> YOLOv8 detector and BLIP-2 captioner with full hyperparameters (epochs, batch, lr, optimizer) — reconstructable. Downstream GPT-4V via API.</li>
+<li><strong>Environment:</strong> 4 GPUs for detection; GPU type/OCR engine unspecified.</li>
+<li><strong>License:</strong> Not reported.</li>
+<li><strong>Exact commands/setup:</strong> Prompt templates given (p.11–12 §7.3.1); no training scripts.</li>
+<li><strong>Missing details (blockers):</strong> exact OCR engine, the ID-labeling algorithm specifics, dataset release, seeds, and GPT-4V version/date. Core results are <em>approximately</em> reconstructable from the paper but the exact numbers are not, mainly due to undisclosed data and OCR.</li>
+</ul>
+<h2 id="strengths">Strengths</h2>
+<ul>
+<li>Clean, well-motivated diagnosis (overloaded single-call) directly justifies the two-component design — motivation and mechanism are tightly coupled.</li>
+<li>Strong, honest results: beats privileged-input baselines and reports its own regressions (cross-task -0.8%, AITW Single -0.9%).</li>
+<li>Practical and modular: upgrades any frozen VLM’s input; no policy retraining; platform-agnostic by construction.</li>
+<li>Concrete, instructive failure analysis (p.7–8 §5) pointing to clear next steps (joint OCR+detection, context-aware captioner).</li>
+</ul>
+<h2 id="weaknesses-and-limitations">Weaknesses and limitations</h2>
+<ul>
+<li>Author-stated: repeated elements, coarse OCR/box-center clicks, context-blind icon captioning (§5).</li>
+<li>Inferred: no variance/seeds; single-run; offline Mind2Web eval; no cost/latency despite three-model overhead; possible caption-data &#x3C;-> ScreenSpot/SeeAssign overlap; datasets/code not released in v1; detector trained only on web pages.</li>
+</ul>
+<h2 id="relationship-to-prior-work">Relationship to prior work</h2>
+<p>Extends Set-of-Mark [YZL+23] by <em>generating</em> the marks from vision instead of from DOM. Versus SeeAct [ZGK+24] and Mind2Web/MindAct [DGZ+23], it removes the HTML dependency yet competes with their DOM-grounded GPT-4V variants. Versus IconNet-based mobile SoM [YYZ+23, SWL+22], it swaps a 96-class mobile icon classifier for an open web-trained detector that transfers cross-platform. Versus GUI-finetuned VLMs (SeeClick [CSC+24], CogAgent [HWL+23], Fuyu [BEH+23], Ferret-UI [YZS+24]), it is orthogonal: it improves the <em>input</em> to a frozen model rather than the model. Genuinely new: the demonstration that learned vision parsing + offloaded local semantics can substitute for privileged UI structure. Incremental parts: the components themselves (YOLOv8, BLIP-2, OCR, SoM) are off-the-shelf; the novelty is in their composition and the semantics-offloading insight, not new architectures.</p>
+<hr>
+<h1 id="decision">Decision</h1>
+<h2 id="what-i-should-read">What I should read</h2>
+<ul>
+<li>Must read: §3 (method), §4.1 SeeAssign + Table 1 (the mechanistic core), §4.2 Table 2 (ablation), §4.3 Table 3 (HTML-free vs DOM baselines).</li>
+<li>Skim: §4.4 AITW, §2 related work, §5 failure cases.</li>
+<li>Can skip: appendix training curves (Fig.5); reference list unless chasing baselines.</li>
+<li>Follow-up papers / references to chase: SeeAct [ZGK+24], Mind2Web [DGZ+23], SeeClick/ScreenSpot [CSC+24], Set-of-Mark [YZL+23], GPT-4V-in-Wonderland [YYZ+23], OSWorld [XZC+24]; and the OmniParser V2 / OmniParser-as-tool follow-ups.</li>
+</ul>
+<h2 id="triage-decision">Triage decision</h2>
+<p>Label: READ_SOON
+Rationale (ground it in the Five Cs + novelty + evidence quality): Foundational, widely-cited perception layer for vision-only GUI agents; the novelty (learned parsing + semantics-offloading replaces DOM grounding) is clear, mechanistically argued, and supported against privileged-input baselines across three benchmarks. Evidence quality is good but not airtight (single-run, offline Mind2Web, possible data overlap, no cost), so it warrants a careful read rather than must-read-now. Directly central to computer-use harness work.
+Confidence: high
+Reading time estimate: 45–60 min for a thorough pass (method + Tables 1–4 + §5).</p>
+<h2 id="personal-notes">Personal notes</h2>
+<p>The reusable idea for harness design: split perception from policy — do semantic labeling in the observation interface so the policy call only chooses an action ID. Watch the box-center click assumption when reusing this; for dense/repeated UIs it will mis-ground. Caption data being GPT-4o-distilled is a quiet dependency worth noting when comparing to later versions.</p>
+<h2 id="follow-up-actions">Follow-up actions</h2>
+<ul>
+<li>Add related paper: OmniParser V2; OSWorld [XZC+24]; Ferret-UI [YZS+24].</li>
+<li>Compare with: SeeAct (DOM-grounded) and SeeClick (policy-finetuned) as the two contrasting paradigms.</li>
+<li>Re-run after new version: check if a later version releases code/weights and adds variance/online eval.</li>
+<li>Check code: look for the Microsoft OmniParser repo (not linked in v1).</li>
+<li>Read benchmark details: ScreenSpot construction and Mind2Web offline-eval protocol.</li>
+</ul> </article> </main> </body></html>

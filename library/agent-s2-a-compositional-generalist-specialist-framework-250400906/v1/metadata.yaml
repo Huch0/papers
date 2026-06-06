@@ -67,7 +67,7 @@ scoring:
 artifacts:
   pdf: library/agent-s2-a-compositional-generalist-specialist-framework-250400906/v1/paper.pdf
   extraction: library/agent-s2-a-compositional-generalist-specialist-framework-250400906/v1/extraction.txt
-  summary: library/agent-s2-a-compositional-generalist-specialist-framework-250400906/v1/summary.html
+  summary: library/agent-s2-a-compositional-generalist-specialist-framework-250400906/v1/summary.mdx
   code_url: null
   project_url: null
   dataset_url: null
@@ -77,4 +77,4 @@ status:
   summarized: true
   triaged: true
   user_read_status: unread
-  summary_format: html
+  summary_format: mdx

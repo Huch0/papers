@@ -1,0 +1,7 @@
+---
+interface Props { label?: string | null; confidence?: string | null; }
+const { label, confidence } = Astro.props;
+---
+{label && (
+  <span class={`badge ${label}`}>{label}{confidence ? ` · ${confidence}` : ""}</span>
+)}

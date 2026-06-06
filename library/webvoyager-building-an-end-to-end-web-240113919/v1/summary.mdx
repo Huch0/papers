@@ -1,0 +1,112 @@
+---
+canonical_key: arxiv-2401.13919
+version_key: v1
+title: 'WebVoyager: Building an End-to-End Web Agent with Large Multimodal Models'
+authors:
+- Hongliang He
+- Wenlin Yao
+- Kaixin Ma
+- Wenhao Yu
+- Yong Dai
+- Hongming Zhang
+- Zhenzhong Lan
+- Dong Yu
+venue: Annual Meeting of the Association for Computational Linguistics
+year: 2024
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2401.13919
+summary_date: '2026-06-06'
+---
+
+<TLDR>A vision-first web agent that drives live, real-world websites end-to-end by acting on marked-up screenshots with an off-the-shelf multimodal LLM, paired with a GPT-4V "judge" that scores open-ended trajectories automatically and a 643-task / 15-site benchmark.</TLDR>
+
+<WhyItMatters>Foundational for my computer-use / web-agent track: it popularized the "screenshot + Set-of-Mark + ReAct on a real browser" recipe and the "VLM-as-judge for open-ended trajectories" evaluation pattern that later agent papers reuse.</WhyItMatters>
+
+## Motivation
+Prior web agents share two gaps. (1) They consume only <Term def="the textual tree (roles, labels, hierarchy) a browser exposes for a page">HTML / accessibility-tree</Term> text and run inside simulators or static page snapshots, ignoring that browsers *render* pages into visual layouts; verbose HTML is hard to manage and discards layout cues. (2) Benchmarks like Mind2Web grade each action against one predefined "golden" trajectory, which cannot credit the many valid ways to finish a task. Together these limit applicability to the messy live web (ads, pop-ups, constant updates) and make fair, scalable evaluation of open-ended end-to-end success hard.
+
+## Contribution (what's new)
+<Claim>A generic VLM can complete tasks on *unmodified live websites* by acting on a screenshot whose interactive elements are overlaid with numbered boxes — with no object-detection module and no fine-tuned element selector — and such open-ended runs can be graded automatically by a second VLM watching the screenshot trajectory.</Claim> Mechanistic why: rendered pages encode information visually, and numbering elements lets the model *refer* to a target by index (`Click [17]`) instead of solving pixel-coordinate grounding, so one model can both see and act; the same numbers let the judge re-derive what happened without a golden path. Closest prior work: <Term def="Set-of-Mark: overlay numbered boxes on an image for visual grounding">SoM</Term> (reused, but drops the object detector — elements extracted rule-based), WebArena (not self-hosted — runs the open web), and concurrent <Term def="a concurrent GPT-4V web agent whose best variant uses a fine-tuned cross-encoder to rank elements">SeeAct</Term> (WebVoyager needs no extra modules).
+
+## Research questions
+Can an off-the-shelf multimodal LLM complete real-world tasks end-to-end on live websites using only marked-up screenshots plus minimal element text? And can a VLM reliably stand in for a human when scoring such open-ended trajectories?
+
+## Methodology
+Given an instruction, WebVoyager drives a real browser (Selenium) in an observe→think→act loop. Each observation is the current screenshot with numbered Set-of-Mark boxes plus per-element text (type, inner text, `aria-label`); the model emits a <Term def="prompting style where the model writes a free-text Thought before each Action">ReAct</Term> Thought then one Action from a fixed set, terminating with `ANSWER`. The evaluator is a separate GPT-4V given the task, the agent's response, and the last k trajectory screenshots, returning binary SUCCESS / NOT SUCCESS.
+
+<Pass title="Method details">
+<Stepper steps={[
+  {title: "Observation", body: "Screenshot at 1024x768 with numbered boxes drawn on interactive elements via the rule-based GPT-4V-Act JS tool (no object detector; single black box color chosen empirically). Auxiliary text per element: type, embedded text, aria-label. Context clipped to the 3 most recent observations but full Thought/Action history kept."},
+  {title: "Action space", body: "Click [n]; Type [n];[text] (clears box + auto-ENTER); Scroll [n/WINDOW];[up/down]; Wait; GoBack; Google (jump to a search engine to escape dead ends); ANSWER;[content] (terminate)."},
+  {title: "Loop budget", body: "Max 15 steps, ~7000 tokens; execution errors fed back and consume a step. Single tab; agent temperature 1."},
+  {title: "Benchmark", body: "643 tasks across 15 popular sites (40-45 each), built by self-instruct from Mind2Web seeds + human verification; 22.3% have stable 'Golden' answers, rest 'Possible' (open-ended / real-time). Plus 90 GAIA web tasks (Level 1+2) and 50 SeeAct online tasks. Login/CAPTCHA sites excluded."},
+  {title: "Evaluation", body: "Human binary judgment (3 annotators on 300 tasks) is primary; GPT-4V auto-judge over last k screenshots at temperature 0 reported as mean +/- std over 3 runs. Backbones: GPT-4V (gpt-4-vision-preview, primary), Claude 3 Opus, GPT-4o."}
+]} />
+</Pass>
+
+## Main result
+WebVoyager reaches <Evidence src="Abstract; Tab.1, p.7">59.1% human-judged task success (GPT-4V backbone) vs 40.1% text-only and 30.8% GPT-4 (All Tools)</Evidence>, and its GPT-4V auto-judge hits <Evidence src="Tab.2, p.7">85.3% agreement with humans, Cohen's kappa = 0.70 — matching the human inter-annotator kappa of 0.70</Evidence>. <Weak>The headline 59.1% is human-judged and appears single-run; only the GPT-4V-judged numbers carry variance (the same agent auto-judges to 57.1% +/- 0.2%), so abstract 59.1% vs Table 1 57.1% reflect different judges, not different agents.</Weak>
+
+<Pass title="Full results">
+  <ResultsTable
+    columns={["Setting", "Metric", "Score", "Baseline / human"]}
+    rows={[
+      ["Overall (human-judged, GPT-4V)", "Task Success Rate", "59.1%", "GPT-4 All Tools 30.8%; text-only 40.1%"],
+      ["Overall (GPT-4V auto-judged, 3 runs)", "Task Success Rate", "57.1% +/- 0.2%", "text-only 44.3% +/- 0.6%"],
+      ["GPT-4V judge vs human (full trajectory)", "Agreement / kappa", "85.3% / 0.70", "human inter-annotator kappa 0.70"],
+      ["Judge agreement at k=1 / 2 / 3 screenshots", "Agreement", "75.3% / 79.7% / 81.3%", "rises with more screenshots"],
+      ["SeeAct online set (50 tasks)", "Task Success Rate", "30%", "best SeeAct autonomous agent 26%"],
+      ["GAIA web (Level 1 / Level 2)", "Task Success Rate", "38.5% / 15.6%", "text-only 19.2/12.5; All-Tools 23.1/12.5"],
+      ["Best / worst sites (human-judged)", "Task Success Rate", "Google Map 76.7% / Booking 43.2%", "text-only Booking 2.3%"],
+      ["Backbone sweep (self auto-judged)", "Task Success Rate", "GPT-4V 57.1 / Claude-3-Opus 61.6 / GPT-4o 64.1", "self-eval bias noted"]
+    ]} />
+WebVoyager beats both baselines by large margins overall but is slightly below text-only on Allrecipes (53.3 vs 55.6) and only on par on text-heavy sites (GitHub, ESPN, Cambridge Dict., Wolfram), because dense text is hard to read from screenshots.
+</Pass>
+
+## Implications
+A simple, module-free recipe (off-the-shelf VLM + rule-based marking + ReAct on a live browser) became a de-facto baseline architecture for multimodal computer-use agents, and the validated VLM-as-judge protocol gave the field a scalable way to score non-deterministic, open-ended agents without golden trajectories.
+
+## Limitations
+<Limit>Live-web evaluation is inherently non-reproducible — numbers are a snapshot in time as sites, ads, and real-time data change.</Limit>
+<Limit>The headline 59.1% (human-judged) appears single-run with no variance; abstract 59.1% vs Table 1 auto-eval 57.1% are easy to conflate.</Limit>
+<Limit>Self-evaluation bias: each backbone's judge favors its own outputs (Tab.3), confounding the cross-backbone comparison (GPT-4o lenient, GPT-4V strict, Claude prefers itself).</Limit>
+<Limit>Site selection excludes login/CAPTCHA sites, biasing toward agent-friendly tasks; reads poorly on text-heavy pages; no Drag, single tab, 15-step budget. Documented failures: Navigation Stuck 44.4%, Visual Grounding 24.8%, Hallucination 21.8%, Prompt Misalignment 9.0% (Tab.4).</Limit>
+
+<Pass title="Evidence check (claim → support)">
+  <ClaimEvidence rows={[
+    { claim: "A multimodal screenshot agent beats text-only and tool-based baselines on live sites", evidence: "59.1% vs 40.1% vs 30.8% (Tab.1); also wins GAIA (Fig.5)", verdict: "holds — verifies the novelty" },
+    { claim: "GPT-4V is a reliable automatic evaluator for open-ended web trajectories", evidence: "85.3% agreement, kappa=0.70, on par with human kappa=0.70 (Tab.2)", verdict: "holds; kappa is 'substantial' not perfect and is backbone-dependent (Claude judge kappa 0.60)" },
+    { claim: "No object-detection or fine-tuned selection module is needed", evidence: "rule-based GPT-4V-Act extracts/labels elements (§3.3); beats best SeeAct 30% vs 26%", verdict: "holds — verifies the novelty" },
+    { claim: "Both text and vision are needed for a generalist agent", evidence: "vision lags on text-heavy sites; text-only collapses on visual sites e.g. Booking 2.3% (Tab.1)", verdict: "partial — argued from per-site results, not an ablation adding HTML text to the vision agent" },
+    { claim: "Headline 59.1% success", evidence: "Abstract + Tab.1 human column", verdict: "unclear robustness — human column lacks std-dev; only auto-judged runs repeated 3x" }
+  ]} />
+Verify-the-novelty experiments: baseline comparison, module-free SeeAct comparison, human-vs-GPT-4V agreement study. Confirm-the-motivation experiments: per-site difficulty analysis and the GPT-4 All Tools limitation discussion.
+</Pass>
+
+---
+
+## Critiques and Questions
+1. The "both modalities needed" claim is argued from per-site splits, not from an ablation that feeds HTML text into the vision agent — the cleaner test would add accessibility text to WebVoyager and measure the lift.
+2. Cross-backbone scores (Tab.3) are confounded by self-evaluation bias; a single fixed neutral judge across all backbones would make the GPT-4V / Claude / GPT-4o comparison fair.
+3. Headline 59.1% is single-run human-judged — I'd want repeated human passes or at least variance before treating the GPT-4V-vs-baseline gap as robust.
+4. Site selection avoids login/CAPTCHA; how much does success drop on the harder, gated web that real assistants must handle?
+
+## Glossary
+- <Term def="an autonomous program that reads a web page and issues actions to complete a natural-language instruction without human help">Web agent</Term> — the system class.
+- <Term def="Large Multimodal Model: an LLM that also takes images; here GPT-4V, Claude 3 Opus, GPT-4o serve as the agent's brain">LMM</Term> — the backbone family.
+- <Term def="overlay numbered bounding boxes on interactive elements so a vision model can reference targets by index instead of pixel coordinates">Set-of-Mark (SoM)</Term> — the marking technique.
+- <Term def="a JavaScript tool that finds interactive elements by HTML type and draws numbered boxes; rule-based, no learned model">GPT-4V-Act</Term> — how the boxes are produced.
+- <Term def="fraction of tasks judged successfully completed (binary), regardless of whether the steps were optimal">Task Success Rate</Term> — the primary metric.
+- <Term def="agreement corrected for chance; 0.70 is 'substantial', matching the human inter-annotator level">Cohen's kappa</Term> — judge-reliability statistic.
+- <Term def="an LLM creates new tasks from a few seed examples; used with human filtering to build the 643-task set">Self-instruct</Term> — benchmark construction.
+- <Term def="a general-assistant benchmark; here only its 90 web-browsing Level-1/2 tasks are used">GAIA</Term> — secondary benchmark.
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

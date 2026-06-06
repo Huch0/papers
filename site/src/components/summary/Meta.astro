@@ -1,0 +1,21 @@
+---
+import TriageBadge from "./TriageBadge.astro";
+interface Props {
+  title?: string; authors?: string[]; venue?: string | null; year?: number | null;
+  tags?: string[]; sourceLink?: string | null; triageLabel?: string | null;
+  triageConfidence?: string | null; canonicalKey?: string;
+}
+const { title, authors = [], venue, year, tags = [], sourceLink, triageLabel,
+  triageConfidence, canonicalKey } = Astro.props;
+const authorStr = authors.length > 6 ? authors.slice(0, 6).join(", ") + ` +${authors.length - 6}` : authors.join(", ");
+---
+<div class="meta-card" data-pagefind-ignore>
+  <dl>
+    {authors.length > 0 && (<><dt>Authors</dt><dd>{authorStr}</dd></>)}
+    <dt>Venue · Year</dt><dd>{venue || "Preprint"} · {year ?? "—"}</dd>
+    {tags.length > 0 && (<><dt>Tags</dt><dd>{tags.join(", ")}</dd></>)}
+    <dt>Triage</dt><dd><TriageBadge label={triageLabel} confidence={triageConfidence} /></dd>
+    {sourceLink && (<><dt>Source</dt><dd><a href={sourceLink} target="_blank" rel="noopener">paper ↗</a></dd></>)}
+    {canonicalKey && (<><dt>Key</dt><dd><code>{canonicalKey}</code></dd></>)}
+  </dl>
+</div>

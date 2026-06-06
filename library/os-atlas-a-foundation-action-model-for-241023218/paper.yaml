@@ -49,7 +49,7 @@ versions:
   source: arxiv
   source_url: https://arxiv.org/abs/2410.23218
   pdf_path: library/os-atlas-a-foundation-action-model-for-241023218/v1/paper.pdf
-  summary_path: library/os-atlas-a-foundation-action-model-for-241023218/v1/summary.html
+  summary_path: library/os-atlas-a-foundation-action-model-for-241023218/v1/summary.mdx
   metadata_path: library/os-atlas-a-foundation-action-model-for-241023218/v1/metadata.yaml
   fetched_at: '2026-06-06T07:57:34Z'
   source_updated_at: null
@@ -59,7 +59,7 @@ versions:
   summary_status: full
   extraction_status: full
   created_at: '2026-06-06T07:57:34Z'
-  updated_at: '2026-06-06T11:25:00Z'
+  updated_at: '2026-06-06T14:06:40Z'
 relations:
   duplicate_candidates: []
   related_papers: []

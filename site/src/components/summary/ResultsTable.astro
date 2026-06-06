@@ -1,0 +1,8 @@
+---
+interface Props { columns: string[]; rows: (string | number)[][]; }
+const { columns = [], rows = [] } = Astro.props;
+---
+<table class="data">
+  <thead><tr>{columns.map((c) => <th>{c}</th>)}</tr></thead>
+  <tbody>{rows.map((r) => <tr>{r.map((cell) => <td>{cell}</td>)}</tr>)}</tbody>
+</table>

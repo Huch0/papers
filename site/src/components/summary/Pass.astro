@@ -1,0 +1,8 @@
+---
+interface Props { title?: string; open?: boolean; }
+const { title = "Details", open = false } = Astro.props;
+---
+<details class="pass" open={open}>
+  <summary>{title}</summary>
+  <slot />
+</details>

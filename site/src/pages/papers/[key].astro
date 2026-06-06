@@ -1,0 +1,61 @@
+---
+import { getCollection, render } from "astro:content";
+import Base from "../../layouts/Base.astro";
+import Meta from "../../components/summary/Meta.astro";
+import { loadCatalog, summaryEntryId } from "../../lib/catalog";
+
+// summary component vocabulary, provided globally to MDX bodies (ADR-0002)
+import TLDR from "../../components/summary/TLDR.astro";
+import WhyItMatters from "../../components/summary/WhyItMatters.astro";
+import Pass from "../../components/summary/Pass.astro";
+import Claim from "../../components/summary/Claim.astro";
+import Evidence from "../../components/summary/Evidence.astro";
+import Weak from "../../components/summary/Weak.astro";
+import Limit from "../../components/summary/Limit.astro";
+import Term from "../../components/summary/Term.astro";
+import ResultsTable from "../../components/summary/ResultsTable.astro";
+import ClaimEvidence from "../../components/summary/ClaimEvidence.astro";
+import Stepper from "../../components/summary/Stepper.astro";
+import Chart from "../../components/summary/Chart.astro";
+import Figure from "../../components/summary/Figure.astro";
+import MathBlock from "../../components/summary/MathBlock.astro";
+import Compare from "../../components/summary/Compare.astro";
+import SelfCheck from "../../components/summary/SelfCheck.astro";
+
+const components = {
+  TLDR, WhyItMatters, Pass, Claim, Evidence, Weak, Limit, Term,
+  ResultsTable, ClaimEvidence, Stepper, Chart, Figure, MathBlock, Compare, SelfCheck,
+};
+
+export async function getStaticPaths() {
+  const cat = loadCatalog();
+  const summaries = await getCollection("summaries");
+  const byId = new Map(summaries.map((e) => [e.id, e]));
+  return cat
+    .map((p) => {
+      const id = summaryEntryId(p.summary_path);
+      const entry = id ? byId.get(id) : undefined;
+      return { params: { key: p.canonical_key }, props: { paper: p, entry } };
+    })
+    .filter((x) => x.props.entry);
+}
+
+const { paper, entry } = Astro.props;
+const { Content } = await render(entry!);
+---
+<Base title={paper.title}>
+  <h1 class="title">{paper.title}</h1>
+  <Meta
+    authors={paper.authors}
+    venue={paper.venue}
+    year={paper.year}
+    tags={paper.tags}
+    sourceLink={paper.source_link}
+    triageLabel={paper.triage_label}
+    triageConfidence={paper.triage_confidence}
+    canonicalKey={paper.canonical_key}
+  />
+  <article data-pagefind-body>
+    <Content components={components} />
+  </article>
+</Base>

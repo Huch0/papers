@@ -1,0 +1,128 @@
+---
+canonical_key: arxiv-2410.23218
+version_key: v1
+title: 'OS-ATLAS: A Foundation Action Model for Generalist GUI Agents'
+authors:
+- Zhiyong Wu
+- Zhenyu Wu
+- Fangzhi Xu
+- Yian Wang
+- Qiushi Sun
+- Chengyou Jia
+- Kanzhi Cheng
+- Zichen Ding
+- Liheng Chen
+- Paul Pu Liang
+- Yu Qiao
+venue: arXiv.org
+year: 2024
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2410.23218
+summary_date: '2026-06-06'
+---
+
+{/*
+  Canonical Summary structure (concise, core-first). Body only — frontmatter is generated
+  from metadata.yaml by `summarize_paper.py --format mdx --prepare`. Components are
+  provided globally by the site (no imports). See config/summary_components.md for the
+  full vocabulary. Rules: concise + core-first; keep depth collapsed in <Pass>; be
+  self-contained (define non-universal terms with <Term>); declarative English; verify
+  numbers against extraction.txt; "Not reported"/"Unclear" for gaps. Motivation ≠
+  Contribution — keep them distinct.
+*/}
+
+<TLDR>An open <Term def="a pre-trained model mapping instruction+screen to executable actions, reusable zero-shot, as a module, or fine-tuned">foundation action model</Term> for GUI agents, trained on the largest open cross-platform <Term def="locating the on-screen element an instruction refers to and emitting its coordinates">grounding</Term> corpus to date (13.58M elements, 5 platforms) plus a <Term def="3 platform-shared Basic Actions CLICK/TYPE/SCROLL + per-task Custom Actions, merging duplicates like tap=click">unified action space</Term>, reaching SOTA open-model GUI grounding and beating GPT-4o on zero-shot OOD agent tasks.</TLDR>
+
+<WhyItMatters>A reusable, open grounding+action backbone for computer-use agents: drop it behind a GPT-4o planner, run it standalone zero-shot, or fine-tune it. The corpus and cleaned ScreenSpot-V2 are reusable harness artifacts.</WhyItMatters>
+
+## Motivation
+Open-source VLMs lag closed models (GPT-4o, GeminiProVision) badly on GUI grounding and on <Term def="out-of-distribution: tasks/domains/apps unseen in training — the realistic deployment regime">OOD</Term> agentic tasks, pushing practitioners to expensive commercial APIs. Two root causes: (1) most VLMs are barely pre-trained on GUI screenshots, and existing grounding corpora are web-/mobile-heavy, often closed, small, and contain no desktop data — cross-platform grounding data is scarce and fragmented. (2) Heterogeneous datasets suffer <Term def="the same logical action labeled differently across platforms, e.g. mobile 'tap' vs desktop 'click'">action naming conflicts</Term> that confuse multitask fine-tuning. The problem ends at "prior data and action spaces fail for cross-platform generalist agents."
+
+## Contribution (what's new)
+A single open action model that generalizes across web/desktop/mobile because it is pre-trained on a large, automatically synthesized cross-platform corpus that *includes desktop*, then fine-tuned under one unified action vocabulary. <Claim>Mechanistic why: web-only pre-training does not transfer (dropping mobile+desktop data collapses desktop icon accuracy 45.71→28.57 and mobile icon 58.52→10.04), and mixing raw action vocabularies confuses the model — so unifying 17→10 action types is necessary, not cosmetic.</Claim> Versus the closest prior work: SeeClick (3.3M open, web+mobile, no desktop) is scaled ~4× and gains desktop; CogAgent (70M) is closed and web-only; concurrent UGround is web-data-focused and grounding-only, whereas OS-Atlas is multi-platform and also ships an action model. Backbones (Qwen2-VL-7B, InternVL-2-4B) are off-the-shelf — the delta is data infrastructure + the unified action space.
+
+## Research questions
+Can an open VLM be turned into a generalist GUI action model that (a) matches/beats closed models on cross-platform grounding and (b) generalizes zero-shot to OOD agent tasks — and what data and action-space design make that possible?
+
+## Methodology
+Two-phase training on off-the-shelf VLM backbones. Phase 1 (grounding pre-training) learns coordinates from `<screenshot, expression, coordinate>` triplets sourced by a custom multi-platform synthesis toolkit, producing OS-Atlas-Base. Phase 2 (action fine-tuning) trains on `<screenshot, instruction, history>` to emit `<thoughts, action type, parameters>` under the unified action space, producing OS-Atlas. It runs in three modes: Grounding (coordinates behind an external planner), Action (standalone zero-shot OOD), Agent (further SFT).
+
+<Pass title="Method details">
+Toolkit/data (Tab.1 p.4; Tab.7 p.17): web pages crawled from FineWeb URLs, rendered full-page and tiled at 1920×1080 with clickable elements parsed from HTML (web pass filters ~37M→7.7M raw elements); desktop/mobile collected by automating real/virtual machines (AndroidEnv for Android, OSWorld for Linux, physical Windows/macOS) and reading the <Term def="accessibility tree — OS-exposed hierarchy of UI elements with roles and bounding boxes">A11y tree</Term> via pyatspi/pywinauto/ApplicationServices, explored with DFS + random walk. <Term def="referring-expression grounding: locate an element explicitly named, e.g. 'click the Open button'">REG</Term> data dominates; <Term def="instruction grounding: map a higher-level instruction (may need reasoning, may not name the element) to an action; superset of REG">IG</Term> data is synthesized via GPT-4o with before/after screenshots and Set-of-Mark prompting.
+
+Unified action space (§3.3, Tab.6 p.16): 3 Basic Actions (CLICK, TYPE, SCROLL) shared across platforms + per-task Custom Actions (OPEN_APP, LONG_PRESS, DRAG…) for OOD extensibility. Coordinates normalized to [0,1000]; emitted as Python-like calls, e.g. `CLICK <point>[[x,y]]</point>`.
+
+Backbones: InternVL-2-4B (AnyRes, max 6 tiles of 448×448) and Qwen2-VL-7B (dynamic resolution, max 1024×1024). 30 REG prompt templates, 15 samples grouped per conversation. Ablations run on the 4B model "due to GPU constraints"; exact GPU count/budget Not reported.
+
+Setup: agent training uses only 3 datasets (AMEX, AITZ mobile; Mind2Web web), leaving others for OOD evaluation; OS-Atlas-Pro repeats SFT on all 7. Evaluated on 6 benchmarks across 3 platforms (mobile/web/desktop) plus interactive OSWorld in Grounding mode.
+</Pass>
+
+## Main result
+The 7B model is the headline. On ScreenSpot (standard, no planner) it reaches <Evidence src="Tab.2, p.7">avg 82.47 vs SeeClick 53.40, UGround-7B 73.30, Qwen2-VL-7B 42.89</Evidence>, rising to 85.14 with a GPT-4o planner. It beats GPT-4o on all six zero-shot OOD agent splits, e.g. <Evidence src="Tab.5, p.9">AndroidControl-Low step SR 50.94 vs GPT-4o 28.39</Evidence>. As a grounding module behind GPT-4o it lifts OSWorld success to <Evidence src="Tab.3, p.8">14.63 vs +SeeClick 9.21, GPT-4o-alone 5.03 (human 72.36)</Evidence>. <Weak>The 4B model (ScreenSpot avg 70.13) is below UGround-7B and sometimes below GPT-4o on OOD splits, so the "open GPT-4o alternative" claim is really 7B-specific.</Weak> <Weak>All numbers are single runs — no variance, error bars, or significance tests anywhere; key ablation magnitudes live only in Figs.3–6, not tables.</Weak>
+
+<Pass title="Full results">
+  <ResultsTable
+    columns={["Setting", "Metric", "OS-Atlas", "Baseline / reference"]}
+    rows={[
+      ["ScreenSpot avg, standard, 7B", "grounding acc", "82.47", "SeeClick 53.40 / UGround-7B 73.30 / Qwen2-VL-7B 42.89"],
+      ["ScreenSpot avg, +GPT-4o planner, 7B", "grounding acc", "85.14", "SeeClick 62.89 / UGround-7B 81.40"],
+      ["ScreenSpot avg, standard, 4B", "grounding acc", "70.13", "UGround-7B 73.30 (4B below)"],
+      ["ScreenSpot-V2 avg, no planner, 7B", "grounding acc", "84.12", "SeeClick 55.09 (4B 71.86)"],
+      ["OSWorld (GPT-4o + grounding), 7B", "success rate", "14.63", "+SeeClick 9.21 / GPT-4o 5.03 / human 72.36"],
+      ["Zero-shot OOD GUI-Act-Web, 7B", "step SR", "57.02", "GPT-4o 41.84"],
+      ["Zero-shot OOD OmniAct-Web, 7B", "step SR", "59.15", "GPT-4o 34.06"],
+      ["Zero-shot OOD AndroidControl-Low, 7B", "step SR", "50.94", "GPT-4o 28.39"],
+      ["Grounding corpus", "size", "13.58M elements / 2.24M screenshots", "SeeClick 3.3M open / CogAgent 70M closed web-only"],
+      ["ScreenSpot re-annotation", "flagged", "11.32% (web 14.4 / desktop 8.4 / mobile 10.6)", "—"],
+      ["Ablation: drop mobile+desktop data", "desktop icon acc", "28.57", "full 45.71"],
+      ["Unified action space", "action types", "17 → 10", "OOD SR/grounding rise"]
+    ]} />
+On the in-distribution SFT setting the backbone Qwen2-VL-7B already matches or slightly beats OS-Atlas-7B on some splits (e.g. GUI-Act-Web SR 82.27 vs 82.70), so the OS-Atlas advantage is clearest in the OOD regime — the paper's intended use. Abstract rounds the corpus to "over 13 million"; the precise table total is 13.58M (consistent).
+</Pass>
+
+## Implications
+A genuinely reusable open backbone for computer-use agents: usable as a drop-in grounding module behind any planner, a standalone zero-shot action model, or an SFT base. The desktop-inclusive corpus, the synthesis toolkit, and cleaned ScreenSpot-V2 are reusable artifacts for future grounding work. It narrows the open-vs-closed gap for GUI agents and shifts the bottleneck from model architecture to cross-platform data infrastructure.
+
+## Limitations
+<Limit>All results appear single-run — no variance, error bars, or significance reported.</Limit> <Limit>Key ablation magnitudes live only in figures (Figs.3–6), hindering precise comparison/reproduction.</Limit> <Limit>"GPT-4o alternative" overstates the 4B model, which underperforms GPT-4o on several OOD splits.</Limit> <Limit>Icon/widget grounding remains weak and OSWorld success (14.63) is far below human (72.36) — a module, not a finished agent.</Limit> <Limit>Loose 14%-screen-width coordinate-correctness thresholds may inflate agent metrics; desktop agent fine-tuning data is extremely thin (7k web, 0 desktop) and desktop coverage leans heavily on Windows (Linux 41k, macOS 13k elements).</Limit> Heavy reliance on GPT-4o to both synthesize IG labels and serve as the planner baseline risks subtle teacher-leakage/circularity. GPU budget, learning rates, and full filtering thresholds are Not reported.
+
+<Pass title="Evidence check (claim → support)">
+  <ClaimEvidence rows={[
+    { claim: "Largest open cross-platform grounding corpus, incl. desktop", evidence: "13.58M elements / 2.24M screenshots, 5 platforms; SeeClick 3.3M open, CogAgent 70M closed web-only (Tab.7 p.17; Tab.1 p.4)", verdict: "holds (largest open)" },
+    { claim: "SOTA GUI grounding among open models", evidence: "7B avg 82.47 / 85.14 vs UGround-7B 73.30 / 81.40 (Tab.2 p.7)", verdict: "holds for 7B; 4B (70.13) below UGround" },
+    { claim: "Open alternative to GPT-4o for GUI agents", evidence: "7B beats GPT-4o on all 6 OOD splits, e.g. 50.94 vs 28.39 (Tab.5 p.9)", verdict: "holds zero-shot OOD; 4B sometimes below GPT-4o" },
+    { claim: "Cross-platform pre-training necessary (verifies novelty)", evidence: "drop mobile+desktop: desktop icon 45.71→28.57, mobile icon 58.52→10.04 (Fig.4 p.7)", verdict: "holds" },
+    { claim: "Unified action space resolves conflicts, improves OOD (verifies novelty)", evidence: "w/o unified action drops OOD SR/grounding; 17→10 types (§5.3 p.10; Fig.5)", verdict: "holds; magnitudes only in figure" },
+    { claim: "First Large Action Model designed for GUI agents", evidence: "positioning argument vs LAM/agent literature (§2 p.3)", verdict: "unclear / framing (priority claim)" }
+  ]} />
+Novelty-verifying experiments (data ablation Fig.4; pre-training + unified-action ablation Fig.5) are distinct from motivation-confirming ones (main grounding/agent tables that merely show open VLMs were weak and OS-Atlas is strong).
+</Pass>
+
+---
+
+## Critiques and Questions
+1. Single-run results with no variance and ablation numbers hidden in figures — I'd want the numeric ablation tables and at least a few seeds before trusting magnitudes.
+2. The "GPT-4o alternative" framing is 7B-only; the 4B story is much weaker — worth checking which OOD splits actually flip.
+3. GPT-4o appears as both IG-label teacher and planner baseline — how much of the OOD win is teacher leakage vs genuine generalization?
+4. Desktop coverage is Windows-heavy with near-zero desktop agent fine-tuning data; how robust is "cross-platform desktop" really on Linux/macOS?
+5. What I'd test next: wire the 7B model as a drop-in grounding module behind a planner on OSWorld and compare head-to-head with UGround on ScreenSpot-V2; verify the toolkit + checkpoints are actually released.
+
+## Glossary
+- <Term def="a system that operates a GUI like a human — reading the screen, issuing mouse/keyboard actions — to complete tasks">GUI agent</Term>
+- <Term def="OS-Atlas's cleaned ScreenSpot: ~11.32% mislabeled/ambiguous samples fixed (14.4% web, 8.4% desktop, 10.6% mobile), same total count">ScreenSpot-V2</Term>
+- <Term def="single-step GUI grounding benchmark across mobile/desktop/web (Cheng et al. 2024); accuracy = predicted point inside ground-truth box">ScreenSpot</Term>
+- <Term def="interactive real-computer benchmark (Xie et al. 2024) where an agent acts step-by-step on a live OS">OSWorld</Term>
+- <Term def="concurrent universal visual GUI grounding model (Gou et al. 2024), focused on scaling web data; the closest baseline">UGround</Term>
+- <Term def="prior GUI grounding/agent VLMs; SeeClick (3.3M open web+mobile) and CogAgent (70M closed web-only) are the main data baselines">SeeClick / CogAgent</Term>
+- <Term def="agent metrics: Type = exact-match of action type; Grounding = coordinate correctness; SR = step success rate (action + arguments correct)">Type / Grounding / SR</Term>
+- <Term def="overlaying numbered marks on image regions so a VLM can refer to elements precisely; used to help GPT-4o synthesize IG labels">Set-of-Mark prompting</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

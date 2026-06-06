@@ -169,7 +169,7 @@ scoring:
 artifacts:
   pdf: library/ui-tars-2-technical-report-advancing-gui-250902544/v1/paper.pdf
   extraction: library/ui-tars-2-technical-report-advancing-gui-250902544/v1/extraction.txt
-  summary: library/ui-tars-2-technical-report-advancing-gui-250902544/v1/summary.html
+  summary: library/ui-tars-2-technical-report-advancing-gui-250902544/v1/summary.mdx
   code_url: null
   project_url: null
   dataset_url: null
@@ -179,4 +179,4 @@ status:
   summarized: true
   triaged: true
   user_read_status: unread
-  summary_format: html
+  summary_format: mdx

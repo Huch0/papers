@@ -46,7 +46,7 @@ def _require(rec: dict, fields: list[str], where: str, rep: Report) -> None:
             rep.err(f"{where}: missing required field '{f}'")
 
 
-def validate() -> Report:
+def validate(skip_pdf: bool = False) -> Report:
     rep = Report()
     seen_keys: dict[str, str] = {}
     sha_index: dict[str, list[str]] = {}
@@ -109,8 +109,8 @@ def validate() -> Report:
                     rep.err(f"{mf}: canonical_key mismatch with paper.yaml")
 
             status = (meta.get("status") or {}) if meta else {}
-            # PDF checks
-            if status.get("downloaded"):
+            # PDF checks (skipped in environments without synced PDFs, e.g. CI — ADR-0003)
+            if status.get("downloaded") and not skip_pdf:
                 pdf_rel = (meta.get("artifacts") or {}).get("pdf")
                 pdf_path = (pl.ROOT / pdf_rel) if pdf_rel else (vdir / "paper.pdf")
                 if not Path(pdf_path).exists():
@@ -152,9 +152,11 @@ def _main() -> int:
     ap = argparse.ArgumentParser(description="Validate the paper registry.")
     ap.add_argument("--json", action="store_true")
     ap.add_argument("--quiet", action="store_true", help="only print on error")
+    ap.add_argument("--skip-pdf", action="store_true",
+                    help="skip downloaded-PDF existence/sha checks (for CI without PDFs)")
     args = ap.parse_args()
 
-    rep = validate()
+    rep = validate(skip_pdf=args.skip_pdf)
     if args.json:
         print(json.dumps({"ok": rep.ok(), "errors": rep.errors,
                           "warnings": rep.warnings}, indent=2))

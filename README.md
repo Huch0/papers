@@ -155,6 +155,33 @@ metadata if needed. Examples:
 - `/evolve-paper-system Make summaries shorter for SKIP papers`
 - `/evolve-paper-system Add a tag for evaluation-harness reliability`
 
+## Website (reading site)
+A static **Astro** site in `site/` is a read-only view over the harness (ADR-0001): it
+reads `registry/papers.jsonl` for the catalog and renders `library/**/summary.{md,mdx}`.
+See `docs/website-requirements.md` and `docs/adr/`.
+
+- **Run locally:** `cd site && bun install && bun run dev` (or `npm install && npm run dev`).
+  The `predev`/`prebuild` hook runs `update_indexes.py` so the feed is fresh.
+- **Build:** `cd site && npm run build` → static output in `site/dist/` (Pagefind full-text
+  index built automatically). Catalog supports facet filter (venue/year/tag/topic/triage) +
+  sort + full-text search.
+- **Summaries** are authored as **MDX** (`config/summary_template.mdx`) using a curated
+  component set (`config/summary_components.md`) — concise, core-first, with depth in
+  collapsible `<Pass>` and inline hover `<Term>` glossary. Legacy `.md` summaries render
+  as-is; new ones are `.mdx`.
+- **Contributing a paper (two paths, same result):**
+  - *With Claude Code:* `/add-paper <ref>` then `/summarize-paper <vdir>` (writes MDX).
+  - *Without Claude Code:* run `python3 scripts/fetch_arxiv.py --id <id> | python3 scripts/ingest.py …`,
+    then `python3 scripts/summarize_paper.py <vdir> --prepare --format mdx` and fill the body
+    against `config/summary_components.md`.
+  - Open a PR; CI runs `validate_registry.py --skip-pdf` → `knowledge.py validate` →
+    `update_indexes.py` → `astro build`, deploys a preview, and on merge publishes to Pages.
+- **PDFs are not shared** — the site links to the source (arXiv/venue). Derived artifacts
+  (`papers.jsonl`, `indexes/`, `site/dist/`) and PDFs are git-ignored; CI regenerates them.
+- **Deploy:** GitHub Actions (`.github/workflows/pages.yml`) publishes to the `gh-pages`
+  branch (prod at root, PR previews at `/pr-preview/pr-N/`). Set repo Pages source to
+  `gh-pages`; add collaborators as repo members so their PR branches get previews.
+
 ## Troubleshooting
 - **arXiv timeouts**: the fetchers retry with exponential backoff; if a run fully
   fails, re-run — errors are logged to `logs/errors.jsonl` and candidates preserved.

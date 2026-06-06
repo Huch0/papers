@@ -1,0 +1,5 @@
+---
+interface Props { src?: string; }
+const { src } = Astro.props;
+---
+<span class="evidence"><slot />{src && <span class="src"> ({src})</span>}</span>

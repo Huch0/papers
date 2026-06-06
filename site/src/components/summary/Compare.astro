@@ -1,0 +1,8 @@
+---
+interface Props { a: string; b: string; aLabel?: string; bLabel?: string; }
+const { a, b, aLabel = "A", bLabel = "B" } = Astro.props;
+---
+<div class="compare">
+  <div><strong>{aLabel}</strong><p>{a}</p></div>
+  <div><strong>{bLabel}</strong><p>{b}</p></div>
+</div>

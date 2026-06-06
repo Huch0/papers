@@ -1,0 +1,92 @@
+name: build-and-deploy
+
+# ADR-0003: derived artifacts generated in CI; PR gate guarantees main always builds;
+# publish via gh-pages branch (prod at root, PR previews under /pr-preview/pr-N).
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: write        # gh-pages branch (prod publish + preview)
+  pull-requests: write   # preview comment
+
+concurrency:
+  group: pages-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - run: pip install pyyaml
+
+      - uses: actions/setup-node@v4
+        with: { node-version: "20" }
+
+      # --- PR gate (ADR-0003): validate -> knowledge validate -> generate -> build ---
+      - name: Validate registry (no PDFs in CI)
+        run: python3 scripts/validate_registry.py --skip-pdf
+      - name: Validate knowledge base
+        run: python3 scripts/knowledge.py validate
+      - name: Generate derived feed/indexes
+        run: python3 scripts/update_indexes.py
+
+      - name: Install site deps
+        working-directory: site
+        run: npm ci
+
+      - name: Compute base path
+        id: base
+        run: |
+          repo="${{ github.event.repository.name }}"
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "base=/$repo/pr-preview/pr-${{ github.event.pull_request.number }}/" >> "$GITHUB_OUTPUT"
+          else
+            echo "base=/$repo/" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build site
+        working-directory: site
+        env:
+          BASE_PATH: ${{ steps.base.outputs.base }}
+          SITE_URL: https://${{ github.repository_owner }}.github.io
+        run: npm run build
+
+      - name: Upload build
+        uses: actions/upload-artifact@v4
+        with: { name: site-dist, path: site/dist }
+
+  deploy-prod:
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions: { contents: write }
+    steps:
+      - uses: actions/download-artifact@v4
+        with: { name: site-dist, path: dist }
+      - name: Publish to gh-pages (root)
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          keep_files: true   # preserve /pr-preview/* alongside prod
+
+  deploy-preview:
+    needs: build
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions: { contents: write, pull-requests: write }
+    steps:
+      - uses: actions/download-artifact@v4
+        with: { name: site-dist, path: site/dist }
+      - name: Deploy PR preview
+        uses: rossjrw/pr-preview-action@v1
+        with:
+          source-dir: ./site/dist
+          preview-branch: gh-pages
+          umbrella-dir: pr-preview

@@ -1,0 +1,98 @@
+---
+import Base from "../layouts/Base.astro";
+import Search from "astro-pagefind/components/Search";
+import { loadCatalog, facets } from "../lib/catalog";
+
+const papers = loadCatalog().filter((p) => p.summary_path);
+const f = facets(papers);
+const base = import.meta.env.BASE_URL;
+const triageRank: Record<string, number> = { MUST_READ: 0, READ_SOON: 1, SKIM: 2, TRACK_ONLY: 3, SKIP: 4 };
+const sorted = [...papers].sort(
+  (a, b) =>
+    (triageRank[a.triage_label ?? ""] ?? 9) - (triageRank[b.triage_label ?? ""] ?? 9) ||
+    (b.score ?? 0) - (a.score ?? 0),
+);
+const href = (key: string) => `${base}papers/${key}/`.replace(/\/+/g, "/");
+---
+<Base title="Paper Library — Catalog">
+  <h1 class="title">Paper Library</h1>
+  <p class="count">{papers.length} papers with summaries.</p>
+
+  <div style="margin:1rem 0;"><Search id="search" className="pagefind-ui" uiOptions={{ showImages: false, excerptLength: 15 }} /></div>
+
+  <div class="controls">
+    <div><label for="q">Filter title/author</label><input id="q" type="search" placeholder="type to filter…" /></div>
+    <div><label for="venue">Venue</label><select id="venue"><option value="">All</option>{f.venues.map((v) => <option value={v}>{v}</option>)}</select></div>
+    <div><label for="year">Year</label><select id="year"><option value="">All</option>{f.years.map((y) => <option value={String(y)}>{y}</option>)}</select></div>
+    <div><label for="tag">Tag</label><select id="tag"><option value="">All</option>{f.tags.map((t) => <option value={t}>{t}</option>)}</select></div>
+    <div><label for="topic">Topic</label><select id="topic"><option value="">All</option>{f.topicGroups.map((t) => <option value={t}>{t}</option>)}</select></div>
+    <div><label for="triage">Triage</label><select id="triage"><option value="">All</option>{f.triageLabels.map((t) => <option value={t}>{t}</option>)}</select></div>
+    <div><label for="sort">Sort</label><select id="sort">
+      <option value="triage">Triage</option><option value="score">Score</option>
+      <option value="year">Year</option><option value="title">Title</option>
+    </select></div>
+  </div>
+  <p class="count"><span id="shown">{papers.length}</span> shown</p>
+
+  <ul class="catalog" id="list">
+    {sorted.map((p) => (
+      <li
+        data-title={(p.title ?? "").toLowerCase()}
+        data-authors={(p.authors ?? []).join(" ").toLowerCase()}
+        data-venue={p.venue ?? ""}
+        data-year={p.year ?? ""}
+        data-tags={(p.tags ?? []).join("|")}
+        data-topics={(p.topic_groups ?? []).join("|")}
+        data-triage={p.triage_label ?? ""}
+        data-score={p.score ?? 0}
+      >
+        <div class="row1">
+          {p.triage_label && <span class={`badge ${p.triage_label}`}>{p.triage_label}</span>}
+          <a class="ttl" href={href(p.canonical_key)}>{p.title}</a>
+        </div>
+        <div class="sub">{(p.authors ?? []).slice(0, 4).join(", ")}{(p.authors ?? []).length > 4 ? " et al." : ""} · {p.venue ?? "Preprint"} · {p.year ?? "—"}{p.score != null ? ` · score ${p.score}` : ""}</div>
+        {p.tags?.length ? <div class="tags">{p.tags.join(" · ")}</div> : null}
+      </li>
+    ))}
+  </ul>
+</Base>
+
+<script>
+  const $ = (id: string) => document.getElementById(id) as HTMLInputElement | HTMLSelectElement;
+  const list = document.getElementById("list")!;
+  const items = Array.from(list.querySelectorAll("li")) as HTMLLIElement[];
+  const shown = document.getElementById("shown")!;
+  const rank: Record<string, number> = { MUST_READ: 0, READ_SOON: 1, SKIM: 2, TRACK_ONLY: 3, SKIP: 4 };
+
+  function apply() {
+    const q = ($("q").value || "").toLowerCase().trim();
+    const venue = $("venue").value, year = $("year").value, tag = $("tag").value,
+      topic = $("topic").value, triage = $("triage").value, sort = $("sort").value;
+    let n = 0;
+    for (const li of items) {
+      const d = li.dataset;
+      const ok =
+        (!q || d.title!.includes(q) || d.authors!.includes(q)) &&
+        (!venue || d.venue === venue) &&
+        (!year || d.year === year) &&
+        (!tag || (d.tags || "").split("|").includes(tag)) &&
+        (!topic || (d.topics || "").split("|").includes(topic)) &&
+        (!triage || d.triage === triage);
+      li.classList.toggle("hidden", !ok);
+      if (ok) n++;
+    }
+    shown.textContent = String(n);
+    const vis = items.filter((li) => !li.classList.contains("hidden"));
+    vis.sort((a, b) => {
+      const da = a.dataset, db = b.dataset;
+      if (sort === "score") return Number(db.score) - Number(da.score);
+      if (sort === "year") return Number(db.year) - Number(da.year);
+      if (sort === "title") return da.title!.localeCompare(db.title!);
+      return (rank[da.triage!] ?? 9) - (rank[db.triage!] ?? 9) || Number(db.score) - Number(da.score);
+    });
+    vis.forEach((li) => list.appendChild(li));
+  }
+  ["q", "venue", "year", "tag", "topic", "triage", "sort"].forEach((id) =>
+    $(id).addEventListener("input", apply),
+  );
+</script>

@@ -1,0 +1,15 @@
+---
+// Dependency-free bar chart (re-plot an extracted result). kind reserved for future.
+interface Datum { label: string; value: number; }
+interface Props { kind?: "bar" | "line"; data: Datum[]; }
+const { data = [] } = Astro.props;
+const max = Math.max(1, ...data.map((d) => d.value));
+---
+<div class="chart">
+  {data.map((d) => (
+    <div class="col">
+      <div class="bar" style={`height:${Math.round((d.value / max) * 110) + 14}px`}>{d.value}</div>
+      <span>{d.label}</span>
+    </div>
+  ))}
+</div>

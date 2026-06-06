@@ -1,0 +1,18 @@
+---
+interface Row { claim: string; evidence: string; verdict?: string; }
+interface Props { rows: Row[]; }
+const { rows = [] } = Astro.props;
+const cls = (v?: string) =>
+  v === "holds" ? "verdict-holds" : v === "partial" ? "verdict-partial" : "verdict-unclear";
+---
+<table class="data">
+  <thead><tr><th>Claim</th><th>Evidence</th><th>Verdict</th></tr></thead>
+  <tbody>
+    {rows.map((r) => (
+      <tr>
+        <td>{r.claim}</td><td>{r.evidence}</td>
+        <td class={cls(r.verdict)}>{r.verdict ?? "unclear"}</td>
+      </tr>
+    ))}
+  </tbody>
+</table>

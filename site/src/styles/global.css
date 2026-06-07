@@ -32,8 +32,8 @@
 }
 
 * { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; }
-body { font-family: var(--font-body); font-size: 18px; line-height: 1.72;
+html { -webkit-text-size-adjust: 100%; font-size: var(--ui-scale, 100%); }
+body { font-family: var(--font-body); font-size: 1.125rem; line-height: 1.72;
   color: var(--ink); background: var(--bg); margin: 0;
   font-feature-settings: "kern" 1, "liga" 1, "onum" 1; text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased; }

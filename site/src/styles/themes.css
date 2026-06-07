@@ -1,0 +1,60 @@
+/* ============================================================================
+   Theme presets + granular font overrides.
+   Default (no data-theme) = "Reading Room" (defined in global.css :root/.dark).
+   A preset overrides theme vars on <html data-theme="..."> for light, and on
+   <html class="dark" data-theme="..."> for dark. Granular font sets override fonts on
+   <html data-font="...">; accent + density are applied as inline vars by the theme panel.
+   ============================================================================ */
+
+/* ——— Lab Notes — crisp humanist sans, cool neutral, blue accent ——— */
+html[data-theme="lab-notes"] {
+  --ink: #1b2330; --mut: #5a6573; --line: #dde3ea; --bg: #fbfcfd; --soft: #eef1f5;
+  --accent: #1f5fa6; --accent-2: #0e7c66; --paper: #ffffff;
+  --font-display: "Hanken Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "Hanken Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --hl-term-bg:#eef1f5; --hl-term-fg:#33405a; --hl-term-bd:#d3dae3;
+  --tldr-bg:#e7f0fa; --th-bg:#e7ecf2; --code-bg:#eef1f5; --tip-bg:#1b2330;
+}
+html.dark[data-theme="lab-notes"] {
+  --ink: #e6ebf1; --mut: #98a3b2; --line: #2a333d; --bg: #0f141a; --soft: #182029;
+  --accent: #5aa2e0; --accent-2: #57c2a6; --paper: #161d25;
+  --hl-term-bg:#1a222b; --hl-term-fg:#cdd6e2; --hl-term-bd:#2f3a45;
+  --tldr-bg:#14202c; --th-bg:#182029; --code-bg:#141b22; --tip-bg:#2a333d;
+}
+
+/* ——— Terminal — mono, high-contrast, phosphor-green accent ——— */
+html[data-theme="terminal"] {
+  --ink: #14150f; --mut: #585a4d; --line: #c9c9bd; --bg: #f4f4ee; --soft: #e6e6dc;
+  --accent: #0b6b2f; --accent-2: #8a6d10; --paper: #ffffff;
+  --font-display: "IBM Plex Mono", ui-monospace, monospace;
+  --font-body: "IBM Plex Mono", ui-monospace, monospace;
+  --hl-term-bg:#e6e6dc; --hl-term-fg:#14150f; --hl-term-bd:#c9c9bd;
+  --tldr-bg:#e3efe5; --th-bg:#e6e6dc; --code-bg:#e9e9df; --tip-bg:#14150f;
+}
+html.dark[data-theme="terminal"] {
+  --ink: #d6f5da; --mut: #82a888; --line: #1f291f; --bg: #0a0d0a; --soft: #11150f;
+  --accent: #56e07a; --accent-2: #e0c24f; --paper: #0e120d;
+  --hl-term-bg:#12180f; --hl-term-fg:#cdebcf; --hl-term-bd:#23301f;
+  --tldr-bg:#10220f; --th-bg:#11150f; --code-bg:#0e140d; --tip-bg:#1f291f;
+}
+
+/* ——— Pastel — soft, gentle contrast, rose accent ——— */
+html[data-theme="pastel"] {
+  --ink: #4a3f44; --mut: #8a7d83; --line: #ecdfe0; --bg: #fdf7f4; --soft: #f6ede9;
+  --accent: #c0608a; --accent-2: #6fa39c; --paper: #fffdfc;
+  --font-display: "Fraunces", Georgia, serif;
+  --font-body: "Hanken Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --hl-term-bg:#f4eae6; --hl-term-fg:#5a4e54; --hl-term-bd:#e6d6d4;
+  --tldr-bg:#fbeef0; --th-bg:#f3e7e6; --code-bg:#f6ede9; --tip-bg:#4a3f44;
+}
+html.dark[data-theme="pastel"] {
+  --ink: #ece3ea; --mut: #ab9fa8; --line: #38303d; --bg: #1c1820; --soft: #251f29;
+  --accent: #e596b3; --accent-2: #8fc7bf; --paper: #221c27;
+  --hl-term-bg:#241d29; --hl-term-fg:#ddd1da; --hl-term-bd:#3d3343;
+  --tldr-bg:#261a24; --th-bg:#251f29; --code-bg:#211b26; --tip-bg:#38303d;
+}
+
+/* ——— granular font sets (override the preset's fonts) ——— */
+html[data-font="serif"] { --font-display: "Fraunces", Georgia, serif; --font-body: "Newsreader", Georgia, serif; }
+html[data-font="sans"]  { --font-display: "Hanken Grotesk", ui-sans-serif, system-ui, sans-serif; --font-body: "Hanken Grotesk", ui-sans-serif, system-ui, sans-serif; }
+html[data-font="mono"]  { --font-display: "IBM Plex Mono", ui-monospace, monospace; --font-body: "IBM Plex Mono", ui-monospace, monospace; }

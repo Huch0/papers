@@ -1,7 +1,9 @@
 ---
 import "../styles/tailwind.css";
 import "../styles/global.css";
+import "../styles/themes.css";
 import ThemeToggle from "../components/ThemeToggle.tsx";
+import ThemePanel from "../components/ThemePanel.tsx";
 interface Props { title: string }
 const { title } = Astro.props;
 const base = import.meta.env.BASE_URL;
@@ -15,16 +17,35 @@ const base = import.meta.env.BASE_URL;
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Hanken+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
       rel="stylesheet"
     />
+    <script is:inline>
+      (function () {
+        var d = document.documentElement, ls = window.localStorage;
+        try {
+          var t = ls.getItem("theme");
+          var prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+          if (t ? t === "dark" : prefersDark) d.classList.add("dark");
+          var p = ls.getItem("theme-preset"); if (p && p !== "reading-room") d.setAttribute("data-theme", p);
+          var f = ls.getItem("theme-font"); if (f) d.setAttribute("data-font", f);
+          var a = ls.getItem("theme-accent");
+          if (a) { d.style.setProperty("--accent", a); d.style.setProperty("--tldr-bd", a); }
+          var den = ls.getItem("theme-density");
+          if (den) {
+            d.setAttribute("data-density", den);
+            d.style.setProperty("--ui-scale", den === "compact" ? "94%" : den === "spacious" ? "112%" : "100%");
+          }
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <header class="site">
       <div class="wrap">
         <h1><a href={base}>Paper Library</a></h1>
         <span class="masthead-tag">· a reading room for agent research</span>
-        <nav><a href={base}>Papers</a> <a href={`${base}knowledge/`.replace(/\/+/g, "/")}>Knowledge</a> <ThemeToggle client:load /></nav>
+        <nav><a href={base}>Papers</a> <a href={`${base}knowledge/`.replace(/\/+/g, "/")}>Knowledge</a> <ThemePanel client:load /> <ThemeToggle client:load /></nav>
       </div>
     </header>
     <main class="wrap"><slot /></main>

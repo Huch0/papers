@@ -3,48 +3,28 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* "Reading Room" — warm ivory paper (light) / espresso (dark), oxblood→terracotta accent */
+/* shadcn/Tailwind tokens are BRIDGED to the global theme vars (set in global.css +
+   themes.css), so presets / overrides re-theme the React catalog from one source. */
 :root {
   --radius: 0.4rem;
-  --background: oklch(0.966 0.013 83);
-  --foreground: oklch(0.265 0.012 68);
-  --card: oklch(0.979 0.011 84);
-  --card-foreground: oklch(0.265 0.012 68);
-  --popover: oklch(0.979 0.011 84);
-  --popover-foreground: oklch(0.265 0.012 68);
-  --primary: oklch(0.455 0.123 27);
-  --primary-foreground: oklch(0.975 0.018 85);
-  --secondary: oklch(0.928 0.017 83);
-  --secondary-foreground: oklch(0.30 0.012 68);
-  --muted: oklch(0.928 0.017 83);
-  --muted-foreground: oklch(0.515 0.019 72);
-  --accent: oklch(0.905 0.022 80);
-  --accent-foreground: oklch(0.30 0.012 68);
-  --destructive: oklch(0.515 0.18 28);
-  --border: oklch(0.868 0.021 84);
-  --input: oklch(0.868 0.021 84);
-  --ring: oklch(0.455 0.123 27);
-}
-
-.dark {
-  --background: oklch(0.178 0.012 68);
-  --foreground: oklch(0.912 0.021 84);
-  --card: oklch(0.221 0.013 66);
-  --card-foreground: oklch(0.912 0.021 84);
-  --popover: oklch(0.221 0.013 66);
-  --popover-foreground: oklch(0.912 0.021 84);
-  --primary: oklch(0.725 0.118 47);
-  --primary-foreground: oklch(0.198 0.012 60);
-  --secondary: oklch(0.272 0.013 64);
-  --secondary-foreground: oklch(0.912 0.021 84);
-  --muted: oklch(0.272 0.013 64);
-  --muted-foreground: oklch(0.705 0.02 80);
-  --accent: oklch(0.305 0.016 60);
-  --accent-foreground: oklch(0.912 0.021 84);
-  --destructive: oklch(0.62 0.17 28);
-  --border: oklch(0.40 0.02 66 / 55%);
-  --input: oklch(1 0 0 / 12%);
-  --ring: oklch(0.725 0.118 47);
+  --background: var(--bg);
+  --foreground: var(--ink);
+  --card: var(--paper);
+  --card-foreground: var(--ink);
+  --popover: var(--paper);
+  --popover-foreground: var(--ink);
+  --primary: var(--accent);
+  --primary-foreground: var(--paper);
+  --secondary: var(--soft);
+  --secondary-foreground: var(--ink);
+  --muted: var(--soft);
+  --muted-foreground: var(--mut);
+  --accent: var(--soft);
+  --accent-foreground: var(--ink);
+  --destructive: var(--hl-problem-fg);
+  --border: var(--line);
+  --input: var(--line);
+  --ring: var(--accent);
 }
 
 @theme inline {
@@ -52,9 +32,9 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
-  --font-sans: "Newsreader", Georgia, "Times New Roman", serif;
-  --font-serif: "Fraunces", Georgia, serif;
-  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-sans: var(--font-body, "Newsreader", Georgia, serif);
+  --font-serif: var(--font-display, "Fraunces", Georgia, serif);
+  --font-mono: var(--font-mono, "IBM Plex Mono", ui-monospace, monospace);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -78,7 +58,7 @@
 @layer base {
   * {
     border-color: var(--border);
-    outline-color: color-mix(in oklch, var(--ring) 50%, transparent);
+    outline-color: color-mix(in srgb, var(--ring) 50%, transparent);
   }
   body {
     background-color: var(--background);

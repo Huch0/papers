@@ -15,7 +15,7 @@ const TRIAGE_CLS: Record<string, string> = {
 };
 const ALL = "__all__";
 type Row = Pick<PaperEntry, "canonical_key" | "title" | "authors" | "year" | "venue" | "tags" | "topic_groups" | "triage_label" | "score">
-  & { latest_version?: string | null; summary_date?: string | null };
+  & { latest_version?: string | null; summary_date?: string | null; source_updated_at?: string | null };
 
 export default function Catalog({ papers, base }: { papers: Row[]; base: string }) {
   const [q, setQ] = useState("");
@@ -26,6 +26,9 @@ export default function Catalog({ papers, base }: { papers: Row[]; base: string 
   const [triage, setTriage] = useState(ALL);
   const [readStatus, setReadStatus] = useState(ALL); // All | unread | read
   const [sort, setSort] = useState("triage");
+  const [dir, setDir] = useState<"asc" | "desc">("asc"); // default matches triage (MUST_READ first)
+  const defaultDir = (s: string): "asc" | "desc" => (s === "triage" || s === "title" ? "asc" : "desc");
+  const changeSort = (s: string) => { setSort(s); setDir(defaultDir(s)); };
 
   // per-browser read state
   const [reads, setReads] = useState<Reads>({});
@@ -101,14 +104,19 @@ export default function Catalog({ papers, base }: { papers: Row[]; base: string 
         (triage === ALL || p.triage_label === triage) &&
         (readStatus === ALL || (readStatus === "read" ? read(p) : !read(p))),
     );
+    const sign = dir === "asc" ? 1 : -1;
+    const dkey = (p: Row) => p.source_updated_at || `${p.year ?? 0}-01-01`; // ISO sorts chronologically
     out.sort((a, b) => {
-      if (sort === "score") return (b.score ?? 0) - (a.score ?? 0);
-      if (sort === "year") return (b.year ?? 0) - (a.year ?? 0);
-      if (sort === "title") return a.title.localeCompare(b.title);
-      return (TRIAGE_RANK[a.triage_label ?? ""] ?? 9) - (TRIAGE_RANK[b.triage_label ?? ""] ?? 9) || (b.score ?? 0) - (a.score ?? 0);
+      let cmp: number; // ascending comparison for the chosen field
+      if (sort === "score") cmp = (a.score ?? 0) - (b.score ?? 0);
+      else if (sort === "date") cmp = dkey(a).localeCompare(dkey(b));
+      else if (sort === "title") cmp = a.title.localeCompare(b.title);
+      else cmp = (TRIAGE_RANK[a.triage_label ?? ""] ?? 9) - (TRIAGE_RANK[b.triage_label ?? ""] ?? 9);
+      cmp *= sign;
+      return cmp || (b.score ?? 0) - (a.score ?? 0); // stable tiebreak: score desc
     });
     return out;
-  }, [papers, q, venue, year, tag, topic, triage, readStatus, reads, sort, searchKeys, pfReady]);
+  }, [papers, q, venue, year, tag, topic, triage, readStatus, reads, sort, dir, searchKeys, pfReady]);
 
   const unreadCount = useMemo(() => papers.filter((p) => !read(p)).length, [papers, reads]);
 
@@ -151,13 +159,20 @@ export default function Catalog({ papers, base }: { papers: Row[]; base: string 
         </div>
         <div className="flex flex-col gap-1">
           <span className="text-xs text-muted-foreground">Sort</span>
-          <Select value={sort} onValueChange={setSort}>
-            <SelectTrigger className="w-32"><SelectValue /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="triage">Triage</SelectItem><SelectItem value="score">Score</SelectItem>
-              <SelectItem value="year">Year</SelectItem><SelectItem value="title">Title</SelectItem>
-            </SelectContent>
-          </Select>
+          <div className="flex gap-1">
+            <Select value={sort} onValueChange={changeSort}>
+              <SelectTrigger className="w-32"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="triage">Triage</SelectItem><SelectItem value="score">Score</SelectItem>
+                <SelectItem value="date">Publish date</SelectItem><SelectItem value="title">Title</SelectItem>
+              </SelectContent>
+            </Select>
+            <button
+              onClick={() => setDir((d) => (d === "asc" ? "desc" : "asc"))}
+              className="border rounded px-2 text-sm hover:border-[var(--accent)] whitespace-nowrap"
+              title={dir === "asc" ? "Ascending — click for descending" : "Descending — click for ascending"}
+            >{dir === "asc" ? "↑ Asc" : "↓ Desc"}</button>
+          </div>
         </div>
       </div>
 
@@ -183,7 +198,7 @@ export default function Catalog({ papers, base }: { papers: Row[]; base: string 
               </div>
             </CardHeader>
             <CardContent className="text-sm text-muted-foreground pt-0">
-              {(p.authors || []).slice(0, 4).join(", ")}{(p.authors || []).length > 4 ? " et al." : ""} · {p.venue ?? "Preprint"} · {p.year ?? "—"}{p.score != null ? ` · score ${p.score}` : ""}
+              {(p.authors || []).slice(0, 4).join(", ")}{(p.authors || []).length > 4 ? " et al." : ""} · {p.venue ?? "Preprint"} · {p.source_updated_at ? p.source_updated_at.slice(0, 10) : (p.year ?? "—")}{p.score != null ? ` · score ${p.score}` : ""}
               {p.tags?.length ? <div className="mt-1 text-xs">{p.tags.join(" · ")}</div> : null}
             </CardContent>
           </Card>

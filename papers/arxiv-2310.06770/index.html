@@ -1,173 +1,52 @@
-<!DOCTYPE html><html lang="en"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>SWE-bench: Can Language Models Resolve Real-World GitHub Issues?</title><link rel="stylesheet" href="/papers/_astro/index.CkSj5fko.css"></head> <body> <header class="site"> <div class="wrap"> <h1><a href="/papers/">📚 Paper Library</a></h1> <nav><a href="/papers/">Catalog</a> <style>astro-island,astro-slot,astro-static-slot{display:contents}</style><script>(()=>{var e=async t=>{await(await t())()};(self.Astro||(self.Astro={})).load=e;window.dispatchEvent(new Event("astro:load"));})();</script><script>(()=>{var A=Object.defineProperty;var g=(i,o,a)=>o in i?A(i,o,{enumerable:!0,configurable:!0,writable:!0,value:a}):i[o]=a;var d=(i,o,a)=>g(i,typeof o!="symbol"?o+"":o,a);{let i={0:t=>m(t),1:t=>a(t),2:t=>new RegExp(t),3:t=>new Date(t),4:t=>new Map(a(t)),5:t=>new Set(a(t)),6:t=>BigInt(t),7:t=>new URL(t),8:t=>new Uint8Array(t),9:t=>new Uint16Array(t),10:t=>new Uint32Array(t),11:t=>1/0*t},o=t=>{let[l,e]=t;return l in i?i[l](e):void 0},a=t=>t.map(o),m=t=>typeof t!="object"||t===null?t:Object.fromEntries(Object.entries(t).map(([l,e])=>[l,o(e)]));class y extends HTMLElement{constructor(){super(...arguments);d(this,"Component");d(this,"hydrator");d(this,"hydrate",async()=>{var b;if(!this.hydrator||!this.isConnected)return;let e=(b=this.parentElement)==null?void 0:b.closest("astro-island[ssr]");if(e){e.addEventListener("astro:hydrate",this.hydrate,{once:!0});return}let c=this.querySelectorAll("astro-slot"),n={},h=this.querySelectorAll("template[data-astro-template]");for(let r of h){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("data-astro-template")||"default"]=r.innerHTML,r.remove())}for(let r of c){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("name")||"default"]=r.innerHTML)}let p;try{p=this.hasAttribute("props")?m(JSON.parse(this.getAttribute("props"))):{}}catch(r){let s=this.getAttribute("component-url")||"<unknown>",v=this.getAttribute("component-export");throw v&&(s+=` (export ${v})`),console.error(`[hydrate] Error parsing props for component ${s}`,this.getAttribute("props"),r),r}let u;await this.hydrator(this)(this.Component,p,n,{client:this.getAttribute("client")}),this.removeAttribute("ssr"),this.dispatchEvent(new CustomEvent("astro:hydrate"))});d(this,"unmount",()=>{this.isConnected||this.dispatchEvent(new CustomEvent("astro:unmount"))})}disconnectedCallback(){document.removeEventListener("astro:after-swap",this.unmount),document.addEventListener("astro:after-swap",this.unmount,{once:!0})}connectedCallback(){if(!this.hasAttribute("await-children")||document.readyState==="interactive"||document.readyState==="complete")this.childrenConnectedCallback();else{let e=()=>{document.removeEventListener("DOMContentLoaded",e),c.disconnect(),this.childrenConnectedCallback()},c=new MutationObserver(()=>{var n;((n=this.lastChild)==null?void 0:n.nodeType)===Node.COMMENT_NODE&&this.lastChild.nodeValue==="astro:end"&&(this.lastChild.remove(),e())});c.observe(this,{childList:!0}),document.addEventListener("DOMContentLoaded",e)}}async childrenConnectedCallback(){let e=this.getAttribute("before-hydration-url");e&&await import(e),this.start()}async start(){let e=JSON.parse(this.getAttribute("opts")),c=this.getAttribute("client");if(Astro[c]===void 0){window.addEventListener(`astro:${c}`,()=>this.start(),{once:!0});return}try{await Astro[c](async()=>{let n=this.getAttribute("renderer-url"),[h,{default:p}]=await Promise.all([import(this.getAttribute("component-url")),n?import(n):()=>()=>{}]),u=this.getAttribute("component-export")||"default";if(!u.includes("."))this.Component=h[u];else{this.Component=h;for(let f of u.split("."))this.Component=this.Component[f]}return this.hydrator=p,this.hydrate},e,this)}catch(n){console.error(`[astro-island] Error hydrating ${this.getAttribute("component-url")}`,n)}}attributeChangedCallback(){this.hydrate()}}d(y,"observedAttributes",["props"]),customElements.get("astro-island")||customElements.define("astro-island",y)}})();</script><astro-island uid="ZydoQf" prefix="r1" component-url="/papers/_astro/ThemeToggle.B8P56gw_.js" component-export="default" renderer-url="/papers/_astro/client.CoywhCtL.js" props="{}" ssr client="load" opts="{&quot;name&quot;:&quot;ThemeToggle&quot;,&quot;value&quot;:true}" await-children><button aria-label="Toggle dark mode" class="text-sm border rounded px-2 py-1">🌙</button><!--astro:end--></astro-island></nav> </div> </header> <main class="wrap"> <h1 class="title">SWE-bench: Can Language Models Resolve Real-World GitHub Issues?</h1> <div class="meta-card" data-pagefind-ignore> <dl> <dt>Authors</dt><dd>Carlos E. Jimenez, John Yang, Alexander Wettig, Shunyu Yao, Kexin Pei, Ofir Press +1</dd> <dt>Venue · Year</dt><dd>ICLR · 2024</dd> <dt>Tags</dt><dd>benchmark, environment, evaluation-harness, execution-based-eval, foundational, swe-agent, test-based-eval</dd> <dt>Triage</dt><dd><span class="badge MUST_READ">MUST_READ · high</span></dd> <dt>Source</dt><dd><a href="https://arxiv.org/abs/2310.06770v3" target="_blank" rel="noopener">paper ↗</a></dd> <dt>Key</dt><dd><code>arxiv-2310.06770</code></dd> </dl> </div> <article data-pagefind-body> <h1 id="swe-bench-can-language-models-resolve-real-world-github-issues">SWE-bench: Can Language Models Resolve Real-World GitHub Issues?</h1>
-<h2 id="metadata">Metadata</h2>
+<!DOCTYPE html><html lang="en"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>SWE-bench: Can Language Models Resolve Real-World GitHub Issues?</title><link rel="stylesheet" href="/papers/_astro/index.TXsLBh8r.css"></head> <body> <header class="site"> <div class="wrap"> <h1><a href="/papers/">📚 Paper Library</a></h1> <nav><a href="/papers/">Catalog</a> <style>astro-island,astro-slot,astro-static-slot{display:contents}</style><script>(()=>{var e=async t=>{await(await t())()};(self.Astro||(self.Astro={})).load=e;window.dispatchEvent(new Event("astro:load"));})();</script><script>(()=>{var A=Object.defineProperty;var g=(i,o,a)=>o in i?A(i,o,{enumerable:!0,configurable:!0,writable:!0,value:a}):i[o]=a;var d=(i,o,a)=>g(i,typeof o!="symbol"?o+"":o,a);{let i={0:t=>m(t),1:t=>a(t),2:t=>new RegExp(t),3:t=>new Date(t),4:t=>new Map(a(t)),5:t=>new Set(a(t)),6:t=>BigInt(t),7:t=>new URL(t),8:t=>new Uint8Array(t),9:t=>new Uint16Array(t),10:t=>new Uint32Array(t),11:t=>1/0*t},o=t=>{let[l,e]=t;return l in i?i[l](e):void 0},a=t=>t.map(o),m=t=>typeof t!="object"||t===null?t:Object.fromEntries(Object.entries(t).map(([l,e])=>[l,o(e)]));class y extends HTMLElement{constructor(){super(...arguments);d(this,"Component");d(this,"hydrator");d(this,"hydrate",async()=>{var b;if(!this.hydrator||!this.isConnected)return;let e=(b=this.parentElement)==null?void 0:b.closest("astro-island[ssr]");if(e){e.addEventListener("astro:hydrate",this.hydrate,{once:!0});return}let c=this.querySelectorAll("astro-slot"),n={},h=this.querySelectorAll("template[data-astro-template]");for(let r of h){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("data-astro-template")||"default"]=r.innerHTML,r.remove())}for(let r of c){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("name")||"default"]=r.innerHTML)}let p;try{p=this.hasAttribute("props")?m(JSON.parse(this.getAttribute("props"))):{}}catch(r){let s=this.getAttribute("component-url")||"<unknown>",v=this.getAttribute("component-export");throw v&&(s+=` (export ${v})`),console.error(`[hydrate] Error parsing props for component ${s}`,this.getAttribute("props"),r),r}let u;await this.hydrator(this)(this.Component,p,n,{client:this.getAttribute("client")}),this.removeAttribute("ssr"),this.dispatchEvent(new CustomEvent("astro:hydrate"))});d(this,"unmount",()=>{this.isConnected||this.dispatchEvent(new CustomEvent("astro:unmount"))})}disconnectedCallback(){document.removeEventListener("astro:after-swap",this.unmount),document.addEventListener("astro:after-swap",this.unmount,{once:!0})}connectedCallback(){if(!this.hasAttribute("await-children")||document.readyState==="interactive"||document.readyState==="complete")this.childrenConnectedCallback();else{let e=()=>{document.removeEventListener("DOMContentLoaded",e),c.disconnect(),this.childrenConnectedCallback()},c=new MutationObserver(()=>{var n;((n=this.lastChild)==null?void 0:n.nodeType)===Node.COMMENT_NODE&&this.lastChild.nodeValue==="astro:end"&&(this.lastChild.remove(),e())});c.observe(this,{childList:!0}),document.addEventListener("DOMContentLoaded",e)}}async childrenConnectedCallback(){let e=this.getAttribute("before-hydration-url");e&&await import(e),this.start()}async start(){let e=JSON.parse(this.getAttribute("opts")),c=this.getAttribute("client");if(Astro[c]===void 0){window.addEventListener(`astro:${c}`,()=>this.start(),{once:!0});return}try{await Astro[c](async()=>{let n=this.getAttribute("renderer-url"),[h,{default:p}]=await Promise.all([import(this.getAttribute("component-url")),n?import(n):()=>()=>{}]),u=this.getAttribute("component-export")||"default";if(!u.includes("."))this.Component=h[u];else{this.Component=h;for(let f of u.split("."))this.Component=this.Component[f]}return this.hydrator=p,this.hydrate},e,this)}catch(n){console.error(`[astro-island] Error hydrating ${this.getAttribute("component-url")}`,n)}}attributeChangedCallback(){this.hydrate()}}d(y,"observedAttributes",["props"]),customElements.get("astro-island")||customElements.define("astro-island",y)}})();</script><astro-island uid="ZydoQf" prefix="r2" component-url="/papers/_astro/ThemeToggle.B8P56gw_.js" component-export="default" renderer-url="/papers/_astro/client.CoywhCtL.js" props="{}" ssr client="load" opts="{&quot;name&quot;:&quot;ThemeToggle&quot;,&quot;value&quot;:true}" await-children><button aria-label="Toggle dark mode" class="text-sm border rounded px-2 py-1">🌙</button><!--astro:end--></astro-island></nav> </div> </header> <main class="wrap"> <h1 class="title">SWE-bench: Can Language Models Resolve Real-World GitHub Issues?</h1> <div class="meta-card" data-pagefind-ignore> <dl> <dt>Authors</dt><dd>Carlos E. Jimenez, John Yang, Alexander Wettig, Shunyu Yao, Kexin Pei, Ofir Press +1</dd> <dt>Venue · Year</dt><dd>ICLR · 2024</dd> <dt>Tags</dt><dd>benchmark, environment, evaluation-harness, execution-based-eval, foundational, swe-agent, test-based-eval</dd> <dt>Triage</dt><dd><span class="badge MUST_READ">MUST_READ · high</span></dd> <dt>Source</dt><dd><a href="https://arxiv.org/abs/2310.06770v3" target="_blank" rel="noopener">paper ↗</a></dd> <dt>Key</dt><dd><code>arxiv-2310.06770</code></dd> </dl> </div> <article data-pagefind-body> <p class="tldr">SWE-bench turns 2,294 real merged GitHub issue→pull-request pairs into an execution-based benchmark where a model must edit a whole repository so the hidden, issue-resolving tests pass — and frontier models of the time resolved almost none.</p>
+<p class="why">This is the artifact that moved coding-agent evaluation from function-level synthesis to <strong>repository-level, test-validated issue resolution</strong>. Nearly everything in my <abbr class="term" title="agents that resolve real software tasks in repositories, judged by tests">SWE-agent</abbr> track reports on a SWE-bench variant, so it is necessary context, not optional.</p>
+<div class="keystats"> <div class="keystat"> <div class="kv">2,294</div> <div class="kl">test task instances</div> <div class="ks">12 popular Python repos</div> </div><div class="keystat"> <div class="kv">1.96%</div> <div class="kl">best resolve rate</div> <div class="ks">Claude 2 + BM25 retrieval</div> </div><div class="keystat"> <div class="kv">~19k</div> <div class="kl">training instances</div> <div class="ks">37 separate repos</div> </div><div class="keystat"> <div class="kv">exec</div> <div class="kl">evaluation</div> <div class="ks">fail→pass + pass→pass tests</div> </div> </div>
+<h2 id="motivation">Motivation</h2>
+<p>Prior code benchmarks (<abbr class="term" title="164 hand-written function-completion problems with unit tests">HumanEval</abbr>, MBPP) test self-contained functions with short context, and had largely saturated. They do not test what real software engineering demands: long-context code understanding, edits spanning multiple files, and interaction with an execution environment. The gap: a <em>realistic, scalable, hard-to-game</em> benchmark whose ground truth comes from real developer behavior.</p>
+<h2 id="contribution-whats-new">Contribution (what’s new)</h2>
+<p><span class="claim">The novelty is the <em>mining pipeline + test-gated metric</em>, not a model.</span> The insight that survives deleting “we propose”: <strong>a real merged PR that both resolves an issue and edits tests already contains a verifiable task</strong> — the gold patch is the reference, and the touched tests become an objective, execution-based grader. Because instances can be drawn continuously from new issues, the benchmark can refresh to resist <abbr class="term" title="when eval data leaks into training data, inflating scores">contamination</abbr> — a property a static, hand-written benchmark cannot offer.</p>
+<h2 id="research-questions">Research questions</h2>
+<p>Can language models resolve real GitHub issues end-to-end — and how far below human/expert performance are they when judged by actual tests rather than string similarity?</p>
+<h2 id="methodology">Methodology</h2>
+<p>Mine merged PRs that (a) close an issue and (b) modify the repo’s test files; the gold patch is the solution and the touched tests are the grader. Give the model the issue text + the repo at the pre-PR commit; it must emit a patch. Success = applying the patch makes the relevant <strong>fail-to-pass</strong> tests pass while <strong>pass-to-pass</strong> tests stay green.</p>
+<details class="pass"> <summary>Method details (pipeline, retrieval, SWE-Llama)</summary> <div class="stepper"> <ol> <li><strong>Scrape</strong> — Pull requests across 12 popular Python repos that reference/close an issue.</li><li><strong>Filter</strong> — Keep PRs that edit tests AND where the repo installs and tests go fail→pass with the gold patch.</li><li><strong>Formulate</strong> — Input = issue + codebase at base commit; output = a unified-diff patch applied with git/patch.</li><li><strong>Grade</strong> — Execution-based: fail-to-pass + pass-to-pass test gates; metric = % of instances resolved.</li> </ol> </div><p>Long repos exceed context windows, so the main experiments feed code via <strong>BM25 retrieval</strong> (an “oracle” setting supplies the gold files). <strong>SWE-Llama</strong> fine-tunes CodeLlama on ~19k held-out-repo instances to study whether open models adapt to the patch-generation format.</p> </details>
+<h2 id="main-result">Main result</h2>
+<p>The headline, verified in the text: <span class="evidence">the best configuration — Claude 2 with a BM25 retriever — resolves only <strong>1.96%</strong> of issues<span class="src"> (§1, §5)</span></span>; frontier models of late 2023 essentially fail the benchmark. <span class="weak">Low scores partly reflect the BM25 retrieval bottleneck, not only reasoning/editing ability — the oracle-retrieval setting isolates this only partially.</span></p>
+<p>Where SWE-bench sits versus earlier code benchmarks (click a header to sort):</p>
+<script>(()=>{var a=(s,i,o)=>{let r=async()=>{await(await s())()},t=typeof i.value=="object"?i.value:void 0,c={rootMargin:t==null?void 0:t.rootMargin},n=new IntersectionObserver(e=>{for(let l of e)if(l.isIntersecting){n.disconnect(),r();break}},c);for(let e of o.children)n.observe(e)};(self.Astro||(self.Astro={})).visible=a;window.dispatchEvent(new Event("astro:visible"));})();</script><astro-island uid="1WmX6m" prefix="r3" component-url="/papers/_astro/SortableTableIsland.BlwfGRtn.js" component-export="default" renderer-url="/papers/_astro/client.CoywhCtL.js" props="{&quot;columns&quot;:[1,[[0,&quot;Benchmark&quot;],[0,&quot;Granularity&quot;],[0,&quot;Exec-based&quot;],[0,&quot;Repo-level&quot;],[0,&quot;# tasks&quot;]]],&quot;rows&quot;:[1,[[1,[[0,&quot;HumanEval&quot;],[0,&quot;function&quot;],[0,&quot;yes&quot;],[0,&quot;no&quot;],[0,164]]],[1,[[0,&quot;MBPP&quot;],[0,&quot;function&quot;],[0,&quot;yes&quot;],[0,&quot;no&quot;],[0,974]]],[1,[[0,&quot;SWE-bench&quot;],[0,&quot;repo issue&quot;],[0,&quot;yes&quot;],[0,&quot;yes&quot;],[0,2294]]]]]}" ssr client="visible" opts="{&quot;name&quot;:&quot;Island&quot;,&quot;value&quot;:true}" await-children><table class="data sortable"><thead><tr><th style="cursor:pointer;user-select:none">Benchmark<!-- --> ⇅</th><th style="cursor:pointer;user-select:none">Granularity<!-- --> ⇅</th><th style="cursor:pointer;user-select:none">Exec-based<!-- --> ⇅</th><th style="cursor:pointer;user-select:none">Repo-level<!-- --> ⇅</th><th style="cursor:pointer;user-select:none"># tasks<!-- --> ⇅</th></tr></thead><tbody><tr><td>HumanEval</td><td>function</td><td>yes</td><td>no</td><td>164</td></tr><tr><td>MBPP</td><td>function</td><td>yes</td><td>no</td><td>974</td></tr><tr><td>SWE-bench</td><td>repo issue</td><td>yes</td><td>yes</td><td>2294</td></tr></tbody></table><!--astro:end--></astro-island>
+<h2 id="implications">Implications</h2>
+<p>Established the now-standard execution-based, repository-level evaluation and the contamination-resistant “issues after training cutoff” idea. Directly enabled the <abbr class="term" title="agent-computer interface: a model-tuned command/observation layer for operating a repo">ACI</abbr>/SWE-agent line and the SWE-bench-Lite / Verified / Multimodal derivatives.</p>
+<h2 id="limitations">Limitations</h2>
 <ul>
-<li>Canonical key: arxiv-2310.06770</li>
-<li>Version: v1 (arXiv v3)</li>
-<li>Fetch date: 2026-06-06</li>
-<li>Source: arxiv</li>
-<li>PDF: library/swe-bench-can-language-models-resolve-real-231006770/v1/paper.pdf</li>
-<li>Venue: ICLR 2024 (accepted)</li>
-<li>Year: 2024</li>
-<li>Authors: Carlos E. Jimenez, John Yang, Alexander Wettig, Shunyu Yao, Kexin Pei, Ofir Press, Karthik Narasimhan</li>
-<li>Tags: foundational, benchmark, swe-agent, execution-based-eval, test-based-eval, environment, evaluation-harness</li>
-<li>User status: unread</li>
-<li>Triage label: MUST_READ</li>
-<li>Triage confidence: high</li>
+<li>
+<span class="limit">Test-derived ground truth can be under- or over-specified: a correct patch that differs from the gold one may fail, and the gated tests may not fully characterize the issue.</span>
+</li>
+<li>
+<span class="limit">Python-only, 12 repos → limited external validity across languages/ecosystems.</span>
+</li>
+<li>
+<span class="limit">The released static split is contamination-susceptible over time despite the refreshable design.</span>
+</li>
 </ul>
-<h2 id="one-sentence-takeaway">One-sentence takeaway</h2>
-<p>SWE-bench turns 2,294 real merged GitHub issue→pull-request pairs from 12 Python repos into an execution-based benchmark where a model must edit a whole codebase to make the hidden, issue-resolving tests pass — and shows frontier models of the time resolved almost none of them.</p>
-<h2 id="why-this-paper-matters">Why this paper matters</h2>
-<p>This is the foundational artifact that reframed “coding agent” evaluation from
-function-level synthesis (HumanEval/MBPP) to <strong>repository-level, execution-validated
-issue resolution</strong>. It defines the task formulation, the test-based evaluator, and the
-contamination-resistant “issues after training cutoff” idea that essentially every
-later SWE-agent harness (ACI/agent-computer-interface work, SWE-agent, and the
-leaderboard ecosystem) builds on. For my software_engineering_agents and agent_harness
-interests it is necessary context, not optional — most current papers report on a
-SWE-bench variant.</p>
-<h2 id="problem-and-gap">Problem and gap</h2>
-<p>Prior code benchmarks (self-contained functions, short contexts, single files) had
-saturated and did not test what real software engineering demands: long-context code
-understanding, cross-file/cross-function edits, and interaction with an execution
-environment. The gap: a <em>realistic, scalable, and hard-to-game</em> benchmark whose ground
-truth is grounded in real developer behavior rather than hand-written prompts.</p>
-<h2 id="core-idea">Core idea</h2>
-<p>Mine merged PRs that (a) close/resolve a GitHub issue and (b) modify the repo’s test
-files. The PR’s gold patch is the reference solution; the touched tests become the
-evaluator. A task instance gives the model the issue text + the repo at the pre-PR
-commit; the model must produce a patch. Success = applying the model’s patch makes the
-relevant <strong>fail-to-pass</strong> tests pass while <strong>pass-to-pass</strong> tests stay green. Because
-instances can be drawn continuously from new issues, the benchmark can refresh to dodge
-training-data contamination.</p>
-<h2 id="harness-relevance">Harness relevance</h2>
+<h2 id="critiques-and-questions">Critiques and Questions</h2>
+<ol>
+<li>How much of the near-zero score is retrieval vs. reasoning? The oracle setting helps but doesn’t fully decompose it.</li>
+<li>Could a model “resolve” tests without truly fixing the issue (reward hacking the gated tests)? Worth probing on the harder instances.</li>
+</ol>
+<details class="selfcheck"> <summary>Why is SWE-bench harder to game than a similarity-based code benchmark?</summary> <div>Success is decided by executing the repo&#39;s real fail-to-pass and pass-to-pass tests on the model&#39;s patch — not by string/semantic similarity to a reference — so superficially-plausible but non-working edits fail.</div> </details>
+<h2 id="glossary">Glossary</h2>
 <ul>
-<li>Environment/workspace: a real Python repository checked out at the pre-fix commit;
-the model operates on the full codebase.</li>
-<li>Observation interface: issue description + repository contents (paper’s main
-experiments feed code via a BM25 <strong>retrieval</strong> step to fit context windows; an
-“oracle” retrieval setting supplies the gold files).</li>
-<li>Action interface: produce a unified-diff <strong>patch file</strong> applied with <code>patch</code>/git.</li>
-<li>Tool/API/shell layer: execution happens by installing the repo and running its test
-suite (per-repo install + test harness); this is the benchmark’s core machinery.</li>
-<li>Planner/executor/verifier structure: the <em>verifier</em> is the repo’s own tests
-(fail-to-pass + pass-to-pass) — the paper’s most durable contribution. No agent loop
-is prescribed here; SWE-bench is the environment+evaluator, and agent scaffolds came
-later (SWE-agent).</li>
-<li>Evaluation harness: percentage of resolved task instances; execution-based, not
-similarity-based.</li>
-<li>Training harness: SWE-Llama is fine-tuned on 19k non-test task instances from 37
-repos (separate from the eval repos).</li>
-<li>Reproducibility: dockerized per-repo environments; instances dated for contamination
-control.</li>
-<li>Safety/permissions: not a focus (sandboxing of arbitrary repo test execution is
-implied but not the paper’s emphasis).</li>
+<li>
+<abbr class="term" title="apply the model's patch, run the repo's tests; the relevant tests must go from failing to passing while previously-passing tests stay green">execution-based evaluation</abbr>
+</li>
+<li>
+<abbr class="term" title="tests that fail on the buggy code and pass once the issue is fixed; the core success signal">fail-to-pass tests</abbr>
+</li>
+<li>
+<abbr class="term" title="BM25: a classical bag-of-words retrieval ranking used here to select which repo files to show the model">BM25 retrieval</abbr>
+</li>
 </ul>
-<h2 id="method">Method</h2>
-<p>Benchmark construction (p.3–4, §2.1): scrape PRs across 12 popular Python repos → keep
-PRs that resolve an issue and edit tests → validate that the repo installs and that
-there exist tests which go fail→pass with the gold patch → filter noise. Task
-formulation (§2.2): input = issue + codebase; output = patch; metric = % resolved via
-the test gates. Retrieval settings handle long contexts (BM25 vs. oracle file sets).
-SWE-Llama (§4): CodeLlama fine-tuned on 19k held-out-repo instances to study whether
-open models can be adapted to the patch-generation format.</p>
-<h2 id="experimental-setup">Experimental setup</h2>
-<ul>
-<li>Dataset/benchmark: 2,294 test task instances (12 repos); ~19,000 training instances
-(37 repos) for SWE-Llama.</li>
-<li>Baselines/models: proprietary Claude 2, GPT-4 (and GPT-3.5), plus fine-tuned
-SWE-Llama 7B/13B. (Exact per-model table in the paper; some numbers below are the
-headline ones I verified in text.)</li>
-<li>Metrics: % of task instances resolved; also analysis of patch size, context length,
-and difficulty.</li>
-<li>Compute/cost: long-context inference is a stated practical constraint; precise
-$/compute not the focus — treat as Not reported in detail.</li>
-<li>Artifacts: benchmark, code, fine-tuned models, and leaderboard released.</li>
-</ul>
-<h2 id="key-results">Key results</h2>
-<ul>
-<li>Best-performing setting in the paper: <strong>Claude 2 with a BM25 retriever resolves only
-1.96%</strong> of issues — i.e., frontier models of late 2023 essentially fail the
-benchmark. This is the headline I confirmed verbatim in the text (§1, §5).</li>
-<li>Even the “oracle”/assisted-retrieval and best proprietary configurations remain in
-the low single-to-low-double-digit percent range; the exact per-model/per-setting
-breakdown is in the results table (read the table for precise numbers — I mark the
-individual cell values as “verify in Table” rather than restate from memory).</li>
-<li>Difficulty scales with context length and patch span; multi-file edits are
-especially hard.</li>
-</ul>
-<h2 id="evidence-quality">Evidence quality</h2>
-<p>Strong where it matters most: the evaluator is <strong>execution-based</strong> (real tests), which
-is the right call and the paper’s main methodological strength — it resists the
-similarity-metric gaming that plagues code benchmarks. Claims about model weakness are
-well supported by near-zero resolution rates. Caveats the reader should hold:</p>
-<ul>
-<li>Test-derived ground truth can be <strong>under- or over-specified</strong>: a model patch
-different from the gold patch may still be correct, and fail-to-pass tests may not
-fully characterize the issue (false negatives/positives are possible).</li>
-<li>Python-only, 12 repos → conclusions may not transfer across languages/ecosystems.</li>
-<li>Retrieval confound: low scores partly reflect the BM25 retrieval bottleneck, not only
-reasoning/editing ability; the oracle setting partially isolates this.</li>
-<li>Contamination is mitigated by date-based refresh in principle, but the released
-static split can still leak over time (a known, later-documented issue for the
-ecosystem).</li>
-</ul>
-<h2 id="reproducibility-and-artifacts">Reproducibility and artifacts</h2>
-<ul>
-<li>Code: released (benchmark construction + evaluation harness).</li>
-<li>Data: 2,294 eval instances + ~19k train instances released.</li>
-<li>Models: SWE-Llama checkpoints released.</li>
-<li>Environment: per-repo install + dockerized execution.</li>
-<li>License: Not reported here (check the repo).</li>
-<li>Exact commands/setup: in the repo, not the PDF.</li>
-<li>Missing details: full compute/cost accounting; exhaustive per-setting tables live in
-the appendix.</li>
-</ul>
-<h2 id="strengths">Strengths</h2>
-<ul>
-<li>Defines the now-standard repository-level, test-validated SWE evaluation.</li>
-<li>Execution-based evaluator that is hard to game.</li>
-<li>Contamination-aware design (date-based, refreshable).</li>
-<li>Real developer-grounded tasks at meaningful scale; released artifacts + leaderboard.</li>
-</ul>
-<h2 id="weaknesses-and-limitations">Weaknesses and limitations</h2>
-<ul>
-<li>Ground-truth tests may not capture issue intent fully (specification gap).</li>
-<li>Python/12-repo scope limits external validity.</li>
-<li>Retrieval bottleneck conflates context access with reasoning in the headline numbers.</li>
-<li>No prescribed agent loop here (by design) — interactive scaffolding is future work.</li>
-<li>Static released split is contamination-susceptible over time.</li>
-</ul>
-<h2 id="relationship-to-prior-work">Relationship to prior work</h2>
-<p>Supersedes function-level benchmarks (HumanEval, MBPP, APPS) in realism by moving to
-whole-repo, execution-validated tasks. Directly enables the SWE-agent / ACI line and
-the many SWE-bench-Lite / Verified / Multimodal / multilingual derivatives. Genuinely
-new at publication: the issue→PR→test mining pipeline and the test-gated metric;
-incremental aspects are mostly in the modeling (SWE-Llama is a competent but not
-central contribution).</p>
-<h2 id="what-i-should-read">What I should read</h2>
-<ul>
-<li>Must read: §2 (benchmark construction + task formulation + evaluation metric) and §5
-(results / why models fail) — these are the reusable ideas.</li>
-<li>Skim: §4 SWE-Llama fine-tuning; appendix construction filters.</li>
-<li>Can skip: per-repo distribution figures unless you need dataset statistics.</li>
-<li>Follow-up papers: SWE-agent (ACI), SWE-bench Verified, SWE-bench Multimodal, and
-current terminal/coding-agent harnesses that report SWE-bench numbers.</li>
-</ul>
-<h2 id="triage-decision">Triage decision</h2>
-<p>Label: MUST_READ
-Rationale: Foundational, accepted at ICLR 2024 (A*), defines the execution-based SWE
-evaluation harness that nearly all of my software_engineering_agents and agent_harness
-interests depend on; the recency penalty is intentionally bypassed via the
-<code>foundational</code> tag.
-Confidence: high
-Reading time estimate: 60–90 min for §2 + §5 + skim of the rest.</p>
-<h2 id="personal-notes">Personal notes</h2>
+
+<h3 id="personal-notes">Personal notes</h3>
 <p>Free-form notes for later.</p>
-<h2 id="follow-up-actions">Follow-up actions</h2>
-<ul>
-<li>Add related paper: SWE-agent (ACI), SWE-bench Verified.</li>
-<li>Compare with: terminal-bench, OSWorld (for the broader computer-use harness lineage).</li>
-<li>Re-run after new version: track SWE-bench variants as separate canonical papers.</li>
-<li>Check code: princeton-nlp/SWE-bench repo for the evaluation harness internals.</li>
-<li>Read benchmark details: fail-to-pass vs pass-to-pass test selection logic.</li>
-</ul> </article> </main> </body></html>
+ </article> </main> </body></html>

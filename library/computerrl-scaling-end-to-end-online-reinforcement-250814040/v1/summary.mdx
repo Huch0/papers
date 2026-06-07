@@ -1,0 +1,135 @@
+---
+canonical_key: arxiv-2508.14040
+version_key: v1
+title: 'ComputerRL: Scaling End-to-End Online Reinforcement Learning for Computer Use Agents'
+authors:
+- Hanyu Lai
+- Xiao Liu
+- Yanxiao Zhao
+- Hang Xu
+- Hanchen Zhang
+- Bohao Jing
+- Yanyu Ren
+- Shuntian Yao
+- Yuxiao Dong
+- Jie Tang
+venue: arXiv.org
+year: 2025
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2508.14040
+summary_date: '2026-06-07'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+{/*
+  Canonical Summary structure (concise, core-first). Body only — frontmatter is generated
+  from metadata.yaml by `summarize_paper.py --format mdx --prepare`. Components are
+  provided globally by the site (no imports). See config/summary_components.md.
+*/}
+
+<TLDR>ComputerRL scales end-to-end online RL for desktop agents by unifying programmatic API calls with GUI actions, running thousands of parallel virtual desktops, and alternating RL with SFT (Entropulse) to dodge entropy collapse — reaching 48.9% on OSWorld with a 9B open model.</TLDR>
+
+<WhyItMatters>Core to the computer-use-agents track: it shows a small open model can beat frontier proprietary CUAs on OSWorld, and that the bottleneck is RL infrastructure + training stability, not just model scale.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "48.9%", label: "OSWorld success rate", sub: "AutoGLM-OS w/ GLM-4.1V-9B-Thinking (SOTA)" },
+  { value: "9B", label: "policy model size", sub: "beats Claude 4 Sonnet 30.7%, OpenAI CUA o3 42.9%" },
+  { value: "+66%", label: "relative gain from RL", sub: "over the BC/SFT cold-start policy" },
+  { value: "1000+", label: "parallel desktop environments", sub: "distributed Docker/gRPC cluster" },
+]} />
+
+## Motivation
+<Problem>GUIs are designed for humans, so making an agent simulate human mouse/keyboard actions is cumbersome and inefficient</Problem>. The dominant training recipe — <Problem>behavior cloning via manual annotation or model distillation — scales poorly, is capped by the teacher model, and generalizes/recovers from errors badly</Problem>. RL is the obvious alternative, but <Problem>computer-use RL is throttled by environment inefficiency and instability: VMs are CPU-heavy and freeze under concurrency, and extended runs suffer entropy collapse and rising KL, so training plateaus before it scales</Problem>.
+
+## Contribution (what's new)
+Three coupled deltas, each addressing a distinct failure of naive computer-use RL:
+- <Novelty>The API-GUI paradigm: an automatically constructed, per-application API ecosystem layered on top of GUI actions, so the agent acts through machine-oriented function calls when available and falls back to GUI when not</Novelty> — this exists because pure GUI control is the efficiency bottleneck (it is 1/3 as step-efficient at best).
+- <Novelty>A distributed RL infrastructure that orchestrates 1,000+ parallel containerized Ubuntu VMs over gRPC, integrated with a fully asynchronous RL framework (AgentRL)</Novelty> — needed because synchronous, single-node OSWorld can't supply rollouts fast enough to scale online RL.
+- <Novelty>Entropulse: periodically interrupt RL to do SFT on the successful rollouts RL already generated, restoring entropy/exploration so a second RL phase can keep improving</Novelty> — designed this way because raising the clip threshold (DAPO-style) slows learning, whereas SFT on diverse self-generated trajectories raises entropy without hurting accuracy.
+
+## Research questions
+Can end-to-end online RL be scaled stably enough to train a strong general desktop agent — i.e., (1) can a machine-oriented API-GUI action space beat human-like GUI-only control, (2) can infrastructure remove the environment-throughput bottleneck, and (3) can a training schedule prevent entropy collapse from capping extended RL?
+
+## Methodology
+A four-stage pipeline: build per-app APIs semi-automatically, cold-start with behavior cloning, run step-level GRPO with rule-based rewards, then alternate Entropulse SFT with a second RL phase.
+
+<Pass title="Method details">
+<Stepper steps={[
+  { title: "API-GUI construction", body: "An LLM workflow turns user exemplar tasks into application APIs in three stages — requirement analysis (find functionality gaps), API implementation (Python libs + error handling/logging), and test-case generation (verify runtime-error-free invocation and correct outputs; failed APIs get error feedback and self-correct). 103 APIs across 7 Ubuntu apps (Code 12, Chrome 11, Calc 27, Impress 22, Writer 19, VLC 12). The active app is auto-detected to expose only relevant APIs and shrink the action space." },
+  { title: "Scalable environment", body: "Refactor OSWorld behind the AgentBench API; deploy lightweight Ubuntu VMs via qemu-in-docker; link CPU nodes into a distributed cluster over gRPC with centralized orchestration and a web monitoring UI. Supports several thousand concurrent environments." },
+  { title: "Async RL framework", body: "AgentRL: data collection on dedicated resources while the trainer streams from a replay engine (no mutual blocking), dynamic batch sizing, isolated actor/reference/critic modules over PyTorch distributed + NCCL, and off-policy bias mitigation via a bounded replay buffer + per-update trajectory sync." },
+  { title: "Behavior cloning cold start", body: "~8,000 manually annotated tasks (with eval functions). Multiple closed-source LLMs sample trajectories; outcomes stratified into Fully Solved / Partially Solved / Unsolved. Partially-solved tasks get SFT-then-resample; unsolved tasks use a random model-pool-per-action to exploit inter-model variance. Keep only successful trajectories — 180k+ correct steps — for SFT." },
+  { title: "Step-level GRPO + verifiable reward", body: "Extends GRPO to step level: per task, sample G trajectories; group all steps from a task and compute a per-step advantage from the group reward mean/std. Reward is rule-based and outcome-coupled — every correctly-formatted action in a successful trajectory gets reward 1; failed or malformed actions get 0 (no Bellman propagation; each prompt-response pair is an independent instance)." },
+  { title: "Entropulse", body: "After RL plateaus (~180 steps), aggregate the successful rollouts produced across different policies/steps, randomly pick one successful trajectory per unique task to form a diverse, high-quality, no-extra-rollout SFT set. SFT on it leaves eval accuracy stable but raises entropy; a second RL phase then resumes (to 360 total steps) and improves further." },
+]} />
+
+<MathBlock>{`A_{i,j} = \\frac{r_{i,j} - \\mathrm{mean}(R)}{\\mathrm{std}(R)}, \\quad R = \\{r_{u,v}\\}`}</MathBlock>
+
+Models: COMPUTERRL is applied to GLM-4-9B-0414 and GLM-4.1V-9B-Thinking to produce AutoGLM-OS-9B. RL config (Tab.6): GRPO, train batch 32, 16 responses/prompt, concurrency 1024, max prompt 63,488 tokens, max response 2,048, temperature 0.8, max 30 turns, KL coef 0.0003, entropy coef 0.0, clip ratio 0.2, actor LR `1e-6`. BC SFT: 16-node cluster, LR `1e-5`, seq len 32,768, global batch 256, 3 epochs. Entropulse adds ~130k steps of curated data at LR `5e-6`.
+</Pass>
+
+## Main result
+<Finding src="Tab.1, Fig.1a">AutoGLM-OS-9B (GLM-4.1V-9B-Thinking) reaches 48.9% ± 0.5 on OSWorld and 48.0 on OSWorld-Verified, a new SOTA, beating OpenAI CUA o3 (42.9), UI-TARS-1.5 (42.5), Agent S2 w/ Gemini-2.5-Pro (41.4), and Claude 4.0 Sonnet (30.7)</Finding> — with a 9B open model versus proprietary frontier systems. The GLM-4-9B-0414 variant scores 48.1 ± 1.0 (47.3 verified).
+
+<SortableTable columns={["Agent / Model", "Params", "OSWorld", "OSWorld-Verified"]} rows={[
+  ["AutoGLM-OS (GLM-4.1V-9B-Thinking)", "9B", 48.9, 48.0],
+  ["AutoGLM-OS (GLM-4-9B-0414)", "9B", 48.1, 47.3],
+  ["OpenAI CUA o3", "-", 42.9, 0],
+  ["UI-TARS-1.5", "-", 42.5, 0],
+  ["Agent S2 w/ Gemini-2.5-Pro", "-", 41.4, 45.8],
+  ["OpenAI CUA 4o", "-", 38.1, 31.3],
+  ["Claude 4.0 Sonnet", "-", 30.7, 43.9],
+  ["UI-TARS-7B-1.5 + ARPO (best prior open)", "7B", 29.9, 0],
+  ["Qwen2.5-VL-72B", "72B", 8.8, 5.0],
+]} />
+
+(0 in the table = not reported by the paper for that cell.)
+
+## Key findings
+- <Finding src="§4.3, Tab.3">API-GUI more than doubles the GUI-only baseline: 26.2% vs 11.2% avg with GPT-4o (+134%), with the largest gains in Office (27.9 vs 6.2, +350%) and Professional (41.6 vs 14.3, +191%)</Finding>: the machine-oriented action space is the single biggest framework lever, especially for structured/professional apps.
+- <Finding src="§4.3, Tab.3">Each training stage compounds (Qwen2.5-14B): Untrained 15.2 → BC 31.9 → RL1 42.0 (+10.1) → Entropulse 41.5 → RL2 45.8 (+3.8 over RL1)</Finding>: RL contributes most of the lift, and the second RL phase only pays off because Entropulse first restored exploration capacity.
+- <Finding src="Fig.5">Entropulse restores entropy after RL1 converges and substantially extends the number of effective RL steps</Finding>: a reference-reset-only continuation (grey curve) plateaus, while Entropulse (red) keeps rewards climbing — the central evidence that SFT-on-self-rollouts is what unlocks scaling.
+- <Finding src="§4.2, Tab.2">On the new OfficeWorld benchmark (180 tasks from SpreadsheetBench/PPTC/in-house Writer), AutoGLM-OS averages 43.3 vs OpenAI o3's 33.9, with a striking Excel result of 58.3 vs o3's 36.7</Finding>: the advantage transfers beyond OSWorld to office automation.
+- <Finding src="§4.1">API-GUI lets the agent finish tasks in at most 1/3 of the steps of the strongest baselines</Finding>: efficiency, not just accuracy, improves — the original motivation for an API layer.
+- <Finding src="Fig.6, §4.4">Remaining errors split into multi-app coordination (34.4%), operational illusion/hallucination (25.8%), visual perception (25.6%), and other (14.2%)</Finding>: multi-application workflows and grounded perception are the dominant failure modes.
+
+## Implications
+This pushes the <Related>AutoGLM / GLM line (CogAgent → AutoGLM)</Related> and the OSWorld benchmark forward, and slots into the RL-for-agents lineage of <Related>GRPO (DeepSeekMath), DAPO, ARPO, and the AgentRL/AReaL asynchronous-RL systems</Related>. The headline message — a 9B open model beating frontier CUAs via infrastructure + training stability — reframes computer-use progress as an RL-engineering problem. Threads worth chasing: <FollowUp>whether Entropulse generalizes to other agentic RL domains (web, SWE) where entropy collapse also caps training</FollowUp>, <FollowUp>how much of the win is the API ecosystem vs the RL recipe, since APIs require per-app construction effort</FollowUp>, and <FollowUp>the released OfficeWorld benchmark as an office-automation testbed</FollowUp>.
+
+## Limitations
+- <Caveat>Coverage and generalization are bounded by the constructed APIs and training-task distribution; novel apps, unexpected pop-ups, and edge-case GUIs are explicitly named as open problems</Caveat> (author-stated, App.F).
+- <Caveat>Strong on bounded atomic tasks but weak on long-horizon, multi-step workstreams</Caveat> — and multi-app coordination is already the top error type (34.4%).
+- <Caveat>The API-GUI advantage depends on the semi-automated API pipeline; per-application APIs are an upfront, app-specific cost not fully accounted in the headline comparison</Caveat> (inferred).
+- <Caveat>Safety of autonomous file/data/system control is acknowledged as unaddressed (permissioning, pre-action validation, approval protocols are future work)</Caveat> (author-stated, App.F.3).
+- <Caveat>The clean stage-ablation is run on Qwen2.5-14B, not the GLM-9B models that produce the headline number, so the per-stage attribution is on a different backbone</Caveat> (inferred from Tab.3 vs Tab.1).
+
+## Critiques and Questions
+1. The framework ablation (API-GUI vs GUI-only) uses GPT-4o, the training ablation uses Qwen2.5-14B, and the headline uses GLM-9B — three different backbones make it hard to attribute the final 48.9% cleanly across the three contributions.
+2. Reward is binary on final outcome with no Bellman propagation; how well does step-level credit assignment hold for the long-horizon multi-app tasks that dominate the error analysis?
+3. OfficeWorld is introduced by the same authors and the comparison "uses the same framework (with tools)"; how comparable is the tooling given to baselines vs AutoGLM-OS?
+4. Entropy/entropy coefficient is set to 0.0 in RL config, so all exploration recovery comes from Entropulse — is the effect robust, or sensitive to how/when SFT is injected?
+
+<SelfCheck q="Why does Entropulse use SFT on the model's own past successful rollouts rather than fresh data, and what problem does that solve?" a="Extended RL drives entropy down (entropy collapse) and KL up, causing performance to plateau. Entropulse curates successful trajectories already produced by RL across different policies/steps into a diverse SFT set; SFT on it raises entropy (restores exploration) without dropping eval accuracy and with no extra environment rollouts, so a second RL phase can keep improving (45.8 vs 42.0 on the ablation, Tab.3)." />
+
+## Glossary
+- <Term def="A unified action space combining auto-built per-application programmatic API calls with direct GUI actions, so the agent uses efficient function calls when available and falls back to mouse/keyboard GUI control otherwise.">API-GUI paradigm</Term>
+- <Term def="Periodically interrupting RL to run SFT on the model's own successful rollouts, restoring action entropy/exploration to extend effective RL training and avoid premature convergence.">Entropulse</Term>
+- <Term def="Group Relative Policy Optimization: a PPO variant that drops the value/critic and computes each sample's advantage from the mean/std of rewards within a sampled group of responses.">GRPO</Term>
+- <Term def="Here, computing GRPO advantages per agent step (action) within a task group rather than per whole trajectory, suited to multi-turn agent RL.">step-level GRPO</Term>
+- <Term def="RL where rollout/data-collection and parameter updates run on decoupled resources concurrently instead of strictly alternating, removing idle/blocking time.">asynchronous RL</Term>
+- <Term def="A benchmark of 369 real-computer tasks with 134 evaluation functions for multimodal desktop agents; OSWorld-Verified is a curated/verified variant.">OSWorld</Term>
+- <Term def="A new 180-task office-automation benchmark introduced here, drawn from SpreadsheetBench, PPTC, and in-house Writer tasks, integrated into the OSWorld framework.">OfficeWorld</Term>
+- <Term def="Training a policy to imitate recorded expert/teacher trajectories via supervised learning; used here as the cold-start before RL.">behavior cloning (BC)</Term>
+- <Term def="When a policy's action entropy falls so low during RL that exploration stops and learning prematurely plateaus.">entropy collapse</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

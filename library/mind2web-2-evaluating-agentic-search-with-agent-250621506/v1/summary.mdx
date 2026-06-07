@@ -1,0 +1,137 @@
+---
+canonical_key: arxiv-2506.21506
+version_key: v1
+title: 'Mind2Web 2: Evaluating Agentic Search with Agent-as-a-Judge'
+authors:
+- Boyu Gou
+- Zanming Huang
+- Yuting Ning
+- Yu Gu
+- Michael Lin
+- Weijian Qi
+- Andrei Kopanev
+- Botao Yu
+- Bernal Jiménez Gutiérrez
+- Yiheng Shu
+- Chan Hee Song
+- Jiaman Wu
+- Shijie Chen
+- Hanane Nour Moussa
+- Tianshu Zhang
+- Jian Xie
+- Yifei Li
+- Tianci Xue
+- Zeyi Liao
+- Kai Zhang
+- Boyuan Zheng
+- Zhao Cai
+- Viktor Rozgic
+- Morteza Ziyadi
+- Huan Sun
+- Yu Su
+venue: arXiv.org
+year: 2025
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2506.21506
+summary_date: '2026-06-07'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>Mind2Web 2 is a 130-task benchmark of long-horizon, time-varying web search tasks paired with a novel <Term def="a per-task agentic workflow that evaluates an answer by descending a hierarchical rubric tree">Agent-as-a-Judge</Term> framework that auto-grades both answer correctness and source attribution against a tree-structured rubric.</TLDR>
+
+<WhyItMatters>Directly relevant to the computer-use / agentic-search track: it is the first benchmark to evaluate Deep Research systems on realistic, open-ended, citation-backed answers, and shows how to evaluate complex agent outputs without predefined answer strings.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "50-70%", label: "of human performance", sub: "best system (OpenAI Deep Research)" },
+  { value: "130", label: "long-horizon tasks", sub: "1,000+ hours of human labor" },
+  { value: "99.0%", label: "judge-agent node correctness", sub: "7 errors / 720 verifications" },
+  { value: "10", label: "frontier systems evaluated", sub: "+ human study" },
+]} />
+
+## Motivation
+Agentic search systems (Deep Research, web agents) now produce <Problem>lengthy, time-varying, citation-backed answers spanning hundreds of actions across dozens of websites</Problem>, but existing benchmarks <Problem>assume short search horizons and static, predefined answers — often a single answer string</Problem>. To make automated grading tractable, prior work (e.g. BrowseComp) <Problem>restricts itself to tasks with time-invariant unique answers, systematically deviating from the true user-query distribution</Problem>. There was no benchmark able to evaluate the realistic, open-ended, real-time tasks current systems already attempt.
+
+## Contribution (what's new)
+The genuine delta is exploiting the <Novelty>generation–verification asymmetry</Novelty>: even though generated answers vary across agents, strategies, and query times, what a task *requires* is known a priori and can be encoded once as a <Novelty>task-specific tree-structured rubric whose leaf nodes are binary checks and whose internal nodes aggregate via a gate-then-average rule</Novelty>. This design must take a tree form because a single LLM-as-a-Judge call cannot reliably grade thousand-word, multi-source, time-varying answers; decomposing into hundreds of binary leaf checks (avg 50, max 603 nodes per task) cleanly separates extraction, verification, and aggregation. The rubric explicitly grades both <Novelty>correctness (does the answer meet every requirement) and attribution (is each claim backed by a cited source)</Novelty>.
+
+## Research questions
+1. How can a benchmark capture realistic, long-horizon, time-varying agentic-search tasks rather than static single-string answers?
+2. How can complex, lengthy, time-varying answers be evaluated automatically yet reliably?
+3. Where do current frontier agentic-search systems stand relative to humans, and what are their dominant failure modes?
+
+## Methodology
+Tasks are crafted by a three-role human pipeline (proposers → refinement experts → validation experts); only tasks independently validated by at least two validation experts are included. Each task gets a dedicated judge agent — a Python script implementing its rubric tree — built with a reusable toolkit plus an LLM code-generation pipeline with self-debug/self-reflection, then hardened by two-stage human refinement.
+
+<Pass title="Method details: rubric tree, scoring, and judge agents">
+**Rubric tree.** Top-down, a task goal is decomposed into hierarchical evaluation nodes; bottom-up, binary leaf scores propagate to the root. Node types: **critical** nodes (failure immediately fails the parent — essential constraints), **non-critical** nodes (allow partial credit), and **sequential** nodes (a failed earlier child short-circuits later siblings, e.g. can't grade an author's email if the paper wasn't found).
+
+**Score aggregation (gate-then-average).** For node `v` with critical children `K(v)` and non-critical children `N(v)`, the score `s(v)` is `0` if any critical child scores `< 1`; otherwise the mean of non-critical children if `|N(v)| > 0`; otherwise `1`. Critical nodes gate but don't contribute to the average. Two metrics derive from the root: **Partial Completion** (avg root score) and **Success Rate** (fraction of tasks with a perfect root score of 1).
+
+**Judge agent tools.** An **Extractor** parses the answer into structured info (item names, prices, URLs); a **Verifier** checks each leaf via functions like `simple_verify` (a factual/logical statement) and `verify_by_url` (whether a cited webpage backs a statement, using the page screenshot). Both tools use OpenAI o4-mini as the backing LLM.
+
+**Rubric complexity (Tab.2a):** leaf nodes avg 34 / max 357; total nodes avg 50 / max 603; depth avg 4 / max 6. **Human effort per task (Subset-30, Tab.2b):** avg 18 min (max 44), avg 8 websites (max 31), avg 110 webpages (max 375).
+
+**Split:** 10-task public dev set (descriptions + scripts) and 120-task private test set (descriptions only) to reduce contamination and abuse as an RL reward model; results are reported on the private test set.
+</Pass>
+
+## Main result
+The best system, <Finding src="Tab.3, p.7, Abstract">OpenAI Deep Research, reaches 0.54 Partial Completion and 0.28 Success Rate vs human 0.79 / 0.54 — i.e. 50-70% of human performance while spending under half the time (8.4 min vs 18.4 min)</Finding>. Even the top agents fully complete at most 28% of tasks; humans only 54%, reflecting the tedious nature of the tasks.
+
+<SortableTable columns={["System", "Partial Completion", "Success Rate", "Pass@3", "Time (min)", "Answer Length (words)"]} rows={[
+  ["ChatGPT Search", 0.26, 0.06, 0.11, "<1", 314],
+  ["Perplexity Pro Search", 0.28, 0.08, 0.12, "<1", 408],
+  ["OpenAI Operator", 0.26, 0.10, 0.17, 9.74, 160],
+  ["HF Open Deep Research", 0.26, 0.11, 0.18, 13.65, 209],
+  ["Claude Research", 0.32, 0.10, 0.19, 7.39, 742],
+  ["Grok DeepSearch", 0.40, 0.18, 0.36, 2.58, 1428],
+  ["Perplexity Deep Research", 0.42, 0.15, 0.26, 5.67, 585],
+  ["Gemini Deep Research", 0.45, 0.18, 0.30, 7.38, 3357],
+  ["Grok DeeperSearch", 0.52, 0.27, 0.40, 5.72, 1362],
+  ["OpenAI Deep Research", 0.54, 0.28, 0.40, 8.40, 559],
+  ["Human", 0.79, 0.54, 0.83, 18.40, 186],
+]} />
+
+## Key findings
+- <Finding src="§4.4, p.10-11">The judge agents are highly reliable: 99.03% node correctness (only 7 genuine Verifier errors out of 720 verifications)</Finding>: of 35 human–judge discrepancies, 27 were actually human evaluator mistakes; far above the sub-90% rates reported for automated evaluation of simpler web tasks.
+- <Finding src="§4.2, Tab.3">Deep Research systems clearly beat search-augmented LLMs and the Operator web agent</Finding>: ChatGPT/Perplexity Search are weakest (0.26-0.28 PC) due to short horizons; Operator lags Deep Research despite browsing real sites.
+- <Finding src="§4.2, Fig.3">Test-time scaling helps</Finding>: more inference time raises Partial Completion within a model family (Grok, Perplexity), and Pass@3 substantially exceeds single-run Success Rate (e.g. 0.40 vs 0.28 for OpenAI Deep Research) — multiple attempts pay off.
+- <Finding src="§4.2, Fig.4">Most systems do worse on the 57 explicitly time-varying tasks</Finding>: systems lacking live browsing give outdated/hallucinated info, while Operator and humans (both strong at live interaction) hold up or improve — underscoring the value of integrating real-time web browsing.
+- <Finding src="§4.2">Longer answers are not better answers</Finding>: Gemini and Grok emit thousand-word structured reports (Gemini avg 3,357 words) yet do not beat OpenAI Deep Research's concise 559-word answers; verbosity adds cognitive burden without accuracy.
+- <Finding src="§4.2, §4.3">Agents can exceed humans on attention-to-detail tasks</Finding>: humans suffer cognitive fatigue and careless "Criteria Violation" errors (their most common error type), whereas exhaustive agents avoid some of these mistakes.
+
+## Implications
+Mind2Web 2 reframes agentic-search evaluation around <Related>the generation–verification asymmetry already used by BrowseComp and the tree-rubric idea of PaperBench</Related>, but goes further by largely *automating* rubric/judge-agent generation and handling time-varying, multi-source answers — extending the <Related>Mind2Web / web-agent benchmark lineage and the Agent-as-a-Judge line</Related>. It positions a maintained leaderboard with a hidden test set as the assessment platform for next-gen Deep Research systems. <FollowUp>Whether the gate-then-average rubric and o4-mini Verifier generalize to subjective or non-URL-attributable tasks</FollowUp>, and <FollowUp>whether OpenAI Deep Research's edge truly comes from live browsing integration vs other tooling</FollowUp>, are open threads worth chasing.
+
+## Limitations
+- <Caveat>Coverage is bounded: 130 tasks cannot span all real-world scenarios, and vague/subjective queries are deliberately excluded</Caveat>.
+- <Caveat>The framework assumes URL-based attribution where cited pages are truthful — it does not assess source credibility or misinformation, and assumes critical info is attributable to individual webpages</Caveat>.
+- <Caveat>Evaluation relies on LLM-based extraction/verification (o4-mini), which can still err; mitigated but not eliminated by human validation</Caveat>.
+- <Caveat>Mostly black-box, closed-source systems are evaluated, so token usage / inference cost cannot be measured precisely (only proxy metrics like time and answer length)</Caveat>.
+- <Caveat>Human baseline and human effort/error stats are measured only on Subset-30, not all 130 tasks</Caveat>.
+
+## Critiques and Questions
+1. The 99% judge correctness is validated on 15 sampled tasks / 720 nodes with trivial total-failure cases excluded — impressive, but a sampled, curated slice of the easiest-to-grade portion; reliability on the full 603-node tasks is less certain.
+2. With only 130 tasks (120 private), and a public dev set plus a published generation pipeline, contamination and RL-reward-hacking risk persists despite the private split; the leaderboard's integrity hinges on self-submission and hidden scripts.
+3. Standard deviations are tight, but each system runs only 3 times — Pass@3 conflates capability with sampling luck.
+
+<SelfCheck q="Why does the rubric need a tree of binary leaf nodes rather than a single LLM-as-a-Judge call?" a="Answers are thousand-word, multi-source, and time-varying, beyond what a few LLM calls can reliably grade. The tree decomposes evaluation into binary leaf checks (avg 50, max 603 nodes) with separate Extractor/Verifier tools and a gate-then-average aggregation, which the paper shows reaches 99% node correctness — far above sub-90% single-shot automated evaluation." />
+
+## Glossary
+- <Term def="Systems that iteratively and autonomously tackle complex search tasks using tools (search APIs, retrievers, web browsing), powered by LLMs that decompose, plan, and synthesize">Agentic search</Term>
+- <Term def="Agentic-search systems explicitly optimized for long-horizon browsing and comprehensive, citation-backed report generation, e.g. OpenAI/Gemini/Perplexity Deep Research">Deep Research</Term>
+- <Term def="Average root-node rubric score across all tasks, reflecting fine-grained partial satisfaction">Partial Completion</Term>
+- <Term def="Fraction of tasks achieving a perfect root score of 1 (all criteria satisfied)">Success Rate</Term>
+- <Term def="A node whose failure immediately fails its parent; gates but does not contribute to partial-score averaging">Critical node</Term>
+- <Term def="Tasks whose correct answer can change over time, e.g. live prices or hotel availability — 57 such tasks here">Time-varying task</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

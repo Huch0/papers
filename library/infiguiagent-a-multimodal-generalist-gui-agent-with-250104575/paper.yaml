@@ -49,17 +49,17 @@ versions:
   source: arxiv
   source_url: https://arxiv.org/abs/2501.04575
   pdf_path: library/infiguiagent-a-multimodal-generalist-gui-agent-with-250104575/v1/paper.pdf
-  summary_path: null
+  summary_path: library/infiguiagent-a-multimodal-generalist-gui-agent-with-250104575/v1/summary.mdx
   metadata_path: library/infiguiagent-a-multimodal-generalist-gui-agent-with-250104575/v1/metadata.yaml
   fetched_at: '2026-06-06T07:57:42Z'
   source_updated_at: null
   arxiv_version: null
   pdf_sha256: e4c34d713836630e180656b095a7dfbe7ed7f3b899b09fdb0a72fba2a2237616
   pdf_bytes: 1495172
-  summary_status: none
-  extraction_status: none
+  summary_status: full
+  extraction_status: full
   created_at: '2026-06-06T07:57:42Z'
-  updated_at: '2026-06-06T07:57:42Z'
+  updated_at: '2026-06-07T06:20:48Z'
 relations:
   duplicate_candidates: []
   related_papers: []

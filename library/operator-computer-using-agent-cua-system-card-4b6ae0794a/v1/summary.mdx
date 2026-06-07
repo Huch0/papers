@@ -1,0 +1,51 @@
+---
+canonical_key: title-574b6ae0794a
+version_key: v1
+title: Operator / Computer-Using Agent (CUA) System Card (OpenAI)
+authors: []
+venue: tech report
+year: 2025
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: null
+summary_date: '2026-06-07'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<Caveat>**Metadata-only record — no full text fetched.** This summary is grounded in the catalog metadata and general context about the system, not the source document. Numbers, claims, and design details are unverified; treat everything below as provisional and **verify against the source** before relying on it.</Caveat>
+
+<TLDR>OpenAI's system card for the <Term def="An agent that perceives the screen as pixels and acts via simulated mouse/keyboard, controlling software through its graphical interface rather than APIs">Computer-Using Agent (CUA)</Term> model and its Operator product preview, a vision-plus-reinforcement-learning system for pixel-level GUI control.</TLDR>
+
+<WhyItMatters>A major commercial milestone for the computer-use-agents area: a frontier lab shipping a general GUI-control agent as a product, with an accompanying safety/capability disclosure.</WhyItMatters>
+
+## What it is
+This record describes the <Novelty>OpenAI Computer-Using Agent (CUA) model and the Operator preview</Novelty>, reported as combining GPT-4o vision with reinforcement learning for pixel-level control of graphical user interfaces. As a <Term def="A document a lab publishes alongside a model release describing its capabilities, evaluations, and safety mitigations">system card</Term>, it is positioned as a capability-and-safety disclosure rather than a peer-reviewed research paper.
+
+NOTE: This is a metadata-only entry — the underlying document was not fetched or extracted, so the description reflects catalog context, not the source text.
+
+## Why it matters
+The entry is tagged `foundational` within the `computer_use_agents` topic group. It is notable as a <Related>commercial, frontier-lab instance of the computer-use-agent lineage</Related> (browser/OS GUI control via vision and learned policies), signalling the transition of GUI agents from research prototypes to shipped products.
+
+## Key findings
+NOTE: No full text was read; the items below are field-role observations from metadata, not extracted results.
+
+- <Finding>Interface type: GUI control at the pixel level (simulated mouse/keyboard over the graphical interface), per the metadata description</Finding>: not API- or CLI-mediated. Specifics — supported surfaces (browser vs. OS), action space, observation format — Not reported / verify against source.
+- <Finding>Reported architecture: GPT-4o vision combined with reinforcement learning</Finding>: exact training recipe, reward design, and model scale Not reported / verify against source.
+- <Finding>Artifact type: a system card accompanying the Operator product preview</Finding>: it likely emphasizes safety mitigations and capability evaluations, but the specific benchmarks and mitigation details are Not reported / verify against source.
+- <Finding>Quantitative claims (benchmark scores, success rates, human comparisons)</Finding>: Not reported here — verify against the source document.
+
+## Glossary
+- <Term def="An agent that perceives the screen as pixels and acts via simulated mouse/keyboard, controlling software through its graphical interface rather than APIs">CUA (Computer-Using Agent)</Term>
+- <Term def="OpenAI's product preview built on the CUA model that operates a computer/browser on the user's behalf">Operator</Term>
+- <Term def="A model-release document describing capabilities, evaluations, and safety mitigations">System card</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

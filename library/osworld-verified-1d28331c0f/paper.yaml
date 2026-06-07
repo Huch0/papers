@@ -36,17 +36,17 @@ versions:
   source: manual
   source_url: null
   pdf_path: null
-  summary_path: null
+  summary_path: library/osworld-verified-1d28331c0f/v1/summary.mdx
   metadata_path: library/osworld-verified-1d28331c0f/v1/metadata.yaml
   fetched_at: '2026-06-06T07:57:50Z'
   source_updated_at: null
   arxiv_version: null
   pdf_sha256: null
   pdf_bytes: null
-  summary_status: none
+  summary_status: triage_only
   extraction_status: none
   created_at: '2026-06-06T07:57:50Z'
-  updated_at: '2026-06-06T07:57:50Z'
+  updated_at: '2026-06-07T06:28:10Z'
 relations:
   duplicate_candidates: []
   related_papers: []

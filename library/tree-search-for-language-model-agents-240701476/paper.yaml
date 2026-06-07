@@ -43,17 +43,17 @@ versions:
   source: arxiv
   source_url: https://arxiv.org/abs/2407.01476
   pdf_path: library/tree-search-for-language-model-agents-240701476/v1/paper.pdf
-  summary_path: null
+  summary_path: library/tree-search-for-language-model-agents-240701476/v1/summary.mdx
   metadata_path: library/tree-search-for-language-model-agents-240701476/v1/metadata.yaml
   fetched_at: '2026-06-06T07:57:33Z'
   source_updated_at: null
   arxiv_version: null
   pdf_sha256: 0b21710f26db2e9383f768cdaea5755f1a39fb0b5eafffdfa5451a33d106e130
   pdf_bytes: 3312735
-  summary_status: none
-  extraction_status: none
+  summary_status: full
+  extraction_status: full
   created_at: '2026-06-06T07:57:33Z'
-  updated_at: '2026-06-06T07:57:33Z'
+  updated_at: '2026-06-07T06:12:53Z'
 relations:
   duplicate_candidates: []
   related_papers: []

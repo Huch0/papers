@@ -1,0 +1,117 @@
+---
+canonical_key: arxiv-2410.18967
+version_key: v1
+title: 'Ferret-UI 2: Mastering Universal User Interface Understanding Across Platforms'
+authors:
+- Zhangheng Li
+- Keen You
+- Haotian Zhang
+- Di Feng
+- Harsh Agrawal
+- Xiujun Li
+- M. Moorthy
+- Jeff Nichols
+- Yinfei Yang
+- Zhe Gan
+venue: International Conference on Learning Representations
+year: 2024
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2410.18967
+summary_date: '2026-06-07'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>Ferret-UI 2 is a single multimodal LLM for fine-grained UI referring, grounding, and user-centered interaction across five platforms (iPhone, Android, iPad, Webpage, AppleTV), built from <Novelty>adaptive grid-based high-resolution encoding plus GPT-4o set-of-mark visual prompting for training-data generation</Novelty>.</TLDR>
+
+<WhyItMatters>A foundational computer-use-agent perception model: it shows how to make one MLLM understand UIs at native resolution across heterogeneous device types, and that better visually-grounded training data — not just architecture — drives the gains.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "89.73", label: "advanced-task GPT-4o score", sub: "Llama3-8B, avg over 5 platforms (Tab.2)" },
+  { value: "+43.92", label: "advanced score over Ferret-UI", sub: "vs 45.81 baseline (Tab.2)" },
+  { value: "5", label: "platforms supported", sub: "iPhone/Android/iPad/Web/AppleTV" },
+  { value: "529k", label: "training samples", sub: "vs 124k for Ferret-UI (Tab.8)" },
+]} />
+
+## Motivation
+Prior UI MLLMs are <Problem>locked to one or two platform types</Problem> — the original Ferret-UI handles only mobile (iPhone/Android). They also use a <Problem>fixed grounding resolution (336×672 / 672×336)</Problem>, which distorts the diverse native resolutions and aspect ratios of iPad, Web, and (landscape) AppleTV screens. Finally, training data was generated with <Problem>text-only GPT-4 prompting where bounding boxes are pure text</Problem>, stripping out the visual and spatial relationships between widgets and capping the quality of the resulting supervision.
+
+## Contribution (what's new)
+Three coupled deltas. (1) <Novelty>Adaptive N-gridding</Novelty>: instead of unbounded any-resolution tiling, search for the grid `(Nw, Nh)` that minimizes aspect-ratio distortion times relative pixel change under a cost cap `Nw + Nh ≤ N` — preserving native resolution within a fixed inference budget. (2) <Novelty>GPT-4o with set-of-mark (SoM) visual prompting</Novelty> to author advanced-task data: each widget is drawn with a corner-style, color-coded numbered box on the actual screenshot, so the generator reasons over real spatial layout rather than text coordinates. This is needed because text-only prompting cannot perceive widget appearance or nesting, and plain GPT-4o has poor grounding. (3) A <Novelty>uniform 13-class label space and multi-platform dataset</Novelty> built largely from human/HTML annotations rather than model-detected boxes.
+
+## Research questions
+Can one MLLM deliver fine-grained referring, grounding, and user-centered single-step interaction across structurally different platforms; how much of the gain comes from architecture vs. data quality; and does the model transfer zero-shot to unseen platforms and benchmarks?
+
+## Methodology
+Build on Ferret-UI's CLIP ViT-L/14 + Visual-Sampler + LLM architecture (tried Gemma-2B, Llama3-8B, Vicuna-13B). Collect screenshots per platform (human boxes for Apple devices, parsed HTML hierarchy for Web/WebUI, RICO for Android; OCR fills missing text). Construct elementary tasks (3 referring + 3 grounding) directly from annotations, and 3 advanced task types via GPT-4o+SoM, then train one joint model.
+
+<Pass title="Method details">
+<Stepper steps={[
+  { title: "Raw collection + filtering", body: "Human-annotated boxes for iPhone/iPad/AppleTV; HTML-parsed boxes for Web (WebUI dataset); RICO for Android. Screen-wide OCR (conf ≥ 0.5) substitutes for text labels. Filter out-of-bound/empty boxes and screenshots with >5% non-ASCII text (no multilingual support)." },
+  { title: "Uniform label space", body: "Map heterogeneous source labels to 13 classes: Checkbox, Button, Container, Dialog, Icon, PageControl, Picture, SegmentedControl, Slider, TabBar, Text, TextField, Toggle (GPT-4 suggestion + human review)." },
+  { title: "Elementary tasks (6)", body: "Referring: OCR, widget classification, tappability. Grounding: widget listing, find-text, find-widget. Converted from annotations into conversations." },
+  { title: "Advanced tasks (3) via GPT-4o+SoM", body: "Comprehensive description, multi-round perception QA, multi-round interaction QA. SoM draws corner-style numbered, class-colored boxes on the screenshot so GPT-4o can reference and spatially reason about widgets. Interaction QA uses user-centered intents ('confirm submission') not 'click [bbox]'." },
+  { title: "Data balancing", body: "Distribution is highly skewed (iPad 19k, AppleTV 16k vs Web 321k). Mitigate via per-platform loss weights and generating all 3 advanced-task types for iPad/AppleTV but only 1 for others." },
+  { title: "Adaptive N-gridding", body: "Grid 336×336. Search Nw,Nh in [1,N] minimizing Δaspect × Δpixel subject to Nw+Nh ≤ N; total grids ≤ ⌊N²/4⌋. Paper sets N=8 (max 16 grids). CLIP encodes a low-res global view + high-res local grids; features flattened into the LLM." },
+]} />
+
+Key gridding objective (Algorithm 1): pick `(Nw, Nh)` minimizing `Δaspect × Δpixel` where `Δpixel = |Nw·Nh − Nw0·Nh0| / (Nw0·Nh0)`, bounding cost while least distorting native resolution.
+</Pass>
+
+## Main result
+On the authors' constructed benchmarks (45 = 9 subtasks × 5 platforms, averaged), Ferret-UI 2 with Llama3-8B reaches an <Finding src="Tab.2">advanced-task GPT-4o score of 89.73, beating Ferret-UI's 45.81 by 43.92 points and GPT-4o's 77.73 by 12.0 points</Finding>, plus the best <Finding src="Tab.2">GUIDE next-action IoU of 55.78 vs 26.91 for Ferret-UI</Finding>. GPT-4o is strong only when given SoM prompting on referring (87.91) but collapses on grounding (12.14 elementary, 7.06 advanced Multi-IoU).
+
+<SortableTable columns={["Model (backbone)", "Refer (Elem)", "Ground (Elem)", "Advanced GPT-4o", "Adv Multi-IoU", "GUIDE IoU"]} rows={[
+  ["Ferret-UI (Vicuna-13B)", 64.15, 57.22, 45.81, 18.75, 26.91],
+  ["Ferret-UI 2 (Gemma-2B)", 75.20, 78.13, 80.25, 40.51, 51.13],
+  ["Ferret-UI 2 (Llama3-8B)", 80.28, 82.79, 89.73, 41.15, 55.78],
+  ["Ferret-UI 2 (Vicuna-13B)", 81.34, 81.31, 86.25, 41.71, 54.71],
+  ["SeeClick (Qwen-VL-9.6B)", 51.58, 62.82, 67.49, 21.56, 39.51],
+  ["GPT-4o", 56.47, 12.14, 77.73, 7.06, 9.64],
+]} />
+
+## Key findings
+- <Finding src="Tab.5">Data quality matters more than architecture</Finding>: on the harder iPhone-v2 test set, the new dataset lifts the GPT-4o score from 85.97 to 89.7 (+3.73), whereas Ferret-UI 2's architecture adds only +1.9 on the same data; on the easy iPhone-v1 set both contribute marginally — the improved visually-grounded data is the dominant lever.
+- <Finding src="Tab.3">Strong zero-shot generalization</Finding>: on GUI-World, Ferret-UI 2 averages 2.948, beating GUI-Vid (2.767, the benchmark's own model) and Ferret-UI (2.638) on iOS/Android/Web without overfitting (still below Gemini-1.5-Pro 3.295 and GPT-4o 3.619).
+- <Finding src="Tab.4">Cross-platform transfer follows resolution/aspect-ratio similarity</Finding>: iPhone↔iPad↔Android transfer well (≈65–72), but AppleTV and Web (landscape) transfer poorly to mobile, and every other domain scores ≤~43 when tested on AppleTV — a large content/orientation domain gap.
+- <Finding src="Tab.4">Data diversity aids generalization</Finding>: iPhone, trained on the largest set (~112k images), is the best donor platform, transferring at ≥68.1 (refer) / ≥63.1 (ground) to iPad and Android.
+- <Finding src="Tab.7">Grounding transfers to unseen data within supported platform families</Finding>: on ScreenSpot (unseen), Ferret-UI 2 (8B) hits 54.0% avg, topping CogAgent (47.4%) and SeeClick (53.4%), strong on Mobile/Web but weak on the unseen Desktop split (e.g. 21.7% icon/widget).
+- <Finding src="Tab.6">OCR, widget listing, and comprehensive description are the hardest subtasks</Finding> within their task types (e.g. OCR 69.3–80.5 across platforms vs find-widget ≥86), and even Gemma-2B (6× smaller than Vicuna-13B) stays competitive across the board.
+
+## Implications
+Establishes a recipe for universal UI perception: cost-bounded native-resolution encoding plus visually-grounded synthetic supervision. Extends the <Related>Ferret / Ferret-UI / Ferret-v2 referring-and-grounding lineage</Related> and connects to the broader computer-use-agent and multi-platform-benchmark line (<Related>CogAgent, SeeClick, GUI-World, GUIDE</Related>). <FollowUp>Single-step interaction only — chaining into a full multi-step planning agent is the obvious next step</FollowUp>; <FollowUp>the AppleTV/desktop domain gap suggests landscape-heavy and OS-desktop data are the next frontier</FollowUp>; <FollowUp>SoM-prompted GPT-4o as a data engine could generalize beyond UIs</FollowUp>.
+
+## Limitations
+- <Caveat>Single-step interaction only</Caveat>: the model responds to one screen at a time; multi-step navigation is shown only qualitatively (Appendix H/Fig.15), not benchmarked.
+- <Caveat>Severe platform imbalance</Caveat> (Web 321k vs AppleTV 16k, iPad 19k) patched with loss weights/task-count heuristics rather than balanced collection.
+- <Caveat>Advanced-task evaluation is GPT-4o-as-judge</Caveat>, and the same family (GPT-4o+SoM) generates the training data — a potential circularity and judge-bias risk.
+- <Caveat>English-only</Caveat> by construction (>5% non-ASCII screenshots discarded); no multilingual UI support.
+- <Caveat>Text labels come from OCR (conf ≥ 0.5)</Caveat> rather than ground truth on Apple platforms, so OCR errors propagate into supervision; OCR is itself the weakest subtask.
+- <Caveat>Weak transfer to unseen Desktop/landscape</Caveat> (ScreenSpot desktop, AppleTV) — "universal" holds within trained platform families, less so outside them.
+
+## Critiques and Questions
+1. The headline 89.73 is a GPT-4o-judged score on the authors' own benchmark with GPT-4o-generated data; how much of the +12 over GPT-4o reflects genuine capability vs. distribution match to the judge?
+2. Adaptive N-gridding's gain is small in isolation (Tab.5) — is the costlier search worth it over plain AnyRes given that data is the real driver?
+3. Numbers appear to be single runs with no variance/error bars reported; the cross-platform transfer table especially would benefit from repeats.
+4. Tappability is "-" for AppleTV (Tab.6) and SoM/GPT-4o rows have gaps (Tab.2) — coverage is uneven across the claimed 5 platforms.
+
+<SelfCheck q="Why does Ferret-UI 2 use set-of-mark visual prompting when generating advanced-task data with GPT-4o, instead of describing bounding boxes as text?" a="Text-only prompting (as in Ferret-UI) hides widget appearance and spatial/nesting relationships, and GPT-4o grounds poorly from raw screenshots. Drawing corner-style, class-colored numbered boxes on the actual screenshot lets GPT-4o reliably reference and reason about each widget's location and relationships, yielding higher-quality, more spatially-aware training data — which the ablation (Tab.5) shows is the dominant source of the model's gains." />
+
+## Glossary
+- <Term def="Referring = answering questions about a widget given its location (OCR, classify, tappability); grounding = locating a widget given a description (listing, find-text, find-widget).">Referring vs grounding</Term>
+- <Term def="Drawing numbered, color-coded marks/boxes directly on an image so a vision-LLM can reference specific regions by tag (Yang et al. 2023).">Set-of-Mark (SoM)</Term>
+- <Term def="Any-Resolution: tile a high-res image into sub-images plus a low-res global view so a fixed CLIP encoder can perceive detail (LLaVA-NeXT).">AnyRes</Term>
+- <Term def="Match predicted to ground-truth boxes, then average IoU per pair (IoU=0 if unmatched) — measures grounding in multi-widget answers.">Multi-IoU</Term>
+- <Term def="The deduped, label-unified multi-platform screenshot dataset (529k samples) the authors build elementary and advanced tasks on.">Core-set</Term>
+- <Term def="Web-based next-action-prediction benchmark (Chawla et al. 2024) used to test interaction grounding via semantic similarity + IoU.">GUIDE</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

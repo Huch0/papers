@@ -1,0 +1,133 @@
+---
+canonical_key: arxiv-2410.24024
+version_key: v1
+title: 'AndroidLab: Training and Systematic Benchmarking of Android Autonomous Agents'
+authors:
+- Yifan Xu
+- Xiao Liu
+- Xueqiao Sun
+- Siyi Cheng
+- Yun-Hao Liu
+- Hanyu Lai
+- Shudan Zhang
+- Dan Zhang
+- Jie Tang
+- Yuxiao Dong
+venue: arXiv.org
+year: 2024
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2410.24024
+summary_date: '2026-06-07'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+{/*
+  Canonical Summary structure (concise, core-first). Body only — frontmatter is generated
+  from metadata.yaml by `summarize_paper.py --format mdx --prepare`. Components are
+  provided globally by the site (no imports). See config/summary_components.md.
+*/}
+
+<TLDR>AndroidLab is a unified environment plus a reproducible 138-task benchmark for Android agents that puts text-only (XML) and multimodal (SoM) models in one shared action space, and shows that fine-tuning small open-source models on its Android Instruct dataset lifts average success rates from 4.59% to 21.50% (LLMs) and 1.93% to 13.28% (LMMs).</TLDR>
+
+<WhyItMatters>A foundational computer-use-agent artifact: it is one of the first frameworks to systematically compare open- and closed-source Android agents in the same action space and to ship an instruction-tuning dataset, making open-source mobile agents competitive with proprietary ones.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "31.16%", label: "best closed-source SR", sub: "GPT-4-1106-Preview (XML) & GPT-4o (SoM), Tab.1" },
+  { value: "4.59→21.50%", label: "avg LLM success rate", sub: "after SFT, §5.3" },
+  { value: "138", label: "benchmark tasks", sub: "across 9 apps, §3.2" },
+  { value: "726 / 6208", label: "training traces / steps", sub: "Android Instruct subset, §4.1" },
+]} />
+
+## Motivation
+Training and evaluating Android agents lacked systematic study spanning both model families. <Problem>Prior mobile benchmarks were largely static</Problem> — agents predicted actions from screenshots without real interaction (AITW, MetaGUI, PixelHelp). The interactive ones still fell short: <Problem>almost all recent benchmarks tested only closed-source models with prompt-based tweaks</Problem>, so behavior could not be analyzed, insights integrated, or RL run. <Problem>Evaluation metrics relied on fixed operation sequences or single device states</Problem>, which restrict valid task paths and the set of expressible tasks. And there was <Problem>no unified benchmark comparing open- vs closed-source models across modalities</Problem>.
+
+## Contribution (what's new)
+<Novelty>A single action space shared by text-only and multimodal models</Novelty>: XML mode (compressed UI tree) for LLMs and SoM mode (set-of-mark numbered screenshot) for LMMs are aligned so the *same* elements and actions are selectable in both — enabling fair cross-modality comparison. <Novelty>Sub-goal-based task verification: each task is decomposed into required page states checked by UI-tree element matching</Novelty>, rather than matching one canonical operation sequence or final device state; this admits many valid paths and near-arbitrary task types. The design must take this form because sequence/state-matching metrics fail to credit alternative-but-correct trajectories and cannot express query tasks. AndroidLab also ships <Novelty>the Android Instruct instruction-tuning dataset</Novelty>, closing the open-source gap.
+
+## Research questions
+- Can open- and closed-source LLMs and LMMs be benchmarked fairly under one action space and one reproducible Android environment?
+- How far behind are open-source models, and can fine-tuning on a purpose-built dataset close the gap to proprietary models?
+- Do reasoning frameworks (ReAct, SeeAct) actually help Android agents, and at what efficiency cost?
+
+## Methodology
+A standard operation environment (action space + four modes) drives a deterministic 138-task benchmark over preloaded Android virtual devices; an annotation pipeline builds the Android Instruct dataset used to fine-tune six small open-source models.
+
+<Pass title="Method details">
+**Action space.** Built on AppAgent and AndroidEnv: four core operations — <Term def="single touch">Tap</Term>, <Term def="drag with direction/distance">Swipe</Term>, <Term def="text entry via ADB keyboard in one shot">Type</Term>, <Term def="press-and-hold">Long Press</Term> — plus Home/Back shortcuts and a <Term def="terminal step returning a result or answer">Finish</Term> action (§3.1).
+
+**Four operation modes.** Two base modes: <Term def="compressed UI XML tree; LLM picks elements directly">XML mode</Term> (text-only) and <Term def="Set-of-Mark: each clickable/focusable element gets a serial number on the screenshot; LMM selects by number">SoM mode</Term> (multimodal); selections are aligned so both modes act on identical elements. Two add-on frameworks: <Term def="think step-by-step, emit thought then action">ReAct</Term> and <Term def="two-round: describe desired action then emit the real call">SeeAct</Term> (§3.1, App.B).
+
+**Benchmark.** 138 tasks across 9 offline apps (Settings, Bluecoins, PiMusic, Clock, Maps.me, Zoom, Contacts, Calendar, Cantook): 93 Operation Tasks and 45 Query Tasks (§3.2). Each task is a 4-tuple `Task(E, I, F, M)` — environment (pre-packaged AVD image), instruction, framework, backbone model. Reproducibility: ADB fixes evaluation time and geolocation, apps run offline with preloaded records, query answers are pre-computed for unique ground truth (§3.2.2).
+
+**Metrics (§3.2.3, higher = better).** <Term def="all sub-goals completed; query answers judged by an advanced LLM">Success Rate (SR)</Term>; <Term def="fraction of sub-goals reached, Operation Tasks only">Sub-Goal SR (Sub-SR)</Term>; <Term def="reciprocal of path length vs human, scaled; can exceed 100; unreported when SR<5">Reversed Redundancy Ratio (RRR)</Term>; <Term def="fraction of operations that changed the screen">Reasonable Operation Ratio (ROR)</Term>.
+
+**Android Instruct dataset (§4).** Three steps: (1) task derivation/expansion seeded from academic datasets + hand-written instructions, expanded by LLMs; (2) self-exploration (a reward model replaced manual selection after 500 traces); (3) manual annotation with cross-verification, using a custom ADB + Accessibility-Service tool that captures screenshot + page XML before each action. Yields 10.5k traces / 94.3k steps overall; the 726 traces / 6208 steps from benchmark apps are used for training, in aligned XML and SoM formats.
+
+**Training (§4.3).** Backbones: Llama-3.1-8B-Instruct, GLM-4-9B-Chat, Qwen2-7B-Instruct (LLMs); Llama-3.2-11B-Vision-Instruct, Qwen2-VL-7B-Instruct, CogVLM2 (LMMs). Base versions fine-tuned where available (Qwen2-VL has no open base); batch size 32, max length 4096, 5 epochs, LR 1e-5. Eval: tasks start inside the target app, max 25 steps, 3s per step, greedy decoding (§5.1).
+</Pass>
+
+## Main result
+The benchmark is hard: the leading closed-source models top out near 31%. <Finding src="Tab.1, p.9">In XML mode GPT-4-1106-Preview leads at 31.16% SR (38.21% Sub-SR); in SoM mode GPT-4o leads at 31.16% SR (35.02% Sub-SR)</Finding>. <Finding src="Tab.1, §5.3">Fine-tuning on Android Instruct raises average SR from 4.59% to 21.50% for LLMs and from 1.93% to 13.28% for LMMs</Finding>, bringing the best tuned open-source LLMs near GPT-4o and the best tuned LMMs past Gemini-1.5-Pro.
+
+<SortableTable columns={["Model", "Mode", "SR (%)", "Sub-SR (%)", "RRR", "ROR (%)"]} rows={[
+  ["GPT-4-1106-Preview", "XML", 31.16, 38.21, 66.34, 86.24],
+  ["GPT-4o", "XML", 25.36, 30.56, 107.45, 86.56],
+  ["GLM4-PLUS", "XML", 27.54, 32.08, 92.35, 83.41],
+  ["GPT-4o", "SoM", 31.16, 35.02, 87.32, 85.36],
+  ["Claude-3.5-Sonnet", "SoM", 28.99, 32.66, 113.41, 81.16],
+  ["LLaMA3.1-8B-Instruct", "XML", 2.17, 3.62, 0, 52.77],
+  ["LLaMA3.1-8B-ft", "XML+SFT", 23.91, 30.31, 75.58, 92.46],
+  ["Qwen2-7B-Instruct", "XML", 4.35, 4.95, 0, 67.26],
+  ["Qwen2-7B-ft", "XML+SFT", 19.57, 24.40, 77.31, 92.48],
+  ["GLM4-9B-Chat", "XML", 7.25, 9.06, 54.43, 58.34],
+  ["GLM4-9B-ft", "XML+SFT", 21.01, 26.45, 74.81, 93.25],
+  ["CogVLM2", "SoM", 0.72, 0.72, 0, 17.97],
+  ["CogVLM2-ft", "SoM+SFT", 11.59, 16.06, 57.37, 85.58],
+  ["Qwen2-VL-7B-Instruct", "SoM", 3.62, 4.59, 0, 84.81],
+  ["Qwen2-VL-7B-Instruct-ft", "SoM+SFT", 18.12, 22.64, 65.23, 88.29],
+]} />
+
+(RRR shown as 0 where the paper reports no value because SR < 5.)
+
+## Key findings
+- <Finding src="Tab.1, §5.3">Fine-tuning closes most of the open-vs-closed gap</Finding>: Qwen2-7B's SR jumps 4.35→23.91 (XML), Qwen2-VL-7B 3.62→18.12 (SoM), and CogVLM2's ROR leaps 17.97→85.58 — tuned models' effective-action rate (ROR) surpasses most closed-source models.
+- <Finding src="Tab.2, §5.3">ReAct helps mainly in XML mode</Finding>: GPT-4o XML SR rises 25.36→33.33 and Gemini-1.5-Pro 18.84→31.16 with ReAct; in SoM ReAct barely moves GPT-4o (31.16→31.88) and SeeAct is inconsistent, attributed to weaker multimodal reasoning.
+- <Finding src="Tab.3, §5.3">Reasoning frameworks cost tokens</Finding>: average generated tokens grow from 4.96 (post-SFT) and 23.56 (base XML/SoM) to 67.89 (ReAct) and 129.12 (SeeAct), hurting efficiency for marginal or no SR gain.
+- <Finding src="Fig.6, §5.3">Screen size matters</Finding>: SoM agents perform best on common phone sizes (Pixel 7 Pro / 8 Pro) and degrade on smaller (Pixel 3a, more scrolling) and tablet-like (Pixel Fold, landscape) screens.
+- <Finding src="Tab.1, §5.3">RRR (efficiency) is decoupled from SR</Finding>: Claude-3.5-Sonnet has the best SoM RRR (113.41) despite lower SR than GPT-4o, and fine-tuning consistently lifts both RRR and ROR.
+- <Finding src="§5.1">Launch-failure is a real confound</Finding>: agents often failed simply because they could not open the specified app, so evaluation starts inside the target app to isolate task-execution ability.
+
+## Implications
+AndroidLab makes open-source mobile agents a viable research target: a shared action space plus an instruction-tuning dataset turns ~2-5% baseline models into ~20% agents. It extends the <Related>AndroidEnv / B-MOCA / AndroidWorld line of interactive mobile benchmarks</Related> and the <Related>AppAgent / CogAgent / SeeAct agent lineage</Related>, and its SoM tasks are reused as the <Related>VAB-Mobile component of VisualAgentBench</Related>. <FollowUp>Whether the sub-goal UI-tree matcher generalizes to apps with dynamic or non-standard UI trees</FollowUp> and <FollowUp>whether RL (now feasible on these open models) beats SFT</FollowUp> are natural next threads, as is <FollowUp>reducing redundancy to improve real-world deployability</FollowUp>.
+
+## Limitations
+- <Caveat>Scope is 9 offline, login-free, no-internet apps</Caveat> chosen for reproducibility — excludes the network-dependent, account-gated, dynamic apps where real users spend most time.
+- <Caveat>All results are single-run greedy decoding with a 25-step cap</Caveat>; no variance or error bars are reported, so small SR differences may not be significant.
+- <Caveat>RRR is unreported whenever SR < 5</Caveat> and can exceed 100 because human paths are not optimal, making it a noisy efficiency proxy for weak models.
+- <Caveat>Tasks start pre-launched inside the target app</Caveat>, removing the app-discovery/launch step that real agents must handle.
+- <Caveat>Query-task grading relies on an advanced LLM judge</Caveat>, which introduces an unquantified evaluator-reliability risk.
+
+## Critiques and Questions
+1. The headline "21.50% / 13.28%" averages are computed only over the open-source models fine-tuned here; with single-run numbers and a 25-step ceiling, how much of the gain is robust vs. variance or distribution-match between the 6208 training steps and the same-app eval tasks (potential overlap/contamination)?
+2. Is the sub-goal UI-tree matcher robust to UI changes across app versions, or does it silently age as the AVD images drift — and how brittle is it on apps with dynamic components (the very case that broke ADB XML capture)?
+3. SeeAct's failure is blamed on multimodal reasoning limits, but it was the most token-heavy mode (129.12 tokens); could the two-round protocol itself, not modality, be the culprit?
+
+<SelfCheck q="Why does AndroidLab align the XML and SoM modes onto the same elements and action space?" a="So text-only (LLM) and multimodal (LMM) models can be compared fairly: both modes select the identical underlying UI elements and emit the identical action calls, isolating the modality/model effect rather than differences in the interface. The SoM serial numbers map to the same elements as the compressed XML list." />
+
+## Glossary
+- <Term def="A unified Android agent framework: a standard operation environment (action space + 4 modes) plus a reproducible 138-task benchmark and the Android Instruct training dataset.">AndroidLab</Term>
+- <Term def="Set-of-Mark prompting: overlay numbered marks on each clickable/focusable element of a screenshot so a multimodal model can refer to an element by its number.">SoM</Term>
+- <Term def="Android Debug Bridge: command-line tool used to drive the device, set time/geolocation, capture input events, and (with the Accessibility Service) retrieve page XML.">ADB</Term>
+- <Term def="Android Virtual Device: a pre-packaged emulator image with fixed screen size, Android version, API level, and app state, used to make evaluation deterministic.">AVD</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

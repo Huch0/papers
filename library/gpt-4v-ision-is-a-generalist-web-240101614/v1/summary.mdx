@@ -1,0 +1,115 @@
+---
+canonical_key: arxiv-2401.01614
+version_key: v1
+title: GPT-4V(ision) is a Generalist Web Agent, if Grounded
+authors:
+- Boyuan Zheng
+- Boyu Gou
+- Jihyung Kil
+- Huan Sun
+- Yu Su
+venue: International Conference on Machine Learning
+year: 2024
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2401.01614
+summary_date: '2026-06-07'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>GPT-4V can act as a strong generalist web agent — completing 51.1% of live-website tasks with oracle grounding — but converting its correct visual plans into precise on-page actions (element grounding) is the dominant bottleneck.</TLDR>
+
+<WhyItMatters>A foundational computer-use-agent result: it separates an LMM's *planning* ability (strong) from its *grounding* ability (weak), and shows that the web's HTML↔visual correspondence — not generic set-of-mark prompting — is what makes grounding work.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "51.1%", label: "online task success", sub: "SeeAct GPT-4V + oracle grounding" },
+  { value: "37.8%", label: "online task success", sub: "SeeAct GPT-4V + textual-choice grounding" },
+  { value: "20-30%", label: "gap to oracle grounding", sub: "best real grounding method" },
+  { value: "2,000+", label: "tasks / 137 websites", sub: "Multimodal Mind2Web benchmark" },
+]} />
+
+## Motivation
+Prior web agents feed <Problem>raw HTML into LLMs, which is noisy, low-density, and incomplete</Problem> — a single screenshot of 423 elements costs 186,490 GPT-2 tokens of HTML but only 1,445 GPT-4V visual tokens, and HTML <Problem>misses critical semantics carried only by rendered visuals (e.g. embedded images)</Problem>. Every website is built to be *seen*, yet <Problem>the visual rendering of websites is largely overlooked as an input modality for agents</Problem>. Whether a powerful LMM can perceive and navigate arbitrary real websites was open.
+
+## Contribution (what's new)
+SeeAct splits an action into <Novelty>visual Action Generation (an LMM reads the screenshot and produces a free-text plan) followed by a separate Action Grounding step that converts that plan into a concrete `(element, operation, value)` browser event</Novelty>. The key empirical insight that survives deleting "we propose": <Novelty>grounding, not planning, is the bottleneck — and the grounding method that works leverages the web's unique HTML-element↔visual-rendering correspondence rather than image annotation</Novelty>. Generic <Problem>set-of-mark / image-annotation prompting fails on webpage screenshots</Problem> because GPT-4V hallucinates bounding boxes and mislinks boxes to labels, so the design routes grounding through HTML-text choices (ranked candidates) instead.
+
+## Research questions
+1. Can an LMM like GPT-4V serve as a *generalist* web agent across arbitrary real websites?
+2. If its textual plans are correct, what is the right way to *ground* them into executable actions?
+3. How do in-context-learning large models compare to supervised fine-tuned small models, and does offline evaluation reflect true performance?
+
+## Methodology
+SeeAct prompts GPT-4V with only the screenshot to generate a step-wise action description, then grounds that description with one of four methods, evaluated on a cleaned multimodal version of Mind2Web both offline (cached pages) and online (live websites via a new Playwright tool).
+
+<Pass title="Method details">
+**Formulation.** At step `t` the agent emits action `a_t = π(s_t, T, {a_1..a_{t-1}})`, where the observation `s_t = {h_t, i_t}` is an HTML document plus a screenshot. An action is a triplet `(e, o, v)`: target element `e`, operation `o ∈ {Click, Type, Select}`, and value `v`. The model first produces a textual plan `ã = (ẽ, õ, ṽ)` (Action Generation), which is then converted to `a` (Action Grounding). Action generation uses the screenshot only — not HTML (§2.2).
+
+<Stepper steps={[
+  { title: "Element Attributes", body: "Model emits element text + type; a heuristic DOM search matches it. Fails when elements have no text or the text lives in a nearby element." },
+  { title: "Textual Choices", body: "A DeBERTa cross-encoder ranks top-50 candidates (from MindAct); elements are batched into groups of 17, and GPT-4V picks the matching choice (with a 'none' option). Best-performing real method." },
+  { title: "Image Annotation", body: "Overlay bounding boxes + bottom-left number labels (set-of-mark style) on the screenshot; model returns the target's label. Severe hallucination on dense webpages." },
+  { title: "Oracle (upper bound)", body: "Human annotators identify the model's intended action from its description — measures pure action-generation quality." },
+]} />
+
+**Benchmark — Multimodal Mind2Web.** Each Mind2Web HTML doc is aligned with its verified screenshot. Three generalization splits: Cross-Task (177 tasks, seen sites), Cross-Website (142 tasks, 10 new sites), Cross-Domain (694 tasks, 2 held-out top-level domains). Tasks average ~6-8 actions, ~600 elements, ~4,200 visual tokens (Tab.1, p.5).
+
+**Baselines.** MindAct two-stage pipeline with supervised fine-tuned FLAN-T5-XL and BLIP-2-T5-XL; in-context GPT-3.5 / GPT-4 (3-shot); pixel-level CogAgent; and SeeAct with Gemini Pro Vision and LLaVA-1.5. Models compared: `GPT-4-vision-preview` for GPT-4V (Appendix A).
+
+**Online tool.** A Playwright harness tunnels screenshot+HTML to the agent and executes the predicted `(e,o,v)` as a real browser event; a human monitors and blocks harmful actions (logins, submissions, orders). Online run = same 90 tasks (30 per split); time-sensitive tasks rewritten to stay valid (§3.4, §4.2).
+</Pass>
+
+## Main result
+With oracle grounding, <Finding src="Tab.4, p.6">SeeAct GPT-4V completes 51.1% of live-website tasks, vs 13.3% for GPT-4 and 8.9% for FLAN-T5-XL</Finding>. With the best *real* grounding (textual choices), <Finding src="Tab.4, p.6">SeeAct reaches 37.8% online — still over 20 points above GPT-4 (13.3%) and FLAN-T5 (8.9%)</Finding>, but well short of the 51.1% oracle ceiling.
+
+<SortableTable columns={["Method (online)", "Online task SR %", "Offline0 SR %", "Offline1 SR %"]} rows={[
+  ["FLAN-T5-XL (SFT)", 8.9, 4.4, 24.4],
+  ["GPT-4 (ICL)", 13.3, 1.1, 12.2],
+  ["SeeAct-Choice (GPT-4V)", 37.8, 3.3, 12.2],
+  ["SeeAct-Oracle (GPT-4V)", 51.1, 13.3, 27.8],
+]} />
+
+## Key findings
+- <Finding src="Tab.3, p.6">Grounding is the bottleneck, not planning</Finding>: across the 30-task subset, step success rises from 16.1/12.1/19.0% (attributes) and 20.3/13.9/23.7% (image annotation) to 39.1/32.7/42.0% (textual choices), but oracle grounding hits 61.9/65.0/62.1% — a ~20-30 point headroom over the best real method.
+- <Finding src="§4.1, p.5">Set-of-mark image annotation fails on webpages</Finding>: unlike on object/scene images, GPT-4V hallucinates on dense screenshots; the best grounding instead organically combines HTML text and visuals, beating image annotation by up to ~10 points.
+- <Finding src="§4.3, p.7">Image-annotation errors are 54% fabricated boxes/labels (visual illusion) and 46% box-label mislinking</Finding>: from 100 cases with correct plans but wrong grounding, GPT-4V invents a bounding box where it should answer "NA", or cannot tie a box to its label — a relative-spatial-position weakness.
+- <Finding src="Tab.4, p.6">Offline evaluation severely underestimates large models</Finding>: SeeAct-Choice scores only 3.3% offline-0 but 37.8% online; GPT-4 beats FLAN-T5 online (13.3 vs 8.9) despite losing on offline step metrics — because multiple valid plans exist but offline references capture only one.
+- <Finding src="§4.1, p.5">ICL with large models generalizes; SFT wins on seen sites</Finding>: SeeAct's lead over the second-best baseline grows from +8.4 (Cross-Task) to +23.9 (Cross-Website) and +23.2 (Cross-Domain) step SR — fine-tuned small models hold an edge only on websites seen in training.
+- <Finding src="Fig.3, p.7">Success drops with task length and the oracle gap widens</Finding>: success falls from Easy (1-4 actions) to Hard (10-18); the SeeAct-Oracle vs SeeAct-Choice gap enlarges on long-horizon tasks because grounding errors cascade across steps.
+- <Finding src="Tab.5, p.14">Markup choice matters for annotation</Finding>: numeric labels at the bottom-left are the best image-annotation markup (27.0% Ele.Acc), beating single/double letters and bottom-center positions.
+
+## Implications
+SeeAct reframes computer-use agents around grounding: a capable planner (<Related>GPT-4V / Gemini, building on the LMM line of Flamingo, BLIP-2, LLaVA</Related>) is bottlenecked by fine-grained UI grounding, which the web can uniquely solve via its <Related>HTML↔render correspondence, unlike generic set-of-mark / SoM visual prompting (Yang et al. 2023a)</Related>. It extends the <Related>Mind2Web / MindAct generalist-web-agent line (Deng et al. 2023)</Related> and ships Multimodal Mind2Web plus a live-website evaluation tool. <FollowUp>Closing the 20-30 point grounding gap — e.g. pixel-level grounding (CogAgent, SeeClick, Ferret) or better visual marks</FollowUp> and <FollowUp>online RL / error-correction loops that exploit GPT-4V's observed self-correction and state-prediction ("world model") behavior</FollowUp> are the obvious next threads.
+
+## Limitations
+- <Caveat>Oracle grounding requires a human in the loop</Caveat>, so the headline 51.1% is an upper bound on planning, not an autonomous result.
+- <Caveat>Online evaluation is only 90 tasks (30 per split) with manual safety monitoring and restricted to non-login, non-submission tasks</Caveat>, limiting both scale and the kinds of tasks tested.
+- <Caveat>Several key comparisons use 30-task subsets and apparently single runs</Caveat> (Tab.3, GPT-3.5/GPT-4 in Tab.2), with no variance reported.
+- <Caveat>GPT-4V is a closed, versioned API (`gpt-4-vision-preview`)</Caveat>, so results may not reproduce as the model changes; open LMMs (LLaVA-1.5, Gemini Pro Vision) lag far behind.
+- <Caveat>The grounding pipeline still depends on the MindAct DeBERTa ranker</Caveat>, so "visual" grounding via choices is not purely visual.
+
+## Critiques and Questions
+1. The framing "GPT-4V is a generalist web agent, *if grounded*" leans on the oracle number; the autonomous best (37.8% online) is much lower — how much of the gap is fundamentally a model-grounding limit vs an artifact of routing grounding through a text ranker rather than end-to-end vision?
+2. Online success is judged by a human monitor on 90 tasks — how reproducible and inter-annotator-consistent is that "success" judgment, and does rewriting time-sensitive tasks bias the comparison?
+3. The error analysis attributes annotation failures to "visual illusion"; would higher-resolution screenshots, smaller element batches, or coordinate-trained models (CogAgent did poorly here at 13-18% step SR) actually fix it, or is dense-UI spatial reasoning a deeper LMM weakness?
+
+<SelfCheck q="Why does set-of-mark image annotation, which works on natural images, fail for web grounding here, and what works instead?" a="Webpage screenshots are dense with many semantically/spatially similar elements, so GPT-4V hallucinates — fabricating bounding boxes (54% of errors) and mislinking boxes to labels (46%). The effective alternative grounds via textual choices that exploit the known correspondence between HTML elements and their visual rendering, reaching 39.1/32.7/42.0% step SR vs ~20% for image annotation (Tab.3, §4.3)." />
+
+## Glossary
+- <Term def="A free-text description of the next step (target element, operation, value) that an LMM produces from the screenshot before it is converted into an executable browser event">Action Generation</Term>
+- <Term def="Converting a textual plan into a concrete browser action by selecting the exact HTML element, operation, and value; element grounding is the hard sub-problem">Action Grounding</Term>
+- <Term def="An upper-bound grounding method where human annotators map the model's intended action to the correct element, isolating planning quality from grounding quality">Oracle grounding</Term>
+- <Term def="Prompting that overlays numbered marks/bounding boxes on an image so the model can refer to regions by label; effective on object-centric images, but hallucination-prone on dense webpages">Set-of-mark (SoM) prompting</Term>
+- <Term def="Multimodal Mind2Web: a cleaned version of Mind2Web pairing each HTML page with a verified screenshot; 2,000+ tasks across 137 websites with Cross-Task/Website/Domain splits">Multimodal Mind2Web</Term>
+- <Term def="Element Accuracy / Operation F1 / Step Success Rate — Mind2Web's step-wise metrics; a step succeeds only if both the selected element and the operation are correct">Ele.Acc / Op.F1 / Step SR</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

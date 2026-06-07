@@ -1,0 +1,46 @@
+---
+canonical_key: title-0b1d28331c0f
+version_key: v1
+title: OSWorld-Verified
+authors: []
+venue: tech report
+year: 2025
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: null
+summary_date: '2026-06-07'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<Caveat>**Metadata-only record — no full text fetched.** This summary is grounded in the catalogued metadata and general context only; no PDF was downloaded or extracted, so no claim here is verified against a source document. All quantitative figures are marked "Not reported / verify against source." Verify everything against the original release before relying on it.</Caveat>
+
+<TLDR>A corrected, verified re-release of the <Term def="A benchmark of real-world computer-use tasks executed in live operating-system environments, scored by execution-based checks rather than text matching.">OSWorld</Term> computer-use benchmark, fixing 300+ task and evaluation issues and adding large-scale parallel execution.</TLDR>
+
+<WhyItMatters>OSWorld is a default reference benchmark for computer-use agents — a core interest area — so a verified, less-noisy version directly affects how agent progress is measured and compared.</WhyItMatters>
+
+## What it is
+OSWorld-Verified is described as an in-place upgrade to the OSWorld benchmark for <Term def="Agents that operate a computer through its graphical/OS interface — clicking, typing, navigating apps — rather than via dedicated APIs.">computer-use agents</Term>. The metadata characterizes it as a corrected and verified release that repairs a large number of <Term def="Errors in how a benchmark scores an agent's attempt — e.g. broken success checks, flaky environment setup, or mislabeled expected outcomes.">evaluation issues</Term> in the original tasks and adds substantially faster, parallelized execution infrastructure. It is catalogued as a tech report (2025), foundational tag, under the computer-use-agents topic group.
+
+## Why it matters
+Because OSWorld functions as a shared leaderboard for computer-use agents, errors in its tasks or scoring propagate into every reported result. A verified release aims to make the benchmark a more trustworthy default for ranking systems. The metadata further notes a "default trusted computer-use leaderboard" positioning, which would make this the canonical scoring target going forward.
+
+## Key findings
+These are field-role observations derived from the catalogued metadata, not results verified from a paper. The record describes a corrected/verified release of the OSWorld benchmark rather than a new method or empirical study.
+
+- <Finding>Role: corrected/verified benchmark re-release.</Finding> The artifact is positioned as an in-place upgrade to OSWorld rather than a new benchmark. Magnitude of correction: "Not reported / verify against source."
+- <Finding>Scope of fixes: 300+ task/evaluation issues addressed.</Finding> The count and the nature of each fix are summarized from metadata only and must be checked against the source. Exact figures: "Not reported / verify against source."
+- <Finding>Execution infrastructure: large-scale parallelization (cited as ~50x via AWS).</Finding> Speedup factor and setup are as-stated in metadata; "Not reported / verify against source."
+- <Finding>Leaderboard role: positioned as the default trusted computer-use leaderboard.</Finding> Adoption and trust claims are unverified here; "Not reported / verify against source."
+
+<Caveat>No PDF, abstract beyond the catalogued one-liner, author list, venue detail, or quantitative results were available at summary time. Treat scope, counts, and speedups as metadata claims pending verification.</Caveat>
+
+{/* NOTES_START */}
+### Personal notes
+Metadata-only stub. To upgrade: fetch the source release (project page / tech report), run extraction, and re-summarize with verified task counts, the precise list of corrected evaluation issues, the parallelization setup, and any reported agent scores on the verified suite.
+{/* NOTES_END */}

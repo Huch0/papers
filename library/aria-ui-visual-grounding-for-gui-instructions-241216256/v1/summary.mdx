@@ -1,0 +1,120 @@
+---
+canonical_key: arxiv-2412.16256
+version_key: v1
+title: 'Aria-UI: Visual Grounding for GUI Instructions'
+authors:
+- Yuhao Yang
+- Yue Wang
+- Dongxu Li
+- Ziyang Luo
+- Bei Chen
+- Chao Huang
+- Junnan Li
+venue: Annual Meeting of the Association for Computational Linguistics
+year: 2024
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2412.16256
+summary_date: '2026-06-07'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+{/*
+  Canonical Summary structure (concise, core-first). Body only — frontmatter is generated
+  from metadata.yaml by `summarize_paper.py --format mdx --prepare`. Components are
+  provided globally by the site (no imports). See config/summary_components.md.
+*/}
+
+<TLDR>Aria-UI is a pure-vision multimodal model for <Term def="mapping a language instruction to the on-screen pixel coordinates of the element to act on">GUI grounding</Term> that, trained on a large synthesized corpus of diverse instructions plus action-history context, sets new state-of-the-art grounding accuracy and agent task success across mobile, desktop, and web without any HTML/accessibility-tree input.</TLDR>
+
+<WhyItMatters>Grounding is the bottleneck that turns a planner's text action into a real click; a robust, AXTree-free grounder is a core building block for the computer-use agent stack I track.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "82.4%", label: "ScreenSpot avg. accuracy", sub: "vs 74.1% UGround (Tab.2)" },
+  { value: "44.8%", label: "AndroidWorld task SR", sub: "online, Aria-UITH (Tab.5)" },
+  { value: "3.9B", label: "activated params", sub: "Aria MoE backbone" },
+  { value: "16.6M", label: "single-step grounding samples", sub: "1.37M screenshots (Tab.8)" },
+]} />
+
+## Motivation
+GUI agents act in two stages — planning (decide the next action) and grounding (locate the target element on screen). The paper targets the grounding stage, where <Problem>relying on HTML or accessibility trees (AXTrees) for element location is brittle</Problem>: long textual trees cause inefficiency, hallucination, and bias, AXTree quality varies by app developer (especially on mobile/desktop), and tree-only methods cannot resolve instructions that need visual or positional cues. Existing pure-vision grounding models exist but <Problem>depend on rigid, narrow instruction formats (HTML-extracted text or fixed referring captions)</Problem> and <Problem>ignore dynamic task context such as prior action history</Problem>, so they generalize poorly to the heterogeneous instructions real planners emit and to multi-step trajectories.
+
+## Contribution (what's new)
+The genuine delta is a <Novelty>data-centric recipe for instruction-robust, context-aware grounding</Novelty>, not a new architecture. Two mechanisms: (1) a <Novelty>two-stage synthesis pipeline — a strong LMM writes a detailed element caption (visual/functional/positional), then an LLM expands each caption into several human-like instructions — yielding diverse (caption, instruction, coordinate) triples and using the caption itself as auxiliary supervision</Novelty>. This form is forced by the failure mode: models trained on rigid HTML/caption inputs can't bind the varied phrasings a planner produces, so training must inject phrasing diversity and an explicit caption↔element alignment signal. (2) <Novelty>Training on textual and text-image-interleaved action history from real trajectories</Novelty>, so the grounder exploits the strong contextual dependence between consecutive steps (e.g., after TYPE the next target is likely a SUBMIT button).
+
+## Research questions
+Can a pure-vision LMM, with no HTML/AXTree input, ground GUI elements more accurately than both vision-only and tree-reliant baselines? And does adding diverse synthesized instructions and dynamic action-history context measurably improve grounding and downstream agent success?
+
+## Methodology
+Build Aria-UI on the Aria multimodal MoE backbone (3.9B activated params), synthesize a large diverse grounding corpus across web/desktop/mobile, extend it with trajectory-based context, and train in two phases (single-step grounding, then context-aware). Output is a normalized `[0, 1000]` pixel point coordinate.
+
+<Pass title="Method details">
+**Data synthesis (§2.1.1).** Two stages. Stage 1: a strong LMM (GPT-4o or Qwen2-VL-72B) sees an isolated element image plus a zoomed-in view with the element in a red bounding box, plus HTML text and screen position, and writes a detailed caption (visual properties, functionality, positional relations). Stage 2: an LLM turns each caption into ~3 natural-language instructions. Applied to:
+- **Web:** Common Crawl, filtered with fastText, interactive elements selected via HTML attributes, graphical elements prioritized over text, pages kept only if >20 valid elements; rendered with Playwright at 1920×1080 and 2440×1600. 173K webpages, 2M elements → 6M+ instruction samples (Tab.8 lists 6.4M).
+- **Desktop:** an LMM-guided (Gemini 1.5 Flash) traverse agent does heuristic DFS over an Ubuntu desktop, hashing intractable elements as state IDs and using hotkeys (ESC/SPACE) to backtrack. 88K unique elements across 7.8K screenshots → 264K samples.
+- **Mobile:** regenerate captions/instructions over AMEX (104K screenshots, 1.6M elements; only 3K had human-like instructions originally) → 4.8M samples. Plus public data: SeeClick, UIBert, GUICourse, OmniACT, AutoGUI.
+
+**Context-aware data (§2.1.2).** From trajectories (GUI-Odyssey, AitW, AitZ, AndroidControl, AMEX; avg. steps 5.5–15.4, 50.8K trajectories) build two context types: textual action history and text-image-interleaved history (window `N = [1,2,3]`). All grounding steps get pipeline-generated stepwise instructions; non-grounding actions (SWIPE/TYPE) are rule-encoded. ~992K context-aware samples (Tab.9).
+
+**Architecture (§2.2).** <Term def="splitting a high-res screenshot into blocks plus NaViT-style aspect-ratio padding before resize, to preserve positional accuracy">Ultra-resolution support</Term> extends Aria's 980×980 limit to a max of 3920×2940.
+
+**Training (§2.3, App.B).** Phase 1: all single-step data, multi-turn-grouped per image, prompt asks for relative `(0-1000)` coordinates. Phase 2: text-based + interleaved-history data, with 20% single-step data re-added to retain generic grounding and avoid overfitting. 64 NVIDIA H800 GPUs, Megatron-LM; phase-1 ctx 4096, 10K steps, 18h, lr 2e-5; phase-2 ctx 8192, 2K steps, 6h, lr 1e-5; global batch 256, EP factor 8, ViT lr = 1/10 of LLM lr.
+</Pass>
+
+## Main result
+On ScreenSpot, Aria-UI reaches <Finding src="Tab.2">82.4% average element accuracy, vs 74.1% for the prior SOTA UGround and 55.8% for SeeClick</Finding>, with the largest gains on text elements (e.g., 92.3% mobile-text, 93.3% desktop-text). On the online AndroidWorld benchmark, <Finding src="Tab.5">Aria-UITH hits 44.8% task success rate vs 32.8% for UGround under the same GPT-4o planner</Finding>.
+
+<SortableTable columns={["Method", "ScreenSpot avg (Tab.2)", "Mind2Web avg (Tab.4)", "AndroidWorld SR (Tab.5)"]} rows={[
+  ["GPT-4o", 18.1, 0, 0],
+  ["SeeClick", 55.8, 32.9, 0],
+  ["Qwen2-VL", 55.3, 0, 0],
+  ["UGround", 74.1, 46.8, 32.8],
+  ["Aria-UI (base)", 82.4, 57.5, 39.7],
+  ["Aria-UITH (text hist.)", 82.4, 58.9, 44.8],
+  ["Aria-UIIH (interleaved)", 82.4, 58.9, 0]
+]} />
+
+{/* 0 = Not reported for that method/benchmark cell. Aria-UI TH/IH share the base ScreenSpot single-step score. */}
+
+## Key findings
+- <Finding src="Tab.3">On zero-shot offline mobile agents, Aria-UI beats all baselines</Finding>: AndroidControl-Low 79.7% grounding / 54.39% task SR and GUI-Odyssey 64.81% / 5.28%, far above Qwen2-VL and SeeClick; with training-split data and history it reaches GUI-Odyssey 87.02% grounding / 37.30% task SR.
+- <Finding src="Tab.5, §3.4">Dynamic context is the single biggest lever in live environments</Finding>: on AndroidWorld the context-aware model outperforms the base model by 12.8 points, and textual history (TH) often matches or beats interleaved history (IH) while being cheaper.
+- <Finding src="Tab.6">On OSWorld (computer-use, pure-vision), GPT-4o + Aria-UITH gets the best 15.15% avg task SR</Finding>, the top pure-vision result, excelling on VLC (30.06%), Chrome (23.80%), and Impress (15.32%) — and beating GPT-4o + A11y (11.21%) despite using no accessibility tree.
+- <Finding src="Tab.7">Ultra-resolution support is critical</Finding>: removing it drops ScreenSpot avg from 82.4% to 61.1%, with the largest hit on desktop/web icon and text elements.
+- <Finding src="Tab.7">Both the synthesized pipeline data and diversified instructions matter</Finding>: removing Aria-UI pipeline data drops avg to 68.7%, removing diversified instructions to 74.9%, and dropping caption-as-supervision to 77.5% — confirming instruction diversity and caption↔element alignment drive the gains.
+- <Finding src="Tab.7">Visual CoT prompting helps mobile text but hurts overall</Finding>: it lifts mobile-text slightly (93.8%) but lowers the average to 71.4%, attributed to noise in visual reasoning.
+
+## Implications
+A strong, AXTree-free grounder lets a generic planner (here GPT-4o) drive real actions across platforms, cleanly decoupling planning from grounding in the agent stack. It extends the pure-vision grounding lineage of <Related>SeeClick and UGround</Related> on the <Related>Aria MoE backbone</Related>, and reframes the problem as a data-synthesis problem (caption→instruction generation from Common Crawl + trajectories). Worth following: <FollowUp>whether textual history (TH) consistently dominates interleaved history (IH) given its lower cost, and where IH's multimodal context actually pays off (it leads on Mind2Web cross-website/cross-domain)</FollowUp>, and <FollowUp>folding planning and grounding into one model with planner-error correction, which the authors flag as future work</FollowUp>.
+
+## Limitations
+- <Caveat>Grounding-only: Aria-UI cannot autonomously plan, so it inherits the quality of an external planner</Caveat>, and overall task success on hard tasks is bounded by that planner.
+- <Caveat>No error correction for planner-generated instructions</Caveat> — it cannot recover from a wrong instruction during a dynamic task.
+- <Caveat>Absolute online success is still low</Caveat>: OSWorld avg 15.15% and GUI-Odyssey zero-shot task SR 5.28% show end-to-end reliability remains far from usable.
+- <Caveat>Synthesized instructions depend on proprietary LMMs (GPT-4o, Gemini 1.5)</Caveat> for caption/instruction generation, so data quality and reproducibility hinge on those models.
+
+## Critiques and Questions
+1. The headline ScreenSpot gain is real but the benchmark uses single human-annotated instructions per element; how much of the 82.4% reflects robustness to the *messy* planner phrasings the paper motivates, vs. clean test instructions?
+2. Desktop training data is collected on Ubuntu and OSWorld is largely Ubuntu apps — the overlap discussion (App.A.3) argues no task leakage, but general single-app interface familiarity could still inflate OSWorld numbers relative to truly unseen desktop environments.
+3. TH vs IH differences are small (Mind2Web 58.9% vs 58.9% avg) and sometimes inconsistent across benchmarks; results are single-run, so it is <Term def="cannot tell from the reported single numbers whether the TH/IH gap exceeds run-to-run variance">Unclear</Term> whether the ordering is stable.
+
+<SelfCheck q="Why must Aria-UI's training data include synthesized diverse instructions and caption supervision, rather than just (HTML-text, coordinate) pairs?" a="Real planners emit heterogeneous, free-form instructions, not HTML-formatted referring text. Training only on rigid formats fails to bind those varied phrasings to the right element, so the pipeline generates multiple human-like instructions per element and uses the detailed caption as auxiliary supervision to align diverse instructions with their target element — ablations confirm removing either drops ScreenSpot accuracy (74.9% without diversified instructions, 77.5% without caption supervision, vs 82.4%)." />
+
+## Glossary
+- <Term def="mapping a natural-language instruction to the on-screen coordinates of the element to interact with">GUI grounding</Term>
+- <Term def="a structured tree of UI elements exposed by the OS/app for assistive tech; quality depends on developer implementation">AXTree / accessibility tree (A11y)</Term>
+- <Term def="overlay numbered/marked tags on UI elements so an LMM picks a tag instead of raw coordinates; relies on HTML/AXTree to place marks">Set-of-Mark (SoM)</Term>
+- <Term def="mixture-of-experts: only a subset of parameters (here 3.9B) is activated per token, giving large-model capacity at lower inference cost">MoE</Term>
+- <Term def="prior action history fed as plain text (textual, TH) or as text plus N recent screenshots (text-image interleaved, IH)">action history context (TH / IH)</Term>
+- <Term def="fraction of trajectories where the agent fully completes the task, checked by environment/system state">task success rate (SR)</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

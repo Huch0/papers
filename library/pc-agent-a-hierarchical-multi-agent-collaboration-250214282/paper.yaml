@@ -50,17 +50,17 @@ versions:
   source: arxiv
   source_url: https://arxiv.org/abs/2502.14282
   pdf_path: library/pc-agent-a-hierarchical-multi-agent-collaboration-250214282/v1/paper.pdf
-  summary_path: null
+  summary_path: library/pc-agent-a-hierarchical-multi-agent-collaboration-250214282/v1/summary.mdx
   metadata_path: library/pc-agent-a-hierarchical-multi-agent-collaboration-250214282/v1/metadata.yaml
   fetched_at: '2026-06-06T07:57:31Z'
   source_updated_at: null
   arxiv_version: null
   pdf_sha256: 58d1ddfb4298d0ea3df39cc57ac079914b262adb75ab38b8313455a1c127e4a6
   pdf_bytes: 18384146
-  summary_status: none
-  extraction_status: none
+  summary_status: full
+  extraction_status: full
   created_at: '2026-06-06T07:57:31Z'
-  updated_at: '2026-06-06T07:57:31Z'
+  updated_at: '2026-06-07T06:20:13Z'
 relations:
   duplicate_candidates: []
   related_papers: []

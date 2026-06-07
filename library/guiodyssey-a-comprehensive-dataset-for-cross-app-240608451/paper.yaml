@@ -48,17 +48,17 @@ versions:
   source: arxiv
   source_url: https://arxiv.org/abs/2406.08451
   pdf_path: library/guiodyssey-a-comprehensive-dataset-for-cross-app-240608451/v1/paper.pdf
-  summary_path: null
+  summary_path: library/guiodyssey-a-comprehensive-dataset-for-cross-app-240608451/v1/summary.mdx
   metadata_path: library/guiodyssey-a-comprehensive-dataset-for-cross-app-240608451/v1/metadata.yaml
   fetched_at: '2026-06-06T07:57:37Z'
   source_updated_at: null
   arxiv_version: null
   pdf_sha256: 3f95681c58642c8b899c3951f940e350b70fb50ece5004520fcd7794759aecb2
   pdf_bytes: 15981954
-  summary_status: none
-  extraction_status: none
+  summary_status: full
+  extraction_status: full
   created_at: '2026-06-06T07:57:37Z'
-  updated_at: '2026-06-06T07:57:37Z'
+  updated_at: '2026-06-07T06:17:13Z'
 relations:
   duplicate_candidates: []
   related_papers: []

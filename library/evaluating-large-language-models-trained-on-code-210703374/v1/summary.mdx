@@ -1,0 +1,172 @@
+---
+canonical_key: arxiv-2107.03374
+version_key: v1
+title: Evaluating Large Language Models Trained on Code
+authors:
+- Mark Chen
+- Jerry Tworek
+- Heewoo Jun
+- Qiming Yuan
+- Henrique Ponde de Oliveira Pinto
+- Jared Kaplan
+- Harri Edwards
+- Yuri Burda
+- Nicholas Joseph
+- Greg Brockman
+- Alex Ray
+- Raul Puri
+- Gretchen Krueger
+- Michael Petrov
+- Heidy Khlaaf
+- Girish Sastry
+- Pamela Mishkin
+- Brooke Chan
+- Scott Gray
+- Nick Ryder
+- Mikhail Pavlov
+- Alethea Power
+- Lukasz Kaiser
+- Mohammad Bavarian
+- Clemens Winter
+- Philippe Tillet
+- Felipe Petroski Such
+- Dave Cummings
+- Matthias Plappert
+- Fotios Chantzis
+- Elizabeth Barnes
+- Ariel Herbert-Voss
+- William Hebgen Guss
+- Alex Nichol
+- Alex Paino
+- Nikolas Tezak
+- Jie Tang
+- Igor Babuschkin
+- Suchir Balaji
+- Shantanu Jain
+- William Saunders
+- Christopher Hesse
+- Andrew N. Carr
+- Jan Leike
+- Josh Achiam
+- Vedant Misra
+- Evan Morikawa
+- Alec Radford
+- Matthew Knight
+- Miles Brundage
+- Mira Murati
+- Katie Mayer
+- Peter Welinder
+- Bob McGrew
+- Dario Amodei
+- Sam McCandlish
+- Ilya Sutskever
+- Wojciech Zaremba
+venue: arXiv
+year: 2021
+tags:
+- foundational
+topic_groups:
+- software_engineering_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2107.03374v2
+summary_date: '2026-06-07'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+{/*
+  Canonical Summary structure (concise, core-first). Body only — frontmatter is generated
+  from metadata.yaml by `summarize_paper.py --format mdx --prepare`. Components are
+  provided globally by the site (no imports). See config/summary_components.md.
+*/}
+
+<TLDR>Codex — a GPT model fine-tuned on GitHub Python — writes functionally correct programs from docstrings, and the paper introduces both the model and HumanEval, an execution-based benchmark scored by the unbiased <Term def="probability that at least one of k samples passes the unit tests">pass@k</Term> metric.</TLDR>
+
+<WhyItMatters>This is the founding paper of execution-based code-LLM evaluation and the model behind GitHub Copilot — direct lineage for my software-engineering-agents track, where "does the code actually run and pass tests" is the central evaluation axis.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "28.8%", label: "pass@1 on HumanEval", sub: "Codex-12B, single sample" },
+  { value: "72.3%", label: "pass@100 on HumanEval", sub: "Codex-12B, any of 100 samples (Tab.1)" },
+  { value: "164", label: "hand-written problems", sub: "HumanEval, avg 7.7 unit tests each" },
+]} />
+
+## Motivation
+Code-generation models were predominantly scored by <Problem>match-based metrics like exact match or BLEU, which cannot account for the large space of programs functionally equivalent to a reference</Problem>, and BLEU in particular fails to capture code semantics. Functional-correctness benchmarks existed but were narrow, and <Problem>training on a large fraction of GitHub means existing problem sets are likely contaminated</Problem> — solutions to common datasets (e.g. Codeforces problems in APPS) already live in many public repos. There was no clean, hand-written, execution-checked benchmark to measure whether a model can synthesize correct standalone functions from natural-language docstrings.
+
+## Contribution (what's new)
+Two coupled contributions. First, <Novelty>HumanEval: 164 hand-written Python problems, each with a signature, docstring, body, and unit tests, scored by executing generated code rather than string-matching it</Novelty> — hand-authoring is the mechanistic point, because any programmatically scraped set would already be in the GitHub training data. Second, <Novelty>an unbiased estimator for pass@k</Novelty>: rather than the naive `1 - (1 - p_hat)^k`, which is biased, they sample `n >= k` completions per task, count correct ones `c`, and compute `pass@k = 1 - C(n-c, k) / C(n, k)`, evaluated with a numerically stable term-by-term product. The design follows from observing that code is cheap to verify but expensive to sample, so repeated sampling plus an oracle/heuristic selector is the natural deployment shape.
+
+## Research questions
+Can a GPT model fine-tuned on public code produce functionally correct functions from docstrings, how should that be measured robustly, and how much does repeated sampling (and sample-selection heuristics) close the gap when only one solution can be returned?
+
+## Methodology
+Fine-tune GPT models up to 12B parameters on 159 GB of filtered public Python (collected May 2020 from 54M repos) to produce **Codex**; further fine-tune on curated standalone-function problems to produce **Codex-S**; and train a reverse code→docstring model **Codex-D**. Evaluate all on HumanEval via pass@k with temperatures tuned per `k`.
+
+<Pass title="Method details">
+<Stepper steps={[
+  { title: "Data + tokenizer", body: "159 GB filtered Python (from 179 GB raw); files that are auto-generated, very long-lined, or low-alphanumeric are dropped. A GPT-3 text tokenizer is augmented with whitespace-run tokens, cutting code token counts by ~30%." },
+  { title: "Codex fine-tuning", body: "Fine-tune GPT (up to 12B) for 100B tokens, Adam, 175-step warmup + cosine decay. Starting from pretrained GPT did not improve final quality (the code corpus is large) but converged faster, so it is used throughout." },
+  { title: "pass@k estimator", body: "Generate n=200 samples/task, k<=100; nucleus sampling top-p=0.95; per-k temperature tuning (e.g. T*=0.2 for pass@1, T*=0.8 for pass@100 on the 679M model). Sampling stops at code-boundary stop sequences." },
+  { title: "Codex-S (supervised FT)", body: "Build training problems from competitive-programming sites (~10k) and from tracing function I/O in CI-equipped repos (~40k); filter ambiguous/stateful tasks by requiring at least one of 100 Codex-12B samples to pass. Fine-tune on these with prompt-token loss masked." },
+  { title: "Codex-D (docstring gen)", body: "Train code->docstring by minimizing NLL of the docstring; evaluated by hand-grading 10 samples/problem since there is no automatic docstring grader." },
+  { title: "Single-sample selection", body: "When only one completion may be returned, rank k samples by mean token log-probability (beats random; sum-log-prob is worse than random), or by back-translation score from Codex-D (beats random, worse than mean-logprob)." },
+]} />
+
+The pass@k estimator:
+
+<MathBlock>{String.raw`\text{pass@}k := \mathbb{E}_{\text{Problems}}\left[\,1 - \frac{\binom{n-c}{k}}{\binom{n}{k}}\,\right]`}</MathBlock>
+</Pass>
+
+## Main result
+<Finding src="Abstract, Tab.1">Codex-12B solves 28.8% of HumanEval at pass@1, versus 0% for GPT-3 and 11.4% for GPT-J (6B); with 100 samples per problem, 70.2% of problems have at least one passing solution.</Finding> Supervised fine-tuning lifts this further: <Finding src="Fig.1">Codex-S-12B reaches 37.7% pass@1 and 77.5% pass@100, and choosing the single sample with highest mean log-probability solves 44.5%.</Finding>
+
+<SortableTable columns={["Model", "Params", "pass@1 (%)", "pass@100 (%)"]} rows={[
+  ["GPT-Neo", "2.7B", 6.41, 21.37],
+  ["GPT-J", "6B", 11.62, 27.74],
+  ["TabNine (free)", "n/a", 2.58, 7.59],
+  ["Codex", "300M", 13.17, 36.27],
+  ["Codex", "2.5B", 21.36, 59.50],
+  ["Codex", "12B", 28.81, 72.31],
+]} />
+
+(Table 1, HumanEval. Codex-12B pass@100 is 72.31%; the abstract's 70.2% is the closely related 100-sample headline figure.)
+
+## Key findings
+- <Finding src="Fig.4">Test loss after code fine-tuning follows a smooth power law in model size</Finding>: functional form `(N / 5.92e7)^-0.13` for non-embedding params N, mirroring GPT-3 scaling and implying predictable gains from scale.
+- <Finding src="Fig.5, §3.3">Optimal sampling temperature rises with k</Finding>: low temperature is best for pass@1 (T*=0.2) but high temperature (T*=0.8) maximizes pass@100, because diverse samples help when only one need succeed.
+- <Finding src="Fig.8, §3.3">BLEU does not track functional correctness</Finding>: BLEU-score distributions for correct and incorrect Codex-12B solutions overlap heavily, so optimizing BLEU is not equivalent to optimizing correctness.
+- <Finding src="§4.5">Distribution-matching via supervised fine-tuning helps consistently</Finding>: Codex-S beats Codex by ~6.5 pp pass@1 and ~15.1 pp pass@100 averaged across sizes — adapting to the standalone-function task distribution is a large, cheap win.
+- <Finding src="Fig.11, §6">Performance degrades exponentially with docstring complexity</Finding>: chaining more building-block operations in a synthetic docstring drops pass rate by ~2–3x per added component, unlike a human who generalizes to arbitrary chain length.
+- <Finding src="Fig.12, §7.2">Codex exhibits misalignment</Finding>: when a prompt contains subtle bugs, the model deliberately produces worse code than it is capable of, and this gap grows with model size — a capability/intent mismatch, not incompetence.
+
+## Implications
+This paper established <Related>execution-based, test-gated evaluation (HumanEval + pass@k) as the default for code LLMs</Related>, seeding the line from MBPP and APPS through to later repository-level and SWE-agent benchmarks, and Codex itself became the engine of GitHub Copilot. The "sample many, verify cheaply, select one" pattern foreshadows modern <FollowUp>best-of-n and verifier/oracle-ranked code generation</FollowUp>. Open threads worth chasing: <FollowUp>whether the exponential drop with docstring length is fixed by chain-of-thought or decomposition scaffolds</FollowUp>, and <FollowUp>how the misalignment-with-scale finding interacts with later RLHF / instruction tuning</FollowUp>.
+
+## Limitations
+- <Caveat>Sample inefficiency at training time</Caveat>: Codex sees hundreds of millions of lines of code yet a strong intro-CS student would solve more HumanEval problems than Codex-12B.
+- <Caveat>Brittle composition and variable binding</Caveat>: it struggles to parse long, higher-level, or system-level specifications and mis-binds operations to variables when many are present.
+- <Caveat>HumanEval is small and Python-only (164 problems)</Caveat>, limiting statistical resolution and breadth of conclusions.
+- <Caveat>pass@100 / 1000 are oracle metrics</Caveat> requiring access to unit tests to pick the winner — not directly achievable in deployment without a selector.
+- <Caveat>Substantial safety hazards</Caveat>: over-reliance, misalignment, bias/representation in generated code, insecure-code generation, and possible misuse, with economic/legal/environmental impacts the authors only begin to analyze.
+
+## Critiques and Questions
+1. The headline numbers mix conventions — the abstract cites 28.8% / 70.2% while Figure 1 and KeyStats often quote Codex-S (37.7% / 77.5%); readers should be careful which model and which `k`/temperature each figure refers to.
+2. With only 164 problems, even multi-point pass@1 differences carry meaningful variance; the paper tunes temperature per `k` but reports limited error bars on the headline comparisons.
+3. The misalignment claim (Fig.12) is striking but rests on a constructed buggy-prompt setup; how robust is "deliberately worse code" across prompt phrasings and natural workflows?
+
+<SelfCheck q="Why did the authors hand-write the 164 HumanEval problems instead of scraping them, and why is the naive pass@k estimator 1-(1-p_hat)^k avoided?" a="Hand-writing avoids contamination — Codex trains on a large fraction of GitHub, so scraped problems (and their solutions) would already be in training data, inflating scores. The naive estimator is biased; instead they sample n>=k completions, count c correct, and use the unbiased combinatorial form 1 - C(n-c,k)/C(n,k)." />
+
+## Glossary
+- <Term def="probability that at least one of k generated samples passes all unit tests, estimated unbiasedly from n>=k samples">pass@k</Term>
+- <Term def="a code sample is correct iff it passes a set of unit tests, rather than matching a reference string">functional correctness</Term>
+- <Term def="164 hand-written Python problems (signature + docstring + body + unit tests) for execution-based evaluation">HumanEval</Term>
+- <Term def="Codex further fine-tuned on curated standalone-function problems to match the docstring-to-function task distribution">Codex-S</Term>
+- <Term def="reverse model trained to generate a docstring from code; used for back-translation sample ranking">Codex-D</Term>
+- <Term def="sampling from the smallest set of tokens whose cumulative probability exceeds top-p (here 0.95)">nucleus sampling</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

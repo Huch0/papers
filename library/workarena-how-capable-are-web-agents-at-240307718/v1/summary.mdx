@@ -1,0 +1,114 @@
+---
+canonical_key: arxiv-2403.07718
+version_key: v1
+title: 'WorkArena: How Capable Are Web Agents at Solving Common Knowledge Work Tasks?'
+authors:
+- Alexandre Drouin
+- Maxime Gasse
+- Massimo Caccia
+- I. Laradji
+- Manuel Del Verme
+- Tom Marty
+- L'eo Boisvert
+- Megh Thakkar
+- Quentin Cappart
+- David Vázquez
+- Nicolas Chapados
+- Alexandre Lacoste
+venue: International Conference on Machine Learning
+year: 2024
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2403.07718
+summary_date: '2026-06-07'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+{/*
+  Canonical Summary structure (concise, core-first). Body only — frontmatter is generated
+  from metadata.yaml by `summarize_paper.py --format mdx --prepare`. Components are
+  provided globally by the site (no imports). See config/summary_components.md.
+*/}
+
+<TLDR>WorkArena is a remote-hosted benchmark of 33 enterprise tasks on the live ServiceNow platform, paired with BrowserGym (a unified multimodal browser environment), showing that even GPT-4o solves only ~43% of common knowledge-work tasks while open-source LLMs lag far behind.</TLDR>
+
+<WhyItMatters>Foundational for the computer-use / web-agent track: it moves evaluation from toy or generic websites to real enterprise software, and quantifies the open-vs-closed LLM gap that becomes glaring on hard, long-context UI tasks.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "42.7%", label: "GPT-4o success rate on WorkArena", sub: "33 tasks, Tab.2" },
+  { value: "33 / 19,912", label: "tasks / unique instances", sub: "ServiceNow, §3" },
+  { value: "0%", label: "all LLMs on list-filter tasks", sub: "6 tasks, Tab.2" },
+]} />
+
+## Motivation
+<Problem>Enterprise software prioritizes functionality over usability, creating long learning curves and repetitive, burdensome UI work for knowledge workers</Problem>, and is also <Problem>inaccessible for visually-impaired users</Problem>. Existing web-agent benchmarks miss this setting: <Problem>they test either toy pages (MiniWoB), synthetic shopping (WebShop), or generic real-world domains like Reddit/GitLab (WebArena) — none capture day-to-day enterprise knowledge work</Problem>. Enterprise UIs also pose distinct technical hurdles — <Problem>non-standard dynamic widgets, exotic HTML (nested iFrames, shadow DOMs, proprietary tags), and prohibitively large DOMs</Problem> — that generic benchmarks do not stress.
+
+## Contribution (what's new)
+Two artifacts. <Novelty>WorkArena: a benchmark built on real, free ServiceNow developer instances covering six task families (lists, forms, knowledge base, service catalogs, dashboards, menus), where each instance ships with a validation function for real-time feedback and an oracle `cheat()` function (a hard-coded Playwright solution) that guarantees task feasibility and provides ground truth</Novelty>. <Novelty>BrowserGym: a single OpenAI-Gym-style browser environment that unifies prior observation modalities (HTML DOM, accessibility tree, screenshot, set-of-mark) and action spaces (high-level bid/coord primitives plus arbitrary Python/Playwright), and is the first to add a chat interface for agent–user interaction</Novelty>. The design must take this form because enterprise pages defeat HTML-only agents (DOMs hit 40k–500k tokens) and because reproducible, self-validating, self-feasible tasks are needed for a benchmark hosted on a live, evolving commercial platform.
+
+## Research questions
+1. How capable are current LLM-based web agents at common enterprise knowledge-work tasks?
+2. How large is the gap to full automation, and where do agents fail?
+3. Which BrowserGym observation/action features actually help (ablation), and how does this differ between strong and weak LLMs?
+
+## Methodology
+A single chain-of-thought web agent is run over three LLMs (GPT-3.5, GPT-4o, Llama3-70B) plus a vision-augmented GPT-4o-V. Each LLM's agent is tuned by random search over feature flags (thinking, action/error/think history, observation augmentations, action set, multi-action), then frozen and re-run on all benchmarks.
+
+<Pass title="Method details">
+**Benchmark construction (§3, Tab.6).** 33 tasks / 19,912 instances. Lists: 12 tasks (6 filter + 6 sort across tables like users, incidents) = 6,900 instances; filters need 1–5 conditions, sorts up to 3 columns. Forms: 5 tasks (1–26 fields) = 5,000 instances. Knowledge base: 1 retrieval task = 1,000 instances, built from 100 GPT-4-generated articles seeded from 100 (item, value) facts, with GPT-3.5 used to answer (to avoid GPT-4 catering to itself) and accept-set validation (e.g. "8.5/10" ≈ "85%"). Service catalogs: 9 ordering tasks = 3,550 instances. Dashboards: 4 chart-reading tasks = 1,862 instances. Menus: 2 tasks (navigation + impersonation) = 1,600 instances. Combinatorial list/form pools are capped at 1,000 instances each. Goals are templated, fully explicit natural language; validation queries the database or checks URL/page/chat.
+
+**Agent (§5.1).** Observation = goal + AXTree (HTML is too large on WorkArena/WebArena; both used on MiniWoB) + focused element + last error, optionally augmented with bid/coords/visible/clickable flags. Action = bid-based primitives by default (`click(bid)`, `type(bid,text)`, ...); optional coord primitives and multi-action. History flags re-inject prior actions / errors / thoughts. A parse-and-retry loop re-prompts up to 4 times on malformed output.
+
+**LLMs (§5.1).** GPT-3.5 (gpt-3.5-turbo-1106, 16K ctx), GPT-4o (gpt-4o-2024-05-13, 128K ctx), Llama3-70B-Instruct (8K ctx, 4×A100 via TGI). Prompt truncation caps: 40K (GPT-4o), 15K (GPT-3.5), 8K (Llama3).
+
+**Protocol (§5.2).** 10 seeds/task on MiniWoB and WorkArena, 1 seed/task on WebArena (deterministic); max 15 steps/episode; success rate ± standard error via stratified bootstrap (1,000 resamples).
+</Pass>
+
+## Main result
+On WorkArena, <Finding src="Tab.2, p.7">GPT-4o reaches 42.7% ±1.5, versus Llama3 17.9% ±1.5 and GPT-3.5 6.1% ±1.3</Finding> — promising but far from automation, and no agent solves any single task at 100%. The headline disparity: closed-source GPT-4o roughly doubles the best open-source model and is ~7× GPT-3.5 on this benchmark.
+
+<SortableTable columns={["Benchmark", "GPT-4o", "GPT-4o-V", "GPT-3.5", "Llama3"]} rows={[
+  ["WorkArena (33)", 42.7, 41.8, 6.1, 17.9],
+  ["MiniWoB (125)", 66.1, 67.7, 38.9, 62.6],
+  ["WebArena (812)", 23.5, 24.0, 6.7, 11.0],
+]} />
+
+## Key findings
+- <Finding src="Tab.2">List-filter tasks are unsolved by every LLM: a flat 0% across all four agents</Finding>: the non-standard filter widget is trivial for humans but defeats agents, making it the benchmark's hardest family; list-sort is barely better (GPT-4o 10%).
+- <Finding src="§5.3, Tab.2">The open-vs-closed gap widens with task difficulty</Finding>: on MiniWoB the spread is modest (GPT-4o 66.1% vs GPT-3.5 38.9%), but on WorkArena/WebArena it explodes — consistent with capability emerging only in very large models, so these benchmarks double as sensitive detectors of emergent ability.
+- <Finding src="§4, p.2">BrowserGym's richer features push the GPT-4o agent to 25.4% on WebArena vs the original 14.4% with GPT-4</Finding>: a unified env + agent design alone nearly doubled prior zero-shot SOTA (Tab.2 reports 23.5% for the frozen re-run).
+- <Finding src="Tab.3-5, §5.4">Chain-of-thought is essential; removing `use thinking` drops Llama3 ~10 points on both MiniWoB and WorkArena</Finding>: this holds clearly for all three LLMs.
+- <Finding src="§5.4, Tab.4-5">More features are not always better for weaker LLMs</Finding>: `long description` and `individual examples` in the action-space prompt degrade GPT-3.5 and Llama3, partly because added text forces more prompt truncation under their short contexts.
+- <Finding src="Tab.2, §5.4">Multimodality and 2D actions disappoint on WorkArena</Finding>: set-of-mark vision (GPT-4o-V 41.8%) barely changes the text-only score (42.7%), and coordinate actions help on MiniWoB but not WorkArena, where bid-only is best.
+- <Finding src="§5.4">Re-injecting past thoughts (`use think history`) can hurt</Finding>: agents stick to early (sometimes wrong) decisions and self-correct less, and most WorkArena/MiniWoB tasks need no cross-page memory anyway.
+
+## Implications
+WorkArena establishes enterprise software as a distinct, unsolved frontier for web agents and gives the field a self-validating, live-platform benchmark. It extends the lineage of <Related>MiniWoB, WebShop, and especially WebArena</Related>, and BrowserGym becomes a unifying substrate that ports those benchmarks under one observation/action API (later widely adopted in the AgentLab / BrowserGym ecosystem). Threads worth chasing: <FollowUp>why the list-filter widget is a universal 0% — is it grounding, the hidden menu, or AXTree representation?</FollowUp>; <FollowUp>the authors' planned compositional WorkArena (multi-task workflows needing retrieval, memory, perception)</FollowUp>; and <FollowUp>why current VLMs gain so little from screenshots on dense enterprise UIs</FollowUp>.
+
+## Limitations
+- <Caveat>The agent is a single, simple chain-of-thought scaffold — no planning, reflection, or tree search — so results are a lower bound on what stronger scaffolds could achieve</Caveat>.
+- <Caveat>Budget-limited evaluation: 10 seeds/task on WorkArena, only 1 seed/task on WebArena, and a 15-step cap that may be too short for some WorkArena tasks unless multi-action mode is used</Caveat>.
+- <Caveat>Built on a live commercial ServiceNow platform, so the benchmark can drift as the product updates (mitigated but not eliminated by oracle functions)</Caveat>.
+- <Caveat>Only one open-source model (Llama3-70B) is tested, and ablation numbers use a different seed than the main table, so the two sets differ slightly</Caveat>.
+- <Caveat>Goals are fully explicit, templated instructions — leaving no ambiguity — so the benchmark stresses UI execution far more than instruction interpretation or planning</Caveat>.
+
+## Critiques and Questions
+1. A flat 0% on all list-filter tasks for all models is striking — is this a genuine capability ceiling, or an artifact of the AXTree representation hiding the filter widget? The paper diagnoses it as a "non-standard HTML widget" but does not isolate the failure mode, which limits how actionable the result is.
+2. "Promising on WorkArena" is generous when the strongest agent fails the majority of tasks and never fully solves a single task; the framing leans optimistic relative to the numbers.
+3. With templated, unambiguous goals, WorkArena measures grounded UI control rather than the planning/ambiguity-handling that real enterprise assistants need — useful but narrower than "common knowledge work" implies.
+
+<SelfCheck q="Why do the authors use the accessibility tree (AXTree) instead of raw HTML as the observation on WorkArena, and what consequence does that have?" a="ServiceNow DOMs are 40k–500k tokens even after cleaning — too large for the models' context windows — so they feed the more compact AXTree. The consequence is heavy reliance on long-context understanding, frequent prompt truncation for short-context models (GPT-3.5, Llama3), and a representation that may obscure exotic widgets like the list-filter menu (a universal 0%)." />
+
+## Glossary
+<Term def="A remote-hosted suite of 33 enterprise tasks (19,912 instances) on the live ServiceNow platform, the contribution of this paper">WorkArena</Term> is evaluated inside <Term def="An OpenAI-Gym-style browser environment unifying HTML/AXTree/screenshot observations and bid/coord/Python action spaces, with a chat interface">BrowserGym</Term>. Tasks run on the <Term def="A widely-used enterprise cloud platform for IT service management, HR, and digital workflows; used by ~85% of Fortune 500 firms">ServiceNow</Term> product. Agents observe the <Term def="Accessibility tree — a structured semantic view of a page exposed via Chrome DevTools, more compact than raw HTML">AXTree</Term> and act through a <Term def="An element identifier BrowserGym attaches to every node, enabling unambiguous actions like click(bid)">bid</Term>. Each task ships an <Term def="A hard-coded Playwright solution (cheat()) that automatically solves the task, used to verify feasibility and provide ground truth">oracle function</Term>. The vision variant uses <Term def="Set-of-Mark prompting — overlaying numbered marks on a screenshot to improve a VLM's visual grounding">set-of-mark</Term>.
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

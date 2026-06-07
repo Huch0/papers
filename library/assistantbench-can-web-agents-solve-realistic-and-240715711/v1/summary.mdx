@@ -1,0 +1,120 @@
+---
+canonical_key: arxiv-2407.15711
+version_key: v1
+title: 'AssistantBench: Can Web Agents Solve Realistic and Time-Consuming Tasks?'
+authors:
+- Ori Yoran
+- S. Amouyal
+- Chaitanya Malaviya
+- Ben Bogin
+- Ofir Press
+- Jonathan Berant
+venue: Conference on Empirical Methods in Natural Language Processing
+year: 2024
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2407.15711
+summary_date: '2026-06-07'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+{/*
+  Canonical Summary structure (concise, core-first). Body only — frontmatter is generated
+  from metadata.yaml by `summarize_paper.py --format mdx --prepare`. Components are
+  provided globally by the site (no imports). See config/summary_components.md.
+*/}
+
+<TLDR>AssistantBench is a 214-task benchmark of realistic, time-consuming open-web tasks on which every current system scores below 26% accuracy, alongside SeePlanAct (SPA), a planning- and memory-augmented web agent that roughly doubles the answer rate of prior agents.</TLDR>
+
+<WhyItMatters>Directly relevant to the computer-use / web-agent track: it stresses agents on the *whole* web (multi-site, multi-hop, no sandbox) rather than a single site, exposing that open-web navigation is the dominant bottleneck for today's agents.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "25.2%", label: "best accuracy", sub: "SPA→CB ensemble, GPT4-T (Tab.1)" },
+  { value: "~0", label: "SeeAct accuracy", sub: "SOTA web agent, 4.1% (Tab.1)" },
+  { value: "214", label: "tasks", sub: "53 people, 35 domain experts (§3.3)" },
+  { value: "525 / 258", label: "pages / websites", sub: "answers spread across (§3.3)" },
+]} />
+
+## Motivation
+Realistic information-seeking tasks — monitoring a real-estate market, finding a nearby early-bird fitness class — take a human several minutes of browsing across multiple sites, yet <Problem>closed-book LMs rely on parametric knowledge and hallucinate</Problem> while <Problem>retrieval-augmented LMs are capped by retrieval quality and can be hurt by irrelevant evidence</Problem>. Existing agent benchmarks <Problem>test only single-website interaction or operate inside a sandbox</Problem>, so they do not measure whether agents can plan and reason over the *entire* open web.
+
+## Contribution (what's new)
+Two deltas. First, <Novelty>a benchmark of realistic, time-consuming, automatically verifiable tasks that require autonomous open-web navigation across many real sites</Novelty> — the design forces multi-site browsing precisely because single-site/sandbox benchmarks let agents succeed without true web navigation. Second, <Novelty>SeePlanAct (SPA): SeeAct extended with an explicit planning/re-planning component and a memory buffer, plus open-web actions (go back, navigate to URL, query a search engine)</Novelty>, because the baseline SeeAct lacks state to carry information across the long trajectories these tasks demand.
+
+## Research questions
+Can language agents (closed-book LMs, retrieval-augmented LMs, and web agents) solve realistic, time-consuming, multi-site web tasks? Where do they fail, and does adding planning + memory to a SOTA agent help?
+
+## Methodology
+A three-stage human data-collection pipeline builds the benchmark; tasks have closed-form answers scored by a type-aware automatic metric. The agent SPA augments SeeAct with planning and memory and is compared against closed-book, retrieval-augmented, and ensemble baselines.
+
+<Pass title="Method details">
+<Stepper steps={[
+  { title: "Seed tasks", body: "18 trusted participants share recent time-consuming web tasks they actually performed; each manually reviewed/tweaked (e.g. add a date constraint) with gold answer, verification URLs, and an explanation → 72 tasks." },
+  { title: "Crowd expansion", body: "Crowdworkers use seed tasks as templates (vary actor, runtime, rating system, etc.) → +102 tasks, manually validated." },
+  { title: "Domain experts", body: "35 Prolific experts (biology, law, medicine, geography, visual arts, …) qualify by listing professional sites, then author time-consuming tasks over them → 42 expert tasks (incl. 2 from seed)." },
+  { title: "Splits", body: "214 unique tasks total; most go to test; a 33-task dev set (12 seed + 21 crowd) for analysis. Answers span 525 webpages across 258 websites." },
+  { title: "Automatic evaluation", body: "Answer types: string (word-level F1), number (order-of-magnitude metric, zero once a full order of magnitude off), and dictionary (per-key F1 of recall/precision). Also report answer rate (fraction not abstaining), precision (accuracy when answered), and exact match." },
+]} />
+
+Difficulty is annotated by closed-book accuracy: `easy` = both GPT-4 and Claude-3.5-Sonnet CB-1S score ≥0.5; `medium` = one of them ≥0.5; `hard` = neither correct. Most tasks are hard.
+
+SPA's number-scoring metric: `max{0, 1 - log(max(A,A')/min(A,A'))}`. Agents run on GPT-4-Turbo and Claude-3.5-Sonnet, capped at 30 execution steps (agents "succeed quickly and fail slowly").
+</Pass>
+
+## Main result
+On the test set with GPT-4-Turbo, <Finding src="Tab.1">no system exceeds ~25% accuracy; the best is the SPA→CB ensemble at 25.2% (falling back to one-shot closed-book when the agent abstains)</Finding>. <Finding src="Tab.1">The SOTA web agent SeeAct reaches only 4.1% accuracy (15.5% answer rate); SPA more than doubles this to 11.1% accuracy and 35.9% answer rate with higher precision (30.9 vs 26.3)</Finding>. With Claude-3.5-Sonnet, SPA→CB reaches 26.4% (Tab.7, §A.8).
+
+<SortableTable columns={["System", "Acc.", "Ans. %", "Prec.", "EM"]} rows={[
+  ["CB-INST (closed-book)", 16.5, 53.6, 30.7, 6.1],
+  ["CB-1S (closed-book, one-shot)", 22.2, 89.5, 24.8, 8.3],
+  ["RALM-INST (retrieval)", 11.8, 60.2, 19.5, 5.5],
+  ["RALM-1S (retrieval, one-shot)", 10.7, 48.1, 22.4, 3.9],
+  ["SeeAct (web agent)", 4.1, 15.5, 26.3, 2.2],
+  ["SPA (ours, web agent)", 11.1, 35.9, 30.9, 5.5],
+  ["SeeAct→CB (ensemble)", 23.4, 89.5, 26.1, 9.4],
+  ["SPA→CB (ours, ensemble)", 25.2, 91.7, 27.5, 9.9],
+]} />
+
+## Key findings
+- <Finding src="Tab.1">Closed-book LMs beat web agents and retrieval LMs on raw accuracy, mainly via higher answer rate, but at the cost of precision</Finding>: CB-1S hits 22.2% accuracy by answering 89.5% of tasks, while exhibiting low precision and a tendency to hallucinate.
+- <Finding src="Fig.5">Agents "fail fast or slow": SPA's accuracy is near zero for very short (`<5` steps) or very long (`>15` actions) trajectories and peaks around ten steps</Finding> — and AssistantBench tasks demand long interactions, explaining the difficulty.
+- <Finding src="Tab.3">Expert tasks are harder for closed-book models but *easier* for SeeAct than general tasks</Finding>: 70% of expert answers sit on a single URL (vs ~20% for general tasks), so they need less multi-site navigation.
+- <Finding src="Tab.4">For web agents, navigation errors dominate (36.7% for SPA, 63.6% for SeeAct), followed by grounding failures (~20%)</Finding>; 80% (SPA) / 97% (SeeAct) of errors are simply not producing an answer.
+- <Finding src="§6.2">Closed-book errors are mostly hallucinated answers (85%) or outdated answers (15%); retrieval-LM errors are dominated by retrieval failures (80%, split across tool-related 38.5%, irrelevant context 50%, partial info 11.5%)</Finding>.
+- <Finding src="§6.3">Proprietary ChatGPT with web search + code interpreter also errs on >90% of dev tasks</Finding>, most often by over-relying on search results to produce a wrong answer.
+- <Finding src="Tab.2">On a 31-task FanOutQA subset (Wikipedia-only, multi-hop), SPA beats SeeAct by 22.5 points and is the only system to reach exact answers (3/31)</Finding>, though closed-book CB-1S still leads on accuracy (40.9%).
+
+## Implications
+AssistantBench reframes web-agent evaluation around <Related>open-web, multi-site navigation rather than single-site (Mind2Web, WebVoyager) or sandboxed (WebArena, VisualWebArena) settings</Related>, and is positioned closest to <Related>GAIA, but scoped purely to web navigation without audio/video tools</Related>. SPA continues the <Related>SeeAct multimodal-agent line</Related> by adding planning + memory. <FollowUp>Whether open-weight agents (Llama-3.2, in-progress) can close the gap</FollowUp> and <FollowUp>training data / methods to fix open-web navigation, the dominant failure mode</FollowUp> are flagged as the key next threads; <FollowUp>extending to time-dependent tasks via reference-free evaluation models</FollowUp> is another.
+
+## Limitations
+- <Caveat>Coverage: realistic but non-auto-verifiable, time-dependent tasks (e.g. live ticket availability) had to be excluded; tasks are limited to reachable participants</Caveat>.
+- <Caveat>Size: 214 tasks is smaller than some agent benchmarks</Caveat> — defended by appeal to small high-quality benchmarks (HumanEval 164, Bamboogle 125) and lower cost/footprint.
+- <Caveat>All systems use only GPT-4-Turbo and Claude-3.5-Sonnet, limiting reproducibility</Caveat>; open-source agents were still in progress.
+- <Caveat>~56.5% of tasks can still change over a longer horizon</Caveat> (only 43.5% are fully static with date constraints, §6.4), so the benchmark will age.
+
+## Critiques and Questions
+1. The "best score" headline (25.2%) is an *ensemble* whose accuracy comes largely from the closed-book fallback (CB-1S alone is 22.2%); the standalone agent contribution is modest (SPA 11.1%). How much of the win is genuine web navigation vs. parametric recall plus a fallback?
+2. Precision when answering is high for agents (SPA 30.9%) but answer rate is low (35.9%) — is the real problem capability, or over-conservative abstention/grounding?
+3. With answers spread across 258 sites, how stable is the benchmark to link rot and content drift, given >56% of tasks are not strictly static?
+
+<SelfCheck q="Why does SeeAct find the expert task split easier than the general split, despite experts being domain specialists?" a="Because ~70% of expert-task answers can be found on a single URL (vs ~20% for general tasks), so they require far less open-web, multi-site navigation — the exact thing agents struggle with (Tab.3, §6.1)." />
+
+## Glossary
+- <Term def="A web agent that picks an action in two stages: describe the next action in natural language from a screenshot, then ground it to an HTML element. AssistantBench's baseline SOTA agent.">SeeAct</Term>
+- <Term def="SeePlanAct — this paper's agent: SeeAct plus an explicit planning/re-planning step, a memory buffer to carry info across steps, and open-web actions (back, go-to-URL, search).">SPA</Term>
+- <Term def="Fraction of tasks for which the model produced an answer instead of abstaining.">Answer rate</Term>
+- <Term def="Average accuracy computed only over tasks the model chose to answer (i.e. excluding abstentions).">Precision</Term>
+- <Term def="A model answering from its internal parametric knowledge with no web/retrieval access; here prompted with chain-of-thought.">Closed-book LM</Term>
+- <Term def="Number metric that gives partial credit by how many orders of magnitude a prediction is off, scoring zero once a full order of magnitude away.">Order-of-magnitude metric</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

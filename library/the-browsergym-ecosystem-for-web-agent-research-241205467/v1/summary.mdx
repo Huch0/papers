@@ -1,0 +1,124 @@
+---
+canonical_key: arxiv-2412.05467
+version_key: v1
+title: The BrowserGym Ecosystem for Web Agent Research
+authors:
+- Thibault Le Sellier de Chezelles
+- Maxime Gasse
+- Alexandre Lacoste
+- Alexandre Drouin
+- Massimo Caccia
+- L'eo Boisvert
+- Megh Thakkar
+- Tom Marty
+- Rim Assouel
+- Sahar Omidi Shayegan
+- L. Jang
+- Xing Han Lù
+- Ori Yoran
+- Dehan Kong
+- Frank F. Xu
+- Siva Reddy
+- Quentin Cappart
+- Graham Neubig
+- Ruslan Salakhutdinov
+- Nicolas Chapados
+venue: Trans. Mach. Learn. Res.
+year: 2024
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2412.05467
+summary_date: '2026-06-07'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>BrowserGym is a unified Gym-style environment that exposes six fragmented web-agent benchmarks behind one observation/action API, paired with AgentLab for reproducible large-scale experiments; using it, the authors run the first multi-benchmark comparison of six LLMs/VLMs.</TLDR>
+
+<WhyItMatters>Foundational infrastructure for the computer-use / web-agent track: it standardizes how web agents are built and evaluated, and provides the first apples-to-apples cross-benchmark leaderboard, with Claude-3.5-Sonnet emerging as the strongest general web agent.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "6", label: "benchmarks unified", sub: "MiniWoB, WebArena, VisualWebArena, WorkArena, WebLINX, AssistantBench" },
+  { value: "6", label: "LLMs/VLMs compared", sub: "GPT-4o(+Mini), o1-Mini, Claude-3.5-Sonnet, Llama-3.1 70B/405B" },
+  { value: "39.1%", label: "WorkArena L2 success", sub: "Claude-3.5-Sonnet vs 8.5% GPT-4o (Tab.2)" },
+]} />
+
+## Motivation
+The web-agent field has produced an abundance of benchmarks, but each ships <Problem>diverging evaluation code, incompatible implementations, and inconsistent practices</Problem> — "research silos." This <Problem>fragmentation blocks fair cross-benchmark comparison</Problem> and forces every researcher to re-do the cumbersome work of installing diverse setups, adapting data formats, and manually wiring agents into each separate benchmark. The result is unreliable, hard-to-reproduce comparisons of web-agent capabilities.
+
+## Contribution (what's new)
+The genuine delta is an <Novelty>ecosystem that exposes every existing benchmark through one standard Gym-like observation/action interface</Novelty>, so an agent written once runs unchanged on all of them — and a benchmark added once is immediately evaluable by all existing agents. The design must take the form of a thin POMDP-style environment wrapper (`<Term def="OpenAI/Farama Gym reset()/step() loop where env returns observation+reward and agent returns action">gymnasium</Term>` API over Chromium + Playwright) precisely because the baseline failure was *per-benchmark glue code*; only a shared interface with a standardized observation space (DOM, AXTree, screenshot, `bid`-tagged elements) and a pluggable `action_mapping` removes that glue. AgentLab adds the complementary tooling (parallel `Study` runner, AgentXRay trace viewer, reproducibility journal, dynamic prompting, unified LLM API). Note this paper *extends* BrowserGym from Drouin et al. (2024); the new benchmarks it integrates are WebLINX, VisualWebArena, and AssistantBench.
+
+## Research questions
+For this system/infrastructure paper the central questions are: (1) Can a single unified interface meaningfully absorb the heterogeneity of existing web-agent benchmarks without losing benchmark-specific fidelity? (2) When you finally evaluate the same agent across all of them, how do today's state-of-the-art LLMs/VLMs actually compare?
+
+## Methodology
+Define a web-agent interaction as a `<Term def="Partially Observable Markov Decision Process — agent sees partial observations, picks actions, receives reward">POMDP</Term>` and expose it through the gymnasium `reset()/step()` loop. The environment provides a rich observation (task goal/chat, open tabs, and per-page DOM + `<Term def="accessibility tree — structured semantic representation of a page used by screen readers">AXTree</Term>` + raw screenshot, with each element enriched by a unique `bid`, bounding box, visibility ratio, and a `<Term def="overlay element boxes/IDs on the screenshot to help a VLM ground actions">Set-of-Marks</Term>` flag). The native action space is raw Playwright/Python code, optionally constrained to a safe `HighLevelActionSet` (e.g. `click(bid)`, `fill(bid, text)`, `mouse_click(x,y)`). New tasks need only a `setup()` and `validate()` method.
+
+<Pass title="Method details: observation, action, AgentLab">
+- **Observation space (§3.1):** `goal_object`/`chat_messages`, `open_pages_urls`/`titles`/`active_page_index`, `dom_object`, `axtree_object`, `screenshot`, plus extra element properties (`bid`, `bbox` as `(left, top, width, height)`, `visibility` in `[0,1]`, `set_of_marks`). `last_action_error` feeds Playwright exceptions back to the agent for self-correction.
+- **Action space (§3.2):** raw Python over a Playwright `page` plus `send_message_to_user()` / `report_infeasible()`; an optional `action_mapping` converts structured actions (JSON/command) into trusted Python, mitigating arbitrary-code risk. The default `HighLevelActionSet` covers `bid`-, coordinate-, keyboard-, and tab-level primitives (Tab.3).
+- **Extensibility (§3.3, §5.5):** a task = `setup(page)→goal` + `validate(page, chat_messages)→(reward, done, message)`; an agent = `bgym.Agent` with a `get_action(obs)→(action, agent_info)`, plus `AgentArgs` for picklable config.
+- **AgentLab (§5):** `Study` orchestrates parallel runs (ray/joblib, up to ~20 tasks/laptop, 50–100/server; auto-relaunch failed tasks up to 3×, but (Visual)WebArena dependencies cap parallelism at 2–4). AgentXRay is a Gradio trace inspector. Reproducibility features log package/benchmark versions, commit hash, OS; a `reproducibility_journal.csv` tracks drift; a `ReproducibilityAgent` replays an action sequence and diffs prompts. `DynamicPrompting` shrinks prompts component-wise to fit context (AXTree can exceed 100k tokens, raw DOM >1M).
+- **Benchmark scale (Tab.1):** MiniWoB++ 125 templates (max 10 steps), WebArena 812, VisualWebArena 910, WorkArena L1 33 / L2 341 / L3 341, WebLINX 31,586 (single-step, static), AssistantBench 214 (open web). Multi-tab: WebArena, VisualWebArena, WorkArena L2/L3, AssistantBench.
+</Pass>
+
+## Main result
+On the first unified, multi-benchmark sweep, <Finding src="Tab.2, p.16">Claude-3.5-Sonnet wins the majority of benchmarks and reaches an unprecedented 39.1%±3.2 on WorkArena L2, versus 8.5%±1.8 for second-place GPT-4o</Finding> — a previously near-unsolved enterprise benchmark. The authors credit Claude's dedicated computer-use training as a likely cause.
+
+<SortableTable columns={["Benchmark", "Claude-3.5-Sonnet", "GPT-4o", "GPT-4o Mini", "Llama-3.1 70B", "Llama-3.1 405B", "o1-Mini"]} rows={[
+  ["MiniWoB", 69.8, 63.8, 56.6, 57.6, 64.6, 67.8],
+  ["WorkArena L1", 56.4, 45.5, 27.0, 27.9, 43.3, 56.7],
+  ["WorkArena L2", 39.1, 8.5, 1.3, 2.1, 7.2, 14.9],
+  ["WorkArena L3", 0.4, 0.0, 0.0, 0.0, 0.0, 0.0],
+  ["WebLINX", 13.7, 12.5, 11.6, 8.9, 7.9, 12.5],
+  ["WebArena", 36.2, 31.4, 17.4, 18.4, 24.0, 28.6],
+  ["VisualWebArena", 21.0, 26.7, 16.9, 0, 0, 0],
+  ["AssistantBench", 5.2, 4.8, 2.1, 2.8, 3.9, 6.9]
+]} />
+
+Values are task success rate (%); 0 marks skipped/not-run cells (VisualWebArena ran only multimodal models; WorkArena L3 grayed out for budget). See Tab.2, p.16.
+
+## Key findings
+- <Finding src="Tab.2">Claude-3.5-Sonnet is the strongest general web agent, with o1-Mini second</Finding>: Claude leads on MiniWoB (69.8%), WorkArena L1 (56.4%), L2 (39.1%), WebLINX (13.7%), and WebArena (36.2%).
+- <Finding src="Tab.2, §6.2">Vision is the exception: GPT-4o beats Claude on the visual benchmark</Finding>: 26.7% vs 21.0% on VisualWebArena, the only benchmark where Claude is not on top.
+- <Finding src="§6.2, p.15">Even the best model collapses on the hardest enterprise tasks</Finding>: WorkArena L3 is essentially unsolved (Claude 0.4%, all others 0.0%), showing how far current agents are from complex compositional workflows.
+- <Finding src="§6.2, p.16">Open-weights are closing the gap</Finding>: Llama-3.1 70B roughly matches GPT-4o Mini, and Llama-3.1 405B significantly surpasses GPT-4o Mini on several benchmarks — "a promising omen for the open-source community."
+- <Finding src="§6.2, p.16">Web benchmarks may be aging / contaminating</Finding>: a newer GPT-4o checkpoint jumped from 23.5%→31.4% on WebArena and 3.8%→8.5% on WorkArena L2 versus Boisvert et al. (2024) with a near-identical agent — attributable to better reasoning *or* benchmark content leaking into training data.
+- <Finding src="§6.2, p.16">The generic agent underperforms on retrieval-heavy tasks</Finding>: best AssistantBench score is only 6.9% vs the leaderboard's ~27%, because GenericAgent prioritizes generality over information-retrieval specialization.
+
+## Implications
+This is plumbing the whole subfield can stand on: it lowers the cost of cross-benchmark evaluation, makes new benchmarks instantly testable against existing agents, and seeds an online leaderboard plus reproducibility journal that track benchmark drift over time. It builds directly on <Related>Drouin et al. (2024) BrowserGym and the WorkArena line</Related> and unifies the <Related>WebArena / VisualWebArena, WebLINX, AssistantBench, and MiniWoB lineages</Related> under one roof. Threads worth chasing: <FollowUp>why WorkArena L3 is unsolved and what scaffolding (planning/search, memory) moves the needle</FollowUp>, <FollowUp>whether the GPT-4o jump reflects real gains or benchmark contamination</FollowUp>, and <FollowUp>using BrowserGym's logged traces as fine-tuning data for web agents</FollowUp>.
+
+## Limitations
+- <Caveat>Reproducibility on live sites remains fragile</Caveat>: localization (time zone, language, region), OS/browser rendering differences, and dynamic content (ads) inject non-determinism the framework can only partly mitigate.
+- <Caveat>Open-web safety and robot detection</Caveat>: agents acting on the live web (AssistantBench, future GAIA) face CAPTCHA, IP rate-limiting, and behavior-based blocking, plus genuine risk of harmful autonomous actions — mitigated only by URL protection and warning notices.
+- <Caveat>Agent collisions and forced serialization</Caveat>: shared mutable backends (WebArena/VisualWebArena use one VM per agent) mean only one agent can run at a time, badly slowing evaluation.
+- <Caveat>Synchronous sync-loop bottleneck</Caveat>: rapid sequential actions can outrun the browser sync loop, causing delays.
+- <Caveat>Error analysis is only qualitative</Caveat>: §6.3 offers a category taxonomy (navigation, form-handling, task-understanding, stuck behavior, extraction, external errors) but no quantitative breakdown, given experiment scale.
+
+## Critiques and Questions
+1. The headline 39.1% framing flatters a single best model; absolute numbers (L3 at 0%, WebArena ~36%) show web agents are still far from reliable — the "ecosystem" contribution is more durable than the leaderboard snapshot.
+2. The GPT-4o improvement is explicitly ambiguous between genuine reasoning gains and training-data contamination; without held-out or freshly-authored tasks, public web benchmarks have a real and unmeasured aging problem.
+3. Single-run success rates with standard error `σ/√N` are reported, but several benchmarks are non-deterministic and some models were skipped (WorkArena L3 reuses prior numbers, VisualWebArena multimodal-only), so cells aren't strictly comparable.
+4. Is a single GenericAgent the fair instrument for cross-model comparison, when per-benchmark specialization (e.g. on AssistantBench) clearly matters?
+
+<SelfCheck q="Why must BrowserGym's contribution take the form of a shared Gym-style observation/action interface rather than per-benchmark adapters?" a="Because the baseline failure mode was per-benchmark glue code that created research silos. Only a single standardized interface (one observation space — DOM/AXTree/screenshot with bid-tagged elements — and a pluggable action_mapping over a POMDP reset/step loop) lets an agent written once run unchanged on every benchmark and a new benchmark be evaluated by every existing agent, eliminating the glue." />
+
+## Glossary
+- <Term def="OpenAI/Farama standard RL environment API: env.reset() and env.step(action) returning observation, reward, terminated, truncated, info">gymnasium / Gym API</Term>
+- <Term def="Partially Observable Markov Decision Process — sequential decision setting where the agent sees only partial state">POMDP</Term>
+- <Term def="Accessibility tree: a structured, semantic representation of a rendered page (roles, names, states) extracted via the Chrome DevTools Protocol">AXTree</Term>
+- <Term def="BrowserGym ID: a unique attribute injected into each page element so agents can reference it unambiguously in DOM, AXTree, and screenshot">bid</Term>
+- <Term def="Set-of-Marks prompting: overlaying numbered/box markers on a screenshot so a vision model can ground its action to a specific element">Set-of-Marks (SoM)</Term>
+- <Term def="AgentLab's Gradio-based tool for inspecting an agent's per-step observation, action, and prompt traces">AgentXRay</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

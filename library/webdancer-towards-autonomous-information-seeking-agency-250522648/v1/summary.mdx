@@ -1,0 +1,120 @@
+---
+canonical_key: arxiv-2505.22648
+version_key: v1
+title: 'WebDancer: Towards Autonomous Information Seeking Agency'
+authors:
+- Jialong Wu
+- Baixuan Li
+- Runnan Fang
+- Wenbiao Yin
+- Liwen Zhang
+- Zhengwei Tao
+- Dingchu Zhang
+- Zekun Xi
+- Yong Jiang
+- Pengjun Xie
+- Fei Huang
+- Jingren Zhou
+venue: arXiv.org
+year: 2025
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2505.22648
+summary_date: '2026-06-07'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>WebDancer is an end-to-end recipe — synthetic deep-search QA, rejection-sampled ReAct trajectories, SFT cold-start, then on-policy RL — that turns open Qwen/QwQ models into autonomous, multi-turn web-browsing agents competitive with strong proprietary Deep Research systems.</TLDR>
+
+<WhyItMatters>A reproducible, data-centric blueprint for building Deep-Research-style <Term def="agents that issue searches and clicks across the live web to answer multi-hop questions">information-seeking web agents</Term> from scratch — directly relevant to the computer-use / web-agent track.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "51.5%", label: "GAIA Avg (Pass@1)", sub: "WebDancer on QwQ-32B" },
+  { value: "47.9%", label: "WebWalkerQA Avg (Pass@1)", sub: "WebDancer on QwQ-32B" },
+  { value: "64.1% / 62.0%", label: "best Pass@3", sub: "GAIA / WebWalkerQA" },
+  { value: "4-stage", label: "training pipeline", sub: "data → traj → SFT → RL" },
+]} />
+
+## Motivation
+Building Deep-Research-style agents is bottlenecked by data and training. <Problem>Widely used QA datasets are shallow — solvable in a single or a few search turns (e.g. 2Wiki already exceeds 80%)</Problem>, and the genuinely hard browsing benchmarks (GAIA 466, WebWalkerQA 680, BrowseComp 1,266 examples) are <Problem>tiny test/validation-only sets, far too small to train on</Problem>. On the training side, <Problem>prompting-only methods cannot exploit a reasoning model's full capability</Problem>, while <Problem>pure SFT generalizes poorly and direct on-policy RL in a multi-tool setting wastes early steps just learning tool-call formatting</Problem>.
+
+## Contribution (what's new)
+The genuine delta is an integrated, reproducible pipeline rather than a single trick. <Novelty>Two scalable synthesis methods manufacture deep multi-hop QA: CRAWLQA (crawl knowledgeable sites by mimicking human clicks, then have GPT-4o write COUNT / MULTI-HOP / INTERSECTION questions) and E2HQA (iteratively rewrite a simple SimpleQA-style entity question into a harder multi-step one while preserving the answer)</Novelty>. <Novelty>A two-stage trainer pairs rejection-sampling SFT (cold start, with both short-CoT from GPT-4o and long-CoT from QwQ-Plus) with on-policy DAPO RL</Novelty>. The design must take this form because <Problem>RL alone never acquires the multi-step multi-tool instruction-following needed to start exploring</Problem>, while <Novelty>DAPO's dynamic sampling consumes exactly the leftover synthetic QA pairs that SFT could not use, discarding all-right/all-wrong prompts so noisy synthetic data does not poison learning</Novelty>.
+
+## Research questions
+How can one build an autonomous, multi-turn, multi-tool information-seeking web agent end-to-end from open models? Specifically: how to (1) synthesize hard enough browsing data at scale, (2) sample reliable long-horizon ReAct trajectories, and (3) train so the agent generalizes to non-stationary real-web environments.
+
+## Methodology
+The agent is a <Term def="interleaved Thought → Action → Observation loop where the model reasons, calls a tool, and conditions on the result">ReAct</Term> policy with a restricted action space of `search` (returns top-10 titles + snippets), `visit` (returns evidence + a summary from a separate summarizer model), and `answer` (terminates). Trajectories are collected by rejection sampling, then passed through a three-stage filter; the policy is cold-started with SFT and refined with RL.
+
+<Pass title="Method details">
+**Data synthesis.** CRAWLQA collects root URLs (arxiv, github, wiki, …), recursively follows sublinks, and prompts GPT-4o via in-context learning to emit typed questions. E2HQA picks an entity `En` from question `Qn`, searches for related content `Cn`, and rewrites it into a sub-query that replaces the entity: `Rn = π(S(Cn))`, so `Qn+1` requires solving the constructed sub-problem first; iteration count controls difficulty while the answer stays fixed.
+
+**Trajectory sampling + filtering.** Short-CoT trajectories come from GPT-4o in ReAct; long-CoT from QwQ-Plus fed the running action/observation history (previous thoughts are excluded at inference since the LRM was not trained on multi-step reasoning inputs, but the generated thought is kept as supervision). Each QA is rejection-sampled up to N times, then funneled through: validity control (drop non-ReAct-format outputs), correctness verification (GPT-4o LLM-as-judge keeps only correct results), and quality assessment (drop ≤2-action / hallucinated / repetitive trajectories; keep those passing Information Non-redundancy, Goal Alignment, Logical Reasoning & Accuracy).
+
+**SFT cold start.** Thought / Action / Observation are wrapped in `<think>`, `<tool_call>`, `<tool_response>` tags; the final `<answer>` ends the trace. Loss masks observation tokens so the model is trained only on its own autonomous decisions.
+
+<MathBlock>{`L = -\\frac{1}{\\sum_{i=1}^{|H|} \\mathbb{1}[x_i \\neq o]} \\sum_{i=1}^{|H|} \\mathbb{1}[x_i \\neq o] \\cdot \\log \\pi_\\theta(x_i \\mid t_c, x_{<i})`}</MathBlock>
+
+**RL.** On-policy <Term def="Decoupled Clip and Dynamic Sampling Policy Optimization — a GRPO-style RL algorithm with decoupled clip bounds and dynamic over-sampling that filters prompts of accuracy 0 or 1">DAPO</Term> optimizes only model-generated tokens (tool responses excluded from the loss but kept in context). Reward is `R = 0.1·format + 0.9·answer`, both binary; because answers are non-verifiable, the answer score comes from an LLM-as-judge rather than F1/EM.
+</Pass>
+
+## Main result
+On the two headline benchmarks (Pass@1, LLM-as-judge), WebDancer lifts the vanilla ReAct baseline substantially at every model scale and, on QwQ-32B, reaches <Finding src="Tab.1, p.7">GAIA Avg 51.5% and WebWalkerQA Avg 47.9%, versus 37.8% / 24.1% for vanilla ReAct on the same backbone</Finding> — surpassing GPT-4o ReAct (34.6% / 33.8%). The closed-source OpenAI Deep Research still leads on GAIA (67.4% Avg).
+
+<SortableTable columns={["Backbone", "Framework", "GAIA Avg", "WebWalkerQA Avg"]} rows={[
+  ["OpenAI DR", "closed-source", 67.4, 0],
+  ["Qwen-2.5-7B", "Vanilla ReAct", 18.4, 24.2],
+  ["Qwen-2.5-7B", "WebDancer", 31.0, 36.0],
+  ["Qwen-2.5-32B", "Vanilla ReAct", 31.0, 31.9],
+  ["Qwen-2.5-32B", "WebDancer", 40.7, 38.4],
+  ["QwQ-32B", "Vanilla ReAct", 37.8, 24.1],
+  ["QwQ-32B", "WebDancer", 51.5, 47.9],
+  ["GPT-4o", "Vanilla ReAct", 34.6, 33.8],
+]} />
+
+## Key findings
+- <Finding src="§5, p.8">Best-performing WebDancer reaches Pass@3 of 64.1% on GAIA and 62.0% on WebWalkerQA</Finding>: the gap to Pass@1 shows substantial headroom in sampling more attempts.
+- <Finding src="Tab.2, p.8">On the harder BrowseComp, WebDancer scores 3.8/7.9 (En, Pass@1/Pass@3) and 18.0/31.5 (Zh)</Finding>: still strong relative to GPT-4o (0.6 En, 6.2 Zh) and QwQ-32B (11.1 Zh), evidencing robustness on more difficult browsing.
+- <Finding src="p.9">SFT cold start is essential — RL alone on QwQ reaches only ~5% Pass@3 on GAIA</Finding>: the agent cannot bootstrap multi-step multi-tool behavior without the SFT initialization.
+- <Finding src="Tab.3, p.9">Long-CoT helps reasoning models most (QwQ-32B: 58.25 vs 44.66 short-CoT Pass@3), but for non-reasoning models it inflates the invalid rate (e.g. Qwen2.5-7B 21.36% invalid)</Finding>: reasoning-model thinking patterns do not transfer cleanly to instruction-tuned models, which overflow context via repetition.
+- <Finding src="Fig.4, p.9">RL boosts non-reasoning models markedly (Pass@1 +7.70 on 7B) while gains for the LRM are marginal, mainly improving consistency</Finding>: continued on-policy optimization yields diminishing returns for already-strong reasoners.
+- <Finding src="Fig.3, p.8">The fully filtered "Final" dataset (6,550) outperforms the larger unfiltered "All" (17,764) under low-data SFT</Finding>: rigorous trajectory filtering matters more than raw volume.
+- <Finding src="Fig.5, p.10">A memorization stress test (Qwen-7B fine-tuned 10 epochs on 69 GAIA-dev trajectories) reaches only 37.4% greedy on the same set, and decoding temperature barely moves results</Finding>: instability comes from the non-stationary live web, not from decoding variance.
+
+## Implications
+WebDancer is a concrete, open recipe that narrows the gap to proprietary Deep Research and shows synthetic-data + two-stage training can produce real browsing agency. It extends the <Related>ReAct line (Yao et al.) and the RL-for-search lineage of R1-Searcher, Search-R1, ReSearch, DeepResearcher, WebThinker, Search-o1</Related>, using <Related>DAPO (Yu et al.) as the RL backbone</Related>. Worth chasing: <FollowUp>whether the brittle short→long-CoT transfer to instruction models can be repaired</FollowUp>, <FollowUp>how to stabilize agents against a drifting, non-stationary web environment</FollowUp>, and <FollowUp>scaling the synthetic CRAWLQA/E2HQA pipeline to broader domains and tool sets</FollowUp>.
+
+## Limitations
+- <Caveat>Action space is restricted to search/visit/answer — no forms, login, file, or code execution</Caveat>, limiting the realism of "computer use."
+- <Caveat>Evaluation relies entirely on LLM-as-judge (answers are non-verifiable), so reported accuracies inherit the judge's biases</Caveat>; no rule-based EM/F1 cross-check.
+- <Caveat>Test sets are small and the live web is non-stationary, producing performance fluctuation the authors themselves attribute to the environment</Caveat>.
+- <Caveat>Reasoning-pattern transfer to non-reasoning models is brittle (high invalid/repetition rates), and mixing short+long CoT gave no improvement</Caveat>.
+- <Caveat>WebWalkerQA results for OpenAI DR are unreported ("-"), so the strongest baseline is only compared on GAIA</Caveat>.
+
+## Critiques and Questions
+1. Synthetic QA is generated and judged largely by GPT-4o; how much of the gain reflects genuine agency versus alignment to GPT-4o's question/answer style? Contamination risk on GAIA/WebWalkerQA from crawled training data is not quantified.
+2. Pass@1 ≪ Pass@3 throughout — is the policy actually reliable, or does it depend on resampling? A single-attempt deployment may behave much worse than the headline numbers.
+3. The LLM-as-judge reward could reward confident-but-wrong answers; no human-verified subset is reported to calibrate the judge.
+
+<SelfCheck q="Why is the SFT cold-start stage necessary before RL, rather than running on-policy RL directly?" a="In a multi-tool ReAct setting the model first has to learn the interleaved Thought–Action–Observation format and tool-call usage; without SFT, RL-only training on QwQ reaches only ~5% Pass@3 on GAIA (p.9). SFT establishes the agentic behavior so RL can then optimize decision-making and generalization." />
+
+## Glossary
+- <Term def="Construct QA by crawling knowledgeable sites and prompting an LLM to write typed multi-hop questions from the gathered content">CRAWLQA</Term>
+- <Term def="Easy-to-Hard QA: iteratively rewrite a simple entity question into a harder multi-step one while keeping the answer fixed">E2HQA</Term>
+- <Term def="General AI Assistants benchmark — 466 real-world tasks needing tools, browsing, and multi-step reasoning, graded in 3 difficulty levels">GAIA</Term>
+- <Term def="A web-navigation QA benchmark (680 examples) testing multi-page browsing, split Easy/Medium/Hard">WebWalkerQA</Term>
+- <Term def="A hard browsing benchmark requiring multi-hop search; BrowseComp-zh is its Chinese counterpart">BrowseComp</Term>
+- <Term def="Fraction of three independent attempts that are correct (1/3, 2/3, or 1), measuring answer consistency">Cons@3</Term>
+- <Term def="Large Reasoning Model — a model trained for long chain-of-thought reasoning, e.g. QwQ">LRM</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

@@ -1,0 +1,130 @@
+---
+canonical_key: arxiv-2501.11733
+version_key: v1
+title: 'Mobile-Agent-E: Self-Evolving Mobile Assistant for Complex Tasks'
+authors:
+- Zhenhailong Wang
+- Haiyang Xu
+- Junyang Wang
+- Xi Zhang
+- Mingshi Yan
+- Ji Zhang
+- Fei Huang
+- Heng Ji
+venue: arXiv.org
+year: 2025
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2501.11733
+summary_date: '2026-06-07'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+{/*
+  Canonical Summary structure (concise, core-first). Body only — frontmatter is generated
+  from metadata.yaml by `summarize_paper.py --format mdx --prepare`. Components are
+  provided globally by the site (no imports). See config/summary_components.md.
+*/}
+
+<TLDR>Mobile-Agent-E is a hierarchical multi-agent mobile GUI assistant that separates high-level planning from low-level action and adds a self-evolution module — persistent Tips and reusable Shortcuts learned across tasks — yielding a 22.1% absolute Satisfaction-Score gain over the prior SOTA on a new long-horizon benchmark.</TLDR>
+
+<WhyItMatters>A foundational computer-use-agent design point: it shows that an explicit planning/action hierarchy plus a cross-task memory of natural-language Tips and executable Shortcuts measurably improves both accuracy and efficiency on realistic, multi-app mobile tasks.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "+22.1%", label: "Satisfaction Score over prior SOTA", sub: "avg across 3 backbones (Tab.4)" },
+  { value: "86.9%", label: "best Satisfaction Score", sub: "Mobile-Agent-E + Evo, GPT-4o (Tab.3)" },
+  { value: "25", label: "benchmark tasks", sub: "Mobile-Eval-E, 5 scenarios, 15 apps (Tab.2)" },
+  { value: "14.56", label: "avg ops per task", sub: "vs ≤6.31 in prior benchmarks (Tab.2)" },
+]} />
+
+## Motivation
+Current LMM-based mobile agents face two gaps. First, <Problem>existing mobile benchmarks are short, goal-oriented, single-app tasks (e.g. "navigate to a gas station") whose performance is already saturated</Problem>, so they fail to reflect real human needs that require reasoning over multiple constraints, long-horizon planning across apps, and active exploration of vague instructions. Second, <Problem>existing agents cannot learn from prior experience</Problem> — they treat every task as a first attempt, spend the same compute each step, and repeat the same mistakes even on recurring subroutines like searching or note-taking.
+
+## Contribution (what's new)
+The genuine delta is twofold. (1) <Novelty>An explicit agent hierarchy that disentangles high-level planning (a Manager that decomposes a task into subgoals) from low-level action (an Operator that emits concrete `tap(x,y)`-style actions)</Novelty> — the prior SOTA Mobile-Agent-v2 conflates "what to do next" and "where to tap" in one decision module, which limits long-horizon planning and error recovery, so the design must split these roles. (2) <Novelty>A self-evolution module with a persistent long-term memory of two knowledge types: Tips (natural-language lessons, akin to episodic memory) and Shortcuts (reusable executable atomic-operation sequences with explicit preconditions, akin to procedural knowledge)</Novelty>, updated after each task by two Experience Reflectors and consumed by the Manager and Operator on later tasks.
+
+## Research questions
+1. Does an explicit planning/action hierarchy improve performance on reasoning-intensive, long-horizon, multi-app mobile tasks over flat multi-agent designs?
+2. Can a mobile agent self-evolve across tasks — accumulating Tips and Shortcuts — to improve both task performance and inference efficiency?
+3. How should such complex, exploratory tasks be evaluated when there is no binary success flag or single ground-truth trajectory?
+
+## Methodology
+Mobile-Agent-E runs a per-step agent loop over a real Android device (controlled via ADB) and a cross-task self-evolution loop over a shared long-term memory. All reasoning agents are instantiated from a frozen LMM (default GPT-4o); only the Perceptor is a separate vision pipeline.
+
+<Pass title="Method details">
+**Hierarchical agent loop (per step `t`).**
+<Stepper steps={[
+  {title: "Perceptor (A_P)", body: "Vision-only perception (no XML): OCR (DBNet), icon grounding (GroundingDINO), icon captioning (Qwen-VL-Plus) produce a list of texts/icons with coordinates W_V. The raw screenshot is still passed to downstream agents as holistic context."},
+  {title: "Manager (A_M)", body: "High-level planning: from the query, screenshot, previous plan/subgoal/progress/notes and available Shortcuts, it outputs an updated overall plan and the next subgoal. It does NOT see fine-grained perception, to avoid noise in high-level planning."},
+  {title: "Operator (A_O)", body: "Low-level action decision: from the query, screenshot, perception W_V, plan/subgoal/progress/notes, the last m=5 actions and errors, plus Shortcuts and Tips, it emits the next action a_t. The action space includes atomic operations AND Shortcuts."},
+  {title: "Action Reflector (A_R)", body: "Compares before/after screenshots to label the outcome: A successful/partially successful, B failed (wrong page), or C failed (no change). On B/C it records an error description with suggested causes/fixes; on A it updates action history and progress."},
+  {title: "Notetaker (A_N)", body: "Aggregates task-relevant information (prices, phone numbers, etc.) into persistent notes W_N after each step."},
+]} />
+
+**Error escalation.** When the Operator first hits an error it tries to fix it; after `k=2` consecutive failures an Error Escalation Flag is raised and the Manager re-plans from a higher level (revising the plan or subgoal). A task is force-exited (counted as a termination error) on max 40 iterations, 3 consecutive errors, 3 repeated identical actions (excluding Swipe/Back), or any parsing error.
+
+**Atomic operation space (Tab.8):** Open App, Tap, Swipe, Type, Enter, Switch App, Back, Home, Wait.
+
+**Self-evolution module.** At the end of each task (final step `τ`), two Experience Reflectors update memory from the full action/error history (and, in the evolution setting, the queries of remaining tasks): `A_ET` updates Tips (natural language) and `A_ES` proposes new Shortcuts (JSON with name, arguments, description, **precondition**, and an atomic-action sequence). The Operator must verify a Shortcut's precondition before invoking it; a Shortcut collapses several atomic ops into one decision step.
+
+**Benchmark — Mobile-Eval-E (Tab.2).** 25 manually crafted tasks across 5 scenarios (Restaurant Recommendation, Information Researching, Online Shopping, What's Trending, Travel Planning), spanning 15 apps; 19/25 (76%) are multi-app vs `<10%` in prior benchmarks; 14.56 avg ops/task (364 total) vs 5.55–6.31 in Mobile-Eval / Mobile-Eval-v2 / AppAgent.
+
+**Metric — Satisfaction Score (SS).** Per task, humans write rubrics mixing milestones ("Opened Tripadvisor") and exploratory criteria ("Viewed multiple attractions"); SS = fulfilled rubrics / total rubrics, judged by a human. Also reported: Action Accuracy (AA), Reflection Accuracy (RA), Termination Error rate (TE), and a Satisfaction-Score-vs-Steps (SSS) curve for efficiency (steeper/higher = better).
+</Pass>
+
+## Main result
+With an identical GPT-4o backbone, Mobile-Agent-E beats the prior multi-agent SOTA (Mobile-Agent-v2) on every metric, and enabling self-evolution widens the gap: <Finding src="Tab.3">Satisfaction Score rises from 53.0% (v2) → 75.1% (Mobile-Agent-E) → 86.9% (+Evo)</Finding>, i.e. +22.1 absolute from the hierarchy and +33.9 absolute total over prior SOTA, while <Finding src="Tab.3">Termination Error drops from 52.0% → 32.0% → 12.0%</Finding> — much better robustness/error recovery.
+
+<SortableTable columns={["Model", "Type", "Satisfaction ↑", "Action Acc ↑", "Reflection Acc ↑", "Termination Err ↓"]} rows={[
+  ["AppAgent", "Single-agent", 25.2, 60.7, 0, 96.0],
+  ["Mobile-Agent-v1", "Single-agent", 45.5, 69.8, 0, 68.0],
+  ["Mobile-Agent-v2 (prior SOTA)", "Multi-agent", 53.0, 73.2, 96.7, 52.0],
+  ["Mobile-Agent-E", "Multi-agent", 75.1, 85.9, 97.4, 32.0],
+  ["Mobile-Agent-E + Evo", "Multi-agent", 86.9, 90.4, 97.8, 12.0],
+]} />
+
+(GPT-4o backbone, Mobile-Eval-E; Reflection Accuracy is 0 where reported as "-" because AppAgent and Mobile-Agent-v1 have no action reflector.)
+
+## Key findings
+- <Finding src="Tab.4">Gains hold across three backbones: average absolute SS gain is +15.6% (no evolution) and +22.1% (with evolution) over Mobile-Agent-v2 across GPT-4o, Claude-3.5-Sonnet, and Gemini-1.5-pro</Finding>: the architecture, not one model, drives the improvement.
+- <Finding src="Tab.4">Self-evolution helps stronger backbones more</Finding>: on GPT-4o SS jumps 75.1→86.9 and on Claude 75.5→83.0 with Evo, but on Gemini it barely moves (70.9→71.2), suggesting evolution depends on the LMM's reflection quality.
+- <Finding src="Fig.6">Self-evolution compounds over time</Finding>: tasks later in a scenario's sequence (which inherit more accumulated Tips/Shortcuts) show larger gains, though not strictly monotonic since task difficulty varies by index.
+- <Finding src="Tab.5">Shortcuts cut compute, recovering speed lost to the deeper hierarchy</Finding>: a Shortcut executes multiple ops in one perception+reasoning iteration; with Evo, GPT-4o reaches 27.4s/op (perception+reasoning), faster than Mobile-Agent-v2's 43.5s, with Shortcut usage at ~12–15% of all actions.
+- <Finding src="Tab.6">Tips help on their own, isolated from Shortcuts</Finding>: restricting to trajectories with no newly generated Shortcuts, evolved Tips still raise SS (e.g. GPT-4o 79.7→87.5, Claude 75.6→85.2), so episodic-style guidance contributes independently of procedural Shortcuts.
+- <Finding src="Tab.2">Mobile-Eval-E is genuinely harder</Finding>: prior SOTA reaches only ~50–70% of human satisfaction, and the benchmark has 2× the ops/task and far more multi-app tasks (76% vs `<10%`) than predecessors.
+
+## Implications
+This consolidates the <Related>Mobile-Agent line (v1, v2) and the broader LMM GUI-agent lineage (AppAgent, AndroidWorld, OSWorld, Cradle)</Related> by importing two ideas: a planning/action hierarchy and a self-evolving skill/lesson memory. Unlike <Related>Cradle's skill curation, which adds skills directly to the atomic action space</Related>, Mobile-Agent-E attaches explicit preconditions to Shortcuts, which the authors argue is critical for multi-app, layout-varying environments. Threads worth chasing: <FollowUp>the closed-loop variant with Experience Retriever agents that select relevant Tips/Shortcuts from a large memory (58 Tips, 7 Shortcuts after 25 tasks) — needed once memory outgrows the context window</FollowUp>, and <FollowUp>whether agent-generated Shortcuts can be self-revised to fix the precondition/parameter errors observed</FollowUp>.
+
+## Limitations
+- <Caveat>Shortcuts are misused when the Operator misperceives the phone state and violates a precondition (e.g. invoking a search Shortcut before the search bar's app is foregrounded; App.C.1, Fig.10)</Caveat>.
+- <Caveat>Self-generated Shortcuts can be imperfect or erroneous — a redundant Tap, or a missing Tap needed to enter an app — and such errors propagate to later tasks (App.C.2, Fig.11)</Caveat>.
+- <Caveat>Evaluation is small-scale and human-dependent: only 25 tasks, on a single device (Samsung Galaxy A15), with Satisfaction Score / Action Accuracy / Reflection Accuracy all judged by human raters against hand-written rubrics</Caveat>; inter-rater reliability is Not reported.
+- <Caveat>Numbers appear to be single-run; variance / error bars are Not reported</Caveat>.
+
+## Critiques and Questions
+1. Satisfaction Score is a human-rated rubric ratio with no reported inter-annotator agreement, and the same authors design both the benchmark and the rubrics — the headline "+22.1%" should be read with that subjectivity in mind.
+2. In the evolution setting the Experience Reflectors are fed the *queries of remaining tasks* in the scenario, so a task partly benefits from foreknowledge of upcoming tasks; this is a generous notion of "self-evolution" versus a strictly online agent.
+3. With only 25 tasks and apparently single runs, the per-cell differences (especially Gemini's flat 70.9→71.2) sit within plausible noise; replication and variance reporting would strengthen the claims.
+4. Shortcuts/Tips are evaluated within the same 5 scenarios they were learned in; transfer to genuinely unseen app domains is shown only qualitatively in one case study (Fig.7), not measured.
+
+<SelfCheck q="Why does the Manager deliberately not receive the Perceptor's fine-grained perception output?" a="High-level planning only needs the task, current screen, and prior plan/progress/notes; the detailed icon/text list would add noise to subgoal decomposition. Fine-grained perception is instead given to the Operator, which needs precise coordinates for actions like tap(x,y)." />
+
+## Glossary
+- <Term def="A natural-language lesson learned from prior trial-and-error, stored in long-term memory and given to the Manager/Operator; analogous to episodic memory.">Tip</Term>
+- <Term def="A reusable executable function bundling a sequence of atomic operations with an explicit precondition; collapses several actions into one decision step; analogous to procedural memory.">Shortcut</Term>
+- <Term def="Human-rated metric: fulfilled rubrics divided by total rubrics for a task, mixing milestone and exploratory criteria; replaces binary success for open-ended tasks.">Satisfaction Score (SS)</Term>
+- <Term def="Satisfaction-Score-vs-Steps curve: satisfaction tracked after each step (steps normalized to [0,1]); a steeper, higher curve means more efficient task completion.">SSS curve</Term>
+- <Term def="Fraction of tasks that exit abnormally (max iterations, consecutive/repeated errors, or parse failure) rather than by self-reported success; lower is better.">Termination Error (TE)</Term>
+- <Term def="Large multimodal model — a vision-language foundation model (e.g. GPT-4o, Claude-3.5-Sonnet, Gemini-1.5-pro) used here as the frozen backbone for the reasoning agents.">LMM</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

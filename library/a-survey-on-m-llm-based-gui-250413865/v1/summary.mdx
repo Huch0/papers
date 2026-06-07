@@ -1,0 +1,115 @@
+---
+canonical_key: arxiv-2504.13865
+version_key: v1
+title: A Survey on (M)LLM-Based GUI Agents
+authors:
+- Fei Tang
+- Haolei Xu
+- Hang Zhang
+- Siqi Chen
+- Xingyu Wu
+- Yongliang Shen
+- Wenqi Zhang
+- Guiyang Hou
+- Zeqi Tan
+- Yuchen Yan
+- Kaitao Song
+- Jian Shao
+- Weiming Lu
+- Jun Xiao
+- Yueting Zhuang
+venue: arXiv.org
+year: 2025
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2504.13865
+summary_date: '2026-06-07'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+{/*
+  Survey summary — core-first. Key findings = the survey's organizing taxonomy/insights.
+  Per-system metrics are "Not reported": the survey does not report a unified leaderboard.
+*/}
+
+<TLDR>A survey that organizes the field of (M)LLM-based GUI agents into four reusable modules — <Novelty>perception, exploration, planning, and interaction</Novelty> — and a matching taxonomy of methods, applications, benchmarks, and open challenges.</TLDR>
+
+<WhyItMatters>A map of the computer-use / GUI-agent landscape: the four-module decomposition is a useful mental model for placing any specific agent paper (AppAgent, Mobile-Agent, OS-Copilot, UI-TARS, etc.) and for spotting where the field's bottlenecks are.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "4", label: "core modules in the taxonomy", sub: "perception · exploration · planning · interaction" },
+  { value: "~50", label: "datasets / benchmarks surveyed", sub: "Tab.1, 2017–2025" },
+  { value: "2021–2025", label: "literature window", sub: "across mobile, desktop, web, games" },
+]} />
+
+## Motivation
+Traditional GUI automation relied on <Problem>brittle, hand-crafted rules and screen record/playback that cannot handle dynamic, varied modern interfaces</Problem>. The recent (M)LLM-based agent literature exploded across platforms but is <Problem>fragmented — papers describe individual systems without a shared vocabulary for their components or a consistent way to compare evaluation methods</Problem>, making it hard to see what is actually new or where the field is stuck.
+
+## Contribution (what's new)
+The genuine delta is a <Novelty>functional decomposition of every GUI agent into four modules — perception, exploration, planning, interaction — mirroring the information flow from sensing the screen, to building/retrieving knowledge, to deciding, to acting</Novelty>. The decomposition is the contribution: it lets otherwise heterogeneous systems be slotted into the same taxonomy (Fig.2), and it exposes per-module bottlenecks (e.g. element localization sits in perception, long-horizon planning in planning). The survey adds a parallel taxonomy of datasets/benchmarks by environment, task type, and evaluation strategy (Tab.1).
+
+## Research questions
+What technical components constitute a modern (M)LLM-based GUI agent, how do current methods realize each component across mobile/desktop/web/game platforms, how is performance evaluated, and what are the field's open challenges?
+
+## Methodology
+A structured literature review (2021–2025). The authors read the corpus, induce a four-module taxonomy plus sub-taxonomies, and organize each method under the relevant leaf. It is descriptive, not experimental: no new system is built and no head-to-head numbers are produced.
+
+<Pass title="The four-module taxonomy in detail">
+<Stepper steps={[
+  { title: "Perception (§2.2)", body: "How the agent reads the screen. Three branches: text-based parsing of DOM/HTML/XML (e.g. WebArena, AutoDroid); multimodal understanding of screenshots via general MLLMs (GPT-4V/4o, Claude-3.5) or GUI-trained models (CogAgent, SeeClick, OS-ATLAS, UI-TARS); and multi-tool collaborative parsing (SoM = Grounding DINO + SAM; OmniParser = OCR + detection + icon recognition feeding GPT-4V)." },
+  { title: "Exploration (§2.3)", body: "How the agent acquires/stores/retrieves knowledge. Acquisition: internal (probing UI structure), historical (past trajectories, skill repos like Voyager, reflection like Reflexion), external (web/docs). Construction: static (offline graphs, AutoDroid) vs dynamic (real-time memory, MobA, OS-Copilot). Storage: natural language / database / data structures (tree, dict, graph) / code. Retrieval: single vs multiple." },
+  { title: "Reasoning & Planning (§2.4)", body: "Reasoning frameworks (CoT, ToT, GoT, ReAct; multimodal CoT; o1/DeepSeek-R1-style models) feed two planner styles — iterative planning (adjust step-by-step from feedback, e.g. Mobile-Agent) and task-decomposition planning (split into subtasks/DAG, e.g. Agent S, OS-Copilot). Plus verifiers and internal/external feedback loops." },
+  { title: "Interaction (§2.5)", body: "Action goal → action generation (GUI grounding to get click coordinates; memory-based vs planning-based strategies) → action space (user-action simulation like Tap/Swipe/Type vs API invocation), all under safety controls (sensitive-action detection, permission management, error recovery)." },
+]} />
+</Pass>
+
+## Main result
+This is a survey, so there is no single headline number; per-system performance is **Not reported** (the survey deliberately does not assemble a unified leaderboard). The substantive output is the taxonomy and the critical analysis of evaluation — captured below.
+
+## Key findings
+The survey's organizing insights, each a structural claim about the field rather than a metric:
+
+- <Finding src="§2.1, Fig.2">GUI agents decompose cleanly into four modules — perception → exploration → planning → interaction</Finding>: this information-flow pipeline is the survey's central organizing claim, and architectures fall into General-MLLM, Trained-MLLM, Multi-Agent, and LLM-based families.
+- <Finding src="§2.2">Perception is migrating from text parsing toward multimodal and tool-augmented grounding</Finding>: text-based parsing suffers redundancy, noise, and availability gaps (XML/HTML often incomplete), pushing the field toward screenshot-native MLLMs — but those trade end-to-end efficiency for tool overhead and still struggle with small-element localization.
+- <Finding src="§2.3">Exploration/memory is the axis separating brittle from adaptive agents</Finding>: static, offline-built knowledge bases fail in dynamic interfaces, so the field is shifting to dynamic, continuously-updated memory, organized as NL/database/tree/graph/code with single- vs multiple-retrieval.
+- <Finding src="§2.4">Planning splits into iterative vs task-decomposition styles with complementary failure modes</Finding>: iterative planning adapts to feedback but can spiral into long, hallucination-prone chains; decomposition reduces forgetting but is rigid when the environment deviates from the fixed subtask plan. o1/R1-style reasoning is an emerging third thread.
+- <Finding src="§4.1, §4.3">Evaluation is the field's weakest link, with three environment types and three scoring paradigms each flawed</Finding>: environments are static replicas / simulated / real-world; scoring is trajectory-based (step-match or LCS, high false-negatives because one reference path can't cover valid alternatives), goal-oriented (checks final device/system state, more robust but task-specific scripts), or graph-driven (CRAB-style, a middle ground tolerating alternative paths).
+- <Finding src="§4.4">Benchmarks share cost, diversity, and security gaps</Finding>: evaluation is expensive (OSWorld tasks ~10–20 steps, serial runs take a day+), English/optimized-UI/region-biased, and demands system-level privileges that pose privacy/security risks with no standardized safety protocol.
+- <Finding src="§5">Four standing challenges define the research frontier</Finding>: realistic multi-step data (interruptions, resumption, dynamic UI), visual grounding of tiny elements at high resolution, robust planning under interruptions/ambiguity, and reinforcement learning with rule-based rewards (R1-style) as a promising but unproven direction.
+
+## Implications
+The four-module taxonomy gives a stable scaffold for reading the rapidly growing GUI-agent literature and for diagnosing where a given system is weak. It connects the lineage from <Related>early UI models (UIBert, META-GUI) through grounding-trained MLLMs (CogAgent, SeeClick, OS-ATLAS, ShowUI, Aguvis, UI-TARS) and multi-agent frameworks (Mobile-Agent-v2, UFO, Agent S)</Related>, and frames evaluation work (<Related>WebArena, OSWorld, AndroidWorld, CRAB, ScreenSpot-Pro</Related>). Threads worth chasing: <FollowUp>RL with rule-based rewards (DeepSeek-R1 paradigm) for GUI agents</FollowUp>, <FollowUp>end-to-end perception+action architectures that avoid the tool-pipeline overhead of SoM/OmniParser</FollowUp>, and <FollowUp>graph-driven evaluation as a way out of the trajectory-vs-goal false-negative trap</FollowUp>.
+
+## Limitations
+- <Caveat>Descriptive, not comparative — no unified benchmark or head-to-head numbers, so the survey cannot rank methods or quantify the gaps it identifies.</Caveat>
+- <Caveat>Fast-moving snapshot (2021–2025) that will age quickly; coverage of the newest grounding models and RL approaches is necessarily thin.</Caveat>
+- <Caveat>Taxonomy boundaries are fuzzy — many systems span modules (e.g. perception tools double as grounding), so the clean four-module split is an idealization.</Caveat>
+- <Caveat>Several extracted figures/tables describe categories qualitatively; per-system capability claims are not backed by reported metrics in this paper.</Caveat>
+
+## Critiques and Questions
+1. The four-module pipeline is intuitive but is it predictive? It organizes existing work, yet the survey does not show that improving a single module reliably improves end-task success — module interactions may dominate.
+2. With no shared benchmark applied across the surveyed systems, the relative maturity of perception vs planning vs interaction is asserted, not measured. Which module is actually the binding constraint today?
+3. Is "exploration" (memory) genuinely a peer module, or a cross-cutting concern that all three other modules consume? Its placement as one of four feels taxonomically convenient.
+
+<SelfCheck q="What are the four modules in the survey's taxonomy, and what does each broadly do?" a="Perception (read the screen via text parsing, multimodal understanding, or tool-augmented parsing), Exploration (acquire/store/retrieve knowledge — internal, historical, external — built statically or dynamically), Reasoning & Planning (CoT/ToT/ReAct-style reasoning driving iterative or decomposition planning with verifiers and feedback), and Interaction (ground instructions to coordinates and emit actions via user-action simulation or API calls under safety controls)." />
+
+## Glossary
+- <Term def="A graphical-user-interface agent: an autonomous system that reads a screen and acts on it (click/type/swipe) to complete a user task.">GUI agent</Term>
+- <Term def="Multimodal large language model — an LLM that also takes images/screenshots as input (e.g. GPT-4V, Claude-3.5-Sonnet, CogAgent).">MLLM</Term>
+- <Term def="Mapping a natural-language instruction to the exact on-screen element / pixel coordinates to click.">GUI grounding</Term>
+- <Term def="Set-of-Mark: tags screen objects with numbered marks (via Grounding DINO + SAM) so an MLLM can refer to them by index.">SoM</Term>
+- <Term def="A perception pipeline that runs OCR + object detection + icon recognition to parse a screenshot into structured elements for an MLLM.">OmniParser</Term>
+- <Term def="Reasoning-and-Acting: interleaves a thought, an action, and an observation in a loop.">ReAct</Term>
+- <Term def="Evaluation that compares the agent's action sequence to a reference path (exact step match or longest-common-subsequence); prone to false negatives.">trajectory-based evaluation</Term>
+- <Term def="Evaluation that checks only whether the final device/system state matches the goal, regardless of the path taken.">goal-oriented evaluation</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

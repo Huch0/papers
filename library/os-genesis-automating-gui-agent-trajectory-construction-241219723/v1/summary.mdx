@@ -1,0 +1,122 @@
+---
+canonical_key: arxiv-2412.19723
+version_key: v1
+title: 'OS-Genesis: Automating GUI Agent Trajectory Construction via Reverse Task Synthesis'
+authors:
+- Qiushi Sun
+- Kanzhi Cheng
+- Zichen Ding
+- Chuanyang Jin
+- Yian Wang
+- Fangzhi Xu
+- Zhenyu Wu
+- Chengyou Jia
+- Liheng Chen
+- Zhoumianze Liu
+- Ben Kao
+- Guohao Li
+- Junxian He
+- Yu Qiao
+- Zhiyong Wu
+venue: Annual Meeting of the Association for Computational Linguistics
+year: 2024
+tags:
+- foundational
+topic_groups:
+- agent_harness
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2412.19723
+summary_date: '2026-06-07'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+{/*
+  Canonical Summary structure (concise, core-first). Body only — frontmatter is generated
+  from metadata.yaml by `summarize_paper.py --format mdx --prepare`. Components are
+  provided globally by the site (no imports). See config/summary_components.md.
+*/}
+
+<TLDR>OS-Genesis reverses GUI trajectory collection — agents explore an app first, then retrospectively synthesize tasks from observed interactions — yielding higher-quality, more diverse training data without human supervision or pre-defined tasks.</TLDR>
+
+<WhyItMatters>Directly relevant to the computer-use / agent-harness track: it attacks the central data bottleneck for training VLM-based GUI agents, and shows synthetic trajectories can reach >80% of human-data quality.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "17.41%", label: "AndroidWorld SR", sub: "Qwen2-VL-7B, vs 9.82% best baseline" },
+  { value: "1K", label: "trajectories used for training", sub: "vs 1.5K for Self-Instruct baseline" },
+  { value: ">80%", label: "human-data retention", sub: "avg SR vs human-annotated trajectories" },
+  { value: "0.813", label: "TRM↔human Spearman", sub: "mobile reward agreement (Tab.6)" },
+]} />
+
+## Motivation
+Training VLM-based GUI agents needs high-quality trajectories — sequences of high-level instruction, low-level steps, actions, and visual/textual states. Collecting them is the bottleneck. <Problem>Human annotation is costly and labor-intensive</Problem>, requiring annotators to pre-define tasks and label entire trajectories. <Problem>Model-based synthesis depends on pre-defined high-level tasks, which limits scalability and diversity</Problem>, and <Problem>struggles to ensure quality, since errors in intermediate steps or mismatched objectives yield incomplete or incoherent trajectories</Problem>. Both produce a gap between synthetic data and real, dynamic environments.
+
+## Contribution (what's new)
+The genuine delta is <Novelty>reverse task synthesis: instead of defining a task then executing it, the agent first explores the GUI by traversing interactive elements, then retrospectively derives tasks from the observed state transitions</Novelty>. A low-level instruction is inferred from each `⟨s_pre, a, s_post⟩` triple, then generalized into a high-level goal that plausibly contains it. This design is forced by *why task-driven baselines fail*: pre-defined tasks cannot enumerate a complex environment's full interaction space and often misalign with the live UI, so grounding tasks *in* observed interactions is what makes them both executable and diverse. A second piece is the <Novelty>Trajectory Reward Model (TRM): a GPT-4o graded score in [1,5] (completion + coherence) used for probabilistic sampling rather than binary keep/discard</Novelty>, so that valuable-but-incomplete trajectories are retained instead of thrown away.
+
+## Research questions
+Can GUI agent trajectories be synthesized without human supervision or pre-defined tasks while improving downstream agent performance? Does exploration-first ("interaction-driven") construction produce more diverse and higher-quality data than task-driven synthesis, and how close does it get to human-annotated data?
+
+## Methodology
+A three-stage pipeline turns blind UI exploration into trained agents: discover functionality by interacting, invert observations into tasks, then collect and quality-weight trajectories.
+
+<Pass title="Method details">
+<Stepper steps={[
+  { title: "Interaction-driven functional discovery", body: "Human-free, mostly rule-based traversal of interactive elements in live environments (Android emulator + Chrome browser) using actions a ∈ {CLICK, TYPE, SCROLL}. GPT-4o is invoked only to fill input fields with contextually appropriate content. Produces massive ⟨s_pre, a, s_post⟩ triples (pre/post-action screenshots + action)." },
+  { title: "Reverse task synthesis", body: "An annotation model (GPT-4o) maps each triple → an atomic low-level instruction τ_low (flow: ⟨s_pre,a,s_post⟩ → τ_low), then generalizes τ_low → a high-level goal τ_high that plausibly encompasses it (fhigh: τ_low → τ_high). Yields a diverse instruction set T={τ_1,…,τ_N}, fully without human intervention." },
+  { title: "Trajectory collection + TRM", body: "GPT-4o executes the synthesized high-level instructions in the environment to produce complete trajectories G. The TRM (GPT-4o) scores each trajectory R∈[1,5] on completion and coherence, using the low-level instructions and the last three states; trajectories are then sampled for training with probability proportional to reward (Algorithm 1)." },
+  { title: "Trajectory training (SFT)", body: "Full fine-tuning of VLMs (InternVL2-4B/8B, Qwen2-VL-7B) on 8×A100 80GB. Two objectives: Planning Training (predict low-level instruction + action given state/high-level/history) and Action Training (predict action given low-level instruction). Agents emit ReAct-style outputs. Task-Driven and OS-Genesis use 1K trajectories; Self-Instruct uses 1.5K; avg trajectory length 6.4 steps." },
+]} />
+
+The headline action space is `{CLICK, TYPE, SCROLL}` (plus `OpenApp` for mobile, seen in Fig.3). All settings uniformly accept a11ytree + screenshots as input.
+</Pass>
+
+## Main result
+On the dynamic online benchmark <Term def="A dynamic Android-emulator benchmark of daily human tasks (Rawles et al., 2024)">AndroidWorld</Term>, OS-Genesis nearly doubles the best task-driven baseline: <Finding src="Tab.1">17.41% success rate with Qwen2-VL-7B vs 9.82% for Task-Driven w. Self-Instruct, and 23.70% for the GPT-4o M3A reference</Finding>. Gains are consistent across all three backbones:
+
+<SortableTable columns={["Backbone", "Strategy", "AndroidWorld SR", "AC-High SR", "WebArena Overall"]} rows={[
+  ["InternVL2-4B", "Task-Driven", 4.02, 27.37, 4.98],
+  ["InternVL2-4B", "OS-Genesis", 15.18, 33.39, 7.88],
+  ["InternVL2-8B", "Task-Driven", 4.46, 23.79, 4.56],
+  ["InternVL2-8B", "OS-Genesis", 16.96, 35.77, 9.96],
+  ["Qwen2-VL-7B", "Task-Driven", 6.25, 38.84, 7.05],
+  ["Qwen2-VL-7B", "OS-Genesis", 17.41, 44.54, 10.79]
+]} />
+
+## Key findings
+- <Finding src="Tab.1, §4.3">OS-Genesis roughly doubles task-driven performance on AndroidWorld even with less data</Finding>: it uses 1K trajectories vs the Self-Instruct baseline's 1.5K, yet the baseline still fails to match its quality.
+- <Finding src="Tab.1, §4.3">Strong out-of-distribution generalization on AndroidControl</Finding>: only 20 of the 833 apps were seen during synthesis, yet OS-Genesis consistently improves both planning (high-level) and action (low-level) over baselines and GPT-4o.
+- <Finding src="Fig.4, §5.1">Highest instruction *and* trajectory diversity</Finding> (avg cosine distance) among synthetic methods. Notably, human data has high instruction diversity but low trajectory diversity — people imagine varied goals but execute with a narrow set of familiar actions — whereas OS-Genesis is high on both.
+- <Finding src="Fig.5, §5.2">TRM beats both no-RM and binary-labeler filtering</Finding>, especially on high-level tasks (AndroidControl-High, AndroidWorld). A labeler helps high-level slightly but *hurts* low-level, because OS-Genesis steps are individually meaningful and shouldn't be discarded wholesale.
+- <Finding src="Fig.6, §5.3">Performance scales with trajectory count then saturates</Finding> (0→1500 trajectories), attributed to VLM capacity limits and the exploration/executor ceiling of GPT-4o.
+- <Finding src="Fig.7-8, §5.4">Synthesized data approaches human quality</Finding>: avg-SR retention vs human-annotated trajectories surpasses 80%, and OS-Genesis high-level instructions actually *outperform* human-written ones — pre-defined human tasks can misalign with the dynamic environment or be misread by the executor.
+
+## Implications
+Establishes interaction-first / reverse synthesis as a way to escape the pre-defined-task ceiling for GUI agent data, building on the <Related>trajectory-data lineage (Rico, MiniWob, AndroidControl, WeblinX) and online benchmarks (AndroidWorld, WebArena)</Related> and complementing grounding work like <Related>SeeClick and UGround</Related>. The TRM's graded reward over a binary labeler is a reusable idea for any synthetic-trajectory pipeline. Threads worth chasing: <FollowUp>replacing the GPT-4o explorer/annotator/TRM with open-source action models to remove proprietary dependence</FollowUp>, <FollowUp>extending reverse synthesis to desktop/OS and IDE environments beyond mobile + web</FollowUp>, and <FollowUp>whether reward-proportional sampling beats simpler reward thresholds</FollowUp>.
+
+## Limitations
+<Caveat>Proprietary dependence: exploration, annotation, and reward modeling all rely on GPT-4o</Caveat>, because current open-source VLMs cannot follow instructions and explore online environments reliably. <Caveat>Trajectory quantity is bounded by the task-executing model's capability</Caveat> — better VLMs are needed to materialize more high-level instructions into complete trajectories. <Caveat>Agents are trained/evaluated with both textual and visual representations</Caveat>; the partial (text-only or vision-only) use of full trajectory data is left to future work. Inferred: <Caveat>evaluation is limited to mobile (AndroidWorld/Control) and web (WebArena) — no desktop/OS — and main results appear to be single-run with no variance reported</Caveat>.
+
+## Critiques and Questions
+1. The TRM is GPT-4o judging GPT-4o-generated trajectories; the strong human-agreement Spearman (0.813 mobile / 0.798 web, Tab.6) is reassuring, but circularity in what "good" means could still inflate the data's apparent quality.
+2. No reported variance or seeds on the headline numbers makes the InternVL2 jumps (e.g. 4.46% → 16.96% on AndroidWorld) hard to bound — how stable are they across runs?
+3. "Reverse task synthesis" risks a coverage bias toward whatever the rule-based explorer happens to reach; long-horizon or multi-app tasks may be under-represented relative to short interaction chains (avg 6.4 steps).
+4. WebArena absolute numbers stay low (≤10.79% overall) — does the method's advantage hold as agents approach harder, longer web workflows?
+
+<SelfCheck q="Why is it called 'reverse' task synthesis, and what is the core unit it operates on?" a="Conventional pipelines define a task then execute it; OS-Genesis reverses this — the agent first explores the GUI and records ⟨s_pre, a, s_post⟩ interaction triples, then retrospectively derives a low-level instruction from each triple and generalizes it into a high-level task. The triple (pre-action state, action, post-action state) is the core unit." />
+
+## Glossary
+- <Term def="Sequence of high-level instruction, low-level steps, actions (CLICK/TYPE/SCROLL), and visual+textual states, used for end-to-end GUI agent training">GUI trajectory</Term>
+- <Term def="Accessibility tree: a structured representation where each node corresponds to a UI element on screen">a11ytree</Term>
+- <Term def="Trajectory Reward Model — a GPT-4o-based grader scoring trajectories 1–5 on completion + coherence, used for reward-proportional sampling instead of binary filtering">TRM</Term>
+- <Term def="Out-of-distribution: apps/tasks not seen during data synthesis (e.g. 813 of 833 AndroidControl apps)">OOD</Term>
+- <Term def="Reasoning-and-acting prompting style where the model interleaves thoughts and actions, recorded in history">ReAct-style</Term>
+- <Term def="The GPT-4o multimodal agent setup used as the reference baseline on AndroidWorld (Rawles et al., 2024)">M3A</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

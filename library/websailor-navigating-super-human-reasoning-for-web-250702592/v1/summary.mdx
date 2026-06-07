@@ -1,0 +1,143 @@
+---
+canonical_key: arxiv-2507.02592
+version_key: v1
+title: 'WebSailor: Navigating Super-human Reasoning for Web Agent'
+authors:
+- Kuan Li
+- Zhongwang Zhang
+- Huifeng Yin
+- Liwen Zhang
+- Litu Ou
+- Jialong Wu
+- Wenbiao Yin
+- Baixuan Li
+- Zhengwei Tao
+- Xinyu Wang
+- Weizhou Shen
+- Junkai Zhang
+- Dingchu Zhang
+- Xixi Wu
+- Yong Jiang
+- Ming Yan
+- Pengjun Xie
+- Fei Huang
+- Jingren Zhou
+venue: arXiv.org
+year: 2025
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2507.02592
+summary_date: '2026-06-07'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+{/*
+  Canonical Summary structure (concise, core-first). Body only — frontmatter is generated
+  from metadata.yaml by `summarize_paper.py --format mdx --prepare`. Components are
+  provided globally by the site (no imports). See config/summary_components.md.
+*/}
+
+<TLDR>A complete open-source post-training recipe — graph-synthesized high-uncertainty QA (SailorFog-QA), reconstructed short-CoT cold-start traces, and a faster agentic RL algorithm (DUPO) — that lifts open browsing agents to near-proprietary performance on the hardest information-seeking benchmarks.</TLDR>
+
+<WhyItMatters>Directly on my computer-use / web-agent track: it is the first open recipe to make a browsing ReAct agent competitive with DeepResearch-class systems on BrowseComp, and its data-synthesis idea (sample obfuscated subgraphs to manufacture irreducible uncertainty) is reusable beyond web search.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "12.0%", label: "BrowseComp-en pass@1", sub: "WebSailor-72B (Tab.1)" },
+  { value: "30.1%", label: "BrowseComp-zh pass@1", sub: "WebSailor-72B, on par with Doubao (Tab.1)" },
+  { value: "~2k", label: "RFT cold-start examples", sub: "minimal SFT before RL (§1)" },
+  { value: "2–3×", label: "RL rollout speedup", sub: "DUPO vs DAPO dynamic sampling (§4.2)" },
+]} />
+
+## Motivation
+Proprietary agents like DeepResearch reach <Finding src="Tab.1">51.5% on BrowseComp-en</Finding> while open-source web agents sit near zero (<Finding src="Tab.1">WebDancer-QwQ 3.8, WebThinker-RL 2.8</Finding>). The paper argues this gap is not scale but <Problem>missing reasoning patterns: open models are trained on Level 1/2 tasks (single-search or fixed-path multi-hop) and never face Level 3 problems with high, hard-to-reduce uncertainty and no predefined solution path</Problem>. A second blocker is supervision: <Problem>strong open LRMs (QwQ, DeepSeek-R1) can solve some hard tasks, but their verbose, stylized chains-of-thought are unfit for fine-tuning — they impose stylistic priors and overflow the context window on long-horizon trajectories</Problem>.
+
+## Contribution (what's new)
+The genuine delta is a recipe to *manufacture* irreducible uncertainty and learn from it cheaply. <Novelty>SailorFog-QA samples diverse subgraphs from random-walk knowledge graphs seeded from rare Wikidata entities, then deliberately obfuscates facts (precise date → "early 2010s", name → "founded by someone with the initial 'F'") so the agent must compare and synthesize rather than look up</Novelty>. Because direct imitation of LRM traces fails, <Novelty>reasoning is reconstructed: keep only the expert's successful action–observation trace, discard its native thoughts, and regenerate concise "short-CoT" justifications per step</Novelty> — capturing the *what/how* without inheriting verbosity or stylistic priors. Training is two-stage: a deliberately *modest* RFT cold start (the paper argues SFT is indispensable here because RL rewards are near-zero-sparse at the start), then <Novelty>DUPO, an agentic-RL algorithm that pre-filters all-correct cases and, instead of padding the batch with fresh sequential rollouts (DAPO), duplicates within-batch samples with non-zero reward variance</Novelty> to cut the rollout bottleneck.
+
+## Research questions
+- Why do open-source web agents fail on BrowseComp while proprietary ones succeed, and is the missing ingredient a trainable reasoning pattern rather than model scale?
+- Can high-uncertainty Level-3 training data be synthesized scalably, and can an open agent trained on it close the gap to proprietary systems?
+- Is an SFT cold start necessary for agentic RL on long-horizon web tasks, or can RL be applied directly?
+
+## Methodology
+Agent is ReAct (Thought → Action → Observation) with two tools — `search` (Google, top-10 titles/snippets/URLs per query) and `visit` (Jina fetch + Qwen-2.5-72B goal-conditioned summarization) — capped at 30 tool calls. Backbones are Qwen-2.5 at 3B/7B/32B/72B. Data is built graph-first, then RFT-filtered, then RL'd with DUPO.
+
+<Pass title="Method details">
+
+<Stepper steps={[
+  { title: "Graph construction (App. A.2)", body: "Seed a fuzzy/rare entity from Wikidata SPARQL; gather features via search+visit; extract related entities/relations as nodes/edges; iteratively and probabilistically expand (either branch a new entity or revisit a prior node) until an edge budget is hit — discouraging linear chains and producing densely interconnected, non-linear topologies." },
+  { title: "SailorFog-QA generation (§3.1)", body: "Sample subgraphs of diverse topology; write a QA over the subgraph; inject information obfuscation (vague dates, partial names, qualitative descriptors) to raise initial uncertainty. Claimed advantages: grounded in the real internet, diverse reasoning patterns, non-linear scalability in graph size." },
+  { title: "Trajectory reconstruction (§3.2)", body: "Prompt an expert LRM (QwQ-32B) for a full solution trajectory; keep only the action–observation trace; for each step t regenerate a concise thought τ̂t ~ π*(τ | H_{t-1}, a_t, o_t) in a short-CoT style." },
+  { title: "RFT cold start (§4.1)", body: "Three-stage filter: keep only correct-answer trajectories (rejection sampling), drop trajectories over 32k tokens, and retain only those with >5 tool calls. Mask observation tokens from the loss. Just over 2k examples." },
+  { title: "DUPO RL (§4.2)", body: "Pre-filter cases where all 8 rollouts are correct; during training duplicate within-batch samples with non-zero reward std instead of padding with fresh rollouts; GRPO-style group-relative advantage, token-level loss, DAPO higher-clip, observation masking." },
+]} />
+
+Reward is rule-based to avoid hacking:
+
+<MathBlock>{`R_i = 0.1 \\cdot R^{format}_i + 0.9 \\cdot R^{answer}_i`}</MathBlock>
+
+where the format term checks ReAct tag structure (`<think>`, `<tool_call>`, `<answer>`) and the answer term is an LLM-as-judge correctness score. RL hyperparameters: group rollout 8, temperature 1.0, batch 128 / mini-batch 32, lr 1e-6; SFT uses batch 32, lr 5e-6 (App. A.4).
+</Pass>
+
+## Main result
+On the hardest benchmarks WebSailor-72B sets a new open-source state-of-the-art and reaches parity with a top proprietary agent in Chinese: <Finding src="Tab.1, p.9">12.0 on BrowseComp-en and 30.1 on BrowseComp-zh, vs DeepResearch 51.5 / 42.9 and Doubao —/26.0</Finding>. The small models punch above their weight — <Finding src="Tab.1, p.9">WebSailor-7B (6.7 on BrowseComp-en) beats 32B-backbone WebDancer-32B (2.5) and WebThinker-RL (2.8)</Finding>, evidence the gains are from the training paradigm, not scale.
+
+<SortableTable columns={["Method", "BrowseComp-en", "BrowseComp-zh", "Xbench-DeepSearch", "GAIA"]} rows={[
+  ["DeepResearch (proprietary)", 51.5, 42.9, 0, 67.4],
+  ["Doubao (proprietary)", 0, 26.0, 50, 0],
+  ["DeepSeek-R1 (direct)", 2.0, 26.3, 32.7, 16.5],
+  ["WebDancer-QwQ", 3.8, 18.0, 39.0, 51.5],
+  ["WebThinker-RL", 2.8, 7.3, 24.0, 48.5],
+  ["WebSailor-7B", 6.7, 14.2, 34.3, 37.9],
+  ["WebSailor-32B", 10.5, 25.5, 53.3, 53.2],
+  ["WebSailor-72B", 12.0, 30.1, 55.0, 55.4]
+]} />
+
+(0 marks a cell the paper does not report — "−" in Tab.1 due to API/cost limits; not a true score.)
+
+## Key findings
+- <Finding src="Tab.1, p.8">Direct inference is near-useless for complex info-seeking</Finding>: even GPT-4.1 scores 1.5 on BrowseComp-en, confirming the task needs live web interaction, not parametric knowledge.
+- <Finding src="Fig.4">WebSailor stays best even on easy Level-1 tasks</Finding>: on a 200-sample SimpleQA subset, WebSailor-72B hits 93.5% pass@1 (vs 87.5 for WebDancer-32B), so training on hard data is "downward compatible" rather than overfit to difficulty.
+- <Finding src="Fig.6">The RFT cold start is essential, not optional</Finding>: direct RL shows a larger raw Pass@1 increase but converges lower; the cold-started model keeps a high, stable tool-call count while direct-RL tool use stays low — i.e. without cold start the model never masters long-horizon reasoning, and the gap is widest on BrowseComp-en.
+- <Finding src="Fig.5">RL helps hardest tasks most and mostly raises Pass@1</Finding>: largest gains on BrowseComp-en/zh (e.g. +8.3 Pass@1 on 72B BrowseComp-zh); Pass@1 rises more than Pass@3, indicating RL improves sample efficiency / stability rather than just ceiling.
+- <Finding src="Fig.3">SailorFog-QA's difficulty profile matches BrowseComp, unlike prior training sets</Finding>: WebDancer's data is >50% two-tool-call and almost never exceeds ten, whereas SailorFog-QA has a long tail past twenty tool calls mirroring BrowseComp-en.
+- <Finding src="Tab.2">The synthetic data is genuinely hard</Finding>: before filtering, o4-mini/DeepSeek-R1 reach only 47.3/38.9 pass@1 on SailorFog-QA vs 90.2/84.4 on WebDancer-QA (and 26.3/9.5 on BrowseComp-en) — far harder than the prior dataset, partly because obfuscation can admit non-unique answers.
+
+## Implications
+This is a concrete blueprint for closing the open-vs-proprietary gap on agentic info-seeking without distillation-at-scale, and the "manufacture uncertainty by sampling + obfuscating knowledge-graph subgraphs" idea is a reusable data engine. It extends the <Related>ReAct line (Yao et al., 2023) and the open web-agent lineage — WebDancer, WebThinker, R1-Searcher, Search-o1</Related>, and the RL side builds on <Related>GRPO (DeepSeekMath) and DAPO</Related>. Threads worth chasing: <FollowUp>asynchronous RL to lift the 50-step training cap the authors flag as a bottleneck</FollowUp>, <FollowUp>raising the 32k-token trajectory filter to learn even longer-horizon tasks</FollowUp>, and <FollowUp>whether the obfuscated-subgraph data engine transfers to non-search agentic domains (e.g. computer/GUI use)</FollowUp>.
+
+## Limitations
+- <Caveat>The 32k-token trajectory filter may cap achievable difficulty; failure analysis shows many errors come from exceeding the context limit, and performance degrades as inference length grows (§5.4)</Caveat>.
+- <Caveat>"Over-thinking": the agent applies multi-step tool calls even to simple questions — though the authors argue this is often cross-verification rather than aimless exploration (§5.4)</Caveat>.
+- <Caveat>RL is limited to 50 steps because the synchronous framework is slow even with DUPO (§5.4)</Caveat>.
+- <Caveat>Weaker on GAIA's math/computation-heavy tasks since WebSailor is not optimized for them; the headline GAIA number mixes these with info-retrieval subsets (§5.2)</Caveat>.
+- <Caveat>Obfuscated questions can lack a unique answer, so even "correct" supervision is noisy — the authors only guarantee the answer satisfies the stated constraints, not uniqueness (§5.3, Tab.2)</Caveat>.
+
+## Critiques and Questions
+1. Absolute numbers are still low (12.0 on BrowseComp-en) and well behind DeepResearch's 51.5 — "closing the gap" holds mainly for BrowseComp-zh parity with Doubao, not the English SOTA. The framing of "superhuman" rests on the claim that the synthetic tasks are intractable for humans in two hours, which is a small manual study, not a controlled measurement.
+2. Many comparison cells are missing ("−" due to cost/API access), so the proprietary comparison is partial and partly self-reported / website-evaluated (Tab.1 footnote ‡).
+3. All metrics are pass@1 from a single-temperature decode (T=0.6) with an LLM judge for correctness; no variance/CIs are given on the main table, and the judge itself is unaudited — both matter on a benchmark with ~zero baselines where small absolute swings dominate.
+4. The reconstructed-reasoning supervision could leak the answer (thoughts are generated *given* the correct action and observation), risking traces that look decisive only in hindsight.
+
+<SelfCheck q="Why does WebSailor reconstruct reasoning traces instead of fine-tuning directly on expert LRM thoughts?" a="Expert LRMs (e.g. QwQ-32B) produce verbose, stylized chains-of-thought that (a) impose stylistic priors that stifle the trainee's own exploratory strategies and (b) overflow the context window on long-horizon, dozens-of-tool-call trajectories. So they keep only the successful action–observation trace and regenerate concise short-CoT justifications per step, capturing solution logic without the drawbacks." />
+
+## Glossary
+- <Term def="Information-seeking task with both high uncertainty and high difficulty in reducing it — entities coupled in emergent ways with no predefined reasoning path; the focus of this paper.">Level 3 task</Term>
+- <Term def="OpenAI/Zhou et al. benchmarks (en/zh) of hard-to-find, multi-faceted info-seeking questions requiring sophisticated browsing; baseline open agents score near zero.">BrowseComp</Term>
+- <Term def="This paper's synthetic training set: QAs generated by sampling obfuscated subgraphs from random-walk knowledge graphs seeded from rare Wikidata entities.">SailorFog-QA</Term>
+- <Term def="Duplicating Sampling Policy Optimization — agentic RL that pre-filters all-correct cases and duplicates within-batch samples with non-zero reward variance instead of padding with fresh rollouts, giving ~2–3× speedup over DAPO dynamic sampling.">DUPO</Term>
+- <Term def="Rejection-sampling Fine-Tuning — a modest SFT 'cold start' on filtered correct trajectories (here just over 2k) before RL.">RFT</Term>
+- <Term def="Reason+Act agent loop: iterate Thought → Action (tool call) → Observation until a final answer is emitted.">ReAct</Term>
+- <Term def="Large Reasoning Model — e.g. QwQ-32B, DeepSeek-R1; strong reasoners whose verbose native CoT is reused only as action traces here.">LRM</Term>
+- <Term def="Deliberately replacing precise facts in a question with vague forms (e.g. exact date → 'early 2010s', name → 'initial F') to raise initial uncertainty.">Information obfuscation</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

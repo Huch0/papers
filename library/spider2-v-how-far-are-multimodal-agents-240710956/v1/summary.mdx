@@ -1,0 +1,133 @@
+---
+canonical_key: arxiv-2407.10956
+version_key: v1
+title: 'Spider2-V: How Far Are Multimodal Agents From Automating Data Science and Engineering Workflows?'
+authors:
+- Ruisheng Cao
+- Fangyu Lei
+- Haoyuan Wu
+- Jixuan Chen
+- Yeqiao Fu
+- Hongcheng Gao
+- Xinzhuang Xiong
+- Hanchong Zhang
+- Yuchen Mao
+- Wenjing Hu
+- Tianbao Xie
+- Hongshen Xu
+- Danyang Zhang
+- Sida Wang
+- Ruoxi Sun
+- Pengcheng Yin
+- Caiming Xiong
+- Ansong Ni
+- Qian Liu
+- Victor Zhong
+- Lu Chen
+- Kai Yu
+- Tao Yu
+venue: Neural Information Processing Systems
+year: 2024
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2407.10956
+summary_date: '2026-06-07'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+{/*
+  Canonical Summary structure (concise, core-first). Body only — frontmatter is generated
+  from metadata.yaml by `summarize_paper.py --format mdx --prepare`. Components are
+  provided globally by the site (no imports). See config/summary_components.md.
+*/}
+
+<TLDR>Spider2-V is the first multimodal-agent benchmark for end-to-end data science and engineering workflows — 494 real-world tasks across 20 enterprise data tools in a live executable computer environment — on which the best VLM agent (GPT-4V) reaches only 14.0% success, exposing how far agents are from automating these pipelines.</TLDR>
+
+<WhyItMatters>A foundational stress-test for <Term def="agents that act in real computer environments via GUI, CLI, and code, observing screenshots and accessibility trees">computer-use agents</Term> on hard, professional, GUI-heavy enterprise work — directly relevant to where the field's headline benchmarks are aging out.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "14.0%", label: "best overall success rate", sub: "GPT-4V, SoM+EF+RAG (Tab.3)" },
+  { value: "494", label: "real-world tasks", sub: "20 enterprise data apps (Tab.1)" },
+  { value: "1.2%", label: "success on Hard tasks (>15 steps)", sub: "GPT-4o (Tab.4)" },
+  { value: "16.2%", label: "success even with oracle step-by-step plan", sub: "verbose instructions (Tab.4)" },
+]} />
+
+## Motivation
+<Problem>Prior data-agent benchmarks cover only a single stage of the pipeline — mostly daily data processing and analysis via code or API calls (Spider, DS-1000, Arcade) — and ignore other crucial stages such as data ingestion, integration, and orchestration on enterprise tools like Snowflake, Airflow, and Dagster.</Problem> Real data work also <Problem>combines code writing with intensive GUI control across multiple professional applications, yet no existing benchmark integrates both code generation and GUI manipulation for professional data science and engineering</Problem> (§1, §5).
+
+## Contribution (what's new)
+<Novelty>A live, executable enterprise-software environment (built on OSWorld) where an agent must drive real desktop apps — clicking GUI elements, writing SQL/Python, and running CLI commands — across the full data pipeline, not produce static input-output pairs.</Novelty> The design must take this form because the bottleneck the authors target is precisely <Novelty>action grounding in authentic, time-dependent GUIs with cloud-hosted enterprise services</Novelty>; a static dataset cannot test whether an agent can locate a button, recover from a wrong pop-up, or configure a cloud workspace. To make this reproducible despite real accounts and live state, they hand-built <Novelty>170 automatic environment-setup configurations and 151 task-specific evaluation scripts</Novelty>, plus a retrieval document warehouse of 11,231 filtered enterprise-docs pages (§2, §3).
+
+## Research questions
+How far are current LLM/VLM-based multimodal agents from automating professional, multi-stage data science and engineering workflows that mix code and GUI control? Which factors — observation modality, action space, retrieval, history length, task difficulty, and authentic-account / interface type — drive or limit their success?
+
+## Methodology
+Each task is a partially observable MDP: the agent sees a natural-language instruction plus a screenshot and/or an <Term def="text representation of the desktop UI listing each element's status, position, and text content">accessibility tree (a11ytree)</Term>, and emits actions like `CLICK(560,200)` or `TYPE("ls -lh")` until it issues `DONE`/`FAIL` or hits the step limit (15 turns / one hour). Tasks come from official enterprise tutorials, modified to avoid contamination, and ship in both **abstract** and **verbose** (step-by-step oracle) instruction forms.
+
+<Pass title="Method details — environment, construction, evaluation, baselines">
+**Environment.** Adapted from OSWorld and built on VM snapshots. Five reset operations restore a consistent initial state (Fig.2): File Transfer, Application Launch, Remote API Calls (to configure cloud workspaces needing real accounts), Script Execution (e.g., Docker for a Superset webserver), and Playwright Automation (e.g., auto-login). The environment is connected to the live Internet so tools like Snowflake/BigQuery use real sandbox accounts.
+
+**Evaluation (Fig.3).** Three generic checker families produce a 0/1 success flag from the open-ended end state: (a) file-based comparison (copy target files out, compare by type, sometimes refetching live ground truth); (b) information-based validation (query tool APIs or use Playwright to read a configured value); (c) execution-based verification (run a shell script, e.g., trigger an Airflow DAG and check run status/logs).
+
+**Construction (Fig.4).** A 6-step pipeline: collect tutorials (10 annotators, 217 source URLs), learn/realize them in the VM, write abstract+verbose instructions with ≥2 modifications to avoid contamination, write setup functions, write evaluation functions, and cross-validate. Each task is checked by two other annotators including red-teaming (deliberate mistakes must score 0). Average annotation cost ≈ 4 hours/task.
+
+**Document warehouse.** Crawled 21,239 HTML pages from official docs, filtered to 11,231 valid pages, each rendered as plain text, simplified HTML, and Markdown for retrieval (§3.2, App.C).
+
+**Baselines (§4.1).** Zero-shot prompting with three add-on techniques: Set-of-Mark (SoM, draw indexed boxes on the screenshot and inject indices into the a11ytree to align modalities), Execution Feedback (EF, append error messages from ungrounded actions), and Retrieval-Augmented Generation (RAG, bge-large-en-v1.5 + LlamaIndex, top-4 segments). Models: open-source Mixtral-8x7B and Llama-3-70B and Qwen-Max (text a11ytree only); VLMs Claude-3-Opus, Gemini-Pro-1.5, GPT-4o, GPT-4V (SoM aligned text+image). Temperature 0.5, top_p 0.9, history window 3, a11ytree cap 5000 tokens.
+</Pass>
+
+## Main result
+Even with EF+RAG, the strongest VLMs barely move the needle: <Finding src="Tab.3, p.8">GPT-4V reaches 14.0% overall success and GPT-4o 13.8%, while Gemini-Pro-1.5 (9.1%) and Claude-3-Opus (8.1%) fall below 10% and the open-source LLMs sit near the floor (Llama-3-70B 2.0%, Mixtral-8x7B 0.8%, Qwen-Max 0.6%)</Finding>. Per-category success rates (SoM+EF+RAG):
+
+<SortableTable columns={["Model", "Observation", "Warehousing", "Transform", "Ingestion", "Visualization", "Orchestration", "Processing", "ITSM", "Overall %"]} rows={[
+  ["Mixtral-8x7B", "a11ytree", 1.2, 0.0, 0.0, 0.0, 2.6, 0.9, 0.0, 0.8],
+  ["Llama-3-70B", "a11ytree", 2.4, 0.0, 0.0, 2.5, 3.9, 2.8, 0.0, 2.0],
+  ["Qwen-Max", "a11ytree", 1.2, 0.0, 0.0, 0.0, 2.6, 0.0, 0.0, 0.6],
+  ["Claude-3-Opus", "Set-of-Mark", 2.4, 2.5, 10.4, 15.0, 11.5, 3.8, 12.1, 8.1],
+  ["Gemini-Pro-1.5", "Set-of-Mark", 3.6, 2.5, 14.6, 15.0, 10.3, 2.8, 19.0, 9.1],
+  ["GPT-4o", "Set-of-Mark", 7.2, 7.5, 24.0, 14.1, 19.8, 10.1, 13.8, 13.8],
+  ["GPT-4V", "Set-of-Mark", 10.8, 10.0, 12.0, 25.0, 18.4, 8.5, 12.1, 14.0]
+]} />
+
+## Key findings
+- <Finding src="Tab.4, p.9">Difficulty scales sharply with action-step count: GPT-4o drops from 38.8% (Easy, ≤5 steps) to 9.7% (Medium, 6–15) to 1.2% (Hard, >15 steps)</Finding> — long-horizon grounding is where agents collapse.
+- <Finding src="Tab.4, §4.3">An oracle step-by-step plan helps but does not rescue the task: verbose instructions raise overall success to only 16.2% vs 11.3% for abstract (a +4.8 point gain)</Finding>, so the residual failure is action grounding, not planning.
+- <Finding src="Tab.4">Tasks needing authentic cloud accounts are harder (10.6% w/ account vs 15.6% w/o)</Finding>: cloud Web UIs have richer menus and suffer network delays and pop-ups the agent must handle live.
+- <Finding src="Tab.4, §4.3">Pure-GUI tasks (20.1%) are easier than pure-CLI tasks (7.1%), with mixed CLI+GUI in between (10.6%)</Finding> — GUIs simplify rigorous coding, and both observation types are designed for them, whereas CLI tasks force extra panel-switching actions.
+- <Finding src="Tab.5, §4.3">Modal alignment is essential: SoM (15.6%) beats raw screenshot+a11ytree (11.4%), which is even worse than a11ytree alone (12.6%)</Finding>; a single screenshot collapses to 4.2% because the agent cannot pinpoint elements without the a11ytree's coordinates. `pyautogui` action space slightly beats a JSON-dict action space (12.6% vs 10.5%).
+- <Finding src="Fig.7, §4.3">Longer history helps grounding: success rises steadily as the history window grows from 0 to 3, and temperature 0.5 is best</Finding> — pointing to interaction efficiency / context length as a key open problem. For RAG, <Finding src="Tab.7">plain-text retrieved docs (16.92%) slightly beat Markdown and simplified HTML (both 15.38%)</Finding>.
+
+## Implications
+Spider2-V extends the live-environment lineage of <Related>OSWorld (which it adapts), WebArena/VisualWebArena, and WorkArena</Related> into professional enterprise data tooling, and sits alongside single-stage data benchmarks like <Related>Spider, DS-1000, Arcade, SheetCopilot, and SWE-bench</Related>. The error mode it isolates — fragile, time-dependent GUI grounding where one mis-clicked coordinate traps the agent in the wrong window — flags <FollowUp>improving action grounding and visual element localization (e.g., spreadsheet-cell precision, cross-app drag operations) as the binding constraint</FollowUp>, and <FollowUp>the history-window/context-length result suggests scaling usable interaction memory is a promising research direction</FollowUp>.
+
+## Limitations
+- <Caveat>Evaluation is largely single-run with temperature 0.5; the authors note high variance in data-ingestion and data-visualization categories, so reported numbers may be noisy.</Caveat>
+- <Caveat>The 15-turn / one-hour cap, plus encouraging multi-action responses to save budget, may under-credit genuinely long-horizon tasks (>15 steps), confounding "capability" with "step budget".</Caveat>
+- <Caveat>Tasks are derived from official tutorials; despite ≥2 mandated modifications, contamination and a tutorial-shaped task distribution remain risks.</Caveat>
+- <Caveat>Live cloud dependence (real accounts, network delay, evolving UIs and refetched ground truth) threatens long-term reproducibility and makes the benchmark prone to aging as enterprise UIs change.</Caveat>
+- <Caveat>Open-source models were given text-only a11ytree observations, so their near-zero scores partly reflect a modality handicap rather than pure reasoning gaps.</Caveat>
+
+## Critiques and Questions
+1. With ~1–2% success on the hard subset and high cross-category variance, how much signal can the per-category leaderboard actually carry without multi-seed runs and confidence intervals?
+2. The verbose ("oracle plan") setting still only reaches 16.2% — but does the grounding bottleneck reflect VLM limits, or the specific SoM/coordinate action interface? An API-level action space for these tools might decouple "can it do the task" from "can it click the pixel".
+3. How stable is the live-ground-truth evaluation over time, given refetched labels and changing cloud UIs — could scores drift purely from upstream product changes?
+
+<SelfCheck q="Providing the agent with a full step-by-step (verbose) plan only raises overall success from 11.3% to 16.2%. What does this small gap imply about where current agents fail?" a="It isolates action grounding — precisely locating and manipulating GUI elements in the live environment — rather than planning/reasoning as the dominant failure mode: even when told exactly what to do, agents can't reliably execute it." />
+
+## Glossary
+- <Term def="A multimodal-agent benchmark of 494 real-world data science and engineering tasks across 20 enterprise tools in a live executable computer environment">Spider2-V</Term>
+- <Term def="The executable computer-environment benchmark Spider2-V is built on; provides VM-backed desktop apps with screenshot and accessibility-tree observations">OSWorld</Term>
+- <Term def="Prompting technique that draws indexed bounding boxes over visible UI elements on the screenshot and injects those indices into the accessibility tree to align the two observation modalities">Set-of-Mark (SoM)</Term>
+- <Term def="A directed acyclic graph of tasks in Apache Airflow, the unit that is scheduled and run">DAG</Term>
+- <Term def="Two instruction styles per task: abstract (high-level goal) and verbose (detailed step-by-step oracle tutorial)">abstract vs verbose instructions</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

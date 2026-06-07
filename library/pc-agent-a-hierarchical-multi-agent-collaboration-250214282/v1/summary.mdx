@@ -1,0 +1,124 @@
+---
+canonical_key: arxiv-2502.14282
+version_key: v1
+title: 'PC-Agent: A Hierarchical Multi-Agent Collaboration Framework for Complex Task Automation on PC'
+authors:
+- Haowei Liu
+- Xi Zhang
+- Haiyang Xu
+- Yuyang Wanyan
+- Junyang Wang
+- Ming Yan
+- Ji Zhang
+- Chunfen Yuan
+- Changsheng Xu
+- Weiming Hu
+- Fei Huang
+venue: arXiv.org
+year: 2025
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+- general_agent_methods
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2502.14282
+summary_date: '2026-06-07'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+{/*
+  Canonical Summary structure (concise, core-first). Body only — frontmatter is generated
+  from metadata.yaml by `summarize_paper.py --format mdx --prepare`. Components are
+  provided globally by the site (no imports). See config/summary_components.md.
+*/}
+
+<TLDR>PC-Agent automates complex, cross-application PC tasks by pairing an Active Perception Module (A11y tree + intention-driven OCR) with a four-agent hierarchy (Manager / Progress / Decision / Reflection) that decomposes work into Instruction–Subtask–Action levels, lifting task success rate by 32 absolute points over the prior best.</TLDR>
+
+<WhyItMatters>A concrete blueprint for computer-use agents on the desktop, where dense GUIs and long inter-app workflows break single-agent scaffolds — directly relevant to the computer-use and general-agent-method tracks.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "56.0%", label: "instruction success rate", sub: "PC-Agent w/ GPT-4o, PC-Eval (Tab.2)" },
+  { value: "+32 pts", label: "absolute SR gain vs prior SOTA", sub: "vs Agent-S, 24%→56% (p.7)" },
+  { value: "25 / 79", label: "instructions / subtasks", sub: "PC-Eval, 8 apps (p.6)" },
+  { value: "88.0%", label: "grounding accuracy with APM", sub: "vs 24.0% Claude-3.5 (Fig.1)" },
+]} />
+
+## Motivation
+PC automation is harder than mobile on two fronts. <Problem>PC GUIs pack dense, diverse, often unlabeled icons and widgets plus varied text layouts, so even strong MLLMs ground them poorly</Problem> — Claude-3.5 reaches only 24.0% on the authors' grounding set (Fig.1). And <Problem>productivity tasks span long, multi-app workflows with interdependent subtasks, so a single agent's instruction-level success collapses far below its subtask-level success</Problem> (GPT-4o: 41.8% subtask vs 8% instruction, Fig.1). <Problem>Prior PC agents (UFO, Agent-S) lack fine-grained on-screen text perception/editing and largely ignore inter-subtask dependencies</Problem> (§1, §4).
+
+## Contribution (what's new)
+Two ideas carry the work. <Novelty>An Active Perception Module that splits perception by element type: interactive widgets are read from the accessibility (A11y) tree and marked Set-of-Mark style, while target text is located by an MLLM intention-understanding agent that names the span, then OCR pins its exact coordinates</Novelty> — this is what gives the agent precise text selection/editing the baselines cannot do. <Novelty>A four-agent hierarchy that decomposes decisions into Instruction–Subtask–Action levels, with a Manager that parameterizes subtasks and routes their outputs through a "communication hub" to instantiate dependent subtasks</Novelty>. The design follows from the failure mode: lengthy histories and cross-subtask dependencies overwhelm one context, so progress tracking and dependency resolution are factored into dedicated agents (§2.3).
+
+## Research questions
+Can a perception-augmented, hierarchically-decomposed multi-agent framework complete realistic, long-horizon, cross-app PC instructions that defeat single MLLM agents — and which components actually drive that gain?
+
+## Methodology
+Decisions are formalized as `A_i = ρ(I, O_i, H_{i-1})`. PC-Agent attacks the blow-up in instruction `I`, observation `O`, and history `H` with refined perception plus top-down decomposition and bottom-up reflection. GPT-4o backs all four agents by default; OpenOCR handles OCR; actions execute via `pyautogui` over a constrained action space (click, double-click, type, select, drag, scroll, shortcut, stop).
+
+<Pass title="Method details">
+**Active Perception Module (APM, §2.2, Fig.3).** Interactive elements: `pywinauto` extracts the A11y tree; coordinates/descriptions are filtered and parsed, then bounding boxes are annotated on the screenshot in a <Term def="Set-of-Mark — overlaying numbered boxes on UI elements so the MLLM can refer to them by index">SoM</Term> manner. Text: the A11y tree cannot expose document text and instructions reference it vaguely (e.g. "bold the last two paragraphs"), so the Decision Agent emits `Select(target text)`; an MLLM intention-understanding agent determines the start/end span, and OCR returns precise coordinates for a follow-up `drag`.
+
+**Hierarchy (§2.3).**
+<Stepper steps={[
+  { title: "Manager Agent (MA), instruction level", body: "Decomposes the instruction into parameterized subtasks and manages inter-subtask communication. Four dependency types: a subtask's result instantiates later ones; a subtask depends on prior results; both; or independent. The MA keeps a communication hub, writing successful subtask outputs into it and using it to instantiate downstream subtasks." },
+  { title: "Progress Agent (PA), subtask level", body: "Tracks per-subtask progress so the Decision Agent is not fed the whole instruction-level history. Input: current subtask T, prior progress TP_{i-1}, action A_i, reflection R_i; output: updated TP_i. On completion, reports results back to the MA." },
+  { title: "Decision Agent (DA), action level", body: "Core MLLM agent that interacts with the environment: A_i = DA(T, O_i, TP_{i-1}, R_{i-1}). Uses Chain-of-Thought (inner monologue then action), which also gives the Reflection Agent a rationale to check against." },
+  { title: "Reflection Agent (RA), action level", body: "Runs parallel to the DA: R_i = RA(T, A_i, O_{i-1}, O_i). Compares screen state before/after each action and returns one of three verdicts — wrong action/position (replan), no effective response (adjust position), or correct (proceed) — feeding errors back to both DA and PA for bottom-up correction." },
+]} />
+
+**PC-Eval benchmark (§3.1).** 25 complex instructions, 79 subtasks total, across 8 apps (Chrome, Word, Excel, Notepad, Clock, Calculator, Outlook, File Explorer). Each instruction chains several interdependent subtasks emphasizing refined operations and long-horizon decisions; three annotators authored/checked them. Evaluation is **human** (per-subtask auto-scripting deemed too costly). Metrics: Success Rate (SR, fraction of instructions fully completed) and Subtask Success Rate (SSR).
+</Pass>
+
+## Main result
+On PC-Eval, <Finding src="Tab.2, p.7">PC-Agent reaches 76.0% SSR and 56.0% SR, beating Agent-S (55.7% / 24.0%) by 32 absolute SR points and UFO (43.0% / 12.0%) by 44 points</Finding>. Single MLLM agents nearly fail at the instruction level — the best, Qwen2.5-VL, manages only 12% SR.
+
+<SortableTable columns={["Method", "Type", "Subtask SR %", "Success Rate %"]} rows={[
+  ["Gemini-2.0", "Single", 35.4, 0.0],
+  ["Claude-3.5", "Single", 15.2, 0.0],
+  ["Qwen2.5-VL", "Single", 46.8, 12.0],
+  ["GPT-4o", "Single", 41.8, 8.0],
+  ["UFO", "Multi", 43.0, 12.0],
+  ["Agent-S", "Multi", 55.7, 24.0],
+  ["PC-Agent (Ours)", "Multi", 76.0, 56.0]
+]} />
+
+## Key findings
+- <Finding src="Tab.3, §3.3">Reflection is the single most important component: removing the Reflection Agent drops SSR by 27.9 points and SR by 44.0 points</Finding>: without it the agent cannot detect or recover from inevitable per-step errors and loops on bad actions.
+- <Finding src="Tab.3, §3.3">Removing the Manager Agent collapses SR to 12%</Finding>: the whole instruction is then handled as one task, so lengthy sequences and subtask dependencies overwhelm progress tracking and decision-making.
+- <Finding src="Tab.3, §3.3">Removing APM cuts SSR by ~20 points and SR by over 30 points</Finding>: the Decision Agent loses element meaning and precise text manipulation, so completion rate falls sharply.
+- <Finding src="Fig.1, p.1">APM lifts GUI grounding accuracy from 24.0% (Claude-3.5) to 88.0%</Finding>: refined perception is the prerequisite for reliable clicking/editing on dense PC screens.
+- <Finding src="Tab.2, §3.2">Instruction-level SR is far below subtask SR for single agents</Finding>: e.g. GPT-4o 8% SR vs 41.8% SSR — long horizons and inter-subtask dependencies, not isolated steps, are the bottleneck.
+- <Finding src="Tab.4, §A.1">Foundation model matters and gains are not universal: GPT-4o PC-Agent (76.0% SSR / 56.0% SR / 64.0% recovery / 96.0% Manager SR) leads, while Qwen2.5-VL inside PC-Agent (32.9% / 12.0%) actually underperforms its own single-agent SSR (46.8%)</Finding>: Qwen2.5-VL struggles to follow the action-output format and to judge subtask completion, which worsens after decomposition.
+
+## Implications
+PC-Agent argues that desktop automation needs both perception repair (type-aware A11y + OCR) and explicit decomposition with reflection, not bigger single models. It extends the GUI-agent lineage from <Related>mobile agents (Mobile-Agent, AppApgent) and PC agents UFO and Agent-S</Related> by adding fine-grained text editing and dependency-aware planning. Threads worth chasing: <FollowUp>the closed-source dependence (GPT-4o) and whether open models can be made format/judgment-reliable enough to match it</FollowUp>; <FollowUp>scaling PC-Eval beyond 25 instructions and replacing human evaluation with reliable automatic graders</FollowUp>; <FollowUp>extending beyond productivity into social/entertainment scenarios</FollowUp>.
+
+## Limitations
+- <Caveat>The strongest backbone remains the closed-source GPT-4o, with attendant cost, latency, privacy and security concerns (author-stated, Limitations)</Caveat>.
+- <Caveat>Scope is productivity scenarios only; social and entertainment use is left to future work (author-stated)</Caveat>.
+- <Caveat>PC-Eval is small (25 instructions / 79 subtasks) and graded entirely by human annotators, so results are not reproducible via an automatic harness and may carry annotator subjectivity (§3.1)</Caveat>.
+- <Caveat>Numbers are single-run; no variance, error bars, or repeated trials are reported despite the stochastic, long-horizon setting</Caveat>.
+
+## Critiques and Questions
+1. With only 25 human-graded instructions and no variance reported, how stable is the headline +32-point gain — could a few instructions flip the ranking?
+2. APM leans on the Windows A11y tree and `pywinauto`; how much of the advantage is OS/app-specific scaffolding rather than a transferable method, and how does it degrade on apps with poor accessibility metadata?
+3. The communication hub passes structured outputs between subtasks — what happens when an early subtask returns wrong-but-plausible values (the Microsoft stock price typo visible in Fig.4 suggests propagated errors are a real risk)?
+4. The reflection ablation is dramatic; is the RA mainly compensating for grounding/perception noise that better backbones would remove, shrinking the framework's marginal value over time?
+
+<SelfCheck q="Why does PC-Agent dedicate a separate Reflection Agent at the action level, and what is the measured cost of removing it?" a="Long PC workflows make per-step perception/decision errors near-inevitable, and one bad step can fail the whole task. The RA compares before/after screenshots to classify each action (wrong action, no effect, or correct) and feeds errors back to the Decision and Progress agents for bottom-up correction. Ablating it drops SSR by 27.9 points and SR by 44.0 points (Tab.3)." />
+
+## Glossary
+- <Term def="The Windows UI Automation / accessibility tree exposing widget coordinates and descriptions; here extracted via pywinauto">A11y tree</Term>
+- <Term def="Subtask Success Rate — fraction of annotated subtasks completed, a finer-grained metric than instruction-level SR">SSR</Term>
+- <Term def="Success Rate — fraction of full instructions completed end-to-end">SR</Term>
+- <Term def="Recovery Rate — fraction of instructions where the agent detected an error and corrected it via reflection, regardless of final outcome (Tab.4)">Recovery Rate</Term>
+- <Term def="Manager SR — how often the Manager Agent decomposes the user instruction correctly (Tab.4)">Manager SR</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

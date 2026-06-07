@@ -45,17 +45,17 @@ versions:
   source: arxiv
   source_url: https://arxiv.org/abs/2406.11896
   pdf_path: library/digirl-training-in-the-wild-device-control-240611896/v1/paper.pdf
-  summary_path: null
+  summary_path: library/digirl-training-in-the-wild-device-control-240611896/v1/summary.mdx
   metadata_path: library/digirl-training-in-the-wild-device-control-240611896/v1/metadata.yaml
   fetched_at: '2026-06-06T07:57:37Z'
   source_updated_at: null
   arxiv_version: null
   pdf_sha256: edab3b139eeb083a80ce129ac8a37d44c72141f7ce615b9cc5e4951c39eec614
   pdf_bytes: 28179560
-  summary_status: none
-  extraction_status: none
+  summary_status: full
+  extraction_status: full
   created_at: '2026-06-06T07:57:37Z'
-  updated_at: '2026-06-06T07:57:37Z'
+  updated_at: '2026-06-07T06:18:23Z'
 relations:
   duplicate_candidates: []
   related_papers: []

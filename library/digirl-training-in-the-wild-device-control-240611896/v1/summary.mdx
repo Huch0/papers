@@ -1,0 +1,120 @@
+---
+canonical_key: arxiv-2406.11896
+version_key: v1
+title: 'DigiRL: Training In-The-Wild Device-Control Agents with Autonomous Reinforcement Learning'
+authors:
+- Hao Bai
+- Yifei Zhou
+- M. Cemri
+- Jiayi Pan
+- Alane Suhr
+- Sergey Levine
+- Aviral Kumar
+venue: Neural Information Processing Systems
+year: 2024
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2406.11896
+summary_date: '2026-06-07'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+{/*
+  Canonical Summary structure (concise, core-first). Body only — frontmatter is generated
+  from metadata.yaml by `summarize_paper.py --format mdx --prepare`. Components are
+  provided globally by the site (no imports). See config/summary_components.md.
+*/}
+
+<TLDR>DigiRL fine-tunes a 1.3B VLM into a state-of-the-art Android GUI agent via autonomous offline-then-online RL, lifting Web Shopping success from 17.7% to 67.2% by learning from its own real-device rollouts under an automatic VLM-based reward.</TLDR>
+
+<WhyItMatters>Foundational for the computer-use-agent track: it shows weight-updating RL on real, non-stationary GUIs beats prompting/imitation wrappers around far larger proprietary VLMs, and supplies a reusable autonomous-evaluation + parallel-emulator training loop.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "67.2%", label: "Web Shopping test success", sub: "DigiRL, 1.3B VLM (Tab.1)" },
+  { value: "+49.5%", label: "absolute gain over SFT", sub: "17.7% → 67.2% (abstract)" },
+  { value: "1.3B", label: "policy params", sub: "AutoUI-Base, vs 18B CogAgent" },
+  { value: "2.8%", label: "evaluator error vs humans", sub: "Gemini-1.5-Pro AutoEval (§3)" },
+]} />
+
+## Motivation
+Off-the-shelf VLMs are <Problem>under-trained on decision-centric data</Problem>, so even strong proprietary models (GPT-4V, Gemini 1.5 Pro) <Problem>fail to ground high-level plans into low-level GUI actions and hallucinate that a wrong page is the goal</Problem>. Prompting/retrieval wrappers cannot exceed the frozen base model. Imitation learning on static demonstrations <Problem>cannot handle the real device/web's stochasticity and non-stationarity (pop-ups, ads, shifting layouts, reordered results) and cannot recover from the agent's own out-of-distribution mistakes</Problem>. A frozen policy's success even degrades over days as websites change (Fig.4).
+
+## Contribution (what's new)
+DigiRL is, to the authors' knowledge, the first to <Novelty>scale autonomous offline-to-online RL for in-the-wild device control</Novelty>: offline RL initializes goal-directed behavior from stale data, then online RL fine-tunes the VLM on its own fresh rollouts with autonomously-assigned rewards. The RL core is a variant of advantage-weighted regression with two design choices forced by the domain: <Novelty>a doubly-robust step-level advantage estimator</Novelty> that blends high-variance Monte-Carlo returns with a lower-variance learned value baseline to survive environment stochasticity, and <Novelty>an automatic curriculum from an instruction-level value function</Novelty> that prioritizes tasks the agent finds hard (high realized advantage) to extract maximal learning signal. Both value functions are trained with a cross-entropy (classification) loss rather than regression.
+
+## Research questions
+Can an agent learn in-the-wild device control purely from autonomous interaction (no human-labeled rollouts or hand-written verifiers), using offline data to bootstrap and online data to adapt, and beat prompting-/imitation-based agents built on much larger models?
+
+## Methodology
+Device control is cast as a finite-horizon MDP over screenshots (state = last two screenshots) and a coordinate/text/button action space, with a sparse 0/1 episode reward from a VLM evaluator. A parallel Android emulator collects rollouts; an AWR-style filtered MLE objective updates the policy on data selected by the two value functions.
+
+<Pass title="Method details">
+<Stepper steps={[
+  {title: "Environment & reward", body: "Scalable, parallelized Android emulator (up to 64 emulators on 128 CPUs, near-linear speedup, Fig.9 right) with a general-purpose autonomous evaluator extending Pan et al. 2024, backed by Gemini 1.5 Pro and seeded with few-shot human-labeled rollouts; average 2.8% disagreement with humans (Fig.8). A reward of 1 is given iff the evaluator judges the task complete."},
+  {title: "Backbone — AWR with hard filtering", body: "Advantage-weighted regression regresses the policy toward exp(A/β)-weighted actions; to avoid tuning β, DigiRL hard-filters by advantage and trains with an MLE loss L(π) = −E_filter(ν)[log π(a|s,c)] (Eq.4.2)."},
+  {title: "Doubly-robust step advantage", body: "A_step blends Monte-Carlo final reward with a learned step-value baseline (a simplified GAE with only next-step and final-step terms, since rewards are terminal); actions are kept when A_step > 1/H (Eq.4.3)."},
+  {title: "Automatic curriculum", body: "An instruction-level value function gives A_instruct = r(s_H,a_H,c) − V_instruct(c) (Eq.4.4); the top-p trajectories by A_instruct (hard, high-signal tasks) are kept before the AWR update, akin to prioritized replay / level replay."},
+  {title: "Value-function training", body: "Both value functions use a cross-entropy objective on the Monte-Carlo trajectory reward (Eq.4.5–4.6); architecture = frozen AutoUI image encoder + RoBERTa instruction features → 2-layer MLP."},
+  {title: "Data & policy", body: "Policy = AutoUI-Base (≈1.3B: 200M LM + 1.1B vision encoder), image encoder frozen. Tasks from AitW General (545 train / 96 test, H=10) and Web Shopping (438 train / 96 test, H=20). Offline runs use ≈1500 trajectories; offline-to-online starts from ≈500 offline + ≈1000 online trajectories, held roughly equal in total."},
+]} />
+
+<MathBlock>{`A_{step}(s_h,a_h,c) = \\lambda^{H-h} r(s_H,a_H,c) + (1-\\lambda^{H-h} r(s_H,a_H,c))\\,(V_{step}(s_{h+1},c)+r(s_h,a_h,c)-V_{step}(s_h,c))`}</MathBlock>
+</Pass>
+
+## Main result
+On the AitW test splits, DigiRL (1.3B, offline-to-online) reaches <Finding src="Tab.1">71.9% (General) and 67.2% (Web Shopping) success</Finding>, vs the prior best autonomous learner Filtered BC at 61.5% / 57.8% and the supervised 18B CogAgent at 25.0% / 38.5%. The abstract's headline is the +49.5% absolute jump from supervised AutoUI (17.7%) to 67.2% on Web Shopping. All gains are obtained <Finding src="§5.1">fully autonomously — no human-labeled rollouts or hand-written task verifiers</Finding>.
+
+<SortableTable columns={["Method", "Params", "General test", "Web Shopping test"]} rows={[
+  ["Set-of-Marks GPT-4V", "—", 13.5, 8.3],
+  ["AppAgent + GPT-4V", "—", 17.7, 8.3],
+  ["Gemini 1.5 Pro (Set-of-Marks)", "—", 16.7, 11.5],
+  ["AutoUI (supervised)", "1.3B", 14.6, 17.7],
+  ["CogAgent (supervised)", "18B", 25.0, 38.5],
+  ["Filtered BC (offline→online)", "1.3B", 61.5, 57.8],
+  ["DigiRL (offline only)", "1.3B", 62.8, 45.8],
+  ["DigiRL (offline→online)", "1.3B", 71.9, 67.2],
+]} />
+
+## Key findings
+- <Finding src="Tab.1">Offline-to-online beats offline-only RL at equal sample budget</Finding>: 71.9% vs 62.8% (General test), showing fresh autonomous interaction — not just more data — drives the gain.
+- <Finding src="Fig.4">A frozen good policy degrades over days while continuous online updates hold performance</Finding>: directly evidences that non-stationarity, not just initialization, requires on-the-fly learning.
+- <Finding src="Fig.7">The failure mode RL reduces most is "fail to recover from mistakes"</Finding>: pre-trained/imitation agents get trapped in unseen states; training on their own rollouts teaches recovery (qualitatively, resetting to a high-value home screen, §C.2).
+- <Finding src="Fig.9">Every component is necessary in ablations (Web Shopping)</Finding>: cross-entropy value loss ≈ +12% over regression, step-level advantage ≈ +12% efficiency, automatic curriculum ≈ +25% learning speed; hard filtering matches extensively-tuned exponential AWR with simpler implementation.
+- <Finding src="§2">DigiRL is ~1000× more sample-efficient than prior on-policy web-nav RL</Finding>: ≈1e3 trajectories vs ≈1e6 (e.g., MiniWoB++), while operating on real GUIs.
+- <Finding src="Tab.4">DigiRL produces shorter rollouts than Filtered BC on both subsets</Finding>: more directed task completion, not just higher success.
+- <Finding src="Fig.9">The distributed emulator scales near-linearly to 64 emulators on 128 CPUs</Finding>: 1.74 vs 0.74 traj/min at 64 CPUs over a single-instance baseline — the engineering that makes real-time online RL feasible.
+
+## Implications
+DigiRL extends the <Related>AutoUI / CogAgent / AppAgent line of device-control agents and the autonomous-evaluation work of Pan et al. (2024)</Related> by showing weight-updating RL, not bigger frozen models, is the lever for in-the-wild GUI control. The autonomous VLM evaluator plus parallel emulator is a reusable training substrate. Worth chasing: <FollowUp>whether the offline-to-online recipe generalizes beyond AitW General/Web Shopping to GoogleApps/Install and non-Android desktop/OS environments</FollowUp>, and <FollowUp>how reward-hacking risk scales when the policy optimizes against a learned VLM judge</FollowUp>.
+
+## Limitations
+- <Caveat>Trained only on AitW General and Web Shopping subsets, not the full task space</Caveat>; GoogleApps/Install excluded for security (account/captcha) and Single excluded as single-step (§A.1) — generality to harder, longer tasks is untested.
+- <Caveat>Reward and most evaluation come from the same Gemini-1.5-Pro autonomous evaluator</Caveat>; despite 2.8% mean human disagreement, the policy is optimized against a fallible judge, and General-subset evaluation is noisier than Web Shopping.
+- <Caveat>Online runs are repeated only twice and offline three times (Tab.1)</Caveat>, with sizable variance on some cells (e.g., DigiRL offline Web Shopping 45.8 ± 6.6), so a few comparisons rest on thin statistics.
+- <Caveat>Headline framing varies across the paper</Caveat>: abstract/Discussion cite 67.2% and a "280%" relative gain while Tab.1's best General number is 71.9% — read the per-cell table, not the prose.
+
+## Critiques and Questions
+1. The reward signal is itself a VLM; reported success could partly reflect the policy learning the evaluator's blind spots rather than true task completion — an independent held-out human eval on the final agent (beyond the correlation study) would be more convincing.
+2. The text says reward is sparse/terminal, yet the doubly-robust estimator and "recover from mistakes" claim imply credit assignment to intermediate actions; how robust is `A_step > 1/H` thresholding to the choice of H (10 vs 20) and to label noise from the evaluator?
+3. With only two online seeds, are the DigiRL-vs-Filtered-BC margins on Web Shopping (67.2 vs 57.8) statistically distinguishable, or within run-to-run drift caused by the very non-stationarity the paper highlights?
+
+<SelfCheck q="Why does DigiRL need an online phase rather than just more offline RL data?" a="Because real GUIs are non-stationary: a frozen policy's success degrades over days as websites change (Fig.4), and offline-to-online beats offline-only at equal sample budget (71.9% vs 62.8% General test, Tab.1). Learning from fresh self-collected rollouts lets the agent adapt and recover from its own out-of-distribution mistakes." />
+
+## Glossary
+- <Term def="Advantage-weighted regression: an off-policy RL method that improves a policy by regressing it toward actions weighted by exponentiated advantage; here simplified to keep only high-advantage actions and train with a plain log-likelihood loss.">AWR</Term>
+- <Term def="An estimator combining a high-variance Monte-Carlo return with a lower-variance learned value baseline so it stays accurate even if either component is imperfect.">doubly-robust advantage estimator</Term>
+- <Term def="Ordering training tasks by how much learning signal they offer — here prioritizing tasks where the agent's realized return exceeds the instruction-level value function's prediction.">automatic curriculum</Term>
+- <Term def="A reward/verifier that judges task success directly from observations using a VLM, without internal emulator state or per-task hand-written rules; DigiRL uses Gemini 1.5 Pro.">autonomous evaluator</Term>
+- <Term def="Android in the Wild — a large dataset of Android device-control tasks; DigiRL uses its General and Web Shopping subsets.">AitW</Term>
+- <Term def="Filtered behavior cloning: imitation learning on autonomously-collected rollouts keeping only successful ones; the prior best autonomous baseline.">Filtered BC</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

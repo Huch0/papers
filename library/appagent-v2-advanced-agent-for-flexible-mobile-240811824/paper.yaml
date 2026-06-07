@@ -47,17 +47,17 @@ versions:
   source: arxiv
   source_url: https://arxiv.org/abs/2408.11824
   pdf_path: library/appagent-v2-advanced-agent-for-flexible-mobile-240811824/v1/paper.pdf
-  summary_path: null
+  summary_path: library/appagent-v2-advanced-agent-for-flexible-mobile-240811824/v1/summary.mdx
   metadata_path: library/appagent-v2-advanced-agent-for-flexible-mobile-240811824/v1/metadata.yaml
   fetched_at: '2026-06-06T07:57:37Z'
   source_updated_at: null
   arxiv_version: null
   pdf_sha256: 9dcc2e21159e478034ff5ac903613aff569709e337ce55a0beb5a611c9530030
   pdf_bytes: 5262567
-  summary_status: none
-  extraction_status: none
+  summary_status: full
+  extraction_status: full
   created_at: '2026-06-06T07:57:37Z'
-  updated_at: '2026-06-06T07:57:37Z'
+  updated_at: '2026-06-07T06:25:38Z'
 relations:
   duplicate_candidates: []
   related_papers: []

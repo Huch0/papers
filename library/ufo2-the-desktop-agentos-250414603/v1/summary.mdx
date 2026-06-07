@@ -1,0 +1,137 @@
+---
+canonical_key: arxiv-2504.14603
+version_key: v1
+title: 'UFO2: The Desktop AgentOS'
+authors:
+- Chaoyun Zhang
+- He Huang
+- Chiming Ni
+- Jian Mu
+- Si Qin
+- Shilin He
+- Lu Wang
+- Fangkai Yang
+- Pu Zhao
+- Chao Du
+- Liqun Li
+- Yu Kang
+- Zhaodi Jiang
+- Suzhen Zheng
+- Rujia Wang
+- Jiaxu Qian
+- Ming-Jie Ma
+- Jianjun Lou
+- Qingwei Lin
+- S. Rajmohan
+- Dongmei Zhang
+venue: arXiv.org
+year: 2025
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2504.14603
+summary_date: '2026-06-07'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+{/*
+  Canonical Summary structure (concise, core-first). Body only — frontmatter is generated
+  from metadata.yaml by `summarize_paper.py --format mdx --prepare`. Components are
+  provided globally by the site (no imports). See config/summary_components.md.
+*/}
+
+<TLDR>UFO2 reframes desktop automation as an OS-level service: a centralized HostAgent dispatches application-specialized AppAgents that fuse Windows UI Automation with vision-based control detection and prefer native APIs over GUI clicks, roughly doubling success over OpenAI Operator on Windows benchmarks while cutting per-task LLM steps.</TLDR>
+
+<WhyItMatters>Foundational for the computer-use-agent track: it argues that the deployment bottleneck for CUAs is not the model but shallow OS integration, and shows that even GPT-4o inside a deeply-integrated runtime beats a dedicated CUA.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "27.9% / 28.6%", label: "UFO2 success rate (WAA / OSWorld-W)", sub: "GPT-4o, vs Operator 20.8% / 14.3%" },
+  { value: "2x", label: "SR over Operator on OSWorld-W", sub: "28.6% vs 14.3%, GPT-4o" },
+  { value: "51.5%", label: "step reduction from speculative multi-action", sub: "OSWorld-W, success subset" },
+  { value: "20+", label: "Windows applications evaluated", sub: "WAA (154 tasks) + OSWorld-W (49 tasks)" },
+]} />
+
+## Motivation
+<Problem>Most Computer-Using Agents (CUAs) remain conceptual prototypes built atop raw screenshots and simulated mouse/keyboard input.</Problem> This shallow stance has three structural costs: <Problem>pixel-only perception is noisy and ignores rich OS interfaces (accessibility trees, application APIs, process state)</Problem>; <Problem>generalist agents have no application introspection, so they cannot exploit built-in APIs or vendor documentation</Problem>; and <Problem>driving the real desktop hijacks the user's mouse and keyboard, locking the user out during long, multi-query runs.</Problem> The OS itself offers no first-class abstraction for exposing GUI application control to agents, so both RPA and CUAs are forced to operate as ad-hoc layers over the GUI.
+
+## Contribution (what's new)
+The genuine delta is treating automation as <Novelty>an OS abstraction (an "AgentOS") rather than a smarter agent</Novelty>: a centralized HostAgent for task decomposition/scheduling plus modular, per-application AppAgents. Four mechanisms make this concrete and survive deleting "we propose": <Novelty>a hybrid control-detection pipeline that fuses UIA metadata with vision grounding (OmniParser-v2) into one control graph</Novelty>; <Novelty>a unified GUI–API action layer ("Puppeteer") that prefers atomic native API calls and falls back to GUI</Novelty>; <Novelty>speculative multi-action execution that predicts a batch of steps in one LLM call and validates each against UIA before acting</Novelty>; and <Novelty>a Picture-in-Picture virtual desktop (RDP loopback) that isolates agent execution from the user's session</Novelty>. The design must take this form because each mechanism targets a measured failure mode: vision recovers controls UIA misses, APIs bypass brittle GUI sequences and circumvent undetected controls, batching amortizes the dominant LLM-inference latency, and session isolation removes the input-contention that makes deployment unusable.
+
+## Research questions
+How can we build a robust, deeply-integrated desktop-automation system that (1) adapts to heterogeneous, evolving interfaces, (2) reliably orchestrates many applications, and (3) minimizes disruption to the user's own workflow — and does deep OS integration measurably beat model-centric CUAs?
+
+## Methodology
+UFO2 is a Windows daemon (~30,000 lines of Python + C#). The HostAgent parses intent, decomposes it into a dependency-ordered subtask graph, and runs a finite-state controller (CONTINUE / ASSIGN / PENDING / FINISH / FAIL) that launches applications and instantiates AppAgents. Each AppAgent runs a ReAct loop over a per-application FSM, perceiving via screenshots + UIA + Set-of-Mark annotation and acting via the Puppeteer. A global blackboard carries cross-agent state. Evaluation runs two Windows benchmarks with handcrafted per-task verifiers, comparing UFO2 and an ablated UFO2-base against five CUAs, all using GPT-4o (plus an o1 variant of UFO2).
+
+<Pass title="Method details">
+<Stepper steps={[
+  {title: "Task decomposition + lifecycle", body: "HostAgent decomposes the request into subtasks, inspects process metadata via UIA, launches missing apps with native Windows APIs, and spawns the matching AppAgent with task context, memory refs, and toolchains."},
+  {title: "Hybrid control detection", body: "UIA enumerates visible/enabled controls into an initial graph; OmniParser-v2 (YOLO-v8 detector + fine-tuned 0.23B Florence-2) parses screenshots for custom/UIA-invisible controls. Visual detections with IoU > 10% vs any UIA control are discarded; survivors become pseudo-UIA objects via a UIAWrapper. 27.9% (WAA) / 56.7% (OSWorld-W) of OmniParser detections are dropped as overlapping duplicates."},
+  {title: "Unified GUI–API (Puppeteer)", body: "Developers register app APIs via a Python decorator (name + arg schema + binding). At runtime the agent prefers a semantically-equivalent API for atomicity, falling back to simulated clicks/keystrokes if the API is missing or errors."},
+  {title: "Continuous knowledge (RAG)", body: "Two flows: static help documents ({request, guidance} JSON ingested to a per-app vector store) and dynamic self-experience (successful trajectories summarized into {task, plan} Example records). At runtime retrieves up to 1 help doc and up to 3 past logs into the prompt; no model retraining."},
+  {title: "Speculative multi-action execution", body: "One LLM call predicts a batch of B (control, op, rationale) steps; each is validated against UIA `is_enabled()` / `is_visible()` in the live context before execution, halting and replanning on the first failed precondition (see Algorithm 1)."},
+  {title: "Picture-in-Picture isolation", body: "An RDP loopback creates a virtual session on the same machine inheriting the user's identity/credentials; input queues and focus are scoped to that session, with a Named-Pipe IPC channel (authenticated, encrypted) bridging host and PiP."},
+]} />
+
+Benchmarks: <Term def="154 live tasks across 15 Windows apps with per-task verification scripts">Windows Agent Arena (WAA)</Term> and <Term def="a Windows-tailored 49-task subset of OSWorld with handcrafted verifiers">OSWorld-W</Term>. Each agent is capped at 30 steps/task. Metrics: <Term def="percent of tasks completed, checked by the benchmark's own verifier">Success Rate (SR)</Term> and <Term def="average number of LLM-involved inference steps per task; lower is more efficient">Average Completion Steps (ACS)</Term>. APIs (12 functions for Word/Excel/PowerPoint via COM) were added only for the 27 office tasks in OSWorld-W, none for WAA. VMs use 8 Ryzen-7 cores / 8 GB RAM; OmniParser-v2 runs on a separate A100 80GB.
+</Pass>
+
+## Main result
+<Finding src="Tab.1">UFO2 (GPT-4o) reaches 27.9% SR on WAA and 28.6% on OSWorld-W, vs the best baseline Operator at 20.8% / 14.3% — a +7.1-point gain on WAA and roughly double on OSWorld-W.</Finding> Even <Finding src="Tab.1">UFO2-base (UIA + GUI only, no knowledge) at 23.4% (WAA) already beats every prior CUA</Finding>, and swapping GPT-4o for o1 lifts full UFO2 to <Finding src="Tab.1">30.5% (WAA) / 32.7% (OSWorld-W)</Finding>.
+
+<SortableTable columns={["Agent", "Model", "WAA SR %", "OSWorld-W SR %"]} rows={[
+  ["UFO", "GPT-4o", 19.5, 12.2],
+  ["NAVI", "GPT-4o", 13.3, 10.2],
+  ["OmniAgent", "GPT-4o", 19.5, 8.2],
+  ["Agent S", "GPT-4o", 18.2, 12.2],
+  ["Operator", "computer-use", 20.8, 14.3],
+  ["UFO2-base", "GPT-4o", 23.4, 16.3],
+  ["UFO2-base", "o1", 25.3, 16.3],
+  ["UFO2", "GPT-4o", 27.9, 28.6],
+  ["UFO2", "o1", 30.5, 32.7],
+]} />
+
+## Key findings
+- <Finding src="Fig.19">Failure modes differ by benchmark: on WAA 62.8% of UFO2-base failures are Control Detection Failures (LibreOffice and other apps with poor UIA support), while OSWorld-W is dominated by Plan Errors (53.1%)</Finding> — each motivates a different mechanism (vision detection vs knowledge/APIs).
+- <Finding src="Tab.3">The hybrid detector beats both UIA-only and OmniParser-only, recovering up to 9.86% of otherwise-failing cases (Control Recovery Ratio)</Finding>; OmniParser-only actually hurts on standardized GUIs (OSWorld-W drops to 14.3% SR, 0% CRR), so neither modality suffices alone.
+- <Finding src="Tab.5">Adding native APIs raises SR by +6.1 points (GPT-4o) and +8.2 points (o1) and cuts effort, with a striking 58.5% step reduction for o1 on identical tasks</Finding> — the models exploit APIs differently: GPT-4o mainly recovers control-detection failures, o1 mainly recovers plan errors via API "shortcuts".
+- <Finding src="Tab.7">Speculative multi-action keeps SR essentially flat while cutting ACS by up to 10% (WAA) and 51.5% (OSWorld-W)</Finding>, directly reducing LLM calls — and <Finding src="Fig.24">LLM inference dominates latency at ~10 s/step, so step reduction is the lever that keeps total task time near ~1 minute</Finding>; hybrid detection adds only ~1 s/step over the base.
+- <Finding src="Tab.6">Knowledge integration reduces planning failures (Plan Recovery Ratio) by up to 17.7%, with self-experience under o1 most consistent</Finding>, though help-document gains depend on task complexity and document specificity.
+- <Finding src="Fig.23">"Everything-as-an-AppAgent" works: wrapping Operator as the sole AppAgent under UFO2's HostAgent lifts WAA SR from 20.8% to 26.0%</Finding> — gains attributed to single-app subtask scoping, HostAgent tips, and reduced visual noise.
+- <Finding src="Tab.2">Per-category SR varies sharply: UFO2 is strong on Coding (58.3%, GPT-4o) and Web Browser (40.0%, o1) but weak on WAA Office (~4.7%, LibreOffice's poor UIA) and on cross-app tasks (9.1%)</Finding>, confirming that API availability and accessibility quality, not just the model, gate success.
+
+## Implications
+UFO2 reframes the CUA bottleneck from model capability to <Novelty>system integration</Novelty>, arguing GUI automation should be an OS primitive like files or sockets. It builds directly on <Related>the original UFO multiagent Windows agent</Related> and the <Related>WAA / OSWorld benchmark and Agent S lineage</Related>, and absorbs <Related>OmniParser-v2 as a pluggable vision grounder</Related>. Threads worth chasing: <FollowUp>fine-tuning reasoning models specifically for desktop automation, since built-in-CoT models (o1) consistently win</FollowUp>; <FollowUp>scaling the API surface beyond 12 hand-written office functions — the GUI–API gains hinge on developer-authored bindings</FollowUp>; and <FollowUp>whether PiP-style isolation generalizes beyond Windows RDP loopback to a portable safe-execution primitive for agents</FollowUp>.
+
+## Limitations
+- <Caveat>Absolute success rates are low (27.9–32.7%): the system is far from reliable, and cross-application tasks sit at 9.1%.</Caveat>
+- <Caveat>The GUI–API and knowledge results rest on tiny, hand-built artifacts — 12 APIs and 34 help documents tailored to the benchmark tasks — raising questions about how the gains scale and how much is benchmark-specific.</Caveat>
+- <Caveat>ACS and step-count comparisons are computed only on the subset of tasks both configurations complete, and several success-subset sizes are very small (e.g. 7–10 OSWorld-W tasks), so efficiency claims rest on thin samples.</Caveat>
+- <Caveat>Windows-only and tied to UIA + RDP loopback; LibreOffice and custom/legacy apps with weak accessibility remain weak spots.</Caveat>
+- <Caveat>Results appear to be single-run with no variance/significance reported, and headline "50% relative" / "doubling" framings come from small absolute differences.</Caveat>
+
+## Critiques and Questions
+1. Is the headline "doubles Operator" comparison fair? UFO2 adds Windows-native APIs and curated help docs that Operator never had — how much of the OSWorld-W gap is architecture vs. these task-specific artifacts?
+2. With LLM inference at ~10 s/step dominating latency, the practical win is step reduction, not raw capability — but speculative execution leaves SR flat, so the system's reliability ceiling is still set by the base model and detection coverage.
+3. The metadata lists conflicting/garbled author names (e.g. "Ming-Jie Ma", "Jianjun Lou") versus the PDF ("Minghua Ma", "Jian-Guang Lou"); treat author normalization as <Caveat>Unclear</Caveat>.
+
+<SelfCheck q="Why does UFO2 validate each speculatively-predicted action against the Windows UIA API rather than re-querying the LLM or a vision model?" a="Each LLM call costs ~10 s (the dominant latency), so re-inferring per step defeats the purpose of batching; UIA's `is_enabled()`/`is_visible()` are trusted, cheap OS-level checks that catch GUI changes (a control vanishing after a prior action) and trigger early-stop + replan, preserving per-step correctness while amortizing one inference across multiple actions." />
+
+## Glossary
+- <Term def="LLM-driven agent that operates a computer through its GUI/OS, interpreting instructions and emitting clicks/keystrokes/API calls">Computer-Using Agent (CUA)</Term>
+- <Term def="Windows accessibility framework exposing a structured tree of UI controls (type, label, bbox, enabled/visible state)">UI Automation (UIA)</Term>
+- <Term def="Robotic Process Automation — script/record-and-replay GUI automation that breaks on minor UI changes">RPA</Term>
+- <Term def="annotating each detected control with a numbered mark on the screenshot so the LLM can reference it">Set-of-Mark (SoM)</Term>
+- <Term def="UFO2's unified execution orchestrator that chooses per step between a native API call and GUI automation">Puppeteer</Term>
+- <Term def="fraction of UIA-only failure cases converted to successes by adding vision/hybrid detection">Control Recovery Ratio (CRR)</Term>
+- <Term def="fraction of previously-failed planning cases resolved after adding knowledge integration">Plan Recovery Ratio (PRR)</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

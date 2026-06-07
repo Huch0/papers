@@ -1,0 +1,120 @@
+---
+canonical_key: arxiv-2510.02250
+version_key: v1
+title: Scaling Agents for Computer Use
+authors:
+- Gonzalo Gonzalez-Pumariega
+- Vincent Tu
+- Chih-Lun Lee
+- Jiachen Yang
+- Ang Li
+- X. Wang
+venue: arXiv
+year: 2025
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2510.02250
+summary_date: '2026-06-07'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+{/*
+  Canonical Summary structure (concise, core-first). Body only — frontmatter is generated
+  from metadata.yaml by `summarize_paper.py --format mdx --prepare`. Components are
+  provided globally by the site (no imports). See config/summary_components.md.
+*/}
+
+<TLDR>Behavior Judge scales computer-use agents *across* multiple parallel rollouts by compressing each long-horizon trajectory into a "behavior narrative" and having a VLM judge comparatively pick the best, reaching a new OSWorld SoTA of 72.6% — above human-level 72.36%.</TLDR>
+
+<WhyItMatters>Directly relevant to the computer-use-agent track: it reframes reliability as a *selection* problem over wide (multi-agent) rollouts rather than a single-rollout policy problem, and shows test-time scaling can finally pay off for long-horizon GUI tasks when the judge compares structured trajectory representations.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "72.6%", label: "OSWorld 100-step SR", sub: "Agent S3 + BJudge, GPT-5 + Opus 4.5 (N=10)" },
+  { value: "+9.2%", label: "absolute over prior SoTA", sub: "vs GTA1 63.4% (GPT-5)" },
+  { value: "72.36%", label: "human-level SR surpassed", sub: "OSWorld 100-step" },
+  { value: "361", label: "OSWorld tasks evaluated", sub: "5 domains, Ubuntu" },
+]} />
+
+## Motivation
+Computer-use agents (CUAs) remain unreliable on <Problem>long-horizon, complex tasks where small step-level errors compound and produce high outcome variance</Problem> — the same agent often succeeds on one attempt and fails catastrophically on another (p.1). <Problem>Prior single-rollout scaling (e.g. step-wise best-of-N) yields only limited gains because it commits the rollout to one agent plan and can over-commit to a harder route</Problem> (§2.2). Scaling *wide* — many parallel rollouts — is more promising, but exposes a bottleneck: <Problem>reliably evaluating and selecting among information-dense, multimodal, long-horizon trajectories is hard, and many tasks admit multiple valid solutions that scripted evaluators cannot judge</Problem> (p.1–2).
+
+## Contribution (what's new)
+The genuine delta is treating wide scaling as a *trajectory-selection* problem and making selection tractable via representation. <Novelty>Behavior Judge (BJudge) first converts each raw trajectory into a "behavior narrative" — a per-transition sequence of facts describing what the agent did and how it changed the environment — then runs a single comparative (multiple-choice) judgment over all candidate narratives at once</Novelty> (§3.1–3.2). The design must take this form because the baseline failure is evaluation: raw trajectories are too dense to judge directly (most pixels are irrelevant), and *independent* scoring of candidates plateaus — so the judge must (a) see a compact, faithful action-effect representation and (b) compare candidates against each other rather than rank them in isolation. A second contribution is <Novelty>Agent S3, an improved base framework that adds a natively-integrated coding agent and replaces hierarchical planning with a flat (worker-only) policy</Novelty> (§3.3).
+
+## Research questions
+How can test-time scaling be made effective for long-horizon CUAs? Concretely (§4): (1) how does BJudge compare to CUA baselines; (2) how do judging strategies fare under equal rollout budget; (3) do behavior narratives beat other trajectory representations; (4) how accurate is the judge and what are its failure modes; (5) how should compute be split across workers; (6) how to pick a mixture-of-models ensemble; (7) does it generalize to other OSes.
+
+## Methodology
+Generate multiple independent rollouts from one or more base policies (Agent S3 instances), compress each into a behavior narrative, and have a VLM judge comparatively select one winner. The judge never sees raw trajectories — only narratives plus the first/last screenshot.
+
+<Pass title="Method details">
+<Stepper steps={[
+  { title: "Generate candidates", body: "Sample M base policies with stochastic decoding to get a candidate set C = ∪ {τ_m^(n)}, capturing both within-model variance (n) and cross-model diversity (m). Objective: select argmax over R(τ,I) (§3.2)." },
+  { title: "Behavior Narrative Generation", body: "For each transition (s_i, a_i, s_{i+1}) a VLM generator G derives facts φ_i = G(s_i, a_i, s_{i+1}). Pointer actions get visual augmentation: a marker at the pre-action coordinate and a zoomed, outlined crop at the post-action coordinate for pixel-level verification; the after-screenshot is taken 3s later to catch delayed changes (§3.1)." },
+  { title: "Assemble narrative", body: "Narrative τ̃ = (s_0, φ_0, …, φ_{T-1}, s_T) keeps only task-relevant changes plus initial/final screenshots for grounding (§3.1)." },
+  { title: "Comparative Behavior Evaluation", body: "A VLM evaluator E receives all candidate narratives and selects one best via a single-round multiple-choice (MCQ) prompt — more informed than independent ranking, faster/cheaper than tournament-style pairwise. The prompt requires citing and contrasting facts (§3.2, App. H)." },
+]} />
+
+Agent S3 base framework (§3.3, App. D): a flat GUI policy `π(a_t | I, h_t)` that can either emit a GUI action or invoke a coding agent. A code call runs a bounded inner loop (budget `B`); at inner step `k` the coding agent conditions on `(I, o_t, F_{1:k-1})` where each feedback tuple `F_k = (status, return_code, stdout, stderr)` comes from executing Python/Bash in a sandboxed VM, terminating on `DONE`/`FAIL` or `k=B`. On termination a summary plus a verifiable inspection checklist is appended to the GUI agent's history. Unlike CoAct-1, the coding agent is natively in the action space (no AutoGen, no orchestrator). The flat policy replans online instead of committing to a subgoal list.
+
+Setup: OSWorld 361-task subset (8 Google-Drive tasks omitted), 100-step budget. Best config = 5 rollouts each from GPT-5 and Opus 4.5, Opus generates facts, GPT-5 selects (§4.1).
+</Pass>
+
+## Main result
+On OSWorld 100-step, <Finding src="Tab.1, Fig.1">Agent S3 + BJudge with a GPT-5 + Opus 4.5 ensemble (N=10) reaches 72.6% SR, surpassing prior SoTA GTA1 at 63.4% (+9.2% absolute) and human-level 72.36%</Finding>. The base framework alone is already strong: <Finding src="Tab.1">Agent S3 with GPT-5 hits 62.6% (averaged over 10 runs), vs Agent S2 at 48.8%</Finding>. BJudge lifts single-model rollouts substantially: <Finding src="Tab.1">+7.3% for GPT-5 (62.6→69.9%) and +10.4% for GPT-5 Mini (49.8→60.2%) at N=10</Finding>.
+
+<SortableTable columns={["Method", "Model", "OSWorld 100-step SR (%)"]} rows={[
+  ["Agent S2", "GPT-5", 48.8],
+  ["Jedi-7B", "o3", 51.0],
+  ["CoAct-1", "OAI CUA + o3 + o4-mini", 59.9],
+  ["Agent S3 (base)", "GPT-5", 62.6],
+  ["GTA1 (step-wise scaling)", "GPT-5", 63.4],
+  ["Agent S3 + WebJudge (N=10)", "GPT-5 Mini", 50.4],
+  ["Agent S3 + BJudge (N=10)", "GPT-5 Mini", 60.2],
+  ["Agent S3 + BJudge (N=10)", "GPT-5", 69.9],
+  ["Agent S3 + BJudge (N=10)", "GPT-5 + Opus 4.5", 72.6],
+]} />
+
+## Key findings
+- <Finding src="Tab.3">Behavior narratives beat all other trajectory representations: 60.2% vs naive captioning 56.8%, screenshot-only 56.0%, and trajectory-summary 55.0% (10 GPT-5 Mini rollouts, +3.4% over best baseline)</Finding>: per-transition action-effect facts carry more signal than raw screenshots or holistic summaries.
+- <Finding src="Fig.4">Comparative selection is what scales — WebJudge (independent ranking) gives little benefit over the rollout average and plateaus around N=4, dropping by N=10, whereas BJudge keeps improving</Finding>: trajectories must be compared against each other, not scored in isolation.
+- <Finding src="Tab.4">Judge accuracy is 78.4% on the 159-task "Judge Subset" (tasks with at least one correct and one incorrect rollout) against OSWorld scripts, rising to 92.8% under human evaluation because OSWorld scripts only accept one predefined solution</Finding>: a chunk of apparent judge errors are actually flawed benchmark graders.
+- <Finding src="§4.5">Remaining 12 judge failures split into 8 behavior-narrative hallucinations (VLM misses fine-grained text, e.g. a negative sign) and 4 Code–GUI handoff failures (GUI agent overwrites the coding agent's correct changes; rich GUI narratives bias the judge toward the failing run)</Finding>: the judge is vulnerable to "reasonable-sounding" narratives (App. G).
+- <Finding src="Tab.5">Model diversity drives coverage and the best SR: GPT-5 + Opus 4.5 gives the top SR (71.6% at N=4) while the most diverse "All" mix gives the highest Pass@N coverage (80.5%)</Finding>: pair strong, capability-diverse models for rollouts.
+- <Finding src="Fig.5">Compute allocation is budget-dependent — at small total budgets a single agent is best, but larger N pays off as budget grows (N=10 gives +6.38% at budget 1000)</Finding>: moderate N for tight budgets, large N when resources allow.
+- <Finding src="Tab.2">Agent S3's design choices are individually efficient: removing hierarchy gives +9.1% SR with −43.8% LLM calls / −52.1% time, and adding the coding agent reaches +13.8% SR, −52.3% calls, −62.4% time vs Agent S2</Finding>: the flat policy is both better and cheaper.
+
+## Implications
+Reframes CUA reliability as a wide-scaling *selection* problem and gives a practical recipe (compress to narratives, compare via MCQ). It builds directly on <Related>Agent S2 (Agashe et al., 2025b) as the base framework and CoAct-1 (Song et al., 2025) for coding-as-actions</Related>, and contrasts with <Related>single-rollout step-wise scaling (GTA1, Yang et al., 2025b) and web-only LLM/VLM judges like WebJudge (Xue et al., 2025) and Mind2Web 2 (Gou et al., 2025)</Related>. It generalizes zero-shot: <Finding src="Tab.6, Tab.7">BJudge (N=3) adds +6.4% on WindowsAgentArena (50.2→56.6%, 100-step) and +3.5% on AndroidWorld (68.1→71.6%) over Agent S3</Finding>. Threads to chase: <FollowUp>cheap-rollout/expensive-judge economics — the judge modules cost ~5× less than rolling out, and a pure open-source Qwen3-VL pipeline still gains +7.6% (App. B–C)</FollowUp>; <FollowUp>infrastructure for snapshot/duplication so independent parallel rollouts are cheap and side-effect-isolated</FollowUp>; <FollowUp>fixing the Code–GUI handoff verification failure that biases the judge</FollowUp>.
+
+## Limitations
+<Caveat>BJudge assumes access to an agent that can produce multiple *independent* rollouts from the same initial state — standard in benchmarks and snapshot-capable VMs, but violated when running on a user's live desktop without isolation (concurrent rollouts interfere)</Caveat> (§5). <Caveat>Even with separate VMs, tasks touching shared online state (email, cloud storage, shopping carts) can introduce cross-run interference</Caveat> (§5). <Caveat>Judge quality is bounded by VLM visual understanding — narrative-generation hallucinations on fine-grained details (e.g. a negative sign) cause selection errors that zooming doesn't fix</Caveat> (§4.5, App. G). <Caveat>Wide scaling multiplies inference cost: each task needs N full rollouts plus narrative generation and judging</Caveat> (App. B).
+
+## Critiques and Questions
+1. The headline 72.6% barely clears human 72.36% (~0.24%) and uses a two-model N=10 ensemble; the single-config robustness/variance of that exact number is not reported, so "surpasses human" is a thin margin.
+2. The most honest accuracy figure (92.8% human-aligned) implies OSWorld scripts mis-grade some tasks — which also casts uncertainty on the comparability of the 72.6% vs prior SoTA numbers, since all share the same imperfect scripted evaluator.
+3. Coverage (Pass@N up to 80.5%) is well above realized SR, so selection — not generation — is now the ceiling; how much of the remaining gap is judge limitation vs benchmark-grader noise is **Unclear**.
+4. Cost-normalized comparisons against single-rollout baselines are relegated to the appendix; a fair SR-per-dollar curve vs GTA1 would clarify whether wide scaling is practically preferable.
+
+<SelfCheck q="Why does BJudge compress trajectories into behavior narratives instead of judging raw screenshots, and why use comparative (MCQ) selection rather than independent scoring?" a="Raw long-horizon trajectories are information-dense and mostly task-irrelevant, so a judge struggles to interpret them directly; per-transition action-effect facts isolate what actually changed (Tab.3: narratives 60.2% vs screenshot-only 56.0%). Comparative MCQ selection lets the judge contrast candidates against each other, which keeps scaling with N, whereas independent ranking (WebJudge) plateaus near N=4 and drops by N=10 (Fig.4)." />
+
+## Glossary
+- <Term def="An agent that operates a computer through its UI (screenshots + clicks/typing/code) to complete user tasks across OSes and apps.">CUA (computer-use agent)</Term>
+- <Term def="Generating many full rollouts in parallel from one or more agents and selecting the best, rather than scaling effort within a single rollout.">wide scaling</Term>
+- <Term def="A compact per-transition sequence of facts describing what the agent did and how it changed the environment, replacing dense raw screenshots for the judge.">behavior narrative</Term>
+- <Term def="Single-round prompt where the judge picks the single best trajectory from all candidates at once; O(1) judge calls, token cost proportional to N.">MCQ-style comparative evaluation</Term>
+- <Term def="OSWorld subset of 159 tasks that have at least one correct and one incorrect rollout — i.e. where a judge can actually change the outcome.">Judge Subset</Term>
+- <Term def="Task coverage metric: a task counts as solved if at least one of the N rollouts is correct; an upper bound on achievable SR.">Pass@N</Term>
+- <Term def="The improved base agentic framework introduced here: a flat (worker-only) GUI policy with a natively integrated coding agent.">Agent S3</Term>
+- <Term def="369-task (361 used) Ubuntu benchmark of real desktop tasks across OS, Office, Daily, Professional, and Workflow domains.">OSWorld</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

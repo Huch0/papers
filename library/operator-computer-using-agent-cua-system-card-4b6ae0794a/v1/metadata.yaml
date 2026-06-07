@@ -48,13 +48,14 @@ scoring:
 artifacts:
   pdf: null
   extraction: null
-  summary: null
+  summary: library/operator-computer-using-agent-cua-system-card-4b6ae0794a/v1/summary.mdx
   code_url: null
   project_url: null
   dataset_url: null
 status:
   downloaded: false
   extracted: false
-  summarized: false
+  summarized: true
   triaged: true
   user_read_status: unread
+  summary_format: mdx

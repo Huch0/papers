@@ -1,0 +1,119 @@
+---
+canonical_key: arxiv-2501.07572
+version_key: v1
+title: 'WebWalker: Benchmarking LLMs in Web Traversal'
+authors:
+- Jialong Wu
+- Wenbiao Yin
+- Yong Jiang
+- Zhenglin Wang
+- Zekun Xi
+- Runnan Fang
+- Deyu Zhou
+- Pengjun Xie
+- Fei Huang
+venue: Annual Meeting of the Association for Computational Linguistics
+year: 2025
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+- general_agent_methods
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2501.07572
+summary_date: '2026-06-07'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>WebWalkerQA is a 680-query benchmark for deep, multi-step web traversal, paired with WebWalker, an explorer–critic multi-agent framework that navigates a site by clicking HTML buttons; even the best system stays below 40% accuracy.</TLDR>
+
+<WhyItMatters>Foundational for the computer-use / general-agent track: it reframes web agents from horizontal search to <Novelty>vertical exploration</Novelty> of a single site, and shows current LLM agents and RAG systems both fail at deep information-seeking — the gap that later deep-research agents target.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "37.50%", label: "best agent accuracy", sub: "WebWalker + GPT-4o, overall (Tab.3)" },
+  { value: "40.73%", label: "best RAG system", sub: "Tongyi, overall (Tab.4)" },
+  { value: "680", label: "QA pairs", sub: "over 1373 webpages, 4 domains" },
+]} />
+
+## Motivation
+Retrieval-augmented generation relies on search engines that perform a <Problem>horizontal search and retrieve only shallow, top-of-site content</Problem>, missing information buried several clicks deep within a website. Prior web-agent benchmarks do not fill this gap: <Problem>HTML-action benchmarks like Mind2Web and WebArena suffer from excessively noisy, overly long inputs and target action execution rather than deep information-seeking</Problem>, and <Problem>no prior benchmark systematically tests traversal depth on a single root site</Problem> (Tab.1: WebWalkerQA is the only one marking Depth, Width, and Hop all positive).
+
+## Contribution (what's new)
+Two coupled artifacts. (1) <Novelty>The Web Traversal task and WebWalkerQA benchmark</Novelty>: from a root URL plus a query, the agent must click through subpages to gather the answer, with both single-source (one deep page) and multi-source (combine two pages) queries graded by traversal depth. (2) <Novelty>WebWalker, an explorer–critic framework that decouples navigation from memory</Novelty>: the explorer issues only click actions and accumulates a long context, while a separate critic distills each observation into a running memory and decides when enough has been gathered. The split is needed because a single ReAct agent drowns in the long, noisy concatenation of page markdown and "gives up" early; offloading memory to the critic is what lets exploration go deep.
+
+## Research questions
+Can current LLM agents traverse a website's subpages to answer queries whose evidence is deep and/or spread across pages? Does a memory-managing multi-agent design beat single-agent ReAct/Reflexion? And does vertical exploration complement horizontal RAG retrieval?
+
+## Methodology
+WebWalkerQA is built by a two-stage funnel: GPT-4o generates synthetic QA pairs from recursively crawled subpages, then crowd-sourced humans rewrite and verify them. WebWalker runs explorer and critic agents over the rendered page (Markdown content plus clickable buttons extracted with BeautifulSoup); evaluation uses GPT-4 as a chain-of-thought judge for answer correctness.
+
+<Pass title="Method details">
+**Benchmark construction (Fig.2, §3).** Root official websites are collected across four domains (conference, organization, education, game). A crawler clicks sublinks to build a URL tree of subpages; GPT-4o then writes queries under a role (single page, or two pages jointly) and verifies that answers are short entities requiring multi-hop reasoning; humans calibrate. Final set: <Finding src="§3.2">680 QA pairs</Finding>. Difficulty is set by page depth `i`: single-source `i∈[2,4]` and multi-source `i∈[2,8]` (sum of the two pages' depths) map to easy/medium/hard. Statistics: 80/140/120 per difficulty for each of single- and multi-source (Tab.2). Distribution — Chinese 60.5% / English 39.5%; domains education 46.3%, conference 24.0%, game 24.0%, organization 7.9% (Fig.3).
+
+**WebWalker agents (§4, Fig.4).** *Explorer* runs a Thought–Action–Observation ReAct loop; observation `Ot = (pt, lt)` is the page content plus a set of clickable sublink buttons, and the action selects one URL to visit (it never answers the question directly). *Critic* runs after each step on the query plus the explorer's latest `(Ot, At)`, updates a memory `M` of relevant facts, and judges whether `M` suffices to answer — emitting the answer when it does. The explorer is capped at `K = 15` steps; all methods run zero-shot.
+
+<Stepper steps={[
+  { title: "Observe", body: "Explorer receives page markdown + clickable button list for the current page." },
+  { title: "Think then click", body: "Explorer reasons and selects one sublink URL to traverse — actions are click-only." },
+  { title: "Critique", body: "Critic extracts useful info from the observation into memory M (usefulness true/false)." },
+  { title: "Judge & answer", body: "Critic checks if M is sufficient; if yes it returns the answer, else exploration continues until K=15." },
+]} />
+
+**Evaluation (§3.3).** Performance = QA accuracy (GPT-4 CoT judge against gold answer); efficiency = action count (A.C.) on correct runs only.
+</Pass>
+
+## Main result
+WebWalkerQA is hard for everyone. The strongest agent, <Finding src="Tab.3, p.7">WebWalker on GPT-4o reaches only 37.50% overall accuracy — and no agent configuration surpasses 40%</Finding>. Among RAG/search systems, <Finding src="Tab.4, p.9">the best is the commercial Tongyi at 40.73%, while strong closed-book models without retrieval collapse (o1-preview 9.85%, Gemini-1.5-Pro 8.08%)</Finding>, confirming the benchmark cannot be solved from parametric memory.
+
+<SortableTable columns={["System", "Type", "Overall acc. (%)"]} rows={[
+  ["WebWalker (GPT-4o)", "Agent, Tab.3", 37.50],
+  ["WebWalker (Qwen-2.5-72B)", "Agent, Tab.3", 33.26],
+  ["Reflexion (GPT-4o)", "Agent, Tab.3", 35.29],
+  ["ReAct (GPT-4o)", "Agent, Tab.3", 33.82],
+  ["Tongyi", "Commercial RAG, Tab.4", 40.73],
+  ["Kimi", "Commercial RAG, Tab.4", 37.35],
+  ["Naive RAG", "Open RAG, Tab.4", 20.73],
+  ["o1-preview", "Closed-book, Tab.4", 9.85],
+  ["Gemini-1.5-Pro", "Closed-book, Tab.4", 8.08],
+]} />
+
+## Key findings
+- <Finding src="Tab.3, §5.2">WebWalker > Reflexion > ReAct across backbones, and accuracy rises with model size</Finding>: e.g. open-source Qwen-2.5 climbs 19.85% (7B) → 33.26% (72B) under WebWalker; correct-run action count also grows with size, indicating larger models sustain longer information-seeking.
+- <Finding src="Tab.3">Difficulty tracks depth and source count</Finding>: accuracy drops monotonically easy→hard and single→multi-source — multi-source-hard is the weakest cell, since the answer requires combining two deep pages that a single horizontal search cannot fetch.
+- <Finding src="§6.1, Tab.4">Both commercial and open RAG systems do poorly, topping out at ~40%</Finding>: multi-source queries score below single-source for open RAG, evidencing that search engines miss deeply buried content (Finding i).
+- <Finding src="§6.2, Fig.7a">WebWalker plugs into RAG as a vertical-exploration module and lifts accuracy at every difficulty level, especially multi-source</Finding>: the critic's memory `M` is appended to retrieved documents before generation (Finding ii).
+- <Finding src="§6.3, Fig.7b">Scaling the action budget `K∈{5,10,15,20,25}` improves accuracy</Finding>: digging through more links is a viable inference-time scaling axis for RAG within a range (Finding iii).
+- <Finding src="§5.4, Fig.6">Failure modes split into reasoning errors, refusal/wrong-locating, and exceeding `K`</Finding>: small ReAct models "give up" early from long-context interference, and some errors persist even after the gold page is found because the model cannot reason over it (e.g. a time-summation question, Tab.5).
+
+## Implications
+WebWalkerQA establishes vertical, click-based traversal as a distinct capability axis from horizontal retrieval, and gives <Related>the WebAgent / deep-research agent line (lineage from ReAct, Reflexion; relatives MindSearch, AssistantBench, GAIA, MMInA)</Related> a depth-graded, bilingual yardstick. The explorer–critic memory split is a reusable recipe for long-horizon agents that accumulate noisy context. Worth chasing: <FollowUp>agent tuning on golden trajectories (the authors hold ~14k unverified silver QA pairs) instead of pure prompting</FollowUp>, <FollowUp>adding the visual/screenshot modality the HTML-only design omits</FollowUp>, and <FollowUp>tighter RAG↔WebWalker integration where the RAG router rewrites the query and hands WebWalker the right official site</FollowUp>.
+
+## Limitations
+- <Caveat>Small dataset (680 pairs)</Caveat>: comparable to GAIA/AssistantBench but limits statistical power; the larger silver set is unverified.
+- <Caveat>HTML-DOM only — no visual modality</Caveat>: actions are restricted to clicking text buttons, so screenshot-based cues are ignored.
+- <Caveat>Prompting-only, no agent tuning</Caveat>: WebWalker is a zero-shot prompted framework, not trained on traversal trajectories.
+- <Caveat>LLM-in-the-loop construction and evaluation</Caveat>: GPT-4o generates questions and GPT-4 grades answers, so benchmark style and scoring inherit those models' biases; the GPT-4 CoT judge's reliability is not separately quantified.
+
+## Critiques and Questions
+1. The headline "best system < 40%" mixes an agent given the root URL (WebWalker) with RAG systems that must also find the site — not a clean apples-to-apples comparison; how much of the 37–40% ceiling is traversal vs. retrieval?
+2. Accuracy depends entirely on a GPT-4 CoT judge with no reported human-agreement / inter-rater number — a real concern for a short-entity-answer benchmark.
+3. Because questions are GPT-4o-generated from crawled pages, the benchmark may encode artifacts of what GPT-4o finds "askable"; how natural and answer-stable are the queries as sites update over time (Tab.6 already shows time-cutoff fragility)?
+4. The `K=15` cap and "action count on correct runs only" make A.C. a biased efficiency metric — failures that burn all 15 steps are excluded.
+
+<SelfCheck q="Why does WebWalker split navigation from memory into two agents instead of using a single ReAct loop?" a="A single ReAct agent must hold the entire growing concatenation of page markdown and button lists in context; this long, noisy history causes small models to misjudge and 'give up' early (§5.4). The critic offloads memory by distilling each observation into a compact running memory M and deciding when to answer, freeing the explorer to keep clicking deeper without drowning in context (§4.2)." />
+
+## Glossary
+- <Term def="Given a root website URL and a query, click through subpages to gather enough information to answer; actions are restricted to 'click'.">Web Traversal</Term>
+- <Term def="Sum of the depths of the source page(s) from the root, used to set easy/medium/hard difficulty.">traversal depth (i)</Term>
+- <Term def="A query whose answer requires combining information from two distinct subpages, defeating single-shot search.">multi-source query</Term>
+- <Term def="Reasoning+Acting agent loop alternating Thought, Action, Observation steps.">ReAct</Term>
+- <Term def="Single-agent framework that adds verbal self-feedback/reflection between attempts.">Reflexion</Term>
+- <Term def="Number of agent actions on correct runs only, used as WebWalker's efficiency metric.">action count (A.C.)</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

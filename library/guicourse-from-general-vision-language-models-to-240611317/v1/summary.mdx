@@ -1,0 +1,136 @@
+---
+canonical_key: arxiv-2406.11317
+version_key: v1
+title: 'GUICourse: From General Vision Language Models to Versatile GUI Agents'
+authors:
+- Wentong Chen
+- Junbo Cui
+- Jinyi Hu
+- Yujia Qin
+- Junjie Fang
+- Yue Zhao
+- Chongyi Wang
+- Jun Liu
+- Gui-Fang Chen
+- Yupeng Huo
+- Yuan Yao
+- Yankai Lin
+- Zhiyuan Liu
+- Maosong Sun
+venue: Annual Meeting of the Association for Computational Linguistics
+year: 2024
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2406.11317
+summary_date: '2026-06-07'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+{/*
+  Canonical Summary structure (concise, core-first). Body only — frontmatter is generated
+  from metadata.yaml by `summarize_paper.py --format mdx --prepare`. Components are
+  provided globally by the site (no imports). See config/summary_components.md.
+*/}
+
+<TLDR>GUICourse is a three-part training-data suite (GUIEnv, GUIAct, GUIChat) that turns general vision-language models into vision-only GUI agents by first fixing their OCR/grounding and then teaching GUI knowledge — yielding a 3.1B agent competitive with a 9.6B one.</TLDR>
+
+<WhyItMatters>A foundational data recipe for the computer-use-agent track: it isolates *why* off-the-shelf VLMs fail as GUI agents (perception, not just knowledge) and supplies the largest real-website single-step + multi-step navigation datasets to fix it.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "57.1", label: "mean StepSR", sub: "MiniCPM-GUI 3.1B, three test sets" },
+  { value: "10M", label: "GUIEnv OCR/grounding samples", sub: "+0.7M SFT, from C4 screenshots" },
+  { value: "67k / 5,696", label: "GUIAct web nav instructions", sub: "single-step / multi-step" },
+  { value: "+47 pts", label: "Text2Bbox IoU@0.2 gain", sub: "9.87 → 68.02 with 10M GUIEnv" },
+]} />
+
+## Motivation
+General VLMs look promising for GUI control but fail as practical agents for two distinct reasons. First, <Problem>their OCR and grounding are too weak to locate web elements or designated text accurately in large, high-resolution screenshots with mixed fonts</Problem> — a powerful open VLM like Qwen-VL-Chat returns wrong bounding boxes for a button like "Log in" (Fig.1). Second, <Problem>they lack knowledge of GUI element functions and control actions</Problem>, so they cannot translate an instruction like "accept the cookies" into the right action. Compounding this, <Problem>existing GUI datasets are too simplistic/simulated, too narrow in domain, or too small</Problem> to train versatile agents, especially for real-world websites.
+
+## Contribution (what's new)
+The genuine delta is a <Novelty>two-stage data-driven pipeline that decouples perception from knowledge</Novelty>: pre-train on a large OCR/grounding corpus (GUIEnv) to fix fundamental perception, *then* SFT on navigation (GUIAct) and conversation (GUIChat) to install GUI knowledge. The design must take this form because <Novelty>navigation requires accurate pixel-level grounding that the baseline VLM lacks</Novelty> — the ablation shows adding GUIEnv lifts both grounding *and* downstream navigation, so knowledge SFT alone would sit on a broken perceptual foundation. A second contribution is the <Novelty>unified 7-group action space and per-action scoring rules</Novelty> that let one agent and one evaluator span websites and smartphones with vision-only inputs and position-based actions.
+
+## Research questions
+1. Can general VLMs be converted into capable vision-only GUI agents purely via data, without bespoke architectures?
+2. Does improving OCR/grounding (perception) causally improve GUI navigation, or is GUI knowledge the bottleneck?
+3. Can a small (3.1B) agent match much larger agents on GUI tasks?
+
+## Methodology
+Construct three datasets, train agents in two stages, and evaluate on held-out splits plus two external benchmarks (Mind2Web, AITW). The agent receives only the viewport screenshot (no DOM/accessibility tree) and emits actions with positions.
+
+<Pass title="Method details">
+
+**GUIEnv — OCR + grounding (Tab.1, §3.1).** 4M URLs from C4 rendered with Playwright into 10M annotated screenshots. *GUIEnv-global* (10M) is a pre-training task: predict all page text + grounding + layout sequence for a full screenshot. *GUIEnv-local* (0.7M) is an SFT QA task: `text2bbox` (text → region) and `bbox2text` (region → text), built by cropping ~50k large screenshots to `<1920×1080`, dropping images with `<10` elements, and sampling 10 elements each.
+
+**GUIAct — navigation knowledge (Tab.1–2, §3.2).** Three partitions: (1) *web-single* — 67k single-step instruction–action pairs over 13k real websites (50 scenarios), auto-labeled by GPT-4V using two images per request (raw screenshot + element-index overlay), then human-verified, raising accuracy 55% → 92% (§A.3.1). (2) *web-multi* — 5,696 high-level multi-step instructions (avg 7.9 turns) over 121 websites in 8 scenarios, crowd-annotated via a browser-plugin recorder (→ ~44k training samples). (3) *smartphone* — 9,157 trajectories converted from AITW-General into the unified action space (→ 67k samples). The two web subsets are the largest real-website nav datasets with both single- and multi-step instructions (Tab.2).
+
+**GUIChat — interaction (§3.3).** ~44k single-turn QA + 6k multi-turn dialogues over text-rich website screenshots with grounding boxes, GPT-4-generated across four question types; human eval on 500 pairs scored Helpfulness/Honesty/Harmlessness/Image-text-correlation at 0.954 / 0.814 / 0.958 / 0.886 (§A.3.3).
+
+**Action space & formats (§A.1, Tab.7–8).** 7 groups (point, input, browse, log, submit, select-value, end), 11 used actions. Parse format JSON for Qwen-VL/Fuyu, CSV for MiniCPM-V; positions absolute for Fuyu, relative for Qwen-VL, relative-scaled-to-`[0,1000)` for MiniCPM-V. Per-action scoring: IoU + element-EM for click/hover, `distance<0.14` for tap, `F1>0.5` for input/answer, direction-match for scroll/swipe; StepSR requires *all* actions in a step to succeed.
+
+<Stepper steps={[
+  {title: "Stage 1 — Pre-train perception", body: "Mix GUIEnv-global (10M) into MiniCPM-V pre-training data to lift OCR/grounding. ~2 days on 128×A100."},
+  {title: "Stage 2 — SFT knowledge + dialogue", body: "Merge 10% GUIEnv-local + all GUIAct + all GUIChat for SFT. ~8h on 8×A100, 3 epochs. Qwen-GUI/Fuyu-GUI get SFT only (no pre-train access)."},
+  {title: "Evaluate", body: "Held-out web-single/web-multi/smartphone splits (Type EM, Cli.Acc, StepSR), then fine-tune + test on Mind2Web and AITW vs baseline VLMs."}
+]} />
+
+</Pass>
+
+## Main result
+A small MiniCPM-GUI (3.1B) reaches a <Finding src="Tab.3, p.7">mean StepSR of 57.1 across the three test sets, essentially matching Qwen-GUI (9.6B) at 57.2</Finding> and far above GPT-4o-mini's 32.0. All three trained agents beat their baseline VLMs on the external benchmarks:
+
+<SortableTable columns={["Agent (size)", "Web-Single StepSR", "Web-Multi StepSR", "Smartphone StepSR", "Mean StepSR"]} rows={[
+  ["GPT-4o-mini*", 57.0, 17.0, 22.0, 32.0],
+  ["Fuyu-GUI (9.4B)", 63.5, 47.1, 40.4, 50.4],
+  ["MiniCPM-GUI (3.1B, +HiRes +GUIChat)", 70.6, 47.5, 53.3, 57.1],
+  ["Qwen-GUI (9.6B)", 66.7, 46.8, 58.1, 57.2]
+]} />
+
+On Mind2Web (Tab.4), GUICourse lifts weaker baselines most: MiniCPM-V cross-task StepSR rises <Finding src="Tab.4, p.7">8.5 → 20.8 (~+10 pts)</Finding> and Fuyu-8B 6.6 → 15.6, while the already-strong Qwen-VL gains a smaller 2–5 pts. On AITW (Tab.5), overall score rises e.g. <Finding src="Tab.5, p.7">MiniCPM-V 48.9 → 58.4</Finding>, with smaller deltas than Mind2Web because more web-scenario data was used in training.
+
+## Key findings
+- <Finding src="Tab.6, p.8">OCR/grounding causally drives navigation</Finding>: scaling GUIEnv 0 → 10M lifts Text2Bbox IoU@0.2 from 9.87 → 68.02, Bbox2Text F1 from 30.49 → 64.78, *and* web-single StepSR from 52.84 → 70.57 — the biggest jump comes from the first 2.5M, confirming perception is the binding constraint.
+- <Finding src="Tab.6, p.8">Type EM is unaffected by GUIEnv (≈92 throughout)</Finding>: predicting *which* action is position-free, so all the GUIEnv gains flow through grounding (Cli.Acc 49.8 → 74.9), isolating perception from action-naming.
+- <Finding src="Tab.3, p.7">High resolution matters a lot</Finding>: the 1344×1344 MiniCPM-GUI raises mean StepSR 49.0 → 56.1 over the 448×448 version.
+- <Finding src="Tab.3, p.7">GUIChat helps even on navigation</Finding>: adding the dialogue dataset nudges mean StepSR +1 (56.1 → 57.1) despite targeting conversation — though external experiments (§B.4.2) find its effect on action execution is otherwise small.
+- <Finding src="Tab.9, §B.4.1">Scaling the LM compounds the recipe</Finding>: "MiniCPM-GUI + Larger LM" (≈Qwen-VL size) hits Mind2Web cross-task 33.2 StepSR, beating SeeClick (25.5) at similar size.
+- <Finding src="§4.5">Half of the analyzed errors are not real failures</Finding>: of 50 web-multi errors, 13 are "false errors" (reasonable but mismatched the single golden answer), 22 action-type and 15 action-position errors — static evaluation undercounts true capability, and remaining true errors cluster on complex screenshots.
+
+## Implications
+GUICourse operationalizes the lesson that <Related>SeeClick / CogAgent-style GUI grounding</Related> is the bottleneck for vision-only agents, and provides reusable data to fix it — making strong GUI agents reachable from small open VLMs rather than only from GPT-4V-class closed models. It also standardizes a cross-platform action space and a per-action evaluator the field can reuse. <FollowUp>Whether RLHF / RL-from-interaction (authors' stated next step) closes the gap to assistant-level agents</FollowUp>; <FollowUp>generalization beyond web + smartphone to desktop apps and professional software</FollowUp>; <FollowUp>how the "false error" rate distorts static GUI leaderboards and whether interactive eval changes rankings</FollowUp>.
+
+## Limitations
+- <Caveat>Pre-training + SFT alone is acknowledged as insufficient for assistant-level agents</Caveat>; no RL/RLHF yet.
+- <Caveat>Coverage is web + smartphone only — no desktop OS or professional-software GUIs</Caveat>, the very settings a "versatile" agent most needs.
+- <Caveat>Static, single-golden-answer evaluation produces ~26% false errors on web-multi</Caveat>, so StepSR understates real performance and is hard to compare across action spaces.
+- <Caveat>GUIEnv screenshots come from C4 / Common Crawl</Caveat>, so personally identifying or offensive content cannot be fully guaranteed (§D); GUIChat quality also degrades on unloaded-page screenshots.
+- <Caveat>Smartphone data is a converted AITW-General subset</Caveat>, not independently collected, limiting how novel the mobile evidence is.
+
+## Critiques and Questions
+1. The headline "3.1B ≈ 9.6B" comparison mixes design axes — MiniCPM-GUI uses high resolution and a different parse/position format than Qwen-GUI, so the parity may reflect resolution and full-pipeline pre-training as much as parameter efficiency. Is a controlled same-resolution comparison available?
+2. GPT-4o-mini is evaluated on only 100 samples per set (Tab.3 note) and given no GUICourse fine-tuning, so the closed-vs-open gap is suggestive, not a fair baseline.
+3. With ~26% false errors, why not adopt interactive/simulated evaluation (used only as a small case study) as the primary metric? The static numbers may rank models by golden-answer overlap rather than capability.
+4. GUIAct labels lean heavily on GPT-4V/GPT-4-generated instructions; how much of the "GUI knowledge" learned is teacher-model bias rather than ground-truth web behavior?
+
+<SelfCheck q="Why does increasing GUIEnv data improve navigation StepSR but leave Type EM roughly flat?" a="GUIEnv only trains OCR/grounding (where things are), so it improves grounding-dependent metrics (Cli.Acc, StepSR) by enabling accurate element localization. Type EM measures predicting the action *name*, which is position-free and already learned from navigation SFT, so more grounding data doesn't change it (Tab.6)." />
+
+## Glossary
+- <Term def="Locating a UI element or text by its pixel-region bounding box / point, so an action can target it.">grounding</Term>
+- <Term def="Step Success Rate — a step counts only if ALL of its predicted actions succeed under the per-action rules.">StepSR</Term>
+- <Term def="Type Exact Match — accuracy of predicting the action's name (e.g. click vs scroll), ignoring its parameters.">Type EM</Term>
+- <Term def="Average success rate of click/tap actions; reflects grounding quality.">Cli.Acc</Term>
+- <Term def="Intersection over Union — overlap area / union area of predicted vs golden element regions.">IoU</Term>
+- <Term def="Supervised fine-tuning on instruction–response pairs.">SFT</Term>
+- <Term def="Android in the Wild — a large smartphone-control dataset; its General subset is converted into GUIAct-smartphone.">AITW</Term>
+- <Term def="A real-world website navigation benchmark with cross-task/website/domain splits.">Mind2Web</Term>
+- <Term def="Cleaned Common Crawl Corpus — the web-text source whose URLs seed GUIEnv screenshots.">C4</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

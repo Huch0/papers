@@ -42,7 +42,8 @@ milestone:
   field: computer_use_agents
   era: foundational
   significance: Reproducible, self-hostable realistic web environment.
-knowledge_concepts: []
+knowledge_concepts:
+- web-agent-generalization
 versions:
 - version_key: v1
   version_label: arXiv v4

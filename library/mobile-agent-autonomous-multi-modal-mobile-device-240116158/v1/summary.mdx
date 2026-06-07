@@ -21,6 +21,9 @@ triage_label: READ_SOON
 triage_confidence: high
 source_link: https://arxiv.org/abs/2401.16158
 summary_date: '2026-06-07'
+curated_by: Huch0
+contributors:
+- Huch0
 ---
 
 <TLDR>Mobile-Agent is a purely vision-based Android GUI agent that drives apps from screenshots alone — using OCR + icon-detection + CLIP to ground GPT-4V's text/icon click intents into pixel coordinates — evaluated on a new 10-app, 3-difficulty benchmark (Mobile-Eval).</TLDR>
@@ -106,3 +109,4 @@ Establishes the screenshot-only / no-view-hierarchy point as a viable design and
 ### Personal notes
 Watch the SU-vs-CR conflation when citing this paper — quote the table (SU 0.91/0.82/0.82; CR 98.2%/90.9%/91.3%), not the p.6 sentence. The icon-grounding recipe (describe attributes → Grounding DINO → CLIP) is the most reusable nugget. Compare its accuracy/latency against view-hierarchy-based agents (AppAgent) and against later set-of-mark / native-grounding approaches. Follow-ups: AppAgent (2312.13771), SeeAct/Zheng et al. 2024 (2401.01614), Mobile-Agent-v2. Check code at https://github.com/X-PLUG/MobileAgent (verify OCR tool, GPT-4V version, prompts, license).
 {/* NOTES_END */}
+

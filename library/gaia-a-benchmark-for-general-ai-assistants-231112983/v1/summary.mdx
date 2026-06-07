@@ -19,6 +19,9 @@ triage_label: READ_SOON
 triage_confidence: high
 source_link: https://arxiv.org/abs/2311.12983
 summary_date: '2026-06-07'
+curated_by: Huch0
+contributors:
+- Huch0
 ---
 
 <TLDR>GAIA is a 466-question benchmark of real-world assistant tasks that have a single factual answer but require multi-step reasoning, web browsing, multimodality, and tool use — conceptually simple for humans yet hard for the strongest tool-augmented LLMs of late 2023.</TLDR>
@@ -103,3 +106,4 @@ GAIA's difficulty-inversion + single-factual-answer recipe gives a cheap, determ
 ### Personal notes
 Treat any agent paper's reported "GAIA score" with care: GAIA fixes the *questions and scorer* but not the *agent harness*, so scores conflate model + scaffolding. The 0% across all AI methods on Level 3 is the most striking single fact. This is a 2023 snapshot; current models likely score much higher, so re-check against a refreshed/held-out split before citing the 15% as current. Follow-ups: AgentBench (2308.03688), OpenAGI, Morris et al. Levels of AGI; check the huggingface.co/gaia-benchmark scoring function + normalization rules.
 {/* NOTES_END */}
+

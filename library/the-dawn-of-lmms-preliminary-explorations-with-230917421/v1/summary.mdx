@@ -20,6 +20,9 @@ triage_label: READ_SOON
 triage_confidence: high
 source_link: https://arxiv.org/abs/2309.17421
 summary_date: '2026-06-07'
+curated_by: Huch0
+contributors:
+- Huch0
 ---
 
 <TLDR>A ~160-page qualitative Microsoft case-study cataloguing what an early GPT-4V(ision) can do across dozens of vision-language tasks, whose two load-bearing ideas for agent research are <Novelty>visual referring prompting</Novelty> (instruct the model by drawing on the input image's pixels) and hand-driven demos of GPT-4V as a GUI/embodied agent that predicts the next action from a screenshot.</TLDR>
@@ -93,3 +96,4 @@ This report seeds the screenshot-to-action and pixel-mark grounding patterns tha
 ### Personal notes
 The most reusable artifact for harness work is the verbatim GUI prompt on p.121/Fig. 92 (give the model the goal, a fixed action vocabulary, and the current screenshot; require it to verbalize the mouse target). Treat every "task accomplished" in Secs. 9.7-9.8 as an existence proof under a human executor, not a success rate. The honest caveat on p.8 ("may not consistently work across different samples") should accompany any citation of these demos. Pair with a quantitative GUI-agent benchmark (WebArena / Mind2Web) for measured numbers.
 {/* NOTES_END */}
+

@@ -36,7 +36,8 @@ milestone:
   era: foundational
   significance: AitW; 715k-episode device-control dataset, orders of magnitude larger than predecessors;
     canonical offline corpus.
-knowledge_concepts: []
+knowledge_concepts:
+- web-agent-generalization
 versions:
 - version_key: v1
   version_label: arxiv

@@ -31,6 +31,9 @@ triage_label: READ_SOON
 triage_confidence: high
 source_link: https://arxiv.org/abs/2404.07972v2
 summary_date: '2026-06-07'
+curated_by: Huch0
+contributors:
+- Huch0
 ---
 
 <TLDR>OSWorld is the first real-OS (Ubuntu/Windows/macOS) virtual-machine environment plus a 369-task benchmark with per-task initial-state setup and execution-based checker scripts, exposing that top LLM/VLM agents reach only ~12% success where humans reach ~72%.</TLDR>
@@ -114,3 +117,4 @@ OSWorld generalizes <Related>WebArena / VisualWebArena (web-only), InterCode (co
 ### Personal notes
 The single most load-bearing result: human ~72.36% vs best model 12.24% overall success (Table 5, §4.2). The "strong planning, weak execution" finding (>75% of failures are mouse-click/grounding errors, §5.4) is the most actionable insight for harness/agent design — it argues for better GUI grounding and/or index-based (SoM-like) action mapping, though SoM did not help GPT-4V here at desktop resolution/element density.
 {/* NOTES_END */}
+

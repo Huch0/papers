@@ -1,0 +1,21 @@
+---
+import { person, initials } from "@/lib/contributors";
+interface Props { id?: string; contributors?: string[]; label?: string; size?: number; }
+const { id, contributors = [], label = "Curated by", size = 22 } = Astro.props;
+const p = id ? person(id) : null;
+const extra = contributors.filter((c) => c && c !== id).map(person);
+---
+{p && (
+  <span class="author" title={p.id}>
+    {label && <span class="author-label">{label}</span>}
+    <a class="who" href={p.url ?? undefined} target={p.url ? "_blank" : undefined} rel="noopener">
+      {p.avatar
+        ? <img class="ava" src={p.avatar} width={size} height={size} alt={p.name} loading="lazy" />
+        : <span class="ava ava-init" style={`width:${size}px;height:${size}px;line-height:${size}px`}>{initials(p.name)}</span>}
+      <span class="who-name">{p.name}</span>
+    </a>
+    {extra.length > 0 && (
+      <span class="contribs">· also {extra.map((e) => e.name).join(", ")}</span>
+    )}
+  </span>
+)}

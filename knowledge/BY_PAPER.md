@@ -4,9 +4,19 @@
 
 Concepts grouped by the paper(s) they were learned from / linked to.
 
+## Mind2Web: Towards a Generalist Agent for the Web  (`arxiv-2306.06070`)
+- [Web-Agent Generalization (cross-task / site / domain)](concepts/web-agent-generalization.md)
+
+## Android in the Wild: A Large-Scale Dataset for Android Device Control  (`arxiv-2307.10088`)
+- [Web-Agent Generalization (cross-task / site / domain)](concepts/web-agent-generalization.md)
+
+## WebArena: A Realistic Web Environment for Building Autonomous Agents  (`arxiv-2307.13854`)
+- [Web-Agent Generalization (cross-task / site / domain)](concepts/web-agent-generalization.md)
+
 ## SWE-bench: Can Language Models Resolve Real-World GitHub Issues?  (`arxiv-2310.06770`)
 - [Agent-Computer Interface (ACI)](concepts/agent-computer-interface-aci.md)
 
 ## SWE-agent: Agent-Computer Interfaces Enable Automated Software Engineering  (`arxiv-2405.15793`)
 - [Agent-Computer Interface (ACI)](concepts/agent-computer-interface-aci.md)
+- [Planner–Executor–Verifier](concepts/planner-executor-verifier.md)
 

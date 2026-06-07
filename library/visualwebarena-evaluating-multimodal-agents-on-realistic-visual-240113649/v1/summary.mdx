@@ -24,6 +24,9 @@ triage_label: READ_SOON
 triage_confidence: high
 source_link: https://arxiv.org/abs/2401.13649
 summary_date: '2026-06-07'
+curated_by: Huch0
+contributors:
+- Huch0
 ---
 
 <TLDR>VisualWebArena is a reproducible, execution-evaluated benchmark of 910 web tasks where solving (and grading) each task requires seeing the page, on which the best VLM agent at submission reached only 16.4% success versus 88.7% for humans.</TLDR>
@@ -104,3 +107,4 @@ Establishes a reusable reference design for multimodal web agents — element-ID
 ### Personal notes
 The most transferable harness ideas: element-ID action space (avoid pixel coords for non-grounding models), SoM-as-observation injected via JS, and visual reward primitives (VQA/SSIM) for open-ended functional evaluation. Watch the evaluator-fidelity risk if reusing eval_vqa/fuzzy_match.
 {/* NOTES_END */}
+

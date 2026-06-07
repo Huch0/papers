@@ -19,10 +19,38 @@ const summaries = defineCollection({
       triage_label: z.string().nullable().optional(),
       triage_confidence: z.string().nullable().optional(),
       source_link: z.string().nullable().optional(),
-      // tolerate YAML auto-parsing an unquoted date into a Date object
       summary_date: z.coerce.string().optional(),
+      curated_by: z.string().optional(),
+      contributors: z.array(z.string()).optional(),
     })
     .passthrough(),
 });
 
-export const collections = { summaries };
+// Concepts: the global, cross-paper knowledge base (ADR-0005).
+const concepts = defineCollection({
+  loader: glob({ pattern: "*.{md,mdx}", base: "../knowledge/concepts" }),
+  schema: z
+    .object({
+      name: z.string().optional(),
+      title: z.string().optional(),
+      aliases: z.array(z.string()).optional(),
+      tags: z.array(z.string()).optional(),
+      related_papers: z.array(z.string()).optional(),
+      related_concepts: z.array(z.string()).optional(),
+      created: z.coerce.string().optional(),
+      updated: z.coerce.string().optional(),
+      curated_by: z.string().optional(),
+      contributors: z.array(z.string()).optional(),
+    })
+    .passthrough(),
+});
+
+// Q&A: paper-scoped questions+answers, colocated in the version dir (ADR-0005).
+const qa = defineCollection({
+  loader: glob({ pattern: "**/qa.mdx", base: "../library" }),
+  schema: z
+    .object({ canonical_key: z.string().optional(), version_key: z.string().optional() })
+    .passthrough(),
+});
+
+export const collections = { summaries, concepts, qa };

@@ -1,0 +1,59 @@
+---
+import { getCollection, render } from "astro:content";
+import Base from "../../layouts/Base.astro";
+import Author from "../../components/Author.astro";
+import { summaryComponents } from "../../components/summary/map";
+import { loadCatalog } from "../../lib/catalog";
+
+export async function getStaticPaths() {
+  const concepts = await getCollection("concepts");
+  return concepts.map((c) => ({ params: { slug: c.id }, props: { c } }));
+}
+
+const { c } = Astro.props;
+const d = c.data as any;
+const slug = c.id;
+const { Content } = await render(c);
+const base = import.meta.env.BASE_URL;
+
+const cat = loadCatalog();
+const titleOf = new Map(cat.map((p) => [p.canonical_key, p.title]));
+const all = await getCollection("concepts");
+const titleOfConcept = new Map(all.map((o) => [o.id, (o.data as any).title || o.id]));
+
+const linkedPapers = (d.related_papers || []).filter((k: string) => titleOf.has(k));
+const relConcepts = (d.related_concepts || []).filter((s: string) => titleOfConcept.has(s));
+const backConcepts = all.filter((o) => ((o.data as any).related_concepts || []).includes(slug) && o.id !== slug);
+const backPapers = cat.filter((p) => (p.knowledge_concepts || []).includes(slug));
+
+const pHref = (k: string) => `${base}papers/${k}/`.replace(/\/+/g, "/");
+const cHref = (s: string) => `${base}knowledge/${s}/`.replace(/\/+/g, "/");
+---
+<Base title={d.title || slug}>
+  <h1 class="title">{d.title || slug}</h1>
+  <div class="meta-card" data-pagefind-ignore>
+    <dl>
+      {d.aliases?.length ? (<><dt>Aliases</dt><dd>{d.aliases.join(", ")}</dd></>) : null}
+      {d.tags?.length ? (<><dt>Tags</dt><dd>{d.tags.join(", ")}</dd></>) : null}
+      {linkedPapers.length ? (<><dt>Linked papers</dt><dd class="related">{linkedPapers.map((k: string) => <a href={pHref(k)}>{titleOf.get(k)}</a>)}</dd></>) : null}
+      {relConcepts.length ? (<><dt>Related concepts</dt><dd class="related">{relConcepts.map((s: string) => <a href={cHref(s)}>{titleOfConcept.get(s)}</a>)}</dd></>) : null}
+    </dl>
+    {d.curated_by && <div style="margin-top:.5rem"><Author id={d.curated_by} contributors={d.contributors} /></div>}
+  </div>
+
+  <article data-pagefind-body data-pagefind-filter="type:concept">
+    <Content components={summaryComponents} />
+  </article>
+
+  {(backConcepts.length > 0 || backPapers.length > 0) && (
+    <section class="backlinks">
+      <h2>Referenced by</h2>
+      {backPapers.length > 0 && (
+        <><h3>Papers</h3><ul>{backPapers.map((p) => <li><a href={pHref(p.canonical_key)}>{p.title}</a></li>)}</ul></>
+      )}
+      {backConcepts.length > 0 && (
+        <><h3>Concepts</h3><ul>{backConcepts.map((o) => <li><a href={cHref(o.id)}>{(o.data as any).title || o.id}</a></li>)}</ul></>
+      )}
+    </section>
+  )}
+</Base>

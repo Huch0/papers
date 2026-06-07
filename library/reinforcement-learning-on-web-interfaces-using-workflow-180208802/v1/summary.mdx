@@ -18,6 +18,9 @@ triage_label: READ_SOON
 triage_confidence: high
 source_link: https://arxiv.org/abs/1802.08802v1
 summary_date: '2026-06-07'
+curated_by: Huch0
+contributors:
+- Huch0
 ---
 
 <TLDR>Instead of imitating expert demonstrations, this paper uses them to induce environment-blind <Term def="a sequence of high-level steps, each constraining the allowed actions at one time step (e.g. 'click a textbox, then type')">workflows</Term> that constrain exploration, seeding a replay buffer that trains a DOM-aware neural policy to solve sparse-reward web tasks.</TLDR>
@@ -104,3 +107,4 @@ The most transferable idea is the inversion of how demonstrations are used: cons
 
 Follow-ups: read Shi et al. 2017 (World of Bits) for benchmark origin; Humphreys et al. 2022 (CC-Net) for MiniWoB at scale; later LLM-driven MiniWoB++ agents. Check code at github.com/stanfordnlp/wge + the CodaLab worksheet.
 {/* NOTES_END */}
+

@@ -40,6 +40,7 @@ milestone:
   significance: The ACI concept; agent scaffold that made SWE-bench tractable.
 knowledge_concepts:
 - agent-computer-interface-aci
+- planner-executor-verifier
 versions:
 - version_key: v1
   version_label: arXiv v3

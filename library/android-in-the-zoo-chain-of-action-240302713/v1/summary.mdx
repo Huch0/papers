@@ -21,6 +21,9 @@ triage_label: READ_SOON
 triage_confidence: high
 source_link: https://arxiv.org/abs/2403.02713
 summary_date: '2026-06-07'
+curated_by: Huch0
+contributors:
+- Huch0
 ---
 
 <TLDR>An Android GUI agent should not emit raw `click (x,y)` from a screenshot alone — <Novelty>Chain-of-Action-Thought (CoAT)</Novelty> routes the decision through an explicit semantic chain (screen description → action think → action description → action result), and the paired AitZ dataset makes that chain trainable for small models.</TLDR>
@@ -102,3 +105,4 @@ The portable idea for harness design is the SD→AT→AD→AR factorization with
 ### Personal notes
 The most portable idea for harness design: factor a GUI policy through SD → AT → AD → AR and route context-providing pieces (SD, previous AR) to *input* and reasoning pieces (AT, AD) to *output*. The negative SD-on-low-res result is a useful caution: textual screen descriptions help only if the visual encoder can ground them; on a 224×224 encoder they add noise.
 {/* NOTES_END */}
+

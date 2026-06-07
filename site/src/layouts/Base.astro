@@ -17,7 +17,7 @@ const base = import.meta.env.BASE_URL;
     <header class="site">
       <div class="wrap">
         <h1><a href={base}>📚 Paper Library</a></h1>
-        <nav><a href={base}>Catalog</a> <ThemeToggle client:load /></nav>
+        <nav><a href={base}>Papers</a> <a href={`${base}knowledge/`.replace(/\/+/g, "/")}>Knowledge</a> <ThemeToggle client:load /></nav>
       </div>
     </header>
     <main class="wrap"><slot /></main>

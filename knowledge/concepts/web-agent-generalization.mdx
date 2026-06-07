@@ -1,0 +1,37 @@
+---
+name: web-agent-generalization
+title: Web-Agent Generalization (cross-task / site / domain)
+aliases: [cross-website generalization, distribution shift in web agents]
+tags: [computer-use-agents, web-agent, evaluation]
+related_papers: [arxiv-2306.06070, arxiv-2307.13854, arxiv-2307.10088]
+related_concepts: [agent-computer-interface-aci]
+created: "2026-06-07T00:00:00Z"
+updated: "2026-06-07T00:00:00Z"
+curated_by: Huch0
+contributors: [Huch0]
+---
+
+## Intuition
+A web agent can look competent on the sites it trained on and fall apart on a *new*
+website — even for the "same" task — because real sites differ wildly in layout, DOM
+structure, and widget conventions. "Generalization" here means holding up when the
+**interface** shifts, not just when the task content shifts. Benchmarks probe this with
+explicit splits: <Term def="held-out tasks on seen websites">cross-task</Term>,
+<Term def="seen task types on entirely unseen websites">cross-website</Term>, and
+<Term def="websites from an unseen domain/vertical">cross-domain</Term>.
+
+## Details
+The empirically hard axis is usually **cross-website**, not cross-domain — LLMs already
+decompose goals well, so the bottleneck is *grounding* an intent into a specific, never-seen
+page (finding the right element among thousands). This is a distribution-shift problem on
+the observation/action interface, which is why it connects to
+the <Term def="the model-facing interface layer; see the ACI concept">agent-computer interface</Term>: a more
+robust, normalized interface shrinks the gap. Mind2Web reports a clear cross-website
+step-success drop; WebArena and Android-in-the-Wild surface the same fragility in live
+environments and on-device control.
+
+## Q&A
+**Why is cross-website harder than cross-domain?** Domain mostly changes *content* (which
+the LLM handles via language), while a new website changes the *grounding surface* — new
+DOM/layout the model must localize actions in. The interface shift, not the topic, is the
+hard part.

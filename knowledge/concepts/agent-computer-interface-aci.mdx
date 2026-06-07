@@ -1,0 +1,37 @@
+---
+name: agent-computer-interface-aci
+title: Agent-Computer Interface (ACI)
+aliases: [ACI]
+tags: [agent-harness, swe-agent]
+related_papers: [arxiv-2405.15793, arxiv-2310.06770]
+related_concepts: [planner-executor-verifier]
+created: "2026-06-06T06:51:11Z"
+updated: "2026-06-07T00:00:00Z"
+curated_by: Huch0
+contributors: [Huch0]
+---
+
+## Intuition
+An ACI is the "keyboard, screen, and house rules" you hand an LLM so it can operate a
+computer without tripping over itself. A human uses an IDE tuned for humans; a model does
+better with a *different* interface tuned for it — compact commands, guardrails that
+reject malformed edits, and feedback short enough to fit in context. Designing the
+interface often matters more than swapping the underlying model.
+
+## Details
+The ACI sits between the agent (the LLM policy) and the environment (a repo, shell,
+browser, OS). It defines the **action space** (e.g. `open`, `scroll`, `edit`,
+`search_file`) and the **observation format** (what the agent sees back). Good ACI design
+(<Term def="SWE-agent showed interface design alone moved SWE-bench resolution substantially with the same base model">SWE-agent</Term>): compact guarded commands (an edit that lint-checks and rejects a
+broken patch), concise paginated observations, and informative errors. The idea
+generalizes beyond code — a browser ACI exposes click/type/scroll; an OS ACI exposes
+shell + file ops.
+
+## Q&A
+**Why not let the model use the same tools a human uses?** Human tools optimize for human
+perception/motor loops; models have different bottlenecks (limited context, malformed
+actions). An ACI trades human-friendliness for model-friendly properties.
+
+## See also
+A complementary structuring idea is the planner–executor–verifier decomposition (see
+Related concepts).

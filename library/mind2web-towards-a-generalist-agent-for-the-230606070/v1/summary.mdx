@@ -21,6 +21,9 @@ triage_label: MUST_READ
 triage_confidence: high
 source_link: https://arxiv.org/abs/2306.06070v3
 summary_date: '2026-06-07'
+curated_by: Huch0
+contributors:
+- Huch0
 ---
 
 <TLDR>Mind2Web is the first benchmark of high-level natural-language tasks with full action traces on a large, diverse set of *real* websites (2,350 tasks / 137 sites / 31 domains), paired with MindAct — a small-LM ranker then LLM multi-choice reader that makes thousand-element HTML pages tractable for action prediction.</TLDR>
@@ -105,3 +108,4 @@ Mind2Web seeded the OSU-NLP web-agent agenda and the broader real-website agent 
 ### Personal notes
 Key sanity-check: the famous "Mind2Web" numbers are *Step* Success Rate (~52% Cross-Task best), not task completion — whole-task SR is single digits. Remember this when comparing later agents that report task SR on live environments. The offline-cache eval design is the main weakness and is exactly what WebArena / Mind2Web-Live were built to fix.
 {/* NOTES_END */}
+

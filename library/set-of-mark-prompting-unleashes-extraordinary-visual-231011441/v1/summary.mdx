@@ -19,6 +19,9 @@ triage_label: READ_SOON
 triage_confidence: high
 source_link: https://arxiv.org/abs/2310.11441
 summary_date: '2026-06-07'
+curated_by: Huch0
+contributors:
+- Huch0
 ---
 
 {/*
@@ -129,3 +132,4 @@ Builds directly on the authors' own segmentation lineage — <Related>SEEM, Sema
 ### Personal notes
 The single most reusable abstraction for the harness: segmentation+numbering turns grounding into discrete selection over an enumerated candidate set, removing the LMM's coordinate-regression weakness. For GUI agents the analogue is overlaying ids on accessibility-tree elements / detected UI components and outputting "click N." Watch the GT-mask ablation (75.6 → 90.1): in a GUI setting the equivalent ceiling lift comes from a clean element detector, so candidate-set quality, not the LLM, is often the bottleneck.
 {/* NOTES_END */}
+

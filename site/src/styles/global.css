@@ -110,3 +110,22 @@ figure.fig figcaption { color: var(--mut); font-size: .85rem; }
 /* misc */
 .count { color: var(--mut); font-size: .85rem; }
 .hidden { display: none !important; }
+
+/* author / curator attribution */
+.author { display: inline-flex; align-items: center; gap: .35rem; font-size: .85rem; color: var(--mut); flex-wrap: wrap; }
+.author-label { color: var(--mut); }
+.author .who { display: inline-flex; align-items: center; gap: .3rem; color: var(--ink); text-decoration: none; font-weight: 500; }
+.author .who:hover { color: var(--accent); }
+.author .ava { border-radius: 50%; border: 1px solid var(--line); object-fit: cover; }
+.author .ava-init { display: inline-block; text-align: center; background: var(--accent); color: #fff; font-size: .62rem; font-weight: 700; }
+.author .contribs { color: var(--mut); font-size: .8rem; }
+/* Q&A panel */
+.qa { border: 1px solid var(--line); border-radius: 8px; padding: .6rem .85rem; margin: .6rem 0; background: var(--soft); }
+.qa .q { font-weight: 600; display: flex; gap: .5rem; align-items: baseline; justify-content: space-between; }
+.qa .q-concepts { margin-top: .4rem; font-size: .8rem; color: var(--mut); }
+.discuss { border: 1px dashed var(--accent); border-radius: 8px; padding: .5rem .85rem; margin: 1rem 0; font-size: .9rem; }
+.discuss code { font-size: .92em; }
+/* knowledge / related lists */
+.related { display: flex; flex-wrap: wrap; gap: .35rem; margin: .3rem 0; }
+.related a { font-size: .82rem; border: 1px solid var(--line); border-radius: 999px; padding: .1rem .55rem; text-decoration: none; background: var(--soft); }
+.backlinks h3 { font-size: .95rem; } .backlinks ul { margin: .2rem 0; padding-left: 1.1rem; }

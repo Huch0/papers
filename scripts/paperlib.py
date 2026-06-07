@@ -216,6 +216,36 @@ def milestones_cfg() -> dict:
     return _cfg("milestones.yaml")
 
 
+def contributors_cfg() -> dict:
+    return _cfg("contributors.yaml")
+
+
+def git_identity() -> tuple[str, str]:
+    """(user.name, user.email) from git config; ('','') if unavailable."""
+    import subprocess
+
+    def g(key: str) -> str:
+        try:
+            r = subprocess.run(["git", "config", key], cwd=str(ROOT),
+                               capture_output=True, text=True, timeout=5)
+            return r.stdout.strip()
+        except Exception:  # noqa: BLE001
+            return ""
+    return g("user.name"), g("user.email")
+
+
+def resolve_curator() -> dict:
+    """Resolve the current git author to {github, name} via config/contributors.yaml.
+    Per ADR-0006: returns a GitHub login (never the raw email) + display name; falls back
+    to the git name with github=None when unmapped."""
+    name, email = git_identity()
+    cc = contributors_cfg()
+    rec = (cc.get("by_email") or {}).get(email) or (cc.get("by_name") or {}).get(name) or {}
+    gh = rec.get("github")
+    return {"github": gh, "name": rec.get("name") or name or "unknown",
+            "id": gh or (name or "unknown")}
+
+
 PRIORITY_WEIGHT = {"very_high": 1.0, "high": 0.8, "medium": 0.55, "low": 0.3}
 
 # --------------------------------------------------------------------------- #

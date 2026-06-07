@@ -23,6 +23,9 @@ triage_label: READ_SOON
 triage_confidence: high
 source_link: https://arxiv.org/abs/2402.04615
 summary_date: '2026-06-07'
+curated_by: Huch0
+contributors:
+- Huch0
 ---
 
 <TLDR>ScreenAI is a 4.6B-parameter PaLI-based vision-language model that unifies UI and infographics understanding by pretraining on an automatically generated, pixel-only <Term def="hierarchical text describing each UI element: class + OCR text + caption/icon name + a 0–999 quantized box, with parentheses for nesting">screen schema</Term> task, reaching SoTA on several screen and document QA benchmarks at a fraction of the size of much larger models.</TLDR>
@@ -115,3 +118,4 @@ ScreenAI is the *perception/grounding* layer a GUI agent could be built on — b
 ### Personal notes
 Key numbers to remember: largest model 4.62B (branded 5B); overall SoTA on MoTIF / MPDocVQA / WebSRC; best-in-class (≤5B) on ChartQA / DocVQA / InfoVQA; LLM-generated pretraining data worth +4.6pp; pix2struct patching wins on landscape. The schema (class + OCR + caption + 0–999 box, parentheses = hierarchy) is the reusable idea. Follow-ups: pix2struct (2210.03347), PaLI-3 (2310.09199); compare with later GUI-agent perception models. arXiv v3 (4 Jul 2024) is the source — check for camera-ready deltas on a new version.
 {/* NOTES_END */}
+

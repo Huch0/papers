@@ -17,6 +17,9 @@ triage_label: READ_SOON
 triage_confidence: high
 source_link: https://arxiv.org/abs/2408.00203
 summary_date: '2026-06-07'
+curated_by: Huch0
+contributors:
+- Huch0
 ---
 
 <TLDR>OmniParser is a vision-only screen parser — a finetuned interactable-icon detector plus a finetuned icon-functionality captioner plus OCR — that turns any UI screenshot into a Set-of-Mark-labeled list of interactable elements with text descriptions, letting a frozen GPT-4V ground actions without any HTML or accessibility tree.</TLDR>
@@ -105,3 +108,4 @@ Establishes the "split perception from policy" pattern for GUI agents: do semant
 ### Personal notes
 The reusable idea for harness design: split perception from policy — do semantic labeling in the observation interface so the policy call only chooses an action ID. Watch the box-center click assumption when reusing this; for dense/repeated UIs it will mis-ground. Caption data being GPT-4o-distilled is a quiet dependency worth noting when comparing to later versions.
 {/* NOTES_END */}
+

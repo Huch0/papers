@@ -26,6 +26,9 @@ triage_label: READ_SOON
 triage_confidence: high
 source_link: https://arxiv.org/abs/2411.02337
 summary_date: '2026-06-07'
+curated_by: Huch0
+contributors:
+- Huch0
 ---
 
 <TLDR>WebRL trains open LLMs into strong WebArena agents by closing a self-improvement loop: it mints new training tasks from the agent's own past failures, scores them with a learned outcome reward model, and learns from them with a drift-resistant off-policy update.</TLDR>
@@ -116,3 +119,4 @@ WebRL gives a reusable recipe for self-improving agents where ground-truth rewar
 ### Personal notes
 The reusable idea is the closed loop: failures → critic-gated generated tasks → ORM-labeled rollouts → KL-constrained off-policy update → success-only/perplexity-filtered replay. The deliberate choice of MSE-on-log-ratio over KL-to-pi* (because the web is failure-heavy and you must be able to push down wrong actions) is the subtlest and most transferable insight. Watch the GPT-4o-in-training-loop caveat and the ~80% ORM ceiling.
 {/* NOTES_END */}
+

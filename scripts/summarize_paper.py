@@ -143,6 +143,14 @@ def prepare(vdir: Path, fmt: str = "md") -> dict:
             "source_link": meta.get("source_url") or meta.get("pdf_url"),
             "summary_date": pl.today(),
         }
+        # attribution (ADR-0006): preserve original curator, append later editors
+        cur = pl.resolve_curator()
+        prev_fm, _ = pl.load_md_frontmatter(vdir / "summary.mdx")
+        contributors = list(prev_fm.get("contributors") or [])
+        if cur["id"] not in contributors:
+            contributors.append(cur["id"])
+        fm["curated_by"] = prev_fm.get("curated_by") or cur["id"]
+        fm["contributors"] = contributors
         fmblock = _yaml.safe_dump(fm, sort_keys=False, allow_unicode=True, width=100).strip()
         scaffold = f"---\n{fmblock}\n---\n\n{body.lstrip()}"
         notes = _existing_notes_mdx(vdir / "summary.mdx")

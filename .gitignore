@@ -26,3 +26,6 @@ __pycache__/
 # Local scratch
 *.tmp
 *.part
+
+# derived contributor map (source: config/contributors.yaml)
+registry/contributors.json

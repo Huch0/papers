@@ -1,0 +1,18 @@
+# Contributor identity map (ADR-0006).
+# Maps a git author email (and/or git user.name) to a GitHub login + display name, so the
+# harness can stamp `curated_by`/`asked_by` with a public GitHub login (never the raw
+# email) and the Website can show the GitHub avatar (https://github.com/<login>.png).
+#
+# Add yourself: run `git config user.email` and add an entry below.
+version: 1
+
+# email -> { github, name }
+by_email:
+  heochiyeong@gmail.com: { github: Huch0, name: Chiyeong Heo }
+
+# Fallback by git user.name (used when the email isn't mapped above).
+by_name:
+  papers-harness: { github: Huch0, name: Chiyeong Heo }
+
+# Shown when neither email nor name resolves: the doc keeps the raw git name and the
+# Website renders a deterministic initials badge instead of a photo.

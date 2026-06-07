@@ -16,6 +16,9 @@ triage_label: READ_SOON
 triage_confidence: high
 source_link: https://arxiv.org/abs/2402.11941
 summary_date: '2026-06-07'
+curated_by: Huch0
+contributors:
+- Huch0
 ---
 
 <TLDR>A fine-tuned <Term def="LLaMA-2-chat-7B decoder + CLIP image encoder + linear projector">LLaVA</Term>-based smartphone GUI agent that pairs a multi-source environment representation (screenshot + OCR text layouts + action history) with a top-down decomposed action format, reaching reported SOTA step-level action accuracy of 79.05% on AITW and 88.27% on META-GUI.</TLDR>
@@ -100,3 +103,4 @@ For harness design, a good accessibility/OCR text layer can outweigh a bigger vi
 ### Personal notes
 The strongest takeaway for harness work: a good accessibility/OCR text layer can outweigh a bigger vision encoder for single-screen GUI grounding — relevant when deciding how to build the observation interface. Watch the offline-vs-online gap: 79.05% step accuracy is NOT episode success, and 3-next drops to 37.74%, so do not read these numbers as end-to-end task completion. Follow-ups to add/compare: Auto-UI, CogAgent, AITW (Rawles 2023), META-GUI (Sun 2022), MM-Navigator. Check the released code (github.com/xbmxb/CoCo-Agent) for the OCR engine, training scripts, and seeds.
 {/* NOTES_END */}
+

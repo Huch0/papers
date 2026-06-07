@@ -49,6 +49,9 @@ triage_label: READ_SOON
 triage_confidence: high
 source_link: https://arxiv.org/abs/2501.12326v1
 summary_date: '2026-06-07'
+curated_by: Huch0
+contributors:
+- Huch0
 ---
 
 <TLDR>UI-TARS is a single end-to-end vision-language model that takes only screenshots and emits low-level GUI actions in a <Term def="one action vocabulary shared across web, desktop, and mobile">unified cross-platform action space</Term>, beating modular agent frameworks wrapped around GPT-4o and Claude on 10+ perception, grounding, and online task-execution benchmarks.</TLDR>
@@ -127,3 +130,4 @@ Consolidates the <Related>native/end-to-end GUI model lineage — Aguvis, OS-Atl
 ### Personal notes
 The most defensible single claim is OSWorld efficiency: UI-TARS-72B-DPO at 15 steps (22.7) roughly matches Claude at 50 steps (22.0), and reaches 24.6 at 50 steps. When citing AndroidWorld 46.6, note the nearest competitor is GPT-4o+Aria-UI at 44.8, not the 34.5 GPT-4o(SoM) the abstract emphasizes. Watch for in-domain leakage when quoting Mind2Web/AndroidControl/GUI Odyssey gains.
 {/* NOTES_END */}
+

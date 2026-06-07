@@ -2,57 +2,37 @@
 import { getCollection, render } from "astro:content";
 import Base from "../../layouts/Base.astro";
 import Meta from "../../components/summary/Meta.astro";
+import Author from "../../components/Author.astro";
+import { summaryComponents } from "../../components/summary/map";
 import { loadCatalog, summaryEntryId } from "../../lib/catalog";
-
-// summary component vocabulary, provided globally to MDX bodies (ADR-0002)
-import TLDR from "../../components/summary/TLDR.astro";
-import WhyItMatters from "../../components/summary/WhyItMatters.astro";
-import Pass from "../../components/summary/Pass.astro";
-import Claim from "../../components/summary/Claim.astro";
-import Evidence from "../../components/summary/Evidence.astro";
-import Weak from "../../components/summary/Weak.astro";
-import Limit from "../../components/summary/Limit.astro";
-import Term from "../../components/summary/Term.astro";
-import ResultsTable from "../../components/summary/ResultsTable.astro";
-import ClaimEvidence from "../../components/summary/ClaimEvidence.astro";
-import Stepper from "../../components/summary/Stepper.astro";
-import Chart from "../../components/summary/Chart.astro";
-import Figure from "../../components/summary/Figure.astro";
-import MathBlock from "../../components/summary/MathBlock.astro";
-import Compare from "../../components/summary/Compare.astro";
-import SelfCheck from "../../components/summary/SelfCheck.astro";
-import KeyStats from "../../components/summary/KeyStats.astro";
-import SortableTable from "../../components/summary/SortableTable.astro";
-import Problem from "../../components/summary/Problem.astro";
-import Novelty from "../../components/summary/Novelty.astro";
-import Finding from "../../components/summary/Finding.astro";
-import FollowUp from "../../components/summary/FollowUp.astro";
-import Related from "../../components/summary/Related.astro";
-import Caveat from "../../components/summary/Caveat.astro";
-
-const components = {
-  TLDR, WhyItMatters, Pass, Claim, Evidence, Weak, Limit, Term,
-  ResultsTable, ClaimEvidence, Stepper, Chart, Figure, MathBlock, Compare, SelfCheck,
-  KeyStats, SortableTable,
-  // semantic highlights (preferred vocabulary)
-  Problem, Novelty, Finding, FollowUp, Related, Caveat,
-};
 
 export async function getStaticPaths() {
   const cat = loadCatalog();
   const summaries = await getCollection("summaries");
   const byId = new Map(summaries.map((e) => [e.id, e]));
+  const qaEntries = await getCollection("qa");
+  const qaById = new Map(qaEntries.map((e) => [e.id, e]));
+  const concepts = await getCollection("concepts");
+  const conceptTitle = new Map(concepts.map((c) => [c.id, (c.data as any).title || c.id]));
   return cat
     .map((p) => {
       const id = summaryEntryId(p.summary_path);
       const entry = id ? byId.get(id) : undefined;
-      return { params: { key: p.canonical_key }, props: { paper: p, entry } };
+      const qa = qaById.get(`${p.slug}/${p.latest_version}/qa`);
+      const related = (p.knowledge_concepts || [])
+        .filter((s: string) => conceptTitle.has(s))
+        .map((s: string) => ({ slug: s, title: conceptTitle.get(s)! }));
+      return { params: { key: p.canonical_key }, props: { paper: p, entry, qa, related } };
     })
     .filter((x) => x.props.entry);
 }
 
-const { paper, entry } = Astro.props;
+const { paper, entry, qa, related } = Astro.props;
+const fm = (entry!.data as any) || {};
 const { Content } = await render(entry!);
+const QAContent = qa ? (await render(qa)).Content : null;
+const base = import.meta.env.BASE_URL;
+const cHref = (s: string) => `${base}knowledge/${s}/`.replace(/\/+/g, "/");
 ---
 <Base title={paper.title}>
   <h1 class="title">{paper.title}</h1>
@@ -66,7 +46,28 @@ const { Content } = await render(entry!);
     triageConfidence={paper.triage_confidence}
     canonicalKey={paper.canonical_key}
   />
-  <article data-pagefind-body>
-    <Content components={components} />
+  {fm.curated_by && <p><Author id={fm.curated_by} contributors={fm.contributors} /></p>}
+
+  {related && related.length > 0 && (
+    <p class="related">
+      <span class="author-label">Related concepts:</span>
+      {related.map((r: any) => <a href={cHref(r.slug)}>{r.title}</a>)}
+    </p>
+  )}
+
+  <article data-pagefind-body data-pagefind-filter="type:paper">
+    <Content components={summaryComponents} />
   </article>
+
+  {QAContent && (
+    <section data-pagefind-ignore>
+      <h2>Questions &amp; Discussion</h2>
+      <QAContent components={summaryComponents} />
+    </section>
+  )}
+
+  <aside class="discuss" data-pagefind-ignore>
+    💬 <strong>Discuss this paper in Claude Code</strong> — ask the tutor and it updates the
+    knowledge base: <code>/paper-tutor {paper.canonical_key}</code>
+  </aside>
 </Base>

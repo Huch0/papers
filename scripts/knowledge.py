@@ -61,7 +61,16 @@ def _slug(title: str) -> str:
 
 
 def _concept_path(slug: str):
-    return pl.CONCEPTS / f"{slug}.md"
+    # Concepts are .mdx (ADR-0005); keep reading a legacy .md if that's all that exists.
+    mdx = pl.CONCEPTS / f"{slug}.mdx"
+    md = pl.CONCEPTS / f"{slug}.md"
+    return md if (md.exists() and not mdx.exists()) else mdx
+
+
+def _concept_files():
+    seen = {p.stem: p for p in pl.CONCEPTS.glob("*.md")}
+    seen.update({p.stem: p for p in pl.CONCEPTS.glob("*.mdx")})  # prefer .mdx on collision
+    return sorted(seen.values())
 
 
 def _split(s: str | None) -> list[str]:
@@ -78,10 +87,12 @@ def ensure_concept(title: str, *, aliases=None, tags=None, paper=None, related=N
     meta, body = pl.load_md_frontmatter(path)
     existed = bool(meta)
     if not existed:
+        cur = pl.resolve_curator()
         meta = {
             "name": slug, "title": title.strip(),
             "aliases": [], "tags": [], "related_papers": [],
             "related_concepts": [], "created": pl.now_iso(), "updated": pl.now_iso(),
+            "curated_by": cur["id"], "contributors": [cur["id"]],
         }
         body = CONCEPT_SKELETON.format(title=title.strip())
 
@@ -151,7 +162,7 @@ def _link_concepts(a: str, b: str) -> None:
 def iter_concepts():
     if not pl.CONCEPTS.exists():
         return
-    for p in sorted(pl.CONCEPTS.glob("*.md")):
+    for p in _concept_files():
         meta, body = pl.load_md_frontmatter(p)
         if meta:
             yield p, meta, body

@@ -37,6 +37,9 @@ triage_label: READ_SOON
 triage_confidence: high
 source_link: https://arxiv.org/abs/2308.03688
 summary_date: '2026-06-07'
+curated_by: Huch0
+contributors:
+- Huch0
 ---
 
 <TLDR>AgentBench is the first systematic multi-environment benchmark that scores 29 LLMs as autonomous agents across 8 interactive, executable text environments (code, game, web), exposing a large gap between top commercial models and the best sub-70B open-source models.</TLDR>
@@ -118,3 +121,4 @@ Establishes the template — prompted LLMs inside real executable environments, 
 ### Personal notes
 The reusable bits are the harness architecture (decoupled HTTP servers, Docker-isolated workers, max-flow scheduling, resumable eval) and the per-env action/observation table (Fig.4). Treat OA as ordinal within this paper, not as an absolute scale — it is locked to the 2023 model pool. Extraction is arXiv v3 (Oct 2025) of a v1 dir; check later versions for added models/environments.
 {/* NOTES_END */}
+

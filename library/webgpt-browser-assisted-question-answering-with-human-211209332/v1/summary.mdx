@@ -31,6 +31,9 @@ triage_label: READ_SOON
 triage_confidence: high
 source_link: https://arxiv.org/abs/2112.09332
 summary_date: '2026-06-07'
+curated_by: Huch0
+contributors:
+- Huch0
 ---
 
 <TLDR>GPT-3 is fine-tuned to operate a bespoke text-based web browser for long-form question answering — imitating human browsing demonstrations, then optimizing answers against a learned reward model — and is required to collect inline references so humans can cheaply judge factual accuracy.</TLDR>
@@ -115,3 +118,4 @@ This is the bridge from <Related>Stiennon et al. 2020 (summarization from human 
 ### Personal notes
 The most quotable harness insight: making the task human-performable (text browser + small command set) is what enables imitation learning to bootstrap the policy, and mandatory quoting is what makes human factuality labeling cheap enough to scale RLHF. The rejection-sampling-beats-RL result is a useful, transferable caution about reward-model overoptimization.
 {/* NOTES_END */}
+

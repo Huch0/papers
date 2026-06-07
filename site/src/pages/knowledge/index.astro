@@ -1,0 +1,29 @@
+---
+import Base from "../../layouts/Base.astro";
+import KnowledgeCatalog from "../../components/KnowledgeCatalog.tsx";
+import { getCollection } from "astro:content";
+
+const all = await getCollection("concepts");
+const base = import.meta.env.BASE_URL;
+
+function intuition(body: string): string {
+  const m = body.match(/##\s*Intuition\s*\n+([^\n#].{0,180})/);
+  if (m) return m[1].replace(/[*`<>[\]]/g, "").trim();
+  const line = body.split("\n").find((l) => l.trim() && !l.startsWith("#") && !l.startsWith("{") && !l.startsWith("<"));
+  return (line || "").replace(/[*`<>[\]]/g, "").slice(0, 160).trim();
+}
+
+const concepts = all.map((c) => ({
+  slug: c.id,
+  title: (c.data as any).title || c.id,
+  tags: (c.data as any).tags || [],
+  linked: ((c.data as any).related_papers || []).length,
+  updated: String((c.data as any).updated || ""),
+  summary: intuition(c.body || ""),
+}));
+---
+<Base title="Knowledge base">
+  <h1 class="title">Knowledge base</h1>
+  <p class="count">{concepts.length} concept(s) — global, cross-paper, linked.</p>
+  <KnowledgeCatalog client:load concepts={concepts} base={base} />
+</Base>

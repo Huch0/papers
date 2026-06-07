@@ -1,0 +1,18 @@
+---
+import Author from "../Author.astro";
+interface Props { question: string; asked_by?: string; concepts?: string; }
+const { question, asked_by, concepts = "" } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const cs = concepts.split(",").map((s) => s.trim()).filter(Boolean);
+const href = (s: string) => `${base}knowledge/${s}/`.replace(/\/+/g, "/");
+---
+<div class="qa">
+  <div class="q">
+    <span>Q: {question}</span>
+    {asked_by && <Author id={asked_by} label="asked by" size={18} />}
+  </div>
+  <div class="qa-answer"><slot /></div>
+  {cs.length > 0 && (
+    <div class="q-concepts">Concepts: {cs.map((s, i) => (<>{i > 0 ? ", " : ""}<a href={href(s)}>{s}</a></>))}</div>
+  )}
+</div>

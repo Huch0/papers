@@ -20,6 +20,9 @@ triage_label: READ_SOON
 triage_confidence: high
 source_link: https://arxiv.org/abs/2401.10935
 summary_date: '2026-06-07'
+curated_by: Huch0
+contributors:
+- Huch0
 ---
 
 <TLDR>SeeClick is a screenshot-only GUI agent built by continually pre-training Qwen-VL on ~1M auto-curated <Term def="locating the on-screen element an instruction refers to, as a click coordinate">GUI grounding</Term> samples, showing that grounding is the bottleneck capability whose improvement directly lifts downstream agent performance.</TLDR>
@@ -102,3 +105,4 @@ Establishes the vision-only GUI agent contract — screenshot in, normalized coo
 ### Personal notes
 The cleanest takeaway for harness design: the entire agent contract is "screenshot in, normalized click/type out, k=4 action history" with zero metadata — a useful minimal baseline to compare richer accessibility-tree harnesses against. ScreenSpot's Icon/Widget vs Text split is the most reusable diagnostic here. Watch the resolution bottleneck: many later gains come simply from feeding higher-res / tiled screenshots.
 {/* NOTES_END */}
+

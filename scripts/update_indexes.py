@@ -236,8 +236,22 @@ def build(write: bool = True) -> dict:
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_text(content + "\n", encoding="utf-8")
         _maybe_sqlite(flats)
+        _emit_contributors()
 
     return {"papers": len(flats), "counts": dict(counts)}
+
+
+def _emit_contributors() -> None:
+    """Derive registry/contributors.json: GitHub login -> {name} (for the site's avatars).
+    Source of truth is config/contributors.yaml; emails stay there (never published)."""
+    cc = pl.contributors_cfg()
+    out: dict[str, dict] = {}
+    for rec in list((cc.get("by_email") or {}).values()) + list((cc.get("by_name") or {}).values()):
+        gh = rec.get("github")
+        if gh and gh not in out:
+            out[gh] = {"name": rec.get("name") or gh}
+    (pl.REGISTRY / "contributors.json").write_text(
+        __import__("json").dumps(out, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
 
 def _maybe_sqlite(flats: list[dict]) -> None:

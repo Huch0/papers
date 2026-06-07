@@ -70,3 +70,18 @@ not claim success — fix them or surface them.
 Key priority: `arxiv-<base_id>` → `doi-<slug>` → `openreview-<id>` → `s2-<id>` →
 `openalex-<id>` → `title-<hash>`. Slug = short-title + key suffix. See
 `config/metadata_schema.md` for the full schema and required fields.
+
+## Agent skills
+
+### Issue tracker
+
+GitHub Issues in `Huch0/papers` via the `gh` CLI. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Five canonical roles, default strings (`needs-triage`, `needs-info`, `ready-for-agent`,
+`ready-for-human`, `wontfix`). See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: `CONTEXT.md` + `docs/adr/` at the repo root. See `docs/agents/domain.md`.

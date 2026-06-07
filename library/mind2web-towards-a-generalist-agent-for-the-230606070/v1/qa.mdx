@@ -1,0 +1,19 @@
+---
+canonical_key: arxiv-2306.06070
+version_key: v1
+---
+
+<QA question="Why does cross-website generalization drop so much, while cross-domain holds up better?" asked_by="Huch0" concepts="web-agent-generalization">
+Because a new *website* changes the **grounding surface** — unfamiliar DOM, layout, and
+widgets the model must localize an action in — whereas a new *domain* mostly changes
+content, which the LLM already handles through language. Mind2Web's own splits show
+cross-website ≈ cross-domain and both well below cross-task, which points at interface
+distribution shift (not topic) as the bottleneck. See <Term def="grounding an intent into a specific, never-seen page">cross-website generalization</Term>.
+</QA>
+
+<QA question="MindAct uses a two-stage (rank then choose) design — why not let the model read the whole page?" asked_by="Huch0" concepts="web-agent-generalization,agent-computer-interface-aci">
+Real pages have thousands of elements — far beyond a usable context window — so a small
+ranker first proposes candidate elements and the LLM only chooses among a short list. This
+is an **interface** decision: shrink and normalize what the agent sees so grounding becomes
+tractable, the same lever the agent-computer-interface idea pulls in code/OS agents.
+</QA>

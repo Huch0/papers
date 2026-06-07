@@ -38,7 +38,8 @@ milestone:
   field: computer_use_agents
   era: foundational
   significance: Generalist web-agent benchmark across many real sites.
-knowledge_concepts: []
+knowledge_concepts:
+- web-agent-generalization
 versions:
 - version_key: v1
   version_label: arXiv v3

@@ -20,6 +20,9 @@ triage_label: READ_SOON
 triage_confidence: high
 source_link: https://arxiv.org/abs/2307.12856
 summary_date: '2026-06-07'
+curated_by: Huch0
+contributors:
+- Huch0
 ---
 
 <TLDR>WebAgent splits real-website automation into a <Term def="encoder-decoder LLM pre-trained on HTML with long-span denoising and local-global attention">HTML-T5</Term> planner+summarizer and a frozen 540B program synthesizer (Flan-U-PaLM) that emits Python/Selenium actions, and shows this modular, self-experience-finetuned recipe lifts real-website success by over 50% while HTML-T5 alone sets SoTA on MiniWoB++ and Mind2Web.</TLDR>
@@ -102,3 +105,4 @@ Treating long messy HTML as the core observation bottleneck — attacked with ar
 ### Personal notes
 Watch the "over 50%" claim: absolute success-rate gap vs a weak open-loop single-LLM baseline on 3 sites, not vs any prior real-world agent. Mind2Web "SoTA" is per-step; full-task SR is still 5-10%. Most reusable artifact is HTML-T5 (local-global + long-span denoising, PEGASUS init) — relevant whenever long structured-document context is the bottleneck.
 {/* NOTES_END */}
+

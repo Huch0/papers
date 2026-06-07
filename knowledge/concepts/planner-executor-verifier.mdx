@@ -1,0 +1,31 @@
+---
+name: planner-executor-verifier
+title: Planner–Executor–Verifier
+aliases: [PEV]
+tags: [agent-harness, verifier]
+related_papers: [arxiv-2405.15793]
+related_concepts: [agent-computer-interface-aci]
+created: "2026-06-07T00:00:00Z"
+updated: "2026-06-07T00:00:00Z"
+curated_by: Huch0
+contributors: [Huch0]
+---
+
+## Intuition
+A common agent shape that splits one hard job into three roles: a **planner** decomposes
+the goal into steps, an **executor** carries out each step against the environment, and a
+**verifier** checks whether the result is actually correct before moving on. Separating
+"decide / do / check" lets each part be optimized (or swapped) independently and makes
+failures legible.
+
+## Details
+The **verifier** is the load-bearing piece: a cheap, reliable check (tests, a reward
+model, a rule) that gates progress and enables search (retry/branch on failure). In SWE
+agents the verifier is often the repo's own test suite (<Term def="apply the patch; relevant tests must go fail→pass while others stay green">execution-based eval</Term>); in
+web/GUI agents it may be a learned outcome judge. Without a trustworthy verifier,
+inference-time search and self-correction degrade into guesswork.
+
+## Q&A
+**Why is the verifier the key part?** Because it converts an open-ended generation problem
+into a checkable one — you can afford a weak planner/executor if you can reliably tell
+good from bad and retry.

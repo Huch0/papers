@@ -1,0 +1,103 @@
+---
+canonical_key: arxiv-2312.13771
+version_key: v1
+title: 'AppAgent: Multimodal Agents as Smartphone Users'
+authors:
+- C. Zhang
+- Zhao Yang
+- Jiaxuan Liu
+- Yanda Li
+- Yucheng Han
+- Xin Chen
+- Zebiao Huang
+- Bin Fu
+- Gang Yu
+venue: International Conference on Human Factors in Computing Systems
+year: 2023
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2312.13771
+summary_date: '2026-06-07'
+---
+
+<TLDR>A training-free <Term def="GPT-4 with vision; reads interleaved image+text">GPT-4V</Term> agent operates real Android apps through a simplified tap/swipe action space over numbered on-screen elements, and bootstraps a reusable per-app "document" by exploring or watching a human demo.</TLDR>
+
+<WhyItMatters>An early (Dec 2023), frequently-cited reference design for the now-standard "VLM + element labeling + simplified action space" recipe for mobile/computer-use agents — directly relevant to my observation/action-interface and agent-memory interests.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "95.6%", label: "best success rate", sub: "manual-doc oracle (Tab.1)" },
+  { value: "2.2% → 48.9%", label: "raw → simplified actions", sub: "action-space ablation (Tab.1)" },
+  { value: "50 / 10", label: "tasks / apps", sub: "headline table: 45 tasks / 9 apps" },
+]} />
+
+## Motivation
+<Problem>Building an agent that operates any smartphone app like a human, using only on-screen GUI gestures (tap/swipe), without back-end API access in the style of Siri (§1).</Problem> Prior work falls short three ways: <Problem>text-only LLM agents cannot perceive GUIs</Problem>; <Problem>fine-tuning embodied/GUI models needs large app-demonstration datasets that are costly to collect and may not generalize to unseen apps (§1)</Problem>; and <Problem>GPT-4V can read typical UIs but struggles on new/atypical ones (§2.1)</Problem>.
+
+## Contribution (what's new)
+Two ideas survive deleting "we propose." First, <Novelty>a coordinate-free action interface: interactive elements get integer IDs overlaid on the screenshot, so the model references `tap(5)` instead of predicting xy pixels (§3.1)</Novelty> — this form is forced by the observation that LLMs are bad at producing accurate coordinates (§4.2). Second, <Novelty>a learned per-app "document": during an exploration phase the agent acts on each element and diffs before/after screenshots to write a natural-language description of what it does, later consulted at deployment (§3.2)</Novelty>. Together these give cross-app generalization with **no parameter updates** — the document, not weights, holds the app knowledge.
+
+## Research questions
+Can a multimodal LLM operate arbitrary smartphone apps purely through GUI gestures without training, and does learned per-app documentation (from autonomous exploration or human demos) meaningfully improve over plain prompting?
+
+## Methodology
+A two-phase, training-free framework (Fig.2) running on Android via a <Term def="exact automation backend (adb/UIAutomator) not named in text">command-line interface</Term>. Each step the agent sees a screenshot plus an XML list of interactive elements, each tagged with a unique integer ID rendered as a semi-transparent number on the screenshot (§3.1). The agent acts, then summarizes the step into a running memory carried into the next prompt.
+
+<Pass title="Method details">
+<Stepper steps={[
+  { title: "Observation interface", body: "Per step: a real-time screenshot + an XML file of interactive elements. Each element gets an integer ID from its XML resource-id, or synthesized from class name + size + content, overlaid as semi-transparent numbers — a Set-of-Mark-style labeling scheme (§3.1)." },
+  { title: "Action space", body: "Four core functions over numbered elements: `Tap(element:int)`, `Long_press(element:int)`, `Swipe(element:int, direction, dist)`, `Text(text:str)` (writes directly into the focused field, bypassing the virtual keyboard), plus system-level `Back()` and `Exit()` (§3.1)." },
+  { title: "Exploration phase", body: "Goal-oriented (task-driven) trial-and-error: act on an element, diff before/after screenshots, write/refine its document entry; back out of irrelevant pages (e.g. ads) via `Back()` rather than blind DFS/BFS. A demo-watching variant records only the elements/actions a human used, shrinking the search space (§3.2)." },
+  { title: "Deployment phase", body: "For a new task, each step ingests the screenshot + dynamically retrieved document for visible elements, then emits Observation → Thought → Action (ReAct-style) and summarizes into carried-forward memory; terminates on self-judged completion via `Exit()` (§3.3)." },
+]} />
+A single GPT-4V plays observer + planner + executor in one loop; there is no separate verifier, and the document is the only learned component. Exploration capped at 40 steps, deployment at 10 steps (§4.1).
+</Pass>
+
+## Main result
+On the headline benchmark (45 tasks / 9 apps; Lightroom excluded for ambiguous completion), the full system reaches <Finding src="Tab.1, p.7">73.3% success with auto-explored docs and 84.4% with demo-watched docs, approaching the 95.6% manual-doc oracle</Finding>, versus a 48.9% no-doc baseline using the same action space.
+
+<SortableTable columns={["Method", "Document", "Action space", "SR %", "Reward", "Avg. steps"]} rows={[
+  ["GPT-4 baseline", "None", "Raw", 2.2, 0.6, 4.0],
+  ["GPT-4 baseline", "None", "Ours", 48.9, 3.5, 6.9],
+  ["AppAgent", "Auto. exploration", "Ours", 73.3, 5.1, 4.4],
+  ["AppAgent", "Watching demos", "Ours", 84.4, 4.7, 5.1],
+  ["AppAgent", "Manually crafted", "Ours", 95.6, 5.5, 5.5],
+]} />
+
+## Key findings
+- <Finding src="Tab.1, p.7">The simplified action space alone lifts success from 2.2% to 48.9%</Finding>: coordinate-free element-ID actions are the single biggest driver — the model "struggles with producing accurate xy coordinates" (§4.2), and removing that requirement is most of the win.
+- <Finding src="Tab.1, p.7">A learned document adds a further large gain (48.9% → 73.3% auto, → 84.4% demos)</Finding>: per-app memory matters on top of the action space, with watching demos beating autonomous exploration.
+- <Caveat src="Tab.1">The "auto docs comparable to manual" claim is only loosely supported</Caveat>: auto (73.3%) and even demos (84.4%) still trail the manual oracle (95.6%) by a wide margin despite the paper's framing.
+- <Finding src="Tab.2, p.7">In the Lightroom image-editing study, doc-equipped agents rank higher than the GPT-4 baseline</Finding>: Avg. Rank 1.75 (manual) and 1.95 (demos) vs 2.30 baseline (lower is better), on 5 prepared images.
+- <Finding src="Tab.2, p.8">With a document the agent uses more editing tools</Finding>: 5.8 (demos) and 4.0 (manual) tools vs 2.4 for the baseline — documents push it toward richer, multi-step manipulation.
+
+## Implications
+This crystallized a recipe — <Related>ReAct-style loop (Yao et al., 2023) + Set-of-Mark-style numbered-element prompting</Related> — into a concrete mobile-agent design, and motivated later mobile/computer-use systems and benchmarks. Its distinctive delta over contemporaneous zero-shot GUI navigation (<Related>"GPT-4V in Wonderland", Yan et al., 2023</Related>) is the persistent, exploration-learned per-app document; versus fine-tuned embodied models (<Related>RT-1/RT-2, Gato</Related>) it is training-free. <FollowUp>How later reproducible, frozen-environment harnesses (AndroidWorld, Mobile-Agent, CogAgent) handle the live-app non-reproducibility this paper accepts.</FollowUp> <FollowUp>The project-page repo for the exact automation backend (adb/UIAutomator) and the document format.</FollowUp>
+
+## Limitations
+- <Caveat>Author-stated: the simplified action space excludes multi-touch and irregular gestures (§5, Limitation).</Caveat>
+- <Caveat>Small, single-seed benchmark (45 tasks / 9 apps for the headline number) with no variance, CI, or significance reporting, and a single proprietary model (GPT-4V).</Caveat>
+- <Caveat>The Reward metric uses a custom reward model whose construction and validation are essentially unclear (§4.2); SR (binary, 10-step cutoff) is the more trustworthy figure.</Caveat>
+- <Caveat>Lightroom is excluded from the main table for ambiguity yet carries the vision claims via a tiny, subjective 5-image user study.</Caveat>
+- <Caveat>Task completion is self-declared via `Exit()` with author-defined success; no independent verifier or safety/permission layer is described.</Caveat>
+- <Caveat>Tasks run on live consumer apps whose UIs drift, so results are not reproducible against a frozen environment.</Caveat>
+
+## Critiques and Questions
+1. The "auto-docs comparable to manual" narrative overstates a 22-point gap (73.3% vs 95.6%) — how much of the manual oracle's lead is doc quality vs exploration coverage?
+2. With self-judged `Exit()` and an under-specified reward model, how reliable are the absolute SR numbers, and would they survive a frozen-environment, multi-seed re-run?
+3. What are the failure modes of stale or incorrect documents as a UI evolves — the mechanism that is supposed to give "long-term applicability"?
+
+<SelfCheck q="Why does AppAgent reference integer element IDs instead of predicting screen coordinates, and what evidence shows it matters?" a="LLMs are poor at producing accurate xy coordinates (§4.2). Replacing raw coordinate actions with taps/swipes over numbered elements raises success from 2.2% to 48.9% (Tab.1) — the largest single jump in the ablation." />
+
+## Glossary
+- <Term def="visual-prompting scheme that overlays numbered/marked labels on image regions so a VLM can refer to them by ID">Set-of-Mark</Term> — the lineage of AppAgent's numbered-element overlay.
+- <Term def="prompting loop that interleaves reasoning ('Thought') with actions, here as Observe → Think → Act → Summarize">ReAct</Term> — the deployment-step structure.
+- <Term def="custom model scoring how close a UI page is to the task goal, giving partial credit even on failed tasks; validation unclear">Reward model</Term> — the paper's fine-grained metric alongside binary SR.
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

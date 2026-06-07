@@ -1,0 +1,110 @@
+---
+canonical_key: arxiv-2404.05719
+version_key: v1
+title: 'Ferret-UI: Grounded Mobile UI Understanding with Multimodal LLMs'
+authors:
+- Keen You
+- Haotian Zhang
+- E. Schoop
+- Floris Weers
+- Amanda Swearngin
+- Jeffrey Nichols
+- Yinfei Yang
+- Zhe Gan
+venue: European Conference on Computer Vision
+year: 2024
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2404.05719
+summary_date: '2026-06-07'
+---
+
+<TLDR>Ferret-UI adapts the Ferret <Term def="multimodal LLM that can refer to and ground regions in an image">referring-and-grounding MLLM</Term> to mobile screens with an "any-resolution" 2-way sub-image split plus curated UI instruction data over 11 tasks, producing a raw-pixel model that beats GPT-4V on every elementary UI task category.</TLDR>
+
+<WhyItMatters>An early, foundational <Problem>perception backbone</Problem> for mobile/GUI agents: it fixes the low-level capabilities (OCR, icon/widget recognition, find-X, grounding) that any downstream agent needs before it can plan or act, and its anyres trick and GPT-generated data recipe are widely reused.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "83.8 vs 4.7", label: "Android grounding acc", sub: "Ferret-UI-anyres vs GPT-4V (Tab.2)" },
+  { value: "11", label: "UI tasks defined", sub: "+ 14-task dual-platform benchmark" },
+  { value: "76%", label: "zero-shot UIBert REC", sub: "framed as find-widget (§5.1)" },
+]} />
+
+## Motivation
+General-domain MLLMs <Problem>cannot reliably comprehend or act on UI screens</Problem>: a UI system must both read the whole screen and focus on specific elements, mapping language to actions and locations. Prior approaches each fall short: natural-image grounding MLLMs (Ferret, Shikra, Kosmos2) are <Problem>restricted to natural images and lose detail when a UI screen is resized to one low-resolution global image</Problem>, while UI-targeted works either <Problem>process whole screens as a single input</Problem> (Pix2Struct, ILuvUI, CogAgent), support only one input box (Spotlight), or lean on GPT-4V navigation — and none covers all dimensions of UI understanding. Two measured properties make this hard: UI screens have <Problem>more elongated aspect ratios</Problem> (Tab.1a) and many targets (icons) <Problem>occupy less than 0.1% of the screen</Problem> (§3).
+
+## Contribution (what's new)
+The genuine delta is twofold. First, an <Novelty>"any-resolution" (anyres) split: each screen is resized to whichever of two grids (`1x2` or `2x1`) matches its aspect ratio, then divided into exactly 2 sub-images (portrait split horizontally, landscape vertically), each encoded separately and fed to the LLM alongside the global image</Novelty> (§3). The design must take this form because the failure being fixed is detail loss on tiny elements: a single resized global image cannot resolve sub-0.1% icons, so the model needs magnified sub-image features in addition to global context. Second, <Novelty>a UI task taxonomy and instruction dataset — template-generated elementary referring/grounding tasks plus GPT-4-generated advanced reasoning tasks — that teaches the referring + grounding + reasoning capability set from raw pixels alone</Novelty>, with no view hierarchy needed at inference.
+
+## Research questions
+Can a single MLLM perform fine-grained UI referring, grounding, and reasoning directly from screen pixels, and does grounding-rich elementary training measurably improve higher-level UI reasoning?
+
+## Methodology
+Build on Ferret (CLIP-ViT-L/14 encoder + Vicuna decoder + a spatial-aware visual sampler for region features), add the anyres split, and train on a 250K-sample instruction mixture spanning Spotlight tasks, 7 elementary tasks per platform, and 4 GPT-4-generated advanced tasks. The vision encoder stays frozen; only the decoder and projection layer update. Evaluate on a 14-task dual-platform benchmark.
+
+<Pass title="Method details">
+<Stepper steps={[
+  {"title": "Collect screens", "body": "Android: a subset of RICO via Spotlight tasks (26,527 train / 3,080 test images). iPhone: a subset of Apple's AMP dataset (84,685 train / 9,410 test). Resolution breakdown in Tab.1a."},
+  {"title": "Annotate elements", "body": "A pre-trained pixel-based UI detector (Screen Recognition / AMP, ref [58]) emits each element's UI type + bounding box, with on-element text from the Apple Vision Framework OCR; heuristics group detections (merge text lines, pair image+caption)."},
+  {"title": "Build elementary tasks", "body": "Template-based, with GPT-3.5 Turbo expanding base prompts for variants. 7 tasks per platform — referring (boxes in input): OCR, icon recognition, widget classification; grounding (boxes in output): widget listing, find text, find icon, find widget. ~40k samples per task (Tab.1b); widget listing treated as auxiliary."},
+  {"title": "Build advanced tasks", "body": "Follow LLaVA: send normalized detections + prompts to GPT-4 (images NOT sent) to generate detailed description, conversation perception, conversation interaction, and function inference — iPhone-only, ~10k each, 40K valid conversations total (Tab.1b, §4.2)."},
+  {"title": "Architecture", "body": "Global image features + per-sub-image features + regional features (visual sampler) + text embeddings are all consumed by the LLM (Fig.2). Anyres uses only 1x2 and 2x1 grids — the split is into exactly 2 sub-images, not a larger N×M grid."},
+  {"title": "Train", "body": "Same objective as Ferret; 250K-sample mixture; 8 A100 GPUs — ~1 day for Ferret-UI-base, ~3 days for Ferret-UI-anyres (§5)."}
+]} />
+
+Benchmark: 14 tasks = 3 Spotlight tasks + iPhone/Android versions of the 11 elementary+advanced tasks. Grounding scored by IoU>0.5 accuracy; referring by exact-match/accuracy; Spotlight by CIDEr (S2W, WiC) and F1 (TaP); advanced tasks scored by GPT-4-as-judge as prediction-score over label-score (§5.1). Advanced test sets are tiny (56 unique iPhone images, 13 Android).
+</Pass>
+
+## Main result
+On elementary-task category averages, <Finding src="Tab.2, p.10">Ferret-UI-anyres surpasses GPT-4V on all four categories — referring iPhone 82.4 vs 61.3, referring Android 82.4 vs 37.7, grounding iPhone 81.4 vs 70.3, and grounding Android 83.8 vs 4.7</Finding>. The base Ferret model scores 13.3 / 13.9 / 8.6 / 12.9, so domain training is what closes the gap.
+
+<SortableTable columns={["Model", "Ref-i", "Ref-A", "Grd-i", "Grd-A"]} rows={[
+  ["Ferret (base)", 13.3, 13.9, 8.6, 12.9],
+  ["GPT-4V (SoM)", 61.3, 37.7, 70.3, 4.7],
+  ["Ferret-UI-base", 80.5, 82.4, 79.4, 83.5],
+  ["Ferret-UI-anyres", 82.4, 82.4, 81.4, 83.8]
+]} />
+
+## Key findings
+- <Finding src="Tab.4a, §5.2">Elementary tasks measurably lift advanced reasoning</Finding>: advanced-only training scores ~64% on both platforms; adding both elementary sets raises iPhone advanced to 73.4 and Android to 80.5 — direct support for the "elementary as substrate" hypothesis.
+- <Finding src="Tab.2, §5.1">Anyres gives a small lift on elementary tasks but a large lift on iPhone advanced tasks</Finding>: ~+2 points on iPhone referring/grounding (80.5→82.4 Ref-i, 79.4→81.4 Grd-i), but iPhone advanced jumps ~20 points (73.4→93.9, Tab.3). Android advanced *drops* (80.5→70.1) because no Android advanced data is in training — a generalization regression.
+- <Finding src="Tab.2, §5.1">Ferret-UI beats Spotlight on S2W and WiC despite Spotlight's vastly larger pretraining</Finding> (115.6/113.4 vs 106.7 CIDEr S2W; 140.3/142.0 vs 141.8 WiC) — Spotlight pretrains on 80M web + 2.69M mobile screenshots. But Ferret-UI falls *below* on taperception (TaP F1 72.9/78.4 vs 88.4).
+- <Finding src="Appendix C">The TaP shortfall is largely a label-noise artifact, not a model failure</Finding>: human annotation agrees with GPT-4V 76% of the time but with the dataset's taperception label only 8%, so the "ground truth" is unreliable.
+- <Finding src="§5.4, p.15">Ferret-UI's grounding is competitive even when handicapped</Finding>: on grounded conversation-interaction box accuracy (manual grading) it scores 91.7% vs GPT-4V's 93.4%, despite emitting raw coordinates while GPT-4V merely *selects* from predefined boxes.
+- <Finding src="Fig.6, §5.3">Anyres concretely fixes small-element failure modes</Finding>: the base model predicts neighboring text instead of the target and misclassifies small text-surrounded icons as text; both are alleviated once enlarged sub-images are added.
+
+## Implications
+This is the *eyes* of a mobile agent, not the agent itself — the observation layer downstream planners sit on. It directly extends <Related>Ferret</Related>, borrows anyres from <Related>SPHINX, LLaVA-NeXT, Monkey</Related>, follows <Related>LLaVA's GPT-generated instruction recipe</Related>, and sits in the lineage that leads to <Related>SeeClick, ScreenAI, and later GUI-grounding agents</Related>. Worth chasing next: <FollowUp>whether released weights / a Ferret-UI 2 exist</FollowUp>, and <FollowUp>how to escape the UI-detector ceiling so the model can perceive color, design, and status-bar icons the detector misses</FollowUp>.
+
+## Limitations
+- <Caveat>Author-stated: the UI detection model is a hard ceiling</Caveat> — Ferret-UI cannot learn anything the detector misses (colors, design, usability, status-bar time/WiFi/battery), since all training signal is bootstrapped from it (§5.4).
+- <Caveat>Only tap actions appear in interaction data</Caveat>; scroll, long-press, and text entry are future work (Appendix B).
+- <Caveat>The GPT-4V baseline is not apples-to-apples</Caveat>: only 100 sampled instances, and for grounding it is forced into Set-of-Mark candidate *selection*, which the authors show collapses on dense Android screens — so the headline 83.8 vs 4.7 Grd-A gap partly reflects a prompting limitation, not pure model capability.
+- <Caveat>Advanced-task evaluation is small and noisy</Caveat>: GPT-4-as-judge over tens of questions (13 unique Android images), and the judge favors verbosity (scores exceed 100); no variance or significance reported anywhere.
+- <Caveat>No released artifacts</Caveat>: no code/weights mentioned, training builds on Apple-internal AMP/detector — limiting reproducibility (Not reported for license, exact sampling ratios, GPT-4 scoring prompt).
+
+## Critiques and Questions
+1. How much of the dramatic Android-grounding gap survives if GPT-4V is allowed to emit raw coordinates rather than being forced into SoM selection? The authors' own SoM analysis suggests a large fraction of the 4.7 is harness, not model.
+2. Anyres regresses Android advanced performance — does the gain on iPhone come partly at the cost of cross-platform generalization, and would balanced Android advanced data remove the trade-off entirely?
+3. With a detector-bootstrapped pipeline, is "self-sufficient, raw pixels only" a meaningful claim at training time, or only at inference time?
+
+<SelfCheck q="Why does Ferret-UI split each screen into exactly two sub-images, and how is the split orientation chosen?" a="UI screens have elongated aspect ratios and tiny target elements (icons under 0.1% of the screen), so a single resized global image loses the detail needed to resolve them. Anyres adds magnified sub-image features: the screen is matched to a 1x2 or 2x1 grid by aspect ratio, then portrait screens are split horizontally and landscape screens vertically — each sub-image encoded separately and combined with the global image features (§3, Fig.2)." />
+
+## Glossary
+- <Term def="using a region (point/box/scribble) in the model's INPUT to talk about a specific screen element">referring</Term>
+- <Term def="the model producing precise locations (bounding boxes) in its OUTPUT">grounding</Term>
+- <Term def="resizing a screen to a 1x2 or 2x1 grid and splitting it into 2 separately-encoded sub-images to magnify small elements">anyres (any-resolution)</Term>
+- <Term def="overlay numbered magenta boxes on detected elements so a model can refer to a region by its number; here it forces GPT-4V to SELECT a box rather than emit coordinates">Set-of-Mark (SoM)</Term>
+- <Term def="intersection-over-union; a grounding box counts as correct when IoU with the label exceeds 0.5">IoU>0.5 accuracy</Term>
+- <Term def="text-similarity metric used to score screen2words (S2W) and widget captions (WiC)">CIDEr</Term>
+- <Term def="Apple-internal mobile screenshot dataset spanning many apps; source of iPhone screens">AMP</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Key mental model: Ferret-UI = Ferret + 2-way anyres split + UI instruction data. It is the *eyes* for a mobile agent, not the agent. The detector-bootstrapped training is the main caveat for reasoning about its ceiling. The Grd-A 83.8 vs 4.7 number is striking but is as much about SoM-forced GPT-4V failing on dense screens as about Ferret-UI's strength.
+
+Follow-up actions: add SeeClick / ScreenAI / Ferret v2 if in scope; compare with CogAgent, Spotlight, GPT-4V-as-agent navigation; re-check for released weights in a later version.
+{/* NOTES_END */}

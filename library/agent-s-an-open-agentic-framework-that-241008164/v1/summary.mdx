@@ -1,0 +1,108 @@
+---
+canonical_key: arxiv-2410.08164
+version_key: v1
+title: 'Agent S: An Open Agentic Framework that Uses Computers Like a Human'
+authors:
+- Saaket Agashe
+- Jiuzhou Han
+- Shuyu Gan
+- Jiachen Yang
+- Ang Li
+- X. Wang
+venue: International Conference on Learning Representations
+year: 2024
+tags:
+- foundational
+topic_groups:
+- agent_harness
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2410.08164
+summary_date: '2026-06-07'
+---
+
+<TLDR>Agent S is an MLLM-based desktop GUI agent that layers retrieval over self-evaluated, abstraction-stratified memory plus live web search onto a bounded language-level <Term def="Agent-Computer Interface: an abstraction layer that gives an MLLM agent a bounded action set and a grounding-friendly observation, instead of raw coordinates and arbitrary code">Agent-Computer Interface (ACI)</Term>, nearly doubling OSWorld success over the OSWorld-agent baseline.</TLDR>
+
+<WhyItMatters>A foundational OSWorld-era computer-use agent and the first to port SWE-agent's "ACI" abstraction into the desktop GUI setting. Its Manager/Worker/Self-Evaluator decomposition, narrative-vs-episodic memory split, and planning/grounding/execution error taxonomy are directly reusable harness patterns.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "20.58%", label: "OSWorld success rate", sub: "GPT-4o, vs 11.21% baseline (+83.6% rel.)" },
+  { value: "18.2%", label: "WindowsAgentArena success", sub: "GPT-4o, vs 13.3% NAVI, no adaptation" },
+  { value: "369 / 154", label: "tasks evaluated", sub: "OSWorld (Ubuntu) / WindowsAgentArena" },
+  { value: "0", label: "fine-tuning", sub: "frozen GPT-4o / Claude-3.5; learning = retrieval" },
+]} />
+
+## Motivation
+Automating real desktop tasks via direct mouse/keyboard control faces three pressures (§1): <Problem>domain knowledge</Problem> — apps and websites change constantly, so the agent needs up-to-date knowledge it cannot hold statically in weights; <Problem>long task horizons</Problem> — desktop tasks are multi-step with order-sensitive, interdependent actions; and <Problem>dynamic, non-uniform interfaces</Problem> — the agent must parse large visual+textual state and pick the right element from a vast action space. Underneath: GUIs are built for humans (real-time perception) or scripts (APIs), but an MLLM is a third user type that acts in slow discrete steps, lacks an internal coordinate system, and cannot process per-pixel feedback (§3.3). Prior GUI agents are reported bottlenecked specifically on <Problem>grounding</Problem> (§3.3, citing Xie et al. 2024; Zheng et al. 2024a).
+
+## Contribution (what's new)
+The genuine delta: a GUI agent improves most not from a smarter single policy but from <Novelty>layering retrieval of self-evaluated, abstraction-stratified experience onto a bounded language-level action interface</Novelty>. Two design commitments follow mechanistically:
+- <Novelty>Memory is stratified by abstraction and matched to stage</Novelty>: high-level full-task "narrative" memory (actions stripped) feeds the planner; low-level grounded "episodic" memory feeds the executor. A single memory would either pollute planning with brittle coordinates or starve execution of step detail (§3.1.1–3.1.2).
+- <Novelty>Grounding is delegated to the accessibility tree, not asked of the MLLM as coordinates</Novelty>: elements get integer IDs, and rather than augmenting the image with tree marks (prior Set-of-Marks work), Agent S augments the *tree* with OCR text blocks so missing elements become referenceable (§3.3).
+
+This is distinct from prior RAG-for-agents (RAP/AutoGuide/RADA: single-level exemplars or guidelines) and from SWE-agent's ACI (code, not GUI dual-input). Note the abstract's framing of "extensive experiments / SOTA" as a contribution is evidence, not novelty.
+
+## Research questions
+Can a frozen MLLM control a full desktop GUI well by (1) retrieving stratified self-built experience and live web knowledge rather than fine-tuning, and (2) acting through a bounded, ID-grounded interface — and which components actually drive the gains?
+
+## Methodology
+A closed-loop hierarchical architecture (Fig.3): a **Manager** plans by fusing web search and narrative memory into a subtask queue; sequential **Workers** execute each subtask using episodic memory plus in-episode reflection, emitting one grounded action per step; a **Self-Evaluator** summarizes completed episodes into textual "rewards" written back to memory. Backbones are frozen — "learning" is retrieval over a continually-updated memory, bootstrapped by self-supervised exploration on synthetic tasks.
+
+<Pass title="Method details">
+<Stepper steps={[
+  { title: "Manager: plan from fused experience", body: "Receives task T_u and initial observation O_0 (annotated accessibility tree + screenshot), forms an observation-aware 'How to do X' query Q, then (a) web-searches via Perplexica and (b) retrieves abstractive full-task experience from Narrative Memory (success AND failure, actions stripped). Experience Context Fusion combines them; the Subtask Planner emits a topologically-sorted subtask queue with per-subtask context C_si. (§3.1.1)" },
+  { title: "Worker: execute with episodic memory + reflection", body: "Each subtask is run by a Worker that retrieves grounded subtask experience from Episodic Memory (keyed by query+subtask+context, only from DONE subtasks). A Trajectory Reflector gives in-episode advice to avoid repeated actions. The Action Generator emits a structured CoT (prior-action status, observation analysis, semantic action, grounded action) yielding one action. DONE ends the subtask; FAIL triggers Manager replanning. (§3.1.2)" },
+  { title: "Self-Evaluator: experience as textual reward", body: "Completed subtasks become episodic summaries; completed full tasks become narrative summaries — all without human feedback or ground truth. Framed as a hierarchical-RL-like loop where retrieval is the learning mechanism. (§3.1.3)" },
+  { title: "Memory construction", body: "Bootstrapped by self-supervised exploration on synthetic tasks (top-50 common app tasks = environment-independent; tasks generated from benchmark initial environments = environment-aware), run with only web knowledge; then continually updated during inference. (§3.2)" },
+  { title: "ACI", body: "Dual input (screenshot for salient changes; integer-tagged, OCR-augmented accessibility tree for grounding via IOU match); bounded space of ~11 primitives (click, type, scroll, hotkey, hold_and_press, drag_and_drop, save_to_buffer, switch_applications, wait, done, fail — Table 5); one action per step, compiled to Python. (§3.3, App. A.1)" },
+]} />
+</Pass>
+
+## Main result
+On the full OSWorld test set, <Finding src="Tab.1, p.8">Agent S w/ GPT-4o reaches 20.58% vs the GPT-4o baseline 11.21% — +9.37 pts, an 83.6% relative gain and a new SOTA</Finding>; Agent S w/ Claude-3.5 reaches 20.48%. Per category it dominates the GPT-4o baseline, but GPT-4V is a surprisingly strong baseline (24.50% on Daily), so "nearly doubling" holds only against the GPT-4o row.
+
+<SortableTable columns={["Method", "OS", "Office", "Daily", "Profess.", "Workflow", "Overall"]} rows={[
+  ["GPT-4o baseline", 41.67, 6.16, 12.33, 14.29, 7.46, 11.21],
+  ["GPT-4V baseline", 16.66, 6.99, 24.50, 18.37, 4.64, 12.17],
+  ["Agent S w/ Claude-3.5", 41.66, 13.83, 30.46, 32.65, 9.54, 20.48],
+  ["Agent S w/ GPT-4o", 45.83, 13.00, 27.06, 36.73, 10.53, 20.58],
+]} />
+
+## Key findings
+- <Finding src="Tab.2, p.9">Web knowledge is the single most impactful experience component</Finding>: on the 65-task `testsub`, removing it drops Agent S from 26.15% to 16.80% (vs w/o Episodic 18.46%, w/o Narrative 21.41%, w/o All 13.85%, baseline 10.77%). But on OS, "w/o Web Knowledge" falls *below* baseline (16.60 vs 33.33) — web guidance can mislead in some categories.
+- <Finding src="Fig.6, p.9">Retrieval and ACI are synergistic, not additive</Finding>: baseline 10.77% → +Retrieval 12.31% → ACI-only 12.31% → ACI+Retrieval 20.00% → full Agent S (adds hierarchical planning) 26.15%. Retrieval barely helps without ACI but jumps once ACI is present; hierarchical planning adds the final 20.00→26.15.
+- <Finding src="Fig.7, p.9">Self-supervised exploration is the most load-bearing memory mechanism, and summaries beat raw trajectories</Finding>: full 26.15% → w/o Continual Update 23.18% → w/o Self-Evaluator 18.46% → w/o Exploration 15.38%. Replacing summaries with full trajectories (w/o Self-Evaluator) costs ~8 pts.
+- <Finding src="Tab.3, p.10">Execution and grounding errors dominate failures</Finding>: of failed `testsub` tasks, execution errors 79.59%, grounding 53.06%, planning 34.69% (overlapping). Grounding stays the practical bottleneck the ACI only partially fixes.
+- <Finding src="Tab.4, p.10">Generalization to Windows is real but uneven</Finding>: 18.2% vs NAVI 13.3% with no adaptation, driven by Windows System (29.2→45.8) and Coding (9.1→29.2), but Agent S is *worse* on Web Browser (20.0→13.3) and Media&Video (25.3→19.1), and 0.0% on Office.
+- <Finding src="Tab.8, p.16">Per-app gains are concentrated, and one app regresses</Finding>: large jumps in VS Code (30.43→52.17), Thunderbird (6.67→40.00), GIMP (0.00→23.08), and OS, but LibreOffice Calc *regresses* (4.26→2.13) — the OS-category headline is dominated by one app's leap.
+
+## Implications
+Establishes that retrieval-as-learning over stratified memory plus a bounded ACI is a strong, fine-tuning-free recipe for desktop control, extending the <Related>SWE-agent ACI line (Yang et al. 2024)</Related> from code to GUIs and the <Related>RAG-for-agents line (RAP, AutoGuide, RADA)</Related> with two-level, self-evaluated experience. It also recombines the broader cognitive-architecture lineage (<Related>Reflexion, ReAct, Voyager, Generative Agents; contemporaneous OS-Copilot, Synapse, Cradle</Related>) rather than introducing a new learning mechanism. Worth chasing: <FollowUp>cost/step-count Pareto-optimality, explicitly flagged as future work</FollowUp>; <FollowUp>whether the grounding bottleneck is fixed by later grounding-specialized models or Agent S2</FollowUp>; <FollowUp>head-to-head against the contemporaneous GUI agents it names but never compares to</FollowUp>.
+
+## Limitations
+- <Caveat>No variance, seeds, or significance anywhere</Caveat> — all numbers appear single-run at low absolute success (~20%), so a few tasks can swing a category.
+- <Caveat>Cost, latency, and step-count are unmeasured</Caveat> (authors flag this, p.10) — a major omission for practical computer-use given the slow one-action-per-step loop.
+- <Caveat>No head-to-head with the contemporaneous GUI agents</Caveat> (Synapse, OS-Copilot, Cradle) it names as closest work.
+- <Caveat>Heavy dependence on accessibility-tree quality</Caveat> limits applicability to canvas-heavy / custom-rendered apps (consistent with GIMP, Calc, and Windows web-browser weaknesses).
+- <Caveat>Abstract and intro miscite OSWorld as "(OpenAI, 2023)"</Caveat> — it is Xie et al. 2024 (minor but notable).
+
+## Critiques and Questions
+1. Self-evaluation labels success/failure with no ground truth; mislabeled successes would silently poison memory, and this is never measured.
+2. Self-supervised exploration tasks are generated from the benchmarks' own initial environments — possible leakage between exploration and test tasks.
+3. The `testsub` of 65 is the authors' own resampling (the official 39-task "small" set is called too imbalanced, footnote p.8); ablations run only on GPT-4o and only on this subset.
+4. The Trajectory Reflector does not reliably break documented grounding→repeated-action→execution-error loops (Figs.14,16).
+
+<SelfCheck q="Why does Agent S use two separate memories (narrative and episodic) instead of one?" a="Because the two stages need experience at different abstraction levels: the Manager plans and needs transferable strategy with concrete actions stripped (narrative memory), while the Worker executes and needs concrete grounded action sequences (episodic memory). A single memory would either pollute planning with brittle low-level coordinates or starve execution of step-level detail." />
+
+## Glossary
+- <Term def="A continually-updated store of high-level, abstractive full-task experience summaries (success and failure, with specific actions removed), keyed by an observation-aware query; feeds the Manager's planning.">Narrative Memory</Term>
+- <Term def="A store of complete subtask plans with grounded actions, only from subtasks marked DONE, keyed by query+subtask+context; feeds the Worker's execution.">Episodic Memory</Term>
+- <Term def="A live web-search engine (Perplexica) the Manager queries in a 'How to do X' format for up-to-date, app-specific knowledge.">Online Web Knowledge</Term>
+- <Term def="A prompting technique that overlays numbered marks on a screenshot so the model can refer to elements by mark; Agent S inverts this by augmenting the accessibility tree with OCR text instead.">Set-of-Marks</Term>
+- <Term def="Executable benchmarks of real desktop apps with success-rate checkers: OSWorld (Ubuntu, 369 tasks) and WindowsAgentArena (Windows, 154 tasks).">OSWorld / WindowsAgentArena</Term>
+
+{/* NOTES_START */}
+### Personal notes
+The narrative/episodic split and "self-evaluator turns episodes into textual rewards, retrieval is the learning step" are the transferable ideas. Watch the unmeasured step/latency cost and the accessibility-tree dependence when reusing this pattern.
+{/* NOTES_END */}

@@ -1,0 +1,104 @@
+---
+canonical_key: arxiv-2307.12856
+version_key: v1
+title: A Real-World WebAgent with Planning, Long Context Understanding, and Program Synthesis
+authors:
+- Izzeddin Gur
+- Hiroki Furuta
+- Austin Huang
+- Mustafa Safdari
+- Yutaka Matsuo
+- D. Eck
+- Aleksandra Faust
+venue: International Conference on Learning Representations
+year: 2023
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2307.12856
+summary_date: '2026-06-07'
+---
+
+<TLDR>WebAgent splits real-website automation into a <Term def="encoder-decoder LLM pre-trained on HTML with long-span denoising and local-global attention">HTML-T5</Term> planner+summarizer and a frozen 540B program synthesizer (Flan-U-PaLM) that emits Python/Selenium actions, and shows this modular, self-experience-finetuned recipe lifts real-website success by over 50% while HTML-T5 alone sets SoTA on MiniWoB++ and Mind2Web.</TLDR>
+
+<WhyItMatters>An early, frequently-cited push of web agents off simulators onto live real sites — three of its choices (HTML-as-observation bottleneck, code-as-action, planner/summarizer/actor split) are load-bearing for today's computer-use harnesses.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "+50%", label: "real-website success gap", sub: "vs single-LLM baseline (Tab.1)" },
+  { value: "+18.7%", label: "MiniWoB++ success", sub: "HTML-T5-XL vs WebN-T5-XL (Tab.3)" },
+  { value: "3B", label: "HTML-T5-XL beats 11B", sub: "85.6% vs Flan-T5-XXL 79.0%" },
+]} />
+
+## Motivation
+Web automation on real websites suffers three problems prior LLM agents sidestepped by staying in simulators. <Problem>There is no pre-defined action space</Problem> — real sites are open-domain, unlike MiniWoB++/WebShop with their fixed categorical actions. <Problem>Real HTML is far longer than simulated observations</Problem>: ~0.5K tokens in simulators vs 7K-14K on real sites (Fig.2, ~15x larger, p.3), overflowing LLM context. And <Problem>general LLMs lack HTML-specific inductive bias</Problem>, while prior HTML transformers (MarkupLM, TIE) use text-XPath alignment too costly for long real documents.
+
+## Contribution (what's new)
+The genuine delta is two-fold. <Novelty>HTML-T5: an encoder-decoder pre-trained specifically for long HTML</Novelty> — local + transient-global attention to match HTML's tree structure, plus a mixture of long-span denoising (mean span mu in `{8,64}`). The design must take this form because short NLP-standard spans (mu=3) mask low-signal fragments like `</` or `id=`, and dense attention cannot afford 16K-token HTML. Second, <Novelty>a planner/summarizer/actor decomposition across specialized models</Novelty> aligned to real sites via "self-experience supervision" (scripted plans + program execution, with environment feedback filtering failures), avoiding manual step-level annotation.
+
+## Research questions
+Can a real-website agent overcome open-domainness, long HTML, and missing HTML inductive bias? Specifically: does an HTML-specialized LLM beat general LLMs on HTML understanding, and does modular planning + summarization + program-synthesis beat a single prompted LLM on live sites?
+
+## Methodology
+Three sub-problems, three specialist roles. <Term def="encoder-decoder LLM pre-trained on HTML">HTML-T5</Term> does closed-loop planning (predict the next NL sub-instruction from instruction + history + current HTML) and extractive summarization (predict `data-ref` IDs of task-relevant snippets). <Term def="frozen 540B generalist, few-shot prompted">Flan-U-PaLM</Term> does grounded program synthesis, turning each sub-instruction + snippet into executable Python/Selenium. Actions are open-ended code (e.g. `driver.find_element(...).click()`), not a categorical action space.
+
+<Pass title="Method details">
+<Stepper steps={[
+  { title: "HTML-T5 architecture (§3.1, Fig.4)", body: "Encoder swaps dense attention for local attention (radius r=127) + transient-global attention (block size k=16), following LongT5/ETC; decoder keeps dense attention. Initialized from PEGASUS weights (Appendix H.1 shows this is critical)." },
+  { title: "Pre-training", body: "Span-denoising with Gaussian span lengths, mixture mu in {8,64}, 15% masking, 4096 input / 910 output. Corpus: 100 CommonCrawl WARC files (Apr 2019), subtrees around <label for=...> elements -> 3.41M examples (avg 1020 tokens). T5X+SeqIO, TPU-v3 128 cores, 100K iters, batch 128 (Appendix C)." },
+  { title: "Self-experience supervision (§3.2)", body: "Sample instruction templates; rule-based parser decomposes into sub-instructions, regex retrieves reference IDs; Flan-U-PaLM generates programs; environment feedback filters failures; HTML-T5 finetuned on survivors (260 real-estate / 230 social-media / 410 map episodes)." },
+  { title: "Grounded program synthesis (§3.3)", body: "Flan-U-PaLM few-shot prompted with generic action examples + next sub-instruction + extracted snippet, decoding Selenium-executable Python; sub-instruction carried as a code comment." },
+]} />
+
+Environments: three anonymized live sites (real-estate ~20 steps, social-media ~10 steps with many page transitions, map = easiest), driven via Selenium WebDriver under human supervision, rate-limited. Also MiniWoB++ (56 tasks), offline Mind2Web (137 sites, 3 generalization splits), static WebSRC. No public code/model release stated; anonymized sites are not reproducible.
+</Pass>
+
+## Main result
+<Finding src="Tab.1, p.7">On real sites WebAgent reaches 65% / 70% / 80% success (real-estate / social-media / map) vs ~10% for a single Flan-U-PaLM</Finding> — the "over 50%" headline is this absolute success-rate gap to a deliberately weak open-loop baseline, on only 20 instructions per site with no variance reported. On public benchmarks the evidence is stronger:
+
+<SortableTable columns={["Setting", "Model", "Metric", "Score"]} rows={[
+  ["MiniWoB++ 12K (Tab.3)", "HTML-T5-XL", "avg success", 67.1],
+  ["MiniWoB++ 12K (Tab.3)", "WebN-T5-XL (prior)", "avg success", 48.4],
+  ["MiniWoB++ 347K (Tab.12)", "HTML-T5-XL (3B)", "avg success", 85.6],
+  ["MiniWoB++ 347K", "Flan-T5-XXL (11B)", "avg success", 79.0],
+  ["Mind2Web Cross-Task (Tab.4)", "HTML-T5-XL", "step SR", 57.8],
+  ["Mind2Web Cross-Domain (Tab.4)", "HTML-T5-XL", "step SR", 48.3],
+]} />
+
+## Key findings
+- <Finding src="Tab.3, p.8">HTML-T5-XL gains +18.7% absolute on MiniWoB++ over WebN-T5-XL</Finding> (67.1 vs 48.4 with 12K demos) and beats LongT5/Flan-LongT5 at every size; a 3B HTML-T5 beats an 11B Flan-T5-XXL (85.6 vs 79.0) — but Synapse's 99.2% SoTA stays far ahead.
+- <Finding src="Tab.2 left, p.7">Local+global attention drives the gain, not just length</Finding>: 53.6% (L=4096) vs 35.3% dense Flan-T5-Base (+18%), with local-only at 44.0% (~+9%) — isolating the inductive-bias benefit.
+- <Finding src="Tab.2 right, p.7">The HTML-tuned denoising objective matters</Finding>: span mu in `{8,64}` beats the NLP-standard `{3,8,64}`+Prefix-LM (MiniWoB++ 57.0 vs 55.2; real-estate 82.46 vs 80.56) and beats no-HTML-denoising (53.8 / 78.07).
+- <Finding src="Tab.4, p.8">HTML-T5-XL sets Mind2Web SoTA across all three splits, surpassing MindAct (GPT-4)</Finding> on element acc / op F1 / step SR — yet overall full-task SR stays 5-10%, so the "SoTA on Mind2Web" claim holds at the per-step level, not full-task.
+- <Finding src="§4.1">Most residual real-world failures are planning errors</Finding> (e.g. 70% of real-estate failures), per the authors' error analysis — pointing at the planner, not the actor, as the bottleneck.
+- <Finding src="Appendix K">The generalist actor is swappable</Finding>: gpt-3.5-turbo matches Flan-U-PaLM-540B on map (80%/93.8%), Flan-PaLM-62B gets 60%, but Flan-PaLM-8B = 0% (cannot synthesize valid programs) — a capability floor for code-as-action.
+
+## Implications
+Treating long messy HTML as the core observation bottleneck — attacked with architecture + a domain-specific objective rather than just bigger windows — and using program synthesis as the action interface are both reusable beyond this system. <Related>Closest lineage: MindAct / Mind2Web (Deng et al. 2023)</Related> (also summarize-then-act, but offline with off-the-shelf models); builds on <Related>LongT5/ETC, UL2 mixture-of-denoisers, PEGASUS, and Code-as-Policies / PAL / Voyager for action-as-program</Related>. <FollowUp>Whether Google ever released HTML-T5 weights or code</FollowUp>, and <FollowUp>how later web/computer-use agents tighten real-site evaluation rigor</FollowUp> beyond 3 anonymized sites, are worth chasing.
+
+## Limitations
+- <Caveat>Tiny, non-reproducible real-world test: 3 anonymized sites x 20 instructions, no variance/CI, strict all-attributes-covered binary success</Caveat>.
+- <Caveat>The "over 50%" headline is a gap to a weak open-loop single-LLM baseline, not to any prior real-world agent</Caveat> (none comparable exists, which the authors acknowledge).
+- <Caveat>Strongest configuration depends on a proprietary 540B model</Caveat>; modular multi-model design adds compute/latency, and the program synthesizer is hard to give execution feedback to (left as future work).
+- <Caveat>Mixed WebSRC results</Caveat>: EM 75.50 / F1 85.75 beats single Flan-U-PaLM but trails TIE-Large (81.66 EM) and is weaker on KV/Table tasks (Tab.6, Fig.7).
+
+## Critiques and Questions
+1. The real-world claim rests on so few instructions and such a weak baseline that the magnitude, while plausible, is essentially uncheckable — anonymized sites make independent replication impossible.
+2. "SoTA on Mind2Web" is true per-step but full-task SR (5-10%) shows real-task success is still mostly unsolved; the framing risks overstating maturity.
+3. No statistical significance testing anywhere, and the headline conflates the HTML-T5 architecture win (well-evidenced) with the modular-agent win (thinly evidenced).
+
+<SelfCheck q="Why does WebAgent use a mixture of long denoising spans (mu in {8,64}) instead of the NLP-standard short spans?" a="Short spans (mu=3) tend to mask low-signal HTML fragments like `</` or `id=`; longer spans force the model to reconstruct meaningful HTML structure, which Tab.2 (right) shows yields higher downstream success (57.0 vs 55.2 on MiniWoB++)." />
+
+## Glossary
+- <Term def="encoder-decoder LLM pre-trained on long HTML with local+global attention and long-span denoising; does WebAgent's planning and summarization">HTML-T5</Term>
+- <Term def="frozen 540B Flan-U-PaLM generalist, few-shot prompted to synthesize Selenium Python; WebAgent's actor">Flan-U-PaLM</Term>
+- <Term def="aligning the planner/summarizer to real sites via scripted plans + executed programs, keeping only environment-validated demonstrations">self-experience supervision</Term>
+- <Term def="local windowed attention plus a small set of aggregated global tokens, from LongT5/ETC; scales attention to long inputs">local + transient-global attention</Term>
+- <Term def="56-task simulated web-automation benchmark; WebShop and Mind2Web are related web benchmarks (Mind2Web is offline, real-site)">MiniWoB++</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Watch the "over 50%" claim: absolute success-rate gap vs a weak open-loop single-LLM baseline on 3 sites, not vs any prior real-world agent. Mind2Web "SoTA" is per-step; full-task SR is still 5-10%. Most reusable artifact is HTML-T5 (local-global + long-span denoising, PEGASUS init) — relevant whenever long structured-document context is the bottleneck.
+{/* NOTES_END */}

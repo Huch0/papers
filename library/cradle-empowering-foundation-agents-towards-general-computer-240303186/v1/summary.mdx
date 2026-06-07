@@ -1,0 +1,110 @@
+---
+canonical_key: arxiv-2403.03186
+version_key: v1
+title: 'Cradle: Empowering Foundation Agents towards General Computer Control'
+authors:
+- Weihao Tan
+- Ziluo Ding
+- Wentao Zhang
+- Boyu Li
+- Bohan Zhou
+- Junpeng Yue
+- Haochong Xia
+- Jiechuan Jiang
+- Longtao Zheng
+- Xinrun Xu
+- Yifei Bi
+- Pengjie Gu
+- Xinrun Wang
+- Börje F. Karlsson
+- Bo An
+- Zongqing Lu
+venue: International Conference on Machine Learning
+year: 2024
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2403.03186
+summary_date: '2026-06-07'
+---
+
+<TLDR>CRADLE defines <Term def="agents act on any software using only screenshots in and raw keyboard/mouse out, with no built-in APIs, DOM, or accessibility tree">General Computer Control (GCC)</Term> and gives a training-free six-module GPT-4o framework that, as a preliminary demonstration, plays four commercial games and five desktop apps plus OSWorld purely from pixels and OS-level keyboard/mouse.</TLDR>
+
+<WhyItMatters>GCC is the strictest possible observation/action interface for computer-use agents — directly on-target for harness design — and the six-module decomposition is a concrete, reusable agent architecture.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "7.81%", label: "OSWorld success (369 tasks)", sub: "vs GPT-4o 5.03%, +SoM 4.59%" },
+  { value: "6", label: "core modules", sub: "perceive / reflect / infer / curate / plan / memory" },
+  { value: "40 min", label: "longest RDR2 mission", sub: "human-evaluated trajectory" },
+]} />
+
+## Motivation
+<Problem>Existing foundation agents do not generalize across virtual environments because each environment ships its own hand-designed observation and action space</Problem> — raw HTML/DOM, internal APIs, predefined semantic actions, accessibility element IDs — so an agent built for one cannot transfer (p.1, p.4-5). <Problem>Prior screenshot-aware web/GUI/game agents still depend on those built-in hooks</Problem>: web/GUI agents use Set-of-Mark or DOM element IDs; game agents (JARVIS-1, CivRealm) use internal textual state and predefined semantic actions; VPT outputs raw keyboard/mouse but needs costly action-labeled video; SIMA needs expensive human gameplay and targets ~10-second tasks (p.4-5). None operate from pure screen pixels with raw keyboard/mouse across both complex games and office software.
+
+## Contribution (what's new)
+Two genuine deltas. First, the <Novelty>GCC setting itself — vision-only observation, OS-level keyboard+mouse action, no internal APIs/DOM/accessibility tree — as a single standardized interface for any software</Novelty>. Second, the mechanism that makes it operable without APIs: <Novelty>the LMM writes Python "skill" functions that wrap an `io_env` class (e.g. `key_hold('tab')`, `place_residential_zone(x1,y1,x2,y2)`), bridging semantic intent to low-level control</Novelty> (p.5-6, Fig.5). Because there is no API to call, semantic actions must be *materialized as executable code* over a raw input device — and that action space models press duration and mouse-move speed, which most prior GUI agents ignore but which matter in real-time games.
+
+## Research questions
+Can a single training-free LMM framework operate arbitrary commercial software — both AAA/2D/simulation games and office/creative apps — end to end, using only screenshots and raw keyboard/mouse, with no environment-specific APIs?
+
+## Methodology
+CRADLE is a training-free GPT-4o orchestration loop that turns a short screen-video clip into low-level keyboard/mouse code, following a "reflect on the past, summarize the present, plan for the future" cycle backed by episodic and procedural memory.
+
+<Pass title="Method details">
+Backbone: GPT-4o (`gpt-4o-2024-05-13`) for all LMM calls; `text-embedding-ada-002` for skill embeddings; skills retrieved by similarity (p.8). Perception is augmented with external vision tools — template matching, Grounding DINO, and SAM — for grounding/localization (p.6). Per step the six modules run as:
+
+<Stepper steps={[
+  { title: "Information Gathering (perceive)", body: "LMM + optional Grounding DINO/SAM/template matching extract visual state and OCR on-screen text from a screen-video clip of the last action's execution, sampled at 2 fps (p.5-6)." },
+  { title: "Self-Reflection (verify)", body: "LMM judges whether the last action and current task succeeded and diagnoses failures from sequential key screenshots + prior context (p.6-7)." },
+  { title: "Task Inference (plan)", body: "LMM selects the highest-priority next subtask and decides when to stop or switch tasks (p.7)." },
+  { title: "Skill Curation", body: "Retrieve relevant code skills from procedural memory; update or generate new ones (from in-game tutorials/manuals or self-exploration) (p.7-8)." },
+  { title: "Action Planning + Executor", body: "Fill skill parameters (duration / position / speed) to form the executable action; the Executor runs it as OS keyboard/mouse commands (p.8)." },
+]} />
+
+Memory: episodic (multimodal experience + periodic summaries) and procedural (code skills). Action primitives: `key_press`, `key_hold`, `key_release`, `mouse_move`, `wheel_scroll` plus mouse buttons, with press duration and mouse speed, simulated via Python in `io_env` (p.5). Note: the RDR2 and Stardew Valley environments are *paused* while waiting for the LMM, so "real-time" should be read loosely (p.8).
+</Pass>
+
+## Main result
+On <Term def="benchmark of 369 real desktop tasks with provided automatic graders">OSWorld</Term> — the only auto-graded benchmark here — <Finding src="Tab.4, p.10">CRADLE reaches 7.81% overall vs GPT-4o 5.03% and GPT-4o+SoM 4.59% (All = 369), without any internal APIs</Finding>, driven largely by the Professional split (<Finding src="Tab.4">20.41% vs GPT-4o 4.08% / +SoM 2.04%</Finding>). <Caveat>Absolute success is very low for every method, and GPT-4o+SoM still beats CRADLE on the OS split (20.83% vs 16.67%)</Caveat>.
+
+<SortableTable columns={["Method", "All %", "Professional %", "OS %"]} rows={[["GPT-4o", 5.03, 4.08, "N/A"], ["GPT-4o + SoM", 4.59, 2.04, 20.83], ["CRADLE", 7.81, 20.41, 16.67]]} />
+
+## Key findings
+- <Finding src="Tab.6, p.11-12">The ablation cleanly isolates what each module buys: ReAct-like, Reflexion-like, and Voyager-like variants all fail every run (N/A) on the harder RDR2/Stardew tasks (Hitch Horse, Protect Dutch, Search for Supplies, Cultivation) — only the full CRADLE completes them</Finding>: task inference + procedural memory are load-bearing, not decorative.
+- <Finding src="Tab.6">Removing vision collapses the agent</Finding>: the Voyager-like text-only variant (image described to text) is the worst, and Claude 3 Opus fails from unreliable OCR of in-game guidance.
+- <Finding src="Tab.2, p.9">The abstract's "maximal weekly total profit of 87%" is a single-run peak (+87.4%), not the mean</Finding>: <Caveat>the mean Total Profit Rate in Dealer's Life 2 is only 39.6 ± 27.3%</Caveat> — a marquee number presented in a way that overstates typical autonomous behavior.
+- <Finding src="Tab.3, p.10">The "city of a thousand people" in Cities: Skylines is reached only with human assistance</Finding>: <Caveat>autonomous max population is 450 ± 224, rising to 850 ± 142 with ≤3 human unit operations (Fig.10b shows 1100+ post-fix)</Caveat>.
+- <Finding src="Fig.7, p.8-9">RDR2 succeeds on navigation/follow tasks but fails real-time combat and indoor search</Finding>: poor enemy/object localization drops nighttime combat (Protect Dutch) to 20% even with Grounding DINO.
+- <Finding src="Fig.11, p.10-11">Even familiar office apps trip the LMM on UI grounding</Finding>: it forgets to click Save and confuses enabled vs disabled buttons in Chrome/Outlook, and degrades further on non-standard layouts (CapCut, Meitu, Feishu).
+
+## Implications
+GCC stakes out the hardest harness setting and shows it is operable end-to-end, even if absolute competence is weak — the value is in the *setting* and *architecture*, not a leaderboard number. The code-as-skill `io_env` executor extends <Related>the Voyager skill-curation / skill-embedding lineage</Related> to pure-pixel control, and the framing sits directly against <Related>API/DOM-based GUI agents (UFO, OS-Copilot, Mind2Web, WebVoyager) and the contemporaneous OSWorld benchmark</Related>; its closest relative is <Related>SIMA (screenshot-in/keyboard-mouse-out, but trained via behavior cloning on short ~10s tasks)</Related>. <FollowUp>Whether later versions add audio, training (RL/imitation), or fully-autonomous Cities: Skylines results</FollowUp>; <FollowUp>how subsequent scaffolds fix the localization/UI-grounding failures that cap performance here</FollowUp>.
+
+## Limitations
+- <Caveat>Author-stated (p.11): poor on out-of-distribution icons/styles (e.g. Stardew's 2D pixel art) due to LMM limits; no audio modality despite GCC including it; heavy per-step LMM calls → high cost/latency; no training (RL/imitation) yet; only a limited task set explored.</Caveat>
+- <Caveat>Inferred: low absolute success (OSWorld 7.81%; many 1/5 results); flagship results lean on human assistance or single-run peaks, risking over-claiming; human evaluation with tiny task counts and no inter-rater reliability; baselines are author-adapted "-like" approximations, not canonical implementations; per-app numbers live only in figures; two game environments are paused for latency, weakening the "precise timing" motivation.</Caveat>
+
+## Critiques and Questions
+1. The abstract foregrounds the most flattering numbers (87% profit = single run; thousand-person city = human-assisted; 40-min RDR2 = human-judged trajectory). The most *defensible* quantitative claim is the OSWorld comparison — but at 7.81% absolute, what does "operable" actually translate to in deployable terms?
+2. With no automatic success signal for games/apps, how trustworthy is the human evaluation given no reliability reporting and 5-run sample sizes?
+3. Does pausing two environments during inference undercut the GCC motivation that raw keyboard/mouse with duration/speed is needed for real-time control?
+
+<SelfCheck q="How does CRADLE issue actions to software without any built-in API, and why must the action space include press duration and mouse-move speed?" a="The GPT-4o backbone writes Python skill functions that wrap an io_env class, which simulates OS-level keyboard/mouse events (key_press/key_hold/key_release, mouse_move, wheel_scroll). Because there is no API to call, semantic intent must be materialized as executable low-level code; duration and mouse speed are modeled because real-time games require timed holds and paced movement that discrete clicks cannot express." />
+
+## Glossary
+- <Term def="agents act on any software using only screenshots in and raw keyboard/mouse out, with no built-in APIs/DOM/accessibility tree">General Computer Control (GCC)</Term> — the paper's proposed unified interface.
+- <Term def="a Python class wrapping OS-level keyboard/mouse simulation; LMM-written skill functions call it to execute actions">`io_env`</Term> — the executor abstraction.
+- <Term def="Set-of-Mark: overlaying numbered marks on detected UI elements so the model can reference them by ID">SoM</Term> — the GPT-4o+SoM OSWorld baseline.
+- <Term def="reusable code function stored in procedural memory and retrieved by embedding similarity (Voyager-style)">skill</Term> — CRADLE's unit of executable behavior.
+
+{/* NOTES_START */}
+### Personal notes
+The abstract/intro headline numbers need care: "thousand-person city" = with human assistance (autonomous max pop 450±224); "87% profit" = single-run peak (mean total profit 39.6%); RDR2 "40-min missions" = human-evaluated trajectory success, with combat/search tasks frequently failing (Protect Dutch 20% even with Grounding DINO). The most defensible quantitative claim is the OSWorld comparison (CRADLE 7.81% vs GPT-4o 5.03% vs +SoM 4.59%, no internal APIs), driven largely by the Professional split (20.41%). Two game environments are paused during LMM inference, so "real-time" should be read loosely.
+
+Venue note: scaffold metadata says ICML 2024 but the extracted PDF header reads "Preprint. Under review." (arXiv:2403.03186v3, 2 Jul 2024) — venue stamp is Unclear from the extraction itself.
+
+Follow-ups: add related OSWorld (arXiv:2404.07972) and SIMA (arXiv:2404.10179); compare API/DOM agents (UFO, OS-Copilot) vs pure-pixel here; confirm open-source repo + license at baai-agents.github.io/Cradle.
+{/* NOTES_END */}

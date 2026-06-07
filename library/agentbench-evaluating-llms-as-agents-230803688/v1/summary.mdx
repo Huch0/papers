@@ -1,0 +1,120 @@
+---
+canonical_key: arxiv-2308.03688
+version_key: v1
+title: 'AgentBench: Evaluating LLMs as Agents'
+authors:
+- Xiao Liu
+- Hao Yu
+- Hanchen Zhang
+- Yifan Xu
+- Xuanyu Lei
+- Hanyu Lai
+- Yu Gu
+- Yuxian Gu
+- Han Ding
+- Kai Men
+- Kejuan Yang
+- Shudan Zhang
+- Xiang Deng
+- Aohan Zeng
+- Zhengxiao Du
+- Chenhui Zhang
+- Shengqi Shen
+- Tianjun Zhang
+- Sheng Shen
+- Yu Su
+- Huan Sun
+- Minlie Huang
+- Yuxiao Dong
+- Jie Tang
+venue: International Conference on Learning Representations
+year: 2023
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2308.03688
+summary_date: '2026-06-07'
+---
+
+<TLDR>AgentBench is the first systematic multi-environment benchmark that scores 29 LLMs as autonomous agents across 8 interactive, executable text environments (code, game, web), exposing a large gap between top commercial models and the best sub-70B open-source models.</TLDR>
+
+<WhyItMatters>Foundational reference for the LLM-as-agent evaluation lineage and a reusable harness design (HTTP server-client, Docker-isolated workers, max-flow scheduling) that predates and motivates SWE-bench, WebArena, OSWorld, and tau-bench.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "4.01", label: "best Overall (OA) score", sub: "gpt-4, Test set, Tab.3" },
+  { value: "2.32 vs 0.51", label: "avg OA: API vs OSS", sub: "commercial-vs-open gap, p.8" },
+  { value: "8", label: "interactive environments", sub: "5 newly built, Tab.2" },
+  { value: "29", label: "LLMs evaluated", sub: "API + OSS ≤70B, Tab.1" },
+]} />
+
+## Motivation
+<Problem>There was no systematic, standard benchmark for evaluating LLMs as agents in interactive environments.</Problem> Prior text-game environments (TextWorld, Jericho, LIGHT) had <Problem>closed/discrete action spaces and narrow commonsense focus</Problem>; embodied simulators were complex but excluded text-only LLMs; and most agent benchmarks <Problem>targeted a single environment, giving no cross-domain view</Problem> (§1, §6).
+
+## Contribution (what's new)
+<Novelty>A multi-environment, text-only, executable benchmark that scores LLMs on real task success across diverse "groundings" under one toolkit.</Novelty> Agent evaluation is cast as a <Term def="Partially Observable Markov Decision Process: states, actions, transitions, rewards, instructions, observations — the agent sees only partial state each turn">POMDP</Term> `(S, A, T, R, U, O)` and instantiated as 8 environments. The design must use real executable backends (bash, MySQL, Freebase, simulated web) graded by outcome metrics rather than text overlap, because the central question — can an LLM actually *act* — cannot be answered by static QA or text-similarity scoring.
+
+## Research questions
+Can current LLMs operate as autonomous agents in realistic interactive environments; how large is the commercial-vs-open-source gap; and what are the dominant failure modes that block usable agents?
+
+## Methodology
+8 environments in three groundings: Code (Operating System, Database, Knowledge Graph), Game (Digital Card Game, Lateral Thinking Puzzles, House-Holding), Web (Web Shopping, Web Browsing). Each exposes a textual observation stream and a per-environment action interface; the agent interacts over multiple rounds using only primitive Chain-of-Thought (Thought + Action per round, adapted from <Related>ReAct</Related>) with greedy decoding (temperature 0) and no reflection, search, or ensemble.
+
+<Pass title="Method details">
+- **Environments (Tab.2):** OS = Ubuntu bash in Docker (SR); DB = real MySQL (SR); KG = Freebase, &gt;45M entities / 3B facts, partially observable (F1); DCG = Aquawar turn-based card game (Reward/win-rate); LTP = yes/no/irrelevant riddle host (Game Progress); HH = ALFWorld household tasks (SR); WS = WebShop simulated e-commerce (Reward); WB = Mind2Web web actions adapted to prompting, no fine-tuning (Step SR). Five of the eight are newly built for this benchmark.
+- **Protocol:** two-role dialogue (user = instruction + environment feedback; agent), 1-shot format demonstration, history truncated to ~3500 tokens with an omission marker (§2). Finish reasons categorized as Context Limit Exceeded (CLE), Invalid Format (IF), Invalid Action (IA), <Term def="agent never solves the task within the round budget">Task Limit Exceeded (TLE)</Term>, and Complete.
+- **Overall score (OA):** each task's raw scores are rescaled so the mean across all evaluated models is 1, then averaged with fixed reciprocal-mean weights so easy high-scoring tasks (e.g., Web Shopping) do not dominate (§3). Splits: Dev 269 / Test 1,014; ~3k + ~11k inference calls.
+- **Harness:** decoupled Task Server / Agent Server / Evaluation Client communicating over HTTP; isolated Docker workers; an agent-task bipartite graph scheduled via the Edmonds-Karp max-flow algorithm; resumable evaluation. Code/data/toolkit released at github.com/THUDM/AgentBench (Appendix A).
+</Pass>
+
+## Main result
+<Finding src="Tab.3, p.7">gpt-4 leads with OA 4.01; the best open-source model ≤70B, codellama-34b, reaches only 0.96 — below even gpt-3.5-turbo's 2.32.</Finding> Averaged, API-based models score 2.32 vs 0.51 for OSS (p.8), and all API-based models exceed 1.00.
+
+<SortableTable columns={["Model", "Type", "Overall (OA)"]} rows={[
+  ["gpt-4", "API", 4.01],
+  ["claude-3 (post-hoc *)", "API", 3.11],
+  ["glm-4 (post-hoc *)", "API", 2.89],
+  ["claude-2", "API", 2.49],
+  ["gpt-3.5-turbo", "API", 2.32],
+  ["codellama-34b", "OSS ≤70B", 0.96],
+  ["vicuna-13b", "OSS ≤70B", 0.93],
+  ["llama-2-70b", "OSS ≤70B", 0.78],
+  ["llama-2-13b", "OSS ≤70B", 0.77],
+]} />
+
+## Key findings
+- <Finding src="Tab.4, §4.3, p.8">Task Limit Exceeded (TLE) is the dominant failure mode</Finding>: the agent fails to finish within the round budget (e.g., LTP 82.5, KG 67.9), indicating weak long-term reasoning and decision-making rather than knowledge gaps.
+- <Finding src="Fig.9, §4.3">Repeating previously generated content is the single biggest cause of TLE</Finding>: &gt;90% of TLE trajectories contain a repeated response (high Rouge-L overlap), with models looping through a few states.
+- <Finding src="Tab.4, §4.3">Different environments fail for different reasons</Finding>: Invalid Format dominates DB (53.3) and DCG (38.5) due to strict output formats, while Invalid Action dominates House-Holding (64.1) where models emit out-of-space actions.
+- <Finding src="§4.3, p.8">Code training is "a double-edged sword"</Finding>: codellama edges llama-2 on procedural tasks (Web Shopping) but underperforms on Digital Card Game and OS — code pretraining does not uniformly help agent ability.
+- <Finding src="§4.3, p.8">High-quality alignment data matters more than scale</Finding>: vicuna-13b (ShareGPT/gpt-4-distilled) beats llama-2-13b and rivals the 3x-larger codellama-34b; llama-2-70b (0.78) barely beats llama-2-13b (0.77), suggesting under-alignment of the 70B.
+- <Finding src="Tab.3, §4.2">gpt-4 is best on 6 of 8 environments</Finding> but is still not a practically usable agent (e.g., OS SR 42.4, DB SR 32.0, LTP 16.6).
+
+## Implications
+Establishes the template — prompted LLMs inside real executable environments, scored by outcome — that the <Related>SWE-bench, WebArena, OSWorld, and tau-bench harnesses</Related> later extend; the reusable server-client/Docker/max-flow toolkit is a direct design precedent. <FollowUp>Whether training on high-quality multi-round alignment data closes the OSS gap</FollowUp> and <FollowUp>how later scaffolds (reflection, tree search, tool augmentation) reduce TLE-via-repetition</FollowUp> are the open threads.
+
+## Limitations
+- <Caveat>Author-stated: even gpt-4 is not a usable agent; OSS capped at ≤70B for compute; only primitive CoT (no reflection/search/ensemble).</Caveat>
+- <Caveat>Text-only — GUI/vision ignored (Web Browsing screenshots are optional and unused for scoring).</Caveat>
+- <Caveat>The OA metric uses a model-pool-specific normalization, so absolute OA values are not portable across model sets.</Caveat>
+- <Caveat>No statistical significance or variance — greedy single-run means (n=1 per item), so small differences (e.g., llama-2-13b vs -70b) may be noise; mechanistic claims are uncontrolled pairwise comparisons.</Caveat>
+
+## Critiques and Questions
+1. claude-3 and glm-4 were scored *after* the task weights were fixed (marked with `*`), so their OA values are slightly inconsistent with the rest of the pool — how much does this distort their ranking?
+2. With no variance reporting and greedy decoding, are the "code is double-edged" and "70B ≈ 13B" conclusions robust, or artifacts of single runs?
+3. Adapted datasets (WebShop, Mind2Web, Freebase) are static 2023 snapshots prone to drift and possible leakage; the interactive setting mitigates but does not eliminate this.
+
+<SelfCheck q="Why can't AgentBench's Overall (OA) scores be compared directly against a benchmark run on a different set of models?" a="OA normalizes each task so the mean score across the evaluated model pool equals 1, then applies fixed reciprocal-mean weights derived from that same pool — so the scale is defined by the 2023 model set and is ordinal within the paper, not an absolute cross-set scale." />
+
+## Glossary
+- <Term def="Partially Observable Markov Decision Process: the agent sees only partial state each turn and acts over multiple rounds">POMDP</Term>
+- <Term def="the agent never solves the task within the predefined round budget, often because it loops/repeats">Task Limit Exceeded (TLE)</Term>
+- <Term def="AgentBench's aggregate: per-task scores rescaled to a pool mean of 1, then weighted-averaged">Overall (OA) score</Term>
+- <Term def="Thought + Action prompting where the model reasons then acts each round (from ReAct)">Chain-of-Thought agent loop</Term>
+
+{/* NOTES_START */}
+### Personal notes
+The reusable bits are the harness architecture (decoupled HTTP servers, Docker-isolated workers, max-flow scheduling, resumable eval) and the per-env action/observation table (Fig.4). Treat OA as ordinal within this paper, not as an absolute scale — it is locked to the 2023 model pool. Extraction is arXiv v3 (Oct 2025) of a v1 dir; check later versions for added models/environments.
+{/* NOTES_END */}

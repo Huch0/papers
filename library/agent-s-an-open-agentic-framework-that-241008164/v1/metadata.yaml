@@ -68,7 +68,7 @@ scoring:
 artifacts:
   pdf: library/agent-s-an-open-agentic-framework-that-241008164/v1/paper.pdf
   extraction: library/agent-s-an-open-agentic-framework-that-241008164/v1/extraction.txt
-  summary: library/agent-s-an-open-agentic-framework-that-241008164/v1/summary.md
+  summary: library/agent-s-an-open-agentic-framework-that-241008164/v1/summary.mdx
   code_url: null
   project_url: null
   dataset_url: null
@@ -78,3 +78,4 @@ status:
   summarized: true
   triaged: true
   user_read_status: unread
+  summary_format: mdx

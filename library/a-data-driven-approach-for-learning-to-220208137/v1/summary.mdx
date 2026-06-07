@@ -1,0 +1,132 @@
+---
+canonical_key: arxiv-2202.08137
+version_key: v1
+title: A data-driven approach for learning to control computers
+authors:
+- P. Humphreys
+- David Raposo
+- Tobias Pohlen
+- Gregory Thornton
+- Rachita Chhaparia
+- Alistair Muldal
+- Josh Abramson
+- Petko Georgiev
+- Alex Goldin
+- Adam Santoro
+- T. Lillicrap
+venue: International Conference on Machine Learning
+year: 2022
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2202.08137
+summary_date: '2026-06-07'
+---
+
+{/*
+  Canonical Summary structure (concise, core-first). Body only — frontmatter is generated
+  from metadata.yaml by `summarize_paper.py --format mdx --prepare`. Components are
+  provided globally by the site (no imports). See config/summary_components.md.
+
+  TWO HARD RULES:
+  1. CONCISE, BUT KEEP THE KEY POINTS. Capture the paper's important findings/analysis —
+     not just the headline number. (e.g. for SWE-bench: "difficulty correlates with
+     context length", "finetuned models are sensitive to context-distribution shift".)
+     Put the headline up top; collect the rest under "## Key findings". Depth in <Pass>.
+  2. USE THE SEMANTIC HIGHLIGHTS for their MEANING (colors are consistent across summaries):
+       <Problem>   red    — the problem this paper tackles / a prior-work limitation
+       <Novelty>   green  — a novel module/approach/insight this paper introduces
+       <Finding src="Tab.X">  teal — a finding / claim / result of THIS paper
+       <FollowUp>  blue   — a notion/thread the reader should follow up on
+       <Caveat>    orange — a limitation of THIS paper
+       <Related>   violet — related work / lineage
+       <Term def="…">  glossary chip with hover definition (self-contained)
+  Declarative English; specific numbers + anchors; "Not reported"/"Unclear" for gaps;
+  verify numbers against extraction.txt. Keep Motivation (<Problem>) ≠ Contribution (<Novelty>).
+*/}
+
+<TLDR>CC-Net shows that a plain behavioural-cloning-plus-RL recipe over a <Term def="actions and observations identical to what a human uses: mouse, keyboard, pixels">human-aligned interface</Term> reaches human-level *mean* performance on the <Term def="MiniWob++: a suite of 104 instruction-following web tasks with programmatic rewards">MiniWob++</Term> web-control benchmark — once the human demonstration set is scaled by orders of magnitude.</TLDR>
+
+<WhyItMatters>An early, influential proof that a generic pixels+DOM, mouse/keyboard policy can solve a broad web-task suite without DOM-specific actions or curricula — the interface design most modern computer-use agents converge on.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "Human-level", label: "mean MiniWob++ score", sub: "CC-Net, no augmentations" },
+  { value: "104", label: "tasks co-trained", sub: "single multimodal agent" },
+  { value: "2.4M+", label: "human demonstrations", sub: "77 participants, ~6300 h" },
+  { value: "~400x", label: "data vs original", sub: "Shi 2017 had ~17 h" },
+]} />
+
+## Motivation
+The goal is agents that operate a computer the way a human does — <Problem>keyboard and mouse with natural-language goals, in principle generalizable to any digital task</Problem>. The gap: at MiniWob's conception (<Related>Shi et al. 2017</Related>), the BC+RL combination over mouse/keyboard <Problem>did not produce competent agents</Problem> — with only ~17 hours of human data, pure behavioural cloning solved just ~5% more tasks than a random policy (p.4). Prior work therefore bolted on <Problem>DOM-specific actions, curricula, and constrained/workflow-guided exploration</Problem> (Liu 2018; Gur 2018; Jia 2019) to get results, leaving open whether that machinery was actually necessary.
+
+## Contribution (what's new)
+The genuine delta is empirical, not algorithmic: <Novelty>the decisive missing factor was the *scale* of human keyboard/mouse demonstrations, not specialized DOM actions or curricula</Novelty>. The design must keep the interface human-aligned (<Term def="mouse + keyboard actions, RGB pixels + DOM tree observations, NL goals">mouse/keyboard over pixels+DOM</Term>) precisely *because* that makes raw human demonstrations directly usable as training data — which is the resource being scaled. The authors explicitly frame this as resolving the original MiniWob hypothesis that conventional deep RL plus demonstrations would suffice (p.8-9).
+
+## Research questions
+Is the specialized machinery (DOM actions, curricula, guided exploration) of prior web agents actually necessary, or was the earlier negative result simply caused by too little human demonstration data? And does a single human-aligned agent co-trained on all tasks transfer across them?
+
+## Methodology
+A single multimodal agent (CC-Net) perceives 165x220 RGB pixels plus a processed DOM tree and the NL instruction, and emits human-equivalent mouse/keyboard actions. It is co-trained from scratch on all 104 tasks with an equally-weighted mixture of <Term def="behavioural cloning: supervised imitation of human action sequences">BC</Term> and RL (<Term def="V-MPO: an on-policy maximum-a-posteriori policy-optimization RL algorithm, Song et al. 2019">VMPO</Term>), using a demonstration set scaled ~400x beyond the original MiniWob data.
+
+<Pass title="Method details">
+Architecture (CC-Net, Fig.2, p.3-4):
+<Stepper steps={[
+  { title: "Perception", body: "165x220 RGB through 4 ResNet blocks (strides 2,2,2,2; channels 32/128/256/512) -> 14x11 map -> 154 pixel tokens. Language inputs (instruction, DOM, and task-fields for the policy) tokenized against a 370-word vocab + 1000 hashed OOV slots, embedded to 64-dim, aggregated per-string by a 1-layer 4-head language transformer -> 512-dim embeddings." },
+  { title: "Integration + memory", body: "Pixel tokens + language embeddings + 2 learned embeddings -> 8-layer, 8-head, 512-dim multimodal transformer. Outputs concatenated with mean-pool + previous-action embedding -> 1536-dim -> dual-layer residual LSTM (512 units/layer)." },
+  { title: "Policy", body: "4 outputs: action type, cursor coords (51 bins/axis, height autoregressive on width), keyboard-key index, task-field index (via dot-product attention over task-field embeddings)." },
+]} />
+
+Action space: 10 action types — no-op; 7 mouse (move, click, double-click, press, release, wheel up/down); 2 keyboard (key press incl. macros like `CTRL+C`, emit a task-field string). Deliberately *no* DOM-element actions in the baseline; those exist only as an ablation (p.3-4, Table 2 p.12).
+
+Data + training: 2.4M+ demonstrations across 104 tasks from 77 participants (~6300 h), crowdsourced and ethically reviewed; split 2.2M train / 310K test; episodes with final reward `< 0.5` filtered (~5%); runs of consecutive no-ops cleaved up to 10 (p.4-5). Equal-weight BC+RL from scratch; for smaller-data scaling runs the BC weight is scaled by `sqrt(relative dataset size)` to slow overfitting (p.6-7). Environment: custom C++ stack running Chrome over X11 with the Chrome DevTools Protocol, jailed in Sandbox2 with network rerouted to a local proxy — motivated by safe crowdsourced data collection (p.3).
+</Pass>
+
+## Main result
+<Finding src="Fig.3, p.2,5">CC-Net reaches state-of-the-art and human-level *mean* performance across the 104 MiniWob++ tasks, exceeding aggregated external SotA "by a wide margin" — and does so without environment augmentations.</Finding> "Human-level" is a mean across tasks, not per-task parity: humans still beat the agent on several tasks while the agent beats humans on others.
+
+<SortableTable columns={["Condition", "Relative mean performance", "Note"]} rows={[
+  ["CC-Net (BC + RL)", 100, "human-level mean, no augmentations"],
+  ["No-DOM-observation ablation", 25, "~75% drop -> agent is DOM-reliant"],
+  ["BC-only / RL-only", 0, "both 'much worse'; both signals needed"],
+]} />
+
+## Key findings
+- <Finding src="Fig.8, p.7-8">Removing the DOM observation drops mean performance ~75%</Finding>: the agent is strongly DOM-reliant, whereas removing pixels hurts far less — because the MiniWob "canvas" is cleanly encoded in the DOM, a benchmark artifact that would not hold for general computer control.
+- <Finding src="Fig.7, p.6-7">Performance scales continuously across ~3 orders of magnitude of demonstration data</Finding>: ~400x the original ~17 h is needed to reach human level; using 1/1000 of the set (~6 h) overfits rapidly and gives no significant gain over RL-only.
+- <Finding src="Fig.5, p.5-6">Co-training all 104 tasks is significantly more data-efficient per task than single-task training</Finding>: evidence of genuine cross-task transfer rather than pure memorization.
+- <Finding src="Tab.3, p.14-15">The agent effectively fails exactly two tasks — simon-says (-0.00 vs 0.62 human) and terminal (-0.01 vs 0.88)</Finding>: simon-says fails because the agent observes at ~2Hz and misses parts of the sequence.
+- <Finding src="Tab.3, p.14-15">The agent's biggest "win" over humans, moving-items (0.88 vs 0.18), comes from human control latency</Finding>, not superior competence — illustrating that the mean parity is partly inflated by tasks where the crowdworkers do poorly.
+- <Finding src="Fig.8, p.8">Removing the privileged task-field action still solves form-filling</Finding>: the agent learns to highlight and drag text instead; DOM-element actions underperform the mouse/keyboard baseline and add no boost.
+
+## Implications
+This is a load-bearing data point for the modern computer-use-agent line: it argues that a generic perception-to-mouse/keyboard policy plus scaled human data is the recipe, reframing later debates about demonstrations vs. specialized affordances. It overturns the negative result of <Related>World of Bits / original MiniWob (Shi 2017)</Related>, contrasts with DOM-action and workflow-guided lines (<Related>Liu 2018, Gur 2018, Jia 2019</Related>), and sits methodologically downstream of <Related>large-scale-demonstration + RL work (DeepMind Interactive Agents 2021, AlphaStar)</Related>. <FollowUp>Whether the recipe survives a true pixel-only setting without a DOM-encoded canvas</FollowUp> and <FollowUp>how WebGPT and later WebArena/Mind2Web-style benchmarks moved the field past scripted, low-noise rewards</FollowUp> are the threads to chase.
+
+## Limitations
+- <Caveat>"Human-level" is a mean over 104 tasks against a specific crowdworker population; per-task humans still win on several, and some agent wins stem from human latency disadvantages.</Caveat>
+- <Caveat>Heavy DOM dependence (~75% drop without it) plus the canvas-in-DOM artifact means true pixel-only / non-DOM computer control is not demonstrated.</Caveat>
+- <Caveat>Only one seed per reported condition, hand-tuned, with no variance/statistical reporting despite high per-task variance.</Caveat>
+- <Caveat>Large proprietary compute, infra, and demonstration data; no code/data/model release; total parameter count and compute cost Not reported.</Caveat>
+- <Caveat>MiniWob++ sidesteps the hard intent/language/preference problem via scripted goals and programmatic low-noise rewards (authors note, p.8).</Caveat>
+
+## Critiques and Questions
+1. The external-SotA aggregate sets non-reported tasks to zero and filters 16 of 104 tasks, which can flatter the "wide margin" — how much of the headline gap is real vs. an artifact of the aggregation?
+2. With a single seed and hand-tuning, how stable is "human-level mean" run-to-run, given the authors' own note of high per-task variance?
+3. Given the 75% DOM-reliance, is the scaling story really about *general computer control*, or specifically about a benchmark whose visual content is readable from the DOM?
+
+<SelfCheck q="Why does the paper insist the interface stay human-aligned (mouse/keyboard over pixels+DOM) rather than using DOM-element actions?" a="Because the human-aligned interface makes raw human demonstrations directly usable as training data, and the paper's central claim is that scaling that demonstration data — not specialized DOM actions — is the decisive factor. DOM-element actions were tested as an ablation and underperformed the mouse/keyboard baseline." />
+
+## Glossary
+- <Term def="A suite of 104 instruction-following web-browser tasks (clicking, typing, dragging, form-filling) with programmatic per-task rewards">MiniWob++</Term>
+- <Term def="The agent: a multimodal transformer + LSTM policy controlling a browser via mouse/keyboard over pixels+DOM">CC-Net</Term>
+- <Term def="The browser's Document Object Model — the tree of page elements with text, value, class, position, and interaction state">DOM</Term>
+- <Term def="Behavioural cloning: supervised imitation that maximizes the log-probability of human actions">BC</Term>
+- <Term def="V-MPO: an on-policy maximum-a-posteriori policy-optimization RL algorithm (Song et al. 2019)">VMPO</Term>
+- <Term def="Chrome DevTools Protocol: the interface used to read the DOM and run JS in the controlled browser">CDP</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Watch the framing trap: "human-level" = mean across 104 tasks, and some agent wins are due to human latency disadvantage (moving-items 0.88 vs 0.18). The DOM-reliance ablation (~75% drop) is the most important caveat for anyone wanting *pixel-only* computer use — MiniWob++'s canvas being in the DOM makes the benchmark easier than general GUIs. Verified numbers: 2.4M+ demos / 77 participants / ~6300 hours; ~400x the original data; 2.2M/310K split; total params Not reported. Follow-ups: WebGPT (Nakano 2021) for a contrasting interface; WebArena-style suites for how the field moved past scripted rewards.
+{/* NOTES_END */}

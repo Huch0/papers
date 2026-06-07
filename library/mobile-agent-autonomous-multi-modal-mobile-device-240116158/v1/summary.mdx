@@ -1,0 +1,108 @@
+---
+canonical_key: arxiv-2401.16158
+version_key: v1
+title: 'Mobile-Agent: Autonomous Multi-Modal Mobile Device Agent with Visual Perception'
+authors:
+- Junyang Wang
+- Haiyang Xu
+- Jiabo Ye
+- Mingshi Yan
+- Weizhou Shen
+- Ji Zhang
+- Fei Huang
+- Jitao Sang
+venue: arXiv.org
+year: 2024
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2401.16158
+summary_date: '2026-06-07'
+---
+
+<TLDR>Mobile-Agent is a purely vision-based Android GUI agent that drives apps from screenshots alone — using OCR + icon-detection + CLIP to ground GPT-4V's text/icon click intents into pixel coordinates — evaluated on a new 10-app, 3-difficulty benchmark (Mobile-Eval).</TLDR>
+
+<WhyItMatters>An early (Jan 2024) landmark in the mobile/computer-use agent lineage that stakes out the "no view-hierarchy, screenshot-only" design point — directly relevant to harness design — and introduces a reusable real-app benchmark. A design reference more than a results anchor.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "0.91 / 0.82 / 0.82", label: "Success rate", sub: "instruction tiers 1/2/3 (Tab.2)" },
+  { value: "~80%", label: "Process Score", sub: "step-level accuracy (Tab.2)" },
+  { value: "10 + Multi-App", label: "Apps in Mobile-Eval", sub: "3 instructions each (Tab.1)" },
+]} />
+
+## Motivation
+<Problem>GPT-4V can decide *what* to do on a screen but cannot reliably say *where* to do it</Problem> — it "struggles to accurately locate the positions of these operations on the screen" (p.2, citing Zheng et al. 2024). Prior fixes inject UI layout files to recover clickable coordinates: <Problem>AppAgent reads Android XML view-hierarchies and SeeAct reads web HTML — but these require file-access permissions that "may not be available"</Problem> in many scenarios (p.2), making them OS- and app-specific.
+
+## Contribution (what's new)
+<Novelty>Decouple decision from grounding: GPT-4V plans and emits a symbolic action, and a separate pipeline of off-the-shelf perception tools (OCR, Grounding DINO, CLIP) translates that target into pixel coordinates from the screenshot alone</Novelty> (p.2–4). The design must take this form because the baseline failure is specifically localization, not planning — so the fix is an external grounding module rather than a better prompt, and dropping the view-hierarchy is what buys OS-agnostic portability. Second contribution: <Novelty>Mobile-Eval, a real-app benchmark with a difficulty gradient (concrete → abstract → multi-app) and four complementary metrics</Novelty> (p.2, p.5).
+
+## Research questions
+Can a mobile agent localize and execute operations from screenshots only — with no XML/view-hierarchy/system metadata — and still complete realistic, multi-step, multi-app instructions on live mainstream apps?
+
+## Methodology
+Two coupled components plus a benchmark. A <Term def="screenshot is the only grounding input; no XML view-hierarchy or system metadata">vision-only</Term> perception module locates targets, and a ReAct-style loop lets GPT-4V plan, act, and self-reflect over a fixed 8-operation vocabulary.
+
+<Pass title="Method details">
+<Stepper steps={[
+  { title: "Text grounding (OCR)", body: "An OCR tool finds the target text box; the agent clicks its center. Three cases (p.3): (a) no match → reselect or pick another op (attributed to GPT-4V hallucinations); (b) one match → click center; (c) multiple → if many, reselect; if few, crop each region, expand the box outward, draw detection boxes, and feed the crops back to the agent to disambiguate." },
+  { title: "Icon grounding (DINO + CLIP)", body: "The agent describes the wanted icon's color/shape; Grounding DINO with the prompt `icon` detects all icons; CLIP scores each detected crop against the description and the highest-similarity box is clicked (p.4)." },
+  { title: "8-operation vocabulary", body: "Open App, Click text, Click icon (with a `Position` hint in `{top,bottom,left,right,center}`), Type, Page up/down (scroll), Back, Exit, Stop (p.4). Concrete taps/types/scrolls execute at coordinates from the perception pipeline — not from the LLM directly." },
+  { title: "Self-Planning loop", body: "Each iteration captures a screenshot and gives the agent the system prompt (built from the instruction), operation history, and current screenshot; it outputs the next op until it emits Stop (p.4). ReAct-style Observation / Thought / Action format." },
+  { title: "Self-Reflection", body: "Two triggers (p.4): (1) screenshot unchanged or wrong page after an op → retry / alter parameters; (2) after self-planning declares done → re-check screenshot + history + instruction for overlooked sub-requirements, else resume." },
+]} />
+
+Training: none — Mobile-Agent is training-free, prompt-engineered around frozen GPT-4V and frozen perception tools.
+
+Benchmark (Mobile-Eval, p.5): 10 mainstream apps (Alibaba.com, Amazon Music, Chrome, Gmail, Google Maps, Google Play, Notes, Settings, TikTok, YouTube) plus a Multi-App tier requiring information transfer between two apps. Three instructions per app of rising difficulty: basic op; basic + extra requirement; abstract instruction that does not name the app. Four metrics: Success (binary), Process Score (correct steps / total steps), Relative Efficiency (agent steps vs human-optimal steps), Completion Rate (human steps completed / total human steps; =1 if fully done).
+</Pass>
+
+## Main result
+On Mobile-Eval (no baseline), per-instruction-tier averages were <Finding src="Tab.2, p.6">Success 0.91 / 0.82 / 0.82, Process Score 0.89 / 0.77 / 0.84 (~80%), and Completion Rate 98.2% / 90.9% / 91.3%</Finding> across tiers 1/2/3. Relative Efficiency was <Finding src="Tab.2, p.6">4.9/4.2, 7.9/6.3, 7.5/6.2 agent-vs-human steps — about 17–25% more steps than the human optimum, summarized as "80% capability of reaching human-optimal operations"</Finding> (p.6).
+
+<SortableTable columns={["Instruction tier", "Success", "Process Score", "Completion Rate", "RE (agent/human)"]} rows={[
+  ["1 (basic)", 0.91, 0.89, "98.2%", "4.9 / 4.2"],
+  ["2 (+ requirement)", 0.82, 0.77, "90.9%", "7.9 / 6.3"],
+  ["3 (abstract)", 0.82, 0.84, "91.3%", "7.5 / 6.2"],
+]} />
+
+## Key findings
+- <Finding src="Tab.2, p.6">Self-reflection rescues low-accuracy trajectories</Finding>: several cells have Process Score `<` 1 yet still succeed (e.g. Notes Instruction 1: PS 0.57, success), supporting the claim that mid-trajectory errors get corrected (p.6).
+- <Finding src="Tab.2, p.6">Difficulty hurts step accuracy more than final success</Finding>: PS dips to 0.77 on tier 2 while Success holds near 0.82 — harder instructions cause more wrong steps that reflection partially recovers from.
+- <Finding src="Fig.6, Fig.7, p.6">Cross-app information transfer works</Finding>: the agent carries data from one app into another (e.g. read a calendar date → write it into Notes), relying on in-context operation history as memory.
+- <Finding src="Fig.8, p.6">Vision-only perception handles a Chinese-language system</Finding> despite GPT-4V's weaker Chinese text generation — perception is decoupled from language fluency.
+- <Caveat src="§3.2, p.6">Reporting inconsistency: the prose calls 91% / 82% / 82% "completion rates," but those are the Success averages</Caveat> — the actual CR averages in Tab.2 are 98.2% / 90.9% / 91.3%. The table is authoritative; the prose conflates Success with Completion Rate.
+
+## Implications
+Establishes the screenshot-only / no-view-hierarchy point as a viable design and provides a named benchmark for it. <Related>Differentiates from AppAgent (Yang et al. 2023d), which tags UI via Android XML, and from SeeAct (Zheng et al. 2024), which grounds web agents via HTML</Related>; borrows Grounding DINO and CLIP wholesale and ReAct for the prompt format. <FollowUp>Compare vision-only accuracy/latency against view-hierarchy-based agents and later set-of-mark / native-grounding approaches; track Mobile-Agent-v2 for added baselines and larger eval</FollowUp>.
+
+## Limitations
+- <Caveat>No baselines and no ablations — the central "vision-only is enough / replaces XML" claim is never tested head-to-head, and the contributions of OCR vs Grounding DINO vs CLIP vs self-reflection are not isolated</Caveat> (the single largest evidentiary gap).
+- <Caveat>Tiny, single-run, author-judged evaluation: ~30 instructions total, no repeated runs, no seeds, no variance or CI; success judged by the authors and not blinded</Caveat> (p.5).
+- <Caveat>Latency and cost unaddressed — a per-step pipeline of GPT-4V + Grounding DINO + CLIP + OCR is plausibly slow/expensive, but no numbers are reported</Caveat>.
+- <Caveat>Grounding ceiling inherited from the tools (OCR/detector failures, CLIP mismatches) with no error taxonomy; the OCR engine identity and GPT-4V snapshot are Not reported</Caveat>.
+- <Caveat>Android-only by the authors' own admission; other OSes left to future work, and no safety/confirmation gate despite executing real irreversible actions (sending emails, posting comments, adding to cart)</Caveat> (p.4).
+
+## Critiques and Questions
+1. Without an XML-based control (AppAgent) on the same tasks, the "vision is enough" thesis is asserted, not measured — how much of the success is the perception pipeline vs GPT-4V's planning alone?
+2. The SU-vs-CR conflation in the prose signals loose reporting; when citing, quote Tab.2 (SU 0.91/0.82/0.82; CR 98.2%/90.9%/91.3%), not the p.6 sentence.
+3. Live-app non-determinism (network, changing content) makes the benchmark hard to reproduce exactly — how stable are these single-run numbers?
+
+<SelfCheck q="Why does Mobile-Agent need OCR, Grounding DINO, and CLIP at all if GPT-4V already decides the action?" a="Because GPT-4V can choose the correct operation but cannot reliably output where on the screen to perform it. The perception tools ground a symbolic target (a text string or an icon description) into pixel coordinates: OCR locates text boxes, Grounding DINO detects all icons, and CLIP matches the detected icons to the agent's description — replacing the XML view-hierarchy that prior agents relied on." />
+
+## Glossary
+- <Term def="screenshot is the only grounding input; no XML view-hierarchy or system metadata is read">vision-only / vision-centric</Term>
+- <Term def="Android's structured tree of on-screen UI elements and their bounds; AppAgent reads it to get clickable coordinates">XML view-hierarchy</Term>
+- <Term def="open-set object detector prompted with text (here 'icon') to find all matching regions">Grounding DINO</Term>
+- <Term def="vision-language model that scores image-text similarity; used to pick the icon crop best matching the agent's description">CLIP</Term>
+- <Term def="prompt format interleaving Observation, Thought, and Action per step">ReAct</Term>
+- <Term def="correct steps divided by total steps; step-level accuracy independent of final success">Process Score (PS)</Term>
+- <Term def="human steps the agent completes divided by total human steps; equals 1 if the instruction is fully done">Completion Rate (CR)</Term>
+- <Term def="agent steps vs human-optimal steps; humans treated as the optimal solution">Relative Efficiency (RE)</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Watch the SU-vs-CR conflation when citing this paper — quote the table (SU 0.91/0.82/0.82; CR 98.2%/90.9%/91.3%), not the p.6 sentence. The icon-grounding recipe (describe attributes → Grounding DINO → CLIP) is the most reusable nugget. Compare its accuracy/latency against view-hierarchy-based agents (AppAgent) and against later set-of-mark / native-grounding approaches. Follow-ups: AppAgent (2312.13771), SeeAct/Zheng et al. 2024 (2401.01614), Mobile-Agent-v2. Check code at https://github.com/X-PLUG/MobileAgent (verify OCR tool, GPT-4V version, prompts, license).
+{/* NOTES_END */}

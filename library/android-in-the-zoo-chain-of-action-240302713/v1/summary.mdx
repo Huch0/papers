@@ -1,0 +1,104 @@
+---
+canonical_key: arxiv-2403.02713
+version_key: v1
+title: 'Android in the Zoo: Chain-of-Action-Thought for GUI Agents'
+authors:
+- Jiwen Zhang
+- Jihao Wu
+- Yihua Teng
+- Minghui Liao
+- Nuo Xu
+- Xiaojun Xiao
+- Zhongyu Wei
+- Duyu Tang
+venue: Conference on Empirical Methods in Natural Language Processing
+year: 2024
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2403.02713
+summary_date: '2026-06-07'
+---
+
+<TLDR>An Android GUI agent should not emit raw `click (x,y)` from a screenshot alone — <Novelty>Chain-of-Action-Thought (CoAT)</Novelty> routes the decision through an explicit semantic chain (screen description → action think → action description → action result), and the paired AitZ dataset makes that chain trainable for small models.</TLDR>
+
+<WhyItMatters>A concrete, reusable observation/reasoning interface for AitW-style mobile agents, plus a labeled dataset and an actionable data-quality critique of AitW. Foundational for the computer-use-agents track.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "+9.4", label: "GPT-4V acc gain", sub: "CoAT vs CoT, zero-shot (Tab.2)" },
+  { value: "14.51", label: "AUTO-UI+CoAT goal progress", sub: "~1.2B rivals 18B CogAgent (Tab.5)" },
+  { value: "18,643", label: "screen-action pairs", sub: "AitZ, 2,504 instructions, 70+ apps" },
+]} />
+
+## Motivation
+<Problem>Existing LLM/LMM GUI agents predict an action sequence while ignoring the semantics of intermediate screenshots and operations.</Problem> Prior methods (AUTO-UI / Chain-of-Action, SeeClick) concentrate on action *coordinates* like `click on (0.17, 0.89)` and discard the logic behind the action (§1). A second gap: <Problem>complex context modeling is claimed to "emerge at a large model scale," so small models cannot acquire it by fine-tuning without high-quality CoAT-style data — and no such data existed</Problem> (§1; the "emerges at scale" claim is cited to Zhang et al. 2023, not demonstrated here). Third, <Problem>AitW itself has heavy label noise</Problem>: for "check the settings for the spotify app," 13 of 15 episodes never open Spotify (Fig.4).
+
+## Contribution (what's new)
+<Novelty>Factor the GUI policy through an interpretable intermediate chain instead of mapping screenshot → coordinate directly.</Novelty> A standard agent learns `pi(a_t | o_t, h_{t-1}, u)` (§2.1); the relation between history, observation, and action is implicit and hard to learn. CoAT inserts four textual states — <Term def="textual description of the screen type and primary apps/widgets; query-independent">Screen Description (SD)</Term>, <Term def="reasons over query + screen + history to infer candidate actions">Action Think (AT)</Term>, <Term def="natural-language description of the operated UI element, e.g. 'click the cart icon'">Next Action Description (AD)</Term>, <Term def="synthesizes the outcome by comparing screenshots before/after the action">Action Result (AR)</Term> — so the decision factors through states the model (and a human) can read. <Novelty>The components are composable: route context-providers (SD, previous-AR) to model *input* and reasoning (AT, AD) to model *output*.</Novelty> Second contribution: <Novelty>AitZ, the first Android-nav dataset combining screen description + action coordinate + action description + action thinking + episode-feasibility verification</Novelty> (Tab.1).
+
+## Research questions
+Does an explicit semantic action chain improve action prediction over coordinate-only / free-form-CoT prompting, and can a CoAT dataset let a small fine-tuned model rival a much larger GUI agent?
+
+## Methodology
+Two artifacts: the CoAT schema and the AitZ dataset built to supply it. Evaluation is **offline action-matching** against gold AitW trajectories (not live device execution), scored by atomic action-match and episodic goal progress.
+
+<Pass title="Method details">
+<Stepper steps={[
+  { title: "Instruction sampling from AitW", body: "AitW has 715k episodes / 30k instructions with template redundancy and train/test leakage. Subset-specific sampling: uniform per-instruction for GENERAL/GOOGLEAPPS/INSTALL (x=3/5/3), balanced sampling over site×object for WEBSHOPPING, verb-grouping + tf-idf clustering + balanced sampling for SINGLE. Yields 3,461 instructions / 7,180 episodes (§3.1)." },
+  { title: "Human completion check", body: "10 annotators verify task completion; 5,147 successful episodes remain; one episode kept per unique instruction. (The 3,461 → final 2,504 instruction count is not explicitly reconciled — Unclear.)" },
+  { title: "Semantic annotation", body: "GPT-4V (Azure API) generates SD/AT/AD/AR; an icon-detection model marks clicked elements; SCROLL/PRESS use templates. SD is query-independent; AD gets query + gold coordinate (prompts in Fig.8)." },
+  { title: "Expert verification", body: "3 UI-expert annotators check AD against gold actions; on mismatch they revise AD and force GPT-4V to regenerate AT/AR. Inter-annotator agreement: Not reported." },
+  { title: "Split", body: "1,998 train / 506 test episodes (~70/30); 13,919 / 4,724 screens (Tab.4). SINGLE (single-step) is all placed in train. Authors stress no instruction overlap → no leakage." },
+]} />
+
+Action space (simplified, App.A): `CLICK(y,x)` in relative `[0,1]`, `SCROLL(direction)`, `TYPE(text)`, `PRESS(back/home/enter)`, `STOP(task_state)`; AitW's `DUAL_POINT` is split into CLICK and SCROLL. UI elements are exposed either as set-of-mark tags drawn on the image or as a textual element list. Agents: zero-shot prompting on Qwen-VL-Max, Gemini-1.0-Pro-Vision, GPT-4V, and CogAgent-Chat-18B (training data not public → ZS only); AUTO-UI-base (~1.2B; BLIP2 encoder, FLAN-Alpaca decoder, 224×224) fine-tuned from scratch on AitZ (≤10 epochs, lr 1e-4).
+</Pass>
+
+## Main result
+Zero-shot, CoAT beats the best of coordinate-only (CoA) / free-form (CoT) prompting on all three LMMs, with the largest gain on the strongest model — <Finding src="Tab.2, p.3">GPT-4V rises 64.1 → 73.5 acc, +9.4 over CoT (+10.7 over CoA)</Finding>, while format hit rates stay 94.5–99.8. Fine-tuned, <Finding src="Tab.5, p.6">AUTO-UI+CoAT (~1.2B) reaches 47.69 total match / 14.51 goal progress — more than doubling its 6.59 GP baseline and rivaling CogAgent-Chat-18B (17.13 GP, 53.28 match)</Finding>; "on-par" is most defensible on goal progress and overall match, less so per-action-type.
+
+<SortableTable columns={["Setting", "Model", "Total match", "Goal progress"]} rows={[
+  ["Zero-shot", "CogAgent-18B", 44.52, 13.82],
+  ["Zero-shot", "CogAgent-18B +CoAT", 53.28, 17.13],
+  ["Fine-tuned", "AUTO-UI ~1.2B", 34.46, 6.59],
+  ["Fine-tuned", "AUTO-UI ~1.2B +CoAT", 47.69, 14.51],
+]} />
+
+## Key findings
+- <Finding src="Tab.2, p.3">CoAT's benefit scales with model capability</Finding>: zero-shot acc gain is +3.0 (Qwen 49.4→52.4) and +2.5 (Gemini 52.0→54.5) but +9.4 on GPT-4V — consistent with the "emerges at scale" framing.
+- <Finding src="Tab.6, p.7">Previous-Action-Result is the single highest-leverage component</Finding>: adding AR-style coherence drives the STOP action-match from 60.12 to 79.17, because explicit textual outcomes link consecutive steps so the agent can judge task progress.
+- <Finding src="Tab.6, rows 5–7">Learning to *think* (AT as output) without supporting input is hard</Finding>: AT-only configs underperform; performance jumps only once SD and/or previous-AR are added to the input.
+- <Finding src="Tab.6, rows 9 vs 10">Adding Screen Description to AUTO-UI's input slightly *hurts*</Finding> (a reported negative result), attributed to its low 224×224 visual encoder being unable to ground the textual description.
+- <Finding src="Tab.5, p.6">CoAT does not help uniformly per action type</Finding>: for CogAgent, +CoAT lifts STOP (4.76→24.60) and SCROLL-type (56.41→70.22) but CLICK-match *drops* (67.40→45.80).
+- <Finding src="Fig.4, p.4">AitW has substantial label noise</Finding>: 13/15 episodes for one instruction never open the target app, and AitW's train/val/test instruction distributions are near-identical (leakage) — motivating AitZ's resampling.
+
+## Implications
+The portable idea for harness design is the SD→AT→AD→AR factorization with context-pieces in input and reasoning in output. It generalizes <Related>Chain-of-Thought (Wei et al. 2022)</Related> with screen/action-specific structure, is positioned against the coordinate-only <Related>AUTO-UI / Chain-of-Action (Zhan & Zhang 2023)</Related>, builds episodes from <Related>Android in the Wild (Rawles et al. 2023)</Related>, and uses <Related>CogAgent-18B (Hong et al. 2023)</Related> as the strong reference. <FollowUp>Whether CoAT survives live device execution rather than offline action-matching</FollowUp>; <FollowUp>how much of the small-model gain is the AR coherence signal vs. the dataset cleaning</FollowUp>; <FollowUp>whether a higher-resolution encoder would flip the SD-hurts result</FollowUp>.
+
+## Limitations
+- <Caveat>Offline action-matching only — no live execution / true task-success metric.</Caveat>
+- <Caveat>The headline cross-model comparison is asymmetric: fine-tuned 1.2B AUTO-UI vs zero-shot 18B CogAgent, and among the +CoAT rows CogAgent still leads on both total match and goal progress — so "on-par" is generous framing.</Caveat>
+- <Caveat>The zero-shot prompting study uses only 50 AitW episodes; no variance, seeds, or significance testing anywhere.</Caveat>
+- <Caveat>Annotation relies on GPT-4V plus a 3-expert pass; inter-annotator agreement Not reported.</Caveat>
+- <Caveat>Author-stated: differing architecture/training data make agent comparison "less intuitive"; impact of image resolution, text-recognition, and GUI-grounding pretraining is left unmeasured.</Caveat>
+
+## Critiques and Questions
+1. The "on-par with 18B" claim mixes metrics: among the +CoAT rows CogAgent leads on both total match (53.28 vs 47.69) and goal progress (17.13 vs 14.51) — so the cleaner statement is "a fine-tuned 1.2B model gets within striking distance of a zero-shot 18B model," not parity.
+2. CogAgent is evaluated zero-shot while AUTO-UI is fine-tuned on AitZ — does CoAT add value, or is the gain mostly the cleaned in-distribution training data? The ablation isolates components but not the data-cleaning vs CoAT-schema split.
+3. With only 50 episodes and no seeds, how stable are the zero-shot prompting deltas, especially the small Gemini gain where CoAT's hit rate (96.4) is below CoT's (97.5)?
+
+<SelfCheck q="Why does the paper put Screen Description and previous-Action-Result in the model input but Action Think and Action Description in the output?" a="SD and previous-AR are context that does not directly decide the current action, so they are given as input; AT and AD are the reasoning/decision the agent must learn to produce, so they are supervised as output. The ablation (Tab.6) shows learning AT as output is hard without SD/AR in the input." />
+
+## Glossary
+- <Term def="screen-wise correctness: an action is right iff its type AND details (coord/direction/text/button) match the gold action">action-matching score</Term>
+- <Term def="episodic metric: relative position in the trajectory where the first error occurs — how far the agent got before failing">goal progress (GP)</Term>
+- <Term def="annotating clickable UI elements by drawing numbered/marked overlays on the screenshot (Yan et al. 2023)">set-of-mark tagging</Term>
+- <Term def="Android in the Wild — the 715k-episode source dataset AitZ resamples and re-annotates">AitW</Term>
+
+{/* NOTES_START */}
+### Personal notes
+The most portable idea for harness design: factor a GUI policy through SD → AT → AD → AR and route context-providing pieces (SD, previous AR) to *input* and reasoning pieces (AT, AD) to *output*. The negative SD-on-low-res result is a useful caution: textual screen descriptions help only if the visual encoder can ground them; on a 224×224 encoder they add noise.
+{/* NOTES_END */}

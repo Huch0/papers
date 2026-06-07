@@ -1,0 +1,130 @@
+---
+canonical_key: arxiv-2307.10088
+version_key: v1
+title: 'Android in the Wild: A Large-Scale Dataset for Android Device Control'
+authors:
+- Christopher Rawles
+- Alice Li
+- Daniel Rodríguez
+- Oriana Riva
+- T. Lillicrap
+venue: Neural Information Processing Systems
+year: 2023
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2307.10088
+summary_date: '2026-06-07'
+---
+
+{/*
+  Canonical Summary structure (concise, core-first). Body only — frontmatter is generated
+  from metadata.yaml by `summarize_paper.py --format mdx --prepare`. Components are
+  provided globally by the site (no imports). See config/summary_components.md.
+
+  TWO HARD RULES:
+  1. CONCISE, BUT KEEP THE KEY POINTS. Capture the paper's important findings/analysis —
+     not just the headline number. (e.g. for SWE-bench: "difficulty correlates with
+     context length", "finetuned models are sensitive to context-distribution shift".)
+     Put the headline up top; collect the rest under "## Key findings". Depth in <Pass>.
+  2. USE THE SEMANTIC HIGHLIGHTS for their MEANING (colors are consistent across summaries):
+       <Problem>   red    — the problem this paper tackles / a prior-work limitation
+       <Novelty>   green  — a novel module/approach/insight this paper introduces
+       <Finding src="Tab.X">  teal — a finding / claim / result of THIS paper
+       <FollowUp>  blue   — a notion/thread the reader should follow up on
+       <Caveat>    orange — a limitation of THIS paper
+       <Related>   violet — related work / lineage
+       <Term def="…">  glossary chip with hover definition (self-contained)
+  Declarative English; specific numbers + anchors; "Not reported"/"Unclear" for gaps;
+  verify numbers against extraction.txt. Keep Motivation (<Problem>) ≠ Contribution (<Novelty>).
+*/}
+
+<TLDR>AITW is a 715k-episode, ~30k-instruction Android device-control dataset whose defining choice is to drop UI-tree metadata for pixel-only observations and a precise dual-point gesture action space, paired with OOD splits and an offline action-matching metric.</TLDR>
+
+<WhyItMatters>Foundational data artifact for pixel-based mobile GUI agents: the action-matching metric, four-subset structure, and OOD splits are upstream of most later Android-agent benchmarks (e.g. AndroidControl, AndroidWorld).</WhyItMatters>
+
+<KeyStats items={[
+  { value: "715k", label: "episodes", sub: "5.69M screens, 30.4k unique prompts" },
+  { value: "73.1", label: "best partial match", sub: "BC-history, Standard split (Tab.4)" },
+  { value: "4", label: "OOD axes", sub: "version / subject / verb / domain" },
+]} />
+
+## Motivation
+Device-control systems should map high-level natural-language goals to UI actions executed directly on-screen, "exactly as a human does," without app-specific APIs (p.1-2). <Problem>Prior datasets are orders of magnitude too small</Problem> — MoTIF, the largest predecessor, has ~4.7k feasible demos vs AITW's 715k (Tab.1). They also <Problem>depend on platform UI-tree metadata (View Hierarchy / DOM)</Problem>, which is "poor quality or missing altogether" for real apps (WebViews, Canvas, Electron, accessibility-gated VH), and they often <Problem>phrase tasks as low-level step commands</Problem> ("Click the button labeled Cancel") rather than high-level goals.
+
+## Contribution (what's new)
+Two coupled design decisions, each derived from a way the metadata-based setup fails in deployment:
+- <Novelty>Pixel-only observation</Novelty>: episodes store screenshots plus pixel-derived features (OCR text + <Term def="Google icon classifier producing one of 96 icon-type labels from pixels">IconNet</Term> labels), explicitly NOT the View Hierarchy (p.5). The thesis is that affordances must be inferred from appearance because the VH is unreliable in the wild.
+- <Novelty>Dual-point gesture action space</Novelty>: each gesture is a `(touch_point, lift_point)` pair at arbitrary normalized `<x,y>`; a tap is the degenerate case (the two points within 0.04 Euclidean distance), a scroll is a longer drag (p.4-5). This represents precise drags (carousels, sliders, month-switching) that element-based action spaces cannot.
+
+The dataset is organized into OOD splits to make it a generalization benchmark, not just a corpus.
+
+## Research questions
+For a benchmark paper, the central questions are: can a single dataset at realistic scale capture high-level instruction following over real Android screens using only pixels and gestures, and how robustly do agents generalize to new platform versions, task subjects, verbs, and app/web domains?
+
+## Methodology
+A two-stage construction pipeline produces multi-step trajectories and then derives single-step examples from them by relabeling, all evaluated offline with a distance-based action-matching metric.
+
+<Pass title="Method details — construction, schema, metric">
+Two-stage pipeline (Fig.1, §3, p.4-5):
+
+<Stepper steps={[
+  { title: "Multi-step collection", body: "Instructions come from the authors, the achievable subset of PixelHelp [28], and LLM-generated prompts. Raters execute end-to-end on a randomized starting screen, ending with task_complete or task_impossible. Tasks already in target state are marked complete." },
+  { title: "Hindsight language relabeling [31,32]", body: "Raters review collected trajectories and annotate short 2-5 frame subsequences (>=3 per video) with result-describing phrases, avoiding 'click/tap/scroll' wording. This produces the SINGLE single-step set without re-collection." }
+]} />
+
+Composition (Tab.2, p.4): 715,142 episodes / 5,689,993 screens / 30,378 unique prompts — GOOGLEAPPS (625,542 ep; 306 prompts), INSTALL (25,760 ep; 688 prompts; 88 apps), WEBSHOPPING (28,061 ep; 13,473 prompts), GENERAL (9,476 ep; 545 prompts), SINGLE (26,303 ep; 15,366 prompts). Coverage: 357+ apps/websites headline (159 Android apps + 198+ websites, "conservative estimate," p.6). Four Android versions (v10-13), eight device types (Pixel 2 XL to Pixel 6).
+
+Per-step record (Appendix C, p.20, GZIP TFRecord): `image/encoded`, `ui_annotations_positions (y,x,h,w)`, `ui_annotations_text`, `ui_annotations_ui_types`, `current_activity`, `android_api_level`. Action types: dual-point gesture, type, go_back, go_home, enter, task_complete, task_impossible. No View Hierarchy is stored.
+
+Action matching (§5.2, p.8): two actions match if action types are equal AND, for taps, fall within 14% screen distance OR within the same detected bounding box (inflated to 240% size); two scrolls match if they share the primary axis. Yields partial match (correct actions / episode length) and complete match (partial = 1.0), following Li et al. [28].
+</Pass>
+
+## Main result
+The custom pixel-based behavioral-cloning agent far outperforms the adapted element-based LLM, but the gap partly measures interface fit. Best Standard-split partial match is <Finding src="Tab.4, p.9">BC-history 73.1 vs LLM-hist-5-CoT 39.6</Finding>.
+
+<SortableTable columns={["Method", "Standard partial match", "Notes"]} rows={[
+  ["BC-history", 73.1, "behavioral cloning, 2 prior steps"],
+  ["BC-single", 68.7, "no history"],
+  ["LLM-hist-5-CoT", 39.6, "PaLM-2, 5-shot CoT, element-only"],
+  ["LLM-0", 30.9, "PaLM-2 zero-shot"]
+]} />
+
+## Key findings
+- <Finding src="Tab.4, p.9">History helps behavioral cloning</Finding>: BC-history beats BC-single by ~4 points on Standard (73.1 vs 68.7), with similar lifts across OOD splits.
+- <Finding src="Tab.4, p.9">All agents degrade out-of-distribution, unevenly</Finding>: BC-history drops to 63.2 (unseen version), 68.5 (subject), 70.4 (verb), 59.7 (domain) — domain shift hurts most.
+- <Finding src="§5, p.8">The LLM's element-only action space is a structural handicap</Finding>: 33% of Standard episodes contain non-element taps that are simply infeasible for it; on the feasible subset LLM-hist-5-CoT reaches 58% partial match.
+- <Finding src="Tab.5, p.17">Per-subset difficulty varies widely</Finding>: BC-history ranges 63.7 (GENERAL) to 80.3 (SINGLE) on Standard; GOOGLEAPPS is easy on Standard (75.7) but hard on Subject/Verb (48.4/57.4) because it has few prompts but many demos each.
+- <Finding src="Fig.3, p.8">Automated complete-match is a lower bound on true success</Finding>: human eval shows partial match correlates with true completion, "especially if the number of steps is small" — but validation covers only a small GOOGLEAPPS subset (~86.5 episodes/split).
+
+## Implications
+AITW set the de facto conventions for the field: pixel-only observation by design, an arbitrary dual-point gesture action space, and the reusable offline action-matching metric (with released code). It builds on <Related>PixelHelp / Li et al. [28] (metric source), MoTIF [9], and the Wang et al. CHI'23 LLM-over-HTML baseline [43]</Related>, and is the lineage behind later <Related>AITW-derived benchmarks (AndroidControl, AndroidWorld)</Related>. Threads worth chasing: <FollowUp>how downstream papers reconcile offline action-matching with online task success</FollowUp> and <FollowUp>the exact 14% / 240% action-matching constants in the google-research code</FollowUp>.
+
+## Limitations
+- <Caveat>The metric is a distance heuristic that under-credits valid alternative actions</Caveat> (e.g. nav-bar back vs in-app back); complete-match is only a lower bound, validated on one small subset (§5.2).
+- <Caveat>The LLM baseline is underpowered by an action-space mismatch the authors introduced</Caveat> (element-only vs gesture space), so the BC-vs-LLM gap conflates interface fit with model capability; no fine-tuned multimodal baseline.
+- <Caveat>English-only prompts; raters not globally representative and used mouse/keyboard, not native touch</Caveat> (§6.1).
+- <Caveat>Phone form factor only; dataset aging</Caveat> — real 2023 web/app screens drift after capture, only partially captured via the Android-version split.
+- <Caveat>Class imbalance</Caveat>: GOOGLEAPPS is ~87% of episodes but only 306 prompts, skewing aggregate numbers.
+
+## Critiques and Questions
+1. A metric the whole field adopted is validated against human judgment on ~86.5 episodes per split, only for short episodes — how much downstream "progress" is metric noise?
+2. The headline BC >> LLM story largely measures who fits the gesture action space, not who understands screens; a fine-tuned multimodal agent could invert it.
+3. Template-based subject/verb OOD splits rely on an LLM extractor whose error rate is Not reported — how clean is the train/test separation?
+
+<SelfCheck q="Why can the element-based LLM baseline not even attempt many AITW episodes?" a="AITW's action space is precise dual-point gestures over arbitrary pixel coordinates; 33% of Standard episodes need taps/drags that are not on any detected element, so an element-only agent has no valid action to emit (§5, p.8)." />
+
+## Glossary
+- <Term def="Each action is a (touch_point, lift_point) pair at arbitrary normalized coordinates; a tap is when the two are within 0.04 distance, a scroll is a longer drag">dual-point gesture</Term>
+- <Term def="Relabeling collected trajectories after the fact: raters describe what a short subsequence accomplished, yielding single-step goal/action pairs without new collection">hindsight language relabeling</Term>
+- <Term def="Offline metric: predicted and ground-truth actions match if types agree and taps fall within 14% screen distance or the same inflated bounding box; scrolls match on primary axis">action matching</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Key verified numbers: 715,142 episodes; 5,689,993 screens; 30,378 unique prompts; subsets GOOGLEAPPS 625,542 / INSTALL 25,760 / WEBSHOPPING 28,061 / GENERAL 9,476 / SINGLE 26,303; coverage 357+ apps+websites (159 apps + 198+ websites); INSTALL spans 88 apps. Action match: tap within 14% screen distance or same bbox @240%; scroll by axis. Baselines (Standard partial match): BC-history 73.1, BC-single 68.7, LLM-hist-5-CoT 39.6, LLM-0 30.9.
+
+Follow-ups: add AndroidEnv [40] and later AITW-derived benchmarks (AndroidControl, AndroidWorld); compare with MoTIF / Mind2Web / PixelHelp for dataset+metric lineage; check the 14% / 240% action-matching constants in the google-research code; watch the contamination/aging angle — real web/app screens captured 2023 on Android v10-13 are already drifting.
+{/* NOTES_END */}

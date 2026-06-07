@@ -1,0 +1,107 @@
+---
+canonical_key: arxiv-2312.13108
+version_key: v1
+title: 'ASSISTGUI: Task-Oriented Desktop Graphical User Interface Automation'
+authors:
+- Difei Gao
+- Lei Ji
+- Zechen Bai
+- Mingyu Ouyang
+- Peiran Li
+- Dongxing Mao
+- Qinchen Wu
+- Weichen Zhang
+- Peiyi Wang
+- Xiangwu Guo
+- Hengxu Wang
+- Luowei Zhou
+- Mike Zheng Shou
+venue: arXiv.org
+year: 2023
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2312.13108
+summary_date: '2026-06-07'
+---
+
+<TLDR>AssistGUI is a 100-task Windows benchmark for automating real productivity software (After Effects, Premiere Pro, Word, ...) with outcome-based grading, plus an Actor-Critic LLM agent that reaches 46% success versus 85% for non-expert humans.</TLDR>
+
+<WhyItMatters>An early, foundational data point for a computer-use harness: it shows how to grade desktop agents by their produced artifact/state rather than action-matching, and gives concrete evidence on why raw vision grounding fails on dense desktop GUIs.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "46%", label: "best overall success", sub: "ACE, gpt-4-0613 (Tab.1)" },
+  { value: "85%", label: "non-expert human", sub: "reference ceiling (Tab.1)" },
+  { value: "100", label: "tasks / 9 apps", sub: "5 categories (§3.2)" },
+]} />
+
+## Motivation
+<Problem>Prior GUI-automation work targets Android/Web tasks centered on "simple device usage and entertainment operations,"</Problem> so agent skill there does not translate into real productivity (p.1 abstract; p.2 §1). Desktop productivity software raises three harder demands the authors argue prior benchmarks miss: <Problem>dense GUI understanding</Problem> (icons and footage, not just salient text), <Problem>complex non-tap operations</Problem> (dragging files, drawing masks on footage), and <Problem>long multi-step procedures</Problem> (one effect needs layer creation, import, effect add, animation). A further obstacle: <Problem>desktop OS metadata is far sparser than web HTML</Problem> — "specific texts and buttons are almost impossible to extract from the meta-data," forcing reliance on vision (p.3 §3.1).
+
+## Contribution (what's new)
+Two genuine deltas. First, <Novelty>a desktop benchmark graded by the produced artifact/state, not by trajectory matching</Novelty>: each task ships a fixed project file so all agents start identically, and success is checked against ground-truth output (pixel similarity for design/office edits, scripts for system settings and folder structure). This form is forced because the same edit has many valid action paths, so action-matching would be fragile. Second, <Novelty>ACE, an Actor-Critic Embodied Agent</Novelty> that converts a screenshot into DOM-like structured text via a tool-invoking GUI Parser, plans a milestone/subtask tree from instructional-video subtitles, and loops Critic→Actor — needed because single OCR/vision models miss dense GUIs and single-step generation cannot sustain long procedures (p.3 §2; §4).
+
+## Research questions
+Can LLM-based agents manipulate mouse/keyboard to complete real Windows productivity tasks, and what components (planning, criticism, perception tools, base model) actually drive success? (p.1 abstract; §5)
+
+## Methodology
+A remote (Linux) LLM server drives a local Windows client: <Term def="reads window/control metadata">PyWinAuto</Term> collects metadata plus screenshots, and the server returns <Term def="Python mouse/keyboard automation; actions are emitted as executable code">PyAutoGUI</Term> code executed locally. ACE perceives via a GUI Parser, plans from video subtitles, then iterates a Critic (judge last action) and Actor (advance subtask, emit action code) until done.
+
+<Pass title="Method details">
+<Stepper steps={[
+  { title: "Benchmark construction", body: "Pick instructional videos (≤5 min) from official/sharing sites; hand-write one query per video, deliberately not always matching the video so the model must adapt. Attach a versioned project file. Annotators execute each task to verify the video and project file. Final: 100 tasks, 9 apps, 5 categories — design, Office, system settings, widget usage, file management (§3.2, Tab.5)." },
+  { title: "Planner", body: "An LLM translates subtitles into a raw plan, then refines it against the user query into a hierarchical milestone→subtask tree; a traversal visits leaf subtasks in order (§4.1, Fig.5)." },
+  { title: "GUI Parser", body: "An LLM invokes vision tools to turn a screenshot into per-panel structured text (name + element labels + coordinates): metadata for panel layout, Google OCR for text, pattern matching for icons, YOLO-v8 for coarse objects, LangSAM (Grounding-DINO+SAM) for precise contours (§4.2, p.7)." },
+  { title: "Critic → Actor loop", body: "Critic diffs before/after screenshots (DeepDiff) to emit Success + Finish flags with a reason; Actor advances to the next subtask if finished and emits PyAutoGUI code conditioned on prior action, observation, subtask, plan, and critique (§4.3-4.4, Eq.1)." },
+]} />
+
+Evaluation is per-category (§3.3): Design/Office compare to ground truth at pixel granularity with a per-task threshold (CLIP-Sim is explicitly rejected because edits are animation, not semantic change); Widget compares the final screenshot in the metadata-defined display region; system-settings and file-management use scripts checking settings / folder structure. Each task is binary 1/0, aggregated to a success rate.
+</Pass>
+
+## Main result
+The best configuration (ACE on `gpt-4-0613`) reaches <Finding src="Tab.1, p.7">46.0% overall success, versus 32.0% for ReAct, 12.0% for CoT, and 85.0% for non-expert humans</Finding>. The large human-model gap makes this a stress-test benchmark, not a near-saturated one.
+
+<SortableTable columns={["Method", "Overall %", "Design", "Office", "Widget", "Sys.Set.", "File"]} rows={[
+  ["CoT", 12.0, "—", "—", "—", "—", "—"],
+  ["ReAct", 32.0, "—", "—", "—", "—", "—"],
+  ["ACE (Ours)", 46.0, 32.4, 40.5, 60.0, 75.0, 72.7],
+  ["Human*", 85.0, 73.5, 83.7, 100.0, 100.0, 100.0],
+]} />
+
+## Key findings
+- <Finding src="Tab.3, p.8">Perception, not reasoning, is the binding constraint</Finding>: removing OCR collapses overall success to 4.0% and removing icon parsing to 13.0% (from 46.0%), while removing panel layout (44.0) or "others" (43.0) barely matters.
+- <Finding src="Tab.3, p.8">A strong VLM is not a drop-in parser</Finding>: replacing the tool-based GUI Parser with Qwen-VL-Chat for grounding scores just 5.0% overall.
+- <Finding src="§5.2, p.8">GPT-4V-SoM is "almost nullified" on desktop</Finding>: the Set-of-Mark approach that works on Web/Smartphone fails because Semantic-SAM segmentation breaks on dense productivity UIs; GPT-4V alone also cannot output button positions.
+- <Finding src="Tab.4, p.8">Heavy dependence on GPT-4</Finding>: swapping the actor/critic to Llama2-7B drops success to 1.0%, a GPT-3.5 planner to 12.0%, and a GPT-3.5 actor/critic to 19.0% — attributed to output-format adherence and hallucination.
+- <Finding src="Tab.2, p.7">The Critic helps less than expected</Finding>: ablating it costs only 46.0→41.0, because its before/after judgments are unreliable on complex tasks; removing planning (35.0) or the instructional video (37.0) hurts more.
+- <Finding src="§5.2, p.8">Failure modes are perception-bound</Finding>: complex footage ops (roto brush), blurred/blank regions (document margins), and sub-word selection in dense text (uncontrollable OCR box granularity).
+
+## Implications
+Establishes desktop productivity software as a distinct, hard frontier for computer-use agents and makes the case for outcome-based, file-anchored grading over action matching. Its lineage sits alongside <Related>AndroidEnv and AutoDroid (Android), WebShop / Mind2Web / WebArena (Web)</Related>, with the GUI Parser following the tool-invoking pattern of <Related>MM-ReAct and VisualClues</Related>. Threads worth chasing: <FollowUp>whether later Windows-desktop benchmarks (e.g. OSWorld) adopt artifact-based grading</FollowUp> and <FollowUp>how to make a self-contained desktop grounding model now that GPT-4V-SoM fails here</FollowUp>.
+
+## Limitations
+- <Caveat>No external baseline</Caveat>: all comparisons are self-built ablations (CoT/ReAct re-implemented inside ACE), so "outperforms existing methods" is internal to the authors' pipeline (§5.1).
+- <Caveat>No variance, confidence intervals, or run counts</Caveat>, and per-category task counts are small (Widget, Sys.Set. move in large increments), so 44.0-vs-46.0-type gaps are likely within noise.
+- <Caveat>Human* is only three non-experts watching the video once</Caveat> — a reference, not a rigorous ceiling (Tab.1 caption).
+- <Caveat>Grader reproducibility is unclear</Caveat>: Design/Office use per-task pixel thresholds that "vary slightly," with no published table.
+- <Caveat>No safety/permission layer</Caveat>: the agent drives the real mouse/keyboard with no sandboxing; tasks are also tied to specific app versions/languages, so UI drift can break project files over time.
+
+## Critiques and Questions
+1. With OCR and icon parsing dominating (4.0% / 13.0% without), is ACE's "reasoning" contribution real, or is it mostly a well-engineered perception stack feeding a capable LLM?
+2. Given small per-category denominators and no variance reporting, which ablation gaps are statistically meaningful versus single-task swings?
+3. Instructional videos for these well-known apps are public — is there mild Planner contamination from GPT-4's training data, only partly mitigated by outcome-based grading?
+
+<SelfCheck q="Which single component, when removed, hurts ACE the most, and what does that say about the bottleneck?" a="Removing OCR drops overall success from 46.0% to 4.0% (Tab.3); together with icon parsing (13.0% without), this shows perception/grounding — not reasoning or planning — is the binding constraint on desktop GUI automation." />
+
+## Glossary
+- <Term def="An agent loop where a Critic judges the previous action's effect and an Actor decides the next action; here both are LLM calls.">Actor-Critic Embodied Agent (ACE)</Term>
+- <Term def="Marking detected UI elements with numbered visual tags so a vision-LLM can refer to them by index; here built on Semantic-SAM.">Set-of-Mark (GPT-4V-SoM)</Term>
+- <Term def="Grading by checking the produced file/state against ground truth (pixel similarity, settings/folder scripts) rather than matching the action sequence.">Outcome-based evaluation</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

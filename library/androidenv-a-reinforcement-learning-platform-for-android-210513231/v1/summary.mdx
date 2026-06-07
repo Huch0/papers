@@ -1,0 +1,102 @@
+---
+canonical_key: arxiv-2105.13231
+version_key: v1
+title: 'AndroidEnv: A Reinforcement Learning Platform for Android'
+authors:
+- Daniel Toyama
+- P. Hamel
+- Anita Gergely
+- Gheorghe Comanici
+- A. Glaese
+- Zafarali Ahmed
+- Tyler Jackson
+- Shibl Mourad
+- Doina Precup
+venue: arXiv.org
+year: 2021
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2105.13231
+summary_date: '2026-06-07'
+---
+
+<TLDR>AndroidEnv is an open-source RL platform that wraps a real emulated Android device behind the <Term def="DeepMind's standard Python RL environment API">`dm_env`</Term> API, exposing screen pixels as observations and a universal touchscreen-gesture interface as actions so agents can learn to operate arbitrary Android apps in real time.</TLDR>
+
+<WhyItMatters>Foundational, pre-LLM substrate for the device-control / GUI-agent lineage: the action interface (raw touch over real Android UIs) and observation (raw pixels) are exactly what modern computer-use agents must master, and later mobile benchmarks build on it (p.1, abstract).</WhyItMatters>
+
+<KeyStats items={[
+  { value: "100+", label: "ready-made tasks", sub: "across ~30 apps (§3)" },
+  { value: "2B+ / 2M+", label: "Android users / apps", sub: "task supply (p.1)" },
+  { value: "6", label: "tasks evaluated", sub: "of 100+ shipped (§4)" },
+  { value: "108", label: "discrete actions", sub: "6×9 grid × {LIFT,TOUCH} (§4)" },
+]} />
+
+## Motivation
+RL agents <Problem>over-specialise to single domains</Problem>, so the field needs platforms exposing diverse tasks through a unified interface to test general-purpose algorithms (p.1, §1). Prior platforms each fall short: <Problem>Atari/ALE is small-discrete-action (18), lock-step, deterministic, with no auxiliary signals and hard task authoring</Problem>; <Problem>DeepMind Lab and Minecraft are confined to a single simulated world</Problem>; <Problem>dm_control/MuJoCo gives continuous control but only synthetic, pausable robotics bodies</Problem>; and <Problem>OpenAI Universe / World of Bits share the universal-pixel vision but derive reward from a CNN over images (Universe) or limit scope to web pages/DOM (WoB)</Problem> (§6, p.8-10).
+
+## Contribution (what's new)
+<Novelty>Use a real (emulated) Android OS as the environment itself, letting the OS generate all dynamics, and bolt a thin RL interface onto it</Novelty> (p.2, §2). The agent sees what a human sees (RGB frames) and acts as a human does (touch a point, lift, or repeat), so the same policy interface applies to any of Android's ~2M apps. The design must take this form because the goal is realistic, deployable control: a research-tailored simulator would reintroduce the domain gap the paper is trying to eliminate, and the intellectual core — <Novelty>the gap between raw touches and meaningful app behaviour</Novelty> — only exists when the substrate is real software (p.3, §2.2). Crucially, <Novelty>rewards come from real Android signals (accessibility service, app log messages) rather than a CNN over pixels</Novelty> (§3, p.5; contrast Universe, p.9).
+
+## Research questions
+For a platform paper: can a single universal pixel-in / touch-out interface over a real OS expose a span of tasks broad enough to challenge general-purpose RL agents — from trivially solvable to currently unsolvable — while staying faithful to real-time, asynchronous deployment conditions?
+
+## Methodology
+This is a systems/platform paper, not an algorithm paper. The "method" is the environment design: a universal interface, real-time asynchronous execution the agent cannot pause, a protocol-buffer task abstraction that layers rewards/termination onto a reward-less OS, and optional wrappers to reshape the hybrid action/observation spaces.
+
+<Pass title="Method details">
+<Stepper steps={[
+  { title: "Universal interface", body: "Observation = {pixels (RGB, device resolution), timedelta, orientation}; raw action = continuous position (x,y) ∈ [0,1]×[0,1] plus discrete ActionType ∈ {TOUCH, LIFT, REPEAT}. Identical across every task and app, so policies can generalise (p.2-4, §2.2-2.3)." },
+  { title: "Gestures emerge from raw actions", body: "Single raw actions rarely change anything; Android interprets sequences as tap / swipe / scroll / long-press / drag-and-drop. A random action sequence has low probability of forming a meaningful gesture, making exploration genuinely hard (p.3, §2.2)." },
+  { title: "Real-time, asynchronous execution", body: "The OS never pauses for the agent; observation/action rates are user-configurable but the OS clock is not. Screen refreshes at 60-120 Hz; sampling faster yields no new information. Large deliberation times hurt — an over-long pause can turn an intended tap into a long-press (p.2 §2.1; p.7 §5, Figs.7-8)." },
+  { title: "Optional rate stabiliser", body: "Given max_steps_per_second, AndroidEnv can insert a wait `dt = 1/max_steps_per_second` to approach a fixed interaction rate and reduce variance in the gap between observations (p.7-8, §5)." },
+  { title: "Task abstraction", body: "A Task protocol-buffer message specifies environment init (e.g. install apps), reset conditions, reset events (launch app, clear cache, pin to one app), and reward derivation from Android signals (p.4-5, §3)." },
+  { title: "Wrappers", body: "ImageRescale (resize pixels), DiscreteAction (discretise the hybrid action space), GymWrapper (Gym interface). Wrappers change the agent's action set but not how Android interprets raw actions (p.3 §2.2; p.8 §5)." },
+]} />
+
+Control plane is the Android Debug Bridge (ADB): launching apps, querying current activity, resetting episodes, and listening for task extras. The whole environment implements `dm_env` over the Android Emulator (Android Studio's default), run via a user-specified Android Virtual Device (p.2, §2; p.7, §5).
+</Pass>
+
+## Main result
+The experiments are a demonstration, not a benchmark: six tasks (`catch`, `rocket_sleigh`, `press_button`, `apple_flinger`, `2048`, `blockinger`) chosen to span action interfaces and difficulty, run with the Acme framework, 128 distributed actors, 4 seeds each, observations downsampled to 80×120 (§4). The headline point is the difficulty spread: <Finding src="Fig.6, p.6">`catch` is solved by almost all agents while no agent generates useful behaviour on `blockinger`</Finding> — the same agents span the full solvable-to-unsolvable range. Scores are reported only as human-normalised (1.0 = average human) in Figure 6.
+
+<Caveat>No per-task numeric scores appear in the extracted text — all quantitative results live in Figure 6, which the extraction cannot render, so exact numbers are Not reported here.</Caveat> Numbers verifiable against the text all check out: 6×9 grid → 108 actions (= 54 cells × 2 ActionTypes), 80×120 observation, 128 actors, 4 seeds, 100+ tasks / ~30 apps, 60-120 Hz refresh.
+
+## Key findings
+- <Finding src="Fig.6, p.6">Task difficulty varies sharply under fixed agents</Finding>: identical baselines range from solving `catch` to total failure on `blockinger`, which combines a highly structured interface, time sensitivity, and sparse rewards (§4, p.5-6).
+- <Finding src="Fig.6, p.6">Discrete-control agents (DQN/IMPALA/R2D2) outperform continuous-control ones overall</Finding>: continuous agents (DDPG/D4PG/MPO) do well only where the interface needs no complex gesture and fail to reach reasonable performance otherwise.
+- <Finding src="§2.2, p.3">The raw-action-to-gesture gap is the core challenge</Finding>: a random action sequence rarely composes into a meaningful gesture, so agents must learn gesture composition on top of solving the task — e.g. to play chess they must also learn drag-and-drop.
+- <Finding src="§2.1, p.7">Real-time deliberation time materially affects behaviour</Finding>: because the OS does not pause, a long deliberation can mutate an intended action (tap → long-press); the optional fixed wait is offered to stabilise the interaction rate.
+- <Finding src="Tab.1, p.10">AndroidEnv is presented as the only platform covering all four axes</Finding>: universal interface, extensible task suite, real-time, and continuous action space (the per-cell glyphs for other platforms render as blanks in the text extraction, so the exact comparison pattern is Unclear from text alone).
+- <Finding src="§3, p.5">Rewards are sourced from OS/app signals, not pixels</Finding>: the accessibility service and app log messages supply reward, avoiding the CNN-on-images reward extraction used by OpenAI Universe.
+
+## Implications
+Establishes the canonical mobile-control setup — pixels in, universal touch out, over a real OS — that <Related>successor benchmarks (AndroidWorld, Android-in-the-Wild, MobileEnv) and the web analogue MiniWoB++ / World of Bits</Related> build on or react against. Because it predates the LLM-agent wave, it frames the problem as pure RL exploration/control rather than language-grounded task solving. <FollowUp>How later LLM-driven scaffolds layer natural-language goals and accessibility-tree observations onto a comparable Android stack</FollowUp>, and <FollowUp>whether sim-to-real transfer to physical devices (the paper's stated motivation) actually holds</FollowUp>, are the threads worth chasing.
+
+## Limitations
+- <Caveat>Thin empirical validation: only 6 of 100+ tasks evaluated, all quantitative content in a single figure, no tables, no confidence intervals or standard errors beyond "averaging 4 seeds," and no human-baseline collection methodology despite using human-normalised scores</Caveat> (§4).
+- <Caveat>Author-disclaimed: the task set is "a starting point and not a definitive benchmark"; real-time timings are inherently unpredictable and depend on host/emulator performance</Caveat> (p.5, p.7).
+- <Caveat>No ablations on the design choices presented (optional wait-time mechanism, one-hot last-action augmentation); real-time deliberation effects are argued conceptually but not measured</Caveat> (§5).
+- <Caveat>No language/instruction grounding — tasks are reward-defined, not natural-language-specified — limiting relevance to today's instruction-following GUI agents</Caveat>.
+
+## Critiques and Questions
+1. The platform claims (universality, real-time, extensibility) are well-supported by construction, but the agent-performance claims are coarse: the paper proves "the environment is hard and varied," not "algorithm X beats Y." How robust is the discrete-beats-continuous conclusion given results from a single figure over 6 tasks?
+2. Human-normalised scores are used as the headline metric, yet the human-score collection protocol is never described. How were human baselines measured, and on which device/resolution?
+3. Compute budget (sample count, wall-clock, GPU/TPU) is Not reported — making the "solvable vs unsolvable" framing hard to interpret without knowing how much training each task received.
+
+<SelfCheck q="Why is AndroidEnv a harder exploration problem than Atari despite a seemingly simple action space?" a="Its raw action is just a screen position plus {TOUCH, LIFT, REPEAT}, and a single raw action rarely changes anything. Agents must compose sequences of raw actions into gestures (tap, swipe, drag-and-drop) that Android interprets — and a random sequence has low probability of forming a meaningful gesture, so agents face the gesture-composition problem on top of the underlying task (§2.2, p.3)." />
+
+## Glossary
+- <Term def="DeepMind's standard Python interface for RL environments (observation/action/step/reset).">`dm_env`</Term>
+- <Term def="Android Debug Bridge: a shell/control channel for sending commands to an Android device, used here to launch apps, reset episodes, and read task extras.">ADB</Term>
+- <Term def="Android Virtual Device: an emulator configuration (screen resolution, OS version) defining the simulated device.">AVD</Term>
+- <Term def="Optional, task-specific structured signals (e.g. button-press events, on-screen text as strings) returned only on explicit request, not part of the default observation.">task extras</Term>
+- <Term def="Score normalised so 1.0 equals average human performance on the task.">human-normalised score</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

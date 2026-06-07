@@ -1,0 +1,105 @@
+---
+canonical_key: arxiv-2311.12983
+version_key: v1
+title: 'GAIA: a benchmark for General AI Assistants'
+authors:
+- G. Mialon
+- Clémentine Fourrier
+- Craig Swift
+- Thomas Wolf
+- Yann LeCun
+- Thomas Scialom
+venue: arXiv.org
+year: 2023
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2311.12983
+summary_date: '2026-06-07'
+---
+
+<TLDR>GAIA is a 466-question benchmark of real-world assistant tasks that have a single factual answer but require multi-step reasoning, web browsing, multimodality, and tool use — conceptually simple for humans yet hard for the strongest tool-augmented LLMs of late 2023.</TLDR>
+
+<WhyItMatters>Foundational, widely-cited agent benchmark: it operationalizes "general AI assistant" as a measurable target with a cheap exact-match scorer and a held-out leaderboard, and its contamination-resistance design directly informs harness/eval work.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "92% vs 15%", label: "human vs GPT-4+plugins", sub: "aggregate success rate" },
+  { value: "466", label: "questions", sub: "166 dev + 300 leaderboard-held" },
+  { value: "0%", label: "every AI on Level 3", sub: "hardest tier, all methods" },
+]} />
+
+## Motivation
+<Problem>LLM benchmarks saturate ever faster</Problem> (GLUE solved within a year; MMLU/GSM8k "close to be solved", p.1), and the field's response — making tasks *harder for humans* (law, STEM, book-writing) — creates two failures: evaluation becomes infeasible (you cannot cheaply grade a generated book), and it invites contamination and forces biased model-based judging that cannot evaluate models stronger than the judge. Prior assistant benchmarks have their own gap: <Problem>they repurpose existing datasets (contamination risk) or test a specific API in a closed environment</Problem>, measuring API-familiarity rather than general capability (§2, p.3–4).
+
+## Contribution (what's new)
+<Novelty>Invert the difficulty axis: use tasks that are conceptually simple but tedious for humans, demanding accurate execution of a long, branching action sequence over the real open world.</Novelty> The design must take this form because the goal is contamination resistance with cheap scoring: constraining every answer to a single short factual string (number, few words, or list) lets a quasi-exact-match scorer suffice, and sourcing answers absent from plaintext pretraining data makes memorization useless and forces genuine browsing/tool use (the "Proof-of-Work" analogy, p.2).
+
+## Research questions
+Can a benchmark measure progress toward a *general* AI assistant — robustness on everyday, real-world tasks — while staying cheap to score, resistant to contamination, and unsaturated by current frontier models? And how large is the human-vs-AI gap on such tasks?
+
+## Methodology
+A benchmark construction + scoring recipe (no model training): author real-world questions grounded in persistent sources of truth or attached files, give each a unique factual answer, validate with independent annotators, stratify by difficulty, and score with a fixed-format quasi-exact-match evaluator. GAIA deliberately does **not** define an API surface or environment — it ships a text prompt (optionally + a file) and leaves browsing/tools to the evaluee's own harness (p.4).
+
+<Pass title="Method details">
+<Stepper steps={[
+  { title: "Creation (§3.4, p.7)", body: "Seed questions plus questions authored by compensated US-based Surge AI annotators under explicit rules: must have a source of truth (Wikipedia/arXiv/GitHub or an attached file); answer absent from the internet in plain text; answer is a number or few words; time-invariant; unambiguous; source robots.txt must permit bots. Each is annotated with answer + tools/steps/time metadata." },
+  { title: "Validation (§3.4, p.7; Tab.3, p.21)", body: "Two new independent annotators answer each question. Valid if both match the designer, or one matches and the other made a human error. 68% valid as-is (L1 75% / L2 68% / L3 47%); the rest repaired or removed. The crafted pool (623 questions, 1246 annotations) is larger than the 466 released — there is attrition." },
+  { title: "Levels (§3.3, p.6)", body: "L1 ≈ ≤1 tool, ≤5 steps; L2 ≈ 5–10 steps, multiple tools; L3 ≈ arbitrarily long action sequences, any tools, broad world access. Levels are proxies from annotator step/tool counts, not hard rules." },
+  { title: "Release split (p.3)", body: "166 dev questions released with answers; 300 released without answers, powering a Hugging Face leaderboard. 466 = 166 + 300." },
+  { title: "Evaluation (§3.2, p.5)", body: "Zero-shot prompt + a fixed format prefix (Fig.2) forcing the FINAL ANSWER format (no thousands separators, no units, no articles, plain-text digits); quasi-exact-match scorer with type-tied normalization. There is exactly one correct answer." },
+]} />
+
+Required capabilities (Fig.3 left, p.6): web browsing 355, coding 154, multi-modality 138, diverse filetype reading 129, none 32. Browsing is restricted to clicks only — no uploading, posting, or booking (p.6). Attached files span 17 types (Fig.6, p.18): xlsx 29, png 18, pdf 15, txt 13, mp3 7, jpg 7, csv 6, then several singletons.
+</Pass>
+
+## Main result
+<Finding src="abstract, p.1">Humans score 92% vs GPT-4-with-plugins ~15% aggregate</Finding> — a striking gap against the trend of LLMs beating humans on professional-skill tasks. The 15% is a question-weighted mean; per-level GPT-4+plugins scores are 30.3 / 9.7 / 0 (L1/L2/L3, Tab.4), consistent with the intro's "does not exceed 30% on the easiest, 0% on the hardest" (p.3).
+
+<SortableTable columns={["Method", "L1 %", "L2 %", "L3 %"]} rows={[
+  ["GPT-4", 9.1, 2.6, 0],
+  ["GPT-4 Turbo", 13.0, 5.5, 0],
+  ["AutoGPT-4", 14.4, 0.4, 0],
+  ["GPT-4 + plugins (oracle)", 30.3, 9.7, 0],
+  ["Search engine", 7.4, 0, 0],
+  ["Human annotator", 93.9, 91.8, 87.3],
+]} />
+
+## Key findings
+- <Finding src="Tab.4, p.20–21">Every AI method scores 0% on Level 3</Finding>: no GPT-4 variant, AutoGPT, or search baseline answers a single hardest-tier question, while humans stay at 87.3%.
+- <Finding src="§4, p.9">Tool/plugin augmentation clearly helps</Finding>: GPT-4+plugins (oracle) at 30.3/9.7 far exceeds bare GPT-4 at 9.1/2.6, confirming the augmented-LLM direction.
+- <Finding src="§4, p.9">AutoGPT-4 underperforms even bare GPT-4 on L2 (0.4 vs 2.6) and is slow</Finding>: a fully-autonomous loop is not automatically better; attributed to its GPT-4 API usage.
+- <Finding src="§3.3, §4, p.8">The proposed difficulty levels correlate with model performance</Finding>, which the authors treat as validation that step/tool-count proxies capture real difficulty.
+- <Finding src="Tab.4, p.21">Human time-to-answer scales with level: 6.8 / 10.5 / 17.7 minutes</Finding>, matching the "6 to 17 minutes" claim and showing the tasks are tedious-but-simple, not hard.
+- <Finding src="appendix, p.22–24">Characteristic failure modes</Finding>: bare GPT-4 refuses without browsing (Saint Petersburg example), and all assistants miss puzzles even when rated Level 1 (Rubik's cube answered wrong).
+
+## Implications
+GAIA's difficulty-inversion + single-factual-answer recipe gives a cheap, deterministic, LLM-judge-free progress signal for agent harnesses, and its construction guidelines let the community refresh the set as it decays. Lineage: <Related>closest to AgentBench (closed environments) and OpenAGI (current-capability multi-step)</Related>, which GAIA departs from by refusing to fix APIs and grounding in the open world; conceptual roots in Chollet's measure-of-intelligence and Morris et al. "Levels of AGI" (GAIA framed as the "competent General AI" milestone). <FollowUp>Re-check GPT-4-era scores against current frontier models and any refreshed/held-out GAIA split before citing the 15% as current</FollowUp>; <FollowUp>watch how reported "GAIA scores" conflate model and scaffolding</FollowUp>.
+
+## Limitations
+- <Caveat>No trace/plan evaluation — only the final string is scored</Caveat> (§6, p.10); multiple paths reach the answer and the authors chose ease-of-use over grading reasoning.
+- <Caveat>The headline AI number rests on a non-reproducible manual-plugin "oracle"</Caveat> (p.8, Tab.4 caption): plugins were hand-picked per question and labeled an oracle that "cannot be reproduced exactly"; no error bars for it or AutoGPT-4.
+- <Caveat>English-only (en-US)</Caveat>, excluding most of the world's population and roughly half the web (§6).
+- <Caveat>Benchmark is expected to decay</Caveat> via pretraining contamination or disappearing web sources; the contamination claim is argued via annotation guidelines, not measured by a probe.
+- <Caveat>Narrow, dated model coverage and small size</Caveat>: only GPT-4-family + AutoGPT (no open models, blamed on missing tool-call logs); 466 total with just 75 Level-3 questions limits statistical resolution.
+- <Caveat>Browsing limited to clicks</Caveat>, so it does not test the harder write/transact actions real assistants need.
+
+## Critiques and Questions
+1. The flagship 15% is an optimistic, non-reproducible upper bound — how would it move with *automatic* plugin selection rather than a manual oracle?
+2. Because GAIA fixes the questions and scorer but not the agent harness, a reported "GAIA score" conflates the model with its scaffolding (browser, retrieval, file tools); cross-paper comparisons are partly a scaffold benchmark.
+3. The contamination-resistance property is enforced only by human agreement, not an empirical contamination probe — how durable is it really?
+
+<SelfCheck q="Why can GAIA use a cheap exact-match scorer where most agent benchmarks need an LLM judge or human grading?" a="Because every question is constructed to have a single short factual answer (number, few words, or list), and a fixed format prefix normalizes outputs — so quasi-exact-match against the unique ground truth suffices, sidestepping judge bias and grading cost (§3.2, p.5)." />
+
+## Glossary
+- <Term def="A unique, short, factual ground-truth answer (number, few words, or comma-separated list) that enables cheap exact-match scoring.">single factual answer</Term>
+- <Term def="Scoring that compares the model's answer to the ground truth up to type-tied normalization (units, articles, separators), with exactly one correct answer.">quasi-exact-match</Term>
+- <Term def="A GPT-4+plugins run where plugins were manually selected per question; an optimistic, non-reproducible upper-bound baseline.">oracle (plugin) baseline</Term>
+- <Term def="Analogy that a correct answer is only reachable by executing a costly correct sequence of real-world tool actions, making memorization/guessing ineffective.">Proof-of-Work</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Treat any agent paper's reported "GAIA score" with care: GAIA fixes the *questions and scorer* but not the *agent harness*, so scores conflate model + scaffolding. The 0% across all AI methods on Level 3 is the most striking single fact. This is a 2023 snapshot; current models likely score much higher, so re-check against a refreshed/held-out split before citing the 15% as current. Follow-ups: AgentBench (2308.03688), OpenAGI, Morris et al. Levels of AGI; check the huggingface.co/gaia-benchmark scoring function + normalization rules.
+{/* NOTES_END */}

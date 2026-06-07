@@ -4,6 +4,7 @@ import "../styles/global.css";
 import "../styles/themes.css";
 import ThemeToggle from "../components/ThemeToggle.tsx";
 import ThemePanel from "../components/ThemePanel.tsx";
+import SyncButton from "../components/SyncButton.tsx";
 interface Props { title: string }
 const { title } = Astro.props;
 const base = import.meta.env.BASE_URL;
@@ -45,7 +46,7 @@ const base = import.meta.env.BASE_URL;
       <div class="wrap">
         <h1><a href={base}>Paper Library</a></h1>
         <span class="masthead-tag">· a reading room for agent research</span>
-        <nav><a href={base}>Papers</a> <a href={`${base}knowledge/`.replace(/\/+/g, "/")}>Knowledge</a> <ThemePanel client:load /> <ThemeToggle client:load /></nav>
+        <nav><a href={base}>Papers</a> <a href={`${base}knowledge/`.replace(/\/+/g, "/")}>Knowledge</a> <SyncButton client:load /> <ThemePanel client:load /> <ThemeToggle client:load /></nav>
       </div>
     </header>
     <main class="wrap"><slot /></main>

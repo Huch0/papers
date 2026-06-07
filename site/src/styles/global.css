@@ -173,3 +173,5 @@ figure.fig figcaption { color: var(--mut); font-size: .85rem; }
 .term { font-family: var(--font-body); }
 .author .ava { box-shadow: 0 0 0 1px var(--line); }
 .count, .author-label { font-variant: all-small-caps; letter-spacing: .05em; }
+
+.paper-toolbar { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; margin: .2rem 0 .6rem; }

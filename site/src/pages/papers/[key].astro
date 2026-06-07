@@ -3,6 +3,7 @@ import { getCollection, render } from "astro:content";
 import Base from "../../layouts/Base.astro";
 import Meta from "../../components/summary/Meta.astro";
 import Author from "../../components/Author.astro";
+import ReadToggle from "../../components/ReadToggle.tsx";
 import { summaryComponents } from "../../components/summary/map";
 import { loadCatalog, summaryEntryId } from "../../lib/catalog";
 
@@ -46,7 +47,10 @@ const cHref = (s: string) => `${base}knowledge/${s}/`.replace(/\/+/g, "/");
     triageConfidence={paper.triage_confidence}
     canonicalKey={paper.canonical_key}
   />
-  {fm.curated_by && <p><Author id={fm.curated_by} contributors={fm.contributors} /></p>}
+  <p class="paper-toolbar">
+    {fm.curated_by && <Author id={fm.curated_by} contributors={fm.contributors} />}
+    <ReadToggle client:load k={paper.canonical_key} mk={`${fm.version_key ?? "v?"}__${fm.summary_date ?? ""}`} />
+  </p>
 
   {related && related.length > 0 && (
     <p class="related">

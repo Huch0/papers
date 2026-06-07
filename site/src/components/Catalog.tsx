@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
+import { type Reads, marker, getReads, isRead, setRead, setUnread, pullRemote } from "@/lib/reads";
 
 const TRIAGE_RANK: Record<string, number> = { MUST_READ: 0, READ_SOON: 1, SKIM: 2, TRACK_ONLY: 3, SKIP: 4 };
 const TRIAGE_CLS: Record<string, string> = {
@@ -13,7 +14,8 @@ const TRIAGE_CLS: Record<string, string> = {
   SKIM: "bg-green-700 text-white", TRACK_ONLY: "bg-neutral-600 text-white", SKIP: "bg-neutral-400 text-white",
 };
 const ALL = "__all__";
-type Row = Pick<PaperEntry, "canonical_key" | "title" | "authors" | "year" | "venue" | "tags" | "topic_groups" | "triage_label" | "score">;
+type Row = Pick<PaperEntry, "canonical_key" | "title" | "authors" | "year" | "venue" | "tags" | "topic_groups" | "triage_label" | "score">
+  & { latest_version?: string | null; summary_date?: string | null };
 
 export default function Catalog({ papers, base }: { papers: Row[]; base: string }) {
   const [q, setQ] = useState("");
@@ -22,7 +24,18 @@ export default function Catalog({ papers, base }: { papers: Row[]; base: string 
   const [tag, setTag] = useState(ALL);
   const [topic, setTopic] = useState(ALL);
   const [triage, setTriage] = useState(ALL);
+  const [readStatus, setReadStatus] = useState(ALL); // All | unread | read
   const [sort, setSort] = useState("triage");
+
+  // per-browser read state
+  const [reads, setReads] = useState<Reads>({});
+  useEffect(() => {
+    setReads(getReads());                                   // instant local cache
+    pullRemote().then((r) => { if (r) setReads(r); }).catch(() => { /* stays local */ }); // sync if connected
+  }, []);
+  const mk = (p: Row) => marker(p.latest_version, p.summary_date);
+  const read = (p: Row) => isRead(reads, p.canonical_key, mk(p));
+  const toggleRead = (p: Row) => setReads(read(p) ? setUnread(p.canonical_key) : setRead(p.canonical_key, mk(p)));
 
   // Pagefind full-text search, intersected with the facet filters below.
   const pf = useRef<any>(null);
@@ -85,7 +98,8 @@ export default function Catalog({ papers, base }: { papers: Row[]; base: string 
         (year === ALL || String(p.year) === year) &&
         (tag === ALL || (p.tags || []).includes(tag)) &&
         (topic === ALL || (p.topic_groups || []).includes(topic)) &&
-        (triage === ALL || p.triage_label === triage),
+        (triage === ALL || p.triage_label === triage) &&
+        (readStatus === ALL || (readStatus === "read" ? read(p) : !read(p))),
     );
     out.sort((a, b) => {
       if (sort === "score") return (b.score ?? 0) - (a.score ?? 0);
@@ -94,7 +108,9 @@ export default function Catalog({ papers, base }: { papers: Row[]; base: string 
       return (TRIAGE_RANK[a.triage_label ?? ""] ?? 9) - (TRIAGE_RANK[b.triage_label ?? ""] ?? 9) || (b.score ?? 0) - (a.score ?? 0);
     });
     return out;
-  }, [papers, q, venue, year, tag, topic, triage, sort, searchKeys, pfReady]);
+  }, [papers, q, venue, year, tag, topic, triage, readStatus, reads, sort, searchKeys, pfReady]);
+
+  const unreadCount = useMemo(() => papers.filter((p) => !read(p)).length, [papers, reads]);
 
   const href = (key: string) => `${base}papers/${key}/`.replace(/\/+/g, "/");
   const facet = (label: string, value: string, set: (v: string) => void, opts: (string | number)[]) => (
@@ -123,6 +139,17 @@ export default function Catalog({ papers, base }: { papers: Row[]; base: string 
         {facet("Topic", topic, setTopic, f.topics)}
         {facet("Triage", triage, setTriage, ["MUST_READ", "READ_SOON", "SKIM", "TRACK_ONLY", "SKIP"])}
         <div className="flex flex-col gap-1">
+          <span className="text-xs text-muted-foreground">Status</span>
+          <Select value={readStatus} onValueChange={setReadStatus}>
+            <SelectTrigger className="w-32"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value={ALL}>All</SelectItem>
+              <SelectItem value="unread">Unread</SelectItem>
+              <SelectItem value="read">Read</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="flex flex-col gap-1">
           <span className="text-xs text-muted-foreground">Sort</span>
           <Select value={sort} onValueChange={setSort}>
             <SelectTrigger className="w-32"><SelectValue /></SelectTrigger>
@@ -135,16 +162,24 @@ export default function Catalog({ papers, base }: { papers: Row[]; base: string 
       </div>
 
       <p className="text-sm text-muted-foreground mb-2">
-        {shown.length} shown{ql && !pfReady ? " · (full-text search active on the deployed site)" : ""}
+        {shown.length} shown · <span className="font-medium">{unreadCount} unread</span>{ql && !pfReady ? " · (full-text search active on the deployed site)" : ""}
       </p>
 
       <div className="flex flex-col gap-3">
-        {shown.map((p) => (
-          <Card key={p.canonical_key}>
+        {shown.map((p) => {
+          const r = read(p);
+          return (
+          <Card key={p.canonical_key} className={r ? "opacity-60" : ""}>
             <CardHeader className="pb-2">
               <div className="flex items-center gap-2 flex-wrap">
+                {!r && <span className="inline-block w-2 h-2 rounded-full bg-primary" title="unread" />}
                 {p.triage_label && (<Badge className={TRIAGE_CLS[p.triage_label] ?? ""}>{p.triage_label}</Badge>)}
                 <CardTitle className="text-base"><a className="hover:underline" href={href(p.canonical_key)}>{p.title}</a></CardTitle>
+                <button
+                  onClick={() => toggleRead(p)}
+                  className="ml-auto text-xs border rounded px-2 py-0.5 hover:border-[var(--accent)] whitespace-nowrap"
+                  title={r ? "Mark as unread" : "Mark as read"}
+                >{r ? "✓ Read" : "Mark read"}</button>
               </div>
             </CardHeader>
             <CardContent className="text-sm text-muted-foreground pt-0">
@@ -152,7 +187,8 @@ export default function Catalog({ papers, base }: { papers: Row[]; base: string 
               {p.tags?.length ? <div className="mt-1 text-xs">{p.tags.join(" · ")}</div> : null}
             </CardContent>
           </Card>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

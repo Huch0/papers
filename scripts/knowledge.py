@@ -202,6 +202,37 @@ def new_session(paper: str | None, title: str | None, concepts=None) -> dict:
 
 
 # --------------------------------------------------------------------------- #
+# paper-scoped Q&A (ADR-0005): library/<slug>/<vN>/qa.mdx
+# --------------------------------------------------------------------------- #
+
+def qa_add(paper_key: str, question: str, answer: str, concepts=None,
+           asked_by: str | None = None) -> dict:
+    pdir = pl.find_paper_by_key(paper_key)
+    if not pdir:
+        pl.log_error("knowledge.qa", f"paper not found: {paper_key}", paper=paper_key)
+        return {"ok": False, "error": "paper not found"}
+    paper = pl.load_yaml(pdir / "paper.yaml") or {}
+    ver = paper.get("latest_version") or "v1"
+    qpath = pdir / ver / "qa.mdx"
+    who = asked_by or pl.resolve_curator()["id"]
+    cs = [c.strip() for c in (concepts or []) if c.strip()]
+
+    def esc(s: str) -> str:
+        return s.replace('"', "'").strip()
+
+    block = (f'<QA question="{esc(question)}" asked_by="{esc(who)}" '
+             f'concepts="{",".join(cs)}">\n{answer.strip()}\n</QA>\n')
+    if qpath.exists():
+        txt = qpath.read_text(encoding="utf-8").rstrip() + "\n\n" + block
+    else:
+        txt = f"---\ncanonical_key: {paper_key}\nversion_key: {ver}\n---\n\n" + block
+    qpath.write_text(txt, encoding="utf-8")
+    for c in cs:  # so the paper page's "Related concepts" lists them
+        _link_paper(c, paper_key)
+    return {"ok": True, "qa": pl.rel(qpath), "asked_by": who, "concepts": cs}
+
+
+# --------------------------------------------------------------------------- #
 # index
 # --------------------------------------------------------------------------- #
 
@@ -320,6 +351,13 @@ def _main() -> int:
     se.add_argument("--title")
     se.add_argument("--concepts")
 
+    qa = sub.add_parser("qa-add")
+    qa.add_argument("--paper", required=True)
+    qa.add_argument("--question", required=True)
+    qa.add_argument("--answer", required=True)
+    qa.add_argument("--concepts")
+    qa.add_argument("--asked-by", dest="asked_by")
+
     sub.add_parser("index")
     sub.add_parser("validate")
 
@@ -340,6 +378,11 @@ def _main() -> int:
         build_index(write=True)
         print(json.dumps({"concept": args.concept, "linked_paper": args.paper,
                           "ok": ok}, ensure_ascii=False))
+    elif args.cmd == "qa-add":
+        res = qa_add(args.paper, args.question, args.answer,
+                     _split(args.concepts), args.asked_by)
+        build_index(write=True)
+        print(json.dumps(res, indent=2, ensure_ascii=False))
     elif args.cmd == "search":
         print(json.dumps(search(args.query), indent=2, ensure_ascii=False))
     elif args.cmd == "list":

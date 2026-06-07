@@ -6,6 +6,35 @@
    <html data-font="...">; accent + density are applied as inline vars by the theme panel.
    ============================================================================ */
 
+/* ——— Reading Room — literary serif, warm ivory / espresso, oxblood→terracotta ——— */
+html[data-theme="reading-room"] {
+  --ink:#211e18; --mut:#6b6357; --line:#ddd4c2; --bg:#f7f3ea; --soft:#efe9dc;
+  --accent:#8a2f2a; --accent-2:#9a7b33; --paper:#fbf8f1;
+  --font-display:"Fraunces", Georgia, serif; --font-body:"Newsreader", Georgia, serif;
+  --hl-problem-bg:#f4ddd6; --hl-problem-fg:#8a2a22;
+  --hl-novelty-bg:#dfeada; --hl-novelty-fg:#2f5630;
+  --hl-finding-bg:#dae7e7; --hl-finding-fg:#235a60;
+  --hl-followup-bg:#dde5ef; --hl-followup-fg:#2a4a78;
+  --hl-caveat-bg:#f5e5cd; --hl-caveat-fg:#855011;
+  --hl-related-bg:#e9e0ee; --hl-related-fg:#5b3a84;
+  --hl-weak-bg:#f2e6ce; --hl-weak-fg:#7e5a14;
+  --hl-term-bg:#efe6d3; --hl-term-fg:#4a4334; --hl-term-bd:#d6c9ad;
+  --tldr-bg:#f1e9d6; --tldr-bd:#8a2f2a; --th-bg:#ece2cc; --code-bg:#efe7d3; --tip-bg:#2a241c;
+}
+html.dark[data-theme="reading-room"] {
+  --ink:#ece3d2; --mut:#a89c86; --line:#3a332a; --bg:#17140f; --soft:#201c16;
+  --accent:#db8d61; --accent-2:#cda766; --paper:#201c16;
+  --hl-problem-bg:#3a201c; --hl-problem-fg:#eaa79c;
+  --hl-novelty-bg:#1d3322; --hl-novelty-fg:#9bdcab;
+  --hl-finding-bg:#16302f; --hl-finding-fg:#8fd2cf;
+  --hl-followup-bg:#1a2740; --hl-followup-fg:#a9c6ef;
+  --hl-caveat-bg:#352511; --hl-caveat-fg:#edbf84;
+  --hl-related-bg:#291d3c; --hl-related-fg:#cbb4ef;
+  --hl-weak-bg:#322611; --hl-weak-fg:#e3c184;
+  --hl-term-bg:#2a241b; --hl-term-fg:#ddd1bb; --hl-term-bd:#473d2e;
+  --tldr-bg:#241d12; --tldr-bd:#db8d61; --th-bg:#241d14; --code-bg:#221c14; --tip-bg:#3a3026;
+}
+
 /* ——— Lab Notes — crisp humanist sans, cool neutral, blue accent ——— */
 html[data-theme="lab-notes"] {
   --ink: #1b2330; --mut: #5a6573; --line: #dde3ea; --bg: #fbfcfd; --soft: #eef1f5;
@@ -55,6 +84,7 @@ html.dark[data-theme="pastel"] {
 }
 
 /* ——— granular font sets (override the preset's fonts) ——— */
+html[data-font="legible"] { --font-display: "Atkinson Hyperlegible", ui-sans-serif, system-ui, sans-serif; --font-body: "Atkinson Hyperlegible", ui-sans-serif, system-ui, sans-serif; }
 html[data-font="serif"] { --font-display: "Fraunces", Georgia, serif; --font-body: "Newsreader", Georgia, serif; }
 html[data-font="sans"]  { --font-display: "Hanken Grotesk", ui-sans-serif, system-ui, sans-serif; --font-body: "Hanken Grotesk", ui-sans-serif, system-ui, sans-serif; }
 html[data-font="mono"]  { --font-display: "IBM Plex Mono", ui-monospace, monospace; --font-body: "IBM Plex Mono", ui-monospace, monospace; }

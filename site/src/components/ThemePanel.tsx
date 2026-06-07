@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
 const PRESETS = [
+  { id: "readable", label: "Readable" },
   { id: "reading-room", label: "Reading Room" },
   { id: "lab-notes", label: "Lab Notes" },
   { id: "terminal", label: "Terminal" },
@@ -8,6 +9,7 @@ const PRESETS = [
 ];
 const FONTS = [
   { id: "", label: "Preset" },
+  { id: "legible", label: "Legible" },
   { id: "serif", label: "Serif" },
   { id: "sans", label: "Sans" },
   { id: "mono", label: "Mono" },
@@ -40,7 +42,7 @@ export default function ThemePanel() {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    setPreset(get("theme-preset") || "reading-room");
+    setPreset(get("theme-preset") || "readable");
     setFont(get("theme-font"));
     setAccent(get("theme-accent"));
     setDensity(get("theme-density") || "comfortable");
@@ -56,8 +58,8 @@ export default function ThemePanel() {
   }, [open]);
 
   const applyPreset = (id: string) => {
-    setPreset(id); save("theme-preset", id === "reading-room" ? "" : id);
-    if (id === "reading-room") root().removeAttribute("data-theme");
+    setPreset(id); save("theme-preset", id === "readable" ? "" : id);
+    if (id === "readable") root().removeAttribute("data-theme");
     else root().setAttribute("data-theme", id);
   };
   const applyFont = (id: string) => {
@@ -74,7 +76,7 @@ export default function ThemePanel() {
     root().setAttribute("data-density", id);
     root().style.setProperty("--ui-scale", id === "compact" ? "94%" : id === "spacious" ? "112%" : "100%");
   };
-  const reset = () => { applyPreset("reading-room"); applyFont(""); applyAccent(""); applyDensity("comfortable"); };
+  const reset = () => { applyPreset("readable"); applyFont(""); applyAccent(""); applyDensity("comfortable"); };
 
   return (
     <div className="relative inline-block align-middle" ref={ref}>

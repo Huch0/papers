@@ -51,17 +51,17 @@ versions:
   source: arxiv
   source_url: https://arxiv.org/abs/2312.08914v3
   pdf_path: library/cogagent-a-visual-language-model-for-gui-231208914/v1/paper.pdf
-  summary_path: null
+  summary_path: library/cogagent-a-visual-language-model-for-gui-231208914/v1/summary.mdx
   metadata_path: library/cogagent-a-visual-language-model-for-gui-231208914/v1/metadata.yaml
   fetched_at: '2026-06-06T07:14:04Z'
   source_updated_at: '2024-12-27T06:56:18Z'
   arxiv_version: v3
   pdf_sha256: d9cb086d826eaee9f919e0cbf142193b77f476b0aef6260b34408abe142fe13b
   pdf_bytes: 15601893
-  summary_status: none
-  extraction_status: none
+  summary_status: full
+  extraction_status: full
   created_at: '2026-06-06T07:14:04Z'
-  updated_at: '2026-06-06T07:14:04Z'
+  updated_at: '2026-06-07T06:17:24Z'
 relations:
   duplicate_candidates: []
   related_papers: []

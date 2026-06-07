@@ -1,0 +1,117 @@
+---
+canonical_key: arxiv-2504.07981
+version_key: v1
+title: 'ScreenSpot-Pro: GUI Grounding for Professional High-Resolution Computer Use'
+authors:
+- Kaixin Li
+- Ziyang Meng
+- Hongzhan Lin
+- Ziyang Luo
+- Yuchen Tian
+- Jing Ma
+- Zhiyong Huang
+- Tat-Seng Chua
+venue: ACM Multimedia
+year: 2025
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+- general_agent_methods
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2504.07981
+summary_date: '2026-06-07'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>ScreenSpot-Pro is a GUI-grounding benchmark of 1,581 expert-annotated tasks on real, full-screen high-resolution professional applications, where the best existing model reaches only 18.9% — and a training-free, planner-guided visual-search method (ScreenSeekeR) lifts it to 48.1%.</TLDR>
+
+<WhyItMatters>Directly relevant to the computer-use-agent track: it exposes how badly current GUI grounders fail on realistic, high-resolution professional screens and offers a training-free recipe to recover accuracy via search-space reduction.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "18.9%", label: "best end-to-end model", sub: "OS-Atlas-7B, full benchmark" },
+  { value: "48.1%", label: "with ScreenSeekeR", sub: "+29.2 pts, no extra training" },
+  { value: "1,581", label: "tasks (1 per screenshot)", sub: "23 apps, 5 industries, 3 OSes" },
+  { value: "0.07%", label: "avg target area", sub: "vs 2.01% in ScreenSpot" },
+]} />
+
+## Motivation
+GUI agents are mostly evaluated on <Problem>easy, general tasks (web browsing, mobile, lifestyle apps) and on cropped, unrealistic screenshots</Problem> — e.g. <Related>ScreenSpot</Related> crops local regions and <Related>VisualWebBench</Related> reduces grounding to multiple choice. Professional desktop software is left out, yet it introduces three hard problems: <Problem>resolutions exceeding what current MLLMs can handle</Problem>, <Problem>much smaller relative target sizes (where grounding accuracy collapses)</Problem>, and <Problem>cluttered screens with extra documents and tools</Problem>. The result is that even when an MLLM understands the instruction and the UI, it cannot ground it to a precise pixel location.
+
+## Contribution (what's new)
+Two distinct deltas. First, a <Novelty>benchmark of authentic, full-screen, high-resolution professional GUIs annotated by domain experts</Novelty> — targets occupy only 0.07% of the screen on average, ~29x smaller than ScreenSpot, making it a genuine stress test of fine-grained grounding. Second, the insight that <Novelty>strategically shrinking the search area, not retraining, is what recovers accuracy</Novelty>: a strong planner (GPT-4o) that scores poorly at direct grounding (0.8%) can still steer a cascaded crop-and-reground search, because GUIs have an exploitable hierarchical layout (menus, panels, neighboring buttons). The design must take this form because monolithic grounders saturate at large input resolutions and tiny targets, whereas recursive cropping hands the grounder a small, simplified subimage at the resolution it was trained for.
+
+## Research questions
+1. How well do current GUI grounding MLLMs perform on realistic high-resolution professional interfaces?
+2. Can grounding be improved at inference time, without additional training, by reducing the search space?
+
+## Methodology
+The authors build the benchmark from screenshots recorded by experts (5+ years of experience) via a silent capture tool, then evaluate end-to-end grounders and four multi-round search methods that progressively crop the image, culminating in ScreenSeekeR.
+
+<Pass title="Method details">
+**Benchmark construction.** 23 applications across Development, Creative, CAD/Engineering, Scientific/Analytical, Office, and OS Commons, on macOS/Windows/Linux. Screens prioritized above 1080p with scaling disabled; dual-monitor setups captured across both displays. Each instance is reviewed by at least two annotators for instruction validity and tight target boxes. Targets are typed as text or icon (icon only when no text hint is present); text makes up 62.6% of elements. Correctness = predicted point (box center for box-outputting models) falls inside the annotated ground-truth box. A Chinese-instruction variant (ScreenSpot-Pro-CN) is also provided (Appendix A).
+
+**Search baselines (all on OS-Atlas-7B).**
+<Stepper steps={[
+  { title: "Iterative Zooming", body: "Ground on the full screenshot, split into a fixed 2x2 grid, recurse into the patch the prediction lands in (3 iterations)." },
+  { title: "Iterative Narrowing", body: "Same loop, but crop to center the prediction at half width/height each step (concurrent with Nguyen 2024)." },
+  { title: "ReGround", body: "Crop the region around the initial prediction and reground once; crop size is tunable to the model's optimal input." },
+  { title: "ScreenSeekeR", body: "Planner-guided recursive visual search (below)." },
+]} />
+
+**ScreenSeekeR.** GPT-4o performs Position Inference: it predicts the likely region(s) for the target and infers neighboring elements (a `delete` button sits near a `new` button) to generate candidate regions. The grounder votes inside each region; candidate areas are dilated, scored by a centrality (Gaussian) weighting that favors boxes near a candidate's center, then deduplicated with non-maximum suppression and sorted. Each candidate is cropped and recursively searched until the patch is small enough (`<=1280` px) to invoke the grounder, after which the planner verifies the box (`is_target` / `target_elsewhere` / `target_not_found`); the loop stops on success or at max depth (Algorithm 1).
+
+<MathBlock>{`s = \\exp\\!\\left(-\\frac{(x'-0.5)^2 + (y'-0.5)^2}{2\\sigma^2}\\right)\\ \\text{if inside, else } 0,\\quad \\sigma = 0.3`}</MathBlock>
+</Pass>
+
+## Main result
+The benchmark is brutal for current models: <Finding src="Tab.2, p.7">OS-Atlas-7B leads at 18.9%, and no other end-to-end model exceeds 10%</Finding>; <Finding src="§5.1, p.7">GPT-4o scores only 0.8% on direct grounding</Finding>. Search-space reduction recovers most of the gap, and ScreenSeekeR is best:
+
+<SortableTable columns={["Method (on OS-Atlas-7B)", "Overall %", "Text %", "Icon %"]} rows={[
+  ["OS-Atlas-7B (direct)", 18.9, 28.1, 4.0],
+  ["Iterative Focusing/Zooming", 31.0, 43.5, 10.8],
+  ["Iterative Narrowing", 31.9, 43.5, 13.1],
+  ["ReGround", 40.2, 55.7, 15.1],
+  ["ScreenSeekeR", 48.1, 64.1, 22.4],
+]} />
+
+<Finding src="Tab.4, p.8">ScreenSeekeR reaches 48.1%, a +29.2-point absolute (254% relative) gain over the 18.9% base, with no additional training</Finding>.
+
+## Key findings
+- <Finding src="Tab.3, p.7">Icons are far harder to ground than text</Finding>: the top model scores 28.1% on text but only 4.0% on icons, because professional toolbars assume icon familiarity and carry domain-specific meanings rarely seen in web training data.
+- <Finding src="§5.1, p.7">A strong planner that cannot ground can still drive grounding</Finding>: GPT-4o's 0.8% direct accuracy contrasts with its role powering ScreenSeekeR's 48.1% — screenshot understanding transfers to search guidance even without grounding skill.
+- <Finding src="Tab.4, p.8">Recursive search is the single most important component</Finding>: removing it (keeping only the first planner decision) drops accuracy from 48.1% to 41.9%, the largest ablation hit.
+- <Finding src="Tab.4, p.8">Neighbor inference and patch scoring give smaller but real gains</Finding>: ablating neighbor inference costs ~1.7 points and replacing centrality scoring with majority vote drops to 46.8%.
+- <Finding src="Tab.5, p.8">Reground crop size has a model-specific sweet spot</Finding>: OS-Atlas-7B peaks at 1024x1024 (40.2%) while UGround-7B peaks at 768x768 (27.0%) — too small loses context, too large exceeds the model's capacity.
+- <Finding src="Tab.6, p.12">Chinese instructions are harder</Finding>: OS-Atlas-7B falls from ~16.5% to 16.8% range and UGround drops most sharply (16.4% to 7.7%), exposing weak bilingual grounding.
+
+## Implications
+The benchmark resets the bar for <Related>the GUI-grounding line (SeeClick, OS-Atlas, UGround, Aria-UI)</Related> by moving from cropped toy screenshots to full professional displays, and it argues that progress on professional computer use needs better fine-grained, small-target, icon grounding — not just bigger generalist MLLMs. The training-free search recipe connects to <Related>visual-search methods like V*</Related> and suggests a practical deployment pattern: pair a cheap grounder with a planner that prunes the screen. <FollowUp>Whether a single end-to-end model can be trained to internalize this hierarchical search rather than orchestrating it externally</FollowUp> and <FollowUp>how the latency/cost of recursive GPT-4o planning trades off against accuracy at scale</FollowUp> are open threads.
+
+## Limitations
+- <Caveat>Grounding only — no planning or execution</Caveat>: the benchmark deliberately excludes full agent tasks (unlike OSWorld), citing software licensing/legal risk, so it does not measure whether better grounding yields better task completion.
+- <Caveat>ScreenSeekeR's cost is not reported</Caveat>: the paper gives no latency, token-cost, or planner-call counts for the recursive GPT-4o search, so its practicality versus the 18.9% direct baseline is "Not reported".
+- <Caveat>Best absolute accuracy is still low (48.1%)</Caveat>: even the SOTA method misses more than half of professional targets, and icon grounding (22.4%) remains weak.
+- <Caveat>The method depends on a strong proprietary planner (GPT-4o)</Caveat>: generalization to weaker or open planners is "Unclear".
+
+## Critiques and Questions
+1. ScreenSeekeR couples a frontier planner with a small grounder; without a compute/latency budget it is hard to compare fairly against direct grounding — is 48.1% worth many GPT-4o calls per screenshot?
+2. Single-run numbers with no variance/error bars are reported; given how small some per-app cells are (some categories have `<10` tasks each in Table 1), per-application accuracies may be noisy.
+3. The benchmark is a static snapshot of specific app versions (e.g. Photoshop 2020, Office 365); UI churn will age it, and contamination risk grows as these screenshots circulate.
+
+<SelfCheck q="GPT-4o scores only 0.8% at direct grounding on ScreenSpot-Pro. How can it still raise accuracy to 48.1% inside ScreenSeekeR?" a="It is used as the planner, not the grounder: GPT-4o reasons over the screenshot to predict likely regions and neighboring elements, recursively cropping the image down to small patches where a dedicated grounder (OS-Atlas-7B) can localize accurately. Screenshot understanding guides search even though GPT-4o cannot itself output precise coordinates." />
+
+## Glossary
+- <Term def="Mapping a natural-language instruction to the precise on-screen location (pixel/box) of the target UI element.">GUI grounding</Term>
+- <Term def="A search strategy that iteratively narrows attention to sub-regions of a high-resolution image until the target is found, instead of processing the whole image at once.">Visual search</Term>
+- <Term def="Post-processing that suppresses overlapping candidate boxes, keeping the higher-scoring one when two overlap heavily.">Non-maximum suppression (NMS)</Term>
+- <Term def="Enlarging a predicted bounding box so a noisy, too-small prediction still covers the true target region.">Box dilation</Term>
+- <Term def="Multi-modal Large Language Model — a language model that also takes image input.">MLLM</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

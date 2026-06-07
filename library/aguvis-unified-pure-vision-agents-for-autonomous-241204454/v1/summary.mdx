@@ -1,0 +1,121 @@
+---
+canonical_key: arxiv-2412.04454
+version_key: v1
+title: 'Aguvis: Unified Pure Vision Agents for Autonomous GUI Interaction'
+authors:
+- Yiheng Xu
+- Zekun Wang
+- Junli Wang
+- Dunjie Lu
+- Tianbao Xie
+- Amrita Saha
+- Doyen Sahoo
+- Tao Yu
+- Caiming Xiong
+venue: International Conference on Machine Learning
+year: 2024
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2412.04454
+summary_date: '2026-06-07'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+{/*
+  Canonical Summary structure (concise, core-first). Body only — frontmatter is generated
+  from metadata.yaml by `summarize_paper.py --format mdx --prepare`. Components are
+  provided globally by the site (no imports). See config/summary_components.md.
+*/}
+
+<TLDR>AGUVIS is the first fully autonomous, pure-vision GUI agent: a single Qwen2-VL-based model that operates directly on screenshots with a unified `pyautogui` action space and explicit inner-monologue reasoning, reaching state-of-the-art on offline and online benchmarks without any closed-source model in the loop.</TLDR>
+
+<WhyItMatters>A foundational reference for the computer-use-agent track: it shows an open-weights model can do both grounding and planning end-to-end on vision alone, decoupling the field from GPT-4o-as-planner and from platform-specific HTML/accessibility-tree inputs.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "89.2%", label: "ScreenSpot avg accuracy", sub: "AGUVIS-72B, self-plan (Tab.1)" },
+  { value: "17.04%", label: "OSWorld task SR", sub: "GPT-4o planner + AGUVIS-7B grounder, zero desktop training (Tab.8)" },
+  { value: "1.036M", label: "grounding trajectories", sub: "AGUVIS Data Collection (Tab.10)" },
+  { value: "1,196", label: "input tokens / step", sub: "constant for 720p image vs ~4K for HTML (§2.2)" },
+]} />
+
+## Motivation
+Autonomous GUI automation has been stuck against four coupled limitations. <Problem>Most agents consume textual interface representations (HTML or accessibility trees), which run past 4K tokens and grow with interface complexity</Problem>, raising cost and hurting generalization. <Problem>Heterogeneous, platform-specific action spaces fragment training data across web/mobile/desktop and block cross-environment learning</Problem>. <Problem>Methods either lack reliable visual grounding or outsource reasoning to closed-source LLMs</Problem>, creating a bottleneck that cannot be improved by training. And <Problem>agents are typically trained to emit reactive low-level actions directly, failing to exploit the planning capacity of VLMs</Problem>.
+
+## Contribution (what's new)
+The genuine delta is a single open model that is both grounder and planner on vision alone. Three design choices make it work: <Novelty>a unified `pyautogui`-based action space with a plugin layer for platform-specific gestures, so one model's "thought-to-action" mapping transfers across web, mobile, and desktop</Novelty>; <Novelty>explicit two-component inner monologue (a free-form thought plus a low-level natural-language instruction) baked into training data, turning reactive action prediction into deliberate planning</Novelty>; and <Novelty>a two-stage pipeline that first trains grounding on single screenshots, then trains planning/reasoning on inner-monologue trajectories</Novelty>. The vision-only observation is what permits the unified action space: pixel coordinates are a common substrate across platforms in a way HTML/accessibility trees are not.
+
+## Research questions
+Can an open-weights, pure-vision model perform both grounding and high-level planning end-to-end across platforms, matching or beating pipelines that depend on closed-source planners and textual inputs — and does explicit inner-monologue reasoning, plus cross-platform unification, measurably help?
+
+## Methodology
+AGUVIS finetunes Qwen2-VL (a NaViT-style dynamic-resolution encoder with 2D-RoPE, chosen for native variable-resolution screenshot handling) on a purpose-built dataset, then evaluates as either a standalone agent or a grounder paired with a GPT-4o planner.
+
+<Pass title="Method details">
+<Stepper steps={[
+  {title: "Unify observation + action", body: "Drop HTML/accessibility-tree inputs; feed raw screenshots. All actions are expressed as pyautogui calls (e.g. pyautogui.click(x,y), pyautogui.write(...)). A plugin system adds platform-specific actions (mobile gestures, browser.select_option, terminate(status)) while keeping the base command grammar consistent (Tab.9)."},
+  {title: "Build AGUVIS Data Collection", body: "Grounding split: unify existing GUI datasets into pyautogui format and template-augment UI-element metadata into synthetic instruction-action pairs — 1.036M single-step trajectories across web/mobile/desktop (Tab.10). Planning split: prompt GPT-4o to add inner-monologue (thought + low-level instruction) onto existing trajectories, keeping prior instructions in context so reasoning is predictive, not post-hoc — ~35K multi-step trajectories (Tab.11)."},
+  {title: "Stage 1 — Grounding training", body: "Train on single screenshots with a 'grounding packing' strategy that bundles multiple instruction-action pairs per image (single-image-multiple-turn) to cut redundant training. Result: AGUVIS-G."},
+  {title: "Stage 2 — Planning & reasoning training", body: "Continue from AGUVIS-G on inner-monologue trajectories with a reasoning mixture spanning bare action instructions up to full thought+plan monologues. Result: AGUVIS (7B and 72B)."},
+]} />
+The inner monologue at inference has two parts per step: an explicit thought `h_t` conditioned on the goal `G` and previous thought `h_{t-1}`, then a low-level natural-language action instruction that is translated into a concrete `pyautogui` command. The framework's model-agnostic claim is checked by re-implementing on LLaVA-OneVision (§4.1).
+</Pass>
+
+## Main result
+On ScreenSpot grounding, <Finding src="Tab.1">AGUVIS-72B reaches 89.2% average, beating the strongest baseline (GPT-4o + UGround, 81.4%) and surpassing closed-source-planner pipelines</Finding>; even the 7B model scores 84.4%. Across benchmarks AGUVIS leads on both grounding and end-to-end planning:
+
+<SortableTable columns={["Benchmark / Setting", "Best baseline", "Baseline score", "AGUVIS", "AGUVIS score"]} rows={[
+  ["ScreenSpot avg (self-plan, Tab.1)", "GPT-4o + UGround", 81.4, "AGUVIS-72B", 89.2],
+  ["MM-Mind2Web Cross-Task Step SR (Tab.2)", "GPT-4 T+I Choice", 40.2, "AGUVIS-72B", 64.0],
+  ["AndroidControl Low-level Step Acc (Tab.3)", "GPT-4o + UGround", 62.4, "AGUVIS-72B", 84.4],
+  ["AndroidControl High-level Step Acc (Tab.3)", "PaLM 2S* (AccTree)", 58.5, "AGUVIS-72B", 66.4],
+  ["Mind2Web-Live Task SR (Tab.4)", "Llama-3.1-405B (HTML)", 24.0, "AGUVIS-72B", 27.1],
+  ["AndroidWorld Task SR (Tab.5)", "GPT-4o + UGround", 32.8, "GPT-4o + AGUVIS-7B", 37.1],
+  ["OSWorld Task SR (Tab.8)", "Claude Computer-Use", 14.9, "GPT-4o + AGUVIS-7B", 17.04],
+]} />
+
+## Key findings
+- <Finding src="Tab.2">On Multimodal-Mind2Web, AGUVIS lifts Step Success Rate by +51.9% on average over prior methods</Finding>: the largest relative gains are in planning-heavy step success, not just element accuracy, indicating the reasoning stage, not only grounding, drives the win.
+- <Finding src="Tab.8">Despite being trained only on web and mobile data, AGUVIS generalizes to desktop OSWorld — 17.04% (GPT-4o planner + AGUVIS-7B) vs 4.59% for SoM and 14.9% for Claude Computer-Use; standalone AGUVIS-72B reaches 10.26%</Finding>: evidence it captures transferable GUI principles rather than overfitting environments.
+- <Finding src="Tab.6">Both stages matter: removing Stage 2 (planning) drops ScreenSpot 84.4→81.8 and MM-Mind2Web Cross-Task 60.4→50.9; removing Stage 1 (grounding) drops ScreenSpot 84.4→77.4; removing both collapses ScreenSpot to 55.3</Finding>.
+- <Finding src="Tab.6">Inner monologue helps low-level execution, not just planning: removing it drops ScreenSpot 84.4→79.3 and AndroidControl low-level 80.5→69.1</Finding> — a counterintuitive result, since one might expect reasoning to aid only high-level steps.
+- <Finding src="Tab.7">Unified cross-platform training beats platform-specific training: web+mobile data (35K traj.) scores 58.5 / 55.4 / 54.8 on MM-Mind2Web Task/Website/Domain vs 53.1 / 50.3 / 52.2 for web-only (6K)</Finding>, supporting the shared-representation hypothesis behind the unified action space.
+- <Finding src="§4.4">Pure vision cuts cost sharply: a constant 1,196 input tokens/step for 720p images vs ~4K for HTML, giving 93% cost reduction and 70% fewer input tokens/step vs GPT-4o on Mind2Web-Live</Finding>; cost-per-successful-step falls to $0.012 for AGUVIS-72B vs $0.142 for GPT-4o (Tab.4).
+- <Finding src="Tab.15">The pipeline is largely model-agnostic: on a weaker LLaVA backbone, ScreenSpot rises from 3.8% to 81.2% after full AGUVIS training</Finding>, attributing gains to the method rather than to Qwen2-VL alone.
+
+## Implications
+This reframes the computer-use-agent stack around an open, vision-only model that is simultaneously grounder and planner, undercutting the dominant <Related>GPT-4o-planner + separate-grounder pipelines such as UGround, SeeClick, and OmniParser</Related> on both accuracy and cost. It extends the lineage of <Related>vision-grounding work (SeeClick, UGround) and reasoning-augmented agents (inner monologue, Huang et al. 2022)</Related> into a single trainable artifact, and the open-sourced datasets/recipes lower the barrier for the field. Threads worth chasing: <FollowUp>whether the inner-monologue augmentation can be regenerated with open VLMs instead of GPT-4o, removing the last closed-source dependency in the data pipeline (authors flag this as future work)</FollowUp>; <FollowUp>adding refusal/uncertainty behavior so agents can decline ambiguous or unsafe actions</FollowUp>; and <FollowUp>a dynamic "when to plan" threshold to balance reasoning overhead against accuracy</FollowUp>.
+
+## Limitations
+- <Caveat>The planning/reasoning training data depends on GPT-4o to synthesize inner monologues, so the "no closed-source model" claim holds at inference but not for data construction</Caveat>.
+- <Caveat>The agent cannot express uncertainty or refuse ambiguous instructions; in a 50-sample ScreenSpot error analysis, 40% of failures stem from ambiguous instructions and 60% from grounding errors (§4.5, Fig.4)</Caveat>.
+- <Caveat>Standalone AGUVIS-72B underperforms its own GPT-4o-paired 7B configuration on some online tasks (e.g. AndroidWorld 26.1 vs 37.1, Tab.5), so the unified model is not yet uniformly the best deployment</Caveat>.
+- <Caveat>Online success rates are low in absolute terms (Mind2Web-Live 27.1%, OSWorld 17.04%), so real-world reliability remains far from usable</Caveat>.
+- <Caveat>Desktop generalization is shown only via OSWorld with no desktop training data; broad desktop competence is inferred, not directly trained or measured at scale</Caveat>.
+
+## Critiques and Questions
+1. The +51.9% Step-SR headline (Tab.2) is a relative average over heterogeneous baselines; the absolute Cross-Task gap is 64.0 vs 40.2, which is strong but less dramatic than the framing suggests — worth reading per-cell rather than as one number.
+2. Numbers appear to be single runs with no variance/error bars reported; given small online benchmarks (e.g. Mind2Web-Live, OSWorld's 369 tasks), the ~3-point online margins over baselines may be within noise.
+3. Self-plan vs original-instruction ScreenSpot results are mixed in the table; it is worth confirming which setting each cited number comes from, since the unified action space's advantage could partly reflect evaluation-protocol choices.
+
+<SelfCheck q="Why does the pure-vision design enable a unified cross-platform action space, where HTML/accessibility-tree inputs do not?" a="Pixel coordinates from a screenshot are a common substrate across web, mobile, and desktop, so a single pyautogui action grammar (e.g. click(x,y)) maps onto all of them; HTML and accessibility trees are platform-specific representations that fragment the action space and prevent cross-environment learning (§2.2, Tab.7)." />
+
+## Glossary
+- <Term def="A purely vision-based GUI agent: it reads the screen as pixels and outputs interface actions, with no HTML or accessibility-tree input.">pure-vision agent</Term>
+- <Term def="Two-part per-step reasoning trace — a free-form thought plus a low-level natural-language action instruction — generated before the concrete action, to make planning explicit.">inner monologue</Term>
+- <Term def="Mapping a natural-language instruction to the correct on-screen element/coordinate to act on.">grounding</Term>
+- <Term def="A Python automation library whose commands (click, write, press, dragTo) AGUVIS adopts as its universal, cross-platform action vocabulary.">pyautogui</Term>
+- <Term def="Cross-platform GUI grounding benchmark spanning mobile, desktop, and web; here the headline 89.2% average accuracy.">ScreenSpot</Term>
+- <Term def="Benchmark of 369 real-world computer tasks across web apps, desktop software, and OS operations; used here to test desktop generalization.">OSWorld</Term>
+- <Term def="Set-of-Marks — overlaying numbered marks on candidate UI elements so a model can refer to them by index; a grounding alternative AGUVIS outperforms.">SoM</Term>
+- <Term def="Training trick that packs multiple instruction-action pairs from one screenshot into a single example (single-image-multiple-turn) to reduce redundant grounding data.">grounding packing</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

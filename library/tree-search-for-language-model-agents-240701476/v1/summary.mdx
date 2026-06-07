@@ -1,0 +1,117 @@
+---
+canonical_key: arxiv-2407.01476
+version_key: v1
+title: Tree Search for Language Model Agents
+authors:
+- Jing Yu Koh
+- S. McAleer
+- Daniel Fried
+- Ruslan Salakhutdinov
+venue: Trans. Mach. Learn. Res.
+year: 2024
+tags:
+- foundational
+topic_groups:
+- agent_harness
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2407.01476
+summary_date: '2026-06-07'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+{/*
+  Canonical Summary structure (concise, core-first). Body only — frontmatter is generated
+  from metadata.yaml by `summarize_paper.py --format mdx --prepare`. Components are
+  provided globally by the site (no imports). See config/summary_components.md.
+*/}
+
+<TLDR>An inference-time, best-first tree search that runs in the real web environment — guided by a multimodal-LM value function — and lifts off-the-shelf LM web agents without any retraining, the first time search is shown to help on realistic web tasks.</TLDR>
+
+<WhyItMatters>Core to the computer-use / agent-harness track: it shows that test-time search, not just bigger base models, is a lever for web agents, and it is orthogonal to (composable with) any existing agent scaffold.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "+39.7%", label: "relative SR gain on VWA", sub: "GPT-4o + SoM, 18.9% → 26.4%" },
+  { value: "26.4%", label: "new SOTA success rate", sub: "VisualWebArena" },
+  { value: "+28.0%", label: "relative SR gain on WA", sub: "GPT-4o, 15.0% → 19.2%" },
+  { value: "910 / 812", label: "tasks evaluated", sub: "VWA / WebArena" },
+]} />
+
+## Motivation
+The best LM web agents lag far behind humans — humans solve <Finding src="§1, p.1">78% of WebArena and 89% of VisualWebArena tasks, while frontier-model agents typically sit below 20%</Finding>. A key reason is that <Problem>agents treat the task as a POMDP and act greedily on the current observation, so errors compound: one bad action at step `t` cannot be rectified and derails the whole trajectory</Problem>. Web environments make this worse — <Problem>the action space is far larger than in games and there are no clear-cut rewards or win conditions</Problem>, so prior LM search work (math, text puzzles, simplified simulators) does not transfer.
+
+## Contribution (what's new)
+The genuine delta is searching over the *actual environment state space* of realistic websites rather than over text outputs. <Novelty>A best-first tree search (loosely A*-inspired) constructs and prunes a graph of real web states reached by executing candidate actions, with backtracking to recover from bad branches.</Novelty> Because web environments give no reward signal, the design hinges on <Novelty>a model-based value function: a multimodal LM scores each state's expected reward by marginalizing over multiple CoT reasoning chains, producing fine-grained values in `[0,1]` to guide the priority queue.</Novelty> The search needs no finetuning of the base agent and is complementary to existing scaffolds — it survives deleting "we propose" as "execute-and-evaluate states in the live environment, guided by an LM critic."
+
+## Research questions
+Can inference-time search improve LM agents' success on *realistic* web tasks despite a huge action space and no explicit rewards, and does that improvement scale with test-time compute?
+
+## Methodology
+At each execution step, run a bounded best-first search from the current state: pop the highest-scored frontier state, backtrack to reach it, score it with the value function, and if it is not terminal, sample `b` candidate actions from the agent and push the resulting child states (carrying the parent's score) onto a max priority queue. Stop when a state scores above threshold `θ` or the budget `c` is hit, then commit to the best state found. Backtracking is done by resetting to the initial state and re-executing the action sequence (not the browser back button), to faithfully restore scroll offset and typed text.
+
+<Pass title="Method details (algorithm, value function, parameters)">
+
+<Stepper steps={[
+  { title: "Init", body: "Frontier F (max priority queue), best state ŝ_t ← s_t, best score v̂_t ← −∞, counter s ← 0." },
+  { title: "Pop & backtrack", body: "Pop highest-priority state s_p; reset environment and re-execute its action sequence to reach it." },
+  { title: "Score", body: "v_p = f_v(I, {o_1..o_p}): prompt a multimodal LM with the task instruction, last-d screenshots, action history and URL; it emits success / failure / on-track → mapped to 1 / 0 / 0.5 (0 for invalid)." },
+  { title: "Update best", body: "If v_p ≥ v̂_t, update best state and score." },
+  { title: "Terminate?", body: "Stop if v_p ≥ θ (likely goal reached) or s ≥ c (budget exceeded)." },
+  { title: "Branch", body: "If depth < d, sample b candidate actions, execute each, and add child states to F with the parent's score v_p." },
+  { title: "Commit", body: "Navigate to the best state ŝ_t found and advance the real trajectory." },
+]} />
+
+Value-function detail: scores come from <Term def="averaging values over multiple sampled CoT reasoning paths to reduce noise">self-consistency</Term> over 20 reasoning paths (ancestral sampling, temp 1.0, top-p 1.0); the average is the state's value. Including the last-`d` screenshots (not just the current one) lets the critic judge multi-step tasks. Calling the value function is roughly half the API cost of action prediction (action prediction carries few-shot examples + the page representation).
+
+Search hyperparameters: depth `d=5`, branching `b=5`, budget `c=20`, max 5 executed actions. Actions are obtained by sampling 20 CoT outputs (temp 1.0, top-p 0.95), aggregating, and taking the top-`b`. Agent backbones tested: multimodal Set-of-Marks (GPT-4o), caption-augmented (Llama-3-70B-Instruct + BLIP-2 captions), and text-only (accessibility tree). Evaluated on the full 910 VWA and 812 WA tasks.
+
+</Pass>
+
+## Main result
+Search lifts every baseline. On VisualWebArena, <Finding src="Tab.2, p.7">GPT-4o + SoM rises from 18.9% to 26.4% success (+39.7% relative), a new SOTA among the paper's comparison set</Finding>; on WebArena, <Finding src="Tab.2, p.7">GPT-4o rises from 15.0% to 19.2% (+28.0% relative)</Finding>. Notably <Finding src="§4.1, p.6">GPT-4o with search capped at 5 actions beats the GPT-4o baseline allowed 30 actions</Finding>.
+
+<SortableTable columns={["Setting", "No Search SR%", "+ Search SR%", "Δ rel%"]} rows={[
+  ["VWA — GPT-4o + SoM", 18.9, 26.4, 39.7],
+  ["VWA — Llama-3-70B + captions", 7.6, 16.7, 119.7],
+  ["WA — GPT-4o", 15.0, 19.2, 28.0],
+  ["WA — Llama-3-70B", 7.6, 10.1, 32.3]
+]} />
+
+## Key findings
+- <Finding src="Tab.2, p.7">Weaker base models gain the most: Llama-3-70B + captions jumps 7.6% → 16.7% on VWA (+119.7% relative)</Finding>, nearly matching no-search frontier multimodal agents — search partly substitutes for base-model quality.
+- <Finding src="Fig.2, §5.1, p.8">Performance scales with the search budget: even tiny search (c=5) gives +30.6% relative (24.5% → 32.0%), and c=20 gives +51.0% (24.5% → 37.0%) on a 200-task VWA subset</Finding> — concrete test-time-compute scaling.
+- <Finding src="Tab.3, p.8">Both depth and breadth matter: scaling d and b jointly reaches 37.0% (d=5,b=5) vs 24.5% no-search; neither dimension alone suffices</Finding>.
+- <Finding src="Tab.4, p.8">Self-consistency in the value function is essential (28.5% → 37.0%), and value-function quality bounds gains: GPT-4o critic 37.0% vs LLaVA 30.0%, with the groundtruth reward reaching 43.5%</Finding> — leaving clear headroom for better critics.
+- <Finding src="Fig.3, §5.1, p.9">Tree search beats trajectory-level reranking: reranking plateaus ~30% around 7 samples, below search at equal compute (c=5,n=5) and well below c=20's 37.0%</Finding>, because reranking cannot backtrack or prune mid-trajectory.
+- <Finding src="Tab.5, p.9">Gains are largest on medium-difficulty tasks (+75% relative, 12.7% → 22.2%); easy tasks need little planning and hard tasks (10+ actions) exceed the d=5 search depth</Finding>.
+
+## Implications
+This establishes test-time search as a first-class lever for web agents and a complement to scaffold/prompt engineering, extending the <Related>AlphaGo/MCTS and Tree-of-Thoughts lineage of search-augmented decision-making</Related> into realistic, reward-free web environments built on <Related>WebArena and VisualWebArena</Related>. Threads worth chasing: <FollowUp>finetuned, domain-specific value functions (the groundtruth-reward gap suggests large upside)</FollowUp>, <FollowUp>swapping in stronger search such as MCTS</FollowUp>, <FollowUp>destructive-action handling via a safety classifier folded into the value function or a learned world model for offline simulation</FollowUp>, and <FollowUp>transfer to non-web agentic domains like SWE agents that need code-execution-aware critics</FollowUp>.
+
+## Limitations
+- <Caveat>Search is slow: budget c=20 can mean up to ~20× more LM calls per step, and the reset-and-replay backtracking adds further wall-clock overhead</Caveat>.
+- <Caveat>Destructive actions (e.g. placing an order) are hard to backtrack from; safe real-world deployment needs a mechanism to forbid them, not yet built here</Caveat>.
+- <Caveat>The value function is heavily visual, plausibly why gains are larger on multimodal VWA than on WA; it is also web-specific and would need adaptation for other domains</Caveat>.
+- <Caveat>Capped at depth d=5 / 5 max actions for compute reasons, so hard tasks needing 10+ actions are effectively intractable</Caveat>.
+
+## Critiques and Questions
+1. The headline "SOTA" is qualified: domain-specific WA agents already report much higher numbers (e.g. <Finding src="Tab.2, p.7">SteP 33.5%, AgentOccam-Judge 45.7%</Finding>) — search only sets SOTA on VWA and within the paper's own prompt-based baselines. The orthogonality claim (search composes with those methods) is plausible but untested.
+2. Several headline ablations (budget, depth/breadth, value-function, reranking) use only a 200-task VWA subset; single-run numbers with no variance/error bars make the smaller deltas hard to trust.
+3. The value function and the success evaluator share GPT-4o lineage and prompt structure — does the critic over-credit trajectories the same model would judge successful, inflating SR relative to the groundtruth-reward ceiling?
+
+<SelfCheck q="Why does this method use a learned value function rather than the environment's reward, and what concretely does that value function output?" a="Realistic web environments give only a sparse 0/1 reward at the true goal (and the simulator state may be inaccessible), which cannot guide best-first search over intermediate states. So a multimodal LM critic scores each state's expected reward in [0,1] from the instruction + screenshots/history, emitting success/on-track/failure → 1/0.5/0, averaged over 20 self-consistent reasoning paths for fine-grained, denser guidance." />
+
+## Glossary
+- <Term def="Iteratively constructing, exploring, and pruning a graph of states; expands the most promising frontier node first using a heuristic/value score, here loosely inspired by A*">best-first tree search</Term>
+- <Term def="A function estimating a state's expected reward E[R(s_t)] ∈ [0,1]; here a prompted multimodal LM rather than a trained network">value function</Term>
+- <Term def="Webpage representation overlaying every interactable element with a numbered bounding box, fed to a multimodal model for visual grounding">Set-of-Marks (SoM)</Term>
+- <Term def="A structured, machine-readable tree of a webpage's elements used as a text observation when screenshots are unavailable">accessibility tree</Term>
+- <Term def="VisualWebArena / WebArena — benchmarks of realistic, self-hosted website re-implementations (910 and 812 tasks) with programmatic success checks">VWA / WA</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

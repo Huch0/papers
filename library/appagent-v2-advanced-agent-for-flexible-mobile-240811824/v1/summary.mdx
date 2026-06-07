@@ -1,0 +1,121 @@
+---
+canonical_key: arxiv-2408.11824
+version_key: v1
+title: 'AppAgent v2: Advanced Agent for Flexible Mobile Interactions'
+authors:
+- Yanda Li
+- Chi Zhang
+- Wenjia Jiang
+- Wanqi Yang
+- Bin Fu
+- Pei Cheng
+- Xin Chen
+- Ling Chen
+- Yunchao Wei
+venue: arXiv.org
+year: 2024
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2408.11824
+summary_date: '2026-06-07'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+{/*
+  Canonical Summary structure (concise, core-first). Body only — frontmatter is generated
+  from metadata.yaml by `summarize_paper.py --format mdx --prepare`. Components are
+  provided globally by the site (no imports). See config/summary_components.md.
+*/}
+
+<TLDR>AppAgent v2 is an MLLM-driven mobile GUI agent that fuses XML parser data with OCR/detection-based visual features into one flexible action space, builds a structured per-element knowledge base during exploration, and retrieves it via RAG at deployment to act on apps it has never seen.</TLDR>
+
+<WhyItMatters>A foundational computer-use-agent design for the smartphone-GUI line: it shows how to escape brittle parser-only grounding and how a document/RAG memory plus a safety-check handoff make an agent robust to unfamiliar, dynamically-changing app interfaces.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "93.3%", label: "success rate on AppAgent benchmark", sub: "manual-exploration docs, GPT-4 (Tab.1)" },
+  { value: "77.8%", label: "completion rate on DroidTask", sub: "vs 71.3% AutoDroid w/ memory, GPT-4 (Fig.2)" },
+  { value: "100%", label: "success on Mobile-Eval", sub: "all 3 instruction sets, no docs (Tab.2)" },
+  { value: "8", label: "actions in the action space", sub: "tap/text/long-press/swipe/back/home/wait/stop (§2.2)" },
+]} />
+
+## Motivation
+GUI agents must act on a screen they can only partially perceive. Prior smartphone agents like the original AppAgent <Problem>depend on an off-the-shelf XML parser to identify UI elements, which fails on non-standard components such as video players, games, and custom icons that the parser cannot resolve</Problem>. Vision-only approaches like MobileAgent instead <Problem>suffer recognition errors from imperfect detection models and cannot tell whether a recognized icon is actually interactive</Problem>. On top of this, <Problem>mobile interfaces change constantly, so even GPT-4 stumbles on lesser-known apps with unfamiliar visual elements</Problem>, and parser-only memory that matches by element ID does not transfer when IDs or layouts shift.
+
+## Contribution (what's new)
+The genuine delta is a <Novelty>unified, flexible action space in which each UI element carries multiple complementary descriptors — parser ID, text content, and visual feature (color/shape) plus coordinates — so the agent can ground an action through whichever channel is available</Novelty>. Parser data stays primary because it alone reports interactivity (clickable/scrollable); <Novelty>visual-feature grounding via OCR + Grounding-DINO detection is invoked only as a fallback when no numerically-tagged parsable element can do the job</Novelty>, which avoids the redundant taps a vision-only agent makes on non-interactive elements. The second delta is a <Novelty>structured per-element knowledge base populated during exploration and queried at deployment by a self-query RAG retriever (embeddings keyed on resource ID or OCR text), updated in real time as new elements appear</Novelty>. This form is forced by the failure mode above: ID-only memory cannot retrieve descriptions for custom/visual elements, so the store must key on heterogeneous attributes.
+
+## Research questions
+Can a mobile GUI agent act reliably across diverse and unfamiliar apps by (1) combining parser and visual grounding in a single action space and (2) carrying a retrievable, continuously-updated knowledge base of element functionality, rather than relying on parser-only perception or rote memorization?
+
+## Methodology
+The agent runs on Android 15 in the Android Studio emulator, driving the device through an `AndroidController`. Each round it reads the current GUI (XML parse + OCR + detection) and emits Observation / Thought / Action / Summary, where the Summary is fed forward as memory. It operates in two phases — exploration (document element functions) and deployment (retrieve docs and execute) — following the original AppAgent's two-phase recipe.
+
+<Pass title="Method details">
+<Stepper steps={[
+  { title: "Perception", body: "Parse the GUI's structured XML for interactive widgets; run OCR (DBNet, Liao et al. 2020) and detection (Grounding-DINO, Liu et al. 2023b) over the screenshot. Each element records: Android ID, numeric tag, text, visual feature, coordinates." },
+  { title: "Action space (8 actions)", body: "TapButton(int|str) — by tag number or by text; Text(str); LongPress(int); Swipe(element, direction, dist); Back(); Home() (enables re-runs and cross-app tasks); Wait() (~2s refresh); Stop()/FINISH (§2.2, App.C)." },
+  { title: "Agent-driven exploration", body: "Pick an element and action, screenshot before/after, compare to record the element's function. A reflection step classifies the outcome as BACK / INEFFECTIVE / CONTINUE / SUCCESS; irrelevant actions are logged to a useless_list and fed back so only task-aligned actions are documented (§2.3.1, Fig.5)." },
+  { title: "Manual exploration", body: "Human performs the operations while GPT-4 observes before/after screenshots; same OCR/detection pipeline documents elements. Used where the LLM misjudges unfamiliar apps; produces higher-quality docs (§2.3.2)." },
+  { title: "Document / knowledge base", body: "Novel structured storage holding, per element, Android ID, visible labels, text, visual features, coordinates, and a GPT-4-written functionality description. Supports dynamic updates as new elements are seen (§2.5)." },
+  { title: "Deployment + RAG", body: "Self-query retriever embeds doc content into a vector store and fetches the most relevant entry by resource ID or OCR text; it is injected into the prompt alongside the screenshot and task. The agent can also run without docs for common tasks. Memory is updated after each action (§2.4)." },
+  { title: "Visual-feature fallback", body: "If the target element is not numerically tagged and no tagged element advances the task, the agent switches to a visual-feature UI layout: OCR/detection annotate text and icons with new numeric tags so the agent can act on them (§2.6.1)." },
+  { title: "Safety check", body: "At deployment, if the next step touches passwords/payment/privacy, the agent halts and hands control to the user (manual mode), retains no information from that step, and resumes when the user types 'finish' (§2.6.2, Fig.8)." },
+]} />
+</Pass>
+
+## Main result
+On the AppAgent benchmark (10 apps, success-rate metric), AppAgent v2 with manual-exploration docs reaches <Finding src="Tab.1">93.3% SR, versus 84.4% for the original AppAgent watching demos and 2.2% for a raw GPT-4 baseline</Finding>; its agent-driven variant matches AppAgent's watching-demos at 84.4%.
+
+<SortableTable columns={["Method", "Document", "SR (%)"]} rows={[
+  ["GPT-4 (baseline)", "None / raw action space", 2.2],
+  ["AppAgent", "None", 48.9],
+  ["AppAgent", "Auto. exploration", 73.3],
+  ["AppAgent", "Watching demos", 84.4],
+  ["AppAgent v2 (Ours)", "Agent-driven", 84.4],
+  ["AppAgent v2 (Ours)", "Manual", 93.3]
+]} />
+
+## Key findings
+- <Finding src="Fig.2">On DroidTask (158 tasks, 13 apps, GPT-4), AppAgent v2 deployed with no document reaches 77.8% completion, beating AutoDroid both without memory (63.5%) and with memory (71.3%), and far above the LLM-only framework (31.6%)</Finding>: the agent's direct deployment outperforms a memory-augmented baseline even before exploration is used.
+- <Finding src="Tab.1">Documentation quality is the dominant lever on the AppAgent benchmark: manual-exploration docs lift SR from 84.4% (agent-driven) to 93.3%, and any documentation moves the original AppAgent from 48.9% (no doc) to 73.3–84.4%</Finding>: human-guided exploration corrects the LLM's misjudgments of unfamiliar apps.
+- <Finding src="Tab.2">On Mobile-Eval (10 apps), AppAgent v2 hits a 100% Success rate across all three instruction sets and process scores of 0.97 / 0.91 / 0.95, versus MobileAgent's 0.91/0.82/0.82 success and 0.89/0.77/0.84 process scores — without loading any document</Finding>: strong out-of-the-box behavior on common apps.
+- <Finding src="Tab.2">Relative efficiency improves over MobileAgent — e.g. average steps 4.3/4.2 vs 4.9/4.2 on instruction set 1 — indicating fewer wasted actions per task</Finding>: closer to human step counts.
+- <Finding src="§3.3">Parser-based structured data is the right primary channel because it uniquely reports widget operability (clickability/scrollability), while pure visual features cannot judge operability without interacting and thus risk redundant actions on non-interactive elements</Finding>: this is the stated reason visual grounding is kept as a secondary fallback.
+- <Finding src="§2.6.1">A visual-feature relabeling pass lets the agent act on custom icons in previously unseen scenarios that have no parser tag</Finding>: the mechanism that extends coverage beyond parsable UIs.
+
+## Implications
+This consolidates the smartphone-GUI-agent lineage from <Related>the original AppAgent (Yang et al. 2023b), MobileAgent (Wang et al. 2024), AutoDroid (Wen et al. 2024), and MobileGPT's human-like app memory (Lee et al. 2024)</Related> into a parser+vision hybrid with retrievable memory, and the safety-check handoff is a reusable pattern for any agent operating on real accounts. Threads worth chasing: <FollowUp>whether the RAG knowledge base actually transfers across app versions/layout changes (the motivating failure mode) rather than only across runs of the same build</FollowUp>; <FollowUp>handling hidden/gesture-only controls (e.g. tap-to-seek in a video) that have no detectable UI element</FollowUp>; and <FollowUp>how reliance on human manual exploration for the best docs scales beyond a 10-app benchmark</FollowUp>.
+
+## Limitations
+- <Caveat>The numeric-tag grounding scheme gets confused when a UI element itself contains numbers; authors mitigate this only via preliminary manual exploration/documentation (§6)</Caveat>.
+- <Caveat>The agent cannot act on hidden UI elements with no on-screen control (e.g. tap-to-accelerate a video) because it lacks the prior knowledge and the button is undetectable in the current UI (§6)</Caveat>.
+- <Caveat>DroidTask numbers are not strictly head-to-head: AutoDroid ran on a real device while this work used an emulator with different app versions, and unsupported tasks were counted as errors — authors argue true performance "would be higher" under identical conditions (App.B)</Caveat>.
+- <Caveat>Evaluation is emulator-only on three small benchmarks (10–13 apps each) with GPT-4 only; no variance/error bars and apparently single-run numbers</Caveat>.
+
+## Critiques and Questions
+1. The best result (93.3%) depends on **manual** human exploration, which partly defers the agent's own perception problem to a human — how much of the gain is the method vs. the human-curated docs?
+2. The headline "flexible action space" claim is supported mostly by aggregate success rates; there is no ablation isolating the visual-feature fallback's contribution, so its marginal value is `Unclear`.
+3. Mobile-Eval's 100% success is on common, well-known apps with no documents — exactly the regime where GPT-4 already does well — so it does not test the unfamiliar-app case the paper motivates.
+4. RAG is claimed to "adapt to dynamic interfaces," but the experiments do not vary app versions across exploration and deployment, leaving the central robustness claim unverified.
+
+<SelfCheck q="Why does AppAgent v2 use parser-based structured data as the primary grounding channel and OCR/detection visual features only as a fallback?" a="Because the XML parser uniquely reports whether a widget is interactive (clickable/scrollable), whereas visual features can recognize text/icons but cannot determine operability without acting — so vision-only grounding causes redundant taps on non-interactive elements (§3.3). Visual grounding is therefore invoked only when no numerically-tagged parsable element can advance the task." />
+
+## Glossary
+- <Term def="Multimodal Large Language Model — an LLM that also takes image input, e.g. GPT-4V">MLLM</Term> — the perception+reasoning backbone (GPT-4 in all experiments).
+- <Term def="Retrieval-Augmented Generation: fetch relevant stored documents and inject them into the prompt before generating">RAG</Term> — used at deployment to pull the right element doc into the prompt.
+- <Term def="A retriever that turns a query into structured filters over a vector store, here keyed on resource ID or OCR text">self-query retriever</Term> — selects the most relevant element document.
+- <Term def="Android Task Automation benchmark: 158 high-level tasks over 13 popular apps, scored by Completion Rate">DroidTask</Term> — Wen et al. 2024.
+- <Term def="Mobile-agent benchmark of 10 common apps scored by Success, Process Score, Relative Efficiency, Completion Rate">Mobile-Eval</Term> — Wang et al. 2024.
+- <Term def="Probability of correctly completing all actions in a given task sequence">Completion Rate</Term> — DroidTask's metric.
+- <Term def="Open-set object detector marrying DINO with grounded pre-training">Grounding-DINO</Term> — the detection model for icon localization (Liu et al. 2023b).
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

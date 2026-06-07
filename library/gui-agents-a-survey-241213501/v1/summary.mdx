@@ -1,0 +1,132 @@
+---
+canonical_key: arxiv-2412.13501
+version_key: v1
+title: 'GUI Agents: A Survey'
+authors:
+- Dang Nguyen
+- Jian Chen
+- Yu Wang
+- Gang Wu
+- Namyong Park
+- Zhengmian Hu
+- Hanjia Lyu
+- Junda Wu
+- Ryan Aponte
+- Yu Xia
+- Xintong Li
+- Jing Shi
+- Hongjie Chen
+- Viet Dac Lai
+- Zhouhang Xie
+- Sungchul Kim
+- Ruiyi Zhang
+- Tong Yu
+- Md Mehrab Tanjim
+- Nesreen K. Ahmed
+- Puneet Mathur
+- Seunghyun Yoon
+- Lina Yao
+- B. Kveton
+- T. Nguyen
+- Trung Bui
+- Tianyi Zhou
+- Ryan A. Rossi
+- Franck Dernoncourt
+venue: Annual Meeting of the Association for Computational Linguistics
+year: 2024
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2412.13501
+summary_date: '2026-06-07'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+{/*
+  SURVEY summary. No single headline metric; "## Key findings" carries the survey's
+  organizing taxonomy. Per-system metrics are "Not reported" (this paper aggregates rather
+  than benchmarks). Numbers verified against extraction.txt.
+*/}
+
+<TLDR>A survey that organizes the GUI-agent field under one <Novelty>perception / reasoning / planning / acting</Novelty> framework, then catalogs its benchmarks, evaluation metrics, architectures, and training methods.</TLDR>
+
+<WhyItMatters>The cleanest entry point and shared vocabulary for the computer-use-agent track: it maps the benchmark and architecture landscape so individual systems (Mind2Web, WebArena, OS-World, UGround, OS-Atlas) can be placed relative to each other.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "4", label: "architecture pillars", sub: "perception / reasoning / planning / acting" },
+  { value: "51.1%", label: "intent accuracy on unseen sites", sub: "cited open-problem evidence (§6)" },
+]} />
+
+## Motivation
+Large Foundation Models are shifting from chatbots to agents that act, and a natural target is to <Problem>drive digital systems through their GUIs the way humans do — clicking, typing, tapping</Problem>, since GUIs are ubiquitous. But the field is fragmented: <Problem>benchmarks, metrics, architectures, and training recipes are scattered across papers with no shared framing</Problem>, and GUIs pose hard problems like dynamic layouts, cross-platform visual diversity, and fine-grained grounding of small, numerous, scattered elements. The survey exists to impose structure on this rapidly growing but disorganized literature.
+
+## Contribution (what's new)
+The genuine delta is organizational, not empirical. The survey proposes a <Novelty>unified taxonomy that decomposes any GUI agent into four capabilities — perception, reasoning, planning, acting — and a parallel split of the surrounding ecosystem into benchmarks, evaluation metrics, architectures, and training methods</Novelty>. It also <Novelty>formalizes the GUI-agent task as a POMDP `(U, A, S, O, T)` with a policy that conditions on the full action-observation history</Novelty>, giving the field a common formal object. The framework form follows from the failure mode of prior surveys: enumerating systems alone hides the axes (interface type, world assumption, knowledge source) along which designs actually differ.
+
+## Research questions
+How should the GUI-agent space be carved up so that disparate systems become comparable — specifically, what are the recurring axes of (1) how agents perceive a screen, (2) how they reason and plan, (3) how they act on elements, (4) how they are evaluated, and (5) how they are trained — and what remains unsolved?
+
+## Methodology
+A structured literature survey. Each axis of the taxonomy is populated with representative systems and contrasted along design trade-offs (privacy, robustness, reproducibility, cost), rather than re-running any experiments.
+
+<Pass title="Taxonomy details">
+**Benchmarks (§3).** Two orthogonal axes. First, static *datasets* (fixed input-output pairs) vs interactive *environments* (stateful, MDP/POMDP-like, actions change state). Second, *closed-world* (all knowledge needed is inside the benchmark) vs *open-world* (task info may live outside, e.g. the live web).
+- Static closed-world: RUSS, Mind2Web, MT-Mind2Web, TURKINGBENCH, VisualWebBench, ScreenSpot, WONDERBREAD, EnvDistraction, NaviQAte.
+- Static open-world: GAIA, WebLINX.
+- Interactive closed-world: MiniWoB, CompWoB, WebShop, WebArena, VisualWebArena, WorkArena(++), ST-WebAgentBench, VideoWebArena, OS-World, Spider2-V, BrowserGym.
+- Interactive open-world: WebVLN, WebVoyager, AutoWebGLM, MMInA, WebCanvas.
+
+**Evaluation metrics (§3.3).** Task-completion (goal-state reached / exact match / all subtasks done, with partial-credit variants; WebVoyager uses GPT-4V as judge with 85.3% human agreement), intermediate-step (URL / element-path / element-value matching, intent match, element accuracy, step success rate), plus efficiency, generalization, safety, and robustness metrics.
+
+**Architectures (§4).**
+- *Perception* — four interface types: accessibility-based (semantic UI tree, layout-robust, privacy-light, but spotty for dynamic/custom widgets), HTML/DOM-based (rich structure but noisy; needs pruning, e.g. AutoWebGLM, HTML-T5), screen-visual-based (screenshots; OmniParser, TAG, Cradle — no instrumentation needed but privacy/compute cost), and hybrid (combine all three for error recovery; OS-Atlas, UGround).
+- *Reasoning* — WebPilot, WebOccam, OSCAR (code generation), LAST.
+- *Planning* — internal-knowledge (WebDreamer world-model simulation, MobA two-level, Agent S hierarchical) vs external-knowledge (Search-Agent A*, AgentQ MCTS, Toolchain, WMA world models).
+- *Acting* — text/metadata-based grounding (WebAgent, Mind2Web, AppAgent, MobileAgent) vs visual-only pixel grounding (UGround, OmniParser, OS-Atlas).
+
+**Training (§5).** Prompt-based (no parameter updates: self-reflection in Agent Q / OSCAR, intent discovery in Auto-Intent, state-space exploration, app memory in AutoDroid) vs training-based: pre-training (PIX2STRUCT, continual pre-training of VLMs — SeeClick, UGround, CogAgent, ShowUI), fine-tuning (Falcon-UI, VGA, UI-Pro for grounding/hallucination reduction), and reinforcement learning (WebGPT, WebRL, AutoGLM, DigiRL).
+</Pass>
+
+## Main result
+This is a survey; there is no single benchmarked headline result. Per-system performance numbers are **Not reported** here by design — the contribution is the framework and catalog, not a leaderboard.
+
+## Key findings
+- <Finding src="§4.1">Perception interfaces fall into four types — accessibility, HTML/DOM, screen-visual, hybrid — each with a distinct privacy/robustness/instrumentation trade-off</Finding>: accessibility and DOM are layout-robust but require developer cooperation and preprocessing, screen-visual needs no instrumentation but raises privacy and compute cost, and hybrid systems (OS-Atlas, UGround) win by falling back between modalities when one is incomplete.
+- <Finding src="§3">Benchmarks separate cleanly along two axes — static dataset vs interactive environment, and closed-world vs open-world</Finding>: realism and reproducibility trade off directly, since live open-world sites give realism but break reproducibility.
+- <Finding src="§4.4">Acting is moving from text/metadata grounding toward visual-only pixel grounding</Finding>: metadata (HTML/accessibility trees) is noisy and costly to parse every step, so systems like UGround and OS-Atlas map instructions straight to screen coordinates for universal cross-platform grounding.
+- <Finding src="§5">Training splits into prompt-based (no weight updates) vs training-based (pre-training / fine-tuning / RL)</Finding>: the trend in training-based work is continual pre-training of existing VLMs then fine-tuning on curated GUI data, with RL increasingly used for error recovery and sparse-reward mitigation (WebRL, AutoGLM, DigiRL).
+- <Finding src="§3.3">Task-completion rate dominates evaluation but is defined inconsistently and is too coarse</Finding>: definitions range from goal-state stop to exact match to all-subtasks-done, and fine-grained step metrics (URL/element/value matching) are harder to label, so cross-paper comparison is unreliable.
+- <Finding src="§6">User-intent understanding is a concrete bottleneck</Finding>: agents reach only `51.1%` accuracy on unseen websites, the survey's clearest quantitative evidence that generalization is unsolved.
+
+## Implications
+The framework gives the field a shared coordinate system: any new agent can be located by its perception interface, knowledge source for planning, action-grounding style, and training recipe. It positions <Related>the visual-grounding lineage (SeeClick → UGround → OS-Atlas) and the interactive-environment lineage (MiniWoB → WebArena → OS-World / BrowserGym)</Related> as the two backbones of current progress. Threads worth chasing: <FollowUp>standardizing task-completion semantics so leaderboards are comparable</FollowUp>, <FollowUp>privacy-preserving perception (local processing, differential privacy) for agents that touch credentials and documents</FollowUp>, and <FollowUp>inference-latency reductions (quantization, multi-token / predictive decoding) for real-time deployment</FollowUp>.
+
+## Limitations
+- <Caveat>Scope is deliberately GUI-only — CLI- and API-based agents are excluded</Caveat>, so it does not cover the full landscape of LFM-driven system interaction.
+- <Caveat>It is descriptive, not quantitative — it aggregates and contrasts but reports no head-to-head numbers, so it cannot say which design actually wins</Caveat>.
+- <Caveat>Fast-moving field, fixed snapshot</Caveat>: a survey of a field with this velocity ages quickly (the arXiv text spans v1 Dec 2024 through a v3 Sep 2025 revision).
+- <Caveat>The taxonomy's sections are uneven</Caveat> — perception and benchmarks are richly detailed while reasoning is covered by only a handful of systems.
+
+## Critiques and Questions
+1. The four-pillar framework is intuitive but its boundaries blur in practice — reasoning vs planning, and perception vs acting (visual grounding sits in both), overlap, so the taxonomy may classify systems ambiguously.
+2. The single quantitative claim (`51.1%` intent accuracy on unseen sites) is borrowed from one cited paper, not a normalized cross-benchmark measurement; the survey offers no apples-to-apples comparison of any capability.
+3. With benchmarks defined and evaluated so inconsistently (the survey itself flags this), how much does the elegant taxonomy actually help a practitioner pick a system today?
+
+<SelfCheck q="What are the two orthogonal axes the survey uses to organize GUI-agent benchmarks?" a="Static dataset vs interactive environment (does taking an action change state?), and closed-world vs open-world (is all task knowledge contained inside the benchmark, or can it live outside, e.g. on the live web?)." />
+
+## Glossary
+- <Term def="An intelligent autonomous agent that interacts with digital platforms through their graphical user interface — observing on-screen visual elements and clicking, typing, or tapping like a human user.">GUI agent</Term>
+- <Term def="Partially Observable Markov Decision Process: a sequential decision model (U,A,S,O,T) where the true state is not fully observable, so the policy conditions on the history of observations and actions.">POMDP</Term>
+- <Term def="A benchmark assumption that all knowledge needed to solve a task is contained within the benchmark itself; open-world relaxes this, allowing required information to exist outside.">closed-world</Term>
+- <Term def="Mapping an instruction or referring expression to the specific on-screen UI element — for visual grounding, directly to pixel coordinates on a screenshot.">grounding</Term>
+- <Term def="OS-level APIs that expose a semantic hierarchy of UI components (roles, labels, states), letting agents identify actionable elements without pixel parsing.">accessibility API</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

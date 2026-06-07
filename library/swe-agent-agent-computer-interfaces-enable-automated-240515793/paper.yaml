@@ -47,17 +47,17 @@ versions:
   source: arxiv
   source_url: https://arxiv.org/abs/2405.15793v3
   pdf_path: library/swe-agent-agent-computer-interfaces-enable-automated-240515793/v1/paper.pdf
-  summary_path: null
+  summary_path: library/swe-agent-agent-computer-interfaces-enable-automated-240515793/v1/summary.mdx
   metadata_path: library/swe-agent-agent-computer-interfaces-enable-automated-240515793/v1/metadata.yaml
   fetched_at: '2026-06-06T06:49:09Z'
   source_updated_at: '2024-11-11T20:01:15Z'
   arxiv_version: v3
   pdf_sha256: d171e0693060b910ceb2cddd0fd4bc7cae302005d42d0d8059bfdbe056c3adba
   pdf_bytes: 4963538
-  summary_status: none
-  extraction_status: none
+  summary_status: full
+  extraction_status: full
   created_at: '2026-06-06T06:49:09Z'
-  updated_at: '2026-06-06T06:49:09Z'
+  updated_at: '2026-06-07T06:20:36Z'
 relations:
   duplicate_candidates: []
   related_papers: []

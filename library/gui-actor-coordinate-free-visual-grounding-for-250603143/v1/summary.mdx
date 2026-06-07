@@ -1,0 +1,140 @@
+---
+canonical_key: arxiv-2506.03143
+version_key: v1
+title: 'GUI-Actor: Coordinate-Free Visual Grounding for GUI Agents'
+authors:
+- Qianhui Wu
+- Kanzhi Cheng
+- Rui Yang
+- Chaoyun Zhang
+- Jianwei Yang
+- Huiqiang Jiang
+- Jian Mu
+- Baolin Peng
+- Bo Qiao
+- Reuben Tan
+- Si Qin
+- Lars Lidén
+- Qingwei Lin
+- Huan Zhang
+- Tongxing Zhang
+- Jianbing Zhang
+- Dongmei Zhang
+- Jianfeng Gao
+venue: arXiv.org
+year: 2025
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+- general_agent_methods
+- software_engineering_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2506.03143
+summary_date: '2026-06-07'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+{/*
+  Canonical Summary structure (concise, core-first). Body only — frontmatter is generated
+  from metadata.yaml by `summarize_paper.py --format mdx --prepare`. Components are
+  provided globally by the site (no imports). See config/summary_components.md.
+*/}
+
+<TLDR>GUI-Actor replaces text-based coordinate generation for GUI grounding with an attention-based action head: a dedicated `<ACTOR>` token attends directly to relevant visual patches, proposing one or more click regions in a single forward pass, with a lightweight verifier picking the best candidate.</TLDR>
+
+<WhyItMatters>Grounding (mapping a plan to a screen location) is the perception bottleneck for computer-use agents. This is a foundational rethink of the grounding head itself — coordinate-free, patch-native, and verifier-augmented — directly relevant to my computer-use and general-agent tracks.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "40.7", label: "ScreenSpot-Pro avg", sub: "GUI-Actor-7B (Qwen2-VL), beats UI-TARS-72B at 38.1" },
+  { value: "44.6", label: "ScreenSpot-Pro avg", sub: "GUI-Actor-7B (Qwen2.5-VL), no verifier" },
+  { value: "~100M", label: "trainable params (7B)", sub: "action head only; backbone frozen" },
+  { value: "~1M", label: "training screenshots", sub: "public GUI datasets, 1 epoch" },
+]} />
+
+## Motivation
+GUI agents must perform visual grounding: locating the right screen region for an action from a screenshot plus a textual plan. <Problem>Most prior methods formulate this as text-based coordinate generation</Problem> — the VLM emits positions as language tokens (e.g. `x=0.125, y=0.23`). This inherits three structural weaknesses. First, <Problem>weak spatial-semantic alignment</Problem>: mapping pixels to numeric strings through a language head carries no spatial inductive bias, making it data-hungry and error-prone. Second, <Problem>ambiguous single-point supervision</Problem>: many points inside a button are valid, but point-prediction penalizes all deviations from one labeled point. Third, <Problem>a granularity mismatch</Problem>: coordinates are continuous and dense while ViT features are coarse patch-level, so the model must infer pixel-precise targets from coarse tokens, hurting generalization across resolutions and layouts. <Problem>Even bounding-box variants still emit raw coordinate strings detached from visual features</Problem>, lacking ROI-pooling or spatial-attention machinery to bridge intent and visual action.
+
+## Contribution (what's new)
+The genuine delta is grounding by <Novelty>attention rather than by token generation</Novelty>: a dedicated <Term def="special token inserted in place of the coordinate span; its final-layer hidden state is the query for action attention">`<ACTOR>` token</Term> serves as a contextual anchor, and an attention-based action head aligns it with visual patch tokens to produce a spatial activation map over the screen. The design must take this form because the baseline fails *at the interface between vision and action*: emitting numbers through a language head discards the patch structure the vision encoder already provides. Attending directly over patches grounds actions at the backbone's <Novelty>native patch resolution</Novelty>, removing the granularity mismatch. The same mechanism enables <Novelty>multi-patch supervision</Novelty> (all patches overlapping the ground-truth box are positives), which absorbs the natural ambiguity of valid click points, and lets the head <Novelty>propose multiple candidate regions in one forward pass</Novelty> at no extra inference cost. A <Novelty>lightweight grounding verifier</Novelty> then re-ranks candidates by marking each on the image and asking a small VLM whether the mark satisfies the instruction.
+
+## Research questions
+1. Can coordinate-free, attention-based grounding match or beat text-based coordinate generation, especially on out-of-distribution high-resolution interfaces?
+2. Does grounding at native patch resolution with multi-patch supervision improve sample efficiency and generalization?
+3. Can grounding be imparted to a frozen backbone VLM by training only the action head, without sacrificing its general-purpose abilities?
+
+## Methodology
+Insert three special tokens (`<ACTOR_START>`, `<ACTOR>`, `<ACTOR_END>`) where a coordinate span would normally go. Take the final-layer hidden state of `<ACTOR>` as a query, run self-attention over the vision encoder's patch features, project both query and patches into a shared space via two MLPs, and compute scaled dot-product attention to yield a per-patch score map. Train with next-token-prediction loss plus an action-attention loss (KL between predicted attention and a normalized multi-patch target mask). At inference, decode normally, extract the `<ACTOR>` attention map, take the top-K patches, and use the verifier to select the first candidate exceeding a confidence threshold.
+
+<Pass title="Method details">
+<Stepper steps={[
+  {title: "ACTOR token as anchor", body: "Replace the coordinate span {x_i..x_j} in the pyautogui-style action string with <ACTOR_START>, <ACTOR>, <ACTOR_END>. The final-layer hidden state h_<ACTOR> is the contextual anchor for action attention (Eq. 1, §3)."},
+  {title: "Attention-based action head", body: "Visual patch features v_1..v_M from the vision encoder pass through a self-attention layer so patches of the same UI element share representations. Project h_<ACTOR> via MLP-T to z and each patch via MLP-V to z_i; attention weight a_i = softmax(z·z_i / sqrt(d)) over all M patches (Eqs. 2-4, §3)."},
+  {title: "Spatial-aware multi-patch supervision", body: "Convert each normalized GT box to a binary mask over the W×H patch grid (floor on left/top, ceil on right/bottom so all partially-covered patches count). Positives y_i=1, else 0. Loss is KL between attention {a_i} and normalized target p_i = y_i / (sum_j y_j + eps) (Eqs. 5-6, §3; Eqs. 8-9, App. B)."},
+  {title: "Grounding verifier", body: "Fine-tuned from UI-TARS-2B-SFT on 730K balanced examples built from OS-Atlas: positives place a hollow red circle at the box center; negatives use a wrong box center or a random outside point. Score s = P(True)/(P(True)+P(False)). 4-connected patch clustering yields weighted sub-patch centers to catch small icons between patches (§4, App. F)."},
+  {title: "Inference", body: "K=20 candidate patches (filtered below 20% of max attention), confidence threshold gamma=0.95 for ScreenSpot-Pro and 0.8 for ScreenSpot/-v2; return first candidate above threshold to save compute (§5 Implementation, App. F.2)."},
+  {title: "Training recipe", body: "Backbone Qwen2-VL-7B-Instruct (also Qwen2.5-VL, 2B/3B). ~1M screenshots / 9.6M elements from UGround Web-Hybrid, GUI-Env/Act, AndroidControl, AMEX, Wave-UI, 1 epoch. Warm-up trains only the action head (~20M/~100M params for 2B/7B) with backbone frozen, then full fine-tune (Tab. 7, §5)."},
+]} />
+
+<MathBlock>{`a_i = \\frac{\\exp(\\alpha_i)}{\\sum_{j=1}^{M}\\exp(\\alpha_j)},\\quad \\alpha_i = \\frac{z^\\top z_i}{\\sqrt{d}}`}</MathBlock>
+</Pass>
+
+## Main result
+On the hard, out-of-distribution <Term def="1,581 expert-annotated tasks across 23 professional apps on 3 OSes, high resolution and large domain gap; a practical generalization testbed">ScreenSpot-Pro</Term>, <Finding src="Tab.1">GUI-Actor-7B (Qwen2-VL) scores 40.7 avg, beating UI-TARS-72B (38.1) with far fewer parameters and less data; the verifier lifts it to 44.2</Finding>. With a Qwen2.5-VL backbone, <Finding src="Tab.4">GUI-Actor-7B reaches 44.6 (no verifier) / 47.7 (verifier) and the 3B model reaches 42.2 / 45.9</Finding>. Notably, <Finding src="Tab.1">GUI-Actor-2B (36.7) already surpasses several 7B baselines and beats UI-TARS-2B (27.7) by +9.0</Finding>.
+
+<SortableTable columns={["Method", "Params", "ScreenSpot-Pro avg"]} rows={[
+  ["GPT-4o", "—", 0.8],
+  ["Claude Computer Use", "—", 17.1],
+  ["UI-TARS-2B", "2B", 27.7],
+  ["GUI-Actor-2B", "2B", 36.7],
+  ["GUI-Actor-2B + Verifier", "2B", 41.8],
+  ["UGround-V1-7B", "7B", 31.1],
+  ["UI-TARS-7B", "7B", 35.7],
+  ["GUI-Actor-7B (Qwen2-VL)", "7B", 40.7],
+  ["GUI-Actor-7B + Verifier", "7B", 44.2],
+  ["GUI-Actor-7B (Qwen2.5-VL)", "7B", 44.6],
+  ["UI-TARS-72B", "72B", 38.1],
+  ["UGround-72B-V1", "72B", 34.5],
+]} />
+
+## Key findings
+- <Finding src="Tab.1, §5">Largest gains on the OOD benchmark</Finding>: GUI-Actor beats prior SOTA UI-TARS by +9.0 (2B) and +5.0 (7B) on ScreenSpot-Pro, the benchmark with the biggest domain shift — attributed to explicit spatial-semantic alignment at native patch resolution. On in-distribution ScreenSpot/-v2 the margin is smaller (e.g. 88.3 vs 89.5 vs UI-TARS-7B on ScreenSpot, Tab. 2).
+- <Finding src="Fig.3, §5">Better sample efficiency</Finding>: GUI-Actor reaches its final ScreenSpot/-v2 accuracy using only ~60% of the training data, while the Aguvis coordinate-based baselines plateau only after 80–90%. On OOD ScreenSpot-Pro, GUI-Actor recovers from early dips and keeps improving, whereas baselines decline after an early peak (no sustained overfitting).
+- <Finding src="Tab.5, §5">Frozen-backbone LiteTrain works</Finding>: training only the ~19M/~103M action-head params (backbone frozen) plus a verifier yields 34.0 (2B) and 35.8 (7B) on ScreenSpot-Pro — comparable to fully fine-tuned coordinate models — implying the backbone VLM already perceives UI semantics and coordinate-generation training mostly learns coordinate mapping, not understanding.
+- <Finding src="Tab.5, §5">Verifier helps most when grounding is hard</Finding>: it adds ~4 points to GUI-Actor-7B and ~13 points to GUI-Actor-7B-LiteTrain on ScreenSpot-Pro, with smaller in-distribution gains.
+- <Finding src="Fig.4, §5">Multi-region prediction is real, not redundant</Finding>: GUI-Actor shows a large Hit@1→Hit@3 jump (e.g. 40.7→45.4 on ScreenSpot-Pro for 7B) because the attention map yields genuinely distinct, mutually-exclusive candidates, whereas resampling coordinate baselines mostly returns near-identical points.
+- <Finding src="Tab.6, §5">Ablation against coordinate supervision</Finding>: Aguvis-7B with bbox supervision (13.8 on ScreenSpot-Pro) does no better than point supervision (15.6) and both trail GUI-Actor-7B (40.7) — more spatial info in string form does not help without an architectural spatial mechanism.
+- <Finding src="Tab.10, §5">Online OSWorld-W</Finding>: with GPT-4o as planner, GUI-Actor-7B reaches a 12.2% task success rate (6/49) vs NAVI/OmniAgent (10.2%) and Aguvis-7B point-sup (4.0%) — a small absolute number on a hard live benchmark.
+
+## Implications
+This recasts GUI grounding as a detection/attention problem aligned with the vision backbone rather than a language-generation problem, extending the <Related>Aguvis / UGround / UI-TARS / OS-Atlas coordinate-generation lineage</Related> and connecting to <Related>attention-driven, training-free grounding (Xu et al., 2025)</Related> and classic <Related>ROI pooling / spatial attention from detection</Related>. The frozen-backbone result is the most provocative thread: <FollowUp>if a small action head plus verifier suffices, grounding can be bolted onto general VLMs without eroding their other skills — a modular path to computer-use agents</FollowUp>. The verifier also <FollowUp>transfers to other grounding models (it boosts Aguvis too) at ~5% of Aguvis's sampling cost</FollowUp>, suggesting a reusable decision-refinement layer. Worth chasing: <FollowUp>offset-based spatial refinement or higher-resolution encoders to fix the small-icon failure mode</FollowUp>.
+
+## Limitations
+- <Caveat>Inherits the backbone's fixed 28×28 patch size (Qwen2-VL Naive Dynamic Resolution)</Caveat>: icons smaller than ~10×10 px are under-represented, pronounced in high-precision pro software like CAD (App. A). The clustering refinement only partially mitigates this.
+- <Caveat>Trained with supervised fine-tuning only</Caveat> — no continual pre-training, annealing, or DPO; the authors note UI-TARS-7B still wins on some metrics partly due to far larger (incl. proprietary) data and a heavier pipeline (§5).
+- <Caveat>The online evaluation is narrow</Caveat>: OSWorld-W is just 49 Windows tasks with GPT-4o as a fixed planner, and absolute success (12.2%) is low, so end-to-end agentic gains are only weakly demonstrated.
+- <Caveat>Verifier thresholds are hand-tuned per benchmark</Caveat> (gamma 0.95 vs 0.8), and best results lean on the extra verifier pass rather than the grounding head alone.
+
+## Critiques and Questions
+1. The headline "beats UI-TARS-72B" pairs GUI-Actor-7B *with* its strongest backbone (Qwen2.5-VL) or counts the bare Qwen2-VL number (40.7) against a 72B model trained very differently — fair on params, but the comparison mixes backbones and training regimes; the like-for-like same-backbone gains (vs Aguvis-7B) are the cleaner evidence.
+2. How robust is the verifier out of distribution? It is trained on OS-Atlas (desktop/mobile/web) but contributes the biggest lift exactly on the most OOD benchmark — is it generalizing or exploiting the red-circle marking artifact?
+3. Multi-patch supervision rewards covering the whole box; does this bias clicks toward element centers and hurt on elements where only a sub-region (e.g. a checkbox within a row) is actionable, as in the Fig. 4b "shopping cart" example?
+4. Single-run numbers throughout — no variance/error bars reported, and several margins on ScreenSpot/-v2 are within a point or two of strong baselines.
+
+<SelfCheck q="Why does attending over visual patches remove the 'granularity mismatch' that coordinate-generation suffers from?" a="Coordinate generation forces the model to emit continuous, pixel-level positions through a language head, while the vision encoder only provides coarse patch-level features — a resolution gap. GUI-Actor instead predicts an attention distribution directly over those same patches, so grounding happens at the backbone's native patch resolution with no need to invent sub-patch precision from coarse tokens." />
+
+## Glossary
+- <Term def="Mapping a natural-language instruction plus screenshot to the screen region/coordinate to act on">GUI visual grounding</Term>
+- <Term def="Predicting screen positions as text tokens, e.g. emitting 'x=0.125, y=0.23' through the LM head">coordinate generation</Term>
+- <Term def="Labeling every image patch overlapping the ground-truth bounding box as a positive target, instead of a single click point">multi-patch supervision</Term>
+- <Term def="Fraction of predictions whose click point falls inside the target element's ground-truth bounding box">Element Accuracy</Term>
+- <Term def="Whether any of the top-k ranked candidate regions hits the target; here used to measure multi-region prediction quality">Hit@k</Term>
+- <Term def="GUI-Actor variant with the backbone VLM frozen, training only the ~20M/~100M action-head and special-token params">LiteTrain</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

@@ -53,17 +53,17 @@ versions:
   source: arxiv
   source_url: https://arxiv.org/abs/2504.13865
   pdf_path: library/a-survey-on-m-llm-based-gui-250413865/v1/paper.pdf
-  summary_path: null
+  summary_path: library/a-survey-on-m-llm-based-gui-250413865/v1/summary.mdx
   metadata_path: library/a-survey-on-m-llm-based-gui-250413865/v1/metadata.yaml
   fetched_at: '2026-06-06T07:57:47Z'
   source_updated_at: null
   arxiv_version: null
   pdf_sha256: 44c8ef9152784d59ea6330c1bfb8d1d0697de4fbb07d23d8c642c5548d9e343d
   pdf_bytes: 2606089
-  summary_status: none
-  extraction_status: none
+  summary_status: full
+  extraction_status: full
   created_at: '2026-06-06T07:57:47Z'
-  updated_at: '2026-06-06T07:57:47Z'
+  updated_at: '2026-06-07T06:20:47Z'
 relations:
   duplicate_candidates: []
   related_papers: []

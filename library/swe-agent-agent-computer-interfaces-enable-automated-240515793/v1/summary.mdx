@@ -1,0 +1,108 @@
+---
+canonical_key: arxiv-2405.15793
+version_key: v1
+title: 'SWE-agent: Agent-Computer Interfaces Enable Automated Software Engineering'
+authors:
+- John Yang
+- Carlos E. Jimenez
+- Alexander Wettig
+- Kilian Lieret
+- Shunyu Yao
+- Karthik Narasimhan
+- Ofir Press
+venue: arXiv
+year: 2024
+tags:
+- foundational
+topic_groups:
+- agent_harness
+- software_engineering_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2405.15793v3
+summary_date: '2026-06-07'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>A purpose-built <Term def="an abstraction layer between an LM agent and a computer that defines the agent's commands and the format of environment feedback">agent-computer interface (ACI)</Term> — not a stronger model — lifts a fixed LM from near-zero to state-of-the-art on real-world software-engineering tasks.</TLDR>
+
+<WhyItMatters>Foundational for the SWE-agent / agent-harness track: it reframes agent performance as an interface-design problem and gives the canonical design principles and ablations that later coding-agent scaffolds build on.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "12.47%", label: "SWE-bench Resolved", sub: "GPT-4 Turbo, full 2,294 tasks" },
+  { value: "+10.7pp", label: "ACI over Shell-only", sub: "SWE-bench Lite ablation" },
+  { value: "87.7%", label: "HumanEvalFix pass@1", sub: "Python, GPT-4 Turbo" },
+  { value: "$1.59", label: "avg cost / resolved", sub: "GPT-4 Turbo, full set" },
+]} />
+
+## Motivation
+LM agents applied to software engineering are typically dropped into interfaces built for other users — the <Problem>Linux shell and Python interpreter, which were designed for humans, not LMs</Problem>. In practice agents <Problem>struggle to reliably take actions in a raw shell</Problem>: they cannot easily edit a small file segment, get <Problem>no feedback on invalid edits</Problem>, and waste budget on inefficient exploration (chains of `cd`, `ls`, `cat`, or `grep` output they cannot interpret). Unlike humans, LMs <Problem>cannot freely ignore irrelevant context — every token has a fixed memory/compute cost and distracting context harms performance</Problem>. Prior non-interactive, retrieval-augmented systems on SWE-bench resolved only 3.8% of tasks.
+
+## Contribution (what's new)
+The paper introduces the <Novelty>agent-computer interface (ACI) as a first-class design object: a thin abstraction layer that shapes the agent's action set, action documentation, and environment feedback specifically for an LM, with the model weights left fixed</Novelty>. The mechanistic argument: because a raw shell is granular, verbose, and silent on errors, an LM must compose many turns and track much state to make one edit, exhausting context and budget. The ACI must therefore <Novelty>consolidate high-order operations (search, view, edit) into single compact commands, return concise informative feedback after every action, and add guardrails (e.g. a linter) that block error-introducing edits before they cascade</Novelty>. The second contribution is SWE-agent, an open-source instantiation of this ACI for software engineering.
+
+## Research questions
+Does interface design — independent of the underlying model — meaningfully change LM-agent performance on real software engineering, and which ACI design choices matter most?
+
+## Methodology
+SWE-agent is an LM plus an ACI, run in a <Term def="interleave a natural-language thought and a single command each step, then feed back the command's output">ReAct</Term> loop atop a Linux shell. The ACI has four components — search/navigation, a windowed file viewer, a single-command file editor with a linter guardrail, and context management — arrived at by manual inspection of agent trajectories plus a hyperparameter sweep.
+
+<Pass title="Method details">
+<Stepper steps={[
+  { title: "Search & navigation", body: "Special commands find_file, search_file, search_dir return a summarized list of matches; results are capped at 50 and an over-broad query is rejected with a prompt to refine, rather than flooding context." },
+  { title: "File viewer", body: "open shows a window of at most 100 lines with the file path, total line count, lines omitted above/below, and per-line numbers; scroll_up / scroll_down / goto move the window." },
+  { title: "File editor", body: "edit takes start line, end line, and replacement text, replacing a multi-line range in one command and auto-redisplaying the updated window. A linter checks each edit; invalid edits (e.g. syntax errors) are discarded and the agent is asked to retry, shown the before/after snippet." },
+  { title: "Context management", body: "Each step requires a thought + action; malformed outputs trigger a retry and all but the first error message are dropped. Observations older than the last 5 are collapsed to a single line, keeping plan/action history while shedding stale file dumps." },
+]} />
+
+Evaluation is on SWE-bench (2,294 real GitHub-issue tasks across 12 Python repos; full set for main results, the 300-instance Lite split for ablations) and HumanEvalFix (short-form code debugging). The metric is `% Resolved` / pass@1 — all hidden unit tests pass after the generated patch is applied — plus average API cost per resolved instance, with a $4 per-instance budget. Base LMs are GPT-4 Turbo and Claude 3 Opus; weaker/smaller-context models (Llama 3, DeepSeek Coder) performed poorly in the agent setting. Baselines are the non-interactive RAG system from SWE-bench and a Shell-only interactive agent (InterCode-style).
+</Pass>
+
+## Main result
+With GPT-4 Turbo, SWE-agent resolves <Finding src="Tab.1, p.6">12.47% (286/2,294) of the full SWE-bench test set vs 1.31% for RAG and a prior best of 3.79% (RAG + Claude 3 Opus) — a ~6.7x gain over RAG</Finding>, at $1.59 average cost per resolved instance. The ACI is portable across models: <Finding src="Tab.1, p.6">Claude 3 Opus reaches 10.46% on the full set without any ACI re-tuning</Finding>. On the Lite split, SWE-agent's 18.00% beats Shell-only's 11.00% — a <Finding src="§2, Tab.1">64% relative (+7pp) improvement over the same model in a raw shell</Finding>.
+
+<SortableTable columns={["Setting (GPT-4 Turbo)", "SWE-bench full % Resolved", "SWE-bench Lite % Resolved", "Avg cost ($)"]} rows={[
+  ["RAG (non-interactive)", 1.31, 2.67, 0.13],
+  ["Shell-only agent", 0, 11.00, 1.46],
+  ["SWE-agent", 12.47, 18.00, 1.59],
+  ["SWE-agent (Claude 3 Opus)", 10.46, 13.00, 2.59]
+]} />
+
+(`Shell-only` was not run on the full set; the 0 above is a placeholder for "Not reported".) On HumanEvalFix, <Finding src="Tab.2, p.6">SWE-agent w/ GPT-4 Turbo reaches 87.7% pass@1 on Python (89.7% JS, 87.9% Java), far above the next-best WaveCoder-DS-6.7B at 57.9%</Finding>. (The abstract and Table 2 report 87.7% Python; the §5 prose cites 88.3% — a minor abstract-vs-text discrepancy.)
+
+## Key findings
+- <Finding src="Tab.3, p.6">The single-command editor is the highest-leverage component</Finding>: removing it (forcing `sed`/redirection edits) drops Lite from 18.0% to 10.3% (↓7.7pp), the largest ablation effect; dropping the linter alone costs 3.0pp (15.0%).
+- <Finding src="Tab.3, §5.1">A summarized search interface beats an iterative one — and a bad search tool is worse than none</Finding>: iterative search (show results one by one) scores 12.0% vs 15.7% for No search and 18.0% for summarized search, because agents exhaustively page through every match with `next`, burning budget.
+- <Finding src="Tab.3, p.6">Feedback granularity has a sweet spot</Finding>: a 100-line file-viewer window (18.0%) beats both 30 lines (14.3%, ↓3.7) and showing the full file (12.7%, ↓5.3) — too little or too much context both hurt.
+- <Finding src="§5.2, p.8">Editing remains hard for agents even with the linter</Finding>: 51.7% (1,185/2,294) of GPT-4 Turbo trajectories contain ≥1 failed edit; any edit eventually succeeds 90.5% of the time, but that recovery rate falls to 57.2% after a single failed edit — errors compound.
+- <Finding src="Fig.8, §5.2">Most failures are reasoning, not interface, failures</Finding>: ~52% of unresolved Lite instances are Incorrect or Overly Specific Implementations, with cascading failed edits a further 23.4% (labels auto-assigned by GPT-4o, 87% agreement with authors).
+- <Finding src="§5.2, p.8">Agents succeed quickly and fail slowly</Finding>: resolved runs finish at a median $1.21 / 12 steps vs a mean $2.52 / 21 steps for unresolved ones, and 93.0% of resolved instances submit before exhausting budget — implying a larger budget would add little.
+
+## Implications
+ACI design becomes a tunable axis for agent performance that is orthogonal to model training, and the four design principles (simple actions, compact/efficient actions, concise informative feedback, guardrails) are reusable across digital agent domains. SWE-agent operationalizes <Related>the SWE-bench evaluation line (Jimenez et al.)</Related> into an interactive agent and <Related>seeds the broad lineage of repository-level coding agents and scaffolds that followed</Related>. <FollowUp>Whether stronger reasoning models shrink the ACI's relative advantage (since failures are now mostly implementation-correctness, not interface friction)</FollowUp> and <FollowUp>how later scaffolds tackle localization and edit-error recovery, the residual weak spots</FollowUp> are the natural threads to chase.
+
+## Limitations
+- <Caveat>The ACI was hand-tuned on GPT-4 Turbo via qualitative trajectory inspection on a small dev set</Caveat>; portability is shown for only one other model (Claude 3 Opus) and weaker models were excluded for poor performance, so generality of the specific design is uncertain.
+- <Caveat>Absolute resolve rates are low (12.47%) and per-instance cost is real ($1.59 avg, $4 cap)</Caveat>; the system resolves a small minority of tasks.
+- <Caveat>Evaluation is Python-only (SWE-bench's 12 repos) for the main results</Caveat>; cross-language SWE generalization is untested beyond the short-form HumanEvalFix.
+- <Caveat>Failure-mode categorization relies on an LM (GPT-4o) labeler</Caveat>, validated at 87% agreement but not human-exhaustive.
+
+## Critiques and Questions
+1. The headline 12.47% is far from human-level; the contribution is the *relative* interface gain and the design principles, not absolute capability — easy to overstate.
+2. Ablations are on the 300-instance Lite split with single-run point estimates (Fig. 4 notes non-trivial per-instance variance); some ~2-4pp deltas may be within noise.
+3. The "increasing budget won't help" claim is inferred from the success/fail cost split; it does not isolate whether a smarter stopping policy (not more budget) would recover the slow-failing runs.
+
+<SelfCheck q="Why does an iterative (one-result-at-a-time) search interface score worse (12.0%) than having no search tool at all (15.7%)?" a="Given many matches, agents tend to page through every result exhaustively with `next`, consuming their cost budget and context window before doing useful work — an interface that invites inefficient behavior is worse than no extra tool, illustrating the 'compact, efficient actions' principle." />
+
+## Glossary
+- <Term def="proportion of task instances where all hidden unit tests pass after the model's generated patch is applied">% Resolved / pass@1</Term>
+- <Term def="2,294 real GitHub issue+PR tasks across 12 popular Python repos, graded by execution of human-written unit tests; Lite is a 300-instance subset of self-contained bug fixes">SWE-bench / SWE-bench Lite</Term>
+- <Term def="a short-form benchmark that asks a model to fix a buggy function, scored by tests">HumanEvalFix</Term>
+- <Term def="non-interactive baseline that retrieves relevant files with BM25 and asks the model to emit a patch directly, without tool interaction">RAG baseline</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

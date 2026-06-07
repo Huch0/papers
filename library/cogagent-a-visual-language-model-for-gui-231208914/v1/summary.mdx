@@ -1,0 +1,121 @@
+---
+canonical_key: arxiv-2312.08914
+version_key: v1
+title: 'CogAgent: A Visual Language Model for GUI Agents'
+authors:
+- Wenyi Hong
+- Weihan Wang
+- Qingsong Lv
+- Jiazheng Xu
+- Wenmeng Yu
+- Junhui Ji
+- Yan Wang
+- Zihan Wang
+- Yuxuan Zhang
+- Juanzi Li
+- Bin Xu
+- Yuxiao Dong
+- Ming Ding
+- Jie Tang
+venue: arXiv
+year: 2023
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2312.08914v3
+summary_date: '2026-06-07'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>CogAgent is an 18B-parameter vision-language model that drives GUIs from screenshots alone, and is the first generalist VLM to beat LLM-based agents that consume cleaned HTML on both web (Mind2Web) and Android (AITW) navigation.</TLDR>
+
+<WhyItMatters>Foundational for the computer-use agents track: it establishes that a pure-pixel agent can outperform structured-text (HTML/DOM) agents, and the high-resolution cross-module is the standard recipe for reading tiny GUI text without quadratic compute blowup.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "58.2%", label: "Mind2Web step SR (overall)", sub: "vs 54.4% for LLaMA2-70B w/ HTML" },
+  { value: "76.88", label: "AITW matching score (overall)", sub: "vs 74.27 Auto-UI (image baseline)" },
+  { value: "1120×1120", label: "input resolution", sub: "via high-res cross-module" },
+  { value: "18B", label: "parameters", sub: "CogVLM-17B base + 0.30B hi-res encoder" },
+]} />
+
+## Motivation
+LLM-based agents are <Problem>limited in the real world because most applications interact through GUIs, which lack standard APIs and convey meaning through icons, images, and spatial layout that text cannot capture</Problem>. Even text-rendered web pages have <Problem>elements like canvas and iframe whose function cannot be parsed from HTML</Problem>. The natural fix — feeding screenshots to a VLM — runs into two walls: <Problem>GUI images are out-of-distribution for VLMs pre-trained on natural images (LAION)</Problem>, and <Problem>GUIs need high resolution to render tiny icons and text, but high resolution explodes the decoder's self-attention cost quadratically (a 1120×1120 image at patch size 14 is 6,400 tokens)</Problem>.
+
+## Contribution (what's new)
+The genuine delta is a <Novelty>lightweight high-resolution cross-module: a small (0.30B) EVA2-CLIP-L encoder processes the 1120×1120 image, and its features are fused into every decoder layer via cross-attention of a small hidden size (1024) rather than being concatenated into the decoder's input sequence</Novelty>. The design must take this form because concatenation makes attention quadratic in the high-res token count; routing high-res features through low-dimensional cross-attention instead keeps cost roughly linear in image patches, exploiting the insight that <Novelty>text-centric features can be captured with a much smaller hidden size than general visual understanding needs</Novelty>. A second contribution is <Novelty>GUI-specific pre-training data (the CCS400K Common-Crawl-screenshot dataset with 140M REC/REG QA pairs)</Novelty> to fix the GUI distribution gap.
+
+## Research questions
+Can a model achieve universality on GUIs relying *solely* on visual input (screenshots), and can such a visual agent match or beat language-based agents that consume the underlying structured HTML/DOM text?
+
+## Methodology
+CogAgent extends CogVLM-17B (Vicuna-1.5-7B decoder + visual expert) with a parallel high-resolution branch, then continually pre-trains on text-recognition, grounding, and GUI data, and finally multi-task fine-tunes on VQA plus GPT-4-converted agent datasets.
+
+<Pass title="Method details">
+
+**Architecture (Fig. 2, Tab. 8).** Two branches run in parallel: a low-resolution branch (EVA2-CLIP-E, 224×224 input, 14×14 patches → 256 tokens) feeding the decoder through an MLP adapter, and a high-resolution cross-module (EVA2-CLIP-L, 0.30B params, 1120×1120 input, 14×14 patches → 6,400 tokens). The decoder keeps its original self-attention with the visual expert and adds, in every layer, a multi-head cross-attention between the layer's hidden states and the high-res image features:
+
+<MathBlock>{`X'_i = \\mathrm{MSA}(\\mathrm{LN}(X^{in}_i)) + X^{in}_i, \\quad X^{out}_i = \\mathrm{MCA}(\\mathrm{LN}(X'_i), X_{hi}) + X'_i`}</MathBlock>
+
+Cross-attention uses `d_cross = 32`, `H_cross = 32` (decoder inherits `d_dec = 128`, `H_dec = 32`). The residual connection lets the high-res features act as a *complement* to the low-res ones, reusing the pre-trained low-res model. The acceleration vs. naively feeding the high-res image to the decoder is at least `(L_Ihi + L_T) / (L_Ilo + L_T) = (6400 + L_T) / (256 + L_T)`, a stringent lower bound; with text length under 512 in early pre-training this is an over 25× compute reduction (§3, p.13).
+
+**Pre-training (§2.3).** Three data families, all from public datasets: (1) text recognition — 80M synthetic renderings, 18M natural-image OCR (PaddleOCR), 9M academic LaTeX docs (Nougat-style); (2) visual grounding — 40M LAION-115M image-caption pairs with normalized `[[x0,y0,x1,y1]]` boxes in `[000,999]`; (3) GUI imagery — CCS400K (400k Common Crawl web screenshots via Playwright) with 140M GUI-REC/REG QA pairs. Trained 60,000 iters, batch 4,608, lr 2e-5; first 20,000 steps freeze everything except the new cross-module (646M / 3.5% trainable), then unfreeze the visual expert; curriculum from easy text recognition → grounding → web data.
+
+**Fine-tuning (§2.4).** Unfreeze all params, 10,000 iters, batch 1,024, lr 2e-5. Data: 2,000+ human-annotated phone/computer screenshots (buttons, clickable areas, info questions, operation steps with grounding), Mind2Web + AITW converted to plan/action QA format via GPT-4, plus public VQA datasets.
+
+**Evaluation protocol.** Mind2Web: choose target element among top-k (k=10 or 50) candidates from Deng et al.'s candidate generator, then predict the operation; step SR on 3 out-of-domain splits (cross-task/website/domain). CogAgent uses screenshots; baselines use cleaned HTML. AITW: predict next action (type + position/direction/content) from goal + history + screenshot; matching score over 5 subsets; GoogleApps downsampled to 10% to avoid imbalance.
+
+</Pass>
+
+## Main result
+On Mind2Web, screenshot-only CogAgent reaches <Finding src="Tab.3, p.7">58.2% overall step SR, beating LLaMA2-70B (54.4%, with cleaned HTML) despite being ~4× smaller, and beating the image-input baselines CogVLM (23.9%) and Qwen-VL (10.2%) by huge margins</Finding>. On AITW Android navigation, CogAgent scores <Finding src="Tab.4, p.7">76.88 overall, +2.61 over the prior best image agent Auto-UI (74.27) and far above language baselines (LLaMA2-7B 28.40, GPT-3.5 7.72)</Finding>. This is the first generalist VLM to beat LLM-with-structured-text agents on both.
+
+<SortableTable columns={["Method", "Input", "Mind2Web overall (step SR)"]} rows={[
+  ["GPT-3.5 (few-shot)", "HTML", 17.4],
+  ["GPT-4 (few-shot)", "HTML", 30.9],
+  ["Flan-T5-XL", "HTML", 43.5],
+  ["LLaMA2-7B", "HTML", 50.1],
+  ["LLaMA2-70B", "HTML", 54.4],
+  ["Qwen-VL", "Image", 10.2],
+  ["CogVLM", "Image", 23.9],
+  ["CogAgent (Ours)", "Image", 58.2]
+]} />
+
+## Key findings
+- <Finding src="Tab.1, p.7">CogAgent is a strong generalist VLM, not just an agent</Finding>: state-of-the-art generalist results on general VQA (VQAv2 83.7, OK-VQA 61.2) and 5/6 text-rich VQA benchmarks (TextVQA 76.1, ST-VQA 80.5, DocVQA 81.6, ChartQA 68.4), even beating task-specific SOTA on TextVQA (+4.7), ST-VQA (+0.6) and DocVQA (+1.6).
+- <Finding src="Tab.2, p.7">It strongly reduces hallucination and excels at complex multimodal tasks</Finding>: zero-shot MM-Vet 52.8 (+16.5 over LLaVA-1.5) and POPE-adversarial 85.9 — despite using only a Vicuna-7B-scale LLM backbone.
+- <Finding src="Fig.3 / Tab.5, p.8">The cross-module makes high resolution nearly free</Finding>: FLOPs grow almost linearly with patches (12.56 TFLOPs at 1120 with cross-module vs 143.2 for the original architecture — over 10× cheaper); at res 756 it uses ~1/2 the compute of the original at res 490 while scoring much higher (DocVQA 62.3 vs 57.6).
+- <Finding src="Tab.5, p.8">Higher resolution drives the text-heavy gains</Finding>: raising cross-module resolution 756→1120 lifts STVQA 73.6→78.2 and DocVQA 62.3→74.1, confirming tiny-text legibility is the bottleneck for GUI/document understanding.
+- <Finding src="Tab.6, p.8">GUI and grounding pre-training data is decisive for agent tasks</Finding>: adding "All" data (web + grounding) over Cap+OCR jumps Mind2Web 41.4→54.2 while barely moving VQA — domain-specific pre-training is what makes the agent work.
+- <Finding src="§4, p.14">Reported AITW numbers understate true ability</Finding>: in 42% of sampled "wrong" cases, CogAgent's action is actually a valid alternative path (multiple correct ways to complete a phone task), motivating execution/task-completion evaluation in interactive environments rather than step-matching.
+
+## Implications
+CogAgent established the <Related>pure-pixel GUI agent line built on CogVLM</Related> and showed screenshots can beat HTML/DOM input, influencing later computer-use and screen-agent work (and Auto-UI / Mind2Web / AITW remain the reference benchmarks). The high-res cross-module is a reusable efficiency pattern for any VLM that must read fine text. Threads worth chasing: <FollowUp>moving from step-matching to interactive task-completion evaluation in a virtual environment</FollowUp>, <FollowUp>fixing imprecise coordinate output and enabling multi-image / multi-step history</FollowUp>, and <FollowUp>the newer CogAgent-9B-20241220 release referenced in the abstract</FollowUp>.
+
+## Limitations
+Authors note <Caveat>imprecise output coordinates and inability to process multiple images</Caveat>. Appendix failure analysis (§7) lists four modes: <Caveat>incorrect action prediction, incorrect coordinate prediction, incorrect GUI observation, and hallucination</Caveat>. Evaluation is <Caveat>offline step-matching against a single ground-truth path, which the authors themselves show penalizes valid alternative actions (42% of "errors")</Caveat>, and Mind2Web success still depends on an <Caveat>external top-k candidate generator rather than open-ended element localization</Caveat>.
+
+## Critiques and Questions
+1. Mind2Web step SR is conditioned on a provided top-10/50 candidate set from a separate model — how much of the "screenshot beats HTML" claim survives when the agent must localize elements end-to-end on the raw screen, without candidate generation? AITW exposes the symmetric weakness: step-matching over-penalizes correct alternatives, so neither benchmark cleanly measures end-to-end task success.
+2. The Mind2Web HTML baselines (LLaMA2) are fine-tuned by the authors with their own HTML-cleaning pipeline; the fairness of that cleaning vs. the screenshot rendering pipeline is hard to audit, and 18B-vs-70B is not the only confound (data and base model differ too).
+3. The headline "18B" includes the 4.4B low-res ViT and 0.30B hi-res encoder, while the LLM backbone is only Vicuna-7B — strong VQA/MM-Vet at this LLM scale suggests the visual encoders and pre-training data, not LLM reasoning, carry most of the load.
+
+<SelfCheck q="Why does CogAgent fuse high-resolution image features via per-layer cross-attention instead of concatenating them into the decoder's input sequence like a standard VLM?" a="Concatenation makes the decoder's self-attention cost quadratic in the number of visual tokens, and a 1120×1120 image is 6,400 tokens — prohibitive. Routing high-res features through low-dimensional cross-attention (hidden size 1024, d=32) in each layer keeps cost roughly linear in image patches, giving at least (6400+L_T)/(256+L_T)× acceleration over the naive approach while still injecting fine text detail." />
+
+## Glossary
+- <Term def="Visual Language Model — a model that takes images (and text) as input and generates text, e.g. for VQA or GUI control">VLM</Term>
+- <Term def="Mind2Web: a web-agent benchmark of 2,000+ open-ended tasks over 137 real websites; agents predict the next (element, operation) given a snapshot and action history, scored by step success rate over out-of-domain splits">Mind2Web</Term>
+- <Term def="Android in the Wild: a 715k-episode Android control dataset across 5 subsets; agents predict the next action (type + position/direction/content) from a goal, history, and screenshot, scored by matching score">AITW</Term>
+- <Term def="Step Success Rate — fraction of steps where the predicted target element AND operation exactly match the ground truth">step SR</Term>
+- <Term def="GUI Referring Expression Comprehension / Generation — pre-training tasks where the model produces a bounding box for a given DOM element (REC) or generates HTML for a screen region (REG)">REC/REG</Term>
+- <Term def="Common Crawl Screenshot 400K — the authors' dataset of 400k web screenshots with 140M REC/REG QA pairs for GUI grounding pre-training">CCS400K</Term>
+- <Term def="POPE-adversarial — a yes/no object-probing benchmark measuring object hallucination under its hardest (adversarial) setting, scored by F1">POPE-adv</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

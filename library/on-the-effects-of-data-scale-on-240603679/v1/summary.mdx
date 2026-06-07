@@ -1,0 +1,138 @@
+---
+canonical_key: arxiv-2406.03679
+version_key: v1
+title: On the Effects of Data Scale on UI Control Agents
+authors:
+- Wei Li
+- Will Bishop
+- Alice Li
+- Christopher Rawles
+- Folawiyo Campbell-Ajala
+- Divya Tyamagundlu
+- O. Riva
+venue: Neural Information Processing Systems
+year: 2024
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2406.03679
+summary_date: '2026-06-07'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+{/*
+  Canonical Summary structure (concise, core-first). Body only — frontmatter is generated
+  from metadata.yaml by `summarize_paper.py --format mdx --prepare`. Components are
+  provided globally by the site (no imports). See config/summary_components.md.
+
+  TWO HARD RULES:
+  1. CONCISE, BUT KEEP THE KEY POINTS. Capture the paper's important findings/analysis —
+     not just the headline number. (e.g. for SWE-bench: "difficulty correlates with
+     context length", "finetuned models are sensitive to context-distribution shift".)
+     Put the headline up top; collect the rest under "## Key findings". Depth in <Pass>.
+  2. USE THE SEMANTIC HIGHLIGHTS for their MEANING (colors are consistent across summaries):
+       <Problem>   red    — the problem this paper tackles / a prior-work limitation
+       <Novelty>   green  — a novel module/approach/insight this paper introduces
+       <Finding src="Tab.X">  teal — a finding / claim / result of THIS paper
+       <FollowUp>  blue   — a notion/thread the reader should follow up on
+       <Caveat>    orange — a limitation of THIS paper
+       <Related>   violet — related work / lineage
+       <Term def="…">  glossary chip with hover definition (self-contained)
+  Declarative English; specific numbers + anchors; "Not reported"/"Unclear" for gaps;
+  verify numbers against extraction.txt. Keep Motivation (<Problem>) ≠ Contribution (<Novelty>).
+*/}
+
+<TLDR>Releases ANDROIDCONTROL — a 15,283-demo Android UI-control dataset with both high- and low-level instructions — and uses it to quantify how fine-tuning scales: data-hungry but feasible in domain, an order or two of magnitude harder out of domain, especially for high-level tasks.</TLDR>
+
+<WhyItMatters>Foundational for the computer-use-agents track: it puts hard numbers on whether "just collect more demonstrations and fine-tune" can carry mobile/GUI agents to deployment, and shows where it breaks (out-of-domain high-level reasoning).</WhyItMatters>
+
+<KeyStats items={[
+  { value: "15,283", label: "human demonstrations", sub: "14,548 unique tasks, 833 apps" },
+  { value: "71.5%", label: "best in-domain HL step acc.", sub: "LoRA-tuned PaLM 2S, r=64, Tab.4" },
+  { value: "86.6%", label: "best in-domain LL step acc.", sub: "LoRA-tuned PaLM 2S, r=64, Tab.4" },
+  { value: "~150M", label: "demos to robustly solve OOD HL", sub: "extrapolated for 95% episode completion, §4.5" },
+]} />
+
+## Motivation
+UI control agents built on pre-trained LLMs without fine-tuning still perform poorly in the real world — <Problem>reported task success ranges from 12% on desktop apps to 46% on mobile apps</Problem> (§1). Fine-tuning on human demonstrations helps, but <Problem>no prior work quantified how much data is needed to hit a target performance level</Problem>, which matters because human UI demonstrations are expensive to collect. A second gap: <Problem>it is unclear what level of task complexity fine-tuning can be fruitfully applied to</Problem> — high-level goals require open-ended reasoning, whereas low-level atomic actions (click/type/scroll) are more constrained and may be more learnable. Existing datasets could not answer these: they lack paired human high/low-level instructions, or are too small or too narrow (e.g., <Related>Mind2Web's 1k-demo train split over 137 sites</Related>) for a credible scaling and out-of-domain analysis.
+
+## Contribution (what's new)
+Two genuine deltas. (1) A dataset designed *for the measurement*, not just for training: <Novelty>ANDROIDCONTROL pairs every task with both human-written high-level and low-level instructions, and spans 833 apps so it can be sliced into distinct out-of-domain test splits</Novelty> (app-/task-/category-unseen). The dual annotation is what lets the same model be probed on hard (HL) vs. easy (LL) task complexity; the app diversity is what makes the OOD splits meaningful. (2) A <Novelty>rigorous data-scaling analysis (5 → all 13,604 episodes) that fits log-linear curves and extrapolates the demonstration budget required to reach deployment-grade accuracy</Novelty>, separately for in- vs. out-of-domain and HL vs. LL. The design must take this form because a scaling claim needs both a wide diversity axis (for OOD) and a complexity axis (HL/LL) held in one consistent dataset — which no prior dataset provided.
+
+## Research questions
+1. How does fine-tuned UI-agent performance scale with the number of human demonstrations, in domain vs. out of domain?
+2. Does fine-tuning scale differently for low-level (grounding) vs. high-level (decompose + ground) tasks?
+3. Is fine-tuning alone a viable path to robust real-world UI control agents?
+
+## Methodology
+Collect demonstrations by crowdsourcing on physical Pixel phones (controlled via a web app over ADB/WebUSB), where annotators write a high-level goal, then for each step type a natural-language low-level instruction before acting. Build one Android UI agent that reads a textual screen representation derived from the accessibility tree (no screenshot) plus an action history, and predicts the next action. Compare zero-shot prompts, few-shot prompting (Gemini 1.5 Pro), and LoRA fine-tuning (PaLM 2S) across data scales, on in-domain and three out-of-domain test splits.
+
+<Pass title="Method details — dataset, agent, and scaling setup">
+**Dataset (§3, Tab.1, Tab.3).** 15,283 demos / 14,548 unique tasks / 833 apps across 40 categories, collected over ~1 year by 20 trained annotators (last 4 months used 20 LLM-generated personas to boost diversity). Avg. 5.5 steps per task; HL instructions 8–34 words (5th–95th pct), LL 3–14 words. Action set: `click`, `long_press`, `input_text`, `scroll`, `navigate_home`, `navigate_back`, `open_app`, `wait` (Tab.2). Each datapoint stores screenshots, accessibility trees, actions (JSON), and per-step instructions as TFRecords. Splits: train 13,604 episodes / 74,722 step actions; val 137; test = IDD 721, app-unseen 631, task-unseen 803, category-unseen 700 (Tab.3); test sub-splits may overlap.
+
+**Agent (§4.1).** Observation is a flattened textual list of UI elements from the accessibility tree (type/text/content-desc/bounds/state tags), pre-filtered to non-empty-text or critical (switch/edit) elements since screens average ~222 elements. The agent outputs an action with absolute coordinates; history is kept as self-contained textual action descriptions. Adds a `terminate` action (artificially appended to each training episode); merges the focusing `click` into `input_text` as a `type` action.
+
+**Setup (§4.2).** Base models: PaLM-2L/2S, Gemini 1.5 Pro, GPT-4 / GPT-4-Turbo, temperature 0. Fine-tuning only on PaLM-2S via <Term def="parameter-efficient fine-tuning that injects small trainable low-rank matrices">LoRA</Term> — rank 4 below 1k episodes, rank 64 at ≥1k. Two SeqIO tasks: HL (high-level instruction only) and LL (low-level + its high-level context, emulating a planner→grounder split). Metric: <Term def="fraction of individual steps where predicted action + args match; uses a relaxed match counting equivalent actions">step-wise accuracy</Term> (§4.2). Cost-reduced eval on Random-500 (500 step actions, distribution-matched) for some zero-shot and all few-shot runs.
+
+**Zero-shot baselines:** AitW prompt (PaLM), SeeAct "choice" (GPT-4-Turbo), M3A (ReAct+Reflexion, GPT-4-Turbo), and ER ("Element Representations", the agent's own prompt, run on all 4 base models).
+
+**Scaling:** sample sizes 5, 10, 100, 1k, 10k, all (13,604); fit log-linear trendlines and extrapolate to 95% step accuracy / 95% episode completion.
+</Pass>
+
+## Main result
+In domain, fine-tuning dominates once enough data is available: the best LoRA-tuned PaLM 2S (r=64, all episodes) reaches <Finding src="Tab.4">71.5% step accuracy on high-level and 86.6% on low-level instructions</Finding>, beating the strongest zero-shot baselines (<Finding src="Tab.4">M3A/GPT-4-Turbo 42.1% HL; AitW/PaLM-2L 56.7% LL</Finding>). Even 5 demonstrations (LT-5) already surpass every non-fine-tuned model on low-level instructions (57.1% LL). The headline scaling claim: in-domain curves are log-linear (R² > 0.95), but out of domain the curve is far flatter — extrapolated demonstrations to reach robust performance differ by 1–2 orders of magnitude.
+
+<SortableTable columns={["Regime / Method", "Model", "HL step acc.", "LL step acc."]} rows={[
+  ["Zero-shot AitW", "PaLM 2L", 19.5, 56.7],
+  ["Zero-shot M3A", "GPT-4-Turbo", 42.1, 55.0],
+  ["Zero-shot SeeAct", "GPT-4-Turbo", 33.9, 54.3],
+  ["Few-shot FS-100", "Gemini 1.5 Pro", 39.5, 53.3],
+  ["LoRA LT-100", "PaLM 2S", 39.8, 62.8],
+  ["LoRA LT-1k", "PaLM 2S", 52.5, 71.4],
+  ["LoRA LT-10k", "PaLM 2S", 62.0, 85.7],
+  ["LoRA LT-all (r=64)", "PaLM 2S", 71.5, 86.6]
+]} />
+
+## Key findings
+- <Finding src="Tab.4">Fine-tuning beats both zero-shot and few-shot in domain, and few-shot is mostly *worse* than zero-shot</Finding>: in-context examples (FS-5/10/100 on Gemini 1.5 Pro) did not help and often hurt HL accuracy versus the same model's zero-shot ER.
+- <Finding src="Fig.5a, §4.4">In-domain step accuracy is log-linear in training data; reaching 95% step accuracy is extrapolated at 500K episodes (LL) and 1M episodes (HL)</Finding>, and ~2M episodes to hit 95% *episode* completion on 5-step HL tasks (the "weakest-link" effect: a 5-step task at 95% needs ~99% per-step accuracy).
+- <Finding src="Fig.5b, §4.5">Out-of-domain accuracy scales much more slowly; the same 95% targets are extrapolated at 10M (LL) and 60M (HL) episodes, and ~150M for 95% OOD episode completion on HL tasks</Finding> — the central evidence that fine-tuning alone may not suffice for OOD high-level tasks.
+- <Finding src="Tab.5">The IDD–OOD gap widens as data grows</Finding>: at LT-10k (r=4) the HL gap is 7.7–8.7 pp and LL gap 2.0–3.2 pp; with r=64 it widens further (HL gap up to 13.4 pp at LT-all). More data improves OOD absolute scores but worsens relative robustness — consistent with prior reports that fine-tuning distorts pretrained features OOD.
+- <Finding src="Tab.5, §4.5">Low-level tasks transfer OOD far better than high-level</Finding>: at small scale LL OOD accuracy even slightly *exceeds* IDD (e.g., LT-100 LL +3–4 pp), since atomic grounding actions share structure across apps, whereas HL planning does not.
+- <Finding src="Tab.1, §2">ANDROIDCONTROL is the most app-diverse UI dataset (833 apps — ~6× Mind2Web, ~5× AitW)</Finding> and second-largest by demos/unique tasks after AitW, but uniquely pairs human HL+LL instructions for every task.
+
+## Implications
+The result reframes the dominant <Related>"collect demonstrations and fine-tune" recipe behind web/mobile agents like WebGPT, WebAgent, and SeeAct</Related>: it is a viable, if expensive, route to strong *in-domain* agents, but brute-force data scaling likely will not deliver robust *out-of-domain high-level* behavior. <FollowUp>Whether better planners (explicit HL decomposition, search/reflection) or stronger pretrained reasoning close the OOD-HL gap more cheaply than 100M+ demonstrations</FollowUp> is the natural next thread, as is <FollowUp>whether the trends hold for multimodal agents that consume screenshots rather than accessibility trees</FollowUp>. ANDROIDCONTROL's OOD splits give the community a standard harness for this generalization question.
+
+## Limitations
+- <Caveat>Only one model is fine-tuned (PaLM-2S)</Caveat>; absolute numbers and the precise extrapolated budgets would shift with other model families, though the authors expect relative trends to hold.
+- <Caveat>The deployment-scale claims (1M–150M episodes) are extrapolations from log-linear fits, not measured</Caveat>; the episode-completion figures further assume i.i.d. per-step success and no mistake recovery, which the authors call conservative.
+- <Caveat>Offline step-wise evaluation does not credit alternative valid routes or corrective actions</Caveat>, so it can understate true task success.
+- <Caveat>The agent uses accessibility-tree text, not screenshots</Caveat>; "Unclear" whether multimodal screen-only agents scale the same way.
+- <Caveat>40 app categories still under-represent the full space of user tasks</Caveat>; inference cost is acknowledged but not studied.
+
+## Critiques and Questions
+1. The most-cited numbers (95% accuracy at millions of episodes) are extrapolations over ~3.5 orders of magnitude of held-out data from a 6-point log-linear fit — the trend could bend before 150M episodes either way; how trustworthy is a log-linear law that far out?
+2. Few-shot underperforming zero-shot is striking; is this a genuine property of UI control, or an artifact of the ER prompt format / Gemini-specific in-context behavior?
+3. With overlapping OOD test splits and modest app counts per split (64–90 apps), and the noted UI-element-count distribution shift between train and OOD (Appendix B.4), how much of the OOD gap is task novelty vs. a sampling/distribution artifact?
+
+<SelfCheck q="Why does the paper predict robust out-of-domain high-level performance may be unreachable by fine-tuning, while in-domain looks feasible?" a="Both in- and out-of-domain step accuracy grow log-linearly with demonstrations, but the OOD curve is much flatter: reaching 95% step accuracy is extrapolated at ~1M episodes in domain vs. ~60M out of domain for HL tasks (~150M for 95% OOD episode completion). That 1–2 orders-of-magnitude gap, plus a widening IDD–OOD gap as data grows, makes brute-force data collection impractical for OOD high-level reasoning, unlike the in-domain case." />
+
+## Glossary
+- <Term def="Controlling a device by perceiving its screen (accessibility tree or screenshot) and emitting UI actions like click/type/scroll to accomplish a natural-language task">UI control agent</Term>
+- <Term def="A whole task demonstration: one high-level goal and the sequence of observations + actions that complete it">episode</Term>
+- <Term def="Test set drawn from the same distribution as training data (in-domain data)">IDD</Term>
+- <Term def="Out-of-domain test splits where the apps, tasks, or app categories were not seen during training">app-/task-/category-unseen</Term>
+- <Term def="A test on Android tasks expressed only as an end goal, requiring decomposition into steps; harder than low-level">high-level (HL) instruction</Term>
+- <Term def="A test where each atomic action is described in words (plus its HL context); mostly a grounding problem; easier">low-level (LL) instruction</Term>
+- <Term def="The phenomenon that a multi-step task fails if any single step fails, so high episode success demands very high per-step accuracy">weakest-link effect</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

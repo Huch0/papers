@@ -45,17 +45,17 @@ versions:
   source: arxiv
   source_url: https://arxiv.org/abs/2412.16256
   pdf_path: library/aria-ui-visual-grounding-for-gui-instructions-241216256/v1/paper.pdf
-  summary_path: null
+  summary_path: library/aria-ui-visual-grounding-for-gui-instructions-241216256/v1/summary.mdx
   metadata_path: library/aria-ui-visual-grounding-for-gui-instructions-241216256/v1/metadata.yaml
   fetched_at: '2026-06-06T07:57:35Z'
   source_updated_at: null
   arxiv_version: null
   pdf_sha256: 169bc7694b456530ce8a6f0336b7efc33a32a21a731e1656caf4934e83f59334
   pdf_bytes: 3843901
-  summary_status: none
-  extraction_status: none
+  summary_status: full
+  extraction_status: full
   created_at: '2026-06-06T07:57:35Z'
-  updated_at: '2026-06-06T07:57:35Z'
+  updated_at: '2026-06-07T06:23:10Z'
 relations:
   duplicate_candidates: []
   related_papers: []

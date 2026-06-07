@@ -1,0 +1,105 @@
+---
+canonical_key: arxiv-2504.19838
+version_key: v1
+title: 'LLM-Powered GUI Agents in Phone Automation: Surveying Progress and Prospects'
+authors:
+- Guangyi Liu
+- Pengxiang Zhao
+- Liang Liu
+- Yaxuan Guo
+- Han Xiao
+- Weifeng Lin
+- Yuxiang Chai
+- Yue Han
+- Shuai Ren
+- Hao Wang
+- Xiaoyu Liang
+- Wenhao Wang
+- Tianze Wu
+- Linghao Li
+- Guanjing Xiong
+- Yong Liu
+- Hongsheng Li
+venue: Trans. Mach. Learn. Res.
+year: 2025
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2504.19838
+summary_date: '2026-06-07'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+{/*
+  SURVEY summary, concise + core-first. Key findings = the survey's organizing
+  insights/taxonomy, each <Finding>. Per-system metrics are "Not reported" (this is a
+  survey, not a primary evaluation). Verify numbers against extraction.txt.
+*/}
+
+<TLDR>A mobile-specific survey of LLM-powered phone GUI agents that organizes the field into a three-axis taxonomy — <Term def="how agents are wired together: single-agent, multi-agent, plan-then-act">Frameworks</Term>, <Term def="prompt engineering vs. training-based (SFT/RL) modeling">Models</Term>, and <Term def="GUI-specific datasets and benchmarks">Resources</Term> — and frames LLMs as the answer to four long-standing failures of script-based phone automation.</TLDR>
+
+<WhyItMatters>The reference map for the computer-use-agents track on the phone platform: it names the canonical systems, datasets, and benchmarks, and isolates the open problems (on-device deployment, long-horizon planning, security) worth following.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "3", label: "taxonomy axes", sub: "Frameworks / Models / Resources" },
+  { value: "4", label: "pre-LLM failure modes", sub: "generality, maintenance, intent, perception" },
+  { value: "93%", label: "AEIA attack success", sub: "environmental-injection threat (§7)" },
+]} />
+
+## Motivation
+Script-based phone automation (testing tools, shortcuts, RPA) hits four structural walls. <Problem>Limited generality</Problem> — scripts break when an app updates its UI or the user switches apps. <Problem>High maintenance cost</Problem> — frequent UI changes force constant, expert rewrites. <Problem>Poor intent comprehension</Problem> — rule-based systems handle "open the browser" but not "go to Amazon and buy X". <Problem>Weak screen GUI perception</Problem> — fixed control-targeting fails on dynamic, API-less, non-standard interfaces. No prior survey had analyzed LLM-driven automation through a specifically mobile lens.
+
+## Contribution (what's new)
+The genuine delta is a <Novelty>phone-centric organizing framework</Novelty> rather than new results: a unified three-axis taxonomy (Frameworks / Models / Resources) read through mobile-specific I/O — view hierarchies, touch action spaces, on-device constraints — plus a problem-to-solution narrative mapping each LLM capability to one of the four pre-LLM failures. The design must take this form because, per the comparison in `Tab.1`, prior surveys are platform-agnostic or only loosely mobile; the mobile setting (touchscreen interaction, constrained resources, diverse app ecosystem) imposes distinct trade-offs that a general GUI-agent survey cannot surface.
+
+## Research questions
+What capabilities let LLMs overcome the four failures of traditional phone automation; how can the design space (framework / model / data-and-eval) be organized for the phone platform; and which trade-offs and gaps remain.
+
+## Methodology
+A structured literature review. The field is decomposed into the three-axis taxonomy (`Fig.2`), a historical trajectory from random/model/learning-based testing to LLM agents (`Fig.3`), and a component view of any agent as Perception → Brain → Action (`Tab.3`). Per-system metrics are <Finding src="N/A">Not reported</Finding> — the survey curates and contrasts published systems rather than re-running them.
+
+<Pass title="Taxonomy detail">
+- **Frameworks (§4):** Single-Agent (DroidBot-GPT, AutoDroid, AppAgent, CogAgent, Mobile-Agent), Multi-Agent split into Role-Coordinated (Mobile-Agent-v2/E, Agent S2) and Scenario-Based (MobileExperts, SteP), and Plan-Then-Act (SeeAct, UGround, LiMAC). Single-agent operation is modeled as a `POMDP`.
+- **Models (§5):** Prompt Engineering (text-based vs. multimodal prompts) vs. Training-Based — task-specific architectures (Auto-GUI, CogAgent, ScreenAI, UI-TARS, GUI-Owl), Supervised Fine-Tuning (SeeClick, GUICourse, GUI Odyssey), and Reinforcement Learning (AutoGLM, UI-R1, GUI-G1, AgentCPM-GUI). RL targets are split across phone / web / PC agents.
+- **Resources (§6):** Datasets (Rico, PixelHelp, AITW, AITZ, AndroidControl, AMEX) and Benchmarks (AndroidWorld, LlamaTouch, B-MoCA, MobileAgentBench, A3, SPA-Bench, Mobile-Bench-v2), with a metric taxonomy spanning task-completion, action-quality, efficiency, reasoning, and reliability metrics.
+</Pass>
+
+## Key findings
+The survey's organizing insights:
+
+- <Finding src="§3.3">LLMs map onto the four failures by capability</Finding>: contextual semantic understanding fixes intent comprehension, multimodal perception fixes weak GUI perception, and reasoning/decision-making handles dynamic cross-app workflows; data scaling laws show consistent gains on step-level tasks.
+- <Finding src="§4.6, Tab.3">The right framework is a component choice, not a fixed architecture</Finding>: viewing every agent as Perception / Brain / Action reveals the real trade-offs better than treating Single-Agent vs. Multi-Agent vs. Plan-Then-Act as rivals.
+- <Finding src="§4.6">Perception faces a richness-vs-speed trade-off</Finding>: fusing screenshots, UI trees, `SoM`, and OCR gives rich context but high per-step latency, and current agents still cannot perceive dynamic content like videos.
+- <Finding src="§4.6">The "Brain" faces a speed/memory/cost trilemma</Finding>: per-step inference takes seconds to tens of seconds (too slow for interactive use), agents have short-term but not persistent long-term memory, and powerful multi-agent setups are expensive.
+- <Finding src="§5.3, §6.3">Modeling is a generalization-vs-specialization gap</Finding>: prompting adapts to new apps but is capped by the base model; training-based methods reach SOTA and enable on-device use but generalize poorly to unseen apps. RL consistently outperforms SFT-only, pointing to hybrid SFT-then-RL pipelines.
+- <Finding src="§6.3, §7">A capability gap separates offline skills from online tasks</Finding>: agents do well on single-step offline tasks (e.g. visual grounding) but success rates stay low on complex multi-step online benchmarks like AndroidWorld — the field is bottlenecked by dataset/benchmark realism.
+- <Finding src="§7, Tab.15">A distinct security threat surface is emerging</Finding>: environmental-injection attacks (AEIA) reach up to 93% success by corrupting the agent's contextual reasoning, and backdoor attacks (VisualTrap) poison the vision foundation model so triggers survive clean fine-tuning.
+
+## Implications
+This is the consolidated map for the <Related>computer-use / phone GUI agent lineage</Related> — DroidBot-GPT and AppAgent through CogAgent, UI-TARS, and the Mobile-Agent family — and it explicitly positions itself as the first mobile-focused entry alongside general GUI-agent surveys (`Tab.1`). Threads worth chasing: <FollowUp>hybrid SFT-then-RL training pipelines</FollowUp>; <FollowUp>lightweight on-device agents (Octopus v2, TinyClick) that stay robust under real-world UI drift</FollowUp>; <FollowUp>compositional cross-app datasets and online benchmarks to close the offline-to-online capability gap</FollowUp>; and <FollowUp>end-to-end security plus Federated Learning for privacy on personal devices</FollowUp>.
+
+## Limitations
+<Caveat>As a survey it reports no primary metrics</Caveat> — per-system numbers are second-hand and the quantitative comparison is confined to the benchmark discussion in §6.3. <Caveat>The taxonomy and conclusions are a snapshot of a fast-moving field</Caveat>; the authors mitigate this with a continuously updated GitHub list, but the paper text ages quickly. <Caveat>The mobile-only scope is deliberate</Caveat>, so desktop/web agents appear only as context, and the "why LLMs help" narrative is largely qualitative rather than experimentally isolated.
+
+## Critiques and Questions
+1. The four-failures-to-four-capabilities mapping is clean but mostly asserted from cited examples; it is hard to tell how much each LLM capability independently contributes versus simply scaling.
+2. The headline capability gap (strong offline, weak online) is the most useful finding — but the survey attributes it largely to datasets/benchmarks; how much is the architecture (perception latency, missing long-term memory) versus the data is left open.
+
+<SelfCheck q="What are the three axes of the survey's taxonomy, and why is a phone-specific survey argued to be necessary?" a="Frameworks (single/multi-agent, plan-then-act), Models (prompt engineering vs. training-based SFT/RL), and Resources (datasets and benchmarks). Phone-specific because the mobile setting — touchscreen action space, view hierarchies, and on-device resource constraints — imposes trade-offs that platform-agnostic GUI-agent surveys (Tab.1) do not capture." />
+
+## Glossary
+- <Term def="Partially Observable Markov Decision Process — sequential decision-making under uncertainty; used to model single-agent step-by-step operation">POMDP</Term>
+- <Term def="Set-of-Mark prompting — overlaying numbered marks on UI elements so the model can refer to them">SoM</Term>
+- <Term def="Active Environmental Injection Attack — manipulating environment elements (e.g. notifications) to mislead an agent's reasoning">AEIA</Term>
+- <Term def="Supervised fine-tuning of a model on labeled GUI trajectories">SFT</Term>
+- <Term def="Reinforcement learning to refine an agent's decision-making beyond imitation">RL</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

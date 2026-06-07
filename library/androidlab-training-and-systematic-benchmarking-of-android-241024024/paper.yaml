@@ -48,17 +48,17 @@ versions:
   source: arxiv
   source_url: https://arxiv.org/abs/2410.24024
   pdf_path: library/androidlab-training-and-systematic-benchmarking-of-android-241024024/v1/paper.pdf
-  summary_path: null
+  summary_path: library/androidlab-training-and-systematic-benchmarking-of-android-241024024/v1/summary.mdx
   metadata_path: library/androidlab-training-and-systematic-benchmarking-of-android-241024024/v1/metadata.yaml
   fetched_at: '2026-06-06T07:57:38Z'
   source_updated_at: null
   arxiv_version: null
   pdf_sha256: 70233eb37c74ce4e3973a6d7c86f7b3ea07dff4045b763adcc52f22e2b76df61
   pdf_bytes: 6932033
-  summary_status: none
-  extraction_status: none
+  summary_status: full
+  extraction_status: full
   created_at: '2026-06-06T07:57:38Z'
-  updated_at: '2026-06-06T07:57:38Z'
+  updated_at: '2026-06-07T06:20:37Z'
 relations:
   duplicate_candidates: []
   related_papers: []

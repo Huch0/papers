@@ -48,17 +48,17 @@ versions:
   source: arxiv
   source_url: https://arxiv.org/abs/2508.14040
   pdf_path: library/computerrl-scaling-end-to-end-online-reinforcement-250814040/v1/paper.pdf
-  summary_path: null
+  summary_path: library/computerrl-scaling-end-to-end-online-reinforcement-250814040/v1/summary.mdx
   metadata_path: library/computerrl-scaling-end-to-end-online-reinforcement-250814040/v1/metadata.yaml
   fetched_at: '2026-06-06T07:57:44Z'
   source_updated_at: null
   arxiv_version: null
   pdf_sha256: a95adc5d1039637e0ec73fc98c2681409fb7b1d19468d5d6473ec6aede1692ae
   pdf_bytes: 14734955
-  summary_status: none
-  extraction_status: none
+  summary_status: full
+  extraction_status: full
   created_at: '2026-06-06T07:57:44Z'
-  updated_at: '2026-06-06T07:57:44Z'
+  updated_at: '2026-06-07T06:21:06Z'
 relations:
   duplicate_candidates: []
   related_papers: []

@@ -1,0 +1,59 @@
+---
+canonical_key: title-4a35c7bd29d2
+version_key: v1
+title: Claude 3.5 Sonnet Computer Use (Anthropic)
+authors: []
+venue: tech report
+year: 2024
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: null
+summary_date: '2026-06-07'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<Caveat>
+**Metadata-only record — no full text was fetched.** No PDF or extraction exists for
+this entry, so every statement below is *context-grounded* (drawn from the field role this
+release is widely known to play), not *text-grounded* (verified against the source).
+Treat all claims, and especially any quantitative figures, as unverified. Verify against
+the original Anthropic source before citing.
+</Caveat>
+
+<TLDR>Anthropic's October 2024 release of <Term def="taking a screenshot of the screen, then issuing mouse-move/click and keyboard actions to operate an ordinary GUI like a human would">computer use</Term> for Claude 3.5 Sonnet — the first frontier model shipped with general screenshot-plus-mouse/keyboard control exposed through a public API.</TLDR>
+
+<WhyItMatters>It is a foundational marker for the <Term def="an agent that operates a computer's graphical interface directly, rather than calling app-specific APIs">computer-use agent (CUA)</Term> line of work: a commercial frontier lab making general GUI control a first-class API capability, which catalyzed the subsequent wave of CUA products and benchmarks.</WhyItMatters>
+
+## What it is
+Computer use is a capability Anthropic added to Claude 3.5 Sonnet (the upgraded "new Sonnet"), announced in October 2024 as a public beta through the Anthropic API. Rather than restricting the model to text or app-specific tool calls, it lets Claude perceive a screen via screenshots and act on it by moving the cursor, clicking, and typing — operating arbitrary desktop and browser GUIs through the same interface a person uses.
+
+Because this is a **metadata-only record** (a `tech report` / product release, no fetched paper), the items below are well-established field-role observations about this release rather than claims extracted from a source document.
+
+## Why it matters
+This release is foundational for <Term def="agents that drive graphical user interfaces by perception (screenshots) and low-level input (mouse, keyboard)">computer-use agents</Term> for one structural reason: it moved general GUI control from research demos and bespoke harnesses into a commercially supported, API-accessible capability from a frontier lab. <Related>It anchors the lineage that the broader CUA research and product ecosystem built on — later screen-control agents, GUI-grounding benchmarks, and competing commercial offerings.</Related> <FollowUp>For the analytical, text-grounded record, fetch and summarize Anthropic's own computer-use documentation and any accompanying system/model card.</FollowUp>
+
+## Key findings
+These are field-role observations, not source-extracted results; quantitative claims are marked accordingly.
+
+- <Finding>Interface modality is general GUI control via screenshots plus mouse and keyboard</Finding>: the model perceives the screen as images and emits low-level pointer/keyboard actions, rather than calling app-specific or DOM-level APIs. (Context-grounded; verify against source.)
+- <Finding>It was delivered as a public API capability on Claude 3.5 Sonnet</Finding>: significance comes largely from being a frontier-lab, commercially available release rather than a research prototype. (Context-grounded; verify against source.)
+- <Finding>Benchmark scores (e.g. on OSWorld or similar CUA evaluations)</Finding>: **Not reported in this record / verify against source.** No extraction exists, so any specific success-rate number must be taken from Anthropic's own materials.
+- <Finding>Reliability, latency, and safety/guardrail details</Finding>: **Not reported in this record / verify against source.** Known qualitatively as an early-beta capability, but exact figures and mitigations are unverified here.
+
+## Limitations
+<Caveat>This is a derived metadata stub, not an analysis of a fetched document — contribution, method, evidence, and limitations cannot be separated into *claimed* vs *evidence-supported* vs *unclear* without the source text.</Caveat> <Caveat>The release was an early beta; real-world reliability of GUI control was understood to be limited, but specific failure-mode and accuracy details are **Not reported** here.</Caveat>
+
+## Glossary
+- <Term def="taking a screenshot, then issuing mouse and keyboard actions to operate a GUI as a human would">computer use</Term>
+- <Term def="an agent that operates a computer's graphical interface directly via perception and low-level input, instead of app-specific APIs">computer-use agent (CUA)</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

@@ -48,17 +48,17 @@ versions:
   source: arxiv
   source_url: https://arxiv.org/abs/2406.01014
   pdf_path: library/mobile-agent-v2-mobile-device-operation-assistant-240601014/v1/paper.pdf
-  summary_path: null
+  summary_path: library/mobile-agent-v2-mobile-device-operation-assistant-240601014/v1/summary.mdx
   metadata_path: library/mobile-agent-v2-mobile-device-operation-assistant-240601014/v1/metadata.yaml
   fetched_at: '2026-06-06T07:57:36Z'
   source_updated_at: null
   arxiv_version: null
   pdf_sha256: cc3d977b738a12efbdbc4a5af5161b9881de89ebe83e488ac72e7dcd6e7eb8d1
   pdf_bytes: 30180667
-  summary_status: none
-  extraction_status: none
+  summary_status: full
+  extraction_status: full
   created_at: '2026-06-06T07:57:36Z'
-  updated_at: '2026-06-06T07:57:36Z'
+  updated_at: '2026-06-07T06:25:45Z'
 relations:
   duplicate_candidates: []
   related_papers: []

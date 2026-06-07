@@ -1,0 +1,126 @@
+---
+canonical_key: arxiv-2504.01382
+version_key: v1
+title: An Illusion of Progress? Assessing the Current State of Web Agents
+authors:
+- Tianci Xue
+- Weijian Qi
+- Tianneng Shi
+- Chan Hee Song
+- Boyu Gou
+- D. Song
+- Huan Sun
+- Yu Su
+venue: arXiv.org
+year: 2025
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2504.01382
+summary_date: '2026-06-07'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+{/*
+  Canonical Summary structure (concise, core-first). Body only — frontmatter is generated
+  from metadata.yaml by `summarize_paper.py --format mdx --prepare`. Components are
+  provided globally by the site (no imports). See config/summary_components.md.
+*/}
+
+<TLDR>Under rigorous human evaluation on a new online benchmark (Online-Mind2Web, 300 realistic tasks across 136 sites), frontier web agents are far weaker than their self-reported numbers suggest — most solve only ~30% of tasks — and the gap traces to flawed benchmarks rather than real progress.</TLDR>
+
+<WhyItMatters>Foundational reality-check for the computer-use / web-agent track: it shows headline success rates on WebVoyager are inflated by easy tasks and unreliable LLM judges, and offers a better benchmark plus a scalable LLM-as-a-Judge (WebJudge) for honest evaluation.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "~30%", label: "human-eval success rate", sub: "most frontier agents on Online-Mind2Web" },
+  { value: "61.3%", label: "best agent (Operator)", sub: "vs 87% it self-reports on WebVoyager" },
+  { value: "300", label: "tasks / 136 websites", sub: "new Online-Mind2Web benchmark" },
+  { value: "85.7%", label: "WebJudge agreement w/ humans", sub: "o4-mini; 3.8% success-rate gap" },
+]} />
+
+## Motivation
+Recent web agents claim close to 90% success on the WebVoyager benchmark, fueling optimism that web automation is nearly solved. But <Problem>most existing benchmarks are offline (cached site snapshots) or sandboxed, so they cannot reflect how real users interact with live, dynamic websites</Problem>. Even the most-used online benchmark, WebVoyager, has serious flaws: <Problem>it covers only 15 websites with limited task diversity, many tasks have shortcut solutions, and its automatic evaluation agrees poorly with humans</Problem>. These issues together inflate reported competence and risk short-sighted decisions about the field's true state.
+
+## Contribution (what's new)
+The genuine delta is <Novelty>a rigorous, human-grounded online benchmark that minimizes the simulation-to-reality gap, plus a scalable judge that makes such evaluation repeatable</Novelty>. Online-Mind2Web is built from crowdsourced, validated, real-world tasks (not synthetic prompts) spanning 136 popular sites, so it resists the shortcut-and-similarity biases of synthesized benchmarks. <Novelty>WebJudge mitigates the core failure of prior LLM judges by identifying key points and selecting only key intermediate screenshots</Novelty> — this design is forced because looking only at the final screenshot misses critical intermediate steps, while feeding all screenshots overloads the context window.
+
+## Research questions
+1. How capable are current frontier web agents really, when measured under conditions that approximate real users on live websites?
+2. Why do self-reported benchmark numbers (e.g., WebVoyager) overstate competence?
+3. Can an automatic evaluator reach human-level reliability while remaining scalable across agents with very different output formats and trajectory lengths?
+
+## Methodology
+Construct a realistic online benchmark from validated real tasks, manually evaluate six frontier agents as ground truth, then develop and validate an LLM-as-a-Judge against that ground truth.
+
+<Pass title="Method details">
+**Benchmark construction (Online-Mind2Web).** From 650 randomly sampled original Mind2Web tasks, <Finding src="§2.2, p.4">47% were found invalid or to have outdated ground-truth trajectories</Finding>. The final set of 300 tasks combines 167 selected from Mind2Web, 24 rewritten Mind2Web tasks, 34 from Mind2Web-Live, and 75 newly authored on high-traffic sites. Tasks are graded by reference length `Nstep` (steps a human needs): easy (`Nstep ≤ 5`, 83 tasks), medium (`6 ≤ Nstep ≤ 10`, 143 tasks), hard (`Nstep ≥ 11`, 74 tasks). Agents are given a start URL and prompted not to use Google Search to block shortcuts.
+
+**Shortcut diagnosis.** A naive <Term def="generates one Google query, clicks a returned link, checks for the answer — no site navigation">search agent</Term> solved 51% of a 100-task WebVoyager sample but only 22% of Online-Mind2Web (≈50% easy, 18% medium, 3% hard), confirming WebVoyager's tasks skew easy and shortcut-solvable.
+
+**Evaluation.** Every trajectory of all six agents was human-annotated (≥2 annotators, a third resolves conflicts) to form the reference standard.
+
+**WebJudge (LLM-as-a-Judge), 3 steps:**
+<Stepper steps={[
+  {title: "Key Point Identification", body: "Prompt the model to extract the key requirements K = (k1..km) a task needs (e.g., location, rating)."},
+  {title: "Key Screenshot Identification", body: "Score each screenshot's relevance 1–5; keep those above threshold δ, discarding uninformative frames to preserve intermediate evidence without token overload."},
+  {title: "Outcome Judgement", body: "Given task, key points, key screenshots, and action history, output binary Success/Failure: O = Evaluator(T, A, I)."}
+]} />
+WebJudge deliberately avoids the agent's final response (often hallucinated) and judges environment observations rather than LLM-generated text, reducing self-preference bias. A lightweight `WebJudge-7B` (Qwen2.5-VL-7B) fixes cost at two API calls per trajectory.
+</Pass>
+
+## Main result
+Under human evaluation, <Finding src="Tab.2, p.6">OpenAI Operator (61.3%) and Claude Computer Use 3.7 (56.3%) lead, while every other agent — including Browser Use (30.0%), SeeAct (30.7%), Claude Computer Use 3.5 (29.0%), and Agent-E (28.0%) — clusters around 30%</Finding>. This stands in stark contrast to WebVoyager self-reports: <Finding src="Fig.1, p.1">agents drop by 23–59 percentage points (e.g., Browser Use 89%→30%, Agent-E 87%→28%), and most recent agents fail to beat the simple SeeAct agent released in early 2024</Finding>.
+
+<SortableTable columns={["Agent", "Online-Mind2Web SR (human, %)", "WebVoyager self-report (%)", "Drop (pp)"]} rows={[
+  ["OpenAI Operator", 61.3, 87, -26],
+  ["Claude Computer Use 3.7", 56.3, 89, -33],
+  ["SeeAct", 30.7, 52, -21],
+  ["Browser Use", 30.0, 89, -59],
+  ["Claude Computer Use 3.5", 29.0, 61, -32],
+  ["Agent-E", 28.0, 87, -59]
+]} />
+
+{/* Note: Fig.1 reports WebVoyager numbers for SeeAct 52, Operator 87, Claude 3.7 89, Browser Use 89; some per-agent drops in Fig.1 (-23,-33,-59,-26) are stated; exact WebVoyager values for a few rows are approximate from Fig.1 bars. */}
+
+## Key findings
+- <Finding src="Tab.2, p.6">WebJudge (o4-mini) reaches 85.7% agreement with humans at only a 3.8% success-rate gap; WebJudge-7B reaches 87% agreement at a 3.9% gap with just two API calls per trajectory</Finding>: a scalable judge can substitute for human evaluation for rapid iteration.
+- <Finding src="Fig.4, p.7">Success collapses with difficulty — average SR drops 31.6 points from easy→medium and a further 15.4 from medium→hard</Finding>: even the best agents (Operator 83.1%, Claude 3.7 90.4% on easy) struggle on hard tasks, pointing to weak long-horizon planning and exploration.
+- <Finding src="Fig.5, §4.3, p.7">Prior judges degrade as trajectories lengthen — WebVoyager suffers token overload from too many screenshots, and Autonomous Evaluation (final-screenshot only) misses intermediate steps</Finding>: WebJudge stays accurate up to ~80 action steps, explaining its edge on long Operator runs (often >100 screenshots).
+- <Finding src="§4.3, p.7">Hallucinations in agents' final responses inflate WebVoyager-style scores via false positives</Finding>: a likely contributor to previously over-optimistic reported numbers.
+- <Finding src="Tab.4, p.8">WebJudge generalizes out-of-domain — 73.7% (GPT-4o), 75.7% (7B), 82.0% (o4-mini) overall precision across 1,302 trajectories on 5 benchmarks in AgentRewardBench</Finding>: suggests use as a reward model for RFT/RL/reflection.
+- <Finding src="Fig.6, §5.1, p.9">Failed tasks take far more steps than successful ones (≈2× for Browser Use, Claude 3.7, Operator), and Operator trades efficiency for exploration (2.6× human reference, up to 44 min)</Finding>: an exploration-vs-exploitation trade-off where greedy agents are efficient (≈1.0× human) but get stuck at dead ends.
+
+## Implications
+The paper reframes web-agent "progress" as partly an artifact of weak evaluation, building on the <Related>Mind2Web / WebVoyager / Mind2Web-Live lineage and the LLM-as-a-Judge tradition (MT-Bench, AlpacaEval)</Related> and complementing <Related>AgentRewardBench, which it uses to test generalization</Related>. WebJudge's high out-of-domain precision opens <FollowUp>using it as a reward signal for Rejection-sampling Fine-Tuning, Reflection, and RL on web agents</FollowUp>. The difficulty cliff motivates <FollowUp>better long-horizon planning and exploration, and handling numerical/temporal constraints that Operator routinely violates</FollowUp>.
+
+## Limitations
+- <Caveat>WebJudge's cost and latency scale with the number of screenshots per trajectory, making evaluation of long-trajectory agents (e.g., Operator) expensive — partly addressed by WebJudge-7B's fixed two calls</Caveat>.
+- <Caveat>WebJudge (o4-mini) is overly conservative (low recall), widening its success-rate gap on some benchmarks despite high precision</Caveat>.
+- <Caveat>Benchmark durability depends on ongoing manual maintenance — live websites change, so tasks must be replaced over time to stay valid</Caveat>.
+- <Caveat>Detailed error analysis focuses mainly on Operator; failure taxonomies for other agents are coarser</Caveat>.
+- <Caveat>Some residual evaluator randomness remains even at temperature 0 (avg SR std 1.1%, max 1.8%)</Caveat>.
+
+## Critiques and Questions
+1. Disabling Google Search to block shortcuts is reasonable for measuring navigation, but it also diverges from how real users let agents act freely — is the "real-user-approximating" claim partly in tension with this constraint?
+2. WebJudge is validated against the same human annotations used as ground truth; its 85% agreement is reassuring, but how much does residual judge bias propagate when WebJudge is later used as a training reward (the proposed RFT/RL use)?
+3. The "illusion of progress" framing rests heavily on comparing to self-reported WebVoyager numbers from different harnesses/prompts — how much of the 23–59pp drop is benchmark difficulty vs. reproduction differences in agent setup?
+
+<SelfCheck q="Why does WebJudge select 'key screenshots' rather than using either the final screenshot alone or all screenshots?" a="Using only the final screenshot (as in Autonomous Evaluation) misses crucial intermediate steps and drops agreement on long trajectories; feeding all screenshots (as in WebVoyager) overloads the context window. Scoring and keeping only relevant intermediate frames preserves the evidence needed to judge completion while staying within token limits — which keeps WebJudge accurate even past ~80 action steps." />
+
+## Glossary
+- <Term def="An online benchmark of 300 crowdsourced, validated real-world tasks across 136 live websites, graded easy/medium/hard by human reference step count">Online-Mind2Web</Term>
+- <Term def="The most widely used online web-agent benchmark; 15 websites, largely synthetic tasks; this paper argues it is shortcut-solvable and inflates results">WebVoyager</Term>
+- <Term def="The paper's LLM-as-a-Judge: identifies task key points, selects key screenshots, then makes a binary Success/Failure judgement without relying on the agent's final response">WebJudge</Term>
+- <Term def="Number of steps a human annotator needs to complete a task; used to bucket tasks into easy/medium/hard">reference length (Nstep)</Term>
+- <Term def="Fraction of automatic-judge decisions that match human binary Success/Failure labels">Agreement Rate (AR)</Term>
+- <Term def="Average ratio of agent steps to human reference steps over successful tasks; lower is more efficient">efficiency score (E)</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

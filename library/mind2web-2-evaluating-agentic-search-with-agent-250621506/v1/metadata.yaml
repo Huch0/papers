@@ -84,14 +84,15 @@ scoring:
     author_or_lab_signal: 1.0
 artifacts:
   pdf: library/mind2web-2-evaluating-agentic-search-with-agent-250621506/v1/paper.pdf
-  extraction: null
-  summary: null
+  extraction: library/mind2web-2-evaluating-agentic-search-with-agent-250621506/v1/extraction.txt
+  summary: library/mind2web-2-evaluating-agentic-search-with-agent-250621506/v1/summary.mdx
   code_url: null
   project_url: null
   dataset_url: null
 status:
   downloaded: true
-  extracted: false
-  summarized: false
+  extracted: true
+  summarized: true
   triaged: true
   user_read_status: unread
+  summary_format: mdx

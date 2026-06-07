@@ -1,0 +1,128 @@
+---
+canonical_key: arxiv-2406.01014
+version_key: v1
+title: 'Mobile-Agent-v2: Mobile Device Operation Assistant with Effective Navigation via Multi-Agent Collaboration'
+authors:
+- Junyang Wang
+- Haiyang Xu
+- Haitao Jia
+- Xi Zhang
+- Ming Yan
+- Weizhou Shen
+- Ji Zhang
+- Fei Huang
+- Jitao Sang
+venue: Neural Information Processing Systems
+year: 2024
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+- general_agent_methods
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2406.01014
+summary_date: '2026-06-07'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+{/*
+  Canonical Summary structure (concise, core-first). Body only — frontmatter is generated
+  from metadata.yaml by `summarize_paper.py --format mdx --prepare`. Components are
+  provided globally by the site (no imports). See config/summary_components.md.
+*/}
+
+<TLDR>Mobile-Agent-v2 splits a mobile-GUI operation agent into three collaborating roles — a text-only planning agent that condenses history into task progress, a decision agent backed by a focus-content memory unit, and a reflection agent that checks each operation — lifting task completion by over 30% versus the single-agent Mobile-Agent.</TLDR>
+
+<WhyItMatters>A foundational computer-use-agent paper showing that multi-agent decomposition, not a bigger backbone, is what unlocks long-horizon GUI navigation — directly relevant to the computer-use and general agent-methods tracks.</WhyItMatters>
+
+<KeyStats items={[
+  { value: ">30%", label: "task completion gain vs single-agent", sub: "Mobile-Agent-v2 vs Mobile-Agent (abstract)" },
+  { value: "55% vs 20%", label: "advanced-instruction success rate", sub: "non-English, multi-agent vs single-agent (p.7)" },
+  { value: "3", label: "specialized agent roles", sub: "planning / decision / reflection" },
+  { value: "88", label: "evaluation instructions per language", sub: "40 system + 40 external + 8 multi-app (§4.2)" },
+]} />
+
+## Motivation
+Mobile device operation is a multi-step sequential task: the agent must navigate two things from a growing history — <Problem>task progress (what sub-goals are already done)</Problem> and <Problem>focus content (task-relevant facts seen on earlier screens, e.g. a match result needed later to write sports news)</Problem>. In a single-agent architecture, the history is a <Problem>lengthy, interleaved image-and-text sequence whose token length grows with each step, degrading navigation effectiveness</Problem> (§1, Fig.1). Prior work either depends on UI/XML files (AppAgent, platform-limited) or, like Mobile-Agent, uses end-to-end GPT-4V screen recognition that still chokes on long interleaved context.
+
+## Contribution (what's new)
+The genuine delta is architectural decomposition. <Novelty>A separate text-only planning agent compresses the interleaved image-text history into a pure-text "task progress" summary, so the decision agent never re-reads the raw history</Novelty> — this must take the form of a text condensation because the failure mode is precisely the length and interleaving of the multimodal history. <Novelty>A memory unit, updated by the decision agent, preserves focus content that the text task-progress would otherwise drop</Novelty>, and <Novelty>a reflection agent compares the before/after screenshots of each operation to catch errors the decision agent cannot self-detect (it never sees the prior screen)</Novelty>. The roles are complementary, not redundant: each addresses a distinct failure the single agent exhibits.
+
+## Research questions
+Can a multi-agent decomposition solve the task-progress and focus-content navigation challenges that long, interleaved context makes intractable for a single-agent mobile operation assistant — and which of the three roles matters most?
+
+## Methodology
+The system runs iteratively over screenshots. A visual perception module turns each screen into text+icon content with coordinates; the planning agent updates task progress from the last operation; the decision agent picks one action from a fixed operation space and updates focus-content memory; the reflection agent classifies the result and triggers recovery on failure.
+
+<Pass title="Method details">
+**Visual perception module** (§3.1): three tools — text recognition (`ConvNextViT-document` OCR from ModelScope), icon recognition (`GroundingDINO`), and icon description (`Qwen-VL-Int4`) — produce screen content plus coordinates, `Pt = VPM(St)`.
+
+**Models** (§4.1): planning agent uses text-only `GPT-4` (no screen perception needed); decision and reflection agents use `GPT-4V`. All via official APIs.
+
+<Stepper steps={[
+  { title: "Planning agent", body: "Updates task progress from instruction, prior operation, prior progress, and focus content: TPt = PA(Ins, O[t-1], TP[t-1], FC[t-1]) (§3.3). Output is pure text, shortening the decision agent's context." },
+  { title: "Decision agent", body: "Generates next action Ot = DA(Ins, TP[t-1], FC[t-1], R[t-1], St, Pt) and updates focus-content memory FCt = DA(Ins, FC[t-1], St, Pt) (§3.4). Operation space: Open app / Tap (x,y) / Swipe / Type / Home / Stop." },
+  { title: "Reflection agent", body: "Compares pre- and post-operation screens, Rt = RA(Ins, FCt, Ot, St, Pt, S[t+1], P[t+1]) (§3.5), labeling the action erroneous / ineffective / correct." },
+  { title: "Recovery", body: "Erroneous → page reverts to prior state; ineffective → page unchanged; both are excluded from operation history so the agent does not imitate them; correct → action and page are committed." },
+]} />
+
+**Evaluation** (§4.2): dynamic evaluation on real devices via ADB, on Harmony OS (non-English) and Android (English). 5 system + 5 external apps per scenario, 2 basic + 2 advanced instructions each, plus 8 multi-app instructions — 88 instructions per language. A "knowledge injection" variant adds manual operation hints, but only for instructions Mobile-Agent-v2 failed unaided. Baseline is single-agent Mobile-Agent (GPT-4V, temperature 0, fixed seed). Mobile-Eval was dropped as too easy (Mobile-Agent-v2 scored 99%).
+
+**Metrics** (§4.2): Success Rate (SR, full-instruction success), Completion Rate (CR, fraction of correct steps vs ground truth), Decision Accuracy (DA), Reflection Accuracy (RA).
+</Pass>
+
+## Main result
+On the harder advanced instructions in the non-English scenario, <Finding src="p.7">multi-agent Mobile-Agent-v2 reaches 55% success rate vs 20% for single-agent Mobile-Agent</Finding>, and the abstract reports an <Finding src="abstract, p.1">over-30% improvement in task completion overall</Finding>. In English the gain is also clear despite a stronger baseline: <Finding src="p.7">+27% average success rate</Finding>.
+
+<SortableTable columns={["Scenario / setting", "Method", "SR", "CR", "DA", "RA"]} rows={[
+  ["Non-EN system, advanced", "Mobile-Agent", "3/10", 37.3, 32.9, 0],
+  ["Non-EN system, advanced", "Mobile-Agent-v2", "6/10", 82.7, 78.2, 84.4],
+  ["Non-EN system, advanced", "v2 + Know.", "8/10", 88.9, 87.2, 91.4],
+  ["Non-EN external, advanced", "Mobile-Agent", "1/10", 29.2, 27.0, 0],
+  ["Non-EN external, advanced", "Mobile-Agent-v2", "5/10", 77.9, 74.1, 78.8],
+  ["EN external, advanced", "Mobile-Agent", "3/10", 45.3, 38.7, 0],
+  ["EN external, advanced", "Mobile-Agent-v2", "7/10", 89.7, 91.0, 93.4],
+  ["EN external, advanced", "v2 + Know.", "9/10", 97.1, 94.2, 98.5],
+]} />
+
+<Caveat>RA shown as 0 for Mobile-Agent rows is "Not reported" — the single-agent baseline has no reflection agent (Tab.1, Tab.2).</Caveat>
+
+## Key findings
+- <Finding src="Tab.4">The planning agent is the single most impactful component</Finding>: ablating it drops basic SR from 88.6% (full) to 59.1% and advanced SR from 61.4% to 29.5%, the largest degradation of any removal — confirming that long-sequence navigation is the core bottleneck.
+- <Finding src="Tab.4">Reflection agent and memory unit each contribute on top of planning</Finding>: with planning+memory but no reflection, advanced SR is 45.5%; adding the reflection agent and memory unit progressively raises it to 54.5% and 61.4%.
+- <Finding src="p.8">Multi-app tasks benefit most from the architecture</Finding>: vs Mobile-Agent, Mobile-Agent-v2 improves multi-app SR by 37.5% and CR by 44.2%, because these tasks lean hardest on retrieving history operations and focus content (the memory unit).
+- <Finding src="Tab.3">The agent scaffold is essential, not optional</Finding>: GPT-4V used end-to-end (no agent) scores only 2.7% / 0.9% single-step SR on basic/advanced, vs 92.7% / 83.5% for GPT-4V inside the framework; Gemini-1.5-Pro (38.2/29.8) and Qwen-VL-Max (42.1/33.6) trail GPT-4V.
+- <Finding src="Fig.4, §4.3.3">The multi-agent design removes a positional error pattern</Finding>: in Mobile-Agent, erroneous/ineffective operations cluster in the later stages of a task; Mobile-Agent-v2 shows no such pattern, evidence it handles long sequences better.
+- <Finding src="p.7, p.8">Manual operation-knowledge injection further boosts performance and is robust</Finding>: it lifts several settings to 100% CR and even 100% SR/DA/RA on EN multi-app advanced, and authors argue injected natural-language procedures survive UI size/color changes — pointing toward mobile-app test automation.
+
+## Implications
+This is a lineage paper for GUI/computer-use agents: it extends <Related>Mobile-Agent (Wang et al. 2024), which removed XML dependence via visual perception, and AppAgent (Zhang et al. 2023a), which used XML</Related>, and it is the first to bring <Related>multi-agent collaboration frameworks (CAMEL, MetaGPT, AgentVerse, AutoGen) into mobile device operation</Related>. The standout thread is <FollowUp>automating high-quality operation-knowledge generation</FollowUp> — if the gains from manual knowledge injection can be produced automatically, the same pattern could underpin language-driven mobile app testing. Also worth chasing: <FollowUp>whether the planning/memory/reflection decomposition transfers to open-weight backbones, given how far Gemini and Qwen trailed GPT-4V here</FollowUp>.
+
+## Limitations
+- <Caveat>Heavy reliance on closed GPT-4/GPT-4V; the framework underperforms sharply with Gemini-1.5-Pro and Qwen-VL-Max (Tab.3), so portability to open models is unproven.</Caveat>
+- <Caveat>Small, self-built evaluation: 88 instructions per language, with multi-app having only 2 per setting (e.g. 2/2 results), making those success rates statistically thin (Tab.1, Tab.2).</Caveat>
+- <Caveat>Knowledge injection is applied only to instructions the system already failed and was authored manually, so reported "+Know." numbers reflect a favorable, human-in-the-loop setting (§4.2).</Caveat>
+- <Caveat>The custom benchmark replaces the easier Mobile-Eval and is not a standard public benchmark, limiting comparability with other agents (§4.3.1 footnote).</Caveat>
+
+## Critiques and Questions
+1. The headline ">30% improvement" mixes settings; reported gains range widely (e.g. +27% average SR in English, much larger on multi-app). Which aggregate does ">30%" refer to, and over which tables?
+2. With only 2 multi-app instructions per setting, the "100% / 2-of-2" multi-app results carry little statistical weight — does the multi-app conclusion hold at larger N?
+3. Reflection adds extra GPT-4V calls (two screenshots per step). The paper reports accuracy gains but no latency/cost accounting — what is the per-task overhead of the three-agent loop?
+
+<SelfCheck q="Why must the planning agent be a separate, text-only model rather than just giving the decision agent the full history?" a="The single-agent failure mode is that the history is a long, interleaved image-text sequence whose length grows each step and degrades navigation. The planning agent condenses that history into a short pure-text task-progress summary, so the decision agent operates on far less context — and because the summary is text, the planning agent needs no screen perception (GPT-4 text-only). Ablating it causes the largest performance drop (Tab.4)." />
+
+## Glossary
+- <Term def="Navigating, from a growing operation history, which sub-goals are already completed so the next action can be planned.">task progress navigation</Term>
+- <Term def="Task-relevant information seen on an earlier screen (e.g. a queried match result) that is needed for a later step; preserved in the memory unit.">focus content</Term>
+- <Term def="A short-term memory module updated by the decision agent to store focus content across screens, critical for multi-app tasks.">memory unit</Term>
+- <Term def="Dynamic evaluation: the agent's actions are executed in real time on a physical device (via ADB), rather than scored against a static log.">dynamic evaluation</Term>
+- <Term def="Completion Rate — the proportion of correct steps performed out of the ground-truth operations, partial credit even when the full instruction fails.">CR</Term>
+- <Term def="Android Debug Bridge — the tooling used to issue the agent's Tap/Swipe/Type/Home/Open-app operations on a real device.">ADB</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

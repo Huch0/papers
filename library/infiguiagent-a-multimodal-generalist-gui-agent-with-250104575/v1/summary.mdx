@@ -1,0 +1,130 @@
+---
+canonical_key: arxiv-2501.04575
+version_key: v1
+title: 'InfiGUIAgent: A Multimodal Generalist GUI Agent with Native Reasoning and Reflection'
+authors:
+- Yuhang Liu
+- Pengxiang Li
+- Zishu Wei
+- Congkai Xie
+- Xueyu Hu
+- Xinchen Xu
+- Shengyu Zhang
+- Xiaotian Han
+- Hongxia Yang
+- Fei Wu
+venue: Conference of the European Chapter of the Association for Computational Linguistics
+year: 2025
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+- general_agent_methods
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2501.04575
+summary_date: '2026-06-07'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+{/*
+  Canonical Summary structure (concise, core-first). Body only — frontmatter is generated
+  from metadata.yaml by `summarize_paper.py --format mdx --prepare`. Components are
+  provided globally by the site (no imports). See config/summary_components.md.
+*/}
+
+<TLDR>InfiGUIAgent fine-tunes a small (2B) MLLM in two SFT stages so it natively performs hierarchical planning and expectation-reflection reasoning over raw screenshots, reaching competitive GUI grounding and navigation without accessibility trees or extra prompting.</TLDR>
+
+<WhyItMatters>Directly on my computer-use-agent track: shows a lightweight, vision-only agent that bakes multi-step reasoning into weights rather than into a prompt scaffold — a useful counterpoint to large prompted agents.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "76.3%", label: "ScreenSpot avg. grounding accuracy", sub: "InfiGUIAgent-2B, raw screenshots" },
+  { value: "0.09", label: "AndroidWorld overall success rate", sub: "vs 0.07 ShowUI-2B, 0.05 Qwen2-VL-72B" },
+  { value: "2B", label: "parameters (Qwen2-VL-2B base)", sub: "8x A800 80GB, full-param SFT" },
+]} />
+
+## Motivation
+Existing MLLM-based GUI agents have two recurring weaknesses. First, <Problem>they do only basic single-step reasoning and fail to leverage information from prior steps, so they reflect poorly on past actions and repeat the same errors</Problem>. Second, <Problem>they lean on textual GUI representations such as accessibility trees or Set-of-Marks, but GUIs are inherently visual — text representations lose or duplicate information, add compute overhead, and vary in availability and consistency across platforms, hindering deployment</Problem>.
+
+## Contribution (what's new)
+The genuine delta is making advanced reasoning *native* rather than prompted. The agent is trained so that <Novelty>two specific reasoning skills are emitted at every step from the model itself: hierarchical reasoning (a strategic planning layer plus a tactical action-selection/grounding layer) and expectation-reflection reasoning (predict the outcome of each action, then at the next step compare the realized state against that prediction)</Novelty>. The design must take this form because a single-step prompted agent has no persistent self-evaluation signal; by synthesizing the reflection/expectation chain into SFT data, the agent learns to self-correct without any extra prompting at inference. <Novelty>A deliberate choice: expectations are generated without access to the next state `s_{t+1}`, so the model learns to handle expectation mismatches at deployment instead of producing unrealistically perfect predictions</Novelty>.
+
+## Research questions
+Can a small MLLM be trained to (1) acquire solid GUI fundamentals (understanding + grounding) and (2) natively reason and reflect across steps, such that it competes with larger agents while operating on raw screenshots alone?
+
+## Methodology
+A two-stage supervised fine-tuning pipeline on top of <Term def="2B-parameter open vision-language model from Alibaba">Qwen2-VL-2B</Term>. Stage 1 builds fundamentals from a broad data mix; Stage 2 continues training on MLLM-synthesized trajectory data that embeds the reasoning skills.
+
+<Pass title="Method details">
+**Stage 1 — fundamental abilities (~1M samples, Tab.1).** Five data categories: GUI understanding (Screen2Words, Screen Annotation), grounding (GUIEnv 150k, RICO Semantic Annotation 150k, SeeClick-Web 100k, RICO SCA 100k, Widget Caption 70k, UIBert, OmniAct-Single Click), QA (GUIChat 40k, ScreenQA 17k, Complex QA 11k), general knowledge (LLaVA-OneVision 250k, PixMo 68.8k), and tool usage (Glaive-function-calling 5k). Coordinates are normalized to a relative `[0, 1000]` scale with origin at top-left; points are `{"x":x,"y":y}` and boxes are `{"x1":...,"y2":...}`. A <Term def="inline notation embedding box/point coords + a note alongside the text they refer to, e.g. <ref type=box coords=... note=...>text</ref>">Reference-Augmented Annotation</Term> format ties GUI elements to text bidirectionally; Qwen2-VL-72B is used for instruction enhancement and response refinement.
+
+**Stage 2 — native reasoning (45K synthesized samples, Tab.2).** Built from trajectory datasets GUIAct (10k), AMEX (3k), Android in the Zoo (2k), plus 30k Stage-1-aligned compositions. At each step the agent runs a cycle: Reflection → Hierarchical Reasoning (Strategic: summary + planning; Tactical: action selection + grounding) → Action → Expectation. Inputs at step `t` are goal `g`, current observation `o_t`, and a history window `H_t = {(o_i, r_i, a_i)}` of size `n`. Interaction uses a function-call protocol (`<tool_call>` with name + arguments; `<tool_response>` with status/current_ui/current_task).
+
+<Stepper steps={[
+  { title: "Screenshot description", body: "Generate a text description d_t per observation so non-interleaved MLLMs can reason over steps." },
+  { title: "Reflection", body: "From prior expectation e_{t-1} and current observation o_t, judge whether the previous action met its expectation." },
+  { title: "Strategic layer", body: "Summary from n-step history + o_t, then planning generated with access to the actual action a_t for trajectory alignment." },
+  { title: "Tactical layer", body: "From reflection + strategic output, select/ground the concrete action; a_t is incorporated to keep tactical reasoning consistent." },
+  { title: "Expectation", body: "Generate e_t from o_t, r_t, a_t — deliberately WITHOUT s_{t+1} to preserve robustness to mismatches." },
+]} />
+
+**Modular action space (Tab.3).** Standardized, composable operations: single-point (tap, click, hover, select), two-point (swipe, select_text), directional (scroll), text input (input, point_input), parameterless (remember, enter, home, back), and state settings (set_task_status). An auxiliary next-state-prediction task (predict `d_{t+1}` from `o_t`, `a_t`) is explored to model transition dynamics while keeping expectation generation independent of future states.
+
+**Training compute.** Full-parameter SFT of Qwen2-VL-2B across 8x A800 80GB GPUs using ZeRO0.
+</Pass>
+
+## Main result
+On <Term def="GUI grounding benchmark, 1200+ instructions across iOS/Android/macOS/Windows/Web">ScreenSpot</Term>, <Finding src="Tab.4, p.7">InfiGUIAgent-2B reaches 76.3% average accuracy, surpassing ShowUI-2B (75.1%) and the larger UGround-7B (73.3%)</Finding>, all evaluated on raw screenshots. On <Term def="dynamic Android environment with reward signals for 116 programmatic tasks across 20 apps">AndroidWorld</Term>, <Finding src="Tab.5, p.7">it scores 0.09 overall, above ShowUI-2B (0.07), Qwen2-VL-72B (0.05), and LLaVa-OV-7B (0.00)</Finding> — notably without using the Set-of-Marks annotations the environment provides.
+
+<SortableTable columns={["Model", "Params", "ScreenSpot Avg. (%)", "AndroidWorld Overall"]} rows={[
+  ["InfiGUIAgent-2B", "2B", 76.3, 0.09],
+  ["ShowUI-2B", "2B", 75.1, 0.07],
+  ["UGround-7B", "7B", 73.3, 0],
+  ["SeeClick", "9.6B", 53.4, 0],
+  ["Gemini-1.5-pro", "n/r", 53.2, 0],
+  ["CogAgent", "18B", 47.4, 0],
+  ["Qwen2-VL-7B", "7B", 42.9, 0.05],
+  ["Qwen2-VL-72B", "72B", 0, 0.05],
+  ["GPT-4o", "n/r", 18.8, 0],
+  ["LLaVa-OV-7B", "7B", 0, 0],
+]} />
+
+{/* Note: zeros above mean "Not reported in that table" for the missing axis, not a measured 0.0 — ScreenSpot Tab.4 and AndroidWorld Tab.5 cover different model sets. */}
+
+## Key findings
+- <Finding src="Tab.4, p.7">A 2B model beats 7B+ grounding specialists on ScreenSpot</Finding>: InfiGUIAgent-2B (76.3%) edges out UGround-7B (73.3%) and ShowUI-2B (75.1%) despite far fewer parameters, supporting the claim that the training recipe — not scale — drives grounding quality.
+- <Finding src="Tab.5, p.7">Native reasoning helps navigation more than raw scale</Finding>: on AndroidWorld it (0.09) outperforms Qwen2-VL-72B (0.05), a 36x larger base, indicating step-wise reflection/planning matters for multi-step task success.
+- <Finding src="§4.1.2, p.6">Vision-only operation is viable</Finding>: the agent responds to raw images rather than the Set-of-Marks labels AndroidWorld supplies, on the argument that over-reliance on SoM weakens pixel-level grounding — yet it still leads similar-size models.
+- <Finding src="Tab.5, p.7">Gains concentrate on Easy tasks</Finding>: the AndroidWorld 0.09 comes from Easy 0.25 with Middle 0.00 and Hard 0.00, so harder multi-step tasks remain effectively unsolved.
+- <Finding src="§3.2.5, p.6">Decoupling expectations from the next state is intentional</Finding>: generating `e_t` without `s_{t+1}` trades peak expectation accuracy for robustness to mismatches at deployment, with a separate auxiliary task added to model transitions.
+- <Finding src="§3.1.1, p.5">Heterogeneous data is unified before training</Finding>: coordinates normalized to `[0,1000]` and a Reference-Augmented Annotation format let many sources combine into ~1M Stage-1 samples with consistent spatial grounding.
+
+## Implications
+Pushes the <Related>vision-only GUI-agent lineage (SeeClick, CogAgent, Ferret-UI, ShowUI, UGround)</Related> toward small models whose reasoning is internalized in weights rather than prompted, lowering deployment cost. It also extends the <Related>reflection/planning agent line (Reflexion, ReAct)</Related> by distilling those behaviors into SFT data instead of relying on inference-time scaffolds. Worth chasing: <FollowUp>whether the expectation-reflection chain actually reduces repeated-error loops in practice (no ablation isolates it)</FollowUp>, <FollowUp>how performance scales if the same recipe is applied to a 7B+ base</FollowUp>, and <FollowUp>whether the synthetic-trajectory reasoning generalizes beyond the mobile-heavy training distribution to desktop/web navigation</FollowUp>.
+
+## Limitations
+- <Caveat>AndroidWorld success is low in absolute terms (0.09) and zero on Middle/Hard tasks — the agent handles only the easiest multi-step tasks</Caveat>.
+- <Caveat>No ablation isolates the contribution of hierarchical vs. expectation-reflection reasoning, or of Stage 2 over Stage 1; the "native reasoning helps" claim rests on cross-model comparison, not a controlled study</Caveat>.
+- <Caveat>Evaluation is narrow: two benchmarks, single reported runs with no variance/error bars, and a mobile-skewed training mix</Caveat>.
+- <Caveat>Stage 2 reasoning data is synthesized by Qwen2-VL-72B from existing trajectories, so quality is bounded by that teacher and by trajectory coverage</Caveat>.
+
+## Critiques and Questions
+1. The headline framing ("native reasoning skills enhance GUI interaction") is under-evidenced without an ablation that turns the reasoning chain off on the same model — the comparisons are against *different* models with different data, so the gain could come from the Stage-1 data mix or the `[0,1000]` coordinate normalization rather than from reflection per se.
+2. Numbers are single-run with no variance; on AndroidWorld the small absolute values (0.07 vs 0.09) make ranking fragile.
+3. The ScreenSpot and AndroidWorld tables cover disjoint model sets, so the "competitive with larger models" story is assembled from two partial comparisons rather than one consistent leaderboard.
+
+<SelfCheck q="What does the expectation-reflection mechanism do, and why are expectations generated without access to the next state?" a="At each step the agent predicts the outcome of its action (the expectation); at the next step it reflects by comparing the realized observation against that prediction to detect and correct errors. Expectations are generated without s_{t+1} (§3.2.5) so the model learns to cope with mismatches at deployment, rather than learning unrealistically perfect predictions it could not reproduce at inference." />
+
+## Glossary
+- <Term def="Multimodal Large Language Model — an LLM with a vision encoder + interface so it can reason over images plus text">MLLM</Term>
+- <Term def="Localizing the on-screen coordinates of the UI element an instruction refers to">grounding</Term>
+- <Term def="Overlaying numbered marks on UI elements so a model can refer to them by index instead of pixel coordinates">Set-of-Marks (SoM)</Term>
+- <Term def="Two-level reasoning: a strategic layer for task decomposition/planning and a tactical layer for concrete action selection and grounding">hierarchical reasoning</Term>
+- <Term def="The state at step t+1; used here to denote the next screen/state the agent transitions into after an action">next state (`s_{t+1}`)</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

@@ -1,0 +1,136 @@
+---
+canonical_key: arxiv-2505.13227
+version_key: v1
+title: Scaling Computer-Use Grounding via User Interface Decomposition and Synthesis
+authors:
+- Tianbao Xie
+- Jiaqi Deng
+- Xiaochuan Li
+- Junlin Yang
+- Haoyuan Wu
+- Jixuan Chen
+- Wenjing Hu
+- Xinyuan Wang
+- Yuhui Xu
+- Zekun Wang
+- Yiheng Xu
+- Junli Wang
+- Doyen Sahoo
+- Tao Yu
+- Caiming Xiong
+venue: arXiv.org
+year: 2025
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2505.13227
+summary_date: '2026-06-07'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+{/*
+  Canonical Summary structure (concise, core-first). Body only — frontmatter is generated
+  from metadata.yaml by `summarize_paper.py --format mdx --prepare`. Components are
+  provided globally by the site (no imports). See config/summary_components.md.
+*/}
+
+<TLDR>Decomposing GUI grounding into icon, component, and layout perspectives lets a synthetic-data pipeline produce JEDI (4M examples) and a harder benchmark (OSWORLD-G, 564 samples), training small open models that set state-of-the-art grounding and lift an o3-planned agent on OSWorld from 23% to 51%.</TLDR>
+
+<WhyItMatters>Grounding — mapping an instruction to a screen coordinate — is the bottleneck for computer-use agents; this work shows scalable synthetic data, not bigger models, is the practical lever, and ships an open benchmark/dataset/checkpoints directly relevant to the computer-use track.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "23%→51%", label: "OSWorld success rate", sub: "o3 planner + JEDI-7B grounder" },
+  { value: "4M", label: "synthetic grounding examples", sub: "JEDI dataset" },
+  { value: "564", label: "benchmark samples", sub: "OSWORLD-G, 32 UI-types" },
+  { value: "3B / 7B", label: "model scale", sub: "Qwen2.5-VL backbone" },
+]} />
+
+## Motivation
+<Problem>Existing GUI grounding benchmarks (ScreenSpot-v2, ScreenSpot-Pro) reduce grounding to short referring expressions and are saturating (~90%)</Problem>, so they no longer measure the capabilities that real computer use demands: software commonsense, layout hierarchy understanding, and fine-grained manipulation of sliders/steppers/text cursors. On the data side, <Problem>training signal comes either from coarse webpage screenshot–text pairs that miss fine-grained operation, or from manually annotated data that is too costly to scale</Problem>, and refusing infeasible instructions is largely untested.
+
+## Contribution (what's new)
+The central <Novelty>insight is that grounding data can be synthesized at scale by decomposing the UI into three perspectives — icon, component, layout — each with its own collection/rendering pipeline that yields exact ground-truth coordinates</Novelty>. The design must take this form because the failure of prior data is *capability-specific*: webpage pairs lack fine-grained component metadata, so the authors render components from production UI libraries (e.g. Material UI) where the source code gives precise element trees, reverse-engineer desktop icons from executables/DLLs, and export layout designs from Figma with designer bounding boxes. <Novelty>The complementary claim is compositional generalization: mixing these specialized data types lets a model generalize to novel interfaces it never saw</Novelty>.
+
+## Research questions
+1. Can synthetic, decomposed UI data scale grounding without the cost of manual annotation?
+2. Does standalone grounding improvement translate into end-to-end agentic success on complex computer tasks?
+3. Which data factors (type mix, scale, instruction knowledge) drive grounding performance?
+
+## Methodology
+Build a harder benchmark, synthesize a large decomposed dataset, fine-tune small VLMs, then test both pure grounding and full agent loops.
+
+<Pass title="Method details">
+**OSWORLD-G benchmark.** 564 samples drawn from OSWorld rollouts at 720p/1080p, annotated on CVAT by software experts with bounding boxes and 32 UI-type tags, verified in real software over multiple rounds (~0.5 human-hours/sample). Each sample also gets a *refined* instruction that strips out required software knowledge (referring only to color/shape). Five capability dimensions: text matching (268), element recognition (337), layout understanding (252), fine-grained manipulation (154), refusal (54) — counts overlap since a sample can carry multiple tags (<Finding src="Tab.1, Tab.7">categories sum past 564 because tags co-occur</Finding>). Evaluation = predicted coordinate falls inside the annotated box.
+
+**JEDI data (4M).** Per-perspective synthesis:
+<Stepper steps={[
+  { title: "Icon", body: "Mine GitHub icon repos + crawl website icons (class/aria metadata); reverse-engineer desktop icons from executables/DLLs across Windows/macOS/Ubuntu via tools like IconsExtract. LLM-generated descriptions become grounding queries." },
+  { title: "Component", body: "Render production UI-library components (e.g. Material UI) in a React app; LLMs synthesize task-specific variants; extract element position tree + names + coordinates. Augment with real screenshots parsed via HTML / python-pptx for behaviors underrepresented in code (scroll, spreadsheet cells, resize)." },
+  { title: "Layout", body: "Export Figma prototype designs (VSCode, Zoom, M365) with designer bounding boxes + hierarchy; supplement with OSWorld/WindowsAgentArena screenshots boxed by OmniParser-v2." },
+  { title: "Processing", body: "Convert screenshot+metadata into image-text-to-text QA in two formats (grounding: predict box; description: describe boxed element) using VisualSketchpad-style prompting with GPT-4o/Claude. Multiple QA pairs per screenshot compressed into one conversation." },
+  { title: "Refusal + reuse", body: "Mismatch instructions with unrelated screenshots → 2.6M infeasible examples (sampled at 5%); unify prior datasets (SeeClick, OS-Atlas, etc.) as AGUVIS++, filtering noisy synthetic data with UI-TARS-72B." },
+]} />
+
+**Training.** Fine-tune Qwen2.5-VL 3B/7B at ~1080p max pixels on 64 H100s (20h for 3B, 30h for 7B).
+
+**Agent setup.** GPT-4o or o3 acts as planner emitting low-level NL instructions; JEDI grounds each into a concrete action. No specialized agent architecture or scheduling, to isolate the grounding contribution.
+</Pass>
+
+## Main result
+The headline is agentic, not just grounding: <Finding src="Tab.6, p.8">an o3 planner with JEDI-7B grounding reaches 51.0% on OSWorld, versus 23.0% for o3 alone</Finding>, surpassing 72B-scale grounders and matching specialized models like Claude 4 Sonnet (43.9%). On the new benchmark, <Finding src="Tab.5, p.7">JEDI-7B scores 54.1% overall on OSWORLD-G vs 31.4% for the Qwen2.5-VL-7B backbone</Finding>, trailing only the much larger Seed1.5-VL (62.9%).
+
+<SortableTable columns={["Model / setup", "Benchmark", "Score (%)"]} rows={[
+  ["o3 (planner only)", "OSWorld SR", 23.0],
+  ["o3 + JEDI-7B", "OSWorld SR", 51.0],
+  ["GPT-4o + JEDI-7B", "OSWorld SR", 27.0],
+  ["GPT-4o + Aguvis-72B", "OSWorld SR", 17.0],
+  ["JEDI-7B", "OSWORLD-G overall", 54.1],
+  ["UI-TARS-72B", "OSWORLD-G overall", 57.1],
+  ["Qwen2.5-VL-7B (backbone)", "OSWORLD-G overall", 31.4],
+  ["JEDI-7B", "ScreenSpot-v2 avg", 91.7],
+  ["JEDI-7B", "ScreenSpot-Pro avg", 39.5],
+  ["JEDI-3B", "ScreenSpot-Pro avg", 36.1],
+]} />
+
+## Key findings
+- <Finding src="Tab.5, p.7">Fine-grained manipulation is the hardest dimension; refusal nearly fails for every model</Finding>: models score highest on text matching and lowest on manipulation, and most computer-use models output essentially zero refusals (JEDI 7.4%, only Gemini-2.5-Pro 38.9% despite refusal training data).
+- <Finding src="Fig.6, §4.2">Grounding keeps improving with data scale and shows no saturation</Finding>: scaling icon/component/layout data from 10%→100% raises ScreenSpot-v2 and OSWORLD-G performance monotonically.
+- <Finding src="Fig.6, §4.2">Mixing data types is more stable than scaling one type</Finding>: scaling a single perspective (e.g. component) causes performance fluctuations, while mixed data gives steady gains — direct evidence for the compositional-decomposition hypothesis.
+- <Finding src="Fig.5, §4.1">Knowledge, not pure grounding, is the residual gap for small models</Finding>: with knowledge-free *refined* instructions JEDI-7B jumps to 63.8% and matches UI-TARS-72B, implying small models already have sufficient pure grounding ability and the remaining deficit is software/background knowledge.
+- <Finding src="§4.3, Fig.7">Case studies show transfer to unseen settings</Finding>: web-layout training generalizes to desktop blanks, and icon training lets JEDI map a counter-clockwise-arrow icon to "rotate" — cases where the Qwen backbone clicks wrong.
+- <Finding src="Tab.8, A.1.2">OSWORLD-G is broader than prior benchmarks</Finding>: 32 annotated UI-types vs 2 for ScreenSpot-v2/Pro, and it is the only one annotating fine-grained actions, refusal cases, and both visual and functional instructions.
+
+## Implications
+This reframes grounding progress around <FollowUp>capability-specific synthetic data pipelines rather than scaling model size</FollowUp>, and shows a generic planner (o3) plus a strong small grounder can rival bespoke computer-use models. It extends the <Related>SeeClick / UGround / OS-Atlas / Aguvis / UI-TARS lineage of GUI grounding models</Related> and the <Related>OSWorld / WindowsAgentArena environments</Related>, providing open data, benchmark, and checkpoints. Threads worth chasing: <FollowUp>why refusal modeling stays broken in VLMs (pretraining + hallucination) and whether RL or planner-side checks help</FollowUp>, and <FollowUp>the authors' proposal to extract screen data from internet images/videos and build human-like "traversers" to harvest interaction data at industrial scale</FollowUp>.
+
+## Limitations
+- <Caveat>Refusal grounding remains essentially unsolved</Caveat>: despite 2.6M refusal examples, the trained models rarely reject infeasible instructions, which the authors attribute to inherent VLM pretraining/hallucination limits.
+- <Caveat>Data scaling was bounded by resources</Caveat>: the proposed internet image/video extraction route is left to "industrial efforts," so the 4M scale is not the pipeline's ceiling.
+- <Caveat>Heavy reliance on proprietary models in the pipeline</Caveat>: GPT-4o/Claude generate annotations and UI-TARS-72B filters data, raising reproducibility and label-quality questions; "Unclear" how much synthetic-annotation noise survives.
+- <Caveat>Benchmark scope is desktop-only and box-containment scored</Caveat>: OSWORLD-G is sampled from OSWorld desktop rollouts at 720p/1080p, and a coordinate-in-box criterion may credit imprecise-but-inside clicks while missing valid out-of-box actions.
+
+## Critiques and Questions
+1. The 23%→51% headline pairs JEDI-7B with an o3 planner, while the GPT-4o-planned JEDI-7B reaches only 27.0%; how much of the gain is the grounder versus o3's stronger planning? The comparison would be cleaner with the same planner across all rows.
+2. Capability counts in OSWORLD-G overlap (sum > 564), so per-dimension accuracies are not over disjoint sets — does a sample's hardest tag dominate its score?
+3. Only the GPT-4o + JEDI OSWorld numbers report variance (4 runs); the marquee o3 + JEDI-7B 51.0% and most grounding tables are single-run, so robustness of the top-line claims is uncertain.
+4. Refined-instruction results (Fig.5) effectively move "knowledge" upstream to a human/model rewriter — is the like-for-like comparison to UI-TARS-72B fair when JEDI gets easier inputs?
+
+<SelfCheck q="Why does the paper argue that improving grounding, rather than scaling model size, is the right lever for computer-use agents?" a="Because (a) data scaling shows no saturation (Fig.6) and mixing decomposed icon/component/layout data generalizes compositionally to novel UIs, and (b) with knowledge-free refined instructions a 7B model matches the 72B UI-TARS (Fig.5), implying small models already have enough pure grounding ability — so the residual gap is data/knowledge, and a strong small grounder lifts a generic planner from 23% to 51% on OSWorld (Tab.6)." />
+
+## Glossary
+- <Term def="Mapping a natural-language instruction to a concrete on-screen action, typically a coordinate (x,y) or bounding box, from pixels alone (no DOM/accessibility tree)">GUI grounding</Term>
+- <Term def="This paper's 4M-example synthetic computer-use grounding dataset, built by decomposing UIs into icon/component/layout perspectives">JEDI</Term>
+- <Term def="This paper's 564-sample desktop grounding benchmark with 32 UI-type tags covering text matching, element recognition, layout, fine-grained manipulation, and refusal">OSWORLD-G</Term>
+- <Term def="A model correctly declining an instruction that cannot be executed on the current screen (e.g. clicking an absent Firefox icon)">refusal / infeasible instruction</Term>
+- <Term def="The hypothesis that combining specialized data for different interface element types lets a model generalize to interface combinations it never saw in training">compositional generalization</Term>
+- <Term def="Qwen2.5-VL — the open vision-language model used as the 3B/7B fine-tuning backbone">backbone VLM</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

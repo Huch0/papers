@@ -1,0 +1,123 @@
+---
+canonical_key: arxiv-2407.13032
+version_key: v1
+title: 'Agent-E: From Autonomous Web Navigation to Foundational Design Principles in Agentic Systems'
+authors:
+- Tamer Abuelsaad
+- Deepak Akkil
+- Prasenjit Dey
+- Ashish Jagmohan
+- Aditya Vempaty
+- Ravi Kokku
+venue: arXiv.org
+year: 2024
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2407.13032
+summary_date: '2026-06-07'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+{/*
+  Canonical Summary structure (concise, core-first). Body only — frontmatter is generated
+  from metadata.yaml by `summarize_paper.py --format mdx --prepare`. Components are
+  provided globally by the site (no imports). See config/summary_components.md.
+
+  TWO HARD RULES:
+  1. CONCISE, BUT KEEP THE KEY POINTS. Capture the paper's important findings/analysis —
+     not just the headline number. (e.g. for SWE-bench: "difficulty correlates with
+     context length", "finetuned models are sensitive to context-distribution shift".)
+     Put the headline up top; collect the rest under "## Key findings". Depth in <Pass>.
+  2. USE THE SEMANTIC HIGHLIGHTS for their MEANING (colors are consistent across summaries):
+       <Problem>   red    — the problem this paper tackles / a prior-work limitation
+       <Novelty>   green  — a novel module/approach/insight this paper introduces
+       <Finding src="Tab.X">  teal — a finding / claim / result of THIS paper
+       <FollowUp>  blue   — a notion/thread the reader should follow up on
+       <Caveat>    orange — a limitation of THIS paper
+       <Related>   violet — related work / lineage
+       <Term def="…">  glossary chip with hover definition (self-contained)
+  Declarative English; specific numbers + anchors; "Not reported"/"Unclear" for gaps;
+  verify numbers against extraction.txt. Keep Motivation (<Problem>) ≠ Contribution (<Novelty>).
+*/}
+
+<TLDR>A hierarchical text-only web agent that splits planning from browser navigation, adds task-adaptive DOM distillation and per-action "change observation", reaching a new state-of-the-art 73.1% on WebVoyager while distilling the build into eight general agent-design principles.</TLDR>
+
+<WhyItMatters>A foundational computer-use / browser-agent reference: it shows a text-only DOM agent can beat multimodal agents, and is among the first to report efficiency and error-awareness metrics (LLM calls, completion time, self-aware failures) alongside success rate.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "73.1%", label: "WebVoyager success", sub: "Agent-E text-only, GPT-4-Turbo (Tab.3)" },
+  { value: "+21 / +16 pts", label: "vs prior text / multimodal SOTA", sub: "WILBUR / WebVoyager (p.9)" },
+  { value: "643", label: "tasks across 15 live sites", sub: "WebVoyager benchmark (p.6)" },
+  { value: "~25", label: "avg LLM calls per task", sub: "6.4 planner + 18.6 browser-nav (Tab.2-3)" },
+]} />
+
+## Motivation
+Real-world web agents are <Problem>not yet practically usable: task success rates remain well below human performance</Problem>, and most prior work <Problem>reports only success rate, which is misleading because stochastic LLMs let simple retries inflate it</Problem>. Two technical pain points drive the failures: <Problem>HTML DOMs are noisy and so large they overflow the LLM context window</Problem> (e.g. a YouTube homepage is ~800,000 tokens, p.11), and <Problem>websites are designed for human visual use, so complex widgets and multi-step tasks are hard for agents to ground and plan over</Problem>. Beyond accuracy, completion time, cost, and error-awareness all shape real utility but go largely unmeasured.
+
+## Contribution (what's new)
+Three architectural ideas plus a measurement contribution. (1) A <Novelty>hierarchical two-agent split: a planner decomposes the task and a freshly-instantiated browser-navigation agent (a nested chat with no plan history) executes one sub-task at a time</Novelty> — the separation insulates the planner from noisy DOM detail and frees the navigator from orchestration, which is what enables clean verification, backtracking, and error recovery. (2) <Novelty>Flexible DOM distillation: the navigator picks among three DOM representations (text-only, input-fields, all-fields) per sub-task</Novelty>, because no single representation fits summarization, searching, and exploration alike. (3) <Novelty>"Change observation": every action skill also reports the resulting DOM state change as linguistic feedback</Novelty> (e.g. "a popup appeared"), grounding the next step. Finally, they are <Novelty>the first to report end-to-end LLM-call counts, completion times, and self-aware-vs-oblivious failure rates</Novelty> as a baseline for future agents.
+
+## Research questions
+Can a generic, text-only web agent — with better architecture rather than vision or site-specific prompting — beat multimodal SOTA on a diverse, live-website benchmark? And what reusable design principles for agentic systems generalize beyond web automation?
+
+## Methodology
+Agent-E is built on <Term def="open-source multi-agent conversation framework">Autogen</Term> with <Term def="browser-automation library used to sense and control the page">Playwright</Term>. Each LLM agent has Python "skills" exposed via function calling; executor components run the chosen function and relay the result back. The planner breaks the user task into steps and delegates each to a nested browser-navigation agent that senses (multiple DOM-distillation skills) and acts (click, enter text, open URL, press keys), reporting success/failure up. The loop repeats until done; Agent-E also supports a human-in-the-loop mode, but evaluation uses autonomous mode only.
+
+<Pass title="Method details">
+**Hierarchy and skills.** Two LLM agents (Planner, Browser Navigation) and two executor components (Planner Skills, Browser Navigation Skills) (p.4). The browser-navigation agent is re-instantiated per sub-task as a nested chat, so it carries no prior-step history. Primitive skills are deliberately minimal — `click`, `enter text`, `get DOM`, `open URL`, `press keys` — explicitly omitting drag, double/right-click, and tab management as unnecessary for most general web tasks (Principle 1, p.13).
+
+**DOM distillation.** Three content types: `text only` (summarize a page), `input fields` (search/forms), `all fields` (enumerate interactive elements) (p.4-5). De-noising for `all fields`/`input fields` tries to preserve parent-child element structure rather than flattening (unlike <Related>WILBUR's flat encoding</Related>), and a custom `mmid` identifier attribute is injected into each element to make referencing/clicking reliable (similar to <Related>WebArena</Related> and <Related>WebVoyager</Related>).
+
+**Change observation.** Implemented with classical code: watch selected attributes (e.g. `aria-expanded`) plus the browser `MutationObserver` API to detect DOM changes right after an action, then return heuristic linguistic feedback (e.g. "Clicked element mmid 25; a popup appeared with the following elements"). Conceptually adjacent to <Related>Reflexion's verbal reinforcement</Related> but not tied to a prior failure and not LLM-generated — any action outcome can be reported, where Reflexion gave no gain on the Webshop benchmark (§3.5, p.12-13).
+
+**Evaluation setup.** WebVoyager: 643 tasks over 15 real, live sites (~40-46 tasks each), run in autonomous mode (ask-user skill disabled) with GPT-4-Turbo as both planner and navigator. 5 human evaluators ran 125-130 tasks each from India during IST hours, marking pass/fail (pass requires full completion) with a textual failure reason; failures hand-annotated as self-aware vs oblivious. Static past-dated tasks were patched by adding 8 months so they remained achievable (§3.1, p.6-7). Four measures: success rate, self-aware vs oblivious failure rate, task completion time, and total LLM calls.
+</Pass>
+
+## Main result
+Agent-E sets a new state of the art on WebVoyager: <Finding src="Tab.3, p.10">73.1% overall success, text-only with GPT-4-Turbo</Finding> (the abstract rounds this to 73.2%). That is <Finding src="p.9">+21 points over the prior text-only SOTA WILBUR and +16 points over the multimodal WebVoyager agent</Finding>, and Agent-E beat both baselines on <Finding src="p.9">11 of 15 sites</Finding> — despite using no vision and no site-specific prompting.
+
+<SortableTable columns={["Method", "Modality", "WebVoyager overall %"]} rows={[["Agent-E", "text-only", 73.1], ["He et al. 2024 (WebVoyager)", "multimodal", 57.1], ["Lutz et al. 2024 (WILBUR)", "text-only", 52.6], ["He et al. 2024", "text-only", 44.3]]} />
+
+## Key findings
+- <Finding src="Tab.2-3, p.9-10">Per-site performance ranges from 95.7% (WolframAlpha) down to 27.3% (Booking.com)</Finding>: Booking.com and Google Flights (35.7%) stay hard for every agent, tracking site complexity (Amazon and Booking homepages have ~3,189 / ~2,952 DOM elements vs ~590 for WolframAlpha, p.10).
+- <Finding src="p.9">Agent-E is self-aware of >52% of its failed tasks</Finding>: self-aware failures (14.1% overall) are usually technical (navigation issues, un-extractable iframes/canvas, anti-scraping), while oblivious failures (12.8% overall) are wrong answers from overlooked task requirements or DOM mis-observation (Tab.3).
+- <Finding src="p.10">Average task completion time is 150s for successes but 220s for failures</Finding>: failed tasks take longer because Agent-E tries multiple approaches before giving up; times vary widely by site (68s WolframAlpha success vs 286s Amazon).
+- <Finding src="p.10">Tasks need ~25 LLM calls on average — 6.4 from the planner and ~18.6 (about 3x) from the browser-navigation agent</Finding>: call counts track completion time, and no prior study reported end-to-end calls, so no direct comparison exists.
+- <Finding src="§3.5, p.11-12">The qualitative design wins are concrete</Finding>: the hierarchy lets the planner detect a too-narrow search from the navigator's "no results" reply and re-plan, and backtrack using stored per-step URLs; multi-DOM lets the agent use `all fields` to interact then `text only` to summarize on the same task; change observation catches "interaction not yet complete" cases (a dropdown/popup opened).
+- <Finding src="§4, p.13-14">The build is generalized into eight design principles</Finding>: craft minimal primitive skills, use hierarchy for complex tasks, denoise payloads, give linguistic feedback of actions, support human-in-the-loop, routinely reflect/aggregate past experience for self-improvement, add internal+external guardrails, and choose generic vs task-specific agents per use case.
+
+## Implications
+The result reframes the vision-vs-text debate: a careful text-only DOM pipeline beats <Related>WebVoyager's multimodal agent</Related> and <Related>WILBUR's site-specific text agent</Related>, suggesting architecture and observation engineering matter as much as modality. The efficiency/error-awareness metrics offer a template later <Related>computer-use and browser-agent benchmarks</Related> can adopt. Worth chasing: <FollowUp>whether adding vision or site-specific prompting on top of Agent-E pushes past 73%, since the authors note both are unused here</FollowUp>; <FollowUp>the proposed self-improvement loop that distills repeated agentic runs and human demos into cheaper classical automation workflows</FollowUp>; and <FollowUp>extending change observation to return element lists so the LLM can act without a fresh Get-DOM call</FollowUp>.
+
+## Limitations
+- <Caveat>Evaluation is autonomous-mode only; the human-in-the-loop mode the authors argue is critical for adoption is not benchmarked, because no HITL web benchmark exists</Caveat> (p.5).
+- <Caveat>Pass/fail and self-aware/oblivious labels are hand-annotated by 5 evaluators, introducing subjectivity</Caveat>, though the authors note an LLM critic could automate it (§3.3).
+- <Caveat>Completion times are confounded by extrinsic factors — runs were done from India during IST hours, affecting page-load and network latency</Caveat> (p.8).
+- <Caveat>73.1% is single-run and far from production-ready</Caveat>; with stochastic LLMs, retries could shift numbers, a critique the authors themselves raise about success-rate reporting (p.2, p.13).
+- <Caveat>Generality of the eight design principles is asserted from one system, not empirically tested beyond web automation</Caveat> (§4).
+
+## Critiques and Questions
+1. Headline mismatch: the abstract and conclusion say 73.2% while Table 3 reports 73.1% — minor, but a reminder the numbers are single-run with no variance or error bars.
+2. The "+20% vs text-only" framing mixes additive points (52.6 -> 73.1 = +20.5 pts) with the language of improvement; relative improvement would be much larger (~39%), so the comparison wording is loose.
+3. Change observation is heuristic and code-based — how much of the gain is the hierarchy vs DOM flexibility vs change observation? No ablation isolates the three contributions, so individual credit is Unclear.
+4. Baselines differ in setup (WILBUR uses site-specific prompting, WebVoyager uses vision); Agent-E's generic text-only win is impressive but not a strictly controlled comparison.
+
+<SelfCheck q="Why does Agent-E re-instantiate the browser-navigation agent as a nested chat for each sub-task instead of keeping one persistent agent?" a="To insulate the navigator from the planner's overall plan/history and from accumulated noisy DOM context — each sub-task starts fresh, keeping the navigator focused on execution while the planner handles orchestration, verification, and backtracking." />
+
+## Glossary
+- <Term def="splitting the page's DOM into a smaller, task-relevant representation to fit the LLM context and cut noise">DOM distillation/de-noising</Term>
+- <Term def="after each action, observing the resulting DOM state change and returning it as linguistic feedback to guide the next step">change observation</Term>
+- <Term def="benchmark of 643 web-navigation tasks across 15 real, live websites">WebVoyager</Term>
+- <Term def="a custom identifier attribute Agent-E injects into each HTML element so the LLM can reliably reference and click it">mmid</Term>
+- <Term def="prior method giving an agent LLM-generated verbal feedback about a past failure to learn from it">Reflexion</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

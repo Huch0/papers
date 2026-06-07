@@ -48,17 +48,17 @@ versions:
   source: arxiv
   source_url: https://arxiv.org/abs/2501.07572
   pdf_path: library/webwalker-benchmarking-llms-in-web-traversal-250107572/v1/paper.pdf
-  summary_path: null
+  summary_path: library/webwalker-benchmarking-llms-in-web-traversal-250107572/v1/summary.mdx
   metadata_path: library/webwalker-benchmarking-llms-in-web-traversal-250107572/v1/metadata.yaml
   fetched_at: '2026-06-06T07:57:40Z'
   source_updated_at: null
   arxiv_version: null
   pdf_sha256: 038f37ada7ad7f358ff9eab7759a6c577fb6b0a228ac9120880847f41bc17b11
   pdf_bytes: 8073248
-  summary_status: none
-  extraction_status: none
+  summary_status: full
+  extraction_status: full
   created_at: '2026-06-06T07:57:40Z'
-  updated_at: '2026-06-06T07:57:40Z'
+  updated_at: '2026-06-07T06:16:47Z'
 relations:
   duplicate_candidates: []
   related_papers: []

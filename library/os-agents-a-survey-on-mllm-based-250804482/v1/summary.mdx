@@ -1,0 +1,132 @@
+---
+canonical_key: arxiv-2508.04482
+version_key: v1
+title: 'OS Agents: A Survey on MLLM-based Agents for General Computing Devices Use'
+authors:
+- Xueyu Hu
+- Tao Xiong
+- Biao Yi
+- Zishu Wei
+- Ruixuan Xiao
+- Yurun Chen
+- Jiasheng Ye
+- Meiling Tao
+- Xiangxin Zhou
+- Ziyu Zhao
+- Yuhuai Li
+- Shengze Xu
+- Shenzhi Wang
+- Xinchen Xu
+- Shuofei Qiao
+- Zhaokai Wang
+- Kun Kuang
+- Tieyong Zeng
+- Liang Wang
+- Jiwei Li
+- Y. Jiang
+- Wangchunshu Zhou
+- Guoyin Wang
+- Keting Yin
+- Zhou Zhao
+- Hongxia Yang
+- Fan Wu
+- Shengyu Zhang
+- Fei Wu
+venue: arXiv.org
+year: 2025
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2508.04482
+summary_date: '2026-06-07'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+{/*
+  Survey summary — core-first. For a survey, "## Key findings" = the survey's organizing
+  insights / taxonomy / aggregated claims, each with an anchor. Per-system metrics are
+  "Not reported" because this survey does not report a unified results table.
+*/}
+
+<TLDR>A comprehensive survey of <Term def="(M)LLM-based agents that operate computers/phones through the interfaces an operating system exposes (GUI, HTML, A11y tree)">OS Agents</Term> that organizes the field into a single framework — fundamentals (environment / observation / action; understanding / planning / grounding), construction (foundation models + agent frameworks), evaluation (protocols + benchmarks), and open challenges (safety/privacy, personalization/self-evolution).</TLDR>
+
+<WhyItMatters>The canonical taxonomy for the computer-use-agent track: it gives a shared vocabulary for how perception, planning, memory, and action are built, and a map of 30+ benchmarks and 30+ foundation models to navigate the literature.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "30+", label: "foundation models surveyed", sub: "Tab.1, 2023–2024" },
+  { value: "30+", label: "agent frameworks surveyed", sub: "Tab.2" },
+  { value: "30", label: "evaluation benchmarks", sub: "Tab.3, mobile/desktop/web" },
+  { value: "ACL 2025", label: "9-page version accepted", sub: "this is the extended arXiv form" },
+]} />
+
+## Motivation
+Virtual assistants (Siri, Cortana, Alexa, Google Assistant) hinted at autonomous device use but <Problem>were held back by weak contextual understanding and limited model capability</Problem> (§1). With (M)LLMs and products like Anthropic Computer Use, Apple Intelligence, AutoGLM, and Project Mariner, the field has exploded — but <Problem>the research is fragmented across modalities, platforms, training strategies, and evaluation protocols, with no consolidated view of how OS Agents are built and assessed</Problem> (§1, §6). The survey exists to unify that scattered body of work.
+
+## Contribution (what's new)
+The genuine delta is an <Novelty>integrated framework that decomposes OS Agents along two orthogonal axes — fundamentals (three key components × three core capabilities) and construction (foundation models vs. agent frameworks)</Novelty>, then maps the evaluation landscape and open challenges onto it (§1). The framing must take this form because the two construction paths are complementary: <Novelty>domain-specific foundation models inject GUI knowledge via training, while non-tuning agent frameworks add reasoning/memory on top of general models</Novelty> — surveys that pick only one miss half the field.
+
+## Research questions
+What are OS Agents, what components and capabilities define them, how are they constructed (model + framework), how are they evaluated, and what are the unsolved challenges?
+
+## Methodology
+A literature survey, not an empirical study. The authors define OS Agents, build a taxonomy, and tabulate recent work along the taxonomy's dimensions (Tab.1 foundation models, Tab.2 frameworks, Tab.3 benchmarks). A live GitHub repository tracks new work. Because it is a survey, **per-system success-rate numbers are Not reported** in a unified table — the contribution is the organization, not a leaderboard.
+
+<Pass title="The taxonomy in detail">
+**Fundamentals (§2).** Three key components: Environment (desktop / mobile / web), Observation space (screenshots, screen text/descriptions, HTML/DOM), Action space (input / navigation / extended ops). Three capabilities: Understanding (parse cluttered high-res GUIs and HTML), Planning (decompose + adapt), Grounding (translate plans into executable actions with coordinates/values).
+
+**Construction — Foundation models (§3.1).** Architectures: existing LLMs (HTML-only, e.g. WebAgent's HTML-T5 + Flan-U-PaLM), existing MLLMs (LLaVA/Qwen-VL/InternVL/CogVLM backbones), concatenated MLLMs (LLM + vision encoder), and modified MLLMs (high-res encoders, e.g. CogAgent's 1120×1120 EVA-CLIP cross-attention; Ferret-UI any-resolution; MobileFlow's LayoutLMv3 GUI encoder). Training: pre-training (publicly-available + synthetic data; tasks = screen grounding, screen understanding, OCR), SFT (collect trajectories for planning, render GUIs for grounding, unify action spaces), RL (early "LLM as feature extractor" e.g. WebShop/MiniWob++, now "LLMs as agents" e.g. AutoGLM's self-evolving online curriculum RL, AGILE).
+
+**Construction — Agent frameworks (§3.2).** Four modules: Perception (textual-description vs. GUI-screenshot input; GUI grounding split into visual / semantic / dual — SoM prompting, SeeAct's HTML-as-semantics, AppAgent/OSCAR dual grounding); Planning (global one-shot vs. iterative — CoT/ReAct/Reflexion/CoAT, task-driven replanning); Memory (internal / external / specific sources; optimization via management, growth-from-experience, retrieval — AWM workflow reuse, PeriGuru KNN); Action (input / navigation / extended-code-and-API ops).
+
+**Evaluation (§4).** Protocols: objective (rule-based, exact/fuzzy/semantic match) vs. subjective (human, LLM-as-judge). Metrics: step-level (operation/element accuracy, F1, step SR) vs. task-level (overall SR, accuracy, reward; efficiency = step ratio, API cost, execution time, peak memory). Benchmarks (Tab.3): platform (mobile/desktop/web), setting (static vs. interactive→simulated/real-world), task (GUI grounding / information processing / agentic).
+</Pass>
+
+## Main result
+This is a survey; there is no single headline metric. The deliverable is the taxonomy plus three reference tables and a maintained repository. Per-system metrics: **Not reported** (the survey does not aggregate success rates into one comparison).
+
+## Key findings
+The survey's main organizing insights and aggregated claims:
+- <Finding src="§3.1, Tab.1">Resolution is the dominant architectural bottleneck for GUI foundation models</Finding>: standard MLLM encoders run at ~224×224 while GUIs are ~720×1080, so small text and icons are lost — driving "modified MLLM" designs (CogAgent high-res cross-attention, Ferret-UI any-resolution, UI-Hawk shape-adaptive cropping).
+- <Finding src="§3.1.2, §3.1.3">Pre-training and SFT are bottlenecked by data, not architecture</Finding>: public web/HTML data alone fails to generalize across platforms, so the field relies on synthesizing cross-platform grounding data (simulators, A11y trees, rendered webpages) and unifying heterogeneous action spaces.
+- <Finding src="§3.1.4">RL has shifted from "(M)LLM as feature extractor" to "LLMs as agents"</Finding>: early work paired RL with behavior cloning (MiniWob++ human-level via behavioral priors); recent work makes the LLM the policy and uses RL to align it with task objectives (AutoGLM's self-evolving online curriculum RL for error recovery).
+- <Finding src="§3.2.1">Perception is converging from textual-DOM input toward GUI-screenshot input</Finding>, which better matches human behavior; grounding bifurcates into visual (SoM/bounding boxes), semantic (HTML/A11y descriptions), and dual grounding.
+- <Finding src="§3.2.2">Planning splits cleanly into global (one-shot, CoT-based) vs. iterative (ReAct/Reflexion/CoAT)</Finding>, and iterative planning is essential because OS environments mutate after every action.
+- <Finding src="§3.2.3">Memory is the lever for self-improvement</Finding>: internal/external/specific memory plus optimization (self-summarization, context clipping, backtracking, KNN/workflow retrieval) is how agents reuse experience and personalize.
+- <Finding src="§4.2.2">Benchmarks are migrating from static (cached pages, one-step) to interactive real-world environments</Finding> (OSWorld VMs across Windows/Linux/macOS, AndroidWorld emulators) because static eval is less authentic and cannot test multi-step adaptation.
+- <Finding src="§5.1">OS Agents introduce attack surfaces that conversational LLM safety does not cover</Finding>: web indirect prompt injection (WIPI), environmental/pop-up injection, and the finding that refusal-trained LLMs lose their guardrails when deployed as browser agents.
+- <Finding src="§5.2">Personalization and self-evolution remain largely aspirational</Finding>: academia lacks real user data, so most work optimizes task performance rather than long-horizon adaptation, though memory mechanisms are the validated path forward.
+
+## Implications
+The survey consolidates the <Related>computer-use-agent lineage spanning OS-Atlas, OS-Copilot, AutoGLM, CogAgent, Ferret-UI, AppAgent, WebVoyager, SeeAct and the WebArena/OSWorld/AndroidWorld benchmark families</Related> into one map, and positions itself against concurrent GUI-agent / generalist-virtual-agent surveys (§6). Threads worth chasing: <FollowUp>OS-Agent-specific defenses, which the survey flags as scarce relative to the catalogued attacks (§5.1.2)</FollowUp>; <FollowUp>multimodal memory (image/voice) and its management/retrieval as the route to genuine self-evolution (§5.2)</FollowUp>; and <FollowUp>"LLMs as agents" RL with self-evolving online curricula (AutoGLM) as the emerging training paradigm (§3.1.4)</FollowUp>.
+
+## Limitations
+- <Caveat>No unified empirical comparison — the survey tabulates which techniques each system uses but reports no consolidated success-rate leaderboard, so relative effectiveness is hard to judge</Caveat>.
+- <Caveat>"Grounding" is overloaded across three sections (capability in §2.2, visual grounding in §3.1.2, GUI-screenshot grounding in §3.2.1), each with a different definition — the authors footnote this but it remains a source of confusion</Caveat>.
+- <Caveat>Fast-moving field with hard recency limits — model rankings are pinned to Dec 2024 (Chatbot Arena) and coverage skews to 2023–2024; the maintained GitHub repo is the intended mitigation</Caveat>.
+- <Caveat>This arXiv version is the extended form of a 9-page ACL 2025 paper; depth is uneven and safety/personalization sections are comparatively thin</Caveat>.
+
+## Critiques and Questions
+1. Without any normalized metric across the surveyed systems, the taxonomy tells you *what* designs exist but not *which* win — readers must still go to OSWorld/AndroidWorld leaderboards themselves.
+2. The two-axis construction split (foundation model vs. framework) is clean but real systems blend both; the survey could say more about the foundation-model + framework co-design that top agents actually use.
+3. Safety coverage is attack-heavy and defense-light, accurately reflecting the literature but leaving the most practically urgent question (how to deploy these safely) open.
+
+<SelfCheck q="Why does the survey treat domain-specific foundation models and agent frameworks as two distinct construction paths rather than one?" a="They are complementary, not substitutes: foundation models inject GUI/OS knowledge through training (architecture, pre-training, SFT, RL), while agent frameworks add reasoning, memory, and action handling on top of general models without tuning. Strong systems combine both, so a taxonomy must cover each axis to map the field (§3)." />
+
+## Glossary
+- <Term def="Operating System Agent — an (M)LLM-based agent that uses computers/phones via the OS-provided interfaces (GUI, HTML/DOM, accessibility tree) to automate tasks">OS Agent</Term>
+- <Term def="Multimodal large language model — an LLM augmented with a vision encoder so it can read screenshots as well as text">MLLM</Term>
+- <Term def="Set-of-Mark prompting — overlaying numbered/boxed labels on a screenshot so the model can refer to interactive elements by mark">SoM</Term>
+- <Term def="Accessibility tree — a structured, machine-readable description of on-screen UI elements exposed by the OS">A11y tree</Term>
+- <Term def="Reason+Act prompting — interleaving reasoning traces with actions so the plan adapts to observed outcomes">ReAct</Term>
+- <Term def="Chain-of-Action-Thought — an OS-agent-targeted reasoning loop of Screen Description → Action Thinking → Next Action → Action Result">CoAT</Term>
+- <Term def="Web Indirect Prompt Injection — attack that controls a web agent by embedding natural-language instructions inside web pages">WIPI</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

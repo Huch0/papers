@@ -43,17 +43,17 @@ versions:
   source: arxiv
   source_url: https://arxiv.org/abs/2503.23434
   pdf_path: library/towards-trustworthy-gui-agents-a-survey-250323434/v1/paper.pdf
-  summary_path: null
+  summary_path: library/towards-trustworthy-gui-agents-a-survey-250323434/v1/summary.mdx
   metadata_path: library/towards-trustworthy-gui-agents-a-survey-250323434/v1/metadata.yaml
   fetched_at: '2026-06-06T07:57:46Z'
   source_updated_at: null
   arxiv_version: null
   pdf_sha256: 7a1d6a9a92de88b8ee442c5c425d38124dbfd8bf9ca992f863bc103c3c8033d3
   pdf_bytes: 762280
-  summary_status: none
-  extraction_status: none
+  summary_status: full
+  extraction_status: full
   created_at: '2026-06-06T07:57:46Z'
-  updated_at: '2026-06-06T07:57:46Z'
+  updated_at: '2026-06-07T06:23:10Z'
 relations:
   duplicate_candidates: []
   related_papers: []

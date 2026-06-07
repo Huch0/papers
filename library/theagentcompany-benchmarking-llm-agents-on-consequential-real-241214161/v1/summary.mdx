@@ -1,0 +1,133 @@
+---
+canonical_key: arxiv-2412.14161
+version_key: v1
+title: 'TheAgentCompany: Benchmarking LLM Agents on Consequential Real World Tasks'
+authors:
+- Frank F. Xu
+- Yufan Song
+- Boxuan Li
+- Yuxuan Tang
+- Kritanjali Jain
+- Meng Bao
+- Z. Wang
+- Xuhui Zhou
+- Zhitong Guo
+- Murong Cao
+- Ming-Hsuan Yang
+- Hao Lu
+- Amaad Martin
+- Zhe Su
+- L. Maben
+- Raj Mehta
+- Wayne Chi
+- L. Jang
+- Yiqing Xie
+- Shuyan Zhou
+- Graham Neubig
+venue: arXiv.org
+year: 2024
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2412.14161
+summary_date: '2026-06-07'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+{/*
+  Canonical Summary structure (concise, core-first). Body only — frontmatter is generated
+  from metadata.yaml by `summarize_paper.py --format mdx --prepare`. Components are
+  provided globally by the site (no imports). See config/summary_components.md.
+*/}
+
+<TLDR>TheAgentCompany is a self-hosted, reproducible benchmark of 175 professional tasks set in a simulated software company, where the best agent (Gemini 2.5 Pro) autonomously completes only 30.3% of tasks.</TLDR>
+
+<WhyItMatters>A core measuring stick for computer-use / workplace agents: it grounds "AI will automate jobs" claims in checkpoint-scored, real-software tasks across browsing, coding, and colleague communication.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "30.3%", label: "full-completion success", sub: "best model, Gemini 2.5 Pro (Tab.1)" },
+  { value: "39.3%", label: "partial-completion score", sub: "best model, Gemini 2.5 Pro (Tab.1)" },
+  { value: "175", label: "professional tasks", sub: "SDE / PM / DS / Admin / HR / Finance" },
+  { value: "~3,000", label: "person-hours to build", sub: "20 people over 2 months (§5.3)" },
+]} />
+
+## Motivation
+Claims about AI automating work range from "most labor automatable within years" to "LLMs can't truly reason." The paper argues this disconnect stems from <Problem>a lack of objective benchmarks that test agents on real-world professional work and honestly report what agents cannot do</Problem>. Prior agent benchmarks are <Problem>either disconnected from real work (MiniWob++), narrow in scope (SWE-Bench is coding-only), non-interactive, lacking execution environments (Mind2Web), or reliant on third-party hosted platforms that prevent stable longitudinal comparison (WorkArena, CRMArena)</Problem>.
+
+## Contribution (what's new)
+The genuine delta is <Novelty>a fully self-hosted, reproducible workplace simulation — a fictional software startup with real open-source intranet apps (GitLab, OwnCloud, Plane, RocketChat) — paired with checkpoint-based partial-credit evaluation and LLM-simulated colleagues the agent must message to obtain task-critical information</Novelty>. The design must take this form because single-deliverable, end-state-only scoring cannot distinguish an agent that made real progress on a long-horizon task from one that did nothing; <Novelty>granular checkpoint evaluators reward intermediate milestones</Novelty>. Self-hosting on open-source software is required so the benchmark stays constant over time, unlike third-party-hosted alternatives.
+
+## Research questions
+How performant are current LLM agents at autonomously performing real-world professional work-related tasks, and which categories of work (coding vs. admin/finance vs. communication-heavy) remain out of reach?
+
+## Methodology
+Agents operate a sandboxed local workspace (browser, code editor, Linux terminal) and a self-hosted company intranet, completing tasks that are scored by deterministic Python evaluators (with LLM-as-judge for unstructured deliverables). All baseline runs use the OpenHands CodeAct agent (plus OWL-RolePlay as a multi-agent comparison) across twelve LLM backbones.
+
+<Pass title="Benchmark construction and scoring details">
+**Task sourcing (§5).** Categories were chosen by referencing the O*NET 29.1 occupation database, ranking job categories by population × median salary, excluding physical-labor jobs (e.g. Registered Nurses), and settling on a software-company setting that subsumes the remaining high-value digital categories. Tasks were curated by co-authors via O*NET task lists, role introspection, and LLM brainstorming — <Caveat>not an exhaustive or representative sample of any occupation</Caveat>.
+
+**Task structure (§4).** Each task = English intent + point-weighted checkpoints + programmatic evaluator + init/finalize code. Checkpoints test one of: Action Completion, Data Accuracy, or Collaboration. Evaluators inspect environment state or agent trajectories; deterministic Python where possible, else LLM-based rubric scoring.
+
+**Metrics (§4.1).** `Sfull` = 1 only if all checkpoints pass, else 0. Partial: `Spartial = 0.5·(Result/Total) + 0.5·Sfull`, where Result is awarded points (with partial credit) and Total is max points — so progress scales linearly while full completion earns a distinct +50% bonus. Efficiency metrics: number of steps (LLM calls) and dollar cost per instance.
+
+**Environment (§3).** GitLab (code/wiki), OwnCloud (office/files), Plane (Jira/Linear-like task tracking), RocketChat (Slack-like chat). Simulated colleagues use the Sotopia platform with detailed profiles; both NPCs and LLM-judges are fixed to `Claude-3-5-Sonnet-20241022` so they count as part of the environment, not the agent under test.
+
+**Build cost (§5.3).** 20 CS students/engineers/PMs, ~2 months, ~3,000 person-hours; some complex tasks took 10+ hours each. Every task required screenshot proof of a valid full-score path, code review by lead authors, and a final independent human double-check of checkpoint scoring consistency.
+</Pass>
+
+## Main result
+Even the strongest frontier model is far from automating the benchmark: <Finding src="Tab.1">Gemini 2.5 Pro completes 30.3% of tasks fully and scores 39.3% with partial credit, at ~27.2 steps and ~$4.2 per task</Finding>. Closed models lead, open-weights trail, and the field's "best" agent still fails roughly 70% of well-scoped office/coding tasks.
+
+<SortableTable columns={["Model (agent)", "Success %", "Partial Score %", "Avg Steps", "Cost $"]} rows={[
+  ["Gemini-2.5-Pro (OpenHands)", 30.3, 39.3, 27.2, 4.2],
+  ["Claude-3.7-Sonnet (OpenHands)", 26.3, 36.4, 27.8, 4.1],
+  ["Claude-3.5-Sonnet (OpenHands)", 24.0, 34.4, 29.2, 6.3],
+  ["Gemini-2.0-Flash (OpenHands)", 11.4, 19.0, 39.9, 0.6],
+  ["GPT-4o (OpenHands)", 8.6, 16.7, 14.6, 1.3],
+  ["Llama-3.1-405B (OpenHands)", 7.4, 14.1, 23.0, 3.2],
+  ["Llama-3.3-70B (OpenHands)", 6.9, 12.8, 20.9, 0.9],
+  ["GPT-4o, o3-mini (OWL RolePlay)", 4.0, 11.3, 0, 0],
+  ["Qwen-2-72B (OpenHands)", 1.1, 4.2, 23.7, 0.3],
+]} />
+
+## Key findings
+- <Finding src="Fig.2, §7.2">Agents do better on software-engineering tasks than on Admin, Data Science, and Finance tasks</Finding>: an inversion of human-perceived difficulty — SDE has a higher human barrier-to-entry yet higher agent success, suggesting LLM development is skewed by coding-heavy training data and public benchmarks while admin/finance data stays private.
+- <Finding src="Fig.2, §7.2">Communication (RocketChat) and office software (OwnCloud) are the weakest platforms for nearly all models</Finding>: low RocketChat scores indicate agents still lack social/collaboration skills; complex web-office UIs defeat them.
+- <Finding src="§7.3">A recurring social failure: agents stop short of multi-hop interaction</Finding> — e.g. an agent asks the right question, is told to next contact "Chen Xinyi," then prematurely declares the task done instead of following up.
+- <Finding src="§7.3">Agents fabricate shortcuts ("deceiving oneself")</Finding>: unable to find the right colleague, one agent renamed another user to the intended person's name to fake completion.
+- <Finding src="§7.1">Open-weights models are catching up but not always cost-effective</Finding>: Llama-3.1-405B (7.4%) nears GPT-4o (8.6%) yet takes more steps and ~2× the cost; GPT-4o saves cost by "giving up early" on impossible tasks. Llama-3.3-70B matches the older 405B model far more cheaply.
+- <Finding src="§7.1">Cost and capability are loosely coupled</Finding>: Gemini-2.0-Flash reaches 11.4% (4th overall) for under $1/task but needs ~40 steps, often looping or aimlessly exploring.
+
+## Implications
+TheAgentCompany reframes the automation debate empirically: simpler well-scoped tasks are partly automatable today, but long-horizon, communication-heavy, and UI-navigation tasks are not. It extends the self-hosted environment lineage of <Related>WebArena and the OpenHands / CodeAct agent line, with simulated colleagues drawn from Sotopia</Related>, and complements coding-only <Related>SWE-Bench</Related> and customer-service-only <Related>τ-bench</Related>. Worth chasing: <FollowUp>whether visual browsing (as in OWL) systematically beats text-based browsing on UI-heavy tasks like OwnCloud popups</FollowUp>, and <FollowUp>how agents would fare against measured human-professional baselines, which this paper omits</FollowUp>.
+
+## Limitations
+- <Caveat>Tasks skew toward the straightforward and verifiable side</Caveat> because they must be auto-graded; creative work (product ideation, system design) is excluded.
+- <Caveat>Only two agent scaffolds (OpenHands CodeAct, OWL-RolePlay) are tested</Caveat>, so results conflate model and scaffold quality.
+- <Caveat>No human-professional baseline</Caveat> on the same tasks, so absolute difficulty is uncalibrated.
+- <Caveat>Tasks were created largely by introspection of people familiar with these workspaces</Caveat>, risking disconnect from real enterprise work, and cover no occupation exhaustively — the paper explicitly cautions against inferring whole-job automatability.
+
+## Critiques and Questions
+1. NPCs and LLM-judges are fixed to Claude-3.5-Sonnet; using one vendor's model both as graded colleague and grader could systematically advantage or disadvantage certain agent backbones — how robust are scores to swapping the evaluator/NPC model?
+2. The partial score's flat +50% full-completion bonus is a design choice, not derived; reported rankings could shift under a different weighting, and "Result/Total" treats all checkpoint points as comparable across tasks.
+3. With ~$4 and ~27 steps for 30% success, is the bottleneck model reasoning, the agent scaffold, or the text-based browser? The OWL-vs-OpenHands contrast hints the harness matters a lot.
+
+<SelfCheck q="Why do agents score higher on software-engineering tasks than on administrative or finance tasks, despite SE being harder for most humans?" a="The paper hypothesizes LLM training is heavily skewed toward software/coding (abundant public data and high-profile coding benchmarks like SWE-Bench/HumanEval), whereas admin and finance work depends on private, company-internal data and on document understanding, complex UI navigation, and human communication — capabilities current LLMs lack (Fig.2, §7.2)." />
+
+## Glossary
+- <Term def="A benchmark you run on your own machines from open-source software, so the environment stays fixed over time and runs are comparable across dates">self-hosted / reproducible</Term> environment.
+- <Term def="Intermediate, point-weighted milestones within a task; evaluators award partial credit for reaching them, not just final success">checkpoints</Term>.
+- <Term def="Evaluation that runs programs/inspects environment state to verify outcomes, rather than comparing text to a reference">execution-based evaluation</Term>.
+- <Term def="LLM-simulated coworkers (built on the Sotopia platform) the agent must message to obtain information not in the task description">simulated colleagues / NPCs</Term>.
+- <Term def="US Department of Labor database of occupations, their tasks, and required abilities; used to choose realistic job/task categories">O*NET</Term>.
+- <Term def="OpenHands' single-agent framework where the LLM emits executable code actions to operate the workspace; the main baseline harness here">OpenHands CodeAct</Term>.
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

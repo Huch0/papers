@@ -1,0 +1,148 @@
+---
+canonical_key: arxiv-2507.05791
+version_key: v1
+title: 'GTA1: GUI Test-time Scaling Agent'
+authors:
+- Yan Yang
+- Dongxu Li
+- Yutong Dai
+- Yuhao Yang
+- Ziyang Luo
+- Zirui Zhao
+- Zhiyuan Hu
+- Junzhe Huang
+- Amrita Saha
+- Zeyuan Chen
+- Ran Xu
+- Liyuan Pan
+- Caiming Xiong
+- Junnan Li
+venue: arXiv.org
+year: 2025
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2507.05791
+summary_date: '2026-06-07'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+{/*
+  Canonical Summary structure (concise, core-first). Body only — frontmatter is generated
+  from metadata.yaml by `summarize_paper.py --format mdx --prepare`. Components are
+  provided globally by the site (no imports). See config/summary_components.md.
+
+  TWO HARD RULES:
+  1. CONCISE, BUT KEEP THE KEY POINTS. Capture the paper's important findings/analysis —
+     not just the headline number. (e.g. for SWE-bench: "difficulty correlates with
+     context length", "finetuned models are sensitive to context-distribution shift".)
+     Put the headline up top; collect the rest under "## Key findings". Depth in <Pass>.
+  2. USE THE SEMANTIC HIGHLIGHTS for their MEANING (colors are consistent across summaries):
+       <Problem>   red    — the problem this paper tackles / a prior-work limitation
+       <Novelty>   green  — a novel module/approach/insight this paper introduces
+       <Finding src="Tab.X">  teal — a finding / claim / result of THIS paper
+       <FollowUp>  blue   — a notion/thread the reader should follow up on
+       <Caveat>    orange — a limitation of THIS paper
+       <Related>   violet — related work / lineage
+       <Term def="…">  glossary chip with hover definition (self-contained)
+  Declarative English; specific numbers + anchors; "Not reported"/"Unclear" for gaps;
+  verify numbers against extraction.txt. Keep Motivation (<Problem>) ≠ Contribution (<Novelty>).
+*/}
+
+<TLDR>GTA1 pairs a click-rewarded <Term def="reinforcement learning that rewards a predicted coordinate falling anywhere inside the target element's bounding box">RL grounding model</Term> (no chain-of-thought) with per-step <Term def="sampling several candidate action proposals at each step and using an MLLM judge to pick the best one, trading compute for decision quality">test-time scaling</Term> over action proposals, reaching state-of-the-art on GUI grounding and OSWorld task execution.</TLDR>
+
+<WhyItMatters>Directly relevant to the computer-use-agents track: it shows a two-stage (planner + grounding) agent can beat native end-to-end agents, and that "thinking" is unnecessary — even harmful — for static GUI grounding.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "50.1%", label: "ScreenSpot-Pro accuracy", sub: "GTA1-7B vs 34.5% UGround-72B" },
+  { value: "63.4%", label: "OSWorld-Verified success", sub: "GTA1-32B w/ GPT-5, 100 steps" },
+  { value: "72.2%", label: "OSWorld-G accuracy", sub: "GTA1-32B, new SOTA" },
+  { value: "8", label: "action proposals / step", sub: "default test-time sampling L" },
+]} />
+
+## Motivation
+Two-stage GUI agents face <Problem>a planning challenge: many valid action-proposal sequences exist for the same task, and GUI environments lack "lookahead" because actions have irreversible state effects, so committing to a single plan invites cascading failures</Problem>. They also face <Problem>a grounding challenge: SFT-based grounding trains models to hit the exact center of a target element, which misaligns with the task — any coordinate inside the element is valid — hurting generalization to high-resolution, professional interfaces</Problem>. A further gap: <Problem>prior RL grounding work copies CoT "thinking" from math/reasoning domains, even though it is unclear whether explicit reasoning or bounding-box rewards help grounding at all</Problem>.
+
+## Contribution (what's new)
+Two complementary mechanisms. (1) <Novelty>A grounding model trained purely with a binary click reward — +1 if the predicted `(x,y)` lands inside the annotated bounding box, 0 otherwise — and NO chain-of-thought</Novelty>; this design follows because the reward must match the task's true success criterion (any point in the box), which SFT's center-only objective violates. (2) <Novelty>Per-step test-time scaling: sample `L` candidate proposals from the planner, let an MLLM judge pick the best, then ground only the chosen action</Novelty>; this sidesteps the missing-lookahead problem by exploring short-term alternatives concurrently instead of rolling out full irreversible sequences. A supporting piece is <Novelty>OmniParser-based data cleaning that drops training samples whose annotated box has IoU below 0.3 with any detected element</Novelty>, removing misaligned labels.
+
+## Research questions
+1. How can a GUI agent plan robustly despite no lookahead and many plausible action sequences?
+2. Is explicit "thinking" (CoT) or an auxiliary bounding-box reward necessary for effective GUI grounding?
+
+## Methodology
+A two-stage agent: at each step the planner sees the task, trajectory, and current screenshot and samples `L` proposals; an MLLM judge selects the best; if it is coordinate-based, the grounding model predicts the click point, otherwise the action executes directly. Grounding is optimized with GRPO using only the click reward.
+
+<Pass title="Method details">
+<Stepper steps={[
+  { title: "Proposal sampling", body: "At each step the planner (o3 or GPT-5) is given the user instruction, trajectory so far, and current screenshot, and samples L candidate action proposals (default L=8)." },
+  { title: "Judge selection", body: "An MLLM judge (which can be the planner itself) scores the L candidates on correctness, effectiveness, alignment, planning quality, and appropriateness, and returns the best index as JSON (§D.3, Tab.12-13)." },
+  { title: "Grounding", body: "If the chosen action is coordinate-based (e.g. a click), the grounding model maps the action description + screenshot to a precise (x,y); non-coordinate actions (key presses, text) execute directly (§3.1, Fig.2)." },
+  { title: "Data cleaning", body: "OmniParser detects element boxes; a training sample is discarded if max IoU between its annotated box and any detected box < τ=0.3, removing render/timing-misaligned labels (Eq.1, §3.2)." },
+  { title: "RL training", body: "GRPO samples G responses per input; reward r=1 iff predicted (x,y) is inside the annotated box (Eq.2); rewards are Z-score normalized into advantages (Eq.3) and optimized with a clipped surrogate (Eq.4). No CoT prompt — the model outputs coordinates directly." },
+]} />
+
+Training detail (Tab.7, §B): GTA1-7B is initialized from UI-TARS-1.5-7B, GTA1-32B from OpenCUA-32B; rollout `G=8`, batch 256, ~250 iterations, ~70K samples drawn from Aria-UI-Web, OmniACT, UI-Vision, Widget Caption, and OS-Atlas-Desktop. 7B trains on 16 H100 (~2 days), 32B on 32 H200 (~1 day). The click reward (Eq.2):
+
+<MathBlock>{`r_i = \\begin{cases} 1, & x_{min} \\le x_i \\le x_{max} \\text{ and } y_{min} \\le y_i \\le y_{max} \\\\ 0, & \\text{otherwise} \\end{cases}`}</MathBlock>
+</Pass>
+
+## Main result
+On the hardest grounding benchmark, ScreenSpot-Pro, <Finding src="Tab.1, p.6">GTA1-7B scores 50.1% — beating UGround-72B's 34.5% despite ~10x fewer params — and GTA1-32B reaches 63.6%</Finding>. On agent task execution, <Finding src="Tab.4, p.9">GTA1-32B w/ GPT-5 hits 63.4% on OSWorld-Verified and GTA1-7B w/ o3 reaches 45.2% on the original OSWorld, beating CUA o3's 42.9% while using a 100-step (vs 200-step) horizon</Finding>.
+
+<SortableTable columns={["Model / setting", "Benchmark", "Score (%)"]} rows={[
+  ["GTA1-7B", "ScreenSpot-Pro", 50.1],
+  ["GTA1-32B", "ScreenSpot-Pro", 63.6],
+  ["UGround-72B", "ScreenSpot-Pro", 34.5],
+  ["GTA1-32B", "ScreenSpot-V2", 95.2],
+  ["GTA1-7B", "OSWorld-G", 67.7],
+  ["GTA1-32B", "OSWorld-G", 72.2],
+  ["GTA1-7B w/ o3", "OSWorld (orig)", 45.2],
+  ["CUA o3 (200 steps)", "OSWorld (orig)", 42.9],
+  ["GTA1-32B w/ GPT-5", "OSWorld-Verified", 63.4],
+  ["GTA1-7B w/ GPT-5", "OSWorld-Verified", 61.0],
+  ["GTA1-32B w/ GPT-5", "WindowsAgentArena", 50.6],
+  ["GTA1-32B w/ o3", "WindowsAgentArena", 51.2],
+]} />
+
+## Key findings
+- <Finding src="Tab.6, p.9">Click reward alone works best for grounding</Finding>: 50.1 / 92.4 / 67.7% on ScreenSpot-Pro / V2 / OSWorld-G, vs 44.5 / 89.3 / 59.9% when adding both IoU and format (thinking) rewards — the auxiliary rewards generally hurt (except marginally on ScreenSpot-V2).
+- <Finding src="§4.3, p.7-8">"Thinking" helps only in dynamic environments</Finding>: in static grounding it gives near-zero gain, but on AndroidWorld a 7B model's task success rose 39%→44% with CoT, attributed to richer textual context (task + trajectory + instruction).
+- <Finding src="§4.3, p.9">Test-time scaling generalizes across horizons and to other agents</Finding>: with `L=8`, OSWorld success climbs from 41.3→43.4% (50 steps) and 43.4→45.2% (100 steps) vs the `L=1` baseline; the strategy also boosts UI-TARS-1.5-7B (Fig.4).
+- <Finding src="Fig.4, p.8">Scaling proposals can substitute for execution length</Finding>: UI-TARS-1.5-7B at 15 steps with `L=32` already beats the un-scaled 100-step baseline, and because the `L` proposals are sampled concurrently this also cuts wall-clock time.
+- <Finding src="Fig.4, p.9">A 50-step horizon gives the largest gain from scaling</Finding>: 15 steps is too few to finish some tasks, while 100 steps adds excessive slack that dilutes the benefit.
+- <Finding src="§4, p.6">A two-stage agent matches/beats native end-to-end agents</Finding>: the paper claims to be the first to show a modular planner+grounding agent is competitive on dynamic benchmarks like OSWorld, challenging the assumption that end-to-end is inherently superior.
+
+## Implications
+GTA1 reinforces the <Related>two-stage GUI-agent lineage (Aria-UI, UGround, Aguvis, Jedi, Agent S/S2)</Related> against the <Related>native end-to-end line (UI-TARS, OpenAI CUA, Claude Computer Use)</Related>, and extends the <Related>R1-Zero-style RL-for-grounding thread (GUI-R1, UI-R1, InfiGUI-R1, GUI-G1)</Related> by showing CoT is unnecessary for static grounding. <FollowUp>Why does test-time scaling peak at a 50-step horizon, and how does the optimal `L` scale with task difficulty?</FollowUp> <FollowUp>Whether a learned judge (vs the planner judging itself) would further reduce cascading failures, and how the approach transfers to mobile/dynamic settings where "thinking" already helps.</FollowUp>
+
+## Limitations
+- <Caveat>Grounding still fails in some scenarios, e.g. selecting custom foregrounds/backgrounds in image editing (GMIP), echoing prior work</Caveat> (§5).
+- <Caveat>Test-time scaling and the strongest agent results depend on heavy proprietary planners (o3, GPT-5), and the agent's headline numbers conflate grounding quality with planner quality</Caveat> (Tab.4) — the paper does not report agent success with an open planner at scale.
+- <Caveat>"Thinking" results in dynamic settings rest on a single AndroidWorld 39%→44% comparison the authors themselves attribute partly to training instability</Caveat> (§4.3); generalization is asserted, not broadly demonstrated.
+- <Caveat>The data-cleaning IoU threshold τ=0.3 and several `'∗'`-marked baseline numbers are self-evaluated and may change with improved eval scripts</Caveat> (Tab.1-3 footnotes).
+
+## Critiques and Questions
+1. The OSWorld comparison mixes step budgets and planners across rows (15/50/100/150/200 steps; GPT-4o/o3/GPT-5/Claude), so "SOTA" claims are only loosely apples-to-apples; the cleanest controlled signal is the `L=1` vs `L=8` ablation.
+2. The judge can be the planner itself — is the gain from genuine candidate diversity, or just from sampling-then-rerank temperature `1` noise? An entropy/diversity analysis of the `L` proposals is missing.
+3. How much of the 7B grounding win over 72B baselines is the click reward vs the OmniParser data cleaning? Tab.6 isolates the reward but not the cleaning.
+
+<SelfCheck q="Why does GTA1 reward any click inside the target box rather than the box's center, and what does Tab.6 show about adding a 'format' (thinking) reward?" a="A click anywhere inside the element is a valid interaction, so a center-only (SFT-style) objective misaligns with the task; the binary in-box click reward matches the true success criterion. Tab.6 shows click reward alone (50.1/92.4/67.7%) beats adding format and/or IoU rewards (e.g. 44.5/89.3/59.9% with all three), so explicit thinking is unnecessary and generally hurts static grounding." />
+
+## Glossary
+- <Term def="The two-module GUI-agent design: a planner proposes high-level actions and a separate grounding model maps them to screen coordinates">two-stage GUI agent</Term>
+- <Term def="An end-to-end GUI agent that perceives, plans, and acts within a single model, e.g. UI-TARS or OpenAI CUA">native GUI agent</Term>
+- <Term def="Group Relative Policy Optimization: an RL method that samples a group of responses per input and normalizes their rewards into advantages, avoiding a separate value model">GRPO</Term>
+- <Term def="Intersection over Union — overlap area divided by union area of two bounding boxes; used here to filter mislabeled training samples (threshold 0.3)">IoU</Term>
+- <Term def="A high-resolution (up to 3840x2160), professional-application GUI grounding benchmark spanning 23 apps across 6 domains; the paper's hardest grounding test">ScreenSpot-Pro</Term>
+- <Term def="An Ubuntu-based benchmark of 369 real web/desktop tasks measuring agent task success rate; OSWorld-Verified is a stability-refined variant">OSWorld</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

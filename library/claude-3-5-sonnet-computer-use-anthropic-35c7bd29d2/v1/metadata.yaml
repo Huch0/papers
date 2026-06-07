@@ -48,13 +48,14 @@ scoring:
 artifacts:
   pdf: null
   extraction: null
-  summary: null
+  summary: library/claude-3-5-sonnet-computer-use-anthropic-35c7bd29d2/v1/summary.mdx
   code_url: null
   project_url: null
   dataset_url: null
 status:
   downloaded: false
   extracted: false
-  summarized: false
+  summarized: true
   triaged: true
   user_read_status: unread
+  summary_format: mdx

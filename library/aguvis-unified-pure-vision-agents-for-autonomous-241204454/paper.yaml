@@ -47,17 +47,17 @@ versions:
   source: arxiv
   source_url: https://arxiv.org/abs/2412.04454
   pdf_path: library/aguvis-unified-pure-vision-agents-for-autonomous-241204454/v1/paper.pdf
-  summary_path: null
+  summary_path: library/aguvis-unified-pure-vision-agents-for-autonomous-241204454/v1/summary.mdx
   metadata_path: library/aguvis-unified-pure-vision-agents-for-autonomous-241204454/v1/metadata.yaml
   fetched_at: '2026-06-06T07:57:35Z'
   source_updated_at: null
   arxiv_version: null
   pdf_sha256: d9f0c31bdae82ae2be8ce1921ba5b23b3898cb61f14ad7755ff8290e7d877a6c
   pdf_bytes: 27830565
-  summary_status: none
-  extraction_status: none
+  summary_status: full
+  extraction_status: full
   created_at: '2026-06-06T07:57:35Z'
-  updated_at: '2026-06-06T07:57:35Z'
+  updated_at: '2026-06-07T06:23:12Z'
 relations:
   duplicate_candidates: []
   related_papers: []

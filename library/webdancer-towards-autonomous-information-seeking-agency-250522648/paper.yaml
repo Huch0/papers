@@ -50,17 +50,17 @@ versions:
   source: arxiv
   source_url: https://arxiv.org/abs/2505.22648
   pdf_path: library/webdancer-towards-autonomous-information-seeking-agency-250522648/v1/paper.pdf
-  summary_path: null
+  summary_path: library/webdancer-towards-autonomous-information-seeking-agency-250522648/v1/summary.mdx
   metadata_path: library/webdancer-towards-autonomous-information-seeking-agency-250522648/v1/metadata.yaml
   fetched_at: '2026-06-06T07:57:41Z'
   source_updated_at: null
   arxiv_version: null
   pdf_sha256: e7ea9dab41d1284d7ddcebc53022e23f14d868f4639469c7122d1f86797c9a51
   pdf_bytes: 1209450
-  summary_status: none
-  extraction_status: none
+  summary_status: full
+  extraction_status: full
   created_at: '2026-06-06T07:57:41Z'
-  updated_at: '2026-06-06T07:57:41Z'
+  updated_at: '2026-06-07T06:10:28Z'
 relations:
   duplicate_candidates: []
   related_papers: []

@@ -43,17 +43,17 @@ versions:
   source: arxiv
   source_url: https://arxiv.org/abs/2401.01614
   pdf_path: library/gpt-4v-ision-is-a-generalist-web-240101614/v1/paper.pdf
-  summary_path: null
+  summary_path: library/gpt-4v-ision-is-a-generalist-web-240101614/v1/summary.mdx
   metadata_path: library/gpt-4v-ision-is-a-generalist-web-240101614/v1/metadata.yaml
   fetched_at: '2026-06-06T07:57:32Z'
   source_updated_at: null
   arxiv_version: null
   pdf_sha256: ac281a3c5cdbda428e14605e9d96035fd35af82073ce46117c27c34792eea041
   pdf_bytes: 9044518
-  summary_status: none
-  extraction_status: none
+  summary_status: full
+  extraction_status: full
   created_at: '2026-06-06T07:57:32Z'
-  updated_at: '2026-06-06T07:57:32Z'
+  updated_at: '2026-06-07T06:23:31Z'
 relations:
   duplicate_candidates: []
   related_papers: []

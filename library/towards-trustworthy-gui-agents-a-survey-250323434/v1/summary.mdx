@@ -1,0 +1,104 @@
+---
+canonical_key: arxiv-2503.23434
+version_key: v1
+title: 'Towards Trustworthy GUI Agents: A Survey'
+authors:
+- Yucheng Shi
+- Wenhao Yu
+- Wenlin Yao
+- Wenhu Chen
+- Ninghao Liu
+venue: arXiv.org
+year: 2025
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2503.23434
+summary_date: '2026-06-07'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+{/*
+  SURVEY summary. Core-first; organizing insight = the taxonomy. Per-system metrics are
+  "Not reported" unless the survey states a concrete number. Verify numbers vs extraction.txt.
+*/}
+
+<TLDR>A survey that reframes GUI-agent trustworthiness around the <Term def="the misalignment between perception, reasoning, and interaction in dynamic, partially observable interfaces">Execution Gap</Term> and organizes failures, attacks, defenses, and evaluation under a workflow-aligned taxonomy of Perception, Reasoning, and Interaction Trust.</TLDR>
+
+<WhyItMatters>Directly foundational for the computer-use-agent track: it gives a vocabulary for *why* agents fail in irreversible, dynamic UIs and a map of the attack/defense/eval landscape to triage future papers against.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "3", label: "trust dimensions", sub: "Perception / Reasoning / Interaction" },
+  { value: "36%", label: "20-step success", sub: "for a 95%-per-step policy" },
+  { value: ">90%", label: "injection attack success", sub: "WIPI / AdvWeb / mobile overlays" },
+]} />
+
+## Motivation
+GUI agents move LLMs from text generation to <Problem>action execution with irreversible consequences</Problem> (submitting forms, granting permissions, deleting data), so a hallucinated click is tangible harm, not just user dissatisfaction. <Problem>Standard LLM safety (output filtering, refusal training, alignment) assumes outputs can be reviewed before harm and that failures are isolated</Problem> — assumptions GUI agents violate via immediate execution, opaque consequences, and compounding action-observation loops. Three GUI-specific properties make prior LLM-trustworthiness surveys insufficient: <Problem>irreversibility</Problem>, <Problem>dynamic/non-stationary environments</Problem> (DOM updates, pop-ups, A/B tests), and <Problem>closed action-observation loops where errors cascade</Problem>.
+
+## Contribution (what's new)
+The genuine delta is the framing and its organization, not new experiments. The survey names the <Novelty>Execution Gap — the disconnect between Perceptual, Reasoning, and Interaction Fidelity — as the root cause of GUI-agent untrustworthiness</Novelty>, and builds a <Novelty>workflow-aligned taxonomy that decomposes trust by *pipeline stage* (Perception / Reasoning / Interaction) rather than by traditional safety categories (privacy/bias/hallucination)</Novelty>. The form is justified by the failure mode it exposes: because errors propagate and compound stage-to-stage, mitigations must be stage-specific and trust must be analyzed along the pipeline where vulnerabilities actually arise and cascade.
+
+## Research questions
+What does trustworthiness mean for agents that execute irreversible actions in dynamic interfaces; where in the perception-reasoning-interaction pipeline do benign failures and adversarial attacks arise; which defenses are stage-appropriate; and why is task-completion an insufficient measure of trust?
+
+## Methodology
+A structured literature review organized by the proposed taxonomy. For each trust dimension the survey catalogs (1) benign failure modes, (2) adversarial attacks, and (3) defense mechanisms, then reviews evaluation practice and the security-utility trade-off.
+
+<Pass title="Taxonomy structure">
+<Stepper steps={[
+  { title: "Perception Trust (§3)", body: "Mapping raw inputs (screenshots, DOM, accessibility trees) to semantic interface state. Failures: visual hallucination + adversarial perception attacks. Defenses: input filtering, cross-modal verification, output calibration." },
+  { title: "Reasoning Trust (§4)", body: "Sustaining goal-aligned plans over long horizons under partial observability and non-stationarity. Failures: horizon problem, goal hijacking, norm violations, multi-agent breakdown. Defenses: enhanced planning, external verification, training-time safety." },
+  { title: "Interaction Trust (§5)", body: "Executing intended actions correctly/safely in external systems. Failures: irreversibility, coordinate-grounding errors, privacy leakage. Defenses: risk-aware execution, human oversight, access control / privacy preservation." },
+  { title: "Evaluation (§6)", body: "Trust-aware metrics beyond task completion; cascade metrics, uncertainty calibration, reasoning-execution alignment, explainability; the security-utility trade-off." },
+]} />
+</Pass>
+
+## Key findings
+- <Finding src="§2.3, p.3">Conversation-centric safety does not transfer to agents</Finding>: refusal-trained LLMs that behave safely as chatbots often fail when wrapped as browser agents, because the compositional pipeline adds attack surfaces existing LLM-safety evals don't capture.
+- <Finding src="§3.1, p.4">Perception hallucination is best read as rational inference under uncertainty, not a mere training defect</Finding>: object/attribute hallucinations and "hallucination snowballing" (early errors biasing later ones) reflect a missing mechanism for uncertainty recognition and signaling.
+- <Finding src="§3.2, p.4">Adversarial perception attacks exploit one shared weakness — mismatches between appearance, structure, and intent</Finding>: visual-perturbation attacks (Imprompter, ARE) report 60-80% success; structural/DOM-injection (WIPI, AdvWeb) and mobile overlay attacks exceed 90%; this motivates cross-modal consistency over single-view trust.
+- <Finding src="§4.1, p.5">The horizon problem makes long tasks fragile to small per-step errors</Finding>: a 95%-accurate policy succeeds only ~36% over 20 steps, and safety awareness decays over long trajectories (early-identified risks ignored later).
+- <Finding src="§5.1, p.7">Agents treat all actions uniformly, ignoring consequence severity</Finding>: destructive, financial, and authorization actions get the same execution logic as benign ones — a fundamental limitation for irreversible interaction; coordinate grounding also breaks under resolution shifts, dynamic layouts, and animations.
+- <Finding src="§6.1, p.8">Task-completion benchmarks (WebArena, VisualWebArena, Mind2Web) are insufficient for trust</Finding>: they don't penalize policy violations, expose failure modes, or count collateral effects; the survey argues for cascade metrics, uncertainty calibration, and reasoning-execution alignment (e.g., GTA separating execution gaps from reasoning gaps).
+- <Finding src="§6.3, p.8">Static security policies are suboptimal; adaptive autonomy works better</Finding>: VeriOS, which queries a human only when trustworthiness is low, reportedly improves success by ~20% over fixed oversight.
+- <Finding src="Tab.1, p.14">No single benchmark covers trust</Finding>: ~17 frameworks are mapped per pipeline stage, each with characteristic coverage-vs-depth trade-offs (per-system numeric scores: Not reported in the body), so comprehensive evaluation needs benchmark *combinations*. Per-system metrics throughout the survey are "Not reported" beyond the few attack/horizon figures above.
+
+## Implications
+Reframing trust by pipeline stage gives a concrete agenda: defenses must be stage-specific, and cross-stage error cascades are the unit of analysis. It connects and extends the <Related>GUI-agent survey lineage (Nguyen et al. 2024a; Wang et al. 2024b; Xie et al. 2024) and LLM-trustworthiness surveys (Liu et al. 2023c; Weidinger et al. 2022; Gan et al. 2024)</Related> by specializing them to executing agents. Threads worth chasing: <FollowUp>scalable cross-modal consistency checking (the survey's flagged open problem for perception)</FollowUp>; <FollowUp>context-aware risk classification, since identical actions range from benign to high-stakes by context</FollowUp>; <FollowUp>world-model / hierarchical planning (WebDreamer, PC-Agent) and process reward models (GUI-Shepherd) for the horizon problem</FollowUp>; <FollowUp>adaptive-autonomy oversight (VeriOS) and trust-aware metrics (GTA, cascade metrics, calibration)</FollowUp>.
+
+## Limitations
+- <Caveat>Rapid field churn means some recent work is likely omitted</Caveat>.
+- <Caveat>The taxonomy, optimized for clarity, may not capture all nuances of specific approaches</Caveat>.
+- <Caveat>The security-utility trade-off analysis is partly qualitative where quantitative data is unavailable</Caveat>.
+- <Caveat>Proposed future directions remain speculative until empirically validated</Caveat>.
+- <Caveat>Coverage of non-English work may be incomplete</Caveat>.
+
+## Critiques and Questions
+1. The Execution Gap is a clarifying lens but largely a re-labeling of known failures; the survey offers no quantitative validation that stage-specific (vs. holistic) defenses actually reduce cascades.
+2. Reported attack-success numbers (60-90%+) are aggregated across heterogeneous setups/backends; without per-benchmark normalization they are hard to compare or trust as field-wide rates.
+3. The claim that hallucination is "rational inference under uncertainty" is an interpretive stance, not an empirical result — useful as a research direction, but unproven here.
+4. Table 1's per-system metrics are listed only as metric *names* (e.g., CUP, PII extraction rate), not values, so the comparison shows coverage, not relative performance.
+
+<SelfCheck q="Why does the survey argue standard LLM safety techniques (refusal training, output filtering) are insufficient for GUI agents?" a="Because they assume outputs can be reviewed before causing harm and that failures are isolated. GUI agents execute actions immediately and irreversibly, their consequences can be opaque, and errors compound through closed action-observation loops — so refusal-trained models that are safe as chatbots are observed to fail when deployed as agents." />
+
+## Glossary
+<Term def="The misalignment between perception, reasoning, and interaction in dynamic, partially observable interfaces; the survey's named root cause of untrustworthiness">Execution Gap</Term> ·
+<Term def="Correctly mapping raw pixels / DOM structure to a semantic understanding of interface elements">Perceptual Fidelity</Term> ·
+<Term def="Maintaining logical, goal-aligned plans across multi-step tasks in an environment that changes between actions">Reasoning Fidelity</Term> ·
+<Term def="Translating an intended action into precise coordinates/commands that achieve the desired effect">Interaction Fidelity</Term> ·
+<Term def="Early perceptual errors biasing later interpretations into a self-reinforcing failure cascade">hallucination snowballing</Term> ·
+<Term def="Document Object Model — the structured tree representation of a web page used as a non-visual interface signal">DOM</Term> ·
+<Term def="Multimodal large language model — an LLM that also consumes images/screenshots">MLLM</Term> ·
+<Term def="Completion Under Policy — task completion that also satisfies safety/policy constraints (ST-WebAgentBench metric)">CUP</Term> ·
+<Term def="Ground-Truth Alignment — distinguishes execution gaps (correct reasoning, failed action) from reasoning gaps (successful action, flawed reasoning)">GTA</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

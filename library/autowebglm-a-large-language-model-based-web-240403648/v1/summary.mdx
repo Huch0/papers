@@ -1,0 +1,135 @@
+---
+canonical_key: arxiv-2404.03648
+version_key: v1
+title: 'AutoWebGLM: A Large Language Model-based Web Navigating Agent'
+authors:
+- Hanyu Lai
+- Xiao Liu
+- Iat Long Iong
+- Shuntian Yao
+- Yuxuan Chen
+- Pengbo Shen
+- Hao Yu
+- Hanchen Zhang
+- Xiaohan Zhang
+- Yuxiao Dong
+- Jie Tang
+venue: Knowledge Discovery and Data Mining
+year: 2024
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2404.03648
+summary_date: '2026-06-07'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+{/*
+  Canonical Summary structure (concise, core-first). Body only — frontmatter is generated
+  from metadata.yaml by `summarize_paper.py --format mdx --prepare`. Components are
+  provided globally by the site (no imports). See config/summary_components.md.
+*/}
+
+<TLDR>A 6B open model (ChatGLM3-6B) turned into a browser agent via an HTML-simplification interface plus a three-stage pipeline (curriculum SFT → self-sampling DPO → rejection-sampling finetuning), reaching or beating GPT-4 across English/Chinese web-navigation benchmarks.</TLDR>
+
+<WhyItMatters>Foundational for the computer-use / browser-agent track: it shows a small open model can be a practically deployable web agent by co-designing the observation interface and a multi-stage training recipe, rather than scaling model size.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "6B", label: "model size", sub: "ChatGLM3-6B base" },
+  { value: "89.3%", label: "MiniWoB++ success", sub: "vs GPT-4 32.1% (Tab.4)" },
+  { value: "59.5", label: "Mind2Web avg SSR", sub: "vs GPT-4† 30.9 (Tab.3)" },
+  { value: "~10k", label: "web traces collected", sub: "hybrid human-AI (§4.1)" },
+]} />
+
+## Motivation
+Most LLM web agents perform far below usable levels in real navigation because of three coupled difficulties: <Problem>HTML is verbose and complex, so models struggle to read pages accurately</Problem>; <Problem>there is no universal action space covering the operations needed across diverse websites</Problem>; and <Problem>the open-domain web makes tasks hard, and agents lack inference and self-checking, so once stuck in an erroneous loop they cannot recover</Problem>. Prior approaches were either deployment-impractical (e.g. <Related>WebAgent's 540B-scale Flan-U-PaLM</Related>) or query-inefficient (<Related>Mind2Web's MindAct uses 10+ model calls per single web operation</Related>), and state-of-the-art models cannot reliably auto-annotate training traces.
+
+## Contribution (what's new)
+The genuine delta is a co-designed *interface + training recipe* that makes a 6B model a competent agent. <Novelty>An HTML-simplification algorithm (the "HTML Pruner") compresses pages into a concise operable representation while preserving structure and content</Novelty>, paired with a <Novelty>self-consistent, fixed action space of 10 operations</Novelty> so the model emits one executable command per step instead of multi-round element selection. Training then bootstraps the model: <Novelty>self-sampling DPO that builds contrastive pairs from the model's own wrong vs golden operations (teaching it from its own mistakes), with an added SFT-loss term to stabilize DPO</Novelty>, followed by <Novelty>rejection-sampling finetuning (RFT) that self-plays in sandbox environments and keeps only environment-verified successful traces</Novelty>. The recipe must take this form because pure SFT mimics reasoning but ignores page state and prior actions (causing hallucinated operations), and complex tasks exceed what any LLM can auto-label, forcing the hybrid human-AI data construction.
+
+## Research questions
+Can a small (6B) open LLM be made into a web-navigation agent that is both *capable* (rivaling GPT-4-class agents) and *practically deployable* in real browser environments — and what interface design and training stages are required to get there?
+
+## Methodology
+Web browsing is framed as sequential decision-making over a state (HTML, URL, window position) and an action set (click, type, scroll, etc.). An interaction framework parses raw pages (HTML parser + OCR) into simplified HTML, marks operable elements, and executes the model's predicted command; the loop runs until `finish` or a max length.
+
+<Pass title="Method details">
+**Observation space (§3.2.1).** Four indicators per step: task description, simplified HTML, current location (scroll position + page size), and past operation records. Past actions are passed explicitly to stop the agent looping on failed operations.
+
+**Action space (Tab.1).** Ten operations: `click(id)`, `hover(id)`, `select(id, option)`, `type_string(id, text, enter)`, `scroll_page(direction)`, `go(direction)`, `jump_to(url, newtab)`, `switch_tab(id)`, `user_input(message)`, `finish(answer)`.
+
+**Data construction (§4.1, hybrid human-AI, ~10k traces).**
+<Stepper steps={[
+  {title: "Web Recognition", body: "Collect Chinese/English top sites (Similarweb); parse operable components; GPT-3.5-Turbo generates diverse questions and bounded answers about page structure and component functions."},
+  {title: "Simple Task Operation", body: "Build single-step operations by rules (not model generation): assemble actionable elements into operations, then GPT-3.5-Turbo writes the matching task + intent; templates for fixed actions (scroll, jump_to), LLM-assisted for flexible ones (click, type)."},
+  {title: "Complex Task Operation", body: "~50 Evol-Instruct-style tasks per site → ~20 manually selected; humans annotate full action traces via a browser plugin; GPT-4 acts as intent predictor using a 'global thought chain' prompt (all steps + key HTML at once) for coherent CoT. Merged with Mind2Web + MiniWoB++ training sets."},
+]} />
+
+**Three-stage training (§4.2, Fig.6).**
+<Stepper steps={[
+  {title: "Step 1 — Curriculum SFT", body: "Easy→hard: first read/operate pages (4.1.1 data), then plan/reason and decompose tasks (4.1.2 data), yielding the base agent π_SFT."},
+  {title: "Step 2 — Reinforcement Learning (self-sampling DPO)", body: "K=20 samples per complex task; keep cases solved 1..K-1 times (skip all-right and all-wrong); pair model errors vs golden ops; train with DPO + SFT loss (β=0.15, SFT weight 0.8) → π_DPO. Contrastive set ≈13k pairs."},
+  {title: "Step 3 — Rejection-Sampling Finetuning (RFT)", body: "Self-play in MiniWoB++ and WebArena sandboxes; keep only env-verified successful traces (MiniWoB++ ≈15k traces / 66k steps; WebArena 240 traces / 2k steps, 64 samples each) and finetune per-environment."},
+]} />
+
+The SFT objective is `L_SFT = -E[(x,y)~D] log π_θ(y|x)`; RL combines DPO and SFT losses as `L_total = α·L_DPO + L_SFT`.
+
+**Benchmark — AutoWebBench (§4.3).** Bilingual (EN/ZH), split into in-domain and out-of-domain; 50 verified traces per split; metric is Step Success Rate (SSR), following Mind2Web's per-step evaluation.
+</Pass>
+
+## Main result
+On simulated environments the 6B model clears GPT-4 by wide margins: <Finding src="Tab.4">AutoWebGLM scores 89.3% on MiniWoB++ and 18.2% on WebArena, vs GPT-4's 32.1% and 14.4%</Finding>. On offline Mind2Web it leads GPT-4 and trails only a 543B model: <Finding src="Tab.3">59.5 average SSR vs GPT-4† 30.9, behind Html-T5-XL (543B) at 66.9</Finding>. On its own benchmark the gap over closed models is largest: <Finding src="Tab.2">on AutoWebBench, 64.8/58.6 (EN cross-task/cross-domain) and 65.4/61.8 (ZH) vs GPT-4's ~36–40</Finding>.
+
+<SortableTable columns={["Benchmark (metric)", "AutoWebGLM (6B)", "GPT-4", "GPT-3.5-Turbo", "Best other"]} rows={[
+  ["MiniWoB++ (succ %)", 89.3, 32.1, 13.4, 85.6],
+  ["WebArena (succ %)", 18.2, 14.4, 6.2, 6.2],
+  ["Mind2Web (avg SSR)", 59.5, 30.9, 17.4, 66.9],
+  ["AutoWebBench EN cross-task (SSR)", 64.8, 38.6, 12.1, 13.2],
+  ["AutoWebBench EN cross-domain (SSR)", 58.6, 39.7, 6.4, 8.9],
+  ["AutoWebBench ZH cross-task (SSR)", 65.4, 36.7, 13.5, 13.0],
+]} />
+
+## Key findings
+- <Finding src="Tab.6">Complex-task data is the dominant lever; simple-task data alone barely helps</Finding>: on MiniWoB++ adding Stage 1 (simple) over the base train set moves 44.3→48.3, while adding Stage 2 (complex) jumps to 78.9; Stage 1+2 reaches 81.7. Training on complex data alone causes basic operational errors that the simple data fixes.
+- <Finding src="Tab.6">Each training stage compounds, and RFT is decisive in-domain</Finding>: SFT 81.7 → +DPO 80.8 → +RFT 89.3 on MiniWoB++, and 8.3 → 8.5 → 18.2 on WebArena — RFT roughly doubles WebArena success via environment self-play.
+- <Finding src="Tab.6">DPO gives a modest but consistent lift on offline tasks</Finding>: Mind2Web 56.7→59.5 and AutoWebBench 61.8→62.7, supporting the claim that learning from its own mistakes reduces hallucinated operations.
+- <Finding src="Tab.7">Hallucination is the leading failure mode at 44%</Finding>, followed by poor graphical recognition (28%), misinterpretation of task context (20%), and pop-up interruption (8%) — i.e. errors are dominated by reasoning/perception, motivating the proposed multimodal and self-check future work.
+- <Finding src="Tab.5">Prediction (model inference) dominates per-step latency</Finding>: it is the largest component of execution time (~47.9% of average step time), with page loading second (~41.6%), so the agent's bottleneck is the model, not the browser plumbing.
+- <Finding src="§4.2.2">Naive DPO was unstable; adding an SFT-loss term stabilized RL training</Finding> without losing the model's natural-language and agent abilities — a practical recipe detail rather than just an architecture claim.
+
+## Implications
+Co-designing a compact observation/action interface with a self-bootstrapping training pipeline lets a 6B model match GPT-4-class browser agents and run as a deployable Chrome extension, shifting the cost frontier for web agents away from raw scale. It extends the <Related>WebGPT / WebGLM lineage from QA toward operational web automation</Related> and contributes <Related>AutoWebBench, the first bilingual (EN/ZH) step-level web-navigation benchmark</Related>. Worth chasing next: <FollowUp>multimodal (HTML + screenshot) inputs for maps, animations, and video where HTML-only falters</FollowUp>; <FollowUp>reasoning/self-check strategies beyond Chain-of-Thought to verify state and the effect of an intended operation</FollowUp>; and <FollowUp>porting the recipe to mobile, where smaller viewports and gesture actions change the action space</FollowUp>.
+
+## Limitations
+- <Caveat>HTML-only observation fails on advanced/visual web apps (maps, animations, video)</Caveat>; the authors explicitly propose multimodal input as the fix.
+- <Caveat>Absolute real-world performance is still low — 18.2% on WebArena</Caveat>, far from reliable autonomy on realistic open-web tasks.
+- <Caveat>RFT gains are domain-specific</Caveat>: improvements come from per-environment self-play in MiniWoB++/WebArena sandboxes, so generalization to arbitrary live sites is unverified, partly due to network-policy constraints on real environments.
+- <Caveat>Evaluation leans on step-level SSR and small test splits</Caveat> (50 traces per AutoWebBench split), which may overstate end-to-end task completion.
+- <Caveat>Robustness drops on unfamiliar sites with unusual logic, and real environments are unstable</Caveat> (network, pop-ups), with no self-check mechanism yet in place.
+
+## Critiques and Questions
+1. Step Success Rate rewards matching individual golden steps; how much does high SSR translate to full-task completion on Mind2Web, where a single mis-step can derail a trajectory? The headline benchmark choice may flatter the model relative to WebArena's end-to-end success.
+2. Several baselines in Tab.2/Tab.3 are zero/few-shot while AutoWebGLM is finetuned on in-distribution data (including merged Mind2Web/MiniWoB++ train sets) — is the comparison apples-to-apples, and how much of the lead is contamination/distribution alignment vs genuine capability?
+3. MiniWoB++/WebArena numbers come from RFT *finetuned per environment*; a single general agent's cross-environment number isn't reported, leaving open how much is one model vs several specialists.
+4. Many results appear to be single runs without variance; the WebArena 8.3→8.5→18.2 progression hinges on small absolute counts, so confidence intervals would matter.
+
+<SelfCheck q="Why does training on complex-task data alone underperform the simple+complex mix, and which stage gives the biggest MiniWoB++ jump?" a="Complex-only training induces basic operational errors that simple-task data corrects; on MiniWoB++ the largest single jump comes from adding complex (Stage 2) data (48.3→78.9, Tab.6), with RFT then pushing the final model to 89.3." />
+
+## Glossary
+- <Term def="Compresses raw HTML into a concise representation that preserves structure and key content while pruning redundant elements, so an LLM can read the page within its context window">HTML simplification / HTML Pruner</Term>
+- <Term def="Step Success Rate: fraction of individual operation steps the agent performs correctly, evaluated per-step as in Mind2Web">SSR</Term>
+- <Term def="Direct Preference Optimization: trains a model to prefer a 'chosen' over a 'rejected' response directly from preference pairs, without a separate reward model">DPO</Term>
+- <Term def="Rejection Sampling Finetuning: sample many trajectories, keep only the ones verified correct by the environment/reward, then finetune on those successful traces">RFT</Term>
+- <Term def="Training that orders examples easy-to-hard, mimicking human learning, here: first page reading/operating, then planning/reasoning">curriculum learning</Term>
+- <Term def="A prompt that feeds all steps and key HTML of a trace at once and asks the model (GPT-4) to emit each step's intent, producing more coherent chain-of-thought than step-by-step prompting">global thought chain</Term>
+- <Term def="Bilingual (English/Chinese) step-level web-navigation benchmark introduced by this paper, split into in-domain and out-of-domain">AutoWebBench</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

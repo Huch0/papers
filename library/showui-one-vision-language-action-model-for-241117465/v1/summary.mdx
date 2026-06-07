@@ -1,0 +1,119 @@
+---
+canonical_key: arxiv-2411.17465
+version_key: v1
+title: 'ShowUI: One Vision-Language-Action Model for GUI Visual Agent'
+authors:
+- Kevin Qinghong Lin
+- Linjie Li
+- Difei Gao
+- Zhengyuan Yang
+- Shiwei Wu
+- Zechen Bai
+- Weixian Lei
+- Lijuan Wang
+- Mike Zheng Shou
+venue: Computer Vision and Pattern Recognition
+year: 2024
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2411.17465
+summary_date: '2026-06-07'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+{/*
+  Canonical Summary structure (concise, core-first). Body only — frontmatter is generated
+  from metadata.yaml by `summarize_paper.py --format mdx --prepare`. Components are
+  provided globally by the site (no imports). See config/summary_components.md.
+*/}
+
+<TLDR>ShowUI is a lightweight 2B vision-language-action model that turns screenshots into GUI actions, using a UI-connected-graph token-selection scheme and interleaved vision-language-action streaming to hit 75.1% zero-shot grounding while cutting 33% of visual tokens.</TLDR>
+
+<WhyItMatters>A foundational computer-use-agent paper: it shows a small purely-visual model (no HTML / accessibility tree) can match or beat much larger GUI agents at both grounding and navigation, and contributes a reusable trick for taming high-resolution screenshot tokens.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "75.1%", label: "zero-shot grounding accuracy", sub: "ShowUI-2B on Screenspot (Tab.2)" },
+  { value: "33%", label: "visual tokens removed in training", sub: "1.4x speedup (abstract, Fig.2)" },
+  { value: "2B", label: "model size", sub: "built on Qwen2-VL-2B" },
+  { value: "256K", label: "instruction-tuning samples", sub: "curated, rebalanced (Tab.1)" },
+]} />
+
+## Motivation
+Most GUI agents are <Problem>language-based, relying on closed-source APIs and text-rich oracle metadata (HTML or accessibility trees)</Problem> that real users never see — they only perceive screenshots. Building a purely-visual GUI agent runs into three under-explored obstacles: <Problem>high-resolution screenshots (e.g. 2K) produce very long visual-token sequences that are expensive in self-attention</Problem>; <Problem>GUI actions vary across devices and parameterizations (e.g. SCROLL has two directions on web, four on mobile) and are interleaved with visual/textual history in ways unclear to model</Problem>; and <Problem>GUI training data is abundant but heterogeneous and severely imbalanced, with no clear recipe for selecting a high-quality corpus</Problem>.
+
+## Contribution (what's new)
+The core delta is a <Novelty>UI-guided visual token selection</Novelty>: because UI screenshots are structured with large redundant regions of identical RGB, each patch becomes a graph node, neighboring patches with near-identical RGB are unioned (Union-Find) into connected components, and within each component a random subset of tokens is *selected* (skipped during self-attention) rather than *merged*. The design must take this form because <Novelty>merging pools tokens and destroys the positional information that pixel-precise UI grounding depends on</Novelty>, whereas selection keeps original position embeddings; it also adds no learnable parameters and can be toggled off at inference. The second contribution is <Novelty>interleaved vision-language-action streaming</Novelty> — unifying action-visual streams (history of screenshots + actions for navigation) and action-query streams (many query/action pairs per screenshot) into one multi-turn format that amortizes the cost of long visual sequences. The third is a <Novelty>small, deliberately curated 256K dataset with rebalanced sampling</Novelty> (e.g. dropping static-text web elements that VLM OCR already handles).
+
+## Research questions
+How does a single visual VLA model perform across grounding and navigation tasks, and what does it gain over its base VLM (Qwen2-VL-2B)? What is the effect of each component (token selection, interleaved streaming, data curation/sampling)? What insights does each benchmark's properties reveal about where GUI visual agents still fail?
+
+## Methodology
+ShowUI is built on Qwen2-VL-2B and instruction-tuned with LoRA on a curated mix of grounding and navigation data. Actions are emitted as JSON dicts `{'action':'type', 'value':'element', 'position':[x,y]}` with relative 0-1 coordinates, and a README of the action space is placed in the system prompt so the model interprets actions in a function-calling style rather than memorizing a fixed set.
+
+<Pass title="Method details">
+**UI connected graph (Algorithm 1).** Divide an `H x W` screenshot into `Gh x Gw` patches; for each node compare RGB to its right/below neighbor, and if the difference is below threshold `δ`, union them. This yields `K` components, typically far fewer than the original patch count, adaptively: a sparse Google-search page collapses `1296 -> 291` components, while a text-rich Overleaf page only collapses `1296 -> 986` (§2.1, Fig.4a).
+
+**Token selection vs merging.** Inspired by Mixture-of-Depths routing, within each component a portion of tokens is randomly skipped during training (single-patch components untouched to preserve salient icons/text); selected tokens retain original position embeddings. Applied with masking ratio 0.75 via cross-layer insertion at layer 14 of both the visual encoder and LM (§B.1). At inference, tokens are uniformly sampled across components so all components stay visible.
+
+**Interleaved streaming (Fig.6).** (a) Action-Visual: after the i-th action, the (i+1)-th screenshot enters the queue, prompting the next action; visual history can be masked (web, static pages) or kept (mobile, frequent software changes). History length is set to 2. (b) Action-Query: one screenshot paired with multiple query/action turns in a single forward pass to exploit short queries (`<10` tokens) against long screenshots (1-2K tokens).
+
+**Data (Tab.1).** Grounding: 22K self-collected web screenshots (576K visual-only elements after dropping the ~40% static text), AMEX mobile (97K), OmniAct desktop (100 images / ~8K elements after GPT-4o-augmented appearance/spatial/intention queries). Navigation: GUIAct web (72K) + mobile (65K). Total 256K samples. Balanced sampling assigns equal probability across the five data types. Training: 32 V100 GPUs, LoRA rank 64 / alpha 128 (~4% params), fp16, lr 1e-4, ~2 days.
+</Pass>
+
+## Main result
+ShowUI-2B reaches <Finding src="Tab.2">75.1% average zero-shot grounding on Screenspot</Finding>, the best in the table while being the smallest model with the least training data — beating UGround-7B (73.3%, 1.3M samples) and OmniParser using GPT-4V (73.0%), and far above its own base Qwen2-VL-2B (9.3%). A grounding-only variant ShowUI-G (119K samples) already hits 74.9%.
+
+<SortableTable columns={["Method", "Size", "#Train", "Screenspot Avg."]} rows={[
+  ["Qwen2-VL-2B", "2B", "-", 9.3],
+  ["Fuyu", "8B", "-", 19.5],
+  ["CogAgent", "18B", "400K", 47.4],
+  ["SeeClick", "9.6B", "364K", 53.4],
+  ["OmniParser (GPT-4V)", "-", "-", 73.0],
+  ["UGround", "7B", "1.3M", 73.3],
+  ["ShowUI-G", "2B", "119K", 74.9],
+  ["ShowUI", "2B", "256K", 75.1]
+]} />
+
+## Key findings
+- <Finding src="Tab.9a">Token selection beats token merging, and the UI-graph beats random selection</Finding>: merging drops Screenspot to 42.3 (34.7 at test time), random selection gives 65.3/56.2, while UI-graph selection holds 70.4/64.9 at a 1.5x speedup — confirming that preserving positional relationships is what matters.
+- <Finding src="Tab.9b, Tab.9c">Cross-layer insertion at ratio 0.5 is the sweet spot</Finding>: alternating inserted/non-inserted layers (70.5) clearly beats early (68.2) or late (67.6) insertion; selection ratio 0.5 keeps accuracy (70.4 vs 70.8 baseline) while ratio 1.0 collapses it to 64.5.
+- <Finding src="Tab.6">Data quality and balanced sampling beat raw scale</Finding>: 22K visual-filtered web elements outperform SeeClick's 270K (69.0 vs 65.5 avg); GPT-4o-diversified OmniAct (only 100 images) reaches 70.9; balanced sampling adds +3.7% (71.2 -> 74.9).
+- <Finding src="Tab.3">Visual history helps most where the screen changes</Finding>: on mobile AITW, action-only ShowUI improves only +1.1% over baseline, but adding interleaved visual history adds a further +1.7% (to 70.0 overall), and ShowUI beats HTML/closed-source methods like OmniParser and PaLM2-CoT.
+- <Finding src="Tab.4">On web Mind2Web the bottleneck is visual perception, not task understanding</Finding>: instruction tuning adds +4.6% step SR over the base VLM, visual history matters less than on mobile (single static site, 3 actions), and cross-website/cross-domain splits are harder than cross-task — pointing to a need for visually-diverse training domains.
+- <Finding src="Tab.2, §3.2.1">Icon grounding lags text grounding everywhere, and desktop/web icons lag mobile</Finding>: text skills transfer across platforms even to unseen desktop text, but the scarcity of non-mobile visual grounding data shows up as weak desktop/web icon accuracy.
+- <Finding src="Tab.5">Zero-shot transfer is fragile in interactive online settings</Finding>: ShowUI-ZS scores only 27.1 on MiniWob (vs fine-tuned 71.5), revealing that offline instruction tuning alone does not handle online out-of-distribution error cases.
+
+## Implications
+ShowUI strengthens the case that <Related>purely-visual GUI agents (SeeClick, CogAgent, UGround, OmniParser) can rival HTML/accessibility-tree pipelines</Related> and slots into the broader <Related>vision-language-action lineage (RT-2, OpenVLA) now extended from robotics to digital GUIs</Related>. The UI-connected-graph token selection is a portable efficiency primitive for any high-resolution screenshot model. Threads worth chasing: <FollowUp>online reinforcement learning to fix the large zero-shot gap in interactive environments</FollowUp>, <FollowUp>building visually-diverse desktop/web grounding data to close the icon and cross-domain gaps</FollowUp>, and <FollowUp>whether UI-graph selection composes with stronger/larger base VLMs</FollowUp>.
+
+## Limitations
+- <Caveat>Trained primarily on offline data; the authors flag online RL as needed future work, consistent with the steep MiniWob zero-shot drop</Caveat>.
+- <Caveat>Test-time token selection slightly reduces accuracy due to resolution loss (70.4 -> 64.9 in Tab.9a), so the speedup is mostly a training-time benefit</Caveat>.
+- <Caveat>Navigation gains over the base VLM are modest in absolute terms (AITW +2.8% overall, Mind2Web a few points), and grounding desktop/web icon accuracy remains weak</Caveat>.
+- <Caveat>Desktop grounding leans on only 100 images plus GPT-4o-synthesized queries, raising questions about coverage and synthetic-query bias</Caveat>.
+
+## Critiques and Questions
+1. The headline "75.1%" is a single-run number with no variance reported; given that the grounding-only ShowUI-G already reaches 74.9%, the marginal value of adding navigation data to grounding is small and could be within noise.
+2. Comparisons mix very different training budgets and even different paradigms (OmniParser uses GPT-4V), so "state-of-the-art with the least data" conflates architecture, data curation, and base-model strength — the UI-graph contribution is best isolated by the ablations, not the leaderboard.
+3. The RGB-equality threshold `δ` is central but its sensitivity is not studied; on anti-aliased or photo-heavy UIs the connected-graph redundancy assumption may weaken.
+
+<SelfCheck q="Why does ShowUI use token *selection* within UI-graph components instead of token *merging*?" a="Merging pools all patches of a component into one token, destroying the per-patch positional information that pixel-precise UI element grounding needs; selection keeps a random subset of tokens with their original position embeddings, so self-attention still sees correct spatial relationships. Empirically merging drops Screenspot to 42.3 while UI-graph selection holds 70.4 (Tab.9a)." />
+
+## Glossary
+- <Term def="A model that maps visual observations plus a language instruction to executable actions (here, GUI clicks/types), extending VLMs from chat to acting.">vision-language-action (VLA) model</Term>
+- <Term def="Locating the on-screen pixel/region that an instruction refers to, output as relative [x,y] coordinates.">UI grounding</Term>
+- <Term def="A zero-shot benchmark for GUI element grounding spanning mobile, desktop, and web, scored separately on text vs icon targets.">Screenspot</Term>
+- <Term def="A disjoint-set data structure used here to group screenshot patches with near-identical RGB into connected components.">Union-Find</Term>
+- <Term def="Routing scheme that lets some tokens skip computation in certain layers; ShowUI borrows its idea of sparsely sampling tokens.">Mixture-of-Depths</Term>
+- <Term def="Step success rate — fraction of individual navigation steps predicted correctly (element + operation), used in Mind2Web.">Step SR</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

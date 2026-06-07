@@ -1,0 +1,167 @@
+---
+canonical_key: arxiv-2510.19949
+version_key: v1
+title: 'Surfer 2: The Next Generation of Cross-Platform Computer Use Agents'
+authors:
+- Mathieu Andreux
+- Mart Bakler
+- Yanael Barbier
+- Hamza Ben Chekroun
+- Emilien Bir'e
+- Antoine Bonnet
+- Riaz Bordie
+- Nathan Bout
+- Matthias Brunel
+- Aleix Cambray
+- Pierre-Louis Cedoz
+- Antoine Chassang
+- Gautier Cloix
+- Ethan Connelly
+- Alexandra D. Constantinou
+- Ramzi De Coster
+- Hubert de la Jonquiere
+- A. Delfosse
+- Maxime Delpit
+- Alexis Deprez
+- Augustin Derupti
+- Mathieu Diaz
+- S. D'souza
+- J. Dujardin
+- Abai Edmund
+- Michael Eickenberg
+- Armand Fatalot
+- Wissem Felissi
+- Isaac Herring
+- Xavier Koegler
+- Erwan Le Jumeau de Kergaradec
+- Aur'elien Lac
+- Maxime Langevin
+- Corentin Lauverjat
+- Ant'onio Loison
+- Avshalom Manevich
+- Axel Moyal
+- Axel Nguyen Kerbel
+- Marinela Parovic
+- Julien Revelle
+- Guillaume Richard
+- Mats L. Richter
+- Ronan Riochet
+- María Santos
+- Romain Savidan
+- L. Sifre
+- Maxime Theillard
+- M. Thibault
+- Ivan Valentini
+- Tony Wu
+- Laura Yie
+- Kai Yuan
+- Jevgenij Zubovskij
+venue: arXiv.org
+year: 2025
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2510.19949
+summary_date: '2026-06-07'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+{/*
+  Canonical Summary structure (concise, core-first). Body only — frontmatter is generated
+  from metadata.yaml by `summarize_paper.py --format mdx --prepare`. Components are
+  provided globally by the site (no imports). See config/summary_components.md.
+*/}
+
+<TLDR>Surfer 2 shows that a purely vision-based, hierarchical orchestration of off-the-shelf frontier models — planner, executor, and validator — reaches state-of-the-art across web, desktop, and mobile computer-use benchmarks with no task-specific fine-tuning.</TLDR>
+
+<WhyItMatters>Central data point for the computer-use-agent track: it argues that *system design and orchestration* — not bigger or fine-tuned models — can deliver human-level cross-platform GUI control from screenshots alone.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "97.1%", label: "WebVoyager pass@1", sub: "vs 93.9% prior SOTA" },
+  { value: "60.1%", label: "OSWorld E2E pass@1", sub: "vs 72.4% human; >human at pass@10 (77.0%)" },
+  { value: "4", label: "benchmarks, SOTA on all", sub: "web / desktop / mobile, no fine-tuning" },
+]} />
+
+## Motivation
+Building agents that generalize across web, desktop, and mobile is unsolved because <Problem>prior systems lean on environment-specific interfaces — DOM parsers for web, accessibility trees for mobile, specialized APIs for desktop</Problem>, which limits cross-platform deployment. The dominant alternative path — <Problem>training ever-larger models with minimal scaffolding to push agentic capability</Problem> — couples progress to expensive model training and domain-specific data rather than reusable system design.
+
+## Contribution (what's new)
+The genuine delta is the claim, backed by results, that <Novelty>careful orchestration of fixed, general-purpose models substitutes for model-level learning</Novelty>: coordination and self-correction at the *system* level, with no gradient updates, reach SOTA. The design must take this form because the failures it targets are systemic, not perceptual — <Novelty>a hierarchical planner/executor split, persistent shared environment state, and a VLM-as-a-Judge validation loop that catches premature termination</Novelty> address error propagation and long-horizon drift that a single monolithic model call cannot. Critically, the agent operates <Novelty>purely from screenshots with raw pixel-coordinate actions</Novelty> (no DOM/a11y tree), making one architecture portable across all three environments.
+
+## Research questions
+Can a single, vision-only, hierarchical agent architecture — assembled from existing frontier models without fine-tuning — match or beat specialized, trained systems across web, desktop, and mobile computer-use benchmarks? And which system-level mechanisms (planning, persistent context, validation, test-time scaling) actually drive that performance?
+
+## Methodology
+Surfer 2 is a three-component agent over an unaltered-screenshot interface. An optional **Orchestrator** plans and replans; a **Navigator** (an upgraded Surfer-H, ReAct loop) executes; a **Localizer** (Holo1.5) grounds textual element references to pixel coordinates; a **Validator** (VLM-as-a-Judge) gates answers. Architecture is flexibly toggled per task: the Orchestrator is enabled for long-horizon web tasks and bypassed for OSWorld/AndroidWorld.
+
+<Pass title="Method details">
+**Design philosophy (§3.1) — five principles:** separation of concerns (Orchestrator plans / Navigator executes); automatic hierarchical context (each component sees relevant global state — goal, plan, completed work, current subtask); shared environment state (browser sessions / open apps persist across subtasks); explicit multi-stage validation; chain-of-thought in all modules except the Localizer.
+
+<Stepper steps={[
+  { title: "Orchestrator (optional, §3.2)", body: "Plans, coordinates, communicates. Decomposes the goal into verifiable subtasks, delegates to the Navigator, evaluates outcomes + Validator feedback, and replans on failure. Maintains persistent memory (objective, plan, status, full interaction history, latest screenshots). Four actions: create plan, replan, delegate, answer." },
+  { title: "Navigator (§3.3)", body: "Upgraded Surfer-H, now web+desktop+mobile. ReAct loop emitting structured output: a note (info from latest observation), a thought (reasoning), and an action. Perceives only via screenshots; issues constrained keyboard/mouse/touch controls." },
+  { title: "Localizer (§3.4)", body: "Holo1.5 model that converts textual element descriptions (e.g. 'blue submit button') into clickable (x,y) coordinates — visual grounding, the critical reliability bottleneck." },
+  { title: "Validator (§3.5)", body: "VLM-as-a-Judge inspecting the full trace (task spec, reasoning, actions, proposed answer, last k screenshots). Operates at two levels: inside the Navigator (gate each answer; on fail, resume with feedback) and at the Orchestrator (accept / refine / replan)." },
+]} />
+
+**Model configuration (Tab.1, p.9):** mixed frontier models per benchmark. WebVoyager: Orchestrator o3, Navigator policy Claude Sonnet 4.5, Judge GPT-4.1, Localizer Holo1.5 7B. WebArena: o3 / Sonnet 4.5 / o3 / Holo1.5 72B. OSWorld: no Orchestrator, Sonnet 4.5 / o3 / Holo1.5 72B. AndroidWorld: no Orchestrator, o3 / o3 / Holo1.5 72B.
+
+**Evaluation (§4):** four benchmarks, no task-specific fine-tuning. WebVoyager (590-task Magnitude subset, 15 live websites, 3x GPT-4o majority-vote judge); WebArena (812 tasks, 6 self-hosted sites, 5x GPT-4.1 majority-vote judge plus URL/HTML checks, with 71 manually corrected tasks); OSWorld (369 Ubuntu tasks, strict **Foundation E2E GUI** category — human-performable GUI ops only, no code/API shortcuts; programmatic checks); AndroidWorld (116 tasks, screenshot-only — deliberately *not* using the available accessibility tree; ADB state checks scored {0, 0.5, 1}). Step budgets: web Orchestrator ≤20 / Navigator ≤50; OSWorld 15–100 (memory cleared at cap without env reset); AndroidWorld 150.
+</Pass>
+
+## Main result
+Surfer 2 sets a new SOTA on all four benchmarks at pass@1 without fine-tuning, and with multiple attempts exceeds the human baseline on every benchmark where one is reported (abstract, §5, Fig.1).
+
+<SortableTable columns={["Benchmark", "Surfer 2 pass@1 (%)", "Prior best (%)", "Human (%)", "Surfer 2 best multi-attempt (%)"]} rows={[
+  ["WebVoyager", 97.1, 93.9, "n/r", "100.0 (pass@10)"],
+  ["WebArena", 69.6, 65.4, 78.2, "84.9 (pass@10)"],
+  ["OSWorld E2E", 60.1, 53.1, 72.4, "77.0 (pass@10)"],
+  ["AndroidWorld", 87.1, 86.2, 80.0, "93.1 (pass@3)"]
+]} />
+
+<Finding src="§5.1, Fig.1">WebVoyager 97.1% pass@1 vs 93.9% prior best, saturating to 100% at pass@10</Finding>; <Finding src="§5.3">OSWorld 60.1% E2E pass@1 reaches 72.0% at pass@5 (≈ human 72.4%) and surpasses human at 77.0% pass@10</Finding>. (Note: for context, the looser OSWorld "All" category — which permits code/API shortcuts — is led by Agent S3 at 69.9%; Surfer 2 reports only the stricter E2E regime.)
+
+## Key findings
+- <Finding src="§5.1, §5.3, Fig.7">The Localizer is the dominant performance lever</Finding>: swapping Holo1.5 for UI-TARS 7B drops WebVoyager 97.1→94.7%, OSWorld 60.1→56.9% (7B Holo1.5: 58.4%), and AndroidWorld 87.1→81.9% (−5.2%) — small-target/icon grounding errors cascade into wrong actions.
+- <Finding src="§5.2, §5.4">Test-time scaling mainly expands task coverage, not single-run reliability</Finding>: WebArena 69.6→84.9% (pass@10) and AndroidWorld 87.1→93.1% (pass@3); the diversity of successful paths suggests residual failures are local exploration traps / stochastic perception, not systematic reasoning errors.
+- <Finding src="§6">Persistent context across subtasks cuts navigation steps by 30–40%</Finding>, and <Finding src="§6">multi-stage validation intercepts 15–20% of errors before they propagate</Finding> — direct evidence that the system-level mechanisms, not just the base models, carry the gains.
+- <Finding src="§6">Prompt engineering is surprisingly impactful — minor wording changes swing accuracy 5–10%</Finding>, and judge model variance stays substantial even at temperature 0, necessitating multi-sampling.
+- <Finding src="§5.4, Fig.6">Performance degrades sharply with task difficulty on mobile</Finding>: AndroidWorld Easy 98.4% / Medium 86.1% / Hard 52.6%, with multi-app (37.5%), memorization (50%), and transcription (50%) the hardest categories — long-horizon temporal memory and cross-app reasoning remain weak.
+- <Finding src="§5.3, App.B.1">Surfer 2 solved several tasks humans labeled infeasible</Finding> (e.g. switching Chrome's UI language to Korean by opening a terminal and running system commands via visual interaction), showing adaptive reasoning beyond predefined task boundaries.
+
+## Implications
+The result reframes computer-use progress as an *orchestration* problem: a fixed-model, modular system generalizes across web/desktop/mobile, extending the <Related>plan-and-act and ReAct lineage</Related> and building directly on <Related>Surfer-H / Holo1.5 and Agent S / Agent S3 hierarchical-agent work</Related>. It positions specialized localization models (Holo1.5, UI-TARS) as first-class system components rather than afterthoughts. <FollowUp>The authors flag cost ($1–5 per complex Orchestrator task with frontier reasoning models), variance, and speed as the binding constraints, and announce a planned family of smaller specialized models to reach Pareto-optimal cost-efficiency</FollowUp> — the natural next read alongside <FollowUp>how the high pass@k coverage could seed RL fine-tuning of these behavioral patterns</FollowUp>.
+
+## Limitations
+- <Caveat>Stochastic outputs force expensive multi-sampling for reliability; Orchestrator cost reaches $1–5 per complex task</Caveat> (§6).
+- <Caveat>Even SOTA localizers fail on 5–8% of UI elements due to dynamic content / ambiguous descriptions</Caveat>, and <Caveat>tasks beyond ~50 steps hit context-window limits and compounding errors</Caveat> (§6).
+- <Caveat>The LLM-based evaluation itself carries 5–10% error rates</Caveat>, complicating benchmarking — and the team's own WebArena harness changes (71 corrected tasks, custom judge ensemble) make cross-paper comparison harder.
+- <Caveat>Long-horizon temporal perception and cross-app workflows remain weak</Caveat> (AndroidWorld Hard 52.6%, multi-app 37.5%; §5.4).
+
+## Critiques and Questions
+1. The pass@1 headline mixes different model stacks per benchmark (Tab.1), so it measures the *best-tuned configuration* per environment rather than one fixed system — the "unified architecture" claim is about the framework, not a single deployed agent.
+2. WebArena's 69.6% relies on a custom judge ensemble plus 71 hand-corrected tasks; the un-corrected, LLM-judge-only ablation is 67.4%, so part of the headline gap over prior SOTA (65.4%) is methodology, not capability. How comparable is this to numbers reported by others?
+3. "Exceeds human performance" holds only at pass@3–pass@10 multi-attempt budgets; at pass@1 the agent is still below human on WebArena (69.6 vs 78.2) and OSWorld (60.1 vs 72.4).
+4. Cost ($1–5/task) and the heavy multi-sampling make the impressive pass@k numbers economically distant from the pass@1 numbers a real deployment would see.
+
+<SelfCheck q="The paper claims SOTA without fine-tuning — so what is doing the work, and what is the single biggest component lever they identify?" a="System-level orchestration of fixed frontier models (hierarchical planner/executor split, persistent shared context worth a 30–40% step reduction, and a validation loop catching 15–20% of errors) substitutes for model training. The single biggest lever is the Localizer: replacing Holo1.5 with UI-TARS drops accuracy by up to 5.2% (AndroidWorld), because pixel-grounding errors on small/icon targets cascade into wrong actions." />
+
+## Glossary
+- <Term def="Agent that controls a computer the way a human would — via the graphical user interface (clicks, typing, gestures) rather than APIs.">Computer-use agent</Term>
+- <Term def="Reason+Act loop: the agent alternates between generating reasoning ('thought') and taking an action, conditioned on observations.">ReAct</Term>
+- <Term def="Design pattern that separates high-level planning from low-level action execution into distinct modules.">Plan-and-act</Term>
+- <Term def="Using a vision-language model to judge whether an agent's trajectory/answer satisfies the task, from screenshots and history.">VLM-as-a-Judge</Term>
+- <Term def="Mapping a natural-language element description to precise pixel (x,y) screen coordinates for a click/tap.">Visual grounding / localization</Term>
+- <Term def="OSWorld category restricting the agent to human-performable GUI operations (clicks, drags, keys) with no code execution or API calls.">Foundation E2E GUI</Term>
+- <Term def="Run N independent attempts and count the task solved if any one succeeds — measures coverage / best-of-N, not single-run reliability.">pass@N</Term>
+- <Term def="The OS-level tree of UI elements and their properties; many agents read it instead of pixels — Surfer 2 deliberately avoids it.">Accessibility tree (a11y)</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

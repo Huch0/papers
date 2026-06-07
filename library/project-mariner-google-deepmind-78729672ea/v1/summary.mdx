@@ -1,0 +1,60 @@
+---
+canonical_key: title-6078729672ea
+version_key: v1
+title: Project Mariner (Google DeepMind)
+authors: []
+venue: tech report
+year: 2024
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: null
+summary_date: '2026-06-07'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<Caveat>**Metadata-only record — no full text fetched.** This summary is grounded in the catalogued metadata and general context about the project, not in the original report. No PDF, source URL, or extraction is on file. Treat every characterization below as provisional and verify against the source before citing.</Caveat>
+
+<TLDR>Project Mariner is Google DeepMind's prototype <Term def="An AI agent that perceives and acts inside a live web browser — clicking, typing, and navigating pages to complete user tasks autonomously.">browser-use agent</Term> for autonomous, multi-task web interaction, later folded into Gemini.</TLDR>
+
+<WhyItMatters>A first-party signal of how a frontier lab approaches <Term def="Agents that operate a computer the way a person would — via the screen/GUI, browser, or OS — rather than through bespoke APIs.">computer-use agents</Term>; relevant lineage for the browser-agent / web-automation thread.</WhyItMatters>
+
+## What it is
+Project Mariner is a Google DeepMind prototype <Problem>aimed at the long-standing difficulty of getting an AI system to reliably act across the open web — navigating, clicking, and completing tasks across multiple sites the way a person would</Problem>. Per the catalogued description, it demonstrates multi-task autonomous web use inside a browser and was subsequently integrated into Gemini.
+
+{/* NOTES: scope of "multi-task" (parallel tasks vs. multi-step single task) is not established from metadata — verify against source. */}
+
+## Why it matters
+As a first-party artifact from a frontier lab, it marks part of the lineage of <Related>browser-based computer-use agents and the broader web-automation agent line</Related>. Its later absorption into Gemini suggests the prototype's ideas fed a shipping product, which makes it a useful reference point for how such capabilities mature from demo to deployment. <FollowUp>Worth chasing the official DeepMind announcement/report and any Gemini agent-mode documentation to confirm capabilities and evaluation.</FollowUp>
+
+## Key findings
+{/* NOTES: metadata-only — these are field-role observations about the record, not extracted results. No quantitative claims are verifiable here. */}
+
+- <Finding src="metadata">Interface type is browser-based</Finding>: the agent operates through a live web browser rather than CLI/API/OS-level control. Verify the exact action space (DOM vs. pixel-level) against source.
+- <Finding src="metadata">Positioned as a multi-task autonomous web agent</Finding>: catalogued as demonstrating autonomous web use across tasks. Exact task suite and autonomy level — Not reported; verify against source.
+- <Finding src="metadata">Product lineage to Gemini</Finding>: described as later folded into Gemini, indicating prototype-to-product transfer. Confirm against the official source.
+- <Finding src="metadata">Classified foundational / computer_use_agents</Finding>: tagged as a foundational entry in the computer-use-agents topic group within this library.
+- <Finding src="metadata">Quantitative results</Finding>: Not reported in the record — benchmark scores, success rates, and task counts must be verified against source.
+
+## Implications
+If accurate, Mariner is an early datapoint in the <Related>frontier-lab computer-use agent lineage</Related> alongside contemporaneous browser/computer-use efforts, and a precursor to agentic features in Gemini. <FollowUp>Compare against other browser-agent prototypes and any published web-task benchmarks to situate its capabilities.</FollowUp>
+
+## Critiques and Questions
+1. What is the concrete action space (DOM manipulation, accessibility tree, or screen pixels) and how is task success evaluated? Unclear from metadata.
+2. Is "multi-task" referring to concurrent tasks or multi-step workflows? Unclear.
+3. What, specifically, transferred from Mariner into Gemini, and when? Not reported.
+
+<SelfCheck q="What kind of interface does Project Mariner operate through, and what is the key caveat about this summary?" a="It operates through a live web browser as a browser-use agent. The key caveat is that this is a metadata-only record — no full text was fetched, so all characterizations are provisional and must be verified against the original source." />
+
+## Glossary
+Defined inline above: <Term def="An AI agent that perceives and acts inside a live web browser to complete user tasks autonomously.">browser-use agent</Term>, <Term def="Agents that operate a computer via screen/GUI, browser, or OS rather than bespoke APIs.">computer-use agents</Term>.
+
+{/* NOTES_START */}
+### Personal notes
+Metadata-only stub. To upgrade: locate the official Google DeepMind Project Mariner report/announcement, ingest it via /add-paper, then re-run /summarize-paper against the fetched text.
+{/* NOTES_END */}

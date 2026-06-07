@@ -45,17 +45,17 @@ versions:
   source: arxiv
   source_url: https://arxiv.org/abs/2408.15978
   pdf_path: library/webpilot-a-versatile-and-autonomous-multi-agent-240815978/v1/paper.pdf
-  summary_path: null
+  summary_path: library/webpilot-a-versatile-and-autonomous-multi-agent-240815978/v1/summary.mdx
   metadata_path: library/webpilot-a-versatile-and-autonomous-multi-agent-240815978/v1/metadata.yaml
   fetched_at: '2026-06-06T07:57:33Z'
   source_updated_at: null
   arxiv_version: null
   pdf_sha256: 156abc4199413d6a6c1f204c8cac6b00d717d98c4746dc5ea63b4bd267669e2a
   pdf_bytes: 6232542
-  summary_status: none
-  extraction_status: none
+  summary_status: full
+  extraction_status: full
   created_at: '2026-06-06T07:57:33Z'
-  updated_at: '2026-06-06T07:57:33Z'
+  updated_at: '2026-06-07T06:17:08Z'
 relations:
   duplicate_candidates: []
   related_papers: []

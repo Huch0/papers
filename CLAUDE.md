@@ -63,8 +63,39 @@ user's reading workflow. It is driven by slash-command skills (`/daily-papers`,
 
 ## When you finish a change
 Run, in order: `validate_registry.py` → `update_indexes.py`. If you touched the schema
-or existing records, also run `migrate_registry.py`. If validation reports ERRORS, do
-not claim success — fix them or surface them.
+or existing records, also run `migrate_registry.py`. If you touched `knowledge/`, run
+`knowledge.py validate`. If you wrote/edited any `.mdx` (summary, concept, qa), run
+`node site/scripts/check-mdx.mjs <abs path>` until it prints `OK`; for site changes run
+`(cd site && npm run build)`. If validation reports ERRORS, do not claim success — fix
+them or surface them.
+
+## Contributing & branch protection (IMPORTANT for agents)
+`main` is branch-protected: **direct pushes are rejected**. Every change — including
+yours — goes through a pull request (no reviewer required; self-merge is allowed):
+```
+git checkout -b <type>/<short-desc>
+# …changes + the validation gates above…
+git push -u origin <type>/<short-desc>
+gh pr create --fill && gh pr merge --merge --delete-branch
+```
+**Never run `git push origin main`.** Full workflow + how to add summaries/Q&A/knowledge/
+skills: `CONTRIBUTING.md`.
+
+## Website, knowledge-on-web, and attribution
+- `site/` is the read-only Astro view (ADR-0001/0004); it globs `library/**/summary.{md,mdx}`,
+  `library/**/qa.mdx`, and `knowledge/concepts/*.{md,mdx}`. **Never edit `site/dist/`.**
+- **Concepts are `.mdx`** (pages at `/knowledge/<slug>/`, catalog at `/knowledge/`).
+  **Q&A is `.mdx`** at `library/<slug>/vN/qa.mdx` (rendered on the paper page). Author via
+  `knowledge.py {ensure-concept,qa-add,link}` — they emit `.mdx` + reciprocal links.
+- **Attribution (ADR-0006):** stamp `curated_by`/`contributors` (summaries, concepts) and
+  `asked_by` (Q&A) with a GitHub login resolved from `config/contributors.yaml` via
+  `paperlib.resolve_curator()` — never the raw email. `registry/contributors.json` is the
+  derived login→name map for site avatars.
+- **Every authored `.mdx` must pass `node site/scripts/check-mdx.mjs`** before finalize
+  (the summarize-paper / paper-tutor skills enforce this). MDX gotchas: backtick stray
+  `{`/`<`; never split a code span across braces.
+- Theming: default "Readable"; presets + per-browser overrides live in `themes.css` + the
+  header panel; Tailwind/shadcn tokens are bridged to the global theme vars (one source).
 
 ## Canonical key / slug (for reference)
 Key priority: `arxiv-<base_id>` → `doi-<slug>` → `openreview-<id>` → `s2-<id>` →

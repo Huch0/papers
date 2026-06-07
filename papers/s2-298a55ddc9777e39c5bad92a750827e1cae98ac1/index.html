@@ -1,114 +1,51 @@
-<!DOCTYPE html><html lang="en"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>World of Bits: An Open-Domain Platform for Web-Based Agents</title><link rel="stylesheet" href="/papers/_astro/index.sbTQzSnb.css"></head> <body> <header class="site"> <div class="wrap"> <h1><a href="/papers/">📚 Paper Library</a></h1> <nav><a href="/papers/">Catalog</a> <style>astro-island,astro-slot,astro-static-slot{display:contents}</style><script>(()=>{var e=async t=>{await(await t())()};(self.Astro||(self.Astro={})).load=e;window.dispatchEvent(new Event("astro:load"));})();</script><script>(()=>{var A=Object.defineProperty;var g=(i,o,a)=>o in i?A(i,o,{enumerable:!0,configurable:!0,writable:!0,value:a}):i[o]=a;var d=(i,o,a)=>g(i,typeof o!="symbol"?o+"":o,a);{let i={0:t=>m(t),1:t=>a(t),2:t=>new RegExp(t),3:t=>new Date(t),4:t=>new Map(a(t)),5:t=>new Set(a(t)),6:t=>BigInt(t),7:t=>new URL(t),8:t=>new Uint8Array(t),9:t=>new Uint16Array(t),10:t=>new Uint32Array(t),11:t=>1/0*t},o=t=>{let[l,e]=t;return l in i?i[l](e):void 0},a=t=>t.map(o),m=t=>typeof t!="object"||t===null?t:Object.fromEntries(Object.entries(t).map(([l,e])=>[l,o(e)]));class y extends HTMLElement{constructor(){super(...arguments);d(this,"Component");d(this,"hydrator");d(this,"hydrate",async()=>{var b;if(!this.hydrator||!this.isConnected)return;let e=(b=this.parentElement)==null?void 0:b.closest("astro-island[ssr]");if(e){e.addEventListener("astro:hydrate",this.hydrate,{once:!0});return}let c=this.querySelectorAll("astro-slot"),n={},h=this.querySelectorAll("template[data-astro-template]");for(let r of h){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("data-astro-template")||"default"]=r.innerHTML,r.remove())}for(let r of c){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("name")||"default"]=r.innerHTML)}let p;try{p=this.hasAttribute("props")?m(JSON.parse(this.getAttribute("props"))):{}}catch(r){let s=this.getAttribute("component-url")||"<unknown>",v=this.getAttribute("component-export");throw v&&(s+=` (export ${v})`),console.error(`[hydrate] Error parsing props for component ${s}`,this.getAttribute("props"),r),r}let u;await this.hydrator(this)(this.Component,p,n,{client:this.getAttribute("client")}),this.removeAttribute("ssr"),this.dispatchEvent(new CustomEvent("astro:hydrate"))});d(this,"unmount",()=>{this.isConnected||this.dispatchEvent(new CustomEvent("astro:unmount"))})}disconnectedCallback(){document.removeEventListener("astro:after-swap",this.unmount),document.addEventListener("astro:after-swap",this.unmount,{once:!0})}connectedCallback(){if(!this.hasAttribute("await-children")||document.readyState==="interactive"||document.readyState==="complete")this.childrenConnectedCallback();else{let e=()=>{document.removeEventListener("DOMContentLoaded",e),c.disconnect(),this.childrenConnectedCallback()},c=new MutationObserver(()=>{var n;((n=this.lastChild)==null?void 0:n.nodeType)===Node.COMMENT_NODE&&this.lastChild.nodeValue==="astro:end"&&(this.lastChild.remove(),e())});c.observe(this,{childList:!0}),document.addEventListener("DOMContentLoaded",e)}}async childrenConnectedCallback(){let e=this.getAttribute("before-hydration-url");e&&await import(e),this.start()}async start(){let e=JSON.parse(this.getAttribute("opts")),c=this.getAttribute("client");if(Astro[c]===void 0){window.addEventListener(`astro:${c}`,()=>this.start(),{once:!0});return}try{await Astro[c](async()=>{let n=this.getAttribute("renderer-url"),[h,{default:p}]=await Promise.all([import(this.getAttribute("component-url")),n?import(n):()=>()=>{}]),u=this.getAttribute("component-export")||"default";if(!u.includes("."))this.Component=h[u];else{this.Component=h;for(let f of u.split("."))this.Component=this.Component[f]}return this.hydrator=p,this.hydrate},e,this)}catch(n){console.error(`[astro-island] Error hydrating ${this.getAttribute("component-url")}`,n)}}attributeChangedCallback(){this.hydrate()}}d(y,"observedAttributes",["props"]),customElements.get("astro-island")||customElements.define("astro-island",y)}})();</script><astro-island uid="ZydoQf" prefix="r1" component-url="/papers/_astro/ThemeToggle.B8P56gw_.js" component-export="default" renderer-url="/papers/_astro/client.CoywhCtL.js" props="{}" ssr client="load" opts="{&quot;name&quot;:&quot;ThemeToggle&quot;,&quot;value&quot;:true}" await-children><button aria-label="Toggle dark mode" class="text-sm border rounded px-2 py-1">🌙</button><!--astro:end--></astro-island></nav> </div> </header> <main class="wrap"> <h1 class="title">World of Bits: An Open-Domain Platform for Web-Based Agents</h1> <div class="meta-card" data-pagefind-ignore> <dl> <dt>Authors</dt><dd>Tianlin Shi, A. Karpathy, Linxi (Jim) Fan, J. Hernández, Percy Liang</dd> <dt>Venue · Year</dt><dd>International Conference on Machine Learning · 2017</dd> <dt>Tags</dt><dd>foundational</dd> <dt>Triage</dt><dd><span class="badge READ_SOON">READ_SOON · high</span></dd> <dt>Source</dt><dd><a href="https://www.semanticscholar.org/paper/298a55ddc9777e39c5bad92a750827e1cae98ac1" target="_blank" rel="noopener">paper ↗</a></dd> <dt>Key</dt><dd><code>s2-298a55ddc9777e39c5bad92a750827e1cae98ac1</code></dd> </dl> </div> <article data-pagefind-body> <h1 id="world-of-bits-an-open-domain-platform-for-web-based-agents">World of Bits: An Open-Domain Platform for Web-Based Agents</h1>
-<blockquote>
-<p><strong>Grounding caveat:</strong> The harness could not fetch a PDF or abstract for this record
-(no open-access PDF via Semantic Scholar/OpenAlex; <code>abstract: Not reported</code>). This
-note is therefore grounded in well-established knowledge of the paper and its role in
-the field, <strong>not</strong> in extracted text from this PDF. Treat specific numbers as
-“verify against the paper”. To upgrade to a text-grounded summary, supply an open PDF
-(e.g. via <code>/add-paper &#x3C;pdf_url></code> to this canonical key) and re-run <code>/summarize-paper</code>.</p>
-</blockquote>
-<h2 id="metadata">Metadata</h2>
+<!DOCTYPE html><html lang="en"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>World of Bits: An Open-Domain Platform for Web-Based Agents</title><link rel="stylesheet" href="/papers/_astro/index.sbTQzSnb.css"></head> <body> <header class="site"> <div class="wrap"> <h1><a href="/papers/">📚 Paper Library</a></h1> <nav><a href="/papers/">Catalog</a> <style>astro-island,astro-slot,astro-static-slot{display:contents}</style><script>(()=>{var e=async t=>{await(await t())()};(self.Astro||(self.Astro={})).load=e;window.dispatchEvent(new Event("astro:load"));})();</script><script>(()=>{var A=Object.defineProperty;var g=(i,o,a)=>o in i?A(i,o,{enumerable:!0,configurable:!0,writable:!0,value:a}):i[o]=a;var d=(i,o,a)=>g(i,typeof o!="symbol"?o+"":o,a);{let i={0:t=>m(t),1:t=>a(t),2:t=>new RegExp(t),3:t=>new Date(t),4:t=>new Map(a(t)),5:t=>new Set(a(t)),6:t=>BigInt(t),7:t=>new URL(t),8:t=>new Uint8Array(t),9:t=>new Uint16Array(t),10:t=>new Uint32Array(t),11:t=>1/0*t},o=t=>{let[l,e]=t;return l in i?i[l](e):void 0},a=t=>t.map(o),m=t=>typeof t!="object"||t===null?t:Object.fromEntries(Object.entries(t).map(([l,e])=>[l,o(e)]));class y extends HTMLElement{constructor(){super(...arguments);d(this,"Component");d(this,"hydrator");d(this,"hydrate",async()=>{var b;if(!this.hydrator||!this.isConnected)return;let e=(b=this.parentElement)==null?void 0:b.closest("astro-island[ssr]");if(e){e.addEventListener("astro:hydrate",this.hydrate,{once:!0});return}let c=this.querySelectorAll("astro-slot"),n={},h=this.querySelectorAll("template[data-astro-template]");for(let r of h){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("data-astro-template")||"default"]=r.innerHTML,r.remove())}for(let r of c){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("name")||"default"]=r.innerHTML)}let p;try{p=this.hasAttribute("props")?m(JSON.parse(this.getAttribute("props"))):{}}catch(r){let s=this.getAttribute("component-url")||"<unknown>",v=this.getAttribute("component-export");throw v&&(s+=` (export ${v})`),console.error(`[hydrate] Error parsing props for component ${s}`,this.getAttribute("props"),r),r}let u;await this.hydrator(this)(this.Component,p,n,{client:this.getAttribute("client")}),this.removeAttribute("ssr"),this.dispatchEvent(new CustomEvent("astro:hydrate"))});d(this,"unmount",()=>{this.isConnected||this.dispatchEvent(new CustomEvent("astro:unmount"))})}disconnectedCallback(){document.removeEventListener("astro:after-swap",this.unmount),document.addEventListener("astro:after-swap",this.unmount,{once:!0})}connectedCallback(){if(!this.hasAttribute("await-children")||document.readyState==="interactive"||document.readyState==="complete")this.childrenConnectedCallback();else{let e=()=>{document.removeEventListener("DOMContentLoaded",e),c.disconnect(),this.childrenConnectedCallback()},c=new MutationObserver(()=>{var n;((n=this.lastChild)==null?void 0:n.nodeType)===Node.COMMENT_NODE&&this.lastChild.nodeValue==="astro:end"&&(this.lastChild.remove(),e())});c.observe(this,{childList:!0}),document.addEventListener("DOMContentLoaded",e)}}async childrenConnectedCallback(){let e=this.getAttribute("before-hydration-url");e&&await import(e),this.start()}async start(){let e=JSON.parse(this.getAttribute("opts")),c=this.getAttribute("client");if(Astro[c]===void 0){window.addEventListener(`astro:${c}`,()=>this.start(),{once:!0});return}try{await Astro[c](async()=>{let n=this.getAttribute("renderer-url"),[h,{default:p}]=await Promise.all([import(this.getAttribute("component-url")),n?import(n):()=>()=>{}]),u=this.getAttribute("component-export")||"default";if(!u.includes("."))this.Component=h[u];else{this.Component=h;for(let f of u.split("."))this.Component=this.Component[f]}return this.hydrator=p,this.hydrate},e,this)}catch(n){console.error(`[astro-island] Error hydrating ${this.getAttribute("component-url")}`,n)}}attributeChangedCallback(){this.hydrate()}}d(y,"observedAttributes",["props"]),customElements.get("astro-island")||customElements.define("astro-island",y)}})();</script><astro-island uid="ZydoQf" prefix="r1" component-url="/papers/_astro/ThemeToggle.B8P56gw_.js" component-export="default" renderer-url="/papers/_astro/client.CoywhCtL.js" props="{}" ssr client="load" opts="{&quot;name&quot;:&quot;ThemeToggle&quot;,&quot;value&quot;:true}" await-children><button aria-label="Toggle dark mode" class="text-sm border rounded px-2 py-1">🌙</button><!--astro:end--></astro-island></nav> </div> </header> <main class="wrap"> <h1 class="title">World of Bits: An Open-Domain Platform for Web-Based Agents</h1> <div class="meta-card" data-pagefind-ignore> <dl> <dt>Authors</dt><dd>Tianlin Shi, A. Karpathy, Linxi (Jim) Fan, J. Hernández, Percy Liang</dd> <dt>Venue · Year</dt><dd>International Conference on Machine Learning · 2017</dd> <dt>Tags</dt><dd>foundational</dd> <dt>Triage</dt><dd><span class="badge READ_SOON">READ_SOON · high</span></dd> <dt>Source</dt><dd><a href="https://www.semanticscholar.org/paper/298a55ddc9777e39c5bad92a750827e1cae98ac1" target="_blank" rel="noopener">paper ↗</a></dd> <dt>Key</dt><dd><code>s2-298a55ddc9777e39c5bad92a750827e1cae98ac1</code></dd> </dl> </div> <article data-pagefind-body> <span class="hl hl-caveat"><strong>Metadata-only record — context-grounded, not text-grounded.</strong> The harness could not fetch a PDF or abstract for this paper (no open-access PDF via Semantic Scholar/OpenAlex; <code>abstract: Not reported</code>). Everything below is grounded in well-established knowledge of the paper and its role in the field, <strong>not</strong> in extracted text from the PDF. Treat all quantitative claims as “Not reported / verify against the paper”. To upgrade to a text-grounded summary, supply an open PDF (e.g. <code>/add-paper &lt;pdf_url&gt;</code> to this canonical key) and re-run <code>/summarize-paper</code>.</span>
+<p class="tldr">World of Bits introduced <span class="term" data-def="small, reproducible web-interaction tasks where an agent observes a rendered page and acts via keyboard/mouse" tabindex="0" aria-label="small, reproducible web-interaction tasks where an agent observes a rendered page and acts via keyboard/mouse">MiniWoB</span> — a platform framing web interaction as an RL environment — seeding the entire lineage of RL/LLM web- and computer-use agents.</p>
+<p class="why">This is the <strong>emergence point</strong> of the computer-use-agent track in my interest profile: nearly every later milestone (MiniWoB++, WebShop, Mind2Web, WebArena, OSWorld, UI-TARS) inherits its core framing of an agent perceiving a UI and acting through human-style input.</p>
+<div class="keystats"> <div class="keystat"> <div class="kv">Not reported</div> <div class="kl">MiniWoB task count</div> <div class="ks">verify against paper</div> </div><div class="keystat"> <div class="kv">≪ human</div> <div class="kl">RL agent vs human success</div> <div class="ks">qualitative; per-task numbers not reported</div> </div> </div>
+<h2 id="motivation">Motivation</h2>
+<p>Before this work, agent benchmarks were mostly <span class="hl hl-problem">synthetic games or narrow, closed domains</span>. The web is a vast, open-domain action space humans already use, but the field lacked a <span class="hl hl-problem">standardized, scalable platform to train and evaluate agents that operate real web interfaces through the same input modalities a person uses</span>.</p>
+<h2 id="contribution-whats-new">Contribution (what’s new)</h2>
+<p>The genuine delta is a framing plus reusable infrastructure: <span class="hl hl-novelty">treat web interaction as an RL environment — render a (mini) web page, expose DOM and pixels as observations and keyboard/mouse events as actions, and define reward from task completion</span>. The design must use <strong>low-level, human-style input</strong> (not a high-level API) so that the same agent could, in principle, operate any real site; the controlled MiniWoB suite makes this reproducible.</p>
+<h2 id="research-questions">Research questions</h2>
+<p>Can web interaction be cast as a standardized, reproducible RL benchmark over human-style input channels, and how far can agents of the era get on it relative to humans?</p>
+<h2 id="methodology">Methodology</h2>
+<p>Frame each task as: observation = the page (DOM structure and/or rendered pixels), action = low-level mouse clicks/movement and keyboard events, reward = task completion. Provide a suite of small, self-contained UIs (MiniWoB) plus the broader vision of using live web pages. Agents are trained with reinforcement learning and imitation from demonstrations; reproducibility comes from the fixed task set.</p>
+<details class="pass"> <summary>Harness framing (context-grounded)</summary> <ul>
+<li><strong>Environment / workspace:</strong> rendered web pages — the MiniWoB suite of small self-contained UIs, plus the broader “open-domain web” vision.</li>
+<li><strong>Observation interface:</strong> the page — DOM structure and/or rendered pixels.</li>
+<li><strong>Action interface:</strong> low-level human-style input — mouse clicks/movement and keyboard events (not a high-level API).</li>
+<li><strong>Planner / executor / verifier:</strong> a single RL policy; the “verifier” is the task reward.</li>
+<li><strong>Evaluation harness:</strong> per-task success/reward on MiniWoB.</li>
+<li><strong>Training harness:</strong> reinforcement learning and imitation from demonstrations.</li>
+<li><strong>Vs later work:</strong> deliberately low-level and reproducible; later milestones trade some control for realism (real sites, larger action vocabularies).</li>
+</ul> </details>
+<h2 id="main-result">Main result</h2>
+<p>The widely-cited qualitative finding: <span class="hl hl-finding">RL agents of the time learned the easiest MiniWoB tasks but fell far short of human performance on harder ones<span class="src"> (verify against paper)</span></span>, exposing the difficulty of general web interaction. Specific per-task numbers are <strong>Not reported here</strong> (no extracted text) — confirm against the paper before quoting.</p>
+<h2 id="key-findings">Key findings</h2>
+<p>Field-role observations that are well-established for this paper; all quantitative specifics are <strong>Not reported / verify against paper</strong>:</p>
 <ul>
-<li>Canonical key: (see paper.yaml; resolved via Semantic Scholar)</li>
-<li>Version: v1</li>
-<li>Source: semantic_scholar / openalex (metadata only)</li>
-<li>PDF: Not fetched</li>
-<li>Venue: ICML 2017</li>
-<li>Year: 2017</li>
-<li>Authors: Tianlin Shi, Andrej Karpathy, Linxi (Jim) Fan, Jonathan Hernández, Percy Liang</li>
-<li>Tags: foundational</li>
-<li>Triage label: READ_SOON (curated milestone — emergence era)</li>
-<li>Triage confidence: medium (metadata-only)</li>
+<li><span class="hl hl-finding">RL agents solved the easiest tasks but lagged humans badly on harder ones<span class="src"> (verify against paper)</span></span>: the gap, not a single score, is the takeaway — general web interaction is hard for era methods.</li>
+<li><span class="hl hl-finding">The lasting contribution is the platform and framing, not one strong empirical result<span class="src"> (verify against paper)</span></span>: MiniWoB’s value is as reusable infrastructure that many later papers built on.</li>
+<li><span class="hl hl-finding">Low-level, human-modality action space makes credit assignment hard for RL<span class="src"> (verify against paper)</span></span>: directly motivated MiniWoB++‘s workflow-guided exploration.</li>
+<li><span class="hl hl-finding">The (observation = page, action = click/type, reward = completion) framing became the field standard<span class="src"> (verify against paper)</span></span>: it is why later web/computer-use benchmarks share a common shape.</li>
 </ul>
-<h2 id="one-sentence-takeaway">One-sentence takeaway</h2>
-<p>World of Bits introduced the “Mini World of Bits” (MiniWoB) platform — small, reproducible
-web-interaction tasks where agents observe a rendered page and act with keyboard/mouse —
-seeding the entire line of RL/LLM web- and computer-use agents that followed.</p>
-<h2 id="why-this-paper-matters">Why this paper matters</h2>
-<p>This is the <strong>emergence point</strong> of the computer-use-agent lineage in my interest profile.
-Nearly every later milestone here traces back to it: MiniWoB++ (<code>arxiv-1802.08802</code>)
-extends its task set and adds workflow-guided exploration; WebShop, Mind2Web, WebArena,
-OSWorld, and UI-TARS all inherit its core framing — <em>an agent perceiving a UI and acting
-through human-style input channels, evaluated by task success</em>. Reading it clarifies why
-the field standardized on (observation = page, action = click/type, reward = task
-completion) and why early agents were so far below humans.</p>
-<h2 id="problem-and-gap">Problem and gap</h2>
-<p>Before this, agent benchmarks were mostly synthetic games or narrow domains. The web is a
-vast, open-domain action space humans already use; the gap was a <strong>standardized, scalable
-platform</strong> to train and evaluate agents that operate real web interfaces by the same
-input modalities a person uses.</p>
-<h2 id="core-idea">Core idea</h2>
-<p>Frame web interaction as an RL environment: render a (mini) web page, expose the DOM and
-pixels as observations and keyboard/mouse events as actions, and define a reward from task
-completion. Provide a suite of small, controlled tasks (MiniWoB) plus the broader vision of
-using live web pages, so agents can be benchmarked reproducibly and, in principle, scaled
-to open-domain sites.</p>
-<h2 id="harness-relevance">Harness relevance</h2>
+<h2 id="implications">Implications</h2>
+<p>This bridges RL-environment design and real UIs and seeds a whole lineage. It directly precedes and motivates <span class="hl hl-related">MiniWoB++ (<code>arxiv-1802.08802</code>, workflow-guided exploration)</span> and the broader web/computer-use line: <span class="hl hl-related">WebShop (<code>arxiv-2207.01206</code>)</span>, <span class="hl hl-related">Mind2Web (<code>arxiv-2306.06070</code>)</span>, <span class="hl hl-related">WebArena (<code>arxiv-2307.13854</code>)</span>, <span class="hl hl-related">OSWorld (<code>arxiv-2404.07972</code>)</span>, <span class="hl hl-related">UI-TARS (<code>arxiv-2501.12326</code>)</span>. <span class="hl hl-followup">Read MiniWoB++ next, then WebArena/OSWorld for how the framing scaled to real sites.</span></p>
+<h2 id="limitations">Limitations</h2>
 <ul>
-<li>Environment / workspace: rendered web pages (the MiniWoB task suite of small,
-self-contained UIs), plus the broader “open-domain web” vision.</li>
-<li>Observation interface: the page — DOM structure and/or rendered pixels.</li>
-<li>Action interface: low-level human-style input — mouse clicks/movement and keyboard
-events (not a high-level API).</li>
-<li>Planner/executor/verifier: a single RL policy; the “verifier” is the task reward.</li>
-<li>Evaluation harness: per-task success/reward on MiniWoB.</li>
-<li>Training harness: reinforcement learning (and imitation from demonstrations);
-reproducibility comes from the fixed, self-contained task set.</li>
-<li>Significance vs later work: deliberately low-level and reproducible; later milestones
-trade some of that control for realism (real sites, larger action vocabularies).</li>
+<li><span class="hl hl-caveat">MiniWoB tasks are small/synthetic relative to real websites</span> (addressed by later work).</li>
+<li><span class="hl hl-caveat">The low-level action space makes RL credit assignment hard</span> (motivating MiniWoB++).</li>
+<li><span class="hl hl-caveat">This record specifically has no full text available — the analysis is context-grounded, not text-grounded</span>.</li>
 </ul>
-<h2 id="key-results-verify-against-the-paper">Key results (verify against the paper)</h2>
-<ul>
-<li>The headline qualitative finding, widely cited from this work: RL agents of the time
-learned the easiest MiniWoB tasks but fell <strong>far short of human performance</strong> on harder
-ones, exposing the difficulty of general web interaction. Specific per-task numbers are
-<strong>Not reported here</strong> (no extracted text) — confirm against the paper before quoting.</li>
-</ul>
-<h2 id="evidence-quality">Evidence quality</h2>
-<p>Cannot assess from text in this harness (metadata-only record). Historically the
-contribution is the <em>platform and framing</em>, not a single strong empirical result; the
-benchmark’s lasting value is as infrastructure (MiniWoB) that many later papers reused.</p>
-<h2 id="reproducibility-and-artifacts">Reproducibility and artifacts</h2>
-<ul>
-<li>Code/environment: MiniWoB tasks were released and became a community standard (later
-consolidated as MiniWoB++). Exact artifacts/links: verify against the paper/repo.</li>
-<li>Everything else: Not reported in this record.</li>
-</ul>
-<h2 id="strengths">Strengths</h2>
-<ul>
-<li>Defined a reproducible, human-modality framing for web agents that the field adopted.</li>
-<li>Released a reusable task suite (MiniWoB) — infrastructure value beyond the paper itself.</li>
-</ul>
-<h2 id="weaknesses-and-limitations">Weaknesses and limitations</h2>
-<ul>
-<li>MiniWoB tasks are small/synthetic relative to real websites (addressed by later work).</li>
-<li>Low-level action space makes credit assignment hard for RL (motivating MiniWoB++‘s
-workflow-guided exploration).</li>
-<li>(This record specifically: no full text available here — analysis is context-grounded.)</li>
-</ul>
-<h2 id="relationship-to-prior-work">Relationship to prior work</h2>
-<p>Bridges RL-environment design and real UIs. Directly precedes and motivates
-<code>arxiv-1802.08802</code> (MiniWoB++) and the broader web/computer-use lineage
-(<code>arxiv-2207.01206</code> WebShop, <code>arxiv-2306.06070</code> Mind2Web, <code>arxiv-2307.13854</code> WebArena,
-<code>arxiv-2404.07972</code> OSWorld, <code>arxiv-2501.12326</code> UI-TARS).</p>
-<h2 id="what-i-should-read">What I should read</h2>
-<ul>
-<li>Must read: the MiniWoB task design and the agent/observation/action formulation.</li>
-<li>Skim: the open-domain “live web” discussion (more vision than results).</li>
-<li>Follow-up papers: MiniWoB++ next, then WebArena/OSWorld for how the framing scaled.</li>
-</ul>
-<h2 id="triage-decision">Triage decision</h2>
-<p>Label: READ_SOON
-Rationale: Foundational emergence-era milestone of computer-use agents and the origin of
-MiniWoB; essential context even though it predates current methods. Kept at READ_SOON by
-the milestone/foundational floor.
-Confidence: medium (metadata-only; not text-grounded)
-Reading time estimate: 30–45 min for the core formulation.</p>
-<h2 id="personal-notes">Personal notes</h2>
-<p>Free-form notes for later.</p>
-<h2 id="follow-up-actions">Follow-up actions</h2>
-<ul>
-<li>Fetch an open PDF and re-run /summarize-paper to make this text-grounded.</li>
-<li>Compare with: MiniWoB++ (workflow-guided exploration) directly.</li>
-<li>Check artifact: the MiniWoB / MiniWoB++ task repository.</li>
-</ul> </article> </main> </body></html>
+<h2 id="critiques-and-questions">Critiques and Questions</h2>
+<ol>
+<li>Without the text, the exact MiniWoB task count, reward design, and per-task human-vs-agent gaps cannot be confirmed here — all are flagged for verification.</li>
+<li>How much of the lasting influence is the platform versus the “live web” vision that was more aspiration than result at the time?</li>
+</ol>
+<details class="selfcheck"> <summary>Why did the field standardize on (observation = page, action = click/type, reward = task completion), and what was the cost of the low-level action space?</summary> <div>World of Bits framed web interaction as an RL environment with human-style input so agents could in principle operate any site; the cost was that low-level actions make credit assignment hard for RL, which later motivated MiniWoB++&#39;s workflow-guided exploration.</div> </details>
+<h2 id="glossary">Glossary</h2>
+<p><span class="term" data-def="small, reproducible web-interaction tasks; an agent observes a rendered page (DOM/pixels) and acts with keyboard/mouse, scored by task completion" tabindex="0" aria-label="small, reproducible web-interaction tasks; an agent observes a rendered page (DOM/pixels) and acts with keyboard/mouse, scored by task completion">MiniWoB</span> is the platform’s core task suite. <span class="term" data-def="extension of MiniWoB with a larger task set and workflow-guided exploration" tabindex="0" aria-label="extension of MiniWoB with a larger task set and workflow-guided exploration">MiniWoB++</span> is the direct successor benchmark.</p>
+
+<h3 id="personal-notes">Personal notes</h3>
+<p>Free-form notes for later. (Metadata-only record — fetch an open PDF and re-run /summarize-paper to make this text-grounded; compare with MiniWoB++ directly; check the MiniWoB / MiniWoB++ task repository.)</p>
+ </article> </main> </body></html>

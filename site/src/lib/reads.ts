@@ -69,16 +69,32 @@ export async function pullRemote(): Promise<Reads | null> {
   return remote;
 }
 
+// Marking auto-syncs: each mark schedules a debounced push (batches rapid clicks); a
+// flush on tab hide/close covers the case of leaving within the debounce window.
 let pushTimer: ReturnType<typeof setTimeout> | null = null;
+let dirty = false;
 export function schedulePush() {
   if (!syncEnabled()) return;
+  dirty = true;
   if (pushTimer) clearTimeout(pushTimer);
   pushTimer = setTimeout(() => { pushNow().catch(() => { /* offline/invalid token: stays local */ }); }, 1200);
 }
-export async function pushNow(): Promise<void> {
+export async function pushNow(opts?: { keepalive?: boolean }): Promise<void> {
   if (!syncEnabled()) return;
+  if (pushTimer) { clearTimeout(pushTimer); pushTimer = null; }
   const id = await findOrCreateGist();
-  await gh(`/gists/${id}`, { method: "PATCH", body: JSON.stringify({ files: { [GIST_FILE]: { content: JSON.stringify(getReads()) } } }) });
+  await gh(`/gists/${id}`, {
+    method: "PATCH",
+    keepalive: opts?.keepalive,
+    body: JSON.stringify({ files: { [GIST_FILE]: { content: JSON.stringify(getReads()) } } }),
+  });
+  dirty = false;
+}
+// flush any pending mark before the page is hidden/closed (keepalive lets it finish)
+if (typeof window !== "undefined") {
+  const flush = () => { if (dirty && syncEnabled()) pushNow({ keepalive: true }).catch(() => { /* stays local */ }); };
+  document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") flush(); });
+  window.addEventListener("pagehide", flush);
 }
 
 // ---- mutations (instant local + debounced sync) ----

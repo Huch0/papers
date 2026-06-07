@@ -7,6 +7,11 @@ related methods). Driven by Claude Code skills and guarded by hooks.
 > Authoritative data is per-paper YAML under `library/`. Everything in `indexes/` and
 > the JSONL/SQLite caches is regenerated from it. See `CLAUDE.md` for the rules.
 
+> **Contributors & their agents:** read **[CONTRIBUTING.md](CONTRIBUTING.md)** for the
+> step-by-step workflow (add a summary / Q&A / knowledge / skill) and **[CLAUDE.md](CLAUDE.md)**
+> before editing. `main` is **branch-protected** — every change lands via a pull request
+> (no reviewer required; you merge your own). **Never push to `main` directly.**
+
 ## Setup
 ```bash
 python3 -m pip install -r requirements.txt   # PyYAML (required), requests + PyMuPDF (recommended)
@@ -125,8 +130,16 @@ you later discuss paper B that shares it. Each concept note has `## Intuition / 
 Q&A / See also` sections; concepts and papers cross-link both ways (`paper.yaml:
 knowledge_concepts` ↔ concept `related_papers`). Generated views: `knowledge/INDEX.md`
 (all concepts), `knowledge/BY_PAPER.md` (concepts per paper), `knowledge/BY_TAG.md`.
-Manage with `scripts/knowledge.py {ensure-concept,link,search,session,index,validate}`;
-your own notes are always preserved.
+Manage with `scripts/knowledge.py {ensure-concept,link,search,session,qa-add,index,validate}`;
+your own notes are always preserved. Concepts are authored as **`.mdx`** (rendered on the
+site at `/knowledge/<slug>/`).
+
+**On the web:** concepts are browsable like the paper library (`/knowledge/`), each paper
+page shows **Related concepts** + a **"Questions & Discussion"** panel (paper-scoped
+`qa.mdx`, written by `/paper-tutor`), and concepts carry build-time **"Referenced by"**
+backlinks. Every summary / concept / Q&A is **attributed** — `curated_by` / `asked_by`
+(your GitHub login, resolved from `config/contributors.yaml`) shown with an avatar. Add
+yourself to `config/contributors.yaml` so your attribution renders.
 
 ## Triage labels
 `MUST_READ` (≥80) · `READ_SOON` (≥65) · `SKIM` (≥50) · `TRACK_ONLY` (≥35) · `SKIP`
@@ -165,6 +178,12 @@ See `docs/website-requirements.md` and `docs/adr/`.
 - **Build:** `cd site && npm run build` → static output in `site/dist/` (Pagefind full-text
   index built automatically). Catalog supports facet filter (venue/year/tag/topic/triage) +
   sort + full-text search.
+- **Theming:** default is **"Readable"** (Atkinson Hyperlegible, tuned for dense technical
+  reading); a header **theme panel** lets each reader switch preset / typeface / accent /
+  density, saved per-browser (GitHub Pages ships the default). See `docs/adr/0005`–`0006`.
+- **Validate MDX before committing:** `node site/scripts/check-mdx.mjs <abs path to .mdx>`
+  must print `OK` for any summary / concept / `qa.mdx` you write (the `/summarize-paper`
+  and `/paper-tutor` skills run this automatically).
 - **Summaries** are authored as **MDX** (`config/summary_template.mdx`) using a curated
   component set (`config/summary_components.md`) — concise, core-first, with depth in
   collapsible `<Pass>` and inline hover `<Term>` glossary. Legacy `.md` summaries render

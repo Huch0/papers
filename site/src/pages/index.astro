@@ -1,6 +1,5 @@
 ---
 import Base from "../layouts/Base.astro";
-import Search from "astro-pagefind/components/Search";
 import Catalog from "../components/Catalog.tsx";
 import { loadCatalog } from "../lib/catalog";
 const papers = loadCatalog().filter((p) => p.summary_path).map((p) => ({
@@ -13,6 +12,5 @@ const base = import.meta.env.BASE_URL;
 <Base title="Paper Library — Catalog">
   <h1 class="title">Paper Library</h1>
   <p class="count">{papers.length} papers with summaries.</p>
-  <div style="margin:1rem 0;"><Search id="search" className="pagefind-ui" uiOptions={{ showImages: false, excerptLength: 15 }} /></div>
   <Catalog client:load papers={papers} base={base} />
 </Base>

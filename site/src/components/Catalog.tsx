@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { PaperEntry } from "@/lib/catalog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -13,12 +13,53 @@ const TRIAGE_CLS: Record<string, string> = {
   SKIM: "bg-green-700 text-white", TRACK_ONLY: "bg-neutral-600 text-white", SKIP: "bg-neutral-400 text-white",
 };
 const ALL = "__all__";
-type Row = Pick<PaperEntry, "canonical_key"|"title"|"authors"|"year"|"venue"|"tags"|"topic_groups"|"triage_label"|"score">;
+type Row = Pick<PaperEntry, "canonical_key" | "title" | "authors" | "year" | "venue" | "tags" | "topic_groups" | "triage_label" | "score">;
 
 export default function Catalog({ papers, base }: { papers: Row[]; base: string }) {
-  const [q, setQ] = useState(""); const [venue, setVenue] = useState(ALL); const [year, setYear] = useState(ALL);
-  const [tag, setTag] = useState(ALL); const [topic, setTopic] = useState(ALL); const [triage, setTriage] = useState(ALL);
+  const [q, setQ] = useState("");
+  const [venue, setVenue] = useState(ALL);
+  const [year, setYear] = useState(ALL);
+  const [tag, setTag] = useState(ALL);
+  const [topic, setTopic] = useState(ALL);
+  const [triage, setTriage] = useState(ALL);
   const [sort, setSort] = useState("triage");
+
+  // Pagefind full-text search, intersected with the facet filters below.
+  const pf = useRef<any>(null);
+  const [pfReady, setPfReady] = useState(false);
+  const [searchKeys, setSearchKeys] = useState<Set<string> | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const mod = await import(/* @vite-ignore */ `${base}pagefind/pagefind.js`);
+        await mod.init?.();
+        if (!cancelled) { pf.current = mod; setPfReady(true); }
+      } catch { /* no index in dev → fall back to local title/author match */ }
+    })();
+    return () => { cancelled = true; };
+  }, [base]);
+
+  useEffect(() => {
+    const term = q.trim();
+    if (!term || !pfReady || !pf.current) { setSearchKeys(null); return; }
+    let cancelled = false;
+    const t = setTimeout(async () => {
+      try {
+        const res = await pf.current.search(term);
+        const datas = await Promise.all(res.results.slice(0, 200).map((r: any) => r.data()));
+        const keys = new Set<string>();
+        for (const d of datas) {
+          const k = String(d.url).replace(/\/+$/, "").split("/").pop();
+          if (k) keys.add(k);
+        }
+        if (!cancelled) setSearchKeys(keys);
+      } catch { if (!cancelled) setSearchKeys(null); }
+    }, 180);
+    return () => { cancelled = true; clearTimeout(t); };
+  }, [q, pfReady]);
+
   const f = useMemo(() => {
     const uniq = (xs: (string | null)[]) => Array.from(new Set(xs.filter((x): x is string => !!x))).sort();
     return {
@@ -28,14 +69,24 @@ export default function Catalog({ papers, base }: { papers: Row[]; base: string 
       topics: uniq(papers.flatMap((p) => p.topic_groups)),
     };
   }, [papers]);
+
+  const ql = q.toLowerCase().trim();
+  const textOk = (p: Row) => {
+    if (!ql) return true;
+    if (pfReady && searchKeys) return searchKeys.has(p.canonical_key);          // full-text (prod)
+    return (p.title + " " + (p.authors || []).join(" ")).toLowerCase().includes(ql); // fallback (dev)
+  };
+
   const shown = useMemo(() => {
-    const ql = q.toLowerCase().trim();
-    const out = papers.filter((p) => {
-      const hay = (p.title + " " + (p.authors || []).join(" ")).toLowerCase();
-      return (!ql || hay.includes(ql)) && (venue === ALL || p.venue === venue) &&
-        (year === ALL || String(p.year) === year) && (tag === ALL || (p.tags || []).includes(tag)) &&
-        (topic === ALL || (p.topic_groups || []).includes(topic)) && (triage === ALL || p.triage_label === triage);
-    });
+    const out = papers.filter(
+      (p) =>
+        textOk(p) &&
+        (venue === ALL || p.venue === venue) &&
+        (year === ALL || String(p.year) === year) &&
+        (tag === ALL || (p.tags || []).includes(tag)) &&
+        (topic === ALL || (p.topic_groups || []).includes(topic)) &&
+        (triage === ALL || p.triage_label === triage),
+    );
     out.sort((a, b) => {
       if (sort === "score") return (b.score ?? 0) - (a.score ?? 0);
       if (sort === "year") return (b.year ?? 0) - (a.year ?? 0);
@@ -43,7 +94,8 @@ export default function Catalog({ papers, base }: { papers: Row[]; base: string 
       return (TRIAGE_RANK[a.triage_label ?? ""] ?? 9) - (TRIAGE_RANK[b.triage_label ?? ""] ?? 9) || (b.score ?? 0) - (a.score ?? 0);
     });
     return out;
-  }, [papers, q, venue, year, tag, topic, triage, sort]);
+  }, [papers, q, venue, year, tag, topic, triage, sort, searchKeys, pfReady]);
+
   const href = (key: string) => `${base}papers/${key}/`.replace(/\/+/g, "/");
   const facet = (label: string, value: string, set: (v: string) => void, opts: (string | number)[]) => (
     <div className="flex flex-col gap-1">
@@ -57,12 +109,13 @@ export default function Catalog({ papers, base }: { papers: Row[]; base: string 
       </Select>
     </div>
   );
+
   return (
     <div>
       <div className="flex flex-wrap items-end gap-3 my-4">
         <div className="flex flex-col gap-1">
-          <span className="text-xs text-muted-foreground">Filter title/author</span>
-          <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="type to filter…" className="w-56" />
+          <span className="text-xs text-muted-foreground">Search (full-text + title/author)</span>
+          <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="search summaries…" className="w-64" />
         </div>
         {facet("Venue", venue, setVenue, f.venues)}
         {facet("Year", year, setYear, f.years)}
@@ -80,7 +133,11 @@ export default function Catalog({ papers, base }: { papers: Row[]; base: string 
           </Select>
         </div>
       </div>
-      <p className="text-sm text-muted-foreground mb-2">{shown.length} shown</p>
+
+      <p className="text-sm text-muted-foreground mb-2">
+        {shown.length} shown{ql && !pfReady ? " · (full-text search active on the deployed site)" : ""}
+      </p>
+
       <div className="flex flex-col gap-3">
         {shown.map((p) => (
           <Card key={p.canonical_key}>

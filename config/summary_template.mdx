@@ -1,77 +1,74 @@
 {/*
   Canonical Summary structure (concise, core-first). Body only — frontmatter is generated
   from metadata.yaml by `summarize_paper.py --format mdx --prepare`. Components are
-  provided globally by the site (no imports). See config/summary_components.md for the
-  full vocabulary. Rules: concise + core-first; keep depth collapsed in <Pass>; be
-  self-contained (define non-universal terms with <Term>); declarative English; verify
-  numbers against extraction.txt; "Not reported"/"Unclear" for gaps. Motivation ≠
-  Contribution — keep them distinct.
+  provided globally by the site (no imports). See config/summary_components.md.
+
+  TWO HARD RULES:
+  1. CONCISE, BUT KEEP THE KEY POINTS. Capture the paper's important findings/analysis —
+     not just the headline number. (e.g. for SWE-bench: "difficulty correlates with
+     context length", "finetuned models are sensitive to context-distribution shift".)
+     Put the headline up top; collect the rest under "## Key findings". Depth in <Pass>.
+  2. USE THE SEMANTIC HIGHLIGHTS for their MEANING (colors are consistent across summaries):
+       <Problem>   red    — the problem this paper tackles / a prior-work limitation
+       <Novelty>   green  — a novel module/approach/insight this paper introduces
+       <Finding src="Tab.X">  teal — a finding / claim / result of THIS paper
+       <FollowUp>  blue   — a notion/thread the reader should follow up on
+       <Caveat>    orange — a limitation of THIS paper
+       <Related>   violet — related work / lineage
+       <Term def="…">  glossary chip with hover definition (self-contained)
+  Declarative English; specific numbers + anchors; "Not reported"/"Unclear" for gaps;
+  verify numbers against extraction.txt. Keep Motivation (<Problem>) ≠ Contribution (<Novelty>).
 */}
 
 <TLDR>One sentence: the paper's core contribution.</TLDR>
 
 <WhyItMatters>1–2 lines: relevance to my interests / current trends.</WhyItMatters>
 
-{/* Headline numbers — scannable. 3–4 items. */}
 <KeyStats items={[
   { value: "NN%", label: "the headline metric", sub: "model / setting" },
   { value: "N", label: "scale (tasks/params)", sub: "context" },
 ]} />
 
 ## Motivation
-The problem and the gap in prior work that makes it worth solving. Problem only — not the solution.
+The <Problem>problem this paper tackles</Problem> and the <Problem>gap in prior work</Problem> that makes it worth solving. Problem only — not the solution.
 
 ## Contribution (what's new)
-The genuine delta vs the closest prior work, and the **mechanistic why** the approach must
-take this form (derived from why the baseline fails). Not "prior work couldn't do X so they
-added a module." Use <Claim>…</Claim> for assertions and keep it to 2–4 lines.
+The genuine delta. State the <Novelty>insight/mechanism that survives deleting "we propose"</Novelty>, and **why the design must take this form** (derived from why the baseline fails). 2–4 lines.
 
 ## Research questions
-The core question(s) the work answers. {/* adaptive: for system/benchmark papers with no
-explicit RQ, state the central question the work addresses. */}
+The core question(s) the work answers. {/* adaptive: for system/benchmark papers, the central question addressed. */}
 
 ## Methodology
-The approach in your own words. Keep the surface short; tuck internals in a Pass:
+The approach in your own words; keep the surface short.
 
 <Pass title="Method details">
-Architecture / algorithm / dataset or benchmark construction details. Use <Stepper> to walk
-a procedure, <MathBlock> for key equations, <Figure src="…" /> for a diagram.
+Architecture / algorithm / dataset or benchmark construction. Use <Stepper>, <MathBlock>, <Figure>.
 </Pass>
 
 ## Main result
-The headline result(s) in context: <Evidence src="Tab.X, p.Y">the number vs baseline/human</Evidence>.
-Flag <Weak>single-run / no-variance / abstract-vs-table mismatch</Weak> where relevant.
+The headline result in context: <Finding src="Tab.X, p.Y">number vs baseline/human</Finding>. For multi-row comparisons use the interactive sortable table:
 
-<Pass title="Full results">
-  {/* <SortableTable> is an interactive React island — click a header to sort. Use it for
-      multi-row comparisons; use <ResultsTable> for small static tables. */}
-  <SortableTable
-    columns={["Method", "Metric", "Score"]}
-    rows={[["…", "…", 0]]} />
-</Pass>
+<SortableTable columns={["Method", "Metric", "Score"]} rows={[["…", "…", 0]]} />
+
+## Key findings
+The paper's important findings/analysis beyond the headline — this is where most summaries
+fail by omission. 3–6 bullets, each a real result with an anchor:
+- <Finding src="§5">a key finding stated plainly</Finding>: one line of explanation.
+- <Finding src="Fig.X">another finding</Finding>: …
 
 ## Implications
-Why it matters / what it changes for the field or for my work.
+Why it matters / what it changes. Name <Related>related work / the lineage it enables</Related>; flag <FollowUp>threads worth chasing next</FollowUp>.
 
 ## Limitations
-Author-stated and inferred. Use <Limit>…</Limit> for the load-bearing ones.
-
-<Pass title="Evidence check (claim → support)">
-  <ClaimEvidence rows={[
-    { claim: "…", evidence: "… (Tab.X)", verdict: "holds | partial | unclear" }
-  ]} />
-Separate experiments that *verify the novelty* from those that *merely confirm the motivation*.
-</Pass>
-
----
+Author-stated and inferred, as <Caveat>this paper's limitations</Caveat>.
 
 ## Critiques and Questions
-1. Your skeptical read / open questions / what you'd test next.
+1. Your skeptical read / open questions.
+
+<SelfCheck q="A comprehension question about the core mechanism or a key finding" a="The answer, grounded in the paper." />
 
 ## Glossary
-Define non-universal terms inline where first used, e.g.
-<Term def="apply a model patch and run the repo's tests; pass = resolved">execution-based eval</Term>.
-List anything that still needs defining here.
+Define non-universal terms inline with <Term def="plain definition">the term</Term>; list any remaining here.
 
 {/* NOTES_START */}
 ### Personal notes

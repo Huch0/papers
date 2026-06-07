@@ -1,5 +1,5 @@
 ---
-interface Props { def: string; }
+interface Props { def: string }
 const { def } = Astro.props;
 ---
-<abbr class="term" title={def}><slot /></abbr>
+<span class="term" data-def={def} tabindex="0" aria-label={def}><slot /></span>

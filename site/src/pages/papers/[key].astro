@@ -23,11 +23,19 @@ import Compare from "../../components/summary/Compare.astro";
 import SelfCheck from "../../components/summary/SelfCheck.astro";
 import KeyStats from "../../components/summary/KeyStats.astro";
 import SortableTable from "../../components/summary/SortableTable.astro";
+import Problem from "../../components/summary/Problem.astro";
+import Novelty from "../../components/summary/Novelty.astro";
+import Finding from "../../components/summary/Finding.astro";
+import FollowUp from "../../components/summary/FollowUp.astro";
+import Related from "../../components/summary/Related.astro";
+import Caveat from "../../components/summary/Caveat.astro";
 
 const components = {
   TLDR, WhyItMatters, Pass, Claim, Evidence, Weak, Limit, Term,
   ResultsTable, ClaimEvidence, Stepper, Chart, Figure, MathBlock, Compare, SelfCheck,
   KeyStats, SortableTable,
+  // semantic highlights (preferred vocabulary)
+  Problem, Novelty, Finding, FollowUp, Related, Caveat,
 };
 
 export async function getStaticPaths() {

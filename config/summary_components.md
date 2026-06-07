@@ -16,14 +16,21 @@ behavior lives in the site; here is the authoring contract.
 | `<WhyItMatters>` | 1–2 lines of relevance | `<WhyItMatters>Foundational for my SWE-agent track.</WhyItMatters>` |
 | `<Pass title="…">` | collapsible depth (collapsed by default) | wrap method internals / full results |
 
-## Inline epistemic marks
-| Component | Meaning | Example |
-|---|---|---|
-| `<Claim>` | a claim the paper makes | `<Claim>matches human-level on MiniWoB++</Claim>` |
-| `<Evidence src="Tab.3, p.8">` | supporting evidence + anchor | `<Evidence src="Tab.2">73.0% vs 16.2%</Evidence>` |
-| `<Weak>` | unclear / weak / caveated | `<Weak>single run, no variance</Weak>` |
-| `<Limit>` | a limitation / risk | `<Limit>Python-only, 12 repos</Limit>` |
-| `<Term def="plain definition">term</Term>` | self-contained inline glossary (hover) | `<Term def="fail→pass tests gate success">execution-based</Term>` |
+## Semantic highlights — one colour per meaning (consistent across all summaries)
+Use these for their MEANING, not decoration. Colours work in light + dark mode.
+
+| Component | Colour | Meaning | Example |
+|---|---|---|---|
+| `<Problem>` | red | the problem the paper tackles / a prior-work limitation | `<Problem>prior benchmarks test only self-contained functions</Problem>` |
+| `<Novelty>` | green | a novel module/approach/insight the paper introduces | `<Novelty>tests touched by the PR become an objective grader</Novelty>` |
+| `<Finding src="Tab.X">` | teal | a finding / claim / result of THIS paper (+ anchor) | `<Finding src="Fig.5">difficulty correlates with context length</Finding>` |
+| `<FollowUp>` | blue | a notion/thread the reader should follow up | `<FollowUp>how later scaffolds fix localization</FollowUp>` |
+| `<Caveat>` | orange | a limitation of THIS paper | `<Caveat>Python-only, 12 repos</Caveat>` |
+| `<Related>` | violet | related work / lineage | `<Related>enabled the SWE-agent line</Related>` |
+| `<Term def="plain definition">term</Term>` | chip + hover tooltip | self-contained inline glossary | `<Term def="fail→pass tests gate success">execution-based</Term>` |
+
+Legacy aliases still work: `<Claim>`→finding, `<Evidence src>`→finding, `<Limit>`→caveat,
+`<Weak>`→amber (uncertain). Prefer the semantic names above.
 
 ## Data-driven interactive primitives (you supply data/props, not code)
 | Component | Props | Use |

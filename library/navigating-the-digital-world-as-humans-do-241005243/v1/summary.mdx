@@ -1,0 +1,109 @@
+---
+canonical_key: arxiv-2410.05243
+version_key: v1
+title: 'Navigating the Digital World as Humans Do: Universal Visual Grounding for GUI Agents'
+authors:
+- Boyu Gou
+- Ruohan Wang
+- Boyuan Zheng
+- Yanan Xie
+- Cheng Chang
+- Yiheng Shu
+- Huan Sun
+- Yu Su
+venue: International Conference on Learning Representations
+year: 2024
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2410.05243
+summary_date: '2026-06-07'
+---
+
+<TLDR>UGround is a 7B LLaVA-derived <Term def="maps a textual element description to on-screen pixel coordinates">visual grounding</Term> model trained on a 10M-element web-synthesized dataset that lets GUI agents act from pixels alone, beating prior grounding models by ~20% absolute and matching or beating agents that additionally read HTML/accessibility trees.</TLDR>
+
+<WhyItMatters>Directly central to computer-use / GUI-agent harness design: it argues for and empirically validates a pure-pixel observation + coordinate-action interface with a clean planner/grounder module split, and the grounder is a pluggable component for any MLLM planner.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "+19.9", label: "ScreenSpot avg over SeeClick", sub: "UGround 73.3 vs 53.4, Tab.2" },
+  { value: "10M", label: "grounding elements", sub: "1.3M screenshots, largest to date" },
+  { value: "6", label: "benchmarks, 3 settings", sub: "grounding / offline / online agent" },
+]} />
+
+## Motivation
+GUI agents overwhelmingly perceive via <Problem>text representations (HTML, accessibility trees) and act by selecting from a candidate list</Problem> rather than operating directly on pixels (p.2, §1). These crutches carry real costs: full HTML is noisy and a11y trees are widely wrong — <Finding src="p.2">WebAIM 2024 finds 95.9% of top-1M home pages have accessibility errors, avg 56.8 per page</Finding> — and <Problem>HTML can take up to ~10x more tokens than the equivalent screenshot</Problem> (cited p.2). Prior pixel-only attempts exist but are "rarely adopted in state-of-the-art solutions"; the diagnosed reason is that <Problem>grounding — mapping a textual plan to precise on-screen coordinates — is not yet accurate, cross-platform, and pluggable enough</Problem> (p.2). The problem is therefore: text input is a leaky, costly proxy, and the missing piece for removing it is a good grounding model.
+
+## Contribution (what's new)
+The genuine delta is a constructive result, not the critique above: <Novelty>a web-only synthetic grounding dataset built from the HTML↔pixel dual representation, plus a resolution-adapted LLaVA, produces a single grounder accurate and general enough that a planner/grounder-split agent runs on pixels alone and still beats agents that consume HTML/a11y trees</Novelty>. Why the design must take this form:
+- <Novelty>Pixel-only is principled, not just cheaper</Novelty>: the rendered screen is the information-complete channel; text is a lossy proxy. Removing it is a net gain *provided* grounding is solved — and the paper is a constructive proof that it can be.
+- <Novelty>A separate grounding module (SeeAct-V), not a monolithic agent</Novelty>: the environment space (1B+ sites, idiosyncratic icons) is too large for one model; grounding benefits from a dedicated, independently fine-tunable, reusable module (Appendix B, p.19).
+- <Novelty>Web data generalizes</Novelty>: webpages uniquely offer full HTML + rendering + exact element↔bbox correspondence, making them an automatic, scalable source of ⟨screenshot, referring-expression, coordinate⟩ triplets that transfer to desktop/mobile (p.4, §2.2).
+
+## Research questions
+Can a pixel-only GUI agent — no HTML, no a11y tree — match or beat text-augmented agents, if given a sufficiently strong universal grounding model? And can such a grounder be trained largely from synthetic *web* data and still transfer across platforms?
+
+## Methodology
+A planner/grounder split (SeeAct-V): per step an MLLM planner sees only the screenshot + task and emits `{action, element description, value}`; UGround maps the element description to `(x,y)` coordinates; the executor performs pixel-level mouse/keyboard actions. No HTML or a11y tree enters observation, planning, grounding, or execution.
+
+<Pass title="Method details">
+<Stepper steps={[
+  { title: "Data: Web-Hybrid", body: "Render Common Crawl pages with Playwright at varied resolutions (~1/3 mobile-friendly), ~773K screenshots. For each element, synthesize referring expressions via a hybrid pipeline: primary descriptors from HTML attributes or MLLM (LLaVA-NeXT-13B condensed by Llama-3-8B); positional REs (absolute/relative/contextual) from rule-based neighbor analysis. Center-point coords are the target. EasyOCR gates trivial text; frequent aria-labels downsampled. Supplemented by Web-Direct (GPT-4o, 408K) + Android sets. Total 10M elements / 1.3M screenshots, ~90% from Web-Hybrid (Tab.1, p.5)." },
+  { title: "Model: UGround", body: "7B LLaVA-NeXT (Vicuna-1.5-7b-16k LM, frozen CLIP-ViT-L-14@224px), modified AnyRes up to 36 grids (1344x1344 / 896x2016) for >1000px legibility, output un-normalized pixel coordinates as text, no low-res global thumbnail, trained with LoRA. UGround-V1 variants (2B/7B/72B) rebuild on Qwen2-VL with the same data." },
+  { title: "Agent: SeeAct-V", body: "MLLM planner (GPT-4 / GPT-4o) emits an element description; UGround grounds it to (x,y); a Click is auto-inserted before Type. Long web pages split into 1280x1000 viewport blocks with simulated scroll." },
+]} />
+
+The referring-expression taxonomy is itself a conceptual contribution: real planners emit visual, positional, and functional REs (and composites), so the synthesis pipeline deliberately manufactures all three types to make the grounder robust to whatever a planner says (p.4).
+</Pass>
+
+## Main result
+On the grounding benchmark, <Finding src="Tab.2, p.6">UGround averages 73.3 on ScreenSpot Standard vs SeeClick 53.4 (+19.9 abs) and CogAgent 47.4</Finding>; GPT-4o scores 18.3. The "up to 20% absolute" headline matches this gap. Under the agent setting the lead widens: <Finding src="Tab.3, p.6">UGround 81.4 vs SeeClick 52.3 (+29.1 abs) with a GPT-4o planner</Finding>. As a full agent, <Finding src="Tab.4, p.7">vision-only SeeAct-V+UGround reaches 46.8 element accuracy on Multimodal-Mind2Web, beating the HTML-Choice SeeAct baseline (42.3)</Finding> despite using strictly less input.
+
+<SortableTable columns={["Benchmark", "Metric", "UGround (GPT-4o)", "Best baseline"]} rows={[
+  ["ScreenSpot Standard", "grounding acc", 73.3, 53.4],
+  ["ScreenSpot Agent", "grounding acc", 81.4, 52.3],
+  ["Multimodal-Mind2Web", "element acc", 46.8, 42.3],
+  ["AndroidControl-High", "step acc", 48.4, 42.1],
+  ["AndroidControl-Low", "step acc", 62.4, 55.0],
+  ["OmniACT", "action score", 32.8, 17.0],
+  ["AndroidWorld", "success rate", 32.8, 30.6],
+]} />
+
+## Key findings
+- <Finding src="Tab.C.1, p.20">Data, not architecture, is the main driver</Finding>: with the *same* Qwen-VL backbone and only Web-Hybrid, UGround-Qwen beats SeeClick by +10.1 abs; the model-design changes add a further +14.5. The same-backbone ablation cleanly isolates the two contributions.
+- <Finding src="p.6, p.8">Web-only training transfers cross-platform</Finding>: UGround sees zero desktop screenshots yet leads on ScreenSpot-Desktop and OmniACT (32.8 vs DetACT 17.0), validating the central transfer hypothesis.
+- <Finding src="Fig.4, p.9">The remaining bottleneck is the planner, not grounding</Finding>: planning errors dominate everywhere (e.g. Multimodal-Mind2Web 18.2% planner vs 8.7% grounding; ScreenSpot-Desktop 46.5% vs 9.3%). UGround is no longer the weak link.
+- <Finding src="Fig.5, p.9">Grounding scales with data but saturates early</Finding>: accuracy rises with Web-Hybrid size, diminishing after ~100K screenshots; at just 50K screenshots (~600K elements) UGround already beats SeeClick by >10% despite SeeClick's ~3M elements.
+- <Finding src="Tab.9, p.10">Positional REs and dynamic resolution both help</Finding>: Web-Hybrid alone (76.9) > supplementary "Others" alone (73.4); combined 81.4. Dynamic resolution beats fixed (Tab.C.2); positional REs add +3.9 standard avg (Tab.C.4).
+- <Finding src="Tab.7, p.9">Vision-only does *not* win every online cell</Finding>: on Mind2Web-Live the GPT-4o SeeAct-V success rate (19.2) trails text GPT-4o (22.1), so "beats text-input agents" is true in aggregate but not literally universal.
+
+## Implications
+Validates a pure-pixel observation + coordinate-action interface and a modular planner/grounder split as a practical harness design, with a reusable, fully-automated data-synthesis recipe exploiting the web's HTML↔pixel duality. It <Related>extends SeeAct's planner/grounder decomposition into a fully vision-only one and supersedes SeeClick / CogAgent as the grounding model</Related>, while being distinct from Set-of-Mark prompting (no labels) and OmniParser-style detectors (one generative grounder). Threads worth chasing: <FollowUp>monolithic end-to-end GUI MLLMs (Aguvis, ShowUI, Qwen2.5-VL grounding) on the same ScreenSpot</FollowUp> and <FollowUp>the UGround-V1 (Qwen2-VL 2B/7B/72B) follow-ups, partly folded in here</FollowUp>.
+
+## Limitations
+- <Caveat>No variance or significance anywhere — all numbers are single runs</Caveat>; AndroidControl uses only 500 random test steps.
+- <Caveat>The efficiency motivation (latency/cost) is argued via cited figures, never measured for SeeAct-V itself</Caveat> — the 10x token and a11y-latency claims are not re-measured.
+- <Caveat>No desktop training data; long-tail idiosyncratic icons remain a grounding-error source</Caveat> (author-stated, p.10).
+- <Caveat>Vision-only forces action-space compromises</Caveat>: on Mind2Web-Live, API-based Select is disabled and some widgets "cannot be easily operated with only Click" (Appendix G.5); on AndroidControl coordinates are post-hoc snapped to the smallest containing element (Appendix G.3).
+- <Caveat>UGround is not a standalone agent — it depends entirely on an external planner.</Caveat>
+
+## Critiques and Questions
+1. The efficiency premise is asserted, not demonstrated — measured end-to-end latency/cost would strengthen the pixel-only case considerably.
+2. "Vision-only matches/beats text-input agents" is a controlled fixed-planner, grounding-isolated claim; operation scores are omitted on Mind2Web-Live as "orthogonal" (p.7), narrowing it from full end-to-end superiority.
+3. Center-point = correct action breaks for elements whose actionable region differs from their visual center; the AndroidControl coordinate snapping is a benchmark-specific crutch.
+
+<SelfCheck q="Why does the paper argue removing HTML/a11y input is a net gain rather than a sacrifice, and what makes that argument hold empirically?" a="The rendered screen is information-complete (it contains exactly what a human user needs), whereas text representations are a lossy, noisy, token-expensive proxy. So removing text is only a sacrifice if grounding can't be solved — and the controlled same-backbone ablation (+10.1 from data) plus zero-shot cross-platform transfer to desktop show the grounder is strong enough that vision-only agents match or beat text-augmented ones." />
+
+## Glossary
+- <Term def="maps a textual element description, e.g. 'the blue Submit button', to on-screen pixel coordinates">visual grounding</Term>
+- <Term def="LLaVA's adaptive high-resolution image tiling; here pushed to 36 ViT grids up to 1344x1344 for legible GUI text">AnyRes</Term>
+- <Term def="a textual description that points to a GUI element; visual, positional, or functional">referring expression (RE)</Term>
+- <Term def="prompting technique that overlays numbered labels on candidate elements for the model to select from">Set-of-Mark (SoM)</Term>
+- <Term def="the planner/grounder-split, vision-only agent framework introduced here, adapted from SeeAct">SeeAct-V</Term>
+
+{/* NOTES_START */}
+### Personal notes
+The task prompt mentioned OSWorld, but this paper does NOT evaluate on OSWorld; desktop is covered by OmniACT (offline) and there is no OSWorld experiment. Verify before citing.
+{/* NOTES_END */}

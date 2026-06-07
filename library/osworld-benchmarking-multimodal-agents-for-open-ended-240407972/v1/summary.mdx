@@ -1,0 +1,116 @@
+---
+canonical_key: arxiv-2404.07972
+version_key: v1
+title: 'OSWorld: Benchmarking Multimodal Agents for Open-Ended Tasks in Real Computer Environments'
+authors:
+- Tianbao Xie
+- Danyang Zhang
+- Jixuan Chen
+- Xiaochuan Li
+- Siheng Zhao
+- Ruisheng Cao
+- Toh Jing Hua
+- Zhoujun Cheng
+- Dongchan Shin
+- Fangyu Lei
+- Yitao Liu
+- Yiheng Xu
+- Shuyan Zhou
+- Silvio Savarese
+- Caiming Xiong
+- Victor Zhong
+- Tao Yu
+venue: arXiv
+year: 2024
+tags:
+- foundational
+topic_groups:
+- agent_harness
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2404.07972v2
+summary_date: '2026-06-07'
+---
+
+<TLDR>OSWorld is the first real-OS (Ubuntu/Windows/macOS) virtual-machine environment plus a 369-task benchmark with per-task initial-state setup and execution-based checker scripts, exposing that top LLM/VLM agents reach only ~12% success where humans reach ~72%.</TLDR>
+
+<WhyItMatters>The reference design for execution-based, open-ended computer-use evaluation: it defines the real-desktop agent benchmark paradigm that later computer-use agents and products are measured against, and its huge human-vs-model gap is a concrete capability target for harness work.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "12.24%", label: "best model success", sub: "GPT-4, a11y tree" },
+  { value: "72.36%", label: "human success", sub: "same protocol" },
+  { value: "369", label: "Ubuntu tasks", sub: "+43 Windows analytic" },
+  { value: "134", label: "execution-based eval functions", sub: "302 initial states" },
+]} />
+
+## Motivation
+<Problem>Prior agent benchmarks are split between two inadequate forms.</Problem> Static demonstration datasets (Mind2Web, AITW, OmniAct) have <Problem>no executable environment, forcing trajectory-matching evaluation that assumes a single gold solution and penalizes valid alternatives</Problem>. Executable environments (MiniWoB++, WebShop, WebArena, VisualWebArena, InterCode) are <Problem>restricted to one application or domain, so they cannot test open-ended tasks spanning multiple apps and interfaces (GUI + CLI) on a real OS</Problem>. The gap: no benchmark offers a real, controllable, multi-app desktop environment with reliable per-task execution-based evaluation and intermediate starting states (Table 4, p.9).
+
+## Contribution (what's new)
+<Novelty>Run agents inside real OS virtual machines and grade by executing checker scripts against the final machine state, not by matching action sequences.</Novelty> Each task is a tuple of natural-language instruction, a setup config that arranges a realistic *intermediate* starting state (downloads files, opens apps, arranges windows), and a custom execution-based evaluator returning a reward in `[0,1]`. The design must take this form because trajectory matching cannot credit alternative valid solutions and cannot reach across apps — only inspecting real end-state artifacts (files, cookies, app internals) does. The action space is <Novelty>raw mouse/keyboard via `pyautogui` Python code, a superset of web-only action spaces that covers GUI, CLI, and multi-app workflows</Novelty>.
+
+## Research questions
+Can a single, scalable environment evaluate open-ended computer tasks across arbitrary real apps and operating systems with reliable, reproducible per-task scoring? And how well do state-of-the-art LLM/VLM agents actually perform as general computer assistants in that setting?
+
+## Methodology
+Tasks run inside real-OS VMs (Ubuntu 22.04 main set; Windows partial; macOS supported but unbenchmarked for legal reasons). The agent observes a full-desktop screenshot and/or a filtered <Term def="XML tree of UI elements exposed by the OS, e.g. via ATSPI/pywinauto">accessibility (a11y) tree</Term> and emits `pyautogui` code plus special `WAIT`/`FAIL`/`DONE` actions. The interaction is formalized as a POMDP `(S,O,A,T,R)` with an execution-based reward (§2.1, p.3). Evaluation runs a pipeline of pre-setup config to agent interaction to post-processing to getter functions that retrieve artifacts to an evaluator that returns the reward.
+
+<Pass title="Method details: benchmark construction & infrastructure">
+**Construction (§3, p.6-8).** 9 CS-student authors over ~3 months / ~1800 man-hours mined tasks from forums, tutorials, how-to sites, and video courses, plus brainstormed multi-app workflows; cross-checked by two other authors for feasibility and ambiguity. Each task gets a setup config (~1 man-hour: restore snapshot, prepare files, run reprocessing) and an execution-based evaluator (~2 man-hours: getters extract key artifacts, evaluator scores them). Quality control: each example is attempted by two non-annotating authors acting as agents; >400 man-hours over four rounds of fixes.
+
+**Distribution (Table 3 / Fig. 3, p.8; Table 10, p.28).** 369 Ubuntu tasks = 268 single-app (72.6%) + 101 multi-app workflow (27.4%); 84 integrated from NL2Bash/Mind2Web/SheetCopilot/PPTC/GAIA (22.8%); 30 infeasible tasks (8.1%) test refusal; 302 distinct initial states; 134 unique eval scripts; plus a 43-task Windows analytic set. Eight focal apps: Chrome, VLC, Thunderbird, VS Code, LibreOffice Calc/Writer/Impress, GIMP.
+
+**Infrastructure (§2.2, p.3-5; App. A).** VMs give isolation against irreversible host damage plus snapshot-based reset; multiple VMs run in parallel and headless. A hybrid setup (snapshot + scripted file prep) avoids multi-GB per-example storage. Per-app evaluation uses openpyxl/python-docx/python-pptx, Playwright (Chrome via socat/Ncat), the VLC HTTP interface, a custom VS Code extension, GIMP config files, and Firefox Decrypt for Thunderbird (App. B.6, p.29-30). An RL-friendly discrete `computer_13` action space (13 action types) is also provided.
+
+**Baselines (§4.1, p.10).** Simple prompted single-agent loops: history of the last 3 (observation, action) turns, temperature 1.0 / top-p 0.9, max 15 steps, 1920x1080 screen. No planner, memory, search, or reflection module.
+</Pass>
+
+## Main result
+<Finding src="Tab.5, p.10">The best model reaches 12.24% overall success (GPT-4 with a11y tree) versus 72.36% for humans under the same protocol</Finding> — a roughly 6x gap. Screenshot-only VLMs do far worse (~5.3-5.8%), and the worst baseline (CogAgent with Set-of-Marks) scores ~0.99%.
+
+<SortableTable columns={["Setting / agent", "Overall success %"]} rows={[
+  ["Human (same protocol)", 72.36],
+  ["GPT-4, a11y tree (best model)", 12.24],
+  ["GPT-4V, screenshot+a11y", 11.21],
+  ["GPT-4V, Set-of-Marks", 6.57],
+  ["Best screenshot-only VLM", 5.8],
+  ["CogAgent, Set-of-Marks (worst)", 0.99],
+]} />
+
+## Key findings
+- <Finding src="Tab.5, §4.2">Multi-app workflow tasks are dramatically harder than single-app</Finding>: best ~6.57% on workflows vs 13.74% single-app (§5.1, Table 6), while humans stay ~73% on both — the cross-app composition, not any one app, is where agents collapse.
+- <Finding src="§5.4, p.15">Failures are "strong planning, weak execution": >75% of ~550 sampled failed examples involve mouse-click inaccuracy / GUI grounding errors</Finding>, plus repetitive clicks and missing software domain knowledge — the most actionable signal for harness design.
+- <Finding src="§4.2">Auxiliary-input effects are model-dependent and sometimes reversed</Finding>: the a11y tree helps GPT-4V and Claude-3 but the conclusion flips for Gemini-Pro, and Set-of-Marks *reduces* GPT-4V performance at desktop resolution/element density, contradicting its usual benefit.
+- <Finding src="Tab.5">Humans are consistent across categories (variance under 5%) while models swing over 20%</Finding>, doing relatively better on CLI/OS-type tasks and worst on GUI-heavy Office (LibreOffice Calc subsets often score 0%, §5.1).
+- <Finding src="§3.4, Fig.4, p.8-9">OSWorld tasks are harder for humans too</Finding>: median human time 111.94s vs 35.38s on WebArena, and human accuracy 72.36% vs 88% on WebArena.
+- <Finding src="Tab.6, p.12">Difficulty tracks expected order but the "infeasible" score is inflated</Finding>: GPT-4V SoM scores Easy 16.78% / Medium 13.12% / Hard 4.59%; the high 16.67% on infeasible tasks is partly false positives from agents prematurely emitting `FAIL`.
+- <Finding src="§5.3, Tab.7, p.14">Capability transfers across OS</Finding>: GPT-4V screenshot-only success is 4.88% on Ubuntu vs 2.55% on Windows, with 0.7 correlation on the migrated subset.
+
+## Implications
+OSWorld generalizes <Related>WebArena / VisualWebArena (web-only), InterCode (code), and AssistGUI (non-interactive desktop)</Related> into a single real full-desktop, cross-app, interactive harness, and it has become the de facto standard for evaluating computer-use agents. The execution-based per-example checker pattern is directly reusable for any GUI/CLI agent eval. <FollowUp>The grounding bottleneck argues for better GUI grounding or index-based action mapping</FollowUp>; <FollowUp>the empty planner/memory/reflection slot invites scaffolded agents to attack the gap the bare baselines leave open</FollowUp>. Worth chasing: later OSWorld-based agent systems, SeeClick (2401.10935), and GAIA (2311.12983).
+
+## Limitations
+- <Caveat>Single-run point estimates with no variance/CI/seeds</Caveat>: at temperature 1.0 over 369 tasks, gaps of a few percent (11.21% vs 12.24%) are within plausible noise.
+- <Caveat>Checkers retain residual false positives/negatives</Caveat>, explicitly acknowledged (§3.3); the infeasible-task score is inflated by spurious `FAIL` outputs, so absolute numbers carry an unmeasured error bar.
+- <Caveat>No safety/side-effect metric</Caveat>: checkers assess only task correctness; no harmful behavior was observed only because agents are weak (§7).
+- <Caveat>Several ablations run on ~10% / 28-task subsets</Caveat> (§5.2), limiting generality, and compute/cost is untracked throughout.
+- <Caveat>macOS is unbenchmarked and Windows is copyright-gated</Caveat>; the GPT-4V/Gemini-Pro/Claude-3-era leaderboard is already dated even though the environment endures.
+
+## Critiques and Questions
+1. Without seeds or CIs, are the closely-spaced top scores (~11-12%) actually distinguishable, or is the leaderboard ordering within noise at temperature 1.0?
+2. How much of the 12% ceiling is the bare prompting loop versus the models themselves? The benchmark may understate what a planner/memory/reflection scaffold could reach — the right control is missing.
+3. Since 84 tasks are adapted from public corpora, do instruction-level overlaps risk contamination as models improve, even though the custom checkers are new?
+
+<SelfCheck q="Why does OSWorld grade agents by execution-based checkers instead of matching their action sequences to a reference trajectory?" a="Because open-ended computer tasks have many valid solutions and span multiple apps/interfaces; trajectory matching assumes a single gold path and penalizes alternative valid solutions, whereas executing a checker against the final machine state (files, cookies, app internals) credits any correct end result (§2.1, Table 4)." />
+
+## Glossary
+- <Term def="evaluation that runs a checker against the final machine state and returns a reward, rather than matching the agent's actions to a reference">execution-based evaluation</Term>
+- <Term def="numbered bounding boxes overlaid on a screenshot, derived from the filtered a11y tree, to give the model addressable UI targets">Set-of-Marks (SoM)</Term>
+- <Term def="a starting machine state that is not the OS default — files already downloaded, apps already open, windows arranged — to mimic real mid-workflow use">intermediate initial state</Term>
+- <Term def="Partially Observable Markov Decision Process; the (S,O,A,T,R) formalism used here since the agent sees only screenshots/a11y, not full system state">POMDP</Term>
+
+{/* NOTES_START */}
+### Personal notes
+The single most load-bearing result: human ~72.36% vs best model 12.24% overall success (Table 5, §4.2). The "strong planning, weak execution" finding (>75% of failures are mouse-click/grounding errors, §5.4) is the most actionable insight for harness/agent design — it argues for better GUI grounding and/or index-based (SoM-like) action mapping, though SoM did not help GPT-4V here at desktop resolution/element density.
+{/* NOTES_END */}

@@ -69,7 +69,7 @@ scoring:
 artifacts:
   pdf: library/ufo-a-ui-focused-agent-for-windows-240207939/v1/paper.pdf
   extraction: library/ufo-a-ui-focused-agent-for-windows-240207939/v1/extraction.txt
-  summary: library/ufo-a-ui-focused-agent-for-windows-240207939/v1/summary.md
+  summary: library/ufo-a-ui-focused-agent-for-windows-240207939/v1/summary.mdx
   code_url: null
   project_url: null
   dataset_url: null
@@ -79,3 +79,4 @@ status:
   summarized: true
   triaged: true
   user_read_status: unread
+  summary_format: mdx

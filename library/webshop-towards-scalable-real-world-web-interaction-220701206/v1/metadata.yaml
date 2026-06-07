@@ -64,7 +64,7 @@ scoring:
 artifacts:
   pdf: library/webshop-towards-scalable-real-world-web-interaction-220701206/v1/paper.pdf
   extraction: library/webshop-towards-scalable-real-world-web-interaction-220701206/v1/extraction.txt
-  summary: library/webshop-towards-scalable-real-world-web-interaction-220701206/v1/summary.md
+  summary: library/webshop-towards-scalable-real-world-web-interaction-220701206/v1/summary.mdx
   code_url: null
   project_url: null
   dataset_url: null
@@ -74,3 +74,4 @@ status:
   summarized: true
   triaged: true
   user_read_status: unread
+  summary_format: mdx

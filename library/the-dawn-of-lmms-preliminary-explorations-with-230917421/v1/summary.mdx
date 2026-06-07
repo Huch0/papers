@@ -1,0 +1,95 @@
+---
+canonical_key: arxiv-2309.17421
+version_key: v1
+title: 'The Dawn of LMMs: Preliminary Explorations with GPT-4V(ision)'
+authors:
+- Zhengyuan Yang
+- Linjie Li
+- Kevin Lin
+- Jianfeng Wang
+- Chung-Ching Lin
+- Zicheng Liu
+- Lijuan Wang
+venue: arXiv.org
+year: 2023
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2309.17421
+summary_date: '2026-06-07'
+---
+
+<TLDR>A ~160-page qualitative Microsoft case-study cataloguing what an early GPT-4V(ision) can do across dozens of vision-language tasks, whose two load-bearing ideas for agent research are <Novelty>visual referring prompting</Novelty> (instruct the model by drawing on the input image's pixels) and hand-driven demos of GPT-4V as a GUI/embodied agent that predicts the next action from a screenshot.</TLDR>
+
+<WhyItMatters>This is a seed document for the computer-use lineage: it is where screenshot-in / next-action-out and pixel-mark grounding enter the literature, anticipating Set-of-Mark prompting, SeeAct, and WebVoyager. Read it for provenance and intuition, <Caveat>not for any reproducible system or benchmark</Caveat>.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "Not reported", label: "task success rate", sub: "qualitative report, no metrics" },
+  { value: "0", label: "benchmarks / baselines", sub: "deliberately substituted by curated demos" },
+  { value: "~160", label: "pages of capability gallery", sub: "single early GPT-4V snapshot" },
+]} />
+
+## Motivation
+With GPT-4 (no vision) and PaLM as the strongest LLMs, it was <Problem>unclear what the status quo and emergent multimodal abilities of LMMs built on SOTA LLMs were</Problem> (p.8). Prior open LMMs (<Related>Flamingo, OpenFlamingo, MiniGPT-4, LLaVA-class</Related>) were of <Problem>limited model/data scale, possibly suppressing emergent abilities</Problem>. The authors further argue <Problem>standard benchmarks are ill-suited to GPT-4V</Problem> (p.8-9): LMM captions are richer than benchmark ground truths, and undisclosed large-scale pretraining may violate train/test splits and invalidate numbers. The gap is therefore exploratory: map a capability surface, not close a measured performance gap.
+
+## Contribution (what's new)
+The genuine delta is <Novelty>visual referring prompting</Novelty> (Sec. 3.2, Sec. 5): because GPT-4V robustly understands markers drawn directly onto image pixels (arrows, boxes, circles, hand-drawings, handwritten scene text), a user can specify the task or referent by editing the image rather than passing numeric text coordinates. The design must take pixel-space form because <Novelty>numeric text coordinates are reported less reliable</Novelty> than marks the model can see in-context (p.66). The second contribution is demonstrational rather than methodological: hand-driven proofs that GPT-4V can act as a GUI/embodied agent by predicting the next action from a screenshot.
+
+## Research questions
+The report is organized around four questions (p.8): (1) what inputs and working modes GPT-4V supports; (2) the quality and genericity of its capabilities across domains; (3) effective ways to prompt it; (4) promising future directions.
+
+## Methodology
+A curated qualitative case study: the report "contains minimal quantitative benchmark results" and presents "selected interesting qualitative examples" (p.8), trading rigor for breadth. The default mode is zero-shot instruction following (p.9), chosen to avoid in-context information leakage; few-shot appears only where zero-shot fails.
+
+<Pass title="Method details">
+- **Anti-memorization protocol** (p.8): generate original text queries from scratch; use images either offline or timestamped after April 2023; flag samples that violate this; add "rationale queries" probing the reasoning process to separate capability from lucky guesses. This is the report's main safeguard and a notable observation in its own right.
+- **Prompting techniques catalogued** (Sec. 3): instruction following; constrained prompting (force JSON, Fig. 3); "condition on good performance" (tell the model it is an expert and to succeed, Fig. 4); chain-of-thought; multimodal example-grounded instruction; in-context few-shot.
+- **Visual referring prompting** (Sec. 5): understand pointing inputs (5.1), prompt by editing pixels (5.2), and even generate pointing outputs as text coordinates for closed-loop grounded reasoning (5.3) — though generated boxes are coarse and not tightly fitted (p.69).
+- **Agent setup**: For GUI/embodied demos the model is given the goal, a fixed natural-language action vocabulary, and the current screenshot, and must predict the next action; e.g. web browsing uses "move the mouse, click an icon with the mouse, type with the keyboard" and must "describe the location as detailed as possible" (p.121, Fig. 92). A human manually executes each predicted action and captures the next screenshot — there is no automated executor, DOM, or accessibility layer.
+- **Capability gallery** (Secs. 4,6,7,8,9): open-world description (celebrity/landmark/food/medical/logo), localization/counting/dense captioning, multimodal knowledge & commonsense, scene-text/table/chart/document reasoning, multilingual understanding, coding-from-image (LaTeX/Markdown/figure replication), temporal/video understanding, abstract visual reasoning & IQ tests (WAIS, Raven's Progressive Matrices), emotion/EQ.
+</Pass>
+
+## Main result
+This is a qualitative report, so there is no headline number: <Finding src="p.8">task success rates, benchmarks, baselines, and ablations are all Not reported</Finding> by design. The "result" is an existence-proof map of capabilities. The closest thing to a headline is that <Finding src="Sec. 9.7-9.8">GPT-4V completes multi-step GUI and embodied tasks in the shown single runs</Finding>: a web-browsing flow that reaches and prints a Mapo Tofu recipe (Figs. 92-96), a 9-step Amazon smartphone shopping flow to checkout (Figs. 103-111), and a virtual house tour that reaches the fridge in ~3-4 turns (Figs. 90-91).
+
+## Key findings
+Because this is qualitative, the findings are demonstrated capabilities and observed failure-then-fix patterns; quantitative success rates are Not reported throughout.
+
+- <Finding src="Sec. 5, p.66">Visual referring prompting works, and marks-on-pixels are reported more reliable than numeric text coordinates</Finding>: GPT-4V binds objects to drawn indices, answers questions written next to a pointed edge/angle, and follows "+dot" arrow patterns — though "more reliably" is not quantified.
+- <Finding src="Figs. 92-96, 103-111, 90-91">GPT-4V can drive GUI and embodied agents from screenshots</Finding>: it predicts plausible next UI actions (click/move-mouse/type) for web browsing, smartphone shopping, and house navigation, with at least one acknowledged "minor error" (Fig. 100, failing to return to a prior search page).
+- <Finding src="Fig. 4">Prompt framing changes correctness</Finding>: "condition on good performance" plus row-by-row counting flips an apple miscount to a correct count.
+- <Finding src="Figs. 8-13">Few-shot is sometimes necessary, not just helpful</Finding>: zero/one-shot fail to read a speed-meter while two-shot reads "~9 mph" correctly (Figs. 8-10), and a multi-hop gas-price line-plot question only reaches the correct "2022" at two-shot (Figs. 11-13).
+- <Finding src="Sec. 5.3, p.69">Generated grounding is spatially coarse</Finding>: GPT-4V can emit bounding boxes as text for closed-loop reasoning, but the boxes are not tightly fitted.
+- <Finding src="p.8">The authors' own honest caveat is the most important finding</Finding>: showcased examples "may require careful instruction tuning to amplify" the capability, "some complex cases may only work with the specifically designed prompts," and capabilities "may not consistently work across different samples."
+
+## Implications
+This report seeds the screenshot-to-action and pixel-mark grounding patterns that recur in the later computer-use / GUI-agent lineage. It is a sibling in spirit to <Related>"Sparks of AGI" (Bubeck et al., 2023)</Related> — a qualitative capability probe, here for the vision modality — and it imports LLM prompting machinery (CoT, in-context few-shot, ReAct, self-reflection, self-consistency, retrieval augmentation) into the multimodal setting. Downstream it anticipates <Related>Set-of-Mark prompting, SeeAct, WebVoyager, and later OS/computer-use agents</Related>. Threads worth chasing: <FollowUp>Set-of-Mark Prompting (Yang et al., 2023) as the direct formalization of pixel-mark grounding</FollowUp>; <FollowUp>quantitative GUI-agent benchmarks (WebArena, Mind2Web) to put measured numbers on the loop this report ran by hand</FollowUp>.
+
+## Limitations
+- <Caveat>Author-stated (p.8-9, 19, 156): not exhaustive; examples may need careful prompt tuning; may not work consistently across samples; quantitative evaluation left to future work.</Caveat>
+- <Caveat>No metrics, baselines, or ablations; capabilities are typically backed by one or a few cherry-picked successful prompts — the gallery shows what can happen, not what usually happens.</Caveat>
+- <Caveat>The "grounded, automatable without a human in the loop" claim for GUI actions (p.121) is aspirational: a human executes every action, and mouse targets are verbal ("approximately 1/3 down the left side"), not pixel-precise.</Caveat>
+- <Caveat>Section 10's richer agent structures (multimodal ReAct chains, self-reflection, self-consistency, retrieval) are hand-built mockups, not running systems.</Caveat>
+- <Caveat>Time-sensitive black box: results pertain to one early GPT-4V snapshot and may not replicate on later versions.</Caveat>
+
+## Critiques and Questions
+1. Every agentic "success" in Secs. 9.7-9.8 is a single human-executed run; treat them as existence proofs, not measured task completion. The anti-memorization protocol raises confidence the model is not merely recalling training data, but it does nothing for reliability.
+2. The "more reliable than text coordinates" claim for visual referring prompting (p.66) carries no number — how much more reliable, and on what task distribution?
+3. The most reusable artifact for harness work is Fig. 92's verbatim GUI prompt (goal + fixed action vocabulary + current screenshot, requiring the model to verbalize the mouse target); any citation of these demos should travel with the p.8 caveat that they "may not consistently work across different samples."
+
+<SelfCheck q="Why does visual referring prompting use marks drawn on the image instead of text coordinates, and what is the evidence for that choice?" a="GPT-4V understands markers drawn onto image pixels (arrows, boxes, circles, scene text) and the report finds pixel marks work more reliably than passing numeric text coordinates (p.66). The evidence is qualitative single-instance demos, not a measured comparison, so 'more reliably' is unquantified." />
+
+## Glossary
+- <Term def="A large language model extended with multi-sensory skills such as visual understanding (here, GPT-4V).">LMM (large multimodal model)</Term>
+- <Term def="Instructing or pointing the model by editing the input image's pixels — drawing arrows/boxes/circles or writing scene text — instead of using text coordinates.">visual referring prompting</Term>
+- <Term def="Running a task with no in-context examples; the report's default mode to avoid information leakage.">zero-shot mode</Term>
+- <Term def="Telling the model it is an expert and should succeed, which can flip an incorrect answer to a correct one (Fig. 4).">condition on good performance</Term>
+- <Term def="A later technique that overlays numbered/colored marks on image regions so a VLM can refer to them; the direct descendant of this report's pixel-mark idea.">Set-of-Mark prompting</Term>
+
+{/* NOTES_START */}
+### Personal notes
+The most reusable artifact for harness work is the verbatim GUI prompt on p.121/Fig. 92 (give the model the goal, a fixed action vocabulary, and the current screenshot; require it to verbalize the mouse target). Treat every "task accomplished" in Secs. 9.7-9.8 as an existence proof under a human executor, not a success rate. The honest caveat on p.8 ("may not consistently work across different samples") should accompany any citation of these demos. Pair with a quantitative GUI-agent benchmark (WebArena / Mind2Web) for measured numbers.
+{/* NOTES_END */}

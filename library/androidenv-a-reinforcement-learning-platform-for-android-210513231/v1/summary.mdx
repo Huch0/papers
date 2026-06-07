@@ -32,7 +32,7 @@ summary_date: '2026-06-07'
   { value: "100+", label: "ready-made tasks", sub: "across ~30 apps (§3)" },
   { value: "2B+ / 2M+", label: "Android users / apps", sub: "task supply (p.1)" },
   { value: "6", label: "tasks evaluated", sub: "of 100+ shipped (§4)" },
-  { value: "108", label: "discrete actions", sub: "6×9 grid × {LIFT,TOUCH} (§4)" },
+  { value: "108", label: "discrete actions", sub: "6×9 grid × `{LIFT,TOUCH}` (§4)" },
 ]} />
 
 ## Motivation
@@ -49,7 +49,7 @@ This is a systems/platform paper, not an algorithm paper. The "method" is the en
 
 <Pass title="Method details">
 <Stepper steps={[
-  { title: "Universal interface", body: "Observation = {pixels (RGB, device resolution), timedelta, orientation}; raw action = continuous position (x,y) ∈ [0,1]×[0,1] plus discrete ActionType ∈ {TOUCH, LIFT, REPEAT}. Identical across every task and app, so policies can generalise (p.2-4, §2.2-2.3)." },
+  { title: "Universal interface", body: "Observation = `{pixels (RGB, device resolution), timedelta, orientation}`; raw action = continuous position (x,y) ∈ [0,1]×[0,1] plus discrete ActionType ∈ `{TOUCH, LIFT, REPEAT}`. Identical across every task and app, so policies can generalise (p.2-4, §2.2-2.3)." },
   { title: "Gestures emerge from raw actions", body: "Single raw actions rarely change anything; Android interprets sequences as tap / swipe / scroll / long-press / drag-and-drop. A random action sequence has low probability of forming a meaningful gesture, making exploration genuinely hard (p.3, §2.2)." },
   { title: "Real-time, asynchronous execution", body: "The OS never pauses for the agent; observation/action rates are user-configurable but the OS clock is not. Screen refreshes at 60-120 Hz; sampling faster yields no new information. Large deliberation times hurt — an over-long pause can turn an intended tap into a long-press (p.2 §2.1; p.7 §5, Figs.7-8)." },
   { title: "Optional rate stabiliser", body: "Given max_steps_per_second, AndroidEnv can insert a wait `dt = 1/max_steps_per_second` to approach a fixed interaction rate and reduce variance in the gap between observations (p.7-8, §5)." },
@@ -87,7 +87,7 @@ Establishes the canonical mobile-control setup — pixels in, universal touch ou
 2. Human-normalised scores are used as the headline metric, yet the human-score collection protocol is never described. How were human baselines measured, and on which device/resolution?
 3. Compute budget (sample count, wall-clock, GPU/TPU) is Not reported — making the "solvable vs unsolvable" framing hard to interpret without knowing how much training each task received.
 
-<SelfCheck q="Why is AndroidEnv a harder exploration problem than Atari despite a seemingly simple action space?" a="Its raw action is just a screen position plus {TOUCH, LIFT, REPEAT}, and a single raw action rarely changes anything. Agents must compose sequences of raw actions into gestures (tap, swipe, drag-and-drop) that Android interprets — and a random sequence has low probability of forming a meaningful gesture, so agents face the gesture-composition problem on top of the underlying task (§2.2, p.3)." />
+<SelfCheck q="Why is AndroidEnv a harder exploration problem than Atari despite a seemingly simple action space?" a="Its raw action is just a screen position plus `{TOUCH, LIFT, REPEAT}`, and a single raw action rarely changes anything. Agents must compose sequences of raw actions into gestures (tap, swipe, drag-and-drop) that Android interprets — and a random sequence has low probability of forming a meaningful gesture, so agents face the gesture-composition problem on top of the underlying task (§2.2, p.3)." />
 
 ## Glossary
 - <Term def="DeepMind's standard Python interface for RL environments (observation/action/step/reset).">`dm_env`</Term>

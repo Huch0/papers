@@ -22,22 +22,28 @@ summary_date: '2026-06-06'
 ---
 
 {/*
-  Concise, core-first. Detail lives in <Pass>. Numbers verified against summary.html / extraction.
+  Concise, core-first. Detail lives in <Pass>. Numbers verified against extraction.txt.
 */}
 
 <TLDR>A compositional computer-use agent that routes each action's <Term def="mapping a UI element description to exact pixel coordinates">grounding</Term> to a specialist expert (visual / OCR / spreadsheet-API) and re-plans subgoals after every step, setting new SOTA on OSWorld, WindowsAgentArena, and AndroidWorld.</TLDR>
 
 <WhyItMatters>The lineage successor to Agent S from an open-code lab; its "compose cheap specialists to beat the best monolith" thesis is directly relevant to GUI-agent harness design (planner/worker/grounder separation and routing).</WhyItMatters>
 
+<KeyStats items={[
+  { value: "34.5%", label: "OSWorld 50-step SOTA", sub: "Claude-3.7, vs OpenAI CUA 32.6%" },
+  { value: "29.23% > 24.61%", label: "small specialist > big generalist", sub: "UI-TARS-7B-DPO vs Claude-3.7 as grounder" },
+  { value: "3", label: "benchmarks set SOTA", sub: "OSWorld · WAA · AndroidWorld" },
+]} />
+
 ## Motivation
-Computer-use agents must do three cognitively distinct things at once — long-horizon planning, action generation, and pixel-precise grounding — yet prior work pushes all three through a single model. That monolith fails on two fronts: it <Claim>imprecisely grounds GUI elements to coordinates</Claim> and <Claim>struggles on long-horizon tasks amid pop-ups and evolving screens</Claim>. A structural reason: fine-tuning one model to specialize on a sub-skill erodes its other abilities (catastrophic forgetting), so a generalist is bottlenecked by its weakest sub-skill. The best agents still trail humans by ~40% on OSWorld (p.1). (Problem only — not the fix.)
+Computer-use agents must do three cognitively distinct things at once — long-horizon planning, action generation, and pixel-precise grounding — yet prior work pushes all three through a single model. That monolith fails on two fronts: it <Problem>imprecisely grounds GUI elements to coordinates</Problem> and <Problem>struggles on long-horizon tasks amid pop-ups and evolving screens</Problem>. A structural reason: <Problem>fine-tuning one model to specialize on a sub-skill erodes its other abilities (catastrophic forgetting)</Problem>, so a generalist is bottlenecked by its weakest sub-skill. The best agents still trail humans by ~40% on OSWorld (p.1). (Problem only — not the fix.)
 
 ## Contribution (what's new)
 Two transferable mechanisms layered on the inherited Agent S Manager/Worker + knowledge base:
-- <Claim>**Mixture-of-Grounding**: treat grounding as a routing problem</Claim> — the Worker gates each action to a specialist tool because a single visual grounder misses fine targets (exact word edges, resized cells) that non-MLLM tools handle better (OCR for spans, a spreadsheet API for cells).
-- <Claim>**Proactive Hierarchical Planning**: re-plan after every subgoal, not just on failure</Claim> — a reactive plan cannot absorb information learned from a *successful* subgoal, so proactive re-planning enables backward correction and adaptive exploration as the partial screen is revealed.
+- <Novelty>**Mixture-of-Grounding**: treat grounding as a routing problem</Novelty> — the Worker gates each action to a specialist tool because a single visual grounder misses fine targets (exact word edges, resized cells) that non-MLLM tools handle better (OCR for spans, a spreadsheet API for cells).
+- <Novelty>**Proactive Hierarchical Planning**: re-plan after every subgoal, not just on failure</Novelty> — a reactive plan cannot absorb information learned from a *successful* subgoal, so proactive re-planning enables backward correction and adaptive exploration as the partial screen is revealed.
 
-The core empirical claim: <Claim>composing individually-suboptimal specialists can beat the best monolithic model</Claim>.
+The core empirical claim: <Novelty>composing individually-suboptimal specialists can beat the best monolithic model</Novelty>.
 
 ## Research questions
 Can splitting cognition across a generalist planner/worker and specialist grounders — plus per-subgoal re-planning — outperform monolithic native agents on real computer-use tasks, and does each component contribute?
@@ -62,33 +68,36 @@ Backbones (Manager/Worker): Claude-3.7-Sonnet (best, thinking on), Claude-3.5-So
 </Pass>
 
 ## Main result
-New SOTA across three benchmarks. On OSWorld with Claude-3.7: <Evidence src="Tab.1, p.6">27.0% @15-step and 34.5% @50-step</Evidence>, vs UI-TARS-72B-DPO 22.7% / OpenAI CUA 32.6% and Claude-3.7 Computer Use baselines. Also <Evidence src="Tab.3, p.7">WindowsAgentArena 29.8% (+52.8% rel.) beating a11y-tree-using NAVI 19.5%</Evidence> with screenshots only, and <Evidence src="Tab.4, p.9">AndroidWorld 54.3% (+16.5% rel.) vs UI-TARS-72B-SFT 46.6%</Evidence>. A direct novelty test: <Evidence src="Fig.6, p.8">an in-framework UI-TARS-7B-DPO grounder (29.23%) beats the Claude-3.7 generalist grounder (24.61%)</Evidence>. <Weak>All numbers appear to be single runs with no variance; the 50-step OSWorld margin over OpenAI CUA is only 1.9 pts; ablations use a 65-task subset; the abstract's "+18.9%/+32.7%" relative framing uses different baselines/variants than p.2, so it is easy to misread.</Weak>
+New SOTA across three benchmarks. On OSWorld with Claude-3.7: <Finding src="Tab.1, p.6">27.0% @15-step and 34.5% @50-step</Finding>, vs UI-TARS-72B-DPO 22.7% / OpenAI CUA 32.6% and Claude-3.7 Computer Use baselines. Also <Finding src="Tab.3, p.7">WindowsAgentArena 29.8% (+52.8% rel.) beating a11y-tree-using NAVI 19.5%</Finding> with screenshots only, and <Finding src="Tab.4, p.9">AndroidWorld 54.3% (+16.5% rel.) vs UI-TARS-72B-SFT 46.6%</Finding>. <Caveat>All numbers appear to be single runs with no variance; the 50-step OSWorld margin over OpenAI CUA is only 1.9 pts; ablations use a 65-task subset; the abstract's "+18.9%/+32.7%" relative framing uses different baselines/variants than p.2, so it is easy to misread.</Caveat>
 
-<Pass title="Full results">
-  <ResultsTable
-    columns={["Setting", "Agent S2", "Best baseline", "Anchor"]}
-    rows={[
-      ["OSWorld 15-step (Claude-3.7)", "27.0%", "UI-TARS-72B-DPO 22.7% · CUA 19.7% · Agent S 20.6%", "Tab.1, p.6"],
-      ["OSWorld 50-step (Claude-3.7)", "34.5%", "OpenAI CUA 32.6% · CCU-3.7 26.0%", "Tab.1, p.6"],
-      ["OSWorld 15/50 (Claude-3.5 new)", "24.5% / 33.7%", "CCU-3.7 15.5% / 26.0%", "Tab.1, p.6"],
-      ["WindowsAgentArena (15-step)", "29.8% (+52.8% rel.)", "NAVI 19.5% · Agent S 18.2% (a11y+screenshot)", "Tab.3, p.7"],
-      ["AndroidWorld", "54.3% (+16.5% rel.)", "UI-TARS-72B-SFT 46.6% · GPT-4o+Aria-UI 44.8%", "Tab.4, p.9"],
-      ["Ablation: MoG (65-subset)", "27.69→30.77% (15) · 33.85→38.46% (50)", "w/o MoG", "Fig.5, p.8"],
-      ["Ablation: Proactive plan (65-subset)", "+4.62% (15) · +6.15% (50)", "vs reactive", "Fig.5, p.8"],
-      ["Small specialist > big generalist (15)", "UI-TARS-7B-DPO 29.23%", "Claude-3.7 generalist 24.61%", "Fig.6, p.8"]
-    ]} />
-Error analysis (Fig.8): planning is now the top failure (41.0%), grounding only 20.5% — MoG shifted the bottleneck off grounding.
-</Pass>
+<SortableTable
+  columns={["Setting", "Agent S2", "Best baseline", "Anchor"]}
+  rows={[
+    ["OSWorld 15-step (Claude-3.7)", "27.0%", "UI-TARS-72B-DPO 22.7% · CUA 19.7% · Agent S 20.6%", "Tab.1, p.6"],
+    ["OSWorld 50-step (Claude-3.7)", "34.5%", "OpenAI CUA 32.6% · CCU-3.7 26.0%", "Tab.1, p.6"],
+    ["OSWorld 15/50 (Claude-3.5 new)", "24.5% / 33.7%", "CCU-3.7 15.5% / 26.0%", "Tab.1, p.6"],
+    ["WindowsAgentArena (15-step)", "29.8% (+52.8% rel.)", "NAVI 19.5% · Agent S 18.2% (a11y+screenshot)", "Tab.3, p.7"],
+    ["AndroidWorld", "54.3% (+16.5% rel.)", "UI-TARS-72B-SFT 46.6% · GPT-4o+Aria-UI 44.8%", "Tab.4, p.9"],
+    ["Small specialist > big generalist (15)", "UI-TARS-7B-DPO 29.23%", "Claude-3.7 generalist 24.61%", "Fig.6, p.8"]
+  ]} />
+
+## Key findings
+- <Finding src="Fig.6, p.8">A small open-source specialist grounder beats the best closed generalist as the grounder</Finding>: in-framework UI-TARS-7B-DPO scores 29.23% vs Claude-3.7 24.61% (UGround-V1-7B 24.61%, UI-TARS-72B-DPO 30.77%) — direct evidence for the "suboptimal specialists beat the monolith" thesis.
+- <Finding src="Fig.8, p.9">MoG shifts the bottleneck off grounding</Finding>: planning is now the top failure (41.0%) while grounding is only 20.5% — a reversal of prior work where grounding dominated, so the framework moves rather than removes the limit.
+- <Finding src="Fig.5, p.8">Both mechanisms help more at longer horizons</Finding>: MoG adds 27.69→30.77% @15 and 33.85→38.46% @50; proactive vs reactive planning adds +4.62% @15 and +6.15% @50 (65-task subset).
+- <Finding src="§4.3, p.8">Each grounding expert measurably lifts its own subtasks</Finding>: removing textual grounding drops subtask success 70.6→65.2%; removing structural grounding drops it 73.7→69.4%.
+- <Finding src="§4.2, p.7">Specialist routing explains a backbone surprise</Finding>: Claude-3.5 (new) beats Claude-3.7 in the Office category because it routes to Textual/Structural experts almost twice as often.
+- <Finding src="Fig.7, p.9">Test-time scaling (15→50 steps) works via four behaviors</Finding>: of tasks fixed by more steps, gains come from Adaptive Navigation (34.5%), Adaptive Interaction (31.0%), Backward Correction (13.8%), and Task Complexity (10.3%) — all enabled by proactive replanning.
 
 ## Implications
-A testable case that modular composition of off-the-shelf models beats monolithic native agents on computer use, and that grounding is better framed as per-action routing than as one skill. For harness design: separate planner/worker/grounder, route grounding to the cheapest tool that works, and re-plan per subgoal. Lowers the adoption barrier by reusing commodity OCR/UNO and open code.
+A testable case that modular composition of off-the-shelf models beats monolithic native agents on computer use, and that grounding is better framed as per-action routing than as one skill. For harness design: separate planner/worker/grounder, route grounding to the cheapest tool that works, and re-plan per subgoal. Lowers the adoption barrier by reusing commodity OCR/UNO and open code. <Related>Direct successor to Agent S (Agashe et al. 2024); reuses its Manager/Worker + knowledge base, and competes with native monoliths UI-TARS / Claude Computer Use / OpenAI CUA.</Related> <FollowUp>The repo (simular-ai/Agent-S) holds the Manager/Worker/router prompts and the 65-task subset selection worth inspecting.</FollowUp>
 
 ## Limitations
-- <Limit>No variance/error bars; headline and ablation numbers appear single-run, so small SOTA margins (e.g. +1.9 pts on 50-step OSWorld) could be within noise.</Limit>
-- <Limit>Ablations on a 65-task subset, not the full 369.</Limit>
-- <Limit>Cost/latency of per-subgoal re-planning and per-action routing is never quantified.</Limit>
-- <Limit>Structural grounding is tied to UNO-controllable office apps — not a general mechanism.</Limit>
-- <Limit>By the authors' own error analysis, planning is now the dominant failure (41.0%) — the framework moves the bottleneck rather than removing it; still ~40% below humans.</Limit>
+- <Caveat>No variance/error bars; headline and ablation numbers appear single-run, so small SOTA margins (e.g. +1.9 pts on 50-step OSWorld) could be within noise.</Caveat>
+- <Caveat>Ablations on a 65-task subset, not the full 369.</Caveat>
+- <Caveat>Cost/latency of per-subgoal re-planning and per-action routing is never quantified.</Caveat>
+- <Caveat>Structural grounding is tied to UNO-controllable office apps — not a general mechanism.</Caveat>
+- <Caveat>By the authors' own error analysis, planning is now the dominant failure (41.0%) — the framework moves the bottleneck rather than removing it; still ~40% below humans.</Caveat>
 
 <Pass title="Evidence check (claim → support)">
   <ClaimEvidence rows={[
@@ -102,14 +111,14 @@ A testable case that modular composition of off-the-shelf models beats monolithi
 Novelty-verifying experiments (Fig.5 MoG/PHP ablations, Fig.6 grounder swap) are separated from the main SOTA tables, which mainly confirm the "monolithic is bottlenecked" motivation.
 </Pass>
 
----
-
 ## Critiques and Questions
 1. With single-run numbers and a 1.9-pt 50-step margin, how much of the SOTA is noise? Re-run with seeds.
 2. Routing is itself an LLM decision — what is the misroute rate, and how often does a wrong expert choice cause failure?
 3. What is the latency/cost multiplier of re-planning after every subgoal vs reactive? The obvious price of the design is unmeasured.
 4. Does the compositional advantage survive when grounders are also weak, or does it depend on a strong UI-TARS visual expert?
 5. How does the v1→S2 delta isolate against the original Agent S? Check the repo for Manager/Worker/router prompts and the 65-task subset selection.
+
+<SelfCheck q="Why can a small open-source grounder outperform Claude-3.7 inside Agent S2 when Claude-3.7 is the stronger overall model?" a="Because grounding is routed out of the generalist: the Worker only reasons and emits a language descriptor, and a specialist grounder (e.g. UI-TARS-7B-DPO, 29.23% vs Claude-3.7's 24.61% in Fig.6) converts it to coordinates. Specializing the sub-skill avoids the catastrophic-forgetting trade-off a monolith faces." />
 
 ## Glossary
 <Term def="autonomous agent that completes tasks by driving a GUI with keyboard/mouse, no app-specific APIs">Computer-use agent</Term> ·

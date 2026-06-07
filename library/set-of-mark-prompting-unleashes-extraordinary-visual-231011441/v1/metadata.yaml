@@ -59,7 +59,7 @@ scoring:
 artifacts:
   pdf: library/set-of-mark-prompting-unleashes-extraordinary-visual-231011441/v1/paper.pdf
   extraction: library/set-of-mark-prompting-unleashes-extraordinary-visual-231011441/v1/extraction.txt
-  summary: library/set-of-mark-prompting-unleashes-extraordinary-visual-231011441/v1/summary.md
+  summary: library/set-of-mark-prompting-unleashes-extraordinary-visual-231011441/v1/summary.mdx
   code_url: null
   project_url: null
   dataset_url: null
@@ -69,3 +69,4 @@ status:
   summarized: true
   triaged: true
   user_read_status: unread
+  summary_format: mdx

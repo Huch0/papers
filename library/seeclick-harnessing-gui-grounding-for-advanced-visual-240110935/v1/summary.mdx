@@ -1,0 +1,104 @@
+---
+canonical_key: arxiv-2401.10935
+version_key: v1
+title: 'SeeClick: Harnessing GUI Grounding for Advanced Visual GUI Agents'
+authors:
+- Kanzhi Cheng
+- Qiushi Sun
+- Yougang Chu
+- Fangzhi Xu
+- Yantao Li
+- Jianbing Zhang
+- Zhiyong Wu
+venue: Annual Meeting of the Association for Computational Linguistics
+year: 2024
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2401.10935
+summary_date: '2026-06-07'
+---
+
+<TLDR>SeeClick is a screenshot-only GUI agent built by continually pre-training Qwen-VL on ~1M auto-curated <Term def="locating the on-screen element an instruction refers to, as a click coordinate">GUI grounding</Term> samples, showing that grounding is the bottleneck capability whose improvement directly lifts downstream agent performance.</TLDR>
+
+<WhyItMatters>One of the founding papers of the screenshot-in / coordinate-out computer-use paradigm, and the source of the widely reused <Term def="the first realistic cross-platform GUI grounding benchmark: >600 screenshots, 1200+ instructions across mobile/desktop/web">ScreenSpot</Term> benchmark — a clean minimal baseline against richer accessibility-tree harnesses.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "53.4%", label: "ScreenSpot avg click acc", sub: "SeeClick 9.6B vs CogAgent 18B 47.4%" },
+  { value: "0.3%", label: "of Pix2Act's training data", sub: "yet beats it on MiniWob (67.0 vs 64.6)" },
+  { value: "~1M", label: "grounding pre-training samples", sub: "web + mobile + general VL" },
+]} />
+
+## Motivation
+<Problem>Prior GUI agents act through structured text (HTML, DOM, Android view hierarchy)</Problem>, which has three concrete failure modes (Intro, p.1): it is <Problem>not always accessible (iOS, desktop apps)</Problem>; it is <Problem>verbose as LLM context and drops layout, images, and icons</Problem>; and <Problem>its variety forces task-specific observation/action spaces</Problem>. The preliminary study (§3, p.2) surfaces the real blocker for a vision-only alternative: <Problem>existing LVLMs ground poorly on GUIs because screenshots differ from natural images (dense text, many icons/widgets)</Problem>, and <Problem>prior UI-grounding work was largely confined to a single 2017 Android dataset with no realistic cross-platform benchmark</Problem>.
+
+## Contribution (what's new)
+<Novelty>Treat GUI grounding as plain language generation: given a screenshot and an instruction, the LVLM emits the location as natural-language numbers, e.g. `click (0.49, 0.40)`, optimized by ordinary cross-entropy — no special coordinate-token vocabulary</Novelty> (§3.1, p.4). This must take this form because the baseline fails at grounding, not at planning: rather than 1000-bin coordinate tokens (Pix2Act/Pix2Seq), normalized text coordinates reuse the LVLM's existing generation head, so all capacity goes into learning UI layouts. The recipe is <Novelty>continual pre-training of a grounding-capable backbone on ~1M auto-curated GUI samples</Novelty>, plus <Novelty>ScreenSpot, the first realistic cross-platform grounding benchmark</Novelty>.
+
+## Research questions
+Can a GUI agent run on screenshots alone, with no metadata? Is grounding the capability that gates downstream agent success — i.e., does improving grounding measurably raise task performance?
+
+## Methodology
+Reformulate grounding (`p(y|s,x)`) and OCR/captioning (`p(x|s,y)`) as text generation over normalized two-decimal `[0,1]` coordinates, then continually pre-train Qwen-VL (LoRA on both vision encoder and LLM) on a ~1M mix before per-task fine-tuning.
+
+<Pass title="Method details: data, backbone, ScreenSpot construction">
+<Stepper steps={[
+  { title: "Grounding as generation", body: "Query prompt like 'In the UI, where should I click if I want to <instruction>?'; ground-truth target 'click (0.49, 0.40)'; cross-entropy loss. Coordinates are plain text, not a 1000-token vocabulary (§3.1, p.4)." },
+  { title: "Web data (~300k pages)", body: "From Common Crawl; elements = (a) visible-text elements and (b) elements with a 'title' attribute. Tasks: text-to-point, text-to-bbox, point-to-text, bbox-to-text (web OCR) (§3.2, p.4)." },
+  { title: "Mobile data", body: "Widget-captioning data (Li et al. 2020b: ~20k screenshots / 40k widgets / 100k descriptions) reversed into grounding; plus RICO-derived elements; plus UI summarization (Screen2Words) (§3.2, p.4)." },
+  { title: "General data", body: "LLaVA instruction-following data to preserve natural-image capability. Total ~1M with 30 prompt templates per task (§3.2, p.4)." },
+  { title: "Training", body: "Qwen-VL backbone (448x448 resolution, existing grounding ability), LoRA on vision encoder + LLM, ~10k steps (~1 epoch) (§3.3, p.4)." },
+  { title: "ScreenSpot benchmark", body: ">600 screenshots, 1200+ instructions across iOS, Android, macOS, Windows, web; explicit Text vs Icon/Widget split; human-annotated and curated to avoid training overlap; web pages from WebArena categories (§4, p.5). Metric: predicted click point inside the ground-truth bounding box." },
+]} />
+</Pass>
+
+## Main result
+On ScreenSpot grounding, <Finding src="Tab.1, p.5">SeeClick (9.6B) reaches 53.4% average click accuracy, beating GUI-specific CogAgent (18B) at 47.4% despite fewer parameters, and crushing generalist LVLMs: GPT-4V 16.2%, Qwen-VL 5.2%, MiniGPT-v2 5.7%</Finding>. The grounding gain transfers to agent tasks: <Finding src="Tab.2, p.6">on MiniWob, SeeClick scores 67.0% on the 35-task vision overlap, beating Pix2Act (64.6%) while using less than 0.3% of its 1.3M training data</Finding>.
+
+<SortableTable columns={["Model", "Size", "ScreenSpot avg (%)"]} rows={[
+  ["SeeClick", "9.6B", 53.4],
+  ["CogAgent", "18B", 47.4],
+  ["Fuyu", "8B", 19.5],
+  ["GPT-4V", "-", 16.2],
+  ["MiniGPT-v2", "7B", 5.7],
+  ["Qwen-VL", "9.6B", 5.2],
+]} />
+
+## Key findings
+- <Finding src="Tab.2, p.6">GUI grounding pre-training, not the backbone, drives the gain</Finding>: at an equal 2.8K episodes SeeClick (Image, 73.6%) beats WebGUM (HTML+Image, 65.5%), and it beats its own Qwen-VL backbone by ~19 points (67.0 vs 48.4) — same model, only the grounding pre-training differs.
+- <Finding src="Tab.3, p.7">On AITW (instruction-wise split), SeeClick leads at 59.3 overall vs Qwen-VL 54.3 and GPT-4V 50.5, with click accuracy 66.4 vs 57.4 — the stated "9% increase in click accuracy"</Finding>: precise clicking is the lever, consistent with the grounding thesis.
+- <Finding src="Tab.4, p.8">On Mind2Web (vision-only), SeeClick nearly doubles the Qwen-VL baseline — Cross-Task Step SR 25.5 vs 13.3, Ele.Acc 28.3 vs 15.9</Finding>: but it still trails HTML-based MindAct (Cross-Task Step SR 52.0), so vision-only real-web navigation remains hard.
+- <Finding src="Fig.6, §5.2.4, p.8">Across several SeeClick checkpoints, higher ScreenSpot grounding consistently tracks higher MiniWob/AITW/Mind2Web scores</Finding>: the headline grounding↔downstream correlation — though shown qualitatively, with no correlation coefficient reported in-text.
+- <Finding src="Tab.1, p.5">All models, including SeeClick, struggle on Icon/Widget elements (SeeClick Desktop-Icon 30.0%, Web-Icon 32.5%)</Finding>: non-text grounding is the benchmark's hard axis, and resolution is the suspected bottleneck (SeeClick even loses to CogAgent on Desktop-Text 72.2 vs 74.2 and Web-Text 55.7 vs 70.4).
+- <Finding src="Tab.5, p.8">A single unified agent jointly trained on all three downstream tasks is feasible but not free</Finding>: e.g. MiniWob drops 67.0 to 64.1 vs per-task training.
+
+## Implications
+Establishes the vision-only GUI agent contract — screenshot in, normalized coordinate out, with no metadata — and gives the field <Related>ScreenSpot, now a standard grounding benchmark</Related> plus the grounding-first recipe that <Related>CogAgent, UGround, OS-Atlas and later grounding models build on</Related>. <FollowUp>Whether the grounding↔agent link is causal or just co-driven by general UI exposure</FollowUp>, and <FollowUp>how much later gains come purely from higher-resolution / tiled screenshots</FollowUp>, are the live threads.
+
+## Limitations
+- <Caveat>Author-stated: action space simplified to mainly click/type, excluding drag and double-click; agent-specific fine-tuning is still required per task (not zero-shot)</Caveat> (Limitations, p.9).
+- <Caveat>The central grounding→agent correlation is qualitative — no correlation statistic, and the "grounding" effect is not isolated from general UI pre-training exposure</Caveat>.
+- <Caveat>Low 448x448 backbone resolution caps fine-grained desktop/web text grounding and forces cropping hacks on Mind2Web's long pages</Caveat>.
+- <Caveat>ScreenSpot is small (>600 screens / 1200+ instructions) and baselines use their own recommended prompts, adding prompt-sensitivity confounds (especially GPT-4V)</Caveat>.
+
+## Critiques and Questions
+1. Figure 6's underlying numbers are not in the text, so "grounding correlates with agent performance" rests on a checkpoint trend plus cross-baseline deltas — suggestive, not a controlled causal test.
+2. Honest evaluation is a genuine strength: matched MiniWob task subsets and the AITW instruction-wise re-split (which lowers the headline AITW number vs the overfitting-prone episode-wise split, Tab.7) make the comparisons fairer than usual.
+3. Given the Icon/Widget weakness tracks resolution, how much of SeeClick's deficit vs CogAgent is method vs the 448x448 cap alone?
+
+<SelfCheck q="Why does SeeClick emit coordinates as plain text rather than as special coordinate tokens, and what does the Qwen-VL comparison show this buys?" a="Plain-text normalized coordinates reuse the LVLM's existing language-generation head with no new vocabulary, so all learning capacity goes into UI layouts rather than a new tokenization. The Qwen-VL comparison (same backbone, no grounding pre-training) trailing SeeClick by ~19 points on MiniWob (48.4 vs 67.0) shows the gain comes from grounding pre-training, not the backbone." />
+
+## Glossary
+- <Term def="locating the on-screen element an instruction refers to, expressed as a click coordinate inside its bounding box">GUI grounding</Term>
+- <Term def="Large Vision-Language Model: a vision encoder fused with an LLM to jointly process image + text">LVLM</Term>
+- <Term def="continuing to pre-train an existing model on new domain data before any task fine-tuning">continual pre-training</Term>
+- <Term def="proportion of test samples where the predicted point falls inside the ground-truth element's bounding box">click accuracy</Term>
+- <Term def="step success rate: fraction of steps where the agent's predicted action matches the reference action">Step SR</Term>
+
+{/* NOTES_START */}
+### Personal notes
+The cleanest takeaway for harness design: the entire agent contract is "screenshot in, normalized click/type out, k=4 action history" with zero metadata — a useful minimal baseline to compare richer accessibility-tree harnesses against. ScreenSpot's Icon/Widget vs Text split is the most reusable diagnostic here. Watch the resolution bottleneck: many later gains come simply from feeding higher-res / tiled screenshots.
+{/* NOTES_END */}

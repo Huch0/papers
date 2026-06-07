@@ -1,0 +1,126 @@
+---
+canonical_key: arxiv-2402.17553
+version_key: v1
+title: 'OmniACT: A Dataset and Benchmark for Enabling Multimodal Generalist Autonomous Agents for Desktop
+  and Web'
+authors:
+- Raghav Kapoor
+- Yash Butala
+- M. Russak
+- Jing Yu Koh
+- Kiran Kamble
+- Waseem Alshikh
+- Ruslan Salakhutdinov
+venue: European Conference on Computer Vision
+year: 2024
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2402.17553
+summary_date: '2026-06-07'
+---
+
+{/*
+  Canonical Summary structure (concise, core-first). Body only — frontmatter is generated
+  from metadata.yaml by `summarize_paper.py --format mdx --prepare`. Components are
+  provided globally by the site (no imports). See config/summary_components.md.
+*/}
+
+<TLDR>OmniACT is a 9,802-example benchmark pairing one desktop/web screenshot plus a natural-language task with a gold <Term def="cross-platform Python library that drives the mouse/keyboard by code">PyAutoGUI</Term> script, and shows even the best 2024 model reaches only ~21% of human action score on pure visual grounding.</TLDR>
+
+<WhyItMatters>One of the earliest computer-use-agent benchmarks that targets native desktop apps (no DOM) and outputs an executable low-level action script rather than DOM-element selection — a clean probe of pixel grounding, and a 2024 calibration point for newer agents.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "11.60", label: "GPT-4 Action Score", sub: "= 14.5% of human (Tab.4)" },
+  { value: "17.02", label: "GPT-4V Action Score", sub: "best model, ~21% of human" },
+  { value: "9,802", label: "examples", sub: "macOS/Linux/Windows + web, >200 screens" },
+]} />
+
+## Motivation
+Generalist computer agents must read a screen and act via mouse/keyboard, but <Problem>prior agent benchmarks are almost entirely web or mobile and operate on the HTML DOM</Problem> (Mind2Web, WebArena, VisualWebArena, MiniWoB++; Tab.1, p.4). DOM-based, text-only agents <Problem>cannot touch native desktop apps that have no DOM, struggle with long HTML, and underperform on visually-grounded actions like "click the blue button in the top-right corner"</Problem> (p.2-3). Native desktop is the deliberately harder, DOM-free regime where visual cues are mandatory.
+
+## Contribution (what's new)
+<Novelty>Reframe a computer task as a transition function `f: T x S -> A`</Novelty> — natural-language task `T` plus a single screenshot `S` from `{Linux, Windows, MacOS, Webpage}` maps to a sequence of PyAutoGUI actions `A` (p.6). The design must take this form because the goal is OS-agnostic, DOM-free control: PyAutoGUI coordinate clicks/keystrokes are the universal action encoding that works identically across native apps and web, forcing the agent to predict pixel coordinates from the image rather than select DOM elements. Two artifacts wrap this: the gold dataset with <Novelty>two spatially-aware metrics (Sequence Score + Action Score)</Novelty>, and <Novelty>DetACT</Novelty>, a perception module that turns the screenshot into a text UI-element list so text-only LLMs can participate.
+
+## Research questions
+Can current LLM/VLM agents generate executable scripts for desktop+web tasks from a screenshot alone, and how far below human grounding ability are they?
+
+## Methodology
+Each example is offline: one static screenshot in, one gold PyAutoGUI script out — <Caveat>not a live environment</Caveat> ("OmniACT can be accomplished as a standalone task as it is not under a mock environment", p.5). The action space is click-dominated (Click 63.73%, Press 16.28%, Write 11.65%; Tab.2, p.7), with ~10 action types — larger than the 2-3 of prior benchmarks. Baselines are single-shot: DetACT perception, then a prompt (role + PyAutoGUI API reference + 5 retrieved in-context examples + filtered UI elements + task) -> script; no planner/verifier loop, no environment feedback.
+
+<Pass title="Method details">
+
+Data pipeline (Fig.2, p.5; §3.2):
+
+<Stepper steps={[
+  { title: "Select apps", body: "60+ applications/websites for diversity: 22 macOS + 8 Linux + 8 Windows native apps and 27 web apps, ~3-4 screens each, >200 screens total (p.7)." },
+  { title: "Segment screens", body: "Desktop screens hand-annotated with a custom PyQt5 bounding-box tool; web screens parsed via JavaScript to extract visible, interactable HTML regions." },
+  { title: "Tag functionality", body: "MTurk workers label each box with a functional description (e.g. 'find-product-search-bar')." },
+  { title: "Create tasks", body: "Students with basic Python write tasks per screen using labeled boxes; each task gets 3 NL reformulations, kept in the same split to prevent leakage." },
+  { title: "Reverse-map + filter", body: "Labels mapped back to coordinates; scripts executed/syntax-checked, broken ones removed, then manual review -> 9,802 gold points, split 7:1:2 (p.9)." },
+]} />
+
+DetACT (§5, p.10-12) fuses three signals into a UI-element list: text (EasyOCR + SAM region classification), icons (1,600 templates matched to SAM regions via grayscale SSIM, threshold 0.95), and color (average RGB bucketed into 11 named colors). GPT-4 then filters the list to task-relevant elements before it enters the prompt.
+
+The two metrics (§4, Eq.1-6):
+
+<MathBlock>{`SeqScore_i = \\beta_1 + \\beta_2 (s-1) \\text{ if all action types match, else } 0 \\quad (\\beta_1 = 0.1, \\beta_2 = 1)`}</MathBlock>
+
+Action Score starts from SeqScore and, only when the type sequence already matches, subtracts a Click penalty (coordinate error via bounding-box-distance with box-size-aware smoothing), a Key penalty (predicted key set != gold), and a Write penalty (`1 - BLEU` on typed text). It is normalized into `[0,1]` per example, reported on a 0-100 scale.
+
+</Pass>
+
+## Main result
+<Finding src="Tab.4, p.13">GPT-4V is best overall at Action Score 17.02 (Sequence Score 38.72); text-only GPT-4 reaches 11.60</Finding> — only 14.5% of the human Action Score of 80.14, matching the abstract's "~15% of human proficiency" claim (the comparison is text-only GPT-4). Even the best model, GPT-4V, is only ~21% of human (17.02/80.14).
+
+<SortableTable columns={["Model", "Sequence Score", "Action Score"]} rows={[
+  ["GPT-4V (multimodal)", 38.72, 17.02],
+  ["GPT-4 (text + DetACT)", 32.75, 11.60],
+  ["Gemini-Pro (multimodal)", 30.98, 11.46],
+  ["GPT-3.5-turbo-0613", 22.85, 7.89],
+  ["LLaVA-v1.5-13B", 20.56, 8.19],
+  ["CodeLLaMA-34B", 10.09, 3.72],
+  ["Vicuna-13B FT", 8.78, 2.72],
+  ["LLaMA-13B FT", 8.92, 2.14],
+  ["LLaMA-13B (prompt)", 4.80, 1.62],
+  ["Human", 82.23, 80.14],
+]} />
+
+## Key findings
+- <Finding src="Tab.4, p.13">Passing the full image (multimodal) markedly improves coordinate prediction</Finding>: GPT-4V's Action Score (17.02) far exceeds text-only GPT-4 (11.60), because text-only LLMs lack pixel grounding and incur large click penalties.
+- <Finding src="Tab.4, p.13">Text-only and fine-tuned LLMs suffer "severe mouse penalties, especially on click coordinates"</Finding>: they rely solely on text-based signals, so DetACT descriptions are not enough to place the cursor.
+- <Finding src="Tab.4, p.13">Code training helps action-sequence prediction</Finding>: CodeLLaMA-34B (SS 10.09) beats similarly-sized non-code models, attributed to its code pre-training.
+- <Finding src="Tab.4, p.13">Light fine-tuning meaningfully helps</Finding>: QLoRA fine-tuning lifts LLaMA-13B Sequence Score 4.80 -> 8.92 and Action Score 1.62 -> 2.14, beating its few-shot counterpart.
+- <Finding src="Tab.4, p.13">A large, well-motivated human-model gap</Finding>: humans score Action 80.14 with tiny penalties (Click 0.12, Key 0.36, Write 1.61), confirming the task is hard for 2024-era models, not just unsolved by weak ones.
+
+## Implications
+OmniACT extends the agent-benchmark <Related>lineage from web/DOM benchmarks (Mind2Web, WebArena, VisualWebArena) and the pixel-to-action thread (Pix2Act, WebAgent)</Related> into native multi-OS desktop, making pixel grounding the bottleneck. Its action-space design and Sequence/Action Score metric are reusable evaluation primitives. <FollowUp>Later live computer-use benchmarks (e.g. OSWorld) that execute model outputs address OmniACT's offline-metric limitation</FollowUp>, and the GPT-4/GPT-4V numbers are a clean 2024 baseline for comparing newer agents.
+
+## Limitations
+- Author-stated (p.14): <Caveat>GPT-4/GPT-4V hallucination and bias, reliance on costly closed models, English-only data, possible temporal biases</Caveat>.
+- Inferred: <Caveat>the metric is offline similarity-against-gold, not live execution</Caveat> — Table 1 claims "Executional Correctness," but that refers to the data-collection filter (scripts verified to execute, p.8), not to running model outputs. <Caveat>Action Score is gated on an exact action-type sequence match</Caveat>, so a single wrong/extra action zeroes the example and valid alternative orderings score 0. <Caveat>Single-screenshot scope excludes the long-horizon cross-app tasks used as motivation</Caveat> (tasks confined "within a single screen", p.7-8). <Caveat>No statistical variance, only 10 human evaluators with no inter-annotator agreement, and a public HuggingFace dataset that raises contamination/aging risk</Caveat>.
+
+## Critiques and Questions
+1. Table 3 shows no Web train rows (web appears only in val/test) yet the text says all platforms split 7:1:2 (p.9) — a table artifact or a real gap in web training data? It is unexplained.
+2. With coordinates judged against a single gold bounding box, how much does the benchmark under-credit valid alternative targets, and would an execution-based success check change the model ranking?
+3. Action Score should be read as a grounding / short-horizon proxy, not a task-success rate — does the human-model gap shrink under a live executor?
+
+<SelfCheck q="Why does GPT-4V outscore text-only GPT-4 on Action Score, and what does that reveal about the benchmark's core difficulty?" a="GPT-4V receives the raw image, so it can predict click coordinates from pixels, whereas text-only GPT-4 sees only DetACT's textual UI-element list and incurs large click/coordinate penalties. This shows the benchmark's central difficulty is pure visual grounding — predicting pixel locations from an image without a DOM." />
+
+## Glossary
+- <Term def="The task formulation f: T x S -> A — natural-language task T plus a screenshot S maps to a sequence of PyAutoGUI actions A">transition function</Term>
+- <Term def="Sequence Score: rewards getting the ordered list of action TYPES right; does not check coordinates/text">Sequence Score</Term>
+- <Term def="Action Score: starts from Sequence Score, then subtracts coordinate/key/text penalties; normalized to [0,1], reported 0-100">Action Score</Term>
+- <Term def="DetACT: perception module turning a screenshot into a filtered text list of UI elements via OCR + SAM + icon-template SSIM + color bucketing + GPT-4 filtering">DetACT</Term>
+- <Term def="Segment Anything Model — a promptable image segmentation model used here to segment screen regions">SAM</Term>
+
+{/* NOTES_START */}
+### Personal notes
+- Headline calibration: GPT-4 (text) = 14.5% of human AS (11.60/80.14) ~ claimed 15%; best model GPT-4V = 17.02 AS ~ 21% of human. Use as a 2024 baseline vs newer computer-use agents.
+- Treat "Action Score" as a grounding/short-horizon proxy, NOT an execution-success rate — the benchmark is offline/static.
+- Watch contamination: dataset public on HuggingFace since 2024.
+- Follow-up: OSWorld / live computer-use benchmarks; compare DOM (Mind2Web/VisualWebArena) vs pixel grounding; locate OmniACT/DetACT repo + license; confirm Table 3 web train-split discrepancy against released data.
+{/* NOTES_END */}

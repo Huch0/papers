@@ -68,7 +68,7 @@ scoring:
 artifacts:
   pdf: library/spreadsheetbench-towards-challenging-real-world-spreadsheet-manipulation-240614991/v1/paper.pdf
   extraction: library/spreadsheetbench-towards-challenging-real-world-spreadsheet-manipulation-240614991/v1/extraction.txt
-  summary: library/spreadsheetbench-towards-challenging-real-world-spreadsheet-manipulation-240614991/v1/summary.md
+  summary: library/spreadsheetbench-towards-challenging-real-world-spreadsheet-manipulation-240614991/v1/summary.mdx
   code_url: null
   project_url: null
   dataset_url: null
@@ -78,3 +78,4 @@ status:
   summarized: true
   triaged: true
   user_read_status: unread
+  summary_format: mdx

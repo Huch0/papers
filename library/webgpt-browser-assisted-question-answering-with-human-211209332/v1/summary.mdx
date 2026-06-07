@@ -1,0 +1,117 @@
+---
+canonical_key: arxiv-2112.09332
+version_key: v1
+title: 'WebGPT: Browser-assisted question-answering with human feedback'
+authors:
+- Reiichiro Nakano
+- Jacob Hilton
+- S. Balaji
+- Jeff Wu
+- Ouyang Long
+- Christina Kim
+- Christopher Hesse
+- Shantanu Jain
+- Vineet Kosaraju
+- W. Saunders
+- Xu Jiang
+- K. Cobbe
+- Tyna Eloundou
+- Gretchen Krueger
+- Kevin Button
+- Matthew Knight
+- Benjamin Chess
+- John Schulman
+venue: arXiv.org
+year: 2021
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2112.09332
+summary_date: '2026-06-07'
+---
+
+<TLDR>GPT-3 is fine-tuned to operate a bespoke text-based web browser for long-form question answering — imitating human browsing demonstrations, then optimizing answers against a learned reward model — and is required to collect inline references so humans can cheaply judge factual accuracy.</TLDR>
+
+<WhyItMatters>A foundational "LLM as a tool-using agent" paper and direct precursor to citation-grounded browsing assistants (ChatGPT browsing, Bing/Copilot, Perplexity). It is a clean early template for three now-ubiquitous patterns: a textual observation + small discrete command set as the agent interface, the full RLHF pipeline applied to a multi-step interactive task, and mandatory evidence collection to make human evaluation tractable.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "56%", label: "preferred vs human demonstrators", sub: "175B best-of-64, ELI5" },
+  { value: "69%", label: "preferred vs top Reddit answer", sub: "175B best-of-64, ELI5" },
+  { value: "175B", label: "largest GPT-3 backbone", sub: "also 760M, 13B" },
+]} />
+
+## Motivation
+<Problem>Long-form question answering — producing a paragraph-length answer to an open-ended question — lagged human performance</Problem> (Intro, p.1, citing Krishna et al. 2021). <Problem>Prior retrieval-augmented QA (<Term def="differentiable inner-product search over a fixed document corpus, trained end-to-end">REALM, RAG, DPR</Term>) frames retrieval as differentiable search over a fixed corpus and targets short answers</Problem> (Related work, p.11-12): fast to optimize but unable to drive a real search engine and less interpretable. <Problem>Automated metrics like ROUGE-L are meaningless on ELI5</Problem> (Krishna et al. 2021), which removes the obvious training signal and motivates human comparison as the primary metric.
+
+## Contribution (what's new)
+<Novelty>Set up QA as a task a *human* can perform inside a constrained text browser, then imitate and improve on human trajectories</Novelty>. The design must take this form because the goal is to use a *non-differentiable* real search engine: you cannot backprop through Bing, so the only training signals available are imitation of human browsing and human preference over outcomes — which in turn requires the task to be human-performable. <Novelty>The model must issue `Quote` commands while browsing; these become the references attached to the answer</Novelty>, which is the load-bearing trick that lets labelers judge factual accuracy without independent research (key contribution #2, p.2).
+
+## Research questions
+Can a language model learn to use a real search engine to answer long-form questions at human level? And which training objective — behavior cloning, reinforcement learning, or rejection sampling against a reward model — best converts human feedback into answer quality?
+
+## Methodology
+The model never sees HTML or a GUI. At each step it gets a text summary of browser state (question, current page text at the cursor, past-action summary, quotes so far, actions-left counter) and emits exactly one command from a fixed vocabulary (Table 1, p.3). Context is reset each step, so the agent is effectively <Term def="state is fully captured by the current observation; no hidden memory across steps">stateless/Markov</Term> over the text summary. Retrieval is outsourced to the Bing Web Search API; synthesis comes from pretrained GPT-3.
+
+<Pass title="Method details">
+**Action set (Table 1, p.3):** `Search <query>`, `Clicked on link <ID>`, `Find in page: <text>`, `Quote: <text>`, `Scrolled down/up <1,2,3>`, `Top`, `Back`, `End: Answer`, `End: <Nonsense, Controversial>`. Any other generated text is an invalid action that still consumes the action budget.
+
+**Page simplification (App. A, p.15):** fetched HTML is run through Mozilla `Readability.js` then `html2text`; PDFs via `pdfminer.six`; links rendered with numeric IDs in a bracketed format. `reddit.com`/`quora.com` results are stripped to prevent answer-copying, and pages with 10-gram overlap with the question/reference are censored to prevent cheating.
+
+**Data (Sec. 3.1, App. B-C):** ~6,209 demonstrations (92% ELI5) and ~21,548 comparisons (98% ELI5), the rest from TriviaQA, ARC, ELI5-fact-check, and hand-written questions. Demonstrations averaged ~15 min, comparisons ~10 min, collected via Upwork + Surge AI (56 contractors; top 5 gave ~50% of data). Researcher-labeler agreement 74%, labeler-labeler 73%. Only the final overall-usefulness rating (5-point Likert collapsed to better/worse/equal, ties as soft 50%) is used for reward-model training.
+
+<Stepper steps={[
+  { title: "Behavior cloning (BC)", body: "Supervised fine-tuning of GPT-3 on human browsing demonstrations — teaches the command format and basic browsing." },
+  { title: "Reward modeling (RM)", body: "BC model with the unembedding removed outputs a scalar; trained on ~16,000 comparisons with cross-entropy (ties as 50% labels). A 1-point Elo gap ≈ 73% preference." },
+  { title: "Reinforcement learning (RL)", body: "PPO against the RM with a per-token KL penalty (coef 0.02) from the BC model to limit reward over-optimization; 256 parallel envs, extra answering-only episodes for ~2x sample efficiency." },
+  { title: "Rejection sampling (best-of-n)", body: "Sample n ∈ `{4,16,64}` answers, pick the RM-highest. The three headline 'WebGPT' models are BC + best-of-n: 760M best-of-4, 13B best-of-16, 175B best-of-64." }
+]} />
+</Pass>
+
+## Main result
+<Finding src="Abstract; §4.1, p.5">The 175B best-of-64 model's answers are preferred 56% of the time to human demonstrators' answers, and 69% of the time to the highest-voted ELI5 Reddit answer</Finding> — versus 23% for Krishna et al. 2021's best model against the same references. On the adversarial short-form benchmark <Term def="adversarial short-form questions designed to elicit imitative human falsehoods">TruthfulQA</Term>, <Finding src="Intro p.2; Fig.3">the 175B model is truthful 75% of the time and both truthful-and-informative 54% of the time</Finding>, beating every GPT-3 prompt baseline but still below humans.
+
+<SortableTable columns={["Comparison", "Metric", "Score (%)"]} rows={[
+  ["WebGPT 175B vs human demonstrators", "human preference", 56],
+  ["WebGPT 175B vs top Reddit answer", "human preference", 69],
+  ["Krishna et al. 2021 vs top Reddit answer", "human preference", 23],
+  ["WebGPT 175B, TruthfulQA", "truthful", 75],
+  ["WebGPT 175B, TruthfulQA", "truthful & informative", 54]
+]} />
+
+## Key findings
+- <Finding src="§5.1, p.7; Fig.4">Rejection sampling beats RL here, and combining them barely helps</Finding>: best-of-64 BC is preferred 68% over plain BC, RL is preferred 58% over BC, but RL adds little once rejection sampling is used — RL mainly helps when inference-time compute is limited.
+- <Finding src="Intro p.2; Fig.3">Truthful-and-informativeness rises with model size for WebGPT but not for GPT-3</Finding>: scaling helps the browsing agent become more honest, unlike plain prompting.
+- <Finding src="§5.2, p.8">Data beats parameters for this task</Finding>: doubling demonstrations raised policy RM score ~0.13 and doubling comparisons raised RM accuracy ~1.8%, whereas doubling policy/RM parameters gave only ~0.09 / ~0.4% (parameter trends noisier).
+- <Finding src="App. G, Tab.9">Browsing transfers to short-form QA</Finding>: GPT-3 175B + WebGPT 175B BC reaches 69.5% TriviaQA exact match vs 58.7% for GPT-3 alone and 68.9% for UnitedQA-E — better on no-overlap questions, slightly worse on overlap.
+- <Finding src="§6, App. H">Failure modes are honesty- and bias-shaped, not capability-shaped</Finding>: the model quotes unreliable sources on out-of-distribution questions, affirming-stance prompts elicit more inaccurate answers, and "What does a wedding look like?" defaulted to Western/American framing (20 of 64 answers).
+
+## Implications
+This is the bridge from <Related>Stiennon et al. 2020 (summarization from human feedback)</Related> — the same RM/RL recipe — to interactive, tool-using agents, and a sibling of the InstructGPT RLHF lineage. It contrasts with <Related>differentiable retrieval QA (REALM, RAG, DPR)</Related> by trading backprop-through-retrieval for a real, interpretable search engine, and it directly seeds <Related>later citation-grounded agents (GopherCite, Sparrow) and mainstream browsing assistants</Related>. <FollowUp>The rejection-sampling-beats-RL result is a transferable caution about reward-model over-optimization worth re-checking on other agentic tasks.</FollowUp> <FollowUp>The action space as the permission boundary (no forms, so no editing Wikipedia) is a clean early agent-safety design pattern.</FollowUp>
+
+## Limitations
+- <Caveat>Headline 56%/69% numbers are *relative* human preference against specific baselines, not absolute correctness</Caveat>; references can be cherry-picked to look convincing without being a fair assessment (§6.4, p.11).
+- <Caveat>Subtle hallucinations were hard for labelers to assess</Caveat>, so reduced non-imitative falsehoods are argued indirectly rather than measured (§6.1, p.9).
+- <Caveat>Bias/stance experiments are explicitly small-sample (60 questions; 64 answers to one question) and described as suggestive only</Caveat> (App. H).
+- <Caveat>Heavy dependence on proprietary GPT-3 + paid Bing API plus unreleased training/browser code limits reproducibility; no compute/cost is reported</Caveat>; only the comparison dataset (19,578 comparisons) is released. English- and ELI5-centric distribution.
+
+## Critiques and Questions
+1. The primary metric is relative preference, so a 56% win over demonstrators is consistent with both models being mediocre — how much of the gain is style/authority rather than substance, given the automation-bias concern the authors themselves raise?
+2. RM-score scaling laws are an internal proxy that can be over-optimized; the validation against human preference only holds for n ≤ 64 (App. I) — would the trends survive larger best-of-n?
+3. Reddit/quora stripping and 10-gram censoring mitigate but do not eliminate train/eval contamination on ELI5; how robust are the wins on genuinely novel questions?
+
+<SelfCheck q="Why must WebGPT collect Quote references while browsing, beyond just improving answers?" a="The quoted references are what make human evaluation of factual accuracy tractable: labelers can check the answer against the model's own cited extracts instead of doing slow, subjective independent research. This cheap labeling is what lets the RLHF preference pipeline scale (key contribution #2, p.2; §6.4)." />
+
+## Glossary
+- <Term def="generating a paragraph-length answer to an open-ended question, as opposed to extracting a short span">long-form question answering (LFQA)</Term>
+- <Term def="supervised fine-tuning on human demonstration trajectories">behavior cloning (BC)</Term>
+- <Term def="sample n candidate answers and keep the one the reward model scores highest; a.k.a. best-of-n">rejection sampling</Term>
+- <Term def="dataset of 'Explain Like I'm Five' subreddit questions used as the primary benchmark">ELI5</Term>
+- <Term def="reward = predicted human preference; a penalty keeps the policy close to the behavior-cloned model">KL penalty</Term>
+
+{/* NOTES_START */}
+### Personal notes
+The most quotable harness insight: making the task human-performable (text browser + small command set) is what enables imitation learning to bootstrap the policy, and mandatory quoting is what makes human factuality labeling cheap enough to scale RLHF. The rejection-sampling-beats-RL result is a useful, transferable caution about reward-model overoptimization.
+{/* NOTES_END */}

@@ -19,7 +19,13 @@ the canonical instruction for both Claude and human authors. The format is `summ
    generated from `metadata.yaml`; never hand-edit frontmatter).
 3. **Read `extraction.txt` in full** (it has `=== PAGE n ===` anchors), then write
    `<version_dir>/summary.mdx` from the scaffold, following the rules below.
-4. `python3 scripts/summarize_paper.py <version_dir> --finalize --format mdx`
+4. **Self-verify the MDX compiles BEFORE finalizing (mandatory).** Run:
+   `(cd site && node scripts/check-mdx.mjs <ABSOLUTE path to summary.mdx>)`.
+   If it prints `FAIL … (line L:C)`, fix that exact spot and re-run until it prints `OK`.
+   You MUST output a completed, error-free summary — never hand off a summary that fails
+   this check. (Common causes: a bare `{` or `<` in prose or inside `<MathBlock>` — wrap
+   code/math in backticks; e.g. `` `{cell:value}` ``, `` `p<0.05` ``, `` `\beta_1=0.1` ``.)
+5. `python3 scripts/summarize_paper.py <version_dir> --finalize --format mdx`
    then `python3 scripts/update_indexes.py`.
 
 ## What a good summary is (our preferences — follow exactly)

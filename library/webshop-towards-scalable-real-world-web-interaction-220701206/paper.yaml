@@ -41,7 +41,7 @@ versions:
   source: arxiv
   source_url: https://arxiv.org/abs/2207.01206v4
   pdf_path: library/webshop-towards-scalable-real-world-web-interaction-220701206/v1/paper.pdf
-  summary_path: library/webshop-towards-scalable-real-world-web-interaction-220701206/v1/summary.md
+  summary_path: library/webshop-towards-scalable-real-world-web-interaction-220701206/v1/summary.mdx
   metadata_path: library/webshop-towards-scalable-real-world-web-interaction-220701206/v1/metadata.yaml
   fetched_at: '2026-06-06T07:13:57Z'
   source_updated_at: '2023-02-08T01:39:30Z'
@@ -51,7 +51,7 @@ versions:
   summary_status: full
   extraction_status: full
   created_at: '2026-06-06T07:13:57Z'
-  updated_at: '2026-06-06T07:19:07Z'
+  updated_at: '2026-06-07T04:05:04Z'
 relations:
   duplicate_candidates: []
   related_papers: []

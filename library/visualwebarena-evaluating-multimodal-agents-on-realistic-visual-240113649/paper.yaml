@@ -49,7 +49,7 @@ versions:
   source: arxiv
   source_url: https://arxiv.org/abs/2401.13649
   pdf_path: library/visualwebarena-evaluating-multimodal-agents-on-realistic-visual-240113649/v1/paper.pdf
-  summary_path: library/visualwebarena-evaluating-multimodal-agents-on-realistic-visual-240113649/v1/summary.md
+  summary_path: library/visualwebarena-evaluating-multimodal-agents-on-realistic-visual-240113649/v1/summary.mdx
   metadata_path: library/visualwebarena-evaluating-multimodal-agents-on-realistic-visual-240113649/v1/metadata.yaml
   fetched_at: '2026-06-06T07:57:32Z'
   source_updated_at: null
@@ -59,7 +59,7 @@ versions:
   summary_status: full
   extraction_status: full
   created_at: '2026-06-06T07:57:32Z'
-  updated_at: '2026-06-06T11:09:51Z'
+  updated_at: '2026-06-07T03:54:47Z'
 relations:
   duplicate_candidates: []
   related_papers: []

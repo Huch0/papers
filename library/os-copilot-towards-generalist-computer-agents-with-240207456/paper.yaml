@@ -46,7 +46,7 @@ versions:
   source: arxiv
   source_url: https://arxiv.org/abs/2402.07456
   pdf_path: library/os-copilot-towards-generalist-computer-agents-with-240207456/v1/paper.pdf
-  summary_path: library/os-copilot-towards-generalist-computer-agents-with-240207456/v1/summary.md
+  summary_path: library/os-copilot-towards-generalist-computer-agents-with-240207456/v1/summary.mdx
   metadata_path: library/os-copilot-towards-generalist-computer-agents-with-240207456/v1/metadata.yaml
   fetched_at: '2026-06-06T07:57:28Z'
   source_updated_at: null
@@ -56,7 +56,7 @@ versions:
   summary_status: full
   extraction_status: full
   created_at: '2026-06-06T07:57:28Z'
-  updated_at: '2026-06-06T08:22:46Z'
+  updated_at: '2026-06-07T03:49:48Z'
 relations:
   duplicate_candidates: []
   related_papers: []

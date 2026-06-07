@@ -1,0 +1,119 @@
+---
+canonical_key: arxiv-2409.08264
+version_key: v1
+title: 'Windows Agent Arena: Evaluating Multi-Modal OS Agents at Scale'
+authors:
+- Rogerio Bonatti
+- Dan Zhao
+- Francesco Bonacci
+- Dillon Dupont
+- Sara Abdali
+- Yinheng Li
+- Yadong Lu
+- Justin Wagle
+- K. Koishida
+- A. Bucker
+- Lawrence Jang
+- Zack Hui
+venue: International Conference on Machine Learning
+year: 2024
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2409.08264
+summary_date: '2026-06-07'
+---
+
+<TLDR>A real-Windows-OS port of OSWorld's execution-based agent benchmark (154 app tasks) whose chief novelty is Azure cloud parallelization that collapses a multi-day serial evaluation into roughly 20 minutes, shipped with a reference VLM agent, Navi, that tops out at 19.5% success vs 74.5% for a human.</TLDR>
+
+<WhyItMatters>A concrete reference design for the two hardest non-model parts of a computer-use harness: running a *real* OS with execution-based rewards, and making full-benchmark evaluation cheap enough to iterate on. The parallelization pattern and the observation-interface ablations are directly reusable.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "19.5%", label: "best agent success", sub: "Navi: GPT-4V-1106 + UIA + OmniParser" },
+  { value: "74.5%", label: "human success", sub: "single user, ~1.5h baseline" },
+  { value: "154", label: "tasks", sub: "6 domains / 11 apps" },
+  { value: "~20 min", label: "full eval (parallel)", sub: "Azure, ~50 workers, best-case config" },
+]} />
+
+## Motivation
+Existing agent benchmarks have two flaws. They are <Problem>narrow in modality or domain</Problem> — text-only, web navigation, Q&A, or coding — so they miss the breadth of real OS use. And they are <Problem>slow to evaluate, on the order of days</Problem>, because tasks are multi-step and sequential and an OS clock cannot be fast-forwarded like a physics simulator. Prior real-OS benchmarks (OSWorld on Linux, AndroidWorld on mobile) achieved realism but <Problem>parallelize only within a single host</Problem>, capping throughput at low-single-digit VMs. No real-OS benchmark existed for Windows — the dominant desktop OS — with native cloud-scale evaluation.
+
+## Contribution (what's new)
+The genuine delta is infrastructure, not the task suite. Each task is treated as a <Novelty>stateless unit of work that Azure ML fans out across isolated container/VM workers</Novelty>, so wall-clock time approaches the cost of the single slowest task rather than the sum of all tasks. The design must take this form because an OS cannot be sped up internally; the only lever for a multi-step real-OS benchmark is horizontal scale across machines, which single-host VM approaches cannot provide. A second contribution is a <Novelty>deliberately modular observation stack</Novelty> (screenshot + UIA accessibility tree + several Set-of-Marks detectors including OmniParser), making the harness double as an ablation testbed for screen-grounding methods.
+
+## Research questions
+For a benchmark/system paper, the central questions are: can a real Windows OS be made into a reproducible, execution-evaluated agent environment; can full-benchmark evaluation be made fast enough to iterate on via cloud parallelism; and how far are off-the-shelf multimodal VLMs from human competence on real OS tasks?
+
+## Methodology
+Adapt OSWorld's <Term def="partially observable Markov decision process — agent acts on partial observations of hidden environment state">POMDP</Term> task formalism and JSON-configured, execution-based evaluation onto Windows 11 running inside a Docker-hosted QEMU/KVM VM, make the whole benchmark cloud-parallelizable, and ship a reference agent (Navi) so the harness is usable out of the box.
+
+<Pass title="Method details">
+**Benchmark construction** (§3.2): 154 tasks across 6 domains / 11 applications — Office (LibreOffice Writer+Calc) 43 tasks, Web Browsing (Edge/Chrome) 30, Windows System (File Explorer/Settings) 24, Coding (VS Code) 24, Media & Video (VLC) 21, Windows Utilities (Notepad/Clock/Paint/Calculator) 12. About two-thirds are adapted from OSWorld Linux configs (path/PowerShell/reverse-proxy conversions, evaluator fixes); about one-third are Windows-specific tasks built from scratch. Infeasible tasks are included to probe refusal/feasibility recognition.
+
+**Observation interface** (§3.1.1): task instruction, clipboard content, foreground/background window titles, and a screen representation — raw screenshot (`1440x900x3`, current + previous frame), DOM tree (browser only), Windows UI Automation (UIA) tree, or pixel-model Set-of-Marks. The UIA tree is parsed into SoM marks rather than fed raw.
+
+**Action interface** (§3.1.2): two action spaces — free-form `pyautogui`/Python code, and a higher-level `Computer` class wrapper. `move_id(id)` lets the agent address elements by SoM ID rather than raw coordinates.
+
+**Evaluation** (§3.1.3): execution-based, OSWorld-style. After the agent terminates, a per-task evaluator inspects VM device state (config files, app settings, file contents, or dynamic web checks) vs golden state. Reward in `[0,1]`: binary for rule-based tasks, continuous for similarity-based. Reward is terminal only — no partial credit.
+
+**Infrastructure** (§3.3): a Docker container holds the Windows 11 VM; a Flask server inside the VM bridges commands and observations to the scheduler/agent/evaluator. Cloud mode uses Azure ML jobs, spinning VMs up/down per submission and aggregating results from Azure Blob.
+
+<Stepper steps={[
+  { title: "Task config", body: "JSON spec: id / instruction / deterministic setup / evaluator / result." },
+  { title: "Provision", body: "Spin up an isolated Windows 11 VM (QEMU/KVM in Docker) per task or small batch." },
+  { title: "Run agent", body: "Navi: one CoT step → screen annotations + plan + one action code block + memory; ends on DONE/FAIL/timeout." },
+  { title: "Evaluate", body: "Per-task script checks final VM state vs golden; emits reward in [0,1]." },
+  { title: "Fan out", body: "Azure ML distributes tasks across ~50 workers; wall-clock ≈ slowest task, not the sum." },
+]} />
+</Pass>
+
+## Main result
+The best Navi configuration reaches <Finding src="Tab.4, p.8">19.5% total success (GPT-4V-1106 + UIA + OmniParser) vs 74.5% for an unassisted human</Finding> — a large gap confirming that zero-shot generalist VLMs are far from human OS competence. The speed headline, <Finding src="A.7 Tab.11">a full parallel evaluation in as little as 20 minutes</Finding>, holds for most configs but not the best-accuracy one (OmniParser runs on CPU and takes 37.8–82.2 min).
+
+<SortableTable columns={["Config (GPT-4V-1106)", "Total success %", "Eval time (min)"]} rows={[
+  ["OneOCR + detectors, no UIA", 9.7, 6.5],
+  ["Pytesseract + DINO + UIA", 13.3, 16.1],
+  ["UIA + OmniParser (best acc.)", 19.5, 82.2],
+  ["Human baseline", 74.5, 0]
+]} />
+
+## Key findings
+- <Finding src="Tab.4, p.8">Performance is strongly interface-dependent</Finding>: the best agent does relatively well on text-dominant domains (Web Browser, Windows System 33.3%) and fails on icon/shortcut-heavy ones (Office 0%, Windows Utilities 8.3%); the human is nearly inverse, peaking on Windows Utilities (91.7%).
+- <Finding src="§4.2, p.8">UIA accessibility markers materially help</Finding>: adding UIA on top of pixel detectors boosts GPT-4V-1106 by 57% (OmniParser), 52% (open models), 15% (proprietary pixel) — but UIA querying can take seconds to minutes on complex screens, a real latency cost.
+- <Finding src="A.7 Tab.11">Speed and accuracy peaks do not coincide</Finding>: the strongest-accuracy config (OmniParser) is the slowest because OmniParser runs on CPU, so the "20 minutes" claim is best-case, not universal.
+- <Finding src="Fig.6, p.8">Failures are grounding failures, not reasoning failures</Finding>: imprecise SoM bounding boxes cause wrong element selection and visual-language misalignment (correct textual intent, wrong visual ID); OmniParser's edge comes from icon-captioning that links IDs to descriptions.
+- <Finding src="Tab.4, p.8">Model capability dominates</Finding>: GPT-4V-1106 is best (over 2x GPT-4o in the UIA+OmniParser config), and Phi-3-V hallucinates on long contexts and multi-step planning.
+- <Finding src="Tab.5, p.10">Navi generalizes to web</Finding>: on a processed Mind2Web split, Navi (Image+SoM, GPT-4o) reaches Element Acc 47.3% / Op-F1 85.8% / Step-SR 45.2%, beating the SeeAct GPT-4V baseline (44.3% / 71.8% / 38.3%).
+
+## Implications
+The transferable lesson is harness-shaped: stateless per-task workers plus cloud fan-out is the right way to make a real-OS agent benchmark iterable, with "wall-clock ≈ slowest task" as the key intuition. It extends the <Related>OSWorld / AndroidWorld real-OS benchmark line</Related> and the <Related>Set-of-Marks and OmniParser grounding lineage</Related>. Worth chasing next: <FollowUp>GPU-backed perception workers to remove the OmniParser CPU bottleneck</FollowUp>, and <FollowUp>using WAA to generate trajectories at scale for RL/imitation training</FollowUp>, which the paper only discusses.
+
+## Limitations
+- <Caveat>The 74.5% human baseline is a single casual user over ~1.5h</Caveat> (A.5) — no variance/CI, yet it anchors the headline gap.
+- <Caveat>No statistical reporting</Caveat>: no seeds or variance on agent success rates despite LLM stochasticity.
+- <Caveat>About two-thirds of tasks overlap with OSWorld</Caveat>, so this is largely a Windows re-port; novelty concentrates in infrastructure.
+- <Caveat>Terminal-only reward with no partial credit</Caveat>, so multi-step tasks score all-or-nothing.
+- <Caveat>No in-loop safety gating</Caveat> — the Navi prompt grants full code-execution permission; isolation is purely at the container boundary.
+- <Caveat>The OS image cannot be distributed</Caveat> (licensing), so users self-provision a Microsoft trial image.
+
+## Critiques and Questions
+1. The abstract pairs "19.5% best accuracy" with "20 minutes" though those come from different configs — the best-accuracy run is the slowest. The body discloses this; the abstract elides it.
+2. With per-domain n as small as 12 (Utilities), single-task swings move category percentages a lot — how robust are the per-domain conclusions?
+3. The Mind2Web "competitive" result is on a *filtered* split (broken/missing-GT entries removed), limiting comparability to prior numbers.
+4. No reward-hacking or evaluator-robustness analysis is reported, which matters for an execution-based grader.
+
+<SelfCheck q="Why does cloud parallelization, rather than a faster agent or simulator, give the headline ~20-minute evaluation?" a="A real OS clock cannot be fast-forwarded, and tasks are sequential, so the only lever is horizontal scale: running each stateless task on its own worker makes wall-clock time approach the single slowest task instead of the sum of all 154." />
+
+## Glossary
+- <Term def="benchmark where success is judged by inspecting actual environment/device state after execution, not by matching a trajectory or text">execution-based evaluation</Term>
+- <Term def="prompting technique that overlays numbered/ID'd marks on detected screen elements so a model can refer to them by ID">Set-of-Marks (SoM)</Term>
+- <Term def="Windows UI Automation — an accessibility API exposing a structured tree of on-screen UI elements">UIA</Term>
+- <Term def="a multi-element screen parser that detects UI elements and captions icons, linking SoM IDs to text descriptions">OmniParser</Term>
+
+{/* NOTES_START */}
+### Personal notes
+The transferable lesson is harness-shaped, not model-shaped: stateless per-task workers + cloud fan-out is the right way to make a real-OS agent benchmark iterable, and the slowest-task wall-clock framing is the key intuition. Note the speed/accuracy mismatch (OmniParser best but CPU-bound) as an argument for GPU-backed perception workers. The Navi prompt (D.1) is a compact, citable example of a single-action CoT computer-use prompt with DONE/FAIL/WAIT/COMMAND control tokens and a free-text memory channel.
+{/* NOTES_END */}

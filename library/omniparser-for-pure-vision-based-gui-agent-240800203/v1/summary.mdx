@@ -1,0 +1,107 @@
+---
+canonical_key: arxiv-2408.00203
+version_key: v1
+title: OmniParser for Pure Vision Based GUI Agent
+authors:
+- Yadong Lu
+- Jianwei Yang
+- Yelong Shen
+- Ahmed Awadallah
+venue: arXiv.org
+year: 2024
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2408.00203
+summary_date: '2026-06-07'
+---
+
+<TLDR>OmniParser is a vision-only screen parser — a finetuned interactable-icon detector plus a finetuned icon-functionality captioner plus OCR — that turns any UI screenshot into a Set-of-Mark-labeled list of interactable elements with text descriptions, letting a frozen GPT-4V ground actions without any HTML or accessibility tree.</TLDR>
+
+<WhyItMatters>Foundational, widely-cited perception layer for computer-use / GUI agents: the canonical "screenshot → structured interactable elements" interface that decouples grounding from any one platform's accessibility API.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "73.0%", label: "ScreenSpot avg accuracy", sub: "GPT-4V+OmniParser vs 16.2% raw GPT-4V" },
+  { value: "67k", label: "detection dataset screenshots", sub: "DOM-derived interactable boxes" },
+  { value: "+4.7%", label: "AITW overall gain", sub: "vs best GPT-4V+history baseline" },
+]} />
+
+## Motivation
+Pure-vision GUI agents fail at <Problem>action grounding</Problem>: a VLM like GPT-4V cannot reliably emit the exact x-y coordinate of a target widget (p.1 §1). <Term def="overlay numbered bounding boxes on the screenshot so the model only names a box ID rather than a coordinate">Set-of-Mark prompting</Term> partly fixes this, but <Problem>every existing SoM pipeline gets its boxes from privileged structure</Problem> — DOM/HTML in the browser or view hierarchies / dataset labels on mobile (p.2–3 §2.2). That dependency <Problem>confines reliable agents to platforms that expose such structure</Problem> (mostly web browsers), so there is no robust way to obtain interactable-element boxes on arbitrary OSes and apps (Windows/macOS, Office365, Photoshop, native desktop). Without platform-agnostic grounding, GPT-4V's real UI-reasoning ability is masked by perception failures (p.2 §1).
+
+## Contribution (what's new)
+The genuine delta: <Novelty>a finetuned vision-only parser can supply interactable-element boxes *and* per-element functional-semantics text good enough that a frozen GPT-4V grounds actions as well as or better than agents fed ground-truth DOM/HTML</Novelty> — the privileged structure SoM pipelines depend on is replaceable by learned perception. The design must take this form because of the diagnosis that <Novelty>GPT-4V overloads when forced to simultaneously (a) figure out what each marked icon means and (b) choose the next action</Novelty> (p.3 §3.2). The fix is to offload (a) into the parsing stage, which requires two separate learned components: a detector (because without DOM, *which* pixels are interactable is unknown) and a captioner (because boxes alone are "misleading to GPT-4V" — textual function per icon lets it match the instruction's referent by text, not by re-reading every icon).
+
+## Research questions
+Can learned vision parsing replace privileged UI structure (DOM/view hierarchy) for action grounding, and does moving semantic labeling out of the action call meaningfully improve a frozen VLM's grounding across web, desktop, and mobile?
+
+## Methodology
+OmniParser turns a screenshot into a DOM-like structured representation purely from pixels, in two parsing sub-stages whose outputs become GPT-4V's prompt: an interactable-region detector + OCR produce the numbered (Set-of-Mark) boxes, and an icon captioner produces a one-sentence function description per detected icon. GPT-4V then receives the task, the SoM-overlaid screenshot, and the parsed local-semantics list, and predicts which box ID to act on (the click point is the center of that box).
+
+<Pass title="Method details">
+
+<Stepper steps={[
+  { title: "Interactable Region Detection (§3.1)", body: "A YOLOv8 detector finetuned on the curated 67k-screenshot dataset predicts boxes for clickable icons/buttons. An OCR module separately detects text boxes. The two box sets are merged, removing boxes with over 90% overlap; each surviving box gets a unique numeric ID placed to minimize label-on-box overlap." },
+  { title: "Local Semantics of Functionality (§3.2)", body: "A BLIP-2 model finetuned on 7,185 GPT-4o-generated icon-description pairs produces a one-sentence functional description per detected icon; OCR text is attached to text boxes. Descriptions plus texts are concatenated into the text prompt alongside the SoM image." },
+  { title: "Action selection", body: "Frozen GPT-4V receives task + SoM image + local-semantics list and outputs a box ID; the click point is the center of that box. GPT-4V is not trained." },
+]} />
+
+<Term def="finetuned interactable-region detection model — the YOLOv8 detector trained on the curated dataset">ID</Term> and <Term def="local semantics of functionality — OCR text per text box plus a one-sentence function description per icon, added to the text prompt">LS</Term> are the two ablation knobs; <Term def="Grounding DINO, an off-the-shelf open-vocabulary detector used as the un-finetuned detector baseline">GD</Term> is the detector OmniParser's ID model is compared against.
+
+**Dataset construction.** Detection: 100k uniform sample of popular URLs from <Term def="a 10-billion-document web corpus that provided the seed URLs">ClueWeb22</Term>; interactable-region boxes harvested from each page's DOM tree (pipeline adapted from AutoGen's multimodal websurfer); final 66,990 samples, 95% train (63,641) / 5% val (3,349) (p.3 §3.1; p.11 §7.2). Icon description: icons cropped from ScreenSpot screenshots, labeled by GPT-4o ("is this an icon? if so describe its functionality, else 'this is not an icon'"), 7,185 pairs (p.11 §7.1). Training: detector — YOLOv8, 20 epochs, batch 256, lr 1e-3, Adam, 4 GPUs; captioner — BLIP-2, 1 epoch, constant lr 1e-5, Adam.
+
+</Pass>
+
+## Main result
+On ScreenSpot (>600 cross-platform screenshots), average element-pointing accuracy rises from <Finding src="Tab.2, p.6">16.2% (raw GPT-4V) to 73.0% (GPT-4V + OmniParser w. LS + ID)</Finding>, surpassing GUI-finetuned VLMs SeeClick (53.4%), CogAgent (47.4%), and Fuyu (19.5%) — i.e. upgrading a frozen model's *input* beats finetuning the model.
+
+<SortableTable columns={["Method", "Size", "ScreenSpot avg %"]} rows={[
+  ["GPT-4V (raw)", "-", 16.2],
+  ["Fuyu", "8B", 19.5],
+  ["CogAgent", "18B", 47.4],
+  ["SeeClick", "9.6B", 53.4],
+  ["OmniParser (w.o. LS, w. GD)", "-", 58.38],
+  ["OmniParser (w. LS + GD)", "-", 68.7],
+  ["OmniParser (w. LS + ID)", "-", 73.0],
+]} />
+
+## Key findings
+- <Finding src="Tab.1, p.5">Local semantics lifts GPT-4V label-assignment accuracy from 0.705 to 0.938 overall on the SeeAssign task, and from 0.620 to 0.900 on hard screens (more than 40 boxes)</Finding>: this is the mechanistic core — with the *same* GPT-4V, only the input text changes, so grounding (not reasoning) was the bottleneck. (Single run, 112 handcrafted tasks.)
+- <Finding src="Tab.2, p.6">The finetuned detector adds +4.3% on ScreenSpot over raw Grounding DINO, and local semantics adds roughly +10 points (58.38% → 68.7%)</Finding>: both learned components matter, not just the captioner.
+- <Finding src="Tab.3, p.6-7">HTML-free OmniParser beats the HTML-using GPT-4V+textual-choice on Mind2Web cross-website (+4.1%) and cross-domain (+5.2%) step success rate, but underperforms cross-task by -0.8%</Finding>: it wins against a *privileged-input* baseline in 2 of 3 splits — an honest, non-uniform result, and the strongest evidence that learned parsing substitutes for DOM grounding. (Offline / teacher-forced eval.)
+- <Finding src="Tab.4, p.8">On mobile AITW, the web-trained detector transfers to phone screens: overall 57.7 vs 53.0 for the best GPT-4V+history baseline (+4.7%), winning most sub-categories but losing slightly on Single (77.4 vs 78.3)</Finding>: a detector trained only on web pages generalizes cross-platform.
+- <Finding src="Fig.7-8, §5">Three concrete failure modes: repeated identical icons/texts confuse ID selection, coarse OCR boxes put the box-center click outside the true target (the "MORE" case), and the crop-only captioner misreads context-dependent icons (three dots read as "a loading or buffering indicator")</Finding>: these point to clear next steps (joint OCR+detection, context-aware captioning).
+
+## Implications
+Establishes the "split perception from policy" pattern for GUI agents: do semantic labeling in the observation interface so the policy call only chooses an action ID. It extends <Related>Set-of-Mark prompting</Related> by generating the marks from vision instead of from DOM, competes directly with DOM-grounded agents like <Related>SeeAct and Mind2Web/MindAct</Related>, and is orthogonal to policy-finetuned GUI VLMs like <Related>SeeClick, CogAgent, Fuyu, Ferret-UI</Related> (it improves their *input* rather than their weights). Threads worth chasing: <FollowUp>the OmniParser V2 / OmniParser-as-tool follow-ups</FollowUp>, <FollowUp>OSWorld for live cross-platform evaluation</FollowUp>, and <FollowUp>whether a joint OCR+detection module fixes the box-center click failure</FollowUp>.
+
+## Limitations
+- Author-stated: <Caveat>repeated elements defeat ID selection, box-center clicks miss for wide text boxes/hyperlinks, and the crop-only captioner is context-blind</Caveat> (§5).
+- <Caveat>No variance or seeds anywhere — all numbers appear single-run</Caveat>, and SeeAssign is only 112 handcrafted tasks.
+- <Caveat>Mind2Web evaluation is offline (teacher-forced action history), not full rollout</Caveat>, so step-SR is optimistic relative to live execution.
+- <Caveat>Possible data overlap: caption-finetuning icons are cropped from ScreenSpot, on which SeeAssign and ScreenSpot evaluations also draw</Caveat> (p.5 §4.1 vs p.11 §7.1).
+- <Caveat>No latency/cost comparison despite running three models per step; datasets and code/weights are not released in this v1 report; the OCR engine and GPT-4V version are unspecified</Caveat>.
+
+## Critiques and Questions
+1. Caption labels are GPT-4o outputs, so the captioner inherits GPT-4o's icon-naming errors and evaluating downstream with GPT-4V partly launders this distillation — how much of the gain is GPT-4o knowledge leaking in?
+2. The strongest claim rests on *offline* Mind2Web; would HTML-free OmniParser still beat DOM-grounded baselines under live rollout, where compounding errors and latency bite?
+3. The fairest comparison — giving competing policies the *same* OmniParser boxes — is never run, so it's unclear how much credit goes to the parser vs the frozen GPT-4V.
+
+<SelfCheck q="Why does OmniParser need a separate icon-captioning model rather than just feeding GPT-4V the numbered boxes?" a="Boxes alone are 'misleading to GPT-4V' because it overloads when forced to simultaneously infer each icon's meaning and pick the next action. Adding per-icon functional text lets GPT-4V match the instruction's referent by text instead of visually re-reading every icon — lifting label-assignment accuracy from 0.705 to 0.938 (Tab.1)." />
+
+## Glossary
+- <Term def="overlay numbered bounding boxes on a screenshot so the model selects a box ID instead of emitting raw coordinates">Set-of-Mark (SoM)</Term>
+- <Term def="finetuned interactable-region detection model (YOLOv8) trained on the curated 67k-screenshot dataset">ID model</Term>
+- <Term def="local semantics of functionality — OCR text per text box plus a one-sentence icon-function description, added to the prompt">LS</Term>
+- <Term def="Grounding DINO, an off-the-shelf open-vocabulary detector used as the un-finetuned baseline">GD</Term>
+- <Term def="benchmark of >600 cross-platform screenshots measuring element-pointing (grounding) accuracy">ScreenSpot</Term>
+- <Term def="web-navigation benchmark; evaluated here offline on element accuracy, Operation-F1, and step success rate">Mind2Web</Term>
+- <Term def="Android-in-the-Wild — a mobile navigation benchmark with 30k instructions / 715k trajectories">AITW</Term>
+
+{/* NOTES_START */}
+### Personal notes
+The reusable idea for harness design: split perception from policy — do semantic labeling in the observation interface so the policy call only chooses an action ID. Watch the box-center click assumption when reusing this; for dense/repeated UIs it will mis-ground. Caption data being GPT-4o-distilled is a quiet dependency worth noting when comparing to later versions.
+{/* NOTES_END */}

@@ -1,0 +1,116 @@
+---
+canonical_key: arxiv-2406.14991
+version_key: v1
+title: 'SpreadsheetBench: Towards Challenging Real World Spreadsheet Manipulation'
+authors:
+- Zeyao Ma
+- Bohan Zhang
+- Jing Zhang
+- Jifan Yu
+- Xiaokang Zhang
+- Xiaohan Zhang
+- Sijia Luo
+- Xi Wang
+- Jie Tang
+venue: Neural Information Processing Systems
+year: 2024
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+- document_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2406.14991
+summary_date: '2026-06-07'
+---
+
+<TLDR>SpreadsheetBench is a 912-instruction benchmark of real Excel-forum spreadsheet-manipulation tasks, scored online-judge style against multiple value-perturbed copies of each sheet, on which the best LLM reaches only ~18% versus ~71% for human Excel experts.</TLDR>
+
+<WhyItMatters>A benchmark/data paper for the office/data-agent space whose core idea — one code solution graded against several value-perturbed copies of the same artifact (hidden-test logic, à la SWE-bench) — is a directly reusable harness pattern, and whose large human–LLM gap is a strong difficulty anchor.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "18.35%", label: "best LLM overall soft acc.", sub: "GPT-4o, single-round" },
+  { value: "71.33%", label: "human expert overall soft", sub: "4 Excel experts, 50-instr subset" },
+  { value: "912", label: "instructions / 2,729 test cases", sub: "real Excel-forum posts" },
+]} />
+
+## Motivation
+The paper attacks three limitations of prior LLM spreadsheet benchmarks (SheetCopilot, SheetAgent/SheetRM, InstructExcel). <Problem>Instructions are synthetic or terse</Problem> — self-instruct queries or short crowd prompts (InstructExcel averages 9.8 words, §2.3) — unlike real users who supply long context, failed attempts, error messages, and output examples. <Problem>Spreadsheets are over-simplified single relational tables</Problem>, ignoring real structures: multiple tables per sheet, non-standard tables (nested / missing headers), free-form cell text, and formatting (color, bold). <Problem>A single test per instruction yields false positives</Problem> — a solution overfit to one sheet's specific values that does not generalize (§1–2).
+
+## Contribution (what's new)
+The genuine delta is the evaluation design: <Novelty>each instruction is graded against multiple structurally-similar but value-perturbed copies of its spreadsheet, with a single model inference</Novelty>. One code solution generated from the instruction plus one sheet is applied to all (avg ~3) test cases; a case passes only if the answer-position cells exactly match ground truth. The design must take this form because the failure it targets — overfitting to one sheet's values — is invisible to single-test exact match; re-running the same solution across perturbed inputs is what surfaces it, and doing so with one inference (not one per perturbation) keeps cost low (§2.4, Eq. 1–2). Annotators craft the perturbations to hit corner cases (e.g. cells that should be empty rather than zero).
+
+## Research questions
+How well do current LLMs handle *realistic* spreadsheet manipulation — messy, multi-table, context-rich tasks drawn from real users — and how far are they from human experts when evaluated by a metric that rewards value-robust rather than sheet-specific solutions?
+
+## Methodology
+Build the benchmark exclusively from real solved forum/blog posts; condense each into a self-contained instruction with an explicit <Term def="cell-level = exact cells like D2:D6; sheet-level = a bounded range covering whole-sheet edits">answer position</Term>; and for each instruction construct three spreadsheet test cases (the original plus two annotator-perturbed copies). Evaluation is <Term def="one solution applied to multiple test cases; a case is accepted only if answer-position cells exactly match ground truth">online-judge</Term> style with soft (IOI-style partial credit per passed case) and hard (ICPC-style all-or-nothing) variants. Inference runs single-round (one-shot code from instruction + 5 sheet rows) or multi-round (ReAct + execution feedback, max 5 rounds).
+
+<Pass title="Method details: 4-stage construction pipeline">
+
+<Stepper steps={[
+  { title: "Data sourcing", body: "Four Excel forums/blogs (ExcelForum, Chandoo, MrExcel, ExcelGuru). Categories: General, Formula, VBA/Macros, Formatting, Pivot Table, Power Query (§2.2, Fig.2)." },
+  { title: "Data filtering", body: "Keep posts that are solved, purely spreadsheet manipulation (drop UI/software questions), feasible/testable (must have an attachment), and representative (high view counts, mix of easy/hard)." },
+  { title: "Data formatting", body: "GPT-4 condenses dispersed replies into a self-contained instruction; annotators verify, derive the answer by applying the forum solution, and annotate the answer position (cell- or sheet-level)." },
+  { title: "Test-case construction", body: "From the original input/output pair, annotators modify the input sheet twice targeting corner cases (e.g. empty-vs-zero), re-running the solution → three test cases per instruction. Data shifts from `{(q,c,a)}` to `{(q,`{(c_ij,a_ij)}`)}`." },
+]} />
+
+Quality control: 20 Excel-specialist annotators, two validators, plus author master's-level secondary checks (§2.3). Software-independence enforced via software-independent instruction selection, XLSX files (portable across Excel / Google Sheets / LibreOffice / WPS), and code-based — not Excel-API — inference (§2.2).
+
+Anti-leakage uses three perturbations: GPT-4-plus-human instruction rewriting (cannot memorize forum text), spreadsheet value modification (cannot memorize sheets), and answer-position relocation (cannot reuse the forum solution verbatim) (§2.2).
+
+Statistics (§2.1, §2.3): 912 instructions, 2,729 test cases (avg ~3); 10 primary manipulation categories; tables exceeding 100 columns and 20,000 rows; 35.7% multiple tables, 42.7% non-standard relational tables (a minor inconsistency: §2.3 prose says "more than one-third" / "nearly half").
+</Pass>
+
+## Main result
+<Finding src="Tab.2, p.9">GPT-4o, the SOTA LLM, reaches only 18.35% overall soft accuracy (cell 15.03 / sheet 23.65), versus 71.33% for human Excel experts (cell 75.56 / sheet 65.00)</Finding> — a substantial, consistent gap across soft/hard and cell/sheet splits.
+
+<SortableTable columns={["Method", "Setting", "Soft overall", "Hard overall"]} rows={[
+  ["Human experts", "50-instr subset", 71.33, 62.00],
+  ["GPT-4o", "single-round", 18.35, 15.02],
+  ["GPT-4o", "multi-round", 16.96, 0],
+  ["Copilot in Excel*", "50-instr / 1 test", 20.00, 0],
+  ["SheetCopilot (GPT-4)*", "50-instr / 1 test", 14.00, 0],
+  ["GPT-3.5", "single-round", 2.34, 0],
+  ["GPT-3.5", "multi-round", 7.09, 0],
+]} />
+
+<Caveat>Products marked * are hand-evaluated on a 50-instruction / 1-test-case subset, breaking the multi-test-case premise — not directly comparable. `0` hard values above mean "Not reported" in this view.</Caveat>
+
+## Key findings
+- <Finding src="Tab.3, p.9">Performance degrades monotonically with complexity</Finding>: GPT-4o soft drops Rows ≤50: 20.63 → >50: 11.50; Cols ≤10: 22.50 → >10: 10.51; single-table 21.12 → multiple 13.71; relational 19.50 → non-standard 16.95.
+- <Finding src="Tab.2, p.9">Multi-round helps weak models but not GPT-4o</Finding>: GPT-3.5 jumps ~3x (2.34 → 7.09 overall soft), while GPT-4o is slightly lower (18.35 → 16.96), attributed to redundant re-reading of already-provided rows.
+- <Finding src="Tab.5, p.18">The GPT-4o single>multi anomaly is run-to-run variance</Finding>: on a 200-sample / 4-run subset, multi-round (16.08±1.08) actually beats single (12.79±1.71) — so single-vs-multi conclusions from the headline table alone are fragile (no error bars in Tab.2).
+- <Finding src="App.D.3, p.19-20">The metric under-credits but never over-credits</Finding>: false discovery 0%, false positive 0%, false omission 3.8%, instruction-level false negative 4% (extra rows / re-added headers get exact-match-rejected).
+- <Finding src="§3, p.8">TableQA models score zero</Finding>: TaPEx and TaPas get 0 across all metrics, and Binder bottoms out at 0.05% (sheet soft) — table question-answering ≠ spreadsheet manipulation.
+- <Finding src="Tab.1, p.6">Real instructions are far richer than prior benchmarks</Finding>: avg 85.7 words here vs 9.8 in InstructExcel, with genuinely messy sheets (35.7% multiple tables, 42.7% non-standard).
+
+## Implications
+The multi-test-case online-judge metric is the standout reusable idea for office/data-agent harness design — it tests value-robustness with a single inference per instruction, directly analogous to how <Related>SWE-bench-style coding harnesses use hidden tests to defeat overfitting</Related>. The large measured human–LLM gap makes this a durable difficulty anchor. <FollowUp>Adapt the soft/hard OJ scoring to output-artifact structural validation, noting that exact-match on only the answer range under-credits structurally-correct-but-noisy outputs</FollowUp>. <Related>Lineage: SheetCopilot (NeurIPS 2023), SheetAgent/SheetRM, InstructExcel (EMNLP Findings 2023); borrows IOI/ICPC scoring and DS-1000's reliability indices</Related>. <FollowUp>Check the project site / GitHub (spreadsheetbench.github.io) for the OJ evaluation harness implementation</FollowUp>.
+
+## Limitations
+- <Caveat>Author-stated (App.A.1): data selection discards posts lacking acknowledged answers or hard to formalize (coverage bias); corner cases are not exhaustively engineered per question given the dataset size — weaker than true OJ rigor.</Caveat>
+- <Caveat>No error bars in the headline Table 2 (cost-driven); the GPT-4o single-vs-multi story is within run variance.</Caveat>
+- <Caveat>Product baselines (SheetCopilot, Copilot in Excel) evaluated on a tiny non-OJ 50-instruction / 1-test-case subset — apples-to-oranges.</Caveat>
+- <Caveat>Anti-leakage is plausible but unmeasured (no contamination probe); the benchmark is static with public-web provenance, so residual aging risk remains.</Caveat>
+- <Caveat>Cell-level exact match causes ~4% instruction-level false negatives on structurally-correct-but-extra output.</Caveat>
+
+## Critiques and Questions
+1. Closed-model versions are thin (GPT-4o dated only via figure paths; GPT-3.5 unversioned) — reproducibility against drifting APIs is weak.
+2. The single-inference-across-perturbations design saves cost but means a model never sees the perturbations; is value-robustness really being *tested*, or just whether the one generated solution happens to generalize? Unclear how often a model would self-correct if shown a second case.
+3. Which presentation of the GPT-4o multi-round result is canonical — the headline table (single>multi) or the averaged appendix (multi>single)? The authors call the averaged one more reliable, but the main table is what most readers will cite.
+
+<SelfCheck q="Why does grading one solution against multiple value-perturbed copies of a sheet catch a failure that single-test exact match misses?" a="Single-test exact match accepts a solution overfit to one sheet's specific values; re-running that same solution on perturbed copies (e.g. corner cases like empty-vs-zero) exposes whether it actually generalizes, which is the robustness the benchmark wants to measure." />
+
+## Glossary
+- <Term def="One model inference produces one code solution, applied to all of an instruction's test cases; a case is accepted only if answer-position cells exactly match ground truth. Soft = mean fraction passed; hard = all-or-nothing">online-judge metric</Term>
+- <Term def="Exact cells (e.g. D2:D6) vs a bounded sheet-level range; the annotated location whose cells are exact-matched against ground truth">answer position</Term>
+- <Term def="Spreadsheets with nested, incomplete, or missing-header tables, free-form cell text, and formatting — not a clean single relational table">non-standard relational tables</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Key reusable harness idea: one code solution evaluated against multiple value-perturbed copies of the same artifact, scored soft (partial) and hard (all-or-nothing). The metric under-credits (0% false positive, ~4% false negative) because it exact-matches only the annotated answer range, not the whole workbook — worth noting if adapting for output-artifact structural validation. Numbers to remember: 912 instructions / 2,729 test cases (~3 each); GPT-4o ~18.35% overall soft vs human ~71.33%.
+
+Follow-ups: add SheetCopilot (NeurIPS 2023), SheetAgent (2403.03636), InstructExcel (EMNLP Findings 2023); compare with SWE-bench-style hidden-test harnesses; check spreadsheetbench.github.io for the OJ harness; read App.D.3 metric reliability before reusing the metric.
+{/* NOTES_END */}

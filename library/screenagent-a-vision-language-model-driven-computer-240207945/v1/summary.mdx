@@ -1,0 +1,113 @@
+---
+canonical_key: arxiv-2402.07945
+version_key: v1
+title: 'ScreenAgent: A Vision Language Model-driven Computer Control Agent'
+authors:
+- Runliang Niu
+- Jindong Li
+- Shiqi Wang
+- Yali Fu
+- Xiyu Hu
+- Xueyuan Leng
+- He Kong
+- Yi Chang
+- Qi Wang
+venue: International Joint Conference on Artificial Intelligence
+year: 2024
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2402.07945
+summary_date: '2026-06-07'
+---
+
+{/*
+  Canonical Summary structure (concise, core-first). Body only — frontmatter is generated
+  from metadata.yaml by `summarize_paper.py --format mdx --prepare`. Components are
+  provided globally by the site (no imports). See config/summary_components.md.
+*/}
+
+<TLDR>ScreenAgent connects a <Term def="Vision Language Model: an LLM that also takes images as input">VLM</Term> to a real desktop OS over <Term def="VNC: Virtual Network Computing — a remote-desktop protocol that streams screen pixels and accepts mouse/keyboard events">VNC</Term>, drives it through a plan→act→reflect loop using only screenshots plus mouse/keyboard actions, and ships a 273-session human-annotated dataset and a region-tolerant CC-Score metric; a fine-tuned 18B model matches GPT-4V overall while far surpassing it on click precision.</TLDR>
+
+<WhyItMatters>An early (Feb 2024) pixel-level computer-use agent that targets the raw OS desktop — no DOM, no accessibility tree — anticipating the now-dominant "screenshot in, mouse/keyboard out" paradigm. Foundational/reference reading for a computer-use harness track.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "0.61", label: "CC-Score (overall)", sub: "ScreenAgent vs GPT-4V 0.63" },
+  { value: "0.51", label: "Mouse Position accuracy", sub: "vs GPT-4V 0.12" },
+  { value: "273", label: "annotated sessions", sub: "203 train / 70 test" },
+  { value: "18B", label: "model size", sub: "fine-tuned CogAgent-Chat" },
+]} />
+
+## Motivation
+<Problem>No existing VLM agent controls a real, arbitrary computer end to end through the GUI using continuous, freely-positioned mouse/keyboard commands</Problem> (p.1, §1). Prior systems each miss a piece: <Problem>CogAgent does GUI understanding/planning but lacks a complete plan→act→reflect loop</Problem>; <Problem>AppAgent (phones) has no planning phase and can only click pre-labeled UI elements, never arbitrary pixels</Problem>; and <Problem>most prior environments/datasets (Mind2Web, Seq2act, Screen2Words) assume HTML/UI metadata or are browser/Android-only</Problem> (p.2-4), whereas mouse+keyboard on raw pixels is the universal interface.
+
+## Contribution (what's new)
+The genuine delta is a <Novelty>real-desktop environment over VNC where the agent sees only screenshots and emits typed JSON mouse/keyboard actions — no accessibility tree, no set-of-marks labeling, so it must localize pixels itself</Novelty> (p.3, §3.1). On top of it: <Novelty>an explicit plan→act→reflect control loop where the VLM itself acts as the in-loop verifier deciding continue/retry/reformulate</Novelty> (p.3, §3.2), and <Novelty>the CC-Score, an alignment-based metric that scores a click by whether it lands in an annotated feasible bounding box rather than at an exact pixel</Novelty> (§4). The pixel-self-localization design is forced by removing element labels: the model cannot lean on a DOM, so localization must be learned and measured directly.
+
+## Research questions
+Can a VLM agent control a real OS purely from screenshots and raw mouse/keyboard actions across multi-step tasks, and can lightweight fine-tuning close the click-precision gap to GPT-4V?
+
+## Methodology
+Given a task prompt and a screenshot, the agent loops: plan subtasks → act (emit low-level mouse/keyboard JSON dispatched over VNC) → reflect on the after-screen and decide continue/retry/reformulate. A human-corrected dataset of real on-machine traces trains a CogAgent-Chat fine-tune, with extra localization data to sharpen clicking.
+
+<Pass title="Method details">
+
+<Stepper steps={[
+  { title: "Plan", body: "From the current screenshot + task prompt, emit a JSON list of PlanActions (subtasks). ~60% of tasks need 3–5 plan steps; avg 4, max 13 (Table 5, p.14)." },
+  { title: "Act", body: "Per subtask, emit typed JSON actions parsed into VNC device events. Action space (Table 1, p.4): Mouse Move/Click/Double-Click/Scroll/Drag with button + integer pixel position; Keyboard Press (keysymdef) and Text; Wait. Coordinates are absolute pixels from top-left." },
+  { title: "Reflect", body: "Consume the after-screen and output EvaluateSubTaskAction = success / need_retry / need_reformulate plus free-text advice fed into the next prompt (motivated by Kolb's experiential-learning cycle, p.2)." },
+]} />
+
+Dataset construction (§4, Appendix C): interactive annotation where GPT-4V drafts a response, a human corrects it to a "golden" label, and actions are actually executed on a real Linux/Windows machine (Fig.3); chosen/reject pairs are kept for future RLHF. Coverage spans office, booking, info retrieval, card games, entertainment, programming, and system operations.
+
+Training (§5.2, Table 4): supervised fine-tune of CogAgent-Chat. To boost localization, COCO and Widget Captions are reformulated into click/drag tasks (click object center; drag a box) and Mind2Web sessions are converted into the ScreenAgent schema (`CLICK`/`SELECT`→click center; `TYPE`→click+text). Data are mixed across 4 phases with rising ScreenAgent-data share (20%→70%). Hyper-parameters (Table 6): 6258 steps, LR 1e-5 cosine, batch 8, weight decay 0.05.
+
+</Pass>
+
+## Main result
+On the 70-session / 898-screenshot test set, the fine-tuned model is <Finding src="Tab.3, p.5">comparable to GPT-4V overall (CC-Score 0.61 vs 0.63) yet dramatically better at click localization (Mouse Position accuracy 0.51 vs 0.12)</Finding>. Fine-grained CC-Score per attribute (computed only over successfully matched/parsed actions):
+
+<SortableTable columns={["Method", "CC-Score", "Mouse Position acc", "Action Type F1", "Plan BLEU"]} rows={[
+  ["ScreenAgent (18B)", 0.61, 0.51, 0.98, 0.31],
+  ["GPT-4V", 0.63, 0.12, 0.98, 0.47],
+  ["LLaVA-1.5 (13B)", 0.51, 0.03, 0, 0],
+  ["CogAgent-Chat (+GPT-3.5)", 0.33, 0.02, 0, 0],
+]} />
+
+(Empty cells for LLaVA/CogAgent action-type and plan are omitted/low in Table 3; the load-bearing comparison is ScreenAgent vs GPT-4V.)
+
+## Key findings
+- <Finding src="Tab.3, p.5">Localization fine-tuning is the headline win: Mouse Position accuracy jumps from CogAgent's 0.02 / GPT-4V's 0.12 to ScreenAgent's 0.51</Finding> — the paper notes GPT-4V often refuses to emit precise coordinates (p.6).
+- <Finding src="Tab.3, p.5">ScreenAgent is clearly weaker at planning — Plan BLEU 0.31 vs GPT-4V 0.47</Finding>: the small base model lacks GPT-4V's common-sense decomposition, so the system trades planning quality for click precision.
+- <Finding src="Tab.2, p.5">Raw CogAgent-VQA/Chat almost never emit valid JSON function calls (near-zero), only partly recovered with a GPT-3.5 parsing crutch; fine-tuning lifts ScreenAgent to GPT-4V-level format compliance (Mouse-Position key-presence 0.91 vs 0.85)</Finding>: instruction-format adherence is a learned skill, not free.
+- <Finding src="Tab.3, p.5">Self-verification (Reflecting) is unreliable for every model — Situation-Assessment F1 ≤ 0.60 (GPT-4V 0.60, ScreenAgent 0.52)</Finding>, so "human intervention is still necessary" (p.6) and the loop is not truly autonomous.
+- <Finding src="§4, p.4">The dataset is small but structured: 39 sub-task categories across 6 themes, avg 1.5 actions per sub-task; action mix is Evaluate 29.24% / Plan 28.68% / Mouse 24.67% / Keyboard 15.29% / Wait 2.12%</Finding> (Fig.4/5a) — reflection/planning dominate the trace.
+- <Finding src="§5.3, p.6">Qualitatively, ScreenAgent recovers from a failed action via reflection; LLaVA repeatedly clicks bottom-left and CogAgent often fails to emit coordinates</Finding> (Figs.7-8).
+
+## Implications
+Removing the accessibility tree and scoring clicks by region (not exact pixel) is a reusable harness/metric template. Lineage: <Related>built on CogAgent (Hong et al., 2023), contrasted with AppAgent's labeled-element clicking, and reuses Mind2Web (Deng et al., 2023) as converted training data</Related>; environment lineage runs through MiniWoB++, WebShop, Seq2act, META-GUI. <FollowUp>Compare its CC-Score (trace similarity) against later real-OS computer-use agents that report end-to-end task success</FollowUp>, and <FollowUp>check the repo for the VNC env wrapper, action parser, and CC-Score implementation</FollowUp> (https://github.com/niuzaisheng/ScreenAgent).
+
+## Limitations
+- <Caveat>Single-frame input only — no video / multi-frame; language capability is bounded by the base LM, and even GPT-4V handles non-English on-screen text poorly</Caveat> (author-stated, §6, p.7).
+- <Caveat>Tiny eval (70 sessions / 898 screenshots), single run, no confidence intervals or significance testing</Caveat>.
+- <Caveat>CC-Score measures similarity to a human trace, not task completion; no end-to-end success rate is reported as a single number; positioning tolerance depends on annotator-drawn boxes</Caveat>.
+- <Caveat>The "RL environment" framing is nominal — no RL training and no concrete reward model; chosen/reject pairs are only proposed for future RLHF</Caveat>.
+- <Caveat>No safety/sandboxing/action-gating layer; only an ethical statement</Caveat>.
+
+## Critiques and Questions
+1. Table 3 scores are computed only over successfully matched/parsed actions, partly conditioning out the format-failure problem — what is the true end-to-end full-task success rate on the real machine?
+2. Baselines aren't apples-to-apples: LLaVA-1.5 is capped at 336px input and CogAgent needs a GPT-3.5 crutch to parse, so format-compliance comparisons are skewed.
+3. No ablation isolates the contribution of each curriculum phase or of the reflecting phase on full-task outcomes.
+
+<SelfCheck q="Why does CC-Score report a high Mouse Position accuracy (0.51) for ScreenAgent even though it never matches exact pixels?" a="CC-Score counts a click as correct if it lands inside an annotated feasible bounding box, not at an exact coordinate — region membership, so reasonable-but-imprecise clicks still score." />
+
+## Glossary
+Non-universal terms are defined inline with `<Term>`: VLM, VNC, CC-Score (<Term def="Vision Language Computer Control Score: alignment-based metric scoring predicted vs labeled action sequences, with clicks judged by feasible-bounding-box membership and text/keys by BLEU">CC-Score</Term>), and set-of-marks (<Term def="set-of-marks / element labeling: overlaying numbered tags on UI elements so the model clicks an element id instead of raw pixels — deliberately not used here">set-of-marks labeling</Term>).
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

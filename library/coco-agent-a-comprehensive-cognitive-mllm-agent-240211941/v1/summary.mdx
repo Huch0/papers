@@ -46,7 +46,7 @@ Full supervised fine-tuning of LLaVA on recorded GUI episodes, doing single-step
   { title: "CEP input", body: "Xtext = PROMPT(goal g, OCR layouts L, last h actions); Ximage = raw screenshot. h=8 full actions in the main runs (Appendix A). Layout line example: ICON_SETTINGS: [0.1783, 0.8701] (§3.3)." },
   { title: "CAP output", body: "Rewrite each ground-truth action into a top-down natural-language line; split dual_point into scroll (endpoints far apart), click (tap inside a bounding box, with item name), tap (no matching box) (Tab.1)." },
   { title: "Normalization", body: "Snap click targets to the OCR bounding-box centroid; snap scrolls to four cardinal swipes (§3.4)." },
-  { title: "Train/eval", body: "Per-subset (separate) and joint (unified) on AITW; eval step-level action accuracy (all JSON fields must match). Max input 2048; lr 2e-5; {8,10,12} epochs; batch {12,16}/device; 4x A800 (Appendix A)." },
+  { title: "Train/eval", body: "Per-subset (separate) and joint (unified) on AITW; eval step-level action accuracy (all JSON fields must match). Max input 2048; lr 2e-5; `{8,10,12}` epochs; batch `{12,16}`/device; 4x A800 (Appendix A)." },
 ]} />
 
 Evaluation follows Rawles et al. 2023: a coordinate is correct if it lands in the same bounding box or within 14% screen distance; scroll correct if main direction matches; typed text correct if the label is contained in the prediction. META-GUI adds F1 (input text) and BLEU (utterances). This is offline, single-step, label-match against logged episodes — not closed-loop device control.

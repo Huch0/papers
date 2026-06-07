@@ -34,21 +34,25 @@ summary_date: '2026-06-06'
   Canonical Summary structure (concise, core-first). Body only — frontmatter is generated
   from metadata.yaml by `summarize_paper.py --format mdx --prepare`. Components are
   provided globally by the site (no imports). See config/summary_components.md for the
-  full vocabulary. Rules: concise + core-first; keep depth collapsed in <Pass>; be
-  self-contained (define non-universal terms with <Term>); declarative English; verify
-  numbers against extraction.txt; "Not reported"/"Unclear" for gaps. Motivation ≠
-  Contribution — keep them distinct.
+  full vocabulary. Semantic highlights used for MEANING: <Problem>/<Novelty>/<Finding>/
+  <FollowUp>/<Caveat>/<Related>. Verify numbers against extraction.txt; "Not reported"/
+  "Unclear" for gaps. Motivation (<Problem>) ≠ Contribution (<Novelty>).
 */}
 
 <TLDR>A live, runnable Android environment giving programmatic reward signals for 116 parameterized tasks across 20 real apps, so agents are scored on actual task completion across endlessly varying goals — not on matching one frozen human demonstration.</TLDR>
 
 <WhyItMatters>Foundational evaluation substrate for mobile / computer-use agents. Its core moves — read durable reward from OS state, and randomize task parameters so one fixed seed can't flatter an agent — generalize well beyond Android.</WhyItMatters>
 
+<KeyStats items={[
+  { value: "30.6%", label: "best agent success", sub: "M3A · GPT-4 Turbo · a11y (vs human 80.0%)" },
+  { value: "116 / 20", label: "reward-verified tasks / real apps", sub: "∞ instances per task template" },
+]} />
+
 ## Motivation
-Most agent evaluation compares an agent's per-step action to a previously collected human demonstration, which is misleading online: goals are reachable by many paths, environments are non-deterministic, and agents recover from mistakes — none of which a fixed-trajectory match rewards. The gold standard is outcome-based online evaluation, but real apps expose no built-in reward, and human / LLM judges scale poorly or are unreliable. Execution-based environments that *do* give ground-truth reward existed, but only on **desktop** (ignoring mobile, used by billions) and only for **static** task specs — when parameters change, the reward check breaks. No reproducible, outcome-rewarding, *parameterizable* environment existed for Android.
+Most agent evaluation compares an agent's per-step action to a previously collected human demonstration, which is <Problem>misleading online: goals are reachable by many paths, environments are non-deterministic, and agents recover from mistakes — none of which a fixed-trajectory match rewards</Problem>. The gold standard is outcome-based online evaluation, but <Problem>real apps expose no built-in reward, and human / LLM judges scale poorly or are unreliable</Problem>. Execution-based environments that *do* give ground-truth reward existed, but <Problem>only on desktop (ignoring mobile, used by billions) and only for static task specs — when parameters change, the reward check breaks</Problem>. No reproducible, outcome-rewarding, *parameterizable* environment existed for Android.
 
 ## Contribution (what's new)
-<Claim>The first live Android environment where every one of 116 tasks across 20 real apps carries programmatic, parameterized setup + success-check + teardown</Claim>, so agents are rewarded on real task completion across a practically unbounded space of randomized goals/states. The **mechanistic why**: real apps emit no reward and naive parameter randomization breaks brittle UI-matching checks, so AndroidWorld instead reads <Term def="reward derived by inspecting persisted OS/app state (SQLite DBs, files, settings) rather than matching surface UI; survives parameter changes and needs no app source code">durable reward</Term> from system state via <Term def="Android Debug Bridge — CLI giving full access to the device file system, app SQLite DBs, and settings">adb</Term> — a check that stays valid when parameters change. This lets it measure what priors could not: outcome success on real apps, and *robustness across task parameters* (Tab.1 lists avg instances/task as ∞ for AndroidWorld vs 1 for OSWorld, 3.3 for WebArena). The baseline agent (M3A) and base models are off-the-shelf compositions — the value is the environment and the robustness methodology.
+<Novelty>The first live Android environment where every one of 116 tasks across 20 real apps carries programmatic, parameterized setup + success-check + teardown</Novelty>, so agents are rewarded on real task completion across a practically unbounded space of randomized goals/states. The **mechanistic why**: real apps emit no reward and naive parameter randomization breaks brittle UI-matching checks, so AndroidWorld instead reads <Term def="reward derived by inspecting persisted OS/app state (SQLite DBs, files, settings) rather than matching surface UI; survives parameter changes and needs no app source code">durable reward</Term> from system state via <Term def="Android Debug Bridge — CLI giving full access to the device file system, app SQLite DBs, and settings">adb</Term> — <Novelty>a check that stays valid when parameters change</Novelty>. This lets it measure what priors could not: outcome success on real apps, and *robustness across task parameters* (Tab.1 lists avg instances/task as ∞ for AndroidWorld vs 1 for OSWorld, 3.3 for WebArena). The baseline agent (M3A) and base models are off-the-shelf compositions — the value is the environment and the robustness methodology.
 
 ## Research questions
 Can a reproducible mobile environment provide durable, outcome-based reward across endlessly parameterized real-app tasks? How well do current LLM agents perform on it, do desktop web agents transfer to mobile, and how much does task-parameter variation move measured performance?
@@ -71,10 +75,10 @@ Environment is lightweight: 2 GB RAM, 8 GB disk; runs on a laptop. Code released
 </Pass>
 
 ## Main result
-<Evidence src="Tab.3, p.8">Best agent (M3A, GPT-4 Turbo, a11y tree) completes 30.6% of tasks vs human 80.0%</Evidence>, leaving ample headroom. The adapted desktop web agent SeeAct reaches only 15.5%, evidence that web agents transfer poorly to mobile. Multimodal SoM input does *not* help here (25.4% < 30.6% text-only on GPT-4). <Weak>The 30.6% headline is a single seed; the 3-seed mean is 29.0% (27.6 / 26.3 / 33.2), which the paper keeps out of the main table "for consistency with literature" — so the headline is mildly optimistic.</Weak> The robustness analysis shows task-parameter variation materially changes measured performance (significant for add-expense, edit-note; Fig.3 shows an agent can look "completely incapable" under one unlucky seed yet solve a task often under others).
+<Finding src="Tab.3, p.8">Best agent (M3A, GPT-4 Turbo, a11y tree) completes 30.6% of tasks vs human 80.0%</Finding>, leaving ample headroom. The adapted desktop web agent SeeAct reaches only 15.5%, evidence that web agents transfer poorly to mobile. Multimodal SoM input does *not* help here (25.4% < 30.6% text-only on GPT-4). The 30.6% headline is a single seed; the <Finding src="§5, p.9">3-seed mean is 29.0% (27.6 / 26.3 / 33.2)</Finding>, which the paper keeps out of the main table "for consistency with literature" — so the headline is mildly optimistic.
 
 <Pass title="Full results">
-  <ResultsTable
+  <SortableTable
     columns={["Setting", "Score (SR)", "Reference", "Anchor"]}
     rows={[
       ["M3A, GPT-4 Turbo, a11y (best)", "30.6%", "Human 80.0%; SeeAct 15.5%", "Tab.3, p.8"],
@@ -92,15 +96,23 @@ Environment is lightweight: 2 GB RAM, 8 GB disk; runs on a laptop. Code released
 Failure modes (§4.3, Figs.6–8): perception (missing a visual cue), reasoning (mis-tracking the active field), missing UI knowledge (hunting a non-existent "delete-all"), grounding (cursor/slider placement), and memory-heavy tasks (transcription, multiplication).
 </Pass>
 
+## Key findings
+- <Finding src="§5, Fig.3, p.10">Task-parameter variation materially changes measured performance</Finding>: with a fixed seed an agent can look "completely incapable" on a task, yet under different parameterizations solves it fairly often; different-seed groups show significantly higher variance, with `p<0.05` for add-expense and edit-note — the paper's most original empirical result.
+- <Finding src="Tab.3, §4.2, p.9">Multimodal (SoM) does not generally beat text-only on real apps</Finding>: 25.4% < 30.6% for GPT-4 on AndroidWorld, though SoM does help on MobileMiniWoB++ (whose a11y trees are often incomplete) — so the benefit of vision is interface-dependent.
+- <Finding src="Tab.3, p.8">A strong desktop web agent transfers poorly to mobile</Finding>: SeeAct reaches only 15.5% vs M3A's 30.6%, struggling with mobile-specific gestures (long-press, swipe) and lacking memory of action outcomes — motivating dedicated cross-platform agents.
+- <Finding src="Tab.3, §4.2, p.9">Prompting scaffolding matters a lot on hard mobile tasks</Finding>: stripping guidelines and reflection (M3A-Simple) drops GPT-4 from 30.6% to 19.8% on AndroidWorld, but barely moves MobileMiniWoB++ (67.7%) — sophisticated prompting pays off only on complex real-app interactions.
+- <Finding src="§5, p.10">Reward stays stable across hardware/OS variation</Finding>: re-running on a Pixel 5 / Android 12 yields 28.4%, comparable to the Pixel 6 baseline, evidence the state-based reward generalizes across device layouts.
+- <Finding src="§4.3, p.9">Foundation-model agents are slow</Finding>: M3A averages 3.9 min (multimodal) / 2.5 min (text-only) per task, roughly 3x slower than humans — a practical cost beyond raw success rate.
+
 ## Implications
-Ports OSWorld-style execution-based reward to mobile and adds MiniWoB++-style unlimited parameterization to *real* apps — a combination no prior benchmark offered. The robustness analysis is itself a methodological lesson: single-seed agent leaderboard numbers can be illusory; report the multi-seed mean. The state-based-reward design and mandatory parameter variation are reusable patterns for trustworthy agent benchmarks far beyond Android, and the dynamic task generation is pitched as a hook for online RL and supervised data generation.
+Ports OSWorld-style execution-based reward to mobile and adds MiniWoB++-style unlimited parameterization to *real* apps — a combination no prior benchmark offered. The robustness analysis is itself a methodological lesson: single-seed agent leaderboard numbers can be illusory; report the multi-seed mean. The state-based-reward design and mandatory parameter variation are reusable patterns for trustworthy agent benchmarks far beyond Android. <Related>Extends OSWorld / WindowsAgentArena's execution-based desktop reward to mobile, and reuses AndroidEnv's I/O with a non-invasive reward.</Related> <FollowUp>The dynamic task generation is pitched as a hook for online RL and supervised data generation; non-zero rewards under some seeds hint at RL-style improvement.</FollowUp>
 
 ## Limitations
-<Limit>App scope skewed to open-source / no-login F-Droid apps for reproducibility; trending commercial and authenticated/cloud workflows are out of scope (and open-source UIs can be harder, skewing difficulty).</Limit>
-<Limit>Headline 30.6% is a single seed; 3-seed mean is 29.0% with high intra-task variance (Fig.3), yet the single-seed figure stays in the main table.</Limit>
-<Limit>Human baseline is only two engineers, one attempt each — a thin 80.0% upper bound.</Limit>
-<Limit>"Millions of goals / ∞ instances" is a by-construction assertion, not an enumerated or sampled count.</Limit>
-<Limit>Reward fallback to UI-element matching for non-inspectable tasks reintroduces the brittleness the paper otherwise avoids.</Limit>
+<Caveat>App scope skewed to open-source / no-login F-Droid apps for reproducibility; trending commercial and authenticated/cloud workflows are out of scope (and open-source UIs can be harder, skewing difficulty).</Caveat>
+<Caveat>Headline 30.6% is a single seed; 3-seed mean is 29.0% with high intra-task variance (Fig.3), yet the single-seed figure stays in the main table.</Caveat>
+<Caveat>Human baseline is only two engineers, one attempt each — a thin 80.0% upper bound.</Caveat>
+<Caveat>"Millions of goals / ∞ instances" is a by-construction assertion, not an enumerated or sampled count.</Caveat>
+<Caveat>Reward fallback to UI-element matching for non-inspectable tasks reintroduces the brittleness the paper otherwise avoids.</Caveat>
 
 <Pass title="Evidence check (claim → support)">
   <ClaimEvidence rows={[
@@ -109,7 +121,7 @@ Ports OSWorld-style execution-based reward to mobile and adds MiniWoB++-style un
     { claim: "Reward durable under parameter variation (reads system state)", evidence: "§3.4: adb to filesystem/SQLite/settings; reusable validators (Tab.2/5)", verdict: "holds — verifies the novelty" },
     { claim: "Best agent 30.6% << human 80.0%", evidence: "Tab.3", verdict: "holds for one seed; 3-seed mean 29.0% is fairer" },
     { claim: "Desktop web agent transfers poorly to mobile", evidence: "SeeAct 15.5% vs M3A 30.6%; §4.3 failure analysis", verdict: "holds — confirms motivation" },
-    { claim: "Task variation significantly affects performance", evidence: "§5 + Fig.3: different-seed higher variance; p<0.05 for add-expense, edit-note", verdict: "holds — most original empirical claim" },
+    { claim: "Task variation significantly affects performance", evidence: "§5 + Fig.3: different-seed higher variance; `p<0.05` for add-expense, edit-note", verdict: "holds — most original empirical claim" },
     { claim: "Multimodal (SoM) does not generally beat text-only", evidence: "SoM 25.4% < a11y 30.6% (GPT-4); helps on MobileMiniWoB++", verdict: "holds, with caveat" }
   ]} />
 
@@ -124,6 +136,8 @@ Verify the novelty: robustness/seed analysis (§5) and state-based reward (§3.4
 3. How much of the "real apps are hard" signal is the reproducibility constraint (open-source, no-login, possibly less-polished UIs) rather than intrinsic mobile difficulty?
 4. The UI-matching fallback reintroduces the brittleness the paper criticizes — how many of the 116 tasks rely on it, and does their reward survive parameter re-rolls?
 5. What I'd test next: compare AndroidWorld's state checkers against OSWorld's device/cloud-state checkers; and check the live repo for task/app counts beyond 116/20.
+
+<SelfCheck q="Why can AndroidWorld's reward check survive randomized task parameters when prior real-app benchmarks' checks break?" a="It reads durable reward from persisted OS/app state (SQLite rows, files, settings) via adb rather than matching surface UI; the same state predicate (e.g. 'event exists') stays valid no matter which date/title/amount the seed picks, whereas UI-string matching breaks when those parameters change." />
 
 ## Glossary
 - <Term def="fraction of tasks an agent completes correctly per the environment's reward check; primary metric in Tab.3">Task success rate (SR)</Term>

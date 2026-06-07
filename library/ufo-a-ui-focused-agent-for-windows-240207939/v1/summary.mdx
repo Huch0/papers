@@ -1,0 +1,105 @@
+---
+canonical_key: arxiv-2402.07939
+version_key: v1
+title: 'UFO: A UI-Focused Agent for Windows OS Interaction'
+authors:
+- Chaoyun Zhang
+- Liqun Li
+- Shilin He
+- Xu Zhang
+- Bo Qiao
+- Si Qin
+- Ming-Jie Ma
+- Yu Kang
+- Qingwei Lin
+- S. Rajmohan
+- Dongmei Zhang
+- Qi Zhang
+venue: North American Chapter of the Association for Computational Linguistics
+year: 2024
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2402.07939
+summary_date: '2026-06-07'
+---
+
+<TLDR>UFO is a GPT-Vision dual-agent framework that completes natural-language requests on Windows by reading screenshots plus the UI Automation control tree and grounding actions through `pywinauto`, reaching 86% success on a 50-request, 9-application benchmark.</TLDR>
+
+<WhyItMatters>An early, concrete blueprint for a desktop-OS computer-use agent: two-tier agent split, hybrid pixel + accessibility-tree observation, and real action grounding — design choices that recur in later Windows/desktop agents.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "86%", label: "task success", sub: "UFO on WindowsBench (Tab.3)" },
+  { value: "50 / 9", label: "tasks / apps", sub: "5 per app + 5 cross-app" },
+  { value: "2x", label: "over best baseline", sub: "vs GPT-4 surrogate's 42%" },
+]} />
+
+## Motivation
+<Problem>Visual LLMs can interact with software UIs, but desktop OS automation was largely unexplored</Problem>: at the time most GUI agents targeted <Problem>smartphones or web</Problem>, leaving Windows — high market share, versatile apps, and tasks needing long-horizon, cross-application planning — without a general agent. The unmet need is a system that interprets a request, perceives a Windows GUI, grounds actions without human intervention, and spans multiple apps.
+
+## Contribution (what's new)
+The genuine delta is not a model but a <Novelty>Windows-native harness: a two-tier agent split (cross-app orchestration vs. in-app execution) on top of <Term def="grounding GPT-Vision decisions into executed Windows operations via the UI Automation accessibility backend">control-tree grounding</Term></Novelty>. <Novelty>Observation combines screenshots with the Windows UI Automation control tree</Novelty> rather than pure pixels — so the agent picks an addressable, enumerated control instead of guessing coordinates. There is no training; the novelty is the orchestration loop, the Windows-specific grounding, and the cross-app switching mechanism.
+
+## Research questions
+Can an off-the-shelf VLM, given the right observation and grounding scaffolding, autonomously fulfill everyday natural-language requests across native Windows applications — including tasks that span multiple apps?
+
+## Methodology
+Two GPT-Vision agents over a deterministic grounding layer. A <Term def="picks which application to use and writes a coarse global plan; re-invoked to switch apps">HostAgent</Term> selects the app; an <Term def="operates inside the chosen app, picking one control + one function per step">AppAgent</Term> executes per-step actions; a Control Interaction module translates choices into real `pywinauto` operations. Multi-app tasks work via a shared Memory module that carries extracted text/image descriptions between apps.
+
+<Pass title="Method details">
+<Stepper steps={[
+  { title: "HostAgent selects an app", body: "Observes the desktop screenshot + active-app list, picks an app, emits a global plan and CONTINUE/FINISH status (Sec 3.2, p.5-6)." },
+  { title: "AppAgent acts in-app", body: "Each step receives three screenshots (previous-with-highlighted-control, clean, Set-of-Mark-annotated) + a filtered control list, then picks one control + one function. Status set: CONTINUE / FINISH / PENDING / SCREENSHOT / APP_SELECTION (Sec 3.3, p.6-7)." },
+  { title: "Control Interaction grounds the action", body: "pywinauto over the UI Automation backend enumerates actionable controls, annotates them with Set-of-Mark, and executes Click / SetText / GetText / Scroll plus custom Annotate / Summary (Sec 3.4, p.7-8)." },
+  { title: "Cross-app switching", body: "On APP_SELECTION, control returns to HostAgent to switch apps (Phase 2…), passing data through shared Memory (Sec 3.3, p.7)." },
+]} />
+
+Special designs (Sec 3.5): Interactive Mode (user follow-ups / password entry); Action Customization (register custom ops into the prompt); dual-level Control Filtering (hard filter to 10 relevant control types `{Button, Edit, TabItem, Document, ListItem, MenuItem, TreeItem, ComboBox, Hyperlink, ScrollBar}`; soft filter re-annotates a smaller set via the SCREENSHOT status); Plan Reflection (re-plan every step); and a Safeguard that requests confirmation before sensitive actions.
+</Pass>
+
+## Main result
+On WindowsBench, <Finding src="Tab.3, p.12">UFO reaches 86% success at 5.48 avg steps, 89.6% completion rate, 85.7% safeguard rate, more than doubling the best baseline (GPT-4 surrogate at 42%)</Finding>. Baselines are weak by construction — GPT-3.5/GPT-4 emit step-by-step instructions executed by a human surrogate, since no other Windows agent existed to compare against.
+
+<SortableTable columns={["Framework", "Success %", "Steps", "Completion %", "Safeguard %"]} rows={[
+  ["UFO", 86, 5.48, 89.6, 85.7],
+  ["GPT-4 (Human Surrogate)", 42, 8.44, 47.8, 57.1],
+  ["GPT-3.5 (Human Surrogate)", 24, 7.86, 31.6, 50.0],
+]} />
+
+## Key findings
+- <Finding src="Tab.4, p.12">Per-app success spans 100% (Outlook, Word, File Explorer, WeChat) down to 60% on Adobe Acrobat</Finding>: the Acrobat dip (78.7% completion) is attributed to control types unsupported by Windows UI Automation — grounding coverage, not reasoning, is the bottleneck.
+- <Finding src="Tab.4, p.13">Cross-application tasks hold up: 80% success, 83% completion, 100% safeguard, at the highest step count (avg 9.8)</Finding>: shared Memory as a cross-app data bus genuinely enables multi-app workflows (e.g. Word + Photos → Outlook email).
+- <Finding src="Tab.3, p.12">UFO uses the fewest steps (5.48 vs 7.86–8.44 for baselines) while being most accurate</Finding>: hybrid observation + grounding is more efficient, not just more capable.
+- <Finding src="§4.3.1, p.13">UFO discovers a hidden PowerPoint shortcut ('Remove All Presentation Notes' via File → Info → Check for Issues → Inspect)</Finding>: the agent navigates non-obvious menu paths rather than only surface controls.
+- <Finding src="§4.2, p.12">85.7% safeguard rate shows the agent can self-classify sensitive actions and pause for confirmation</Finding>: safety is driven by the model's own judgment over a non-exhaustive sensitive-action list (Tab.2).
+
+## Implications
+A foundational template for the Windows-native branch of GUI agents: hybrid screenshot + accessibility-tree observation, dual-agent orchestration, `pywinauto` grounding, and an explicit safeguard. Lineage: <Related>builds on Set-of-Mark prompting (Yang et al., 2023a) and the multi-agent line (AutoGen, MetaGPT), with reflection from Reflexion / TaskWeaver</Related>; distinct from mobile agents (<Related>AppAgent, MobileAgent</Related>) and the trained-VLM approach of <Related>CogAgent</Related>. <FollowUp>Watch how later work fixes grounding coverage (Win32 backend or dedicated GUI vision models) and adds external-knowledge retrieval for niche apps</FollowUp>; <FollowUp>UFO2 and OSWorld-style benchmarks are the natural next read</FollowUp>.
+
+## Limitations
+- <Caveat>Capabilities are bounded by what pywinauto / Windows UI Automation expose; non-standard controls (much of Adobe Acrobat) are unsupported</Caveat> (author-stated, Sec 5, p.14).
+- <Caveat>Poor handling of unfamiliar/niche app UIs</Caveat> (author-stated); proposed fix is web-search-derived external knowledge.
+- <Caveat>Weak evaluation rigor: a small self-made 50-task benchmark, human-surrogate baselines, no ablations, no variance reporting, and "best of 3 runs" selection</Caveat> — the 86% should be read as an upper-ish estimate, not a robustly measured rate.
+- <Caveat>No training/learning; performance is entirely tied to GPT-Vision's zero/few-shot ability</Caveat>, and safety relies on a non-exhaustive list plus the model's own judgment.
+
+## Critiques and Questions
+1. With no ablations, which components actually drive the 86% — Set-of-Mark, control filtering, plan reflection, the three-screenshot input, or memory — is Unclear.
+2. Completion Rate is a self-defined "correct steps / total steps" metric whose grading is presumably manual and not described as blind; potential for optimistic scoring.
+3. "Best of 3" plus N=5 requests/app makes per-app percentages coarse (each task = 20 points) and inflates headline numbers vs. single-shot.
+4. Compute, latency, token cost, exact GPT-V version, and decoding params are all Not reported.
+
+<SelfCheck q="Why does the dual-agent design split HostAgent from AppAgent, and what makes multi-application tasks possible?" a="HostAgent handles cross-app orchestration (pick/switch app + global plan) while AppAgent handles in-app per-step execution — separating coarse planning from fine control. Multi-app tasks work because a shared Memory module carries extracted text/image descriptions between apps, and the AppAgent's APP_SELECTION status hands control back to HostAgent to switch (Sec 3.3, p.7)." />
+
+## Glossary
+- <Term def="grounding GPT-Vision decisions into executed Windows operations via the UI Automation accessibility backend, surfaced through the pywinauto library">Control Interaction module</Term>
+- <Term def="Set-of-Mark — overlaying numeric labels on enumerated UI controls so the VLM can reference them by index">Set-of-Mark (SoM)</Term>
+- <Term def="the Windows accessibility API exposing each control's name, type, title, location, and bounding box as a structured tree">Windows UI Automation</Term>
+- <Term def="WindowsBench — a 50-request benchmark over 9 apps (5 single-app each + 5 cross-app), authored by the same team">WindowsBench</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Numbers to remember: 50 tasks / 9 apps / 5 cross-app; UFO 86% success, 89.6% completion, 5.48 steps, 85.7% safeguard; GPT-4 surrogate 42%, GPT-3.5 24%; cross-app 80% success at 9.8 steps. Key reusable ideas: control tree from Windows UI Automation as structured observation; Set-of-Mark over enumerated controls; soft control filtering (SCREENSHOT status to re-annotate a smaller set); shared memory as the cross-app data bus. Main caveat: no ablations, weak baselines, best-of-3. Follow-ups: CogAgent (2312.08914), AppAgent (2312.13771), UFO2, OSWorld-style benchmarks. Check repo for license, prompt files, current architecture.
+{/* NOTES_END */}

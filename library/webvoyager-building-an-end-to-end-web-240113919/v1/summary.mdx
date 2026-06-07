@@ -27,11 +27,17 @@ summary_date: '2026-06-06'
 
 <WhyItMatters>Foundational for my computer-use / web-agent track: it popularized the "screenshot + Set-of-Mark + ReAct on a real browser" recipe and the "VLM-as-judge for open-ended trajectories" evaluation pattern that later agent papers reuse.</WhyItMatters>
 
+<KeyStats items={[
+  { value: "59.1%", label: "task success (human-judged)", sub: "GPT-4V backbone vs 40.1% text-only, 30.8% GPT-4 All Tools" },
+  { value: "85.3%", label: "auto-judge agreement", sub: "kappa 0.70, matches human inter-annotator kappa" },
+  { value: "643", label: "tasks / 15 live sites", sub: "+90 GAIA web + 50 SeeAct online tasks" },
+]} />
+
 ## Motivation
-Prior web agents share two gaps. (1) They consume only <Term def="the textual tree (roles, labels, hierarchy) a browser exposes for a page">HTML / accessibility-tree</Term> text and run inside simulators or static page snapshots, ignoring that browsers *render* pages into visual layouts; verbose HTML is hard to manage and discards layout cues. (2) Benchmarks like Mind2Web grade each action against one predefined "golden" trajectory, which cannot credit the many valid ways to finish a task. Together these limit applicability to the messy live web (ads, pop-ups, constant updates) and make fair, scalable evaluation of open-ended end-to-end success hard.
+Prior web agents share two gaps. (1) They consume only <Term def="the textual tree (roles, labels, hierarchy) a browser exposes for a page">HTML / accessibility-tree</Term> text and run inside simulators or static page snapshots, so they <Problem>ignore that browsers *render* pages into visual layouts</Problem> — and verbose HTML is hard to manage and discards layout cues. (2) Benchmarks like Mind2Web <Problem>grade each action against one predefined "golden" trajectory</Problem>, which cannot credit the many valid ways to finish a task. Together these <Problem>limit applicability to the messy live web (ads, pop-ups, constant updates)</Problem> and make fair, scalable evaluation of open-ended end-to-end success hard.
 
 ## Contribution (what's new)
-<Claim>A generic VLM can complete tasks on *unmodified live websites* by acting on a screenshot whose interactive elements are overlaid with numbered boxes — with no object-detection module and no fine-tuned element selector — and such open-ended runs can be graded automatically by a second VLM watching the screenshot trajectory.</Claim> Mechanistic why: rendered pages encode information visually, and numbering elements lets the model *refer* to a target by index (`Click [17]`) instead of solving pixel-coordinate grounding, so one model can both see and act; the same numbers let the judge re-derive what happened without a golden path. Closest prior work: <Term def="Set-of-Mark: overlay numbered boxes on an image for visual grounding">SoM</Term> (reused, but drops the object detector — elements extracted rule-based), WebArena (not self-hosted — runs the open web), and concurrent <Term def="a concurrent GPT-4V web agent whose best variant uses a fine-tuned cross-encoder to rank elements">SeeAct</Term> (WebVoyager needs no extra modules).
+<Novelty>A generic VLM can complete tasks on *unmodified live websites* by acting on a screenshot whose interactive elements are overlaid with numbered boxes — with no object-detection module and no fine-tuned element selector — and such open-ended runs can be graded automatically by a second VLM watching the screenshot trajectory.</Novelty> Mechanistic why: rendered pages encode information visually, and numbering elements lets the model *refer* to a target by index (`Click [17]`) instead of solving pixel-coordinate grounding, so one model can both see and act; the same numbers let the judge re-derive what happened without a golden path. Closest prior work: <Related><Term def="Set-of-Mark: overlay numbered boxes on an image for visual grounding">SoM</Term> (reused, but drops the object detector — elements extracted rule-based), WebArena (not self-hosted — runs the open web), and concurrent <Term def="a concurrent GPT-4V web agent whose best variant uses a fine-tuned cross-encoder to rank elements">SeeAct</Term> (WebVoyager needs no extra modules)</Related>.
 
 ## Research questions
 Can an off-the-shelf multimodal LLM complete real-world tasks end-to-end on live websites using only marked-up screenshots plus minimal element text? And can a VLM reliably stand in for a human when scoring such open-ended trajectories?
@@ -50,10 +56,10 @@ Given an instruction, WebVoyager drives a real browser (Selenium) in an observe�
 </Pass>
 
 ## Main result
-WebVoyager reaches <Evidence src="Abstract; Tab.1, p.7">59.1% human-judged task success (GPT-4V backbone) vs 40.1% text-only and 30.8% GPT-4 (All Tools)</Evidence>, and its GPT-4V auto-judge hits <Evidence src="Tab.2, p.7">85.3% agreement with humans, Cohen's kappa = 0.70 — matching the human inter-annotator kappa of 0.70</Evidence>. <Weak>The headline 59.1% is human-judged and appears single-run; only the GPT-4V-judged numbers carry variance (the same agent auto-judges to 57.1% +/- 0.2%), so abstract 59.1% vs Table 1 57.1% reflect different judges, not different agents.</Weak>
+WebVoyager reaches <Finding src="Abstract; Tab.1, p.7">59.1% human-judged task success (GPT-4V backbone) vs 40.1% text-only and 30.8% GPT-4 (All Tools)</Finding>, and its GPT-4V auto-judge hits <Finding src="Tab.2, p.7">85.3% agreement with humans, Cohen's kappa = 0.70 — matching the human inter-annotator kappa of 0.70</Finding>. <Caveat>The headline 59.1% is human-judged and appears single-run; only the GPT-4V-judged numbers carry variance (the same agent auto-judges to 57.1% +/- 0.2%), so abstract 59.1% vs Table 1 57.1% reflect different judges, not different agents.</Caveat>
 
 <Pass title="Full results">
-  <ResultsTable
+  <SortableTable
     columns={["Setting", "Metric", "Score", "Baseline / human"]}
     rows={[
       ["Overall (human-judged, GPT-4V)", "Task Success Rate", "59.1%", "GPT-4 All Tools 30.8%; text-only 40.1%"],
@@ -68,14 +74,22 @@ WebVoyager reaches <Evidence src="Abstract; Tab.1, p.7">59.1% human-judged task 
 WebVoyager beats both baselines by large margins overall but is slightly below text-only on Allrecipes (53.3 vs 55.6) and only on par on text-heavy sites (GitHub, ESPN, Cambridge Dict., Wolfram), because dense text is hard to read from screenshots.
 </Pass>
 
+## Key findings
+- <Finding src="Tab.1, p.7">A marked-up-screenshot VLM agent beats both text-only and tool-based baselines by large margins on live sites — 59.1% vs 40.1% (text-only) vs 30.8% (GPT-4 All Tools)</Finding>: the vision-first recipe wins overall, and also wins GAIA (Fig.5).
+- <Finding src="Tab.2, p.7">GPT-4V is a reliable automatic judge for open-ended trajectories — 85.3% agreement and kappa 0.70 with humans, on par with the human inter-annotator kappa of 0.70</Finding>; agreement climbs with more screenshots (75.3% → 79.7% → 81.3% at k=1/2/3), so the full trajectory matters.
+- <Finding src="§5.2; Tab.1, p.7">No object-detection or fine-tuned selection module is needed — the rule-based GPT-4V-Act labeler suffices and still beats the best SeeAct agent (30% vs 26%) on its own online set</Finding>: simplicity does not cost accuracy here.
+- <Finding src="§5.3, p.8; Tab.1">Both modalities are needed for a generalist agent: vision lags on text-heavy sites (GitHub/ESPN/Wolfram), while text-only collapses on visually complex ones (Booking 2.3%, Google Flights 7.1%)</Finding> — argued from per-site splits, not a clean ablation.
+- <Finding src="Tab.3, p.7">Cross-backbone judging exhibits self-evaluation bias — GPT-4o is lenient, GPT-4V strict, and Claude-3-Opus prefers its own outputs</Finding>, which confounds the GPT-4V / Claude / GPT-4o comparison.
+- <Finding src="Tab.4, p.9">Failures are dominated by Navigation Stuck (44.4%), then Visual Grounding (24.8%), Hallucination (21.8%), and Prompt Misalignment (9.0%)</Finding>: running out of the 15-step budget, not raw perception, is the top failure mode.
+
 ## Implications
-A simple, module-free recipe (off-the-shelf VLM + rule-based marking + ReAct on a live browser) became a de-facto baseline architecture for multimodal computer-use agents, and the validated VLM-as-judge protocol gave the field a scalable way to score non-deterministic, open-ended agents without golden trajectories.
+A simple, module-free recipe (off-the-shelf VLM + rule-based marking + ReAct on a live browser) became <Related>a de-facto baseline architecture for multimodal computer-use agents</Related>, and the validated VLM-as-judge protocol gave the field a scalable way to score non-deterministic, open-ended agents without golden trajectories. <FollowUp>Worth chasing: whether feeding HTML/accessibility text into the vision agent closes the text-heavy-site gap, and how a single neutral fixed judge would change the cross-backbone ranking.</FollowUp>
 
 ## Limitations
-<Limit>Live-web evaluation is inherently non-reproducible — numbers are a snapshot in time as sites, ads, and real-time data change.</Limit>
-<Limit>The headline 59.1% (human-judged) appears single-run with no variance; abstract 59.1% vs Table 1 auto-eval 57.1% are easy to conflate.</Limit>
-<Limit>Self-evaluation bias: each backbone's judge favors its own outputs (Tab.3), confounding the cross-backbone comparison (GPT-4o lenient, GPT-4V strict, Claude prefers itself).</Limit>
-<Limit>Site selection excludes login/CAPTCHA sites, biasing toward agent-friendly tasks; reads poorly on text-heavy pages; no Drag, single tab, 15-step budget. Documented failures: Navigation Stuck 44.4%, Visual Grounding 24.8%, Hallucination 21.8%, Prompt Misalignment 9.0% (Tab.4).</Limit>
+<Caveat>Live-web evaluation is inherently non-reproducible — numbers are a snapshot in time as sites, ads, and real-time data change.</Caveat>
+<Caveat>The headline 59.1% (human-judged) appears single-run with no variance; abstract 59.1% vs Table 1 auto-eval 57.1% are easy to conflate.</Caveat>
+<Caveat>Self-evaluation bias: each backbone's judge favors its own outputs (Tab.3), confounding the cross-backbone comparison (GPT-4o lenient, GPT-4V strict, Claude prefers itself).</Caveat>
+<Caveat>Site selection excludes login/CAPTCHA sites, biasing toward agent-friendly tasks; reads poorly on text-heavy pages; no Drag, single tab, 15-step budget. Documented failures: Navigation Stuck 44.4%, Visual Grounding 24.8%, Hallucination 21.8%, Prompt Misalignment 9.0% (Tab.4).</Caveat>
 
 <Pass title="Evidence check (claim → support)">
   <ClaimEvidence rows={[
@@ -88,13 +102,13 @@ A simple, module-free recipe (off-the-shelf VLM + rule-based marking + ReAct on 
 Verify-the-novelty experiments: baseline comparison, module-free SeeAct comparison, human-vs-GPT-4V agreement study. Confirm-the-motivation experiments: per-site difficulty analysis and the GPT-4 All Tools limitation discussion.
 </Pass>
 
----
-
 ## Critiques and Questions
 1. The "both modalities needed" claim is argued from per-site splits, not from an ablation that feeds HTML text into the vision agent — the cleaner test would add accessibility text to WebVoyager and measure the lift.
 2. Cross-backbone scores (Tab.3) are confounded by self-evaluation bias; a single fixed neutral judge across all backbones would make the GPT-4V / Claude / GPT-4o comparison fair.
 3. Headline 59.1% is single-run human-judged — I'd want repeated human passes or at least variance before treating the GPT-4V-vs-baseline gap as robust.
 4. Site selection avoids login/CAPTCHA; how much does success drop on the harder, gated web that real assistants must handle?
+
+<SelfCheck q="Why can WebVoyager skip the object-detection / fine-tuned element-selector module that earlier Set-of-Mark and SeeAct pipelines used?" a="Because it labels interactive elements rule-based (the GPT-4V-Act JS tool reads HTML element types) and overlays numbered boxes, so the VLM refers to a target by its index (e.g. Click [17]) instead of solving pixel-coordinate grounding — the numbering replaces both the detector and the learned selector." />
 
 ## Glossary
 - <Term def="an autonomous program that reads a web page and issues actions to complete a natural-language instruction without human help">Web agent</Term> — the system class.

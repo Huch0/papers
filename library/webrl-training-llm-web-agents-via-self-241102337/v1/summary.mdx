@@ -1,0 +1,118 @@
+---
+canonical_key: arxiv-2411.02337
+version_key: v1
+title: 'WebRL: Training LLM Web Agents via Self-Evolving Online Curriculum Reinforcement Learning'
+authors:
+- Zehan Qi
+- Xiao Liu
+- Iat Long Iong
+- Hanyu Lai
+- Xueqiao Sun
+- Xinyue Yang
+- Jiadai Sun
+- Yu Yang
+- Shuntian Yao
+- Tianjie Zhang
+- Wei Xu
+- Jie Tang
+- Yuxiao Dong
+venue: arXiv.org
+year: 2024
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2411.02337
+summary_date: '2026-06-07'
+---
+
+<TLDR>WebRL trains open LLMs into strong WebArena agents by closing a self-improvement loop: it mints new training tasks from the agent's own past failures, scores them with a learned outcome reward model, and learns from them with a drift-resistant off-policy update.</TLDR>
+
+<WhyItMatters>One of the first end-to-end online-RL pipelines that makes small open models (Llama-3.1-8B, GLM-4-9B) competitive web agents without ground-truth reward functions for self-generated tasks — directly on-target for self-improving agent training harnesses.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "4.8% → 42.4%", label: "WebArena-Lite success", sub: "Llama-3.1-8B + WebRL" },
+  { value: "17.6%", label: "GPT-4-Turbo baseline", sub: "open 8B beats it" },
+  { value: "8", label: "self-evolving phases", sub: "~500 new tasks each" },
+]} />
+
+## Motivation
+High-performing web agents today lean on <Problem>expensive proprietary APIs (GPT-4) with hand-crafted prompts</Problem>, while open LLMs lack decision-centric data. Training open agents online in <Term def="a benchmark of long-horizon tasks across sandboxed websites (Reddit, GitLab, CMS, Map, OSS)">WebArena</Term> breaks on three coupled obstacles (p.2, §1): <Problem>task scarcity</Problem> — even curated WebArena-Lite ships only ~1k training instructions; <Problem>sparse, costly feedback</Problem> — arbitrary tasks have no success function and oracle solutions average ~10 steps, so the single terminal reward is extremely sparse; and <Problem>policy distribution drift</Problem> — online exploration without a fixed set causes catastrophic forgetting phase-to-phase.
+
+## Contribution (what's new)
+The genuine delta: <Novelty>an LLM web agent bootstraps its own training distribution by generating new tasks from its own past failures, gated to moderate difficulty by a learned critic, while a learned reward model supplies the success signal and a KL-to-previous-phase off-policy update keeps the policy from drifting</Novelty> — so a small open model improves monotonically across phases with no external reward function for the new tasks. Each piece is forced by why baselines fail: tasks gated to critic score `[0.05, 0.75]` are precisely the ones the current policy can still get reward on (attacking sparsity); the <Term def="outcome-supervised reward model: judges success from instruction + action history + final-state HTML by comparing P(YES) vs P(NO)">ORM</Term> is what makes rewardless self-generated tasks learnable; and the KL constraint is what fights drift.
+
+## Research questions
+Can a self-improving online-RL loop turn open LLMs into web agents that rival proprietary models, when (a) training tasks are scarce, (b) reward is sparse and undefined for new tasks, and (c) the policy drifts under online learning? Which components are load-bearing?
+
+## Methodology
+Two stages. First, SFT on the WebArena-Lite training set, then roll out the SFT model to seed a success replay buffer and a failure set. Then, for 8 phases, the agent generates tasks from its failures, attempts them, scores rollouts with the ORM, and updates with a KL-constrained off-policy objective — appending new successes/failures to feed the next phase.
+
+<Pass title="Method details">
+The training loop (Algorithm 1, p.22) per phase:
+
+<Stepper steps={[
+  { title: "Generate tasks", body: "~500 new instructions seeded from the failure set via GPT-4o in-breadth evolving (WizardLM-style), filtered by the critic to scores in [0.05, 0.75] and by a GPT-4o feasibility prompt." },
+  { title: "Roll out", body: "Current actor attempts the generated instructions; generated tasks have no environment reward function." },
+  { title: "Label with ORM", body: "The trained ORM assigns binary success from instruction + action history + final-state HTML — the reward signal for arbitrary new tasks." },
+  { title: "Confidence-filtered replay", body: "Draw stored successful experiences whose actor perplexity lies in [1/0.95, 1/0.5] (moderate difficulty), capped at 2x the interaction data." },
+  { title: "KL-constrained update", body: "Update actor with the MSE-on-log-ratio loss and critic with a cross-entropy value loss; advantage via a next/final-step GAE blend (lambda=0.5), discount gamma=0.9." },
+  { title: "Grow the corpus", body: "Append successes to the replay buffer and failed instructions to the failure set for the next phase." },
+]} />
+
+The objective is max-entropy RL with a `beta`-weighted KL toward the previous-phase policy `pi_ref`. Its gradient (eq. 6, p.5) raises positive-advantage actions, lowers negative-advantage ones, and is throttled by the KL term:
+
+<MathBlock>{`\\nabla_\\theta \\mathcal{L} \\propto A(s,a)\\,\\nabla_\\theta \\log \\pi_\\theta(a\\mid s) - \\beta\\,\\nabla_\\theta \\mathrm{KL}\\!\\left(\\pi_\\theta \\,\\|\\, \\pi_{\\text{ref}}\\right)`}</MathBlock>
+
+The authors deliberately pick the MSE-on-log-ratio target (eq. 11) over a KL-to-`pi*` target (eq. 13): eq. 13 requires data drawn from `pi_ref` and cannot decrease the probability of negative-advantage actions, so on a failure-heavy web it can *increase* the probability of wrong actions (Appendix A.1, p.17–18). The observation is simplified HTML (clickable elements get IDs) + instruction + history; actions are one-line `do(action, argument, element)` calls over a 14-verb space. Main runs: 8 phases, 500 instructions/phase, batch 128, actor/critic lr 1e-6, cutoff 16384 (Table 5, p.23); ORM trained on 12,200 labeled samples at lr 5e-6 (Appendix B.3).
+</Pass>
+
+## Main result
+On WebArena-Lite (165 human-verified test cases, average success rate over five sites), <Finding src="Tab.1, p.7">WebRL lifts Llama-3.1-8B from 4.8% to 42.4% and GLM-4-9B from 6.1% to 43.0%</Finding> — both open models surpassing GPT-4-Turbo (17.6%), GPT-4o (13.9%), and prior open-model SOTA AutoWebGLM (18.2%) by >160% relative. Llama-3.1-70B reaches 49.1%.
+
+<SortableTable columns={["Method", "Backbone", "Success %"]} rows={[
+  ["GPT-4o (prompting)", "GPT-4o", 13.9],
+  ["GPT-4-Turbo (prompting)", "GPT-4-Turbo", 17.6],
+  ["AutoWebGLM", "GLM-4", 18.2],
+  ["DigiRL", "Llama-3.1-8B", 30.3],
+  ["DigiRL", "GLM-4-9B", 31.5],
+  ["WebRL", "Llama-3.1-8B", 42.4],
+  ["WebRL", "GLM-4-9B", 43.0],
+  ["WebRL", "Llama-3.1-70B", 49.1]
+]} />
+
+## Key findings
+- <Finding src="Fig.5, p.9">All four components are load-bearing</Finding>: full WebRL 42.4% vs w/o replay buffer 32.7%, w/o KL 34.5%, w/o KL and replay 20.0%, w/o curriculum 24.8% (init 20.6%) — removing replay/KL degrades over phases (forgetting), and REINFORCE-with-baseline overfits the current phase and falls *below* its starting value.
+- <Finding src="Tab.3, p.10">The open ORM beats GPT-4 as a trajectory judge</Finding>: 80.8% test / 79.4% rollout accuracy vs GPT-4 (71.9/71.2), Captioner+GPT-4 (72.6/73.3), and GPT-4V (71.2/70.5) — ~80% vs ~70%, while being open and cheap.
+- <Finding src="Tab.2, p.10">Moderate-difficulty replay wins</Finding>: the perplexity band `[1/0.95, 1/0.5]` gives 31.5% vs 27.9% (too-easy `[1, 1/0.95]`), 29.1% (all `[1, inf]`), and 23.0% (too-hard `[1/0.5, inf]`) — mirroring the curriculum's difficulty logic at the data level.
+- <Finding src="Fig.14, p.23">The curriculum generalizes beyond WebRL</Finding>: adding WebRL's self-evolving curriculum to DigiRL improves DigiRL, yet it still trails WebRL — the curriculum is the bigger lever but the KL objective matters too.
+- <Finding src="Fig.12">Per-site interference is a real failure mode</Finding>: the Map site rises then declines across phases as OSS/CMS gains accrue — improving some sites can cost others, with no mechanism to prevent it.
+- <Finding src="Tab.7, p.24">Results are stable to the generation prompt</Finding>: 42.4 / 40.6 / 43.6 across three task-generation prompt variants, and four-seed error bars show a consistent upward trend (Fig.13, p.22).
+
+## Implications
+WebRL gives a reusable recipe for self-improving agents where ground-truth reward is unavailable for generated tasks: failures → critic-gated tasks → ORM-labeled rollouts → KL-constrained off-policy update → confidence-filtered replay. It builds on and beats the closest online-RL line <Related>DigiRL (device-control actor-critic on a fixed task set)</Related> and supersedes imitation agents <Related>AutoWebGLM / Filtered BC</Related>; the objective choice is argued against <Related>AWR, DPO, and PPO</Related>. The standalone open ORM is independently useful as a cheap trajectory judge. Threads worth chasing: <FollowUp>how ORM label error (~1 in 5) compounds across 8 phases of self-training</FollowUp> and <FollowUp>whether the loop transfers to live or pixel-based (non-HTML) web environments</FollowUp>.
+
+## Limitations
+- <Caveat>GPT-4o sits in the training loop</Caveat> for both task generation and feasibility filtering, so the "open-model" agent still depends on a proprietary model at training time (not inference).
+- <Caveat>The whole self-training loop trusts an ~80%-accurate ORM</Caveat> on rewardless tasks; systematic ORM bias would silently corrupt the curriculum, and the paper does not quantify error compounding over phases.
+- <Caveat>Narrow scope</Caveat>: five sandboxed, HTML-only WebArena sites — no live, open-web, or visual/pixel-based generalization tested.
+- <Caveat>Cost/compute opacity and hand-tuned bands</Caveat>: no GPU-hours reported; the critic band `[0.05, 0.75]`, perplexity band, and the main-run `beta` (omitted from Table 5) are not fully characterized.
+
+## Critiques and Questions
+1. The headline "significantly surpass" framing mixes benchmarks: AWM+GPT-4-0613 (35.5) and WebPilot+GPT-4o (37.2) are on *full* WebArena, not WebArena-Lite, so they are not strictly comparable to the 42.4/43.0/49.1 numbers (the paper marks them with `*`). The directly-comparable claim is vs GPT-4-Turbo/GPT-4o/AutoWebGLM.
+2. Absolute success (~40%) is still far from solved, and the central reliability question — does ORM error compound or self-correct across self-training phases? — is left unexamined.
+
+<SelfCheck q="Why does WebRL use an MSE-on-log-ratio target (eq. 11) instead of a KL-to-pi* target (eq. 13)?" a="Eq. 13 requires data sampled from pi_ref and cannot lower the probability of negative-advantage actions, so on a failure-heavy web it can actually increase the probability of wrong actions. The off-policy MSE form can push down bad actions, which is essential when most rollouts fail." />
+
+## Glossary
+- <Term def="generates new training tasks each phase from the agent's own failures, gated by a critic to moderate difficulty relative to current ability">Self-evolving curriculum</Term>
+- <Term def="outcome-supervised reward model: a learned binary judge of task success from instruction + action history + final-state HTML, used as reward for tasks with no predefined reward function">ORM</Term>
+- <Term def="storing only successful trajectories, sampled by actor perplexity within a moderate-difficulty band, replayed alongside fresh rollouts">Confidence-filtered replay</Term>
+- <Term def="benchmark of 165 human-verified long-horizon tasks across five sandboxed sites: Reddit, GitLab, CMS, Map (OpenStreetMap), OSS (OneStopShop)">WebArena-Lite</Term>
+
+{/* NOTES_START */}
+### Personal notes
+The reusable idea is the closed loop: failures → critic-gated generated tasks → ORM-labeled rollouts → KL-constrained off-policy update → success-only/perplexity-filtered replay. The deliberate choice of MSE-on-log-ratio over KL-to-pi* (because the web is failure-heavy and you must be able to push down wrong actions) is the subtlest and most transferable insight. Watch the GPT-4o-in-training-loop caveat and the ~80% ORM ceiling.
+{/* NOTES_END */}

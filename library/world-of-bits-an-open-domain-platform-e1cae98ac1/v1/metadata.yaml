@@ -52,7 +52,7 @@ scoring:
 artifacts:
   pdf: null
   extraction: null
-  summary: library/world-of-bits-an-open-domain-platform-e1cae98ac1/v1/summary.md
+  summary: library/world-of-bits-an-open-domain-platform-e1cae98ac1/v1/summary.mdx
   code_url: null
   project_url: null
   dataset_url: null
@@ -62,3 +62,4 @@ status:
   summarized: true
   triaged: true
   user_read_status: unread
+  summary_format: mdx

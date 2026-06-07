@@ -1,0 +1,131 @@
+---
+canonical_key: arxiv-2310.11441
+version_key: v1
+title: Set-of-Mark Prompting Unleashes Extraordinary Visual Grounding in GPT-4V
+authors:
+- Jianwei Yang
+- Hao Zhang
+- Feng Li
+- Xueyan Zou
+- Chun-yue Li
+- Jianfeng Gao
+venue: arXiv.org
+year: 2023
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2310.11441
+summary_date: '2026-06-07'
+---
+
+{/*
+  Canonical Summary structure (concise, core-first). Body only — frontmatter is generated
+  from metadata.yaml by `summarize_paper.py --format mdx --prepare`. Components are
+  provided globally by the site (no imports). See config/summary_components.md.
+
+  TWO HARD RULES:
+  1. CONCISE, BUT KEEP THE KEY POINTS. Capture the paper's important findings/analysis —
+     not just the headline number. (e.g. for SWE-bench: "difficulty correlates with
+     context length", "finetuned models are sensitive to context-distribution shift".)
+     Put the headline up top; collect the rest under "## Key findings". Depth in <Pass>.
+  2. USE THE SEMANTIC HIGHLIGHTS for their MEANING (colors are consistent across summaries):
+       <Problem>   red    — the problem this paper tackles / a prior-work limitation
+       <Novelty>   green  — a novel module/approach/insight this paper introduces
+       <Finding src="Tab.X">  teal — a finding / claim / result of THIS paper
+       <FollowUp>  blue   — a notion/thread the reader should follow up on
+       <Caveat>    orange — a limitation of THIS paper
+       <Related>   violet — related work / lineage
+       <Term def="…">  glossary chip with hover definition (self-contained)
+  Declarative English; specific numbers + anchors; "Not reported"/"Unclear" for gaps;
+  verify numbers against extraction.txt. Keep Motivation (<Problem>) ≠ Contribution (<Novelty>).
+*/}
+
+<TLDR>Set-of-Mark (SoM) overlays a segmented image with speakable symbolic marks (numbers/letters/boxes) so GPT-4V can ground answers by naming a mark instead of emitting pixel coordinates, turning visual grounding into discrete selection over an enumerated candidate set.</TLDR>
+
+<WhyItMatters>The pick-a-mark reframing became the standard click-target mechanism for GUI / computer-use agents: a screenshot becomes a menu of numbered, clickable candidates, sidestepping the LMM's inability to regress coordinates.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "86.4", label: "RefCOCOg REC ACC@0.5", sub: "GPT-4V+SoM vs 25.7 raw coords" },
+  { value: "+60.7", label: "absolute REC gain", sub: "from adding marks alone" },
+  { value: "0", label: "training / params", sub: "zero-shot, no fine-tuning" },
+]} />
+
+## Motivation
+<Problem>GPT-4V understands images well but grounds poorly</Problem> — it "can hardly produce a sequence of accurate coordinates for a dog or a few traffic lights" (p.2). Forcing an LMM to interleave text with numeric coordinates both hurts language fluency and discards the spatial structure already present in the vision encoder. <Problem>Prior visual prompting only marks one or a few objects</Problem> (red circles, highlighted regions, circles+arrows; p.2) and uses marks that an LLM cannot "speak," so it does not scale to dense, multi-object grounding.
+
+## Contribution (what's new)
+<Novelty>Partition the image into regions and overlay each with a mark that is both interpretable and "speakable" (alphanumerics), so the model can refer to a region by naming its mark in plain text.</Novelty> Each mark `m_k` is bijectively tied to a region mask `r_k`, so any mark the model utters dereferences back to a mask, yielding `<region, mark, text>` triplets (p.6) — that is what lets a pure-text LMM emit mask/box outputs. The design must take this form because the baseline failure is coordinate regression itself: replacing regression with selection over a finite, labeled set removes the weak link.
+
+## Research questions
+Can GPT-4V's latent visual grounding be unlocked purely by transforming the image input, with no training and no change to the text query? And how far does discrete mark-selection close the gap to fully fine-tuned grounding specialists?
+
+## Methodology
+The text query is left unchanged; only the image `I` is augmented into a marked image `I_m` and fed as `(I_m, T_i)` (Eq.2, p.3). An off-the-shelf segmentation toolbox proposes regions at a selectable granularity, a mark-allocation step places non-colliding ids, and GPT-4V reads the marks via OCR and answers by referencing them.
+
+<Pass title="Method details">
+<Stepper steps={[
+  { title: "Image partition (p.3-4)", body: "Segment I into K binary masks using a suite chosen for strength (MaskDINO), open vocabulary (SEEM), and fine granularity incl. parts (SAM, Semantic-SAM). Granularity and automatic vs interactive mode are user-selectable." },
+  { title: "Mark generation (p.4-5)", body: "Pick a mark TYPE per image (alphanumeric primarily, optionally box + mask boundary), e.g. avoid numeric marks on arithmetic images. Pick mark LOCATION via Mark_Allocation (Fig.5): sort regions ascending by area, exclude area covered by earlier masks, distance-transform to place the id maximally far from boundaries, nudge off tiny regions." },
+  { title: "Interleaved prompt (p.5)", body: "Either a plain text prompt (GPT-4V auto-grounds on marks with no mark named in text) or an interleaved prompt injecting mark ids as symbolic references." },
+  { title: "SoM for vision (p.6-7)", body: "Trace named marks back to masks to support open-vocab segmentation, referring expression segmentation/comprehension, phrase grounding, and video object segmentation." },
+]} />
+Evaluation is manual: GPT-4V is driven through the ChatGPT web UI (no API at the time), each question in a fresh chat to avoid context leakage, with a divide-and-conquer split across authors (p.5, p.8). All benchmarks are subsampled (71–100 images) due to quota.
+</Pass>
+
+## Main result
+<Finding src="Tab.2, p.9">On RefCOCOg referring-expression comprehension, GPT-4V predicting raw coordinates scores 25.7 ACC@0.5; with SoM it jumps to 86.4</Finding> — a +60.7 absolute gain from marks alone, beating grounding specialists and LMMs:
+
+<SortableTable columns={["Method", "RefCOCOg REC ACC@0.5"]} rows={[
+  ["GPT-4V + SoM", 86.4],
+  ["Grounding DINO*", 86.1],
+  ["Ferret", 85.8],
+  ["PolyFormer*", 85.8],
+  ["MiniGPT-v2", 84.4],
+  ["Shikra", 82.6],
+  ["LLaVA-1.5", 63.3],
+  ["FGVP", 63.3],
+  ["RedCircle", 59.4],
+  ["GPT-4V (raw coords)", 25.7],
+]} />
+
+<Caveat>* baselines are full-val numbers from their own papers; SoM is on the authors' subsample, so several head-to-head wins are not strictly apples-to-apples.</Caveat>
+
+## Key findings
+- <Finding src="Tab.2, p.9">SoM matches fine-tuned segmentation in zero-shot</Finding>: RefCOCOg RES reaches 75.6 mIoU vs PolyFormer 67.2 and SEEM 65.7, supporting the abstract's claim of beating a fully fine-tuned referring-segmentation model with no training.
+- <Finding src="Tab.4, p.9-10">Residual error is mostly segmentation-proposal quality, not GPT-4V grounding</Finding>: swapping predicted MaskDINO masks for ground-truth masks lifts RefCOCOg RES from 75.6 to 90.1 mIoU (+14.5). The candidate set, not the LLM, is the ceiling.
+- <Finding src="Tab.3, p.9">Mark type matters and composes</Finding>: adding boxes on top of Number+Mask raises Flickr30K phrase grounding R@1 from 84.4 to 89.2.
+- <Finding src="Tab.2, p.9">Open-vocabulary segmentation gains are large</Finding>: ADE20K precision 63.4 with SoM vs 23.4 for zero-shot OpenSeeD; on video object segmentation SoM hits 78.8 J&F on DAVIS2017, best among generalist vision models.
+- <Finding src="p.11">SoM is GPT-4V-specific and unexplained</Finding>: the authors call it "still mysterious why" it works, and LLaVA-1.5 / MiniGPT-v2 "can hardly interpret the marks," so this is not yet a general LMM technique.
+
+## Implications
+Builds directly on the authors' own segmentation lineage — <Related>SEEM, Semantic-SAM, MaskDINO, SAM</Related> — as a way to wire those detectors into GPT-4V without training. The lasting impact is downstream: pick-a-mark grounding is the conceptual seed for <Related>set-of-mark / accessibility-tree overlays in later GUI and computer-use agents</Related>. The appendix already gestures at this with one-shot tasks on a game controller, a 2D platformer, and apartment floor-plan navigation (p.21-23). <FollowUp>Whether a clean UI-element detector reproduces the 75.6→90.1 ceiling lift in real GUI settings — i.e. candidate-set quality as the agent bottleneck.</FollowUp>
+
+## Limitations
+- <Caveat>Tiny, manually-run, subsampled benchmarks (71–100 images), no API, no seeds, no repeated trials or confidence intervals.</Caveat>
+- <Caveat>Per-image, per-task choice of segmentation tool and mark type is human-in-the-loop tuning that undercuts the "zero-shot" framing (p.10).</Caveat>
+- <Caveat>GPT-4V-specific; does not transfer to the open LMMs tested (p.11).</Caveat>
+- <Caveat>Fully dependent on external segmentation quality; degrades when proposals miss regions (Tab.4).</Caveat>
+- <Caveat>No safety analysis despite demonstrating GPT-4V solving a CAPTCHA with SoM (p.18); and it is not an agent — no closed-loop action, environment, or planning.</Caveat>
+
+## Critiques and Questions
+1. The SOTA-beating claims mix subset numbers (SoM) against full-val baseline numbers; the authors flag this with `*`, but the abstract states the win unqualified — how robust are the wins on matched evaluation sets?
+2. With mark/tool selection done per image, how much of the "zero-shot" gain is really an automatable pipeline vs author judgment?
+3. Why does SoM work on GPT-4V but not open LMMs? Left as hypotheses (scale + data curation, p.11-12) with no controlled test.
+
+<SelfCheck q="Why does converting grounding into 'pick a mark' help GPT-4V so much?" a="GPT-4V cannot reliably regress pixel coordinates (25.7 raw REC, Tab.2). SoM replaces coordinate regression with selecting among a finite set of speakable, segmentation-backed marks, so grounding becomes discrete labeling; the named mark dereferences to its mask, giving box/segmentation outputs without training (86.4 REC)." />
+
+## Glossary
+<Term def="A method that overlays a segmented image with speakable symbolic marks so an LMM can ground by naming a mark.">Set-of-Mark (SoM)</Term> ·
+<Term def="Large multimodal model — an LLM that also ingests images, e.g. GPT-4V.">LMM</Term> ·
+<Term def="Referring expression comprehension: locate the box for a described object; scored by ACC@0.5 (IoU≥0.5).">REC</Term> ·
+<Term def="Referring expression segmentation: produce the pixel mask for a described object; scored by mIoU.">RES</Term> ·
+<Term def="Video object segmentation; scored by J&F (region + boundary accuracy).">VOS</Term> ·
+<Term def="Promptable segmentation models used as the region proposer.">SEEM / SAM / Semantic-SAM / MaskDINO</Term>
+
+{/* NOTES_START */}
+### Personal notes
+The single most reusable abstraction for the harness: segmentation+numbering turns grounding into discrete selection over an enumerated candidate set, removing the LMM's coordinate-regression weakness. For GUI agents the analogue is overlaying ids on accessibility-tree elements / detected UI components and outputting "click N." Watch the GT-mask ablation (75.6 → 90.1): in a GUI setting the equivalent ceiling lift comes from a clean element detector, so candidate-set quality, not the LLM, is often the bottleneck.
+{/* NOTES_END */}

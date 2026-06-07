@@ -1,0 +1,86 @@
+---
+canonical_key: s2-298a55ddc9777e39c5bad92a750827e1cae98ac1
+version_key: v1
+title: 'World of Bits: An Open-Domain Platform for Web-Based Agents'
+authors:
+- Tianlin Shi
+- A. Karpathy
+- Linxi (Jim) Fan
+- J. Hernández
+- Percy Liang
+venue: International Conference on Machine Learning
+year: 2017
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://www.semanticscholar.org/paper/298a55ddc9777e39c5bad92a750827e1cae98ac1
+summary_date: '2026-06-07'
+---
+
+<Caveat>**Metadata-only record — context-grounded, not text-grounded.** The harness could not fetch a PDF or abstract for this paper (no open-access PDF via Semantic Scholar/OpenAlex; `abstract: Not reported`). Everything below is grounded in well-established knowledge of the paper and its role in the field, **not** in extracted text from the PDF. Treat all quantitative claims as "Not reported / verify against the paper". To upgrade to a text-grounded summary, supply an open PDF (e.g. `/add-paper <pdf_url>` to this canonical key) and re-run `/summarize-paper`.</Caveat>
+
+<TLDR>World of Bits introduced <Term def="small, reproducible web-interaction tasks where an agent observes a rendered page and acts via keyboard/mouse">MiniWoB</Term> — a platform framing web interaction as an RL environment — seeding the entire lineage of RL/LLM web- and computer-use agents.</TLDR>
+
+<WhyItMatters>This is the **emergence point** of the computer-use-agent track in my interest profile: nearly every later milestone (MiniWoB++, WebShop, Mind2Web, WebArena, OSWorld, UI-TARS) inherits its core framing of an agent perceiving a UI and acting through human-style input.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "Not reported", label: "MiniWoB task count", sub: "verify against paper" },
+  { value: "≪ human", label: "RL agent vs human success", sub: "qualitative; per-task numbers not reported" },
+]} />
+
+## Motivation
+Before this work, agent benchmarks were mostly <Problem>synthetic games or narrow, closed domains</Problem>. The web is a vast, open-domain action space humans already use, but the field lacked a <Problem>standardized, scalable platform to train and evaluate agents that operate real web interfaces through the same input modalities a person uses</Problem>.
+
+## Contribution (what's new)
+The genuine delta is a framing plus reusable infrastructure: <Novelty>treat web interaction as an RL environment — render a (mini) web page, expose DOM and pixels as observations and keyboard/mouse events as actions, and define reward from task completion</Novelty>. The design must use **low-level, human-style input** (not a high-level API) so that the same agent could, in principle, operate any real site; the controlled MiniWoB suite makes this reproducible.
+
+## Research questions
+Can web interaction be cast as a standardized, reproducible RL benchmark over human-style input channels, and how far can agents of the era get on it relative to humans?
+
+## Methodology
+Frame each task as: observation = the page (DOM structure and/or rendered pixels), action = low-level mouse clicks/movement and keyboard events, reward = task completion. Provide a suite of small, self-contained UIs (MiniWoB) plus the broader vision of using live web pages. Agents are trained with reinforcement learning and imitation from demonstrations; reproducibility comes from the fixed task set.
+
+<Pass title="Harness framing (context-grounded)">
+- **Environment / workspace:** rendered web pages — the MiniWoB suite of small self-contained UIs, plus the broader "open-domain web" vision.
+- **Observation interface:** the page — DOM structure and/or rendered pixels.
+- **Action interface:** low-level human-style input — mouse clicks/movement and keyboard events (not a high-level API).
+- **Planner / executor / verifier:** a single RL policy; the "verifier" is the task reward.
+- **Evaluation harness:** per-task success/reward on MiniWoB.
+- **Training harness:** reinforcement learning and imitation from demonstrations.
+- **Vs later work:** deliberately low-level and reproducible; later milestones trade some control for realism (real sites, larger action vocabularies).
+</Pass>
+
+## Main result
+The widely-cited qualitative finding: <Finding src="verify against paper">RL agents of the time learned the easiest MiniWoB tasks but fell far short of human performance on harder ones</Finding>, exposing the difficulty of general web interaction. Specific per-task numbers are **Not reported here** (no extracted text) — confirm against the paper before quoting.
+
+## Key findings
+Field-role observations that are well-established for this paper; all quantitative specifics are **Not reported / verify against paper**:
+- <Finding src="verify against paper">RL agents solved the easiest tasks but lagged humans badly on harder ones</Finding>: the gap, not a single score, is the takeaway — general web interaction is hard for era methods.
+- <Finding src="verify against paper">The lasting contribution is the platform and framing, not one strong empirical result</Finding>: MiniWoB's value is as reusable infrastructure that many later papers built on.
+- <Finding src="verify against paper">Low-level, human-modality action space makes credit assignment hard for RL</Finding>: directly motivated MiniWoB++'s workflow-guided exploration.
+- <Finding src="verify against paper">The (observation = page, action = click/type, reward = completion) framing became the field standard</Finding>: it is why later web/computer-use benchmarks share a common shape.
+
+## Implications
+This bridges RL-environment design and real UIs and seeds a whole lineage. It directly precedes and motivates <Related>MiniWoB++ (`arxiv-1802.08802`, workflow-guided exploration)</Related> and the broader web/computer-use line: <Related>WebShop (`arxiv-2207.01206`)</Related>, <Related>Mind2Web (`arxiv-2306.06070`)</Related>, <Related>WebArena (`arxiv-2307.13854`)</Related>, <Related>OSWorld (`arxiv-2404.07972`)</Related>, <Related>UI-TARS (`arxiv-2501.12326`)</Related>. <FollowUp>Read MiniWoB++ next, then WebArena/OSWorld for how the framing scaled to real sites.</FollowUp>
+
+## Limitations
+- <Caveat>MiniWoB tasks are small/synthetic relative to real websites</Caveat> (addressed by later work).
+- <Caveat>The low-level action space makes RL credit assignment hard</Caveat> (motivating MiniWoB++).
+- <Caveat>This record specifically has no full text available — the analysis is context-grounded, not text-grounded</Caveat>.
+
+## Critiques and Questions
+1. Without the text, the exact MiniWoB task count, reward design, and per-task human-vs-agent gaps cannot be confirmed here — all are flagged for verification.
+2. How much of the lasting influence is the platform versus the "live web" vision that was more aspiration than result at the time?
+
+<SelfCheck q="Why did the field standardize on (observation = page, action = click/type, reward = task completion), and what was the cost of the low-level action space?" a="World of Bits framed web interaction as an RL environment with human-style input so agents could in principle operate any site; the cost was that low-level actions make credit assignment hard for RL, which later motivated MiniWoB++'s workflow-guided exploration." />
+
+## Glossary
+<Term def="small, reproducible web-interaction tasks; an agent observes a rendered page (DOM/pixels) and acts with keyboard/mouse, scored by task completion">MiniWoB</Term> is the platform's core task suite. <Term def="extension of MiniWoB with a larger task set and workflow-guided exploration">MiniWoB++</Term> is the direct successor benchmark.
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later. (Metadata-only record — fetch an open PDF and re-run /summarize-paper to make this text-grounded; compare with MiniWoB++ directly; check the MiniWoB / MiniWoB++ task repository.)
+{/* NOTES_END */}

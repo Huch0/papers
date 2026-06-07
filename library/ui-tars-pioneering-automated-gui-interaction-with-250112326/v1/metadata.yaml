@@ -103,7 +103,7 @@ scoring:
 artifacts:
   pdf: library/ui-tars-pioneering-automated-gui-interaction-with-250112326/v1/paper.pdf
   extraction: library/ui-tars-pioneering-automated-gui-interaction-with-250112326/v1/extraction.txt
-  summary: library/ui-tars-pioneering-automated-gui-interaction-with-250112326/v1/summary.md
+  summary: library/ui-tars-pioneering-automated-gui-interaction-with-250112326/v1/summary.mdx
   code_url: null
   project_url: null
   dataset_url: null
@@ -113,3 +113,4 @@ status:
   summarized: true
   triaged: true
   user_read_status: unread
+  summary_format: mdx

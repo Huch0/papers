@@ -47,7 +47,7 @@ Three sub-problems, three specialist roles. <Term def="encoder-decoder LLM pre-t
 <Pass title="Method details">
 <Stepper steps={[
   { title: "HTML-T5 architecture (§3.1, Fig.4)", body: "Encoder swaps dense attention for local attention (radius r=127) + transient-global attention (block size k=16), following LongT5/ETC; decoder keeps dense attention. Initialized from PEGASUS weights (Appendix H.1 shows this is critical)." },
-  { title: "Pre-training", body: "Span-denoising with Gaussian span lengths, mixture mu in {8,64}, 15% masking, 4096 input / 910 output. Corpus: 100 CommonCrawl WARC files (Apr 2019), subtrees around <label for=...> elements -> 3.41M examples (avg 1020 tokens). T5X+SeqIO, TPU-v3 128 cores, 100K iters, batch 128 (Appendix C)." },
+  { title: "Pre-training", body: "Span-denoising with Gaussian span lengths, mixture mu in `{8,64}`, 15% masking, 4096 input / 910 output. Corpus: 100 CommonCrawl WARC files (Apr 2019), subtrees around <label for=...> elements -> 3.41M examples (avg 1020 tokens). T5X+SeqIO, TPU-v3 128 cores, 100K iters, batch 128 (Appendix C)." },
   { title: "Self-experience supervision (§3.2)", body: "Sample instruction templates; rule-based parser decomposes into sub-instructions, regex retrieves reference IDs; Flan-U-PaLM generates programs; environment feedback filters failures; HTML-T5 finetuned on survivors (260 real-estate / 230 social-media / 410 map episodes)." },
   { title: "Grounded program synthesis (§3.3)", body: "Flan-U-PaLM few-shot prompted with generic action examples + next sub-instruction + extracted snippet, decoding Selenium-executable Python; sub-instruction carried as a code comment." },
 ]} />
@@ -89,7 +89,7 @@ Treating long messy HTML as the core observation bottleneck — attacked with ar
 2. "SoTA on Mind2Web" is true per-step but full-task SR (5-10%) shows real-task success is still mostly unsolved; the framing risks overstating maturity.
 3. No statistical significance testing anywhere, and the headline conflates the HTML-T5 architecture win (well-evidenced) with the modular-agent win (thinly evidenced).
 
-<SelfCheck q="Why does WebAgent use a mixture of long denoising spans (mu in {8,64}) instead of the NLP-standard short spans?" a="Short spans (mu=3) tend to mask low-signal HTML fragments like `</` or `id=`; longer spans force the model to reconstruct meaningful HTML structure, which Tab.2 (right) shows yields higher downstream success (57.0 vs 55.2 on MiniWoB++)." />
+<SelfCheck q="Why does WebAgent use a mixture of long denoising spans (mu in `{8,64}`) instead of the NLP-standard short spans?" a="Short spans (mu=3) tend to mask low-signal HTML fragments like `</` or `id=`; longer spans force the model to reconstruct meaningful HTML structure, which Tab.2 (right) shows yields higher downstream success (57.0 vs 55.2 on MiniWoB++)." />
 
 ## Glossary
 - <Term def="encoder-decoder LLM pre-trained on long HTML with local+global attention and long-span denoising; does WebAgent's planning and summarization">HTML-T5</Term>

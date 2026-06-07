@@ -1,0 +1,129 @@
+---
+canonical_key: arxiv-2501.12326
+version_key: v1
+title: 'UI-TARS: Pioneering Automated GUI Interaction with Native Agents'
+authors:
+- Yujia Qin
+- Yining Ye
+- Junjie Fang
+- Haoming Wang
+- Shihao Liang
+- Shizuo Tian
+- Junda Zhang
+- Jiahao Li
+- Yunxin Li
+- Shijue Huang
+- Wanjun Zhong
+- Kuanye Li
+- Jiale Yang
+- Yu Miao
+- Woyu Lin
+- Longxiang Liu
+- Xu Jiang
+- Qianli Ma
+- Jingyu Li
+- Xiaojun Xiao
+- Kai Cai
+- Chuang Li
+- Yaowei Zheng
+- Chaolin Jin
+- Chen Li
+- Xiao Zhou
+- Minchao Wang
+- Haoli Chen
+- Zhaojian Li
+- Haihua Yang
+- Haifeng Liu
+- Feng Lin
+- Tao Peng
+- Xin Liu
+- Guang Shi
+venue: arXiv
+year: 2025
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+- general_agent_methods
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2501.12326v1
+summary_date: '2026-06-07'
+---
+
+<TLDR>UI-TARS is a single end-to-end vision-language model that takes only screenshots and emits low-level GUI actions in a <Term def="one action vocabulary shared across web, desktop, and mobile">unified cross-platform action space</Term>, beating modular agent frameworks wrapped around GPT-4o and Claude on 10+ perception, grounding, and online task-execution benchmarks.</TLDR>
+
+<WhyItMatters>A flagship instance of the <Novelty>"native GUI agent model"</Novelty> thesis — one model trained on perception + grounding + reasoning + action traces — and an open-sourced, directly reusable observation/action interface for the computer-use agent track.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "24.6", label: "OSWorld @ 50 steps", sub: "72B-DPO vs Claude 22.0" },
+  { value: "46.6", label: "AndroidWorld success", sub: "72B-SFT vs GPT-4o 34.5" },
+  { value: "38.1", label: "ScreenSpot Pro avg (SOTA)", sub: "72B grounding" },
+  { value: "~50B", label: "training tokens", sub: "Qwen-2-VL 2B/7B/72B backbones" },
+]} />
+
+## Motivation
+GUI agents historically depend on <Problem>textual representations (HTML, accessibility trees) that are platform-inconsistent, verbose, permission-hungry, and scale poorly</Problem> (p.3). Most systems are also <Problem>"agent frameworks" — perception/grounding/memory/reasoning glued by hand-crafted prompts and workflows around a frozen VLM like GPT-4o</Problem>, which the paper calls "design-driven": fragile, high-maintenance, and unable to update parameters from new experience (p.7-8). The deeper blocker is a <Problem>data bottleneck — unified perception→reasoning→memory→action traces that capture expert workflow knowledge are historically scarce</Problem> (p.3, §4.5).
+
+## Contribution (what's new)
+<Novelty>Train one model end-to-end so that gains come from data and parameters, not from a hand-built scaffold.</Novelty> The design must take this form because a frozen-VLM framework cannot learn from its own mistakes; the genuine delta is therefore not the pure-vision interface (shared with peers) but the <Novelty>integrated online self-improvement loop — bootstrap traces on hundreds of VMs, filter, reflection-tune, and apply Agent DPO over self-generated error pairs</Novelty> (§4.5), plus a <Novelty>System-1/System-2 framing where explicit "thoughts" are bootstrapped to genuinely cause correct actions</Novelty> (§4.4).
+
+## Research questions
+Can a native, pure-vision, end-to-end agent model match or beat prompt-engineered frameworks built on commercial VLMs across perception, grounding, and online task execution — and how do you manufacture the training data to make that possible?
+
+## Methodology
+At each step the model consumes (task instruction, last `N=5` screenshot+thought+action tuples as short-term memory, current screenshot) and autoregressively emits a "thought" then an action in the unified space (p.14, Eq. 2-3). Observation is pure vision — raw screenshots, no DOM/a11y tree. Built on four pillars and a three-phase training schedule.
+
+<Pass title="Method details">
+<Stepper steps={[
+  { title: "Enhanced perception", body: "Synthetic GUI screenshot dataset built bottom-up: element description, dense captioning, state-transition captioning, QA, set-of-mark prompting, from crawled + human-assisted screenshots with extracted metadata (element type, depth, bbox, text) (§4.2, p.15-16)." },
+  { title: "Unified action modeling", body: "One cross-platform action space (Table 1, p.17): shared Click/Drag/Scroll/Type/Wait + terminal Finished()/CallUser(); desktop Hotkey/LeftDouble/RightSingle; mobile LongPress/PressBack/PressHome/PressEnter. Coordinates predicted as normalized relative coords for resolution invariance (§4.3)." },
+  { title: "System-2 reasoning", body: "~6M filtered GUI tutorials (avg 510 tokens, 3.3 images each), then thought augmentation: ActRe (reverse-annotate a thought from the action) and Thought Bootstrapping (forward-sample, keep the thought that yields the correct action) to avoid spurious thought-action alignment (§4.4, p.17-19)." },
+  { title: "Iterative online learning", body: "Deploy M_n on hundreds of VMs, collect raw traces, 3-stage filter (rule reward → VLM scoring → human review) → fine-tune to M_n+1; plus reflection tuning (SFT only on corrected steps) and Agent DPO (Bradley-Terry preference of corrected over erroneous action) (§4.5, p.20-22)." },
+]} />
+
+Training is continual pre-training → annealing (yields UI-TARS-SFT) → DPO (yields UI-TARS-DPO), ~50B tokens total on Qwen-2-VL 2B/7B/72B backbones (§4.6, p.22). Note the authors' own annotated grounding/trace volumes are masked with `*` in Table 2, so data scale is not fully auditable.
+</Pass>
+
+## Main result
+On OSWorld (369 real web+desktop tasks, screenshot-only, 3-run avg), <Finding src="Tab.9, p.26">UI-TARS-72B-DPO scores 24.6 at 50 steps and 22.7 at 15 steps, vs Claude Computer-Use 22.0 (50 steps) and 14.9 (15 steps)</Finding> — i.e. it roughly matches Claude's 50-step result using only 15 steps. <Caveat>These headline figures use the DPO model; SFT-only OSWorld is 18.8 at 15 steps, and DPO is applied selectively (only OSWorld benefits, §5.4)</Caveat>.
+
+<SortableTable columns={["Method", "Type", "OSWorld 15-step", "OSWorld 50-step"]} rows={[
+  ["UI-TARS-72B-DPO", "Agent Model", 22.7, 24.6],
+  ["UI-TARS-72B-SFT", "Agent Model", 18.8, 0],
+  ["UI-TARS-7B-DPO", "Agent Model", 18.7, 0],
+  ["Claude Computer-Use", "Agent Model", 14.9, 22.0],
+  ["GPT-4o", "Agent Model", 5.0, 0],
+]} />
+
+## Key findings
+- <Finding src="Tab.9, p.26">AndroidWorld: UI-TARS-72B-SFT = 46.6, vs GPT-4o (SoM) 34.5</Finding>: but the nearest competitor is the framework GPT-4o+Aria-UI at 44.8, so the "surpassing GPT-4o" framing understates the gap.
+- <Finding src="Tab.4, p.23">ScreenSpot Pro grounding scales cleanly with size: 2B 27.7 → 7B 35.7 → 72B 38.1 (SOTA)</Finding>: well above UGround-V1-7B 31.1, Claude Computer Use 17.1, and GPT-4o 0.8.
+- <Finding src="Fig.8, §5.5, p.26-27">System-2 reasoning can hurt at N=1 in-domain but overtakes System-1 at N=16/64 and clearly wins on OOD AndroidWorld at N=1</Finding>: deliberate reasoning helps generalization and benefits from test-time sampling, not greedy decoding.
+- <Finding src="Tab.7, p.25">Offline Mind2Web Step-SR SOTA: 72B reaches Cross-Task 68.6, Cross-Website 63.5, Cross-Domain 62.1</Finding>: but Mind2Web/AndroidControl/GUI Odyssey are explicitly in-domain (p.26), so these gains partly reflect supervised fitting rather than generalization.
+- <Finding src="§5.4">Claude transfers well to web but poorly to mobile, whereas UI-TARS handles both</Finding>: DPO over self-generated negatives is what lets UI-TARS distinguish optimal from suboptimal actions on OSWorld.
+
+## Implications
+Consolidates the <Related>native/end-to-end GUI model lineage — Aguvis, OS-Atlas, UGround, Aria-UI, CogAgent, SeeClick, Claude Computer Use</Related> and pushes one step beyond by adding the online reflective self-improvement loop. Method lineage: <Related>ReAct (thoughts before actions), ActRe (thought annotation), DPO, Set-of-Mark prompting, Qwen-2-VL backbone</Related>. The unified pure-vision interface and CallUser() safety affordance are directly reusable as a harness contract. <FollowUp>Watch for later UI-TARS / UI-TARS-1.5 with RL-based single-pass System-2; chase a per-pillar ablation isolating backbone vs UI-TARS data</FollowUp>.
+
+## Limitations
+- <Caveat>Selective DPO (only OSWorld) makes the headline abstract number unrepresentative of the default deployed model across benchmarks.</Caveat>
+- <Caveat>Heavy in-domain overlap for offline benchmarks weakens generalization claims; authors acknowledge offline metrics may mislead.</Caveat>
+- <Caveat>No per-pillar ablation and continual training from Qwen-2-VL, so gains cannot be attributed to specific innovations vs a strong backbone.</Caveat>
+- <Caveat>Masked data volumes (Table 2 `*`), minimal compute disclosure ("hundreds of VMs", "~50B tokens"), and no variance/error bars on most tables limit reproducibility.</Caveat>
+- <Caveat>Safety beyond CallUser() is essentially unaddressed for an agent issuing real mouse/keyboard actions on live systems.</Caveat>
+
+## Critiques and Questions
+1. The abstract attributes "24.6 / 22.7 outperforming Claude 22.0 / 14.9" to "UI-TARS" without flagging these are the DPO model; the SFT default is meaningfully lower.
+2. How much of the SOTA is the Qwen-2-VL backbone vs the UI-TARS pipeline? Without an ablation, the data-recipe contribution is hard to size.
+3. Online bootstrapping on hundreds of VMs is effectively impossible to reproduce from the paper alone — is the self-improvement loop the real moat, and is it accessible to anyone without that infrastructure?
+
+<SelfCheck q="Why is the OSWorld 15-step vs 50-step comparison the strongest single piece of evidence?" a="It is an efficiency argument: UI-TARS-72B-DPO at 15 steps (22.7) roughly matches Claude at 50 steps (22.0) and reaches 24.6 at 50 steps, showing the native model does more per step rather than just winning on a single setting." />
+
+## Glossary
+<Term def="end-to-end model perceiving only screenshots and emitting low-level actions, with perception/grounding/reasoning/memory in one set of parameters">native GUI agent model</Term> · <Term def="modular system gluing a frozen VLM to hand-crafted prompts/workflows for perception, memory, and reasoning">agent framework</Term> · <Term def="predicting the action first, then writing a thought that justifies it (reverse annotation)">ActRe</Term> · <Term def="forward-sampling thoughts and keeping only those that lead to the correct action, to prevent superficial thought-action matching">Thought Bootstrapping</Term> · <Term def="Direct Preference Optimization over corrected-vs-erroneous action pairs with a KL constraint to the SFT policy">Agent DPO</Term> · <Term def="terminal action that hands control back to the human, e.g. for login/authentication">CallUser()</Term>
+
+{/* NOTES_START */}
+### Personal notes
+The most defensible single claim is OSWorld efficiency: UI-TARS-72B-DPO at 15 steps (22.7) roughly matches Claude at 50 steps (22.0), and reaches 24.6 at 50 steps. When citing AndroidWorld 46.6, note the nearest competitor is GPT-4o+Aria-UI at 44.8, not the 34.5 GPT-4o(SoM) the abstract emphasizes. Watch for in-domain leakage when quoting Mind2Web/AndroidControl/GUI Odyssey gains.
+{/* NOTES_END */}

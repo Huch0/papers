@@ -75,7 +75,7 @@ scoring:
 artifacts:
   pdf: library/windows-agent-arena-evaluating-multi-modal-os-240908264/v1/paper.pdf
   extraction: library/windows-agent-arena-evaluating-multi-modal-os-240908264/v1/extraction.txt
-  summary: library/windows-agent-arena-evaluating-multi-modal-os-240908264/v1/summary.md
+  summary: library/windows-agent-arena-evaluating-multi-modal-os-240908264/v1/summary.mdx
   code_url: null
   project_url: null
   dataset_url: null
@@ -85,3 +85,4 @@ status:
   summarized: true
   triaged: true
   user_read_status: unread
+  summary_format: mdx

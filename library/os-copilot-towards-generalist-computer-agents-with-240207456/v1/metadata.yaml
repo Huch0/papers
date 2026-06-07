@@ -65,7 +65,7 @@ scoring:
 artifacts:
   pdf: library/os-copilot-towards-generalist-computer-agents-with-240207456/v1/paper.pdf
   extraction: library/os-copilot-towards-generalist-computer-agents-with-240207456/v1/extraction.txt
-  summary: library/os-copilot-towards-generalist-computer-agents-with-240207456/v1/summary.md
+  summary: library/os-copilot-towards-generalist-computer-agents-with-240207456/v1/summary.mdx
   code_url: null
   project_url: null
   dataset_url: null
@@ -75,3 +75,4 @@ status:
   summarized: true
   triaged: true
   user_read_status: unread
+  summary_format: mdx

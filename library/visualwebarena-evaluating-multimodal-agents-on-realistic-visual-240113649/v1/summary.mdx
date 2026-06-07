@@ -1,0 +1,106 @@
+---
+canonical_key: arxiv-2401.13649
+version_key: v1
+title: 'VisualWebArena: Evaluating Multimodal Agents on Realistic Visual Web Tasks'
+authors:
+- Jing Yu Koh
+- Robert Lo
+- L. Jang
+- Vikram Duvvur
+- Ming Chong Lim
+- Po-Yu Huang
+- Graham Neubig
+- Shuyan Zhou
+- Ruslan Salakhutdinov
+- Daniel Fried
+venue: arXiv
+year: 2024
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+- general_agent_methods
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2401.13649
+summary_date: '2026-06-07'
+---
+
+<TLDR>VisualWebArena is a reproducible, execution-evaluated benchmark of 910 web tasks where solving (and grading) each task requires seeing the page, on which the best VLM agent at submission reached only 16.4% success versus 88.7% for humans.</TLDR>
+
+<WhyItMatters>A foundational multimodal/computer-use agent benchmark: it pins down a concrete observation interface (accessibility tree, screenshot, <Term def="screenshot with every interactable element labeled by a colored box + numeric ID, injected via JavaScript">Set-of-Marks</Term> screenshot), an element-ID action space, and functional reward primitives — exactly the harness design worth comparing any web/GUI agent project against.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "16.4%", label: "best VLM success", sub: "GPT-4V + SoM (vs 88.7% human)" },
+  { value: "910", label: "visually grounded tasks", sub: "314 templates, 3 sites" },
+  { value: "25.2%", label: "tasks with input images", sub: "interleaved image+text intents" },
+]} />
+
+## Motivation
+<Problem>Most agent benchmarks evaluate text-only agents over HTML or accessibility-tree representations, neglecting the many real web tasks that genuinely require seeing the page</Problem> — "buy the green polo in the second row", "find the post matching this image", reading colors/icons/layout. Because digital interfaces are built for human eyes, <Problem>visual understanding is necessary for routine computer tasks, yet there was no realistic, reproducible benchmark forcing agents to integrate interleaved image-and-text input with web actions</Problem>. Without one, multimodal web agents cannot be measured or driven forward.
+
+## Contribution (what's new)
+The genuine delta is <Novelty>a reproducible, execution-evaluated web benchmark in which visual understanding is required to compute the reward</Novelty> — vision is not incidental but load-bearing for grading. The design must take this form because its parent benchmark <Related>WebArena</Related> computes rewards over textual/HTML state, so an agent can succeed without ever seeing the page. To force and verify visual competence, VisualWebArena adds (a) tasks whose target is only resolvable visually, and (b) <Novelty>visual reward primitives</Novelty>: `eval_vqa` (a yes/no VQA query over the resulting page) and `eval_fuzzy_image_match` (SSIM threshold between produced and target images), since enumerating acceptable answers for open-ended visual goals is infeasible. It also ships a brand-new Classifieds site and a Set-of-Marks observation/action representation (a prompting/representation choice, not a new architecture).
+
+## Research questions
+Can today's LLM and VLM agents act on realistic, visually grounded web tasks? How large is the gap between text-only and multimodal agents, and between agents and humans? Does a Set-of-Marks visual representation help VLMs act on visually dense pages?
+
+## Methodology
+The environment is a deterministic <Term def="partially observable Markov decision process; agent sees only part of the web state">POMDP</Term> inherited from WebArena, with a binary reward returned at the final step. Observations are one of `{HTML DOM, accessibility tree, raw screenshot, SoM screenshot}`; the action space is 12 discrete browser actions keyed to element IDs rather than (x,y) pixels, deliberately keeping agents at high-level reasoning. Six co-authors authored 314 intent templates expanded to 910 tasks across three self-hosted sites.
+
+<Pass title="Method details">
+<Stepper steps={[
+  { title: "Sites", body: "Three self-hosted web apps — Classifieds (new; OSClass CMS, 65,955 real Craigslist listings, PII scrubbed), Shopping (WebArena/WebShop Amazon data), Reddit (WebArena forum, 31,464 image posts). 4.9% of tasks are multi-site; some use a self-hosted Wikipedia (§4.1, §D)." },
+  { title: "Tasks", body: "314 templates → 910 tasks (avg 2.9/template). 25.2% include one or more input images in the intent. 5.1% (46 tasks) are deliberately unachievable, testing early termination, graded via fuzzy_match on the agent's stated reason (§4.2)." },
+  { title: "Difficulty labels", body: "Each task tagged with action difficulty (≤3 / 4-9 / ≥10 human actions) and visual difficulty (basic ID / patterns+short-OCR / multi-image+fine-detail), averaged into an overall level (§4.2)." },
+  { title: "Reward primitives", body: "Text: exact_match, must_include, fuzzy_match (GPT-4-Turbo), new must_exclude. Visual: new eval_vqa (BLIP-2-T5XL) and eval_fuzzy_image_match (SSIM). Navigation tasks fetch final-state content via a (locator, URL) pair and reuse the text/visual checks (§3.3)." },
+  { title: "SoM observation/action", body: "JavaScript labels every interactable element with a colored box + unique ID, plus a text list `[id] [tagType] [text]`, so a VLM can reference marks directly on visually dense pages where the accessibility tree cannot disambiguate spatially adjacent images (§3.1, §6)." },
+]} />
+</Pass>
+
+## Main result
+At submission, <Finding src="Tab.3, p.8">the best agent, GPT-4V with Set-of-Marks, reached 16.37% overall success vs 88.7% for humans</Finding> on the 230-task human sample — multimodality clearly beats text (best text-only GPT-4 7.25%), but the benchmark is far from solved.
+
+<SortableTable columns={["Method", "Setting", "Success %"]} rows={[
+  ["Human", "230-task sample", 88.7],
+  ["GPT-4o", "Image+Caps+SoM (post-deadline, Tab.5)", 19.78],
+  ["GPT-4V", "Image+Caps+SoM", 16.37],
+  ["GPT-4V", "Image+Caps+Acc.Tree", 15.05],
+  ["GPT-4 (text)", "Acc.Tree + captions", 12.75],
+  ["GPT-4 (text)", "Acc.Tree only", 7.25],
+  ["Gemini-Pro", "Image+Caps+SoM", 5.71],
+]} />
+
+## Key findings
+- <Finding src="Tab.3, §6">VLMs beat text LLMs, and captions help text LLMs</Finding>: GPT-4V (15.05%) far exceeds text GPT-4 (7.25%); even just adding image captions lifts text GPT-4 from 7.25% to 12.75%. This verifies the motivation that vision matters.
+- <Finding src="Tab.3, §6">Set-of-Marks helps only the strongest VLM</Finding>: it lifts GPT-4V +1.3 pts overall (most on visually dense sites: Reddit 12.38%→17.14%), but slightly hurts Gemini-Pro (6.04%→5.71%) and does nothing for IDEFICS-80B (0.99%) or CogVLM (0.33%) — the benefit is model-dependent, not a general property.
+- <Finding src="Tab.4, p.9">OCR is the bottleneck, not image matching</Finding>: GPT-4V+SoM scores 13.4% on OCR tasks vs 16.9% non-OCR, but 19.0% on image-input tasks vs 14.9% (more tractable once seen) and 18.9% on exact-image-match — so reading text in pixels hurts more than visual matching.
+- <Finding src="§C.4, p.15-17">Failures are reasoning/state-tracking, not perception alone</Finding>: agents undo correct actions, give up before scrolling, append-instead-of-replace in fields, and oscillate between tabs — attributed to the lack of any planner, memory, or history module.
+- <Finding src="Tab.5, §B">Native multimodal models close the gap fast</Finding>: post-deadline, GPT-4o+SoM reaches 19.78% (surpassing GPT-4V's 16.37%) and Llama-3-70B jumps to 9.78% from Llama-2-70B's 0.66% — though these are absent from the headline.
+
+## Implications
+Establishes a reusable reference design for multimodal web agents — element-ID action spaces (avoiding pixel coordinates for models not trained to ground them), SoM-as-observation injected via JS, and visual reward primitives (VQA/SSIM) extending functional evaluation to open-ended visual goals. It builds directly on <Related>WebArena</Related> and operationalizes <Related>Set-of-Marks prompting (Yang et al., 2023a)</Related> on live interactive pages for the first time. <FollowUp>Track later VWA leaderboard entries and stronger native multimodal models</FollowUp>, and <FollowUp>whether trajectory fine-tuning or an explicit planner/memory module closes the human gap</FollowUp>.
+
+## Limitations
+- <Caveat>All Tab.3 / Tab.5 numbers appear single-run with no variance, seeds, or significance reported.</Caveat>
+- <Caveat>Reward fidelity depends on model-based evaluators (BLIP-2-T5XL VQA, GPT-4-Turbo fuzzy match, SSIM) that are not independently validated against human labels in the main text.</Caveat>
+- <Caveat>The SoM "agent" is a prompting/representation tweak whose benefit is GPT-4V-specific, not a deep method.</Caveat>
+- <Caveat>Rewards are binary only (authors note continuous scoring as future work), and cost prevented running the strongest model on the in-context-count ablation (run on Gemini-Pro instead).</Caveat>
+
+## Critiques and Questions
+1. "Every task requires vision" is asserted by construction/annotation, not independently audited — and a text-only GPT-4 scoring 7.25% shows some tasks are partly solvable from text. How visually grounded is the long tail really?
+2. An agent could pass `eval_vqa` by reaching a superficially matching state, or fail despite a correct-but-rephrased answer. Without evaluator-vs-human validation, the exact success numbers carry bounded confidence.
+3. The SSIM threshold and the exact evaluator prompts are left unspecified in the extracted text — load-bearing details for reproduction.
+
+<SelfCheck q="Why does VisualWebArena need new visual reward primitives like eval_vqa and eval_fuzzy_image_match, rather than reusing WebArena's text-based checks?" a="WebArena's rewards operate over textual/HTML state, so an agent can succeed without seeing the page, and open-ended visual goals (e.g. 'buy a green hoodie under $10') cannot be graded by enumerating acceptable text answers. The VQA (BLIP-2-T5XL) and SSIM image-match primitives let the benchmark check open-ended visual outcomes, making visual competence both required and verifiable." />
+
+## Glossary
+- <Term def="execution/functional-correctness evaluation: a reward function checks the resulting environment state, returning binary success">execution-based evaluation</Term>
+- <Term def="Set-of-Marks: overlaying numbered/boxed labels on interactable elements so a VLM can reference them by ID">SoM</Term>
+- <Term def="Structural Similarity Index Measure: a perceptual similarity score between two images">SSIM</Term>
+- <Term def="Visual Question Answering: answering a natural-language question about an image">VQA</Term>
+
+{/* NOTES_START */}
+### Personal notes
+The most transferable harness ideas: element-ID action space (avoid pixel coords for non-grounding models), SoM-as-observation injected via JS, and visual reward primitives (VQA/SSIM) for open-ended functional evaluation. Watch the evaluator-fidelity risk if reusing eval_vqa/fuzzy_match.
+{/* NOTES_END */}

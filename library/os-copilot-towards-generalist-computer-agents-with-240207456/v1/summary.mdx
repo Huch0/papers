@@ -1,0 +1,109 @@
+---
+canonical_key: arxiv-2402.07456
+version_key: v1
+title: 'OS-Copilot: Towards Generalist Computer Agents with Self-Improvement'
+authors:
+- Zhiyong Wu
+- Chengcheng Han
+- Zichen Ding
+- Zhenmin Weng
+- Zhoumianze Liu
+- Shunyu Yao
+- Tao Yu
+- Lingpeng Kong
+venue: arXiv.org
+year: 2024
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2402.07456
+summary_date: '2026-06-07'
+---
+
+{/*
+  Canonical Summary structure (concise, core-first). Body only — frontmatter is generated
+  from metadata.yaml by `summarize_paper.py --format mdx --prepare`. Components are
+  provided globally by the site (no imports). See config/summary_components.md.
+*/}
+
+<TLDR>OS-Copilot gives an LLM agent a single <Term def="Python interpreter, bash, API POST calls, and mouse/keyboard behind one runtime">universal code-execution interface</Term> to the whole OS, and the FRIDAY agent built on it autonomously writes, scores, and accumulates reusable Python tools — letting it generalize to unseen apps and self-improve from 0% to 60% on a spreadsheet benchmark.</TLDR>
+
+<WhyItMatters>An early (Feb 2024) move from single-sandbox agents (one browser, one terminal) toward the full OS as the environment. It is a reusable blueprint — planner + memory + actor-with-critic, plus <Term def="autonomous accumulation of self-written tools, no weight updates">self-directed tool acquisition</Term> — that maps cleanly onto today's computer-use agents.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "+35%", label: "rel. gain over prior best on GAIA L1", sub: "40.86 vs 30.30 (GPT-4 Plugins)" },
+  { value: "0% → 60%", label: "spreadsheet Pass@1 from self-learning", sub: "SheetCopilot-20, FRIDAY" },
+  { value: "4", label: "OS interaction methods unified", sub: "Python / bash / API / mouse-keyboard" },
+]} />
+
+## Motivation
+<Problem>Prior language agents are confined to a narrow domain — one website, one terminal, one game, one database — which limits applicability to general computer tasks</Problem> (p.2). Two stated obstacles to OS-level agents (p.2): <Problem>there is no unified interface across a heterogeneous OS (code, keyboard/mouse, APIs)</Problem>, and <Problem>the sheer number of distinct applications makes hand-crafting per-app tools and prompts impractical, hurting generalization</Problem>. Even multi-scenario frameworks (AutoGPT, OpenAgents) are claimed to still "operate within the confines of either a terminal or a web browser" (p.8).
+
+## Contribution (what's new)
+Two coupled pieces. (1) <Novelty>Code execution as the universal action interface</Novelty>: rather than engineering a tool per app, the runtime consolidates Python interpreter, bash, API POST, and mouse/keyboard behind one interface (p.2, Tab.4 p.13). This must take this form because per-app tooling cannot scale to "every application" — code is the lowest common denominator that already drives most apps. (2) <Novelty>Self-directed tool accumulation</Novelty>: given an objective (e.g. "master spreadsheets"), FRIDAY self-instructs a curriculum, solves it by trial and error, and keeps tools the critic scores above 8/10 into a persistent repository (p.5-6). The individual components (ReAct, Reflexion, Voyager-style skill libraries) are explicitly not claimed as new (p.7); the genuine delta is unifying them into one working OS-level system.
+
+## Research questions
+Can a single code-execution interface plus a swappable planner/memory/actor scaffold drive a generalist agent across the whole OS, and does autonomous tool accumulation measurably improve performance on unseen applications?
+
+## Methodology
+Per request the loop is planner -> configurator (memory) -> actor (executor + critic + refiner), each component swappable (p.3, Fig.2). Memory follows a biological metaphor: declarative (user profile + semantic knowledge), procedural (the tool repository), and working memory linking the components (p.3-4). FRIDAY is prompting-based — <Term def="GPT-4-turbo-1106 on GAIA; GPT-4 on spreadsheets; no fine-tuning">no weight updates</Term> (p.13).
+
+<Pass title="Method details">
+<Stepper steps={[
+  {title: "Plan", body: "Planner decomposes the request into subtasks, retrieving in-house tools and OS info. A proposed DAG planner encodes subtask dependencies so independent subtasks run in parallel via subagents (p.3, App. A)."},
+  {title: "Configure", body: "For each subtask the Configuration Tracker uses dense retrieval to pull relevant tools/profiles/OS state into the prompt. If no tool clears a similarity threshold, the Tool Generator writes a new Python class subclassing BaseAction with a __call__ method, e.g. AppleScript to set dark mode (Fig.3, Tab.13)."},
+  {title: "Act", body: "Executor emits an executable action — a bash command or a generated-tool invocation — run in the OS runtime. Critic judges completion (boolean) from pre/post system state (OS version, cwd, files, stdout/stderr), returns error analysis, and scores tool generality 1-10 (Tab.9). Refiner self-corrects; the loop runs up to 3 attempts per subtask (p.5)."},
+  {title: "Learn", body: "For self-directed learning FRIDAY self-instructs ~10 tasks (e.g. Excel via openpyxl), solves them, and accumulates tools scoring >8 into the persistent repository — 8 tools for spreadsheets (p.6, §4.2)."},
+]} />
+
+Observation is text-only: system state before/after execution plus critic feedback. <Caveat>Web access is retrieval-only (no clicks/forms) and there is no screenshot/GUI grounding in this version</Caveat> (p.13).
+</Pass>
+
+## Main result
+On <Term def="466 general-assistant QA tasks across 3 difficulty levels; private test via official server">GAIA</Term>, FRIDAY reaches <Finding src="Tab.1, p.6">40.86% on Level 1 vs the prior best 30.30% (GPT-4 Plugins) — a 35% relative gain</Finding>, and is the only system non-zero at Level 3 (6.12% vs 0% for all baselines).
+
+<SortableTable columns={["Method (GAIA private test)", "L1 %", "L2 %", "L3 %"]} rows={[
+  ["FRIDAY", 40.86, 20.13, 6.12],
+  ["FRIDAY (w/o learning)", 36.56, 17.61, 6.12],
+  ["GPT-4 Plugins", 30.30, 9.70, 0],
+  ["AutoGPT-4", 15.05, 0.63, 0],
+  ["Human", 93.90, 91.80, 87.30],
+]} />
+
+<Caveat>The abstract/intro (p.2) cites AutoGPT-4 at 14.4%, but Tab.1 lists 15.05%. The 14.4% is not reproduced in the table — treat 15.05% as the reported number and 14.4% as Unclear.</Caveat>
+
+## Key findings
+- <Finding src="Tab.2, p.7">Self-directed learning lifts spreadsheet Pass@1 from 0% to 60%</Finding>: FRIDAY without learning fails every SheetCopilot-20 task (defaults to pandas/matplotlib); after self-generating and solving just 10 tasks and keeping 8 tools, it surpasses SheetCopilot/GPT-4 (55%), /Claude (45%), and /GPT-3.5 (40%) — and all FRIDAY tools are auto-generated vs SheetCopilot's hand-crafted operations.
+- <Finding src="Tab.1, p.6">On GAIA the learning gain is real but modest</Finding>: +4.30 pts at L1 (36.56→40.86) and +2.52 pts at L2 (17.61→20.13), and exactly zero at L3 — most of FRIDAY's headline lead over baselines comes from the scaffold itself, not from self-learning.
+- <Finding src="Tab.3, p.6">FRIDAY is time-efficient</Finding>: ~118s vs AutoGPT-4's 456s on L1 (~4x faster) and ~3x faster than humans; it is slower than GPT-4 Plugins, but that excludes human plugin-selection time.
+- <Finding src="Fig.5b">Capability is lopsided</Finding>: strong on coding and file I/O, weak on web browsing (retrieval-only, no clicks) and multimodality — the gaps trace directly to the text-only, click-less interface.
+- <Finding src="p.6">Generality comes from code, not a fixed app list</Finding>: seeded with only 4 basic tools (+9 auto-generated on the GAIA dev set), the framework never enumerates "apps controlled" — new capability is written on demand.
+
+## Implications
+A clean, reusable architectural blueprint (planner / memory-configurator / actor-with-critic+refiner) for OS-level agents, and concrete evidence that autonomous tool accumulation pays off. <Related>Closest analogue is Voyager (Wang et al. 2023a) — lifelong skill library, here ported from Minecraft to the OS</Related>; the primary contrast is <Related>AutoGPT (shares memory + tool repo + task decomposition; FRIDAY's edge is self-criticism/refinement and self-directed tool generation)</Related>, with component lineage from ReAct, Plan-and-Solve, Reflexion, Toolformer, and Self-Instruct. <FollowUp>Watch later versions / later computer-use agents for the web-action and visual-grounding (screenshot→action) gaps this paper flags</FollowUp>.
+
+## Limitations
+- <Caveat>Author-stated (p.13-14): heavy reliance on prompt engineering (brittle to LLM changes), no support for closed-source GUI-only apps, no multimodal/screenshot-to-action, subtask-completion judged by an LLM critic without ground truth (called potentially inaccurate and unscalable), and safety/interpretability/alignment left as open work.</Caveat>
+- <Caveat>Inferred: small evaluation sets with single runs and no variance/CIs — the 0%→60% headline is 12 of 20 tasks, and GAIA L3 (~6%) is near-floor where small-count noise dominates. Per-capability numbers use the authors' own annotations, which they admit differ from the server.</Caveat>
+- <Caveat>The agent runs generated code directly in the live OS with no described sandbox or permission gating — an operational safety risk.</Caveat>
+
+## Critiques and Questions
+1. The "surpasses a system designed for spreadsheets" claim rests on a +5-pt margin (60 vs 55) over a different scaffold with different assumptions — suggestive, not decisive.
+2. Most of the GAIA lead is the scaffold, not self-learning (which adds ~0-4 pts); how much of the framework's value is just GPT-4-turbo plus a good harness?
+3. No fine-tuning baseline and everything is prompt-dependent — would the architecture survive a model swap, given the authors' own warning?
+
+<SelfCheck q="What concretely does FRIDAY's 'self-directed learning' change, and what does it leave unchanged?" a="It autonomously writes and accumulates reusable Python tools (keeping those the critic scores >8/10) into a persistent repository — boosting spreadsheet Pass@1 from 0% to 60%. It does NOT update model weights; the underlying LLM (GPT-4 / GPT-4-turbo) is frozen and prompting-based throughout (p.6, p.13)." />
+
+## Glossary
+- <Term def="General AI Assistants benchmark; 466 real-world assistant tasks in 3 difficulty levels, scored on a private server (Mialon et al. 2023)">GAIA</Term>
+- <Term def="20 representative spreadsheet-control tasks drawn from SheetCopilot's 221-task set (Li et al. 2023)">SheetCopilot-20</Term>
+- <Term def="fraction of tasks solved correctly on the first attempt">Pass@1</Term>
+- <Term def="base class FRIDAY subclasses to define a generated tool; implements a __call__ method invoked as Class()(args)">BaseAction</Term>
+
+{/* NOTES_START */}
+### Personal notes
+When citing, use AutoGPT-4 = 15.05% (Tab.1), not the abstract's 14.4%. "35% improvement" is relative (40.86 vs 30.30 at L1), not absolute. Self-improvement headline (0%→60%) is on only 20 tasks. No sandbox/permission layer is a notable gap given the agent runs generated code live. Most of the GAIA lead is the scaffold, not self-learning.
+{/* NOTES_END */}

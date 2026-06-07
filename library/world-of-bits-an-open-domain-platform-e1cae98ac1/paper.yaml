@@ -41,7 +41,7 @@ versions:
   source: semantic_scholar
   source_url: https://www.semanticscholar.org/paper/298a55ddc9777e39c5bad92a750827e1cae98ac1
   pdf_path: null
-  summary_path: library/world-of-bits-an-open-domain-platform-e1cae98ac1/v1/summary.md
+  summary_path: library/world-of-bits-an-open-domain-platform-e1cae98ac1/v1/summary.mdx
   metadata_path: library/world-of-bits-an-open-domain-platform-e1cae98ac1/v1/metadata.yaml
   fetched_at: '2026-06-06T07:13:52Z'
   source_updated_at: null
@@ -51,7 +51,7 @@ versions:
   summary_status: triage_only
   extraction_status: none
   created_at: '2026-06-06T07:13:52Z'
-  updated_at: '2026-06-06T07:25:40Z'
+  updated_at: '2026-06-07T03:54:38Z'
 relations:
   duplicate_candidates: []
   related_papers: []

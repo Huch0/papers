@@ -1,0 +1,108 @@
+---
+canonical_key: arxiv-2305.11854
+version_key: v1
+title: Multimodal Web Navigation with Instruction-Finetuned Foundation Models
+authors:
+- Hiroki Furuta
+- Ofir Nachum
+- Kuang-Huei Lee
+- Yutaka Matsuo
+- S. Gu
+- Izzeddin Gur
+venue: International Conference on Learning Representations
+year: 2023
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2305.11854
+summary_date: '2026-06-07'
+---
+
+<TLDR>WebGUM is a fully offline, imitation-trained multimodal web agent — an instruction-finetuned Flan-T5 encoder-decoder plus a ViT, consuming HTML and screenshots and emitting free-form text actions — that beats prior offline SoTA, online-RL SoTA, humans, and a GPT-4 prompted agent on MiniWoB++, and transfers to WebShop and real-world Mind2Web.</TLDR>
+
+<WhyItMatters>An early, foundational data-point for the now-dominant computer-use recipe: finetune a VLM over (HTML/DOM + screenshot), output parsable text actions, train by offline imitation. It cleanly separates four design levers — multimodal perception, instruction-finetuning, data scaling, and text-action formulation — each directly relevant to building a computer-use harness.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "94.2%", label: "MiniWoB++ success", sub: "Flan-T5-XL + ViT, 401K demos" },
+  { value: "+45.8", label: "over offline SoTA", sub: "vs WebN-T5 48.4%" },
+  { value: "3B", label: "params beat PaLM-540B", sub: "on WebShop" },
+  { value: "347K", label: "demos released", sub: "multimodal MiniWoB++" },
+]} />
+
+## Motivation
+Prior web-navigation agents fell into two unsatisfying camps. <Problem>Online RL reaches high success but needs massive trial-and-error</Problem> — <Term def="online-RL web agent that uses 2.4M demos plus billions of online frames">CC-Net</Term> uses 2.4M demos plus billions of online frames, which is unsafe and impractical on real sites (a wrong password can freeze an account) (p.1-2). <Problem>Offline supervised learning is safe but had been sub-optimal</Problem> — WebN-T5 reached only 48.4% on MiniWoB++ (p.2,4). A second gap: <Problem>prior models used web-specific architectures (LSTM, self-attention, GNN over DOM) and fixed categorical action spaces</Problem>, which prevents reusing out-of-domain pre-trained models and emitting open-ended actions (p.1).
+
+## Contribution (what's new)
+<Novelty>Recast web navigation as a VQA-style `(text + image) → text` problem so general foundation models can be used directly</Novelty>, then recover the lost offline performance with three coupled choices: <Novelty>feed both raw HTML and screenshots for grounded perception</Novelty>, <Novelty>use an instruction-finetuned backbone (Flan-T5, not vanilla T5) because navigation is inherently instruction-following</Novelty>, and <Novelty>scale offline demonstrations</Novelty>. The design must take this form because the baseline fails on two axes the recipe targets: web-specific heads block foundation-model reuse (fixed by text actions), and HTML-only perception is blind to layout (fixed by the ViT tokens).
+
+## Research questions
+Can offline imitation learning over pre-trained vision-language foundation models match or beat online-RL web agents — and which of multimodal perception, instruction-tuning, data scale, and action formulation actually carries the gains?
+
+## Methodology
+An encoder-decoder T5 (Flan-T5) jointly finetuned with a ViT-B16 image encoder on a large corpus of HTML+screenshot demonstrations, via plain <Term def="supervised learning that imitates successful demonstration trajectories; no environment interaction">behavioral cloning</Term>. The agent observes per-step raw HTML plus a screenshot and decodes a free-form text action such as `{action: click, ref: 6}`.
+
+<Pass title="Method details">
+<Stepper steps={[
+  { title: "Multimodal observation", body: "Per-step raw HTML as a text sequence plus a screenshot. Screenshots are cropped to remove the instruction bar (160x160), padded to 224x224 for the ViT (p.5)." },
+  { title: "Visual tokenization", body: "ViT-B16 (86M, ImageNet-21K pre-trained) maps each image to 14x14 patch ('local') tokens; an H=2 temporal window stacks the last two steps → 14x14x2 = 392 visual tokens for action consistency (p.5)." },
+  { title: "Joint encoding", body: "The T5 encoder consumes HTML tokens plus temporal/local visual tokens jointly; the decoder predicts the text action (Fig 2, p.3)." },
+  { title: "Action space", body: "Constrained `function(selector, text)` with function in `{click, type}`, selector an integer element ref — emitted as free-form text, no categorical head (p.4)." },
+  { title: "Data collection", body: "Bootstrap from the public WebN-T5 policy: roll out 100 episodes/task → 2.8K successes; finetune Flan-T5-XL; re-roll at 10,000 episodes/task keeping only successes; add 54K demos via Synapse (PaLM-2 prompting) plus a scripted book-flight policy. Total 401K; 347K released (Sec 4.3, Appendix F)." },
+  { title: "Mind2Web transfer", body: "Take WebGUM finetuned on the 401K MiniWoB++ data, then further finetune on the Mind2Web training set; predict element id + operation + value (Sec 5.5, p.9)." },
+]} />
+
+Training: TPU-v4, batch size 128, input length 4096 tokens, single seed per model, 1-2 days; sizes Base(220M) → Large(770M) → XL(3B) → XXL(11B), multimodal variants adding the ViT (Appendix C, p.19-20).
+</Pass>
+
+## Main result
+On MiniWoB++ (56 tasks, 100 eval episodes each), the best WebGUM (Flan-T5-XL + ViT, 401K demos) reaches <Finding src="Tab.1, p.4">94.2% success — exceeding offline SoTA WebN-T5 (48.4%, the +45.8 gap), online-RL SoTA CC-Net SL+RL (93.5%), humans (93.5%), and the GPT-4 RCI agent (94.0%)</Finding>. One important caveat: <Caveat>the in-context agent Synapse (GPT-3.5-turbo) is listed at 98.5% on the same table</Caveat>, higher than WebGUM — the "beats GPT-4 agent" framing refers to RCI(GPT-4)=94.0%, not the higher Synapse number.
+
+<SortableTable columns={["Method", "Type", "MiniWoB++ %"]} rows={[
+  ["WebGUM (Flan-T5-XL + ViT)", "offline IL", 94.2],
+  ["Synapse (GPT-3.5-turbo)", "in-context", 98.5],
+  ["RCI (GPT-4)", "in-context", 94.0],
+  ["CC-Net SL+RL", "online RL", 93.5],
+  ["Human", "human", 93.5],
+  ["WebN-T5", "offline IL", 48.4],
+]} />
+
+## Key findings
+- <Finding src="Tab.1, Tab.4">Strong data efficiency: Base+ViT with only 2.8K demos already hits 61.1%, beating WebN-T5's 48.4%</Finding>: the foundation-model prior makes tiny offline datasets competitive; HTML-only Base at 2.8K is 55.7%, so the image adds ~5 points.
+- <Finding src="Fig.3, Fig.4, p.6-7">Both the temporal stack and per-patch local tokens matter, more than the ViT pretraining</Finding>: temporal+local = 66.1% > temporal-only 64.2% > local-only 64.0%; swapping ViT pretraining (JFT/CLIP/MAE/DINO) only moves ~64-66.3%, and a white-image input collapses the model back to HTML-only level, confirming the screenshot is actually used.
+- <Finding src="p.7-8">Encoder-decoder beats decoder-only at matched-ish scale</Finding>: decoder-only Flan-PaLM-8B reaches only 72.8%, about Flan-T5-Large level, supporting the encoder-decoder choice.
+- <Finding src="Fig.5, Fig.6, p.7">Instruction-tuning buys robustness, not just raw success</Finding>: on stitched compositional tasks WebGUM 78.5% vs WebN-T5 51.0%; under HTML perturbation (added coordinate attributes) 62.6% vs 6.4% — far less brittle than the prior offline model.
+- <Finding src="Tab.2, p.8">A 3B WebGUM beats PaLM-540B on WebShop</Finding>: score 67.5 / success 45.0% vs ReAct PaLM-540B (66.6 / 40.0%), decoupling the win from MiniWoB-specific perception.
+- <Finding src="Tab.3, p.9">Positive transfer to real-world Mind2Web, but absolute success stays low</Finding>: WebGUM-XL > MindAct-XL and GPT-4 across all splits (cross-task SR 8.5 vs 5.2 vs 2.0), yet full-task SR of 3-9% shows real-web navigation is far from solved.
+
+## Implications
+Validates the offline-imitation multimodal recipe as a cheaper, safer alternative to online RL, and the released 347K-episode multimodal dataset is a reusable training-harness artifact. It builds directly on <Related>WebN-T5 (Gur 2022) — same text-action formulation</Related>, contrasts with <Related>CC-Net (Humphreys 2022) online RL</Related> and in-context agents <Related>RCI / Synapse</Related>, and enables the <Related>real-world WebAgent / HTML-T5 (Gur 2023) line</Related>. Worth chasing: <FollowUp>the deployment successor WebAgent (Gur 2023) and whether keeping only successful self-generated trajectories generalizes beyond the training task set</FollowUp>.
+
+## Limitations
+- <Caveat>Single training seed per model (Appendix C) — no variance/CI, so small margins (+0.7% over CC-Net, 80.3 vs 79.0) are not statistically backed</Caveat>.
+- <Caveat>Headline SoTA framing omits that Synapse (98.5%) scored higher on the same MiniWoB++ table</Caveat>.
+- <Caveat>Training demos are self-generated by other LLM policies on the same tasks, and only successes are kept</Caveat> — generalization claims rest on the compositional/perturbation and Mind2Web evals, not the headline number.
+- <Caveat>MiniWoB++ eval ignores the per-task time limit (p.22)</Caveat>, which can inflate success on slow multi-step tasks.
+- <Caveat>No planner/verifier/search — a reactive policy that caps multi-step memory tasks (authors note a guess-number weakness)</Caveat>.
+- <Caveat>The "38x larger dataset" claim is arithmetically inconsistent with 347K/12K (~29x)</Caveat>.
+
+## Critiques and Questions
+1. The headline "beats humans / online SoTA / GPT-4 agent" is genuine vs offline SL and vs RCI(GPT-4), but not unconditional SoTA given Synapse's 98.5% — cite it with that caveat.
+2. Because demos are LLM-generated on the same task set, how much of the 94.2% is task-specific imitation vs transferable skill? The compositional, perturbation, and Mind2Web results are the real generalization evidence.
+3. With n=1 seed, several near-ties (encoder-decoder vs decoder-only at scale, image-token variants) deserve more skepticism than the prose grants.
+
+<SelfCheck q="WebGUM is offline-trained yet beats CC-Net, which uses billions of online RL frames. What supplies the inductive bias that makes plain behavioral cloning competitive here?" a="The pre-trained, instruction-finetuned foundation models (Flan-T5 + ViT). Reusing them — enabled by recasting navigation as text+image→text with free-form text actions instead of web-specific heads — lets offline imitation match online RL; e.g. just 2.8K demos already beat the prior offline SoTA." />
+
+## Glossary
+- <Term def="56-task simulated-website benchmark for web navigation; success = instruction satisfied (r=1)">MiniWoB++</Term>
+- <Term def="online-shopping simulator with real product data; scored by attribute coverage and success rate">WebShop</Term>
+- <Term def="real-world web-navigation dataset (~2K instructions, 137 websites) used here for action-prediction transfer">Mind2Web</Term>
+- <Term def="instruction-finetuned variant of the T5 encoder-decoder language model">Flan-T5</Term>
+- <Term def="Vision Transformer; here ViT-B16 producing per-patch image tokens">ViT</Term>
+
+{/* NOTES_START */}
+### Personal notes
+The most harness-actionable takeaways: (1) one local token per ViT patch + a 2-step temporal stack matters more than the ViT pretraining choice; (2) the instruction-tuned backbone buys robustness to HTML perturbations and compositional tasks, not just raw success; (3) keeping only successful self-generated trajectories is a cheap data-scaling trick but ties generalization claims to the held-out compositional/Mind2Web evals. Watch the "38x"/347K arithmetic and the Synapse 98.5% when citing this paper's SoTA claim.
+{/* NOTES_END */}

@@ -1,0 +1,109 @@
+---
+canonical_key: arxiv-2309.11436
+version_key: v1
+title: 'You Only Look at Screens: Multimodal Chain-of-Action Agents'
+authors:
+- Zhuosheng Zhang
+- Aston Zhang
+venue: Annual Meeting of the Association for Computational Linguistics
+year: 2023
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2309.11436
+summary_date: '2026-06-07'
+---
+
+<TLDR>Auto-GUI is a sub-1B multimodal encoder-decoder that maps a raw Android screenshot plus a goal directly to a low-level touch/type action — no OCR, HTML, view-hierarchy, or app APIs — using a "chain-of-action" of past action histories and predicted future action-type plans.</TLDR>
+
+<WhyItMatters>An early (2023), clean instance of the now-dominant "screenshot-in, action-out" paradigm for computer-use agents. The value is the design stance, not the dated backbone: a pixel-only, API-free agent can match a specialized behavioral-cloning baseline — a foundational reference for observation/action-interface design in agent harnesses.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "74.3%", label: "overall action accuracy", sub: "Auto-GUI unified, AITW" },
+  { value: "90.1%", label: "action-type accuracy", sub: "avg across 5 subsets" },
+  { value: "<1s", label: "inference / action", sub: ">10x faster than Llama-2" },
+  { value: "<1B", label: "parameters", sub: "small/base/large 60M–700M" },
+]} />
+
+## Motivation
+Prior GUI agents run in a <Problem>"sandbox" setting that parses the screen into textual elements</Problem> (OCR + icon detection → HTML) and <Problem>relies on application-specific APIs to execute actions</Problem> (e.g. JS element selection, Python interpreters). The stated failure modes (p1, §1): parsed inputs are long, causing <Problem>inference inefficiency and context-limit overflow</Problem>, parsing introduces <Problem>error propagation / information loss</Problem>, and internal APIs are <Problem>often unavailable in third-party apps</Problem>.
+
+## Contribution (what's new)
+Two deltas. (1) A <Novelty>pixel-only, API-free agent</Novelty>: a single multimodal model reads the raw screenshot through a frozen vision encoder and decodes the concrete action string directly — no environment parsing, no app API. (2) <Novelty>Chain-of-action</Novelty>: the input is conditioned on a <Term def="up to 8 prior action 4-tuples fed as text">chain of previous action histories</Term>, and the decoder is trained to first emit a <Term def="a short list of up to 4 upcoming action TYPES, decoded before the concrete action">chain of future action plans</Term> before the current action. The design must take this form because the baseline pipeline fails on *where to act* (spatial grounding), so the model emits continuous normalized coordinates directly rather than selecting a parsed element index.
+
+## Research questions
+Can a unified, screenshot-only model with no environment parsing and no app APIs match specialized parse-based GUI agents on device control — and does conditioning on past actions plus predicting future action types help?
+
+## Methodology
+A T5-style encoder-decoder (init from FLAN-Alpaca) reads a single screenshot via a frozen BLIP-2 image encoder and the goal+history via a language encoder, fuses the two modalities with gated self-attention, and decodes an action string. Evaluation is offline on logged AITW Android episodes using screen-wise action matching, against ICL LLMs, a fine-tuned Llama-2, and the prior-SOTA behavioral-cloning agent.
+
+<Pass title="Method details">
+<Stepper steps={[
+  { title: "Encode", body: "Frozen BLIP-2 yields a screen feature Hscreen, projected by a trainable W to language dimensionality. A language encoder encodes Xlanguage = `{Xgoal, Xhistory}` (goal + up to 8 prior action tuples)." },
+  { title: "Interact (fuse)", body: "Single-head self-attention with Q=Hlanguage, K=V=projected screen features, then sigmoid gated fusion Hfuse = (1-lambda)·Hlanguage + lambda·Hattn. Kept to one layer to stay `<1B` params and modality-extensible (p4, fn.2)." },
+  { title: "Decode", body: "Transformer decoder emits the string `{Action Plan: Yplan, Action Decision: Yaction}` — future action types first, then the concrete current action." },
+]} />
+
+**Action space** (p4–5, §3.3): a 4-tuple `{action_type, touch_point, lift_point, typed_text}` emitted as a string. Six action types: dual-point gesture (covers click and scroll), type, go_back, go_home, enter, status_complete. Clicks/scrolls use normalized `[y,x]` coordinates (clicks to 4 decimals; scrolls snapped to 4 canonical directional pairs); system actions fill coordinates with -1. <Novelty>This is a continuous-coordinate action space</Novelty>, unlike the LLM baselines which can only click a detected element index. Coordinate normalization is reported to reduce ambiguity and speed convergence.
+
+**Benchmark** (p5, Table 1): AITW (Rawles et al. 2023) — 715K episodes, 30K unique instructions, 350+ apps/websites, 5 subsets (General, Install, GoogleApps, Single, WebShopping), 80/10/10 episode-wise split. Offline static evaluation on logged episodes, not a live emulator loop.
+
+**Eval metric** (§4.3): screen-wise action matching = correct actions / episode length. Correct = action type matches AND gesture matches; a click is correct if within 14% screen distance or the same bounding box as gold; a scroll is correct if on the same axis. Reported (by Rawles et al.) to correlate with human task-completion judgments.
+
+**Training** (§4.4): frozen BLIP-2 vision features, up to 10 epochs, lr 1e-4, max len 512, batch 4, 8× V100 32G (large/base = 75h/25h). Two regimes: Auto-GUIseparate (per-subset) and Auto-GUIunified (one model over all subsets, using only 10% of GoogleApps to mitigate imbalance and cut ~80% compute).
+</Pass>
+
+## Main result
+<Finding src="Tab.2, p.7">Auto-GUIunified reaches 74.27 overall action accuracy, beating prior SOTA BC-history (73.1)</Finding> — but the margin is small and it *loses* on 2 of 5 subsets. <Finding src="Fig.4, p.7-8">Action-type accuracy averages 90.1%</Finding>, while the spatial sub-problem lags (click 67.4%, scroll 82.0%).
+
+<SortableTable columns={["Method", "Overall accuracy"]} rows={[
+  ["Auto-GUI unified", 74.27],
+  ["Auto-GUI separate", 74.07],
+  ["BC-history (prior SOTA)", 73.1],
+  ["BC-single", 68.7],
+  ["GPT-4V", 52.96],
+  ["PaLM 2-CoT", 39.6],
+  ["Fine-tuned Llama-2", 28.40],
+  ["ChatGPT-CoT", 7.72],
+]} />
+
+## Key findings
+- <Finding src="Tab.3/9, p.7,15">Chain-of-action adds +5.74 overall (74.27 vs 68.53 without it)</Finding>: nearly all of it comes from predicting the *future action-type plan* (removing it drops to 68.81, −5.46), while feeding *past action history* alone contributes little (drops only to 73.78, −0.49).
+- <Finding src="Tab.6, p.9">The textual pipeline fails on *where*, not *what*</Finding>: ChatGPT with HTML input reaches 41.7% action-type but only 8.5% click / 4.0% scroll accuracy, vs Auto-GUI 87.0 / 58.3 / 82.7 — isolating spatial grounding as the real bottleneck.
+- <Finding src="Tab.4, p.9">Scale matters surprisingly little</Finding>: small/base/large = 71.38 / 72.84 / 74.27 — only ~3 pts across a >10x parameter range. BLIP-2 > CLIP (74.27 vs 71.84) and FLAN-Alpaca init > FLAN-T5 > vanilla T5.
+- <Finding src="Tab.5, p.9">>10x faster inference than Llama-2</Finding>: `<1s/action` and `<10GB` GPU, vs Llama-2 at 8.5s and 49.7GB — the practical case for the API-free design.
+- <Finding src="Tab.10, p.15">Adding HTML screen descriptions actually *raises* accuracy (72.84 → 75.54)</Finding>: an honesty point that undercuts the strong "parsing is harmful" framing — parsing is dropped for latency/practicality, not because it hurts accuracy.
+- <Finding src="Fig.5, p.8">Cross-subset transfer degrades off-domain</Finding>: a Single-trained model scores 81 on Single but 17–35 elsewhere, making the unified model the practical choice.
+
+## Implications
+This is the action-space analogue of chain-of-thought, built on the authors' own <Related>Multimodal-CoT (Zhang et al. 2023b)</Related> and CoT prompting (Wei et al. 2022). It replaces <Related>BC's OCR+icon+BERT pipeline (Rawles et al. 2023)</Related> with pixel-only modeling on the same benchmark, and positions against sandbox/API agents (<Related>WebArena, WebAgent</Related>) and concurrent pixel-grounding agents (<Related>SeeClick, CogAgent</Related>) that add GUI grounding pretraining, which Auto-GUI deliberately skips to stay lightweight. <FollowUp>The reusable insight: a strong modern VLM (better spatial grounding) plus a cheap future-action-type prefix should dominate this design</FollowUp> — the ceiling here is vision-feature quality, not the chain-of-action idea.
+
+## Limitations
+- Author-stated (p9): <Caveat>not scaled to very large models; experiments confined to a single benchmark (AITW)</Caveat>.
+- <Caveat>Offline action-matching metric, not live task completion</Caveat> — a proxy the authors acknowledge correlates with human judgment but is not end-to-end success on a real device.
+- <Caveat>Small absolute margin over prior SOTA with no significance/variance testing</Caveat>; loses on Install (76.89 vs 77.5) and GoogleApps (71.37 vs 75.7).
+- <Caveat>The anti-parsing argument is undercut by Table 10</Caveat>; weak spatial grounding (click 67.4%) is the real ceiling.
+- <Caveat>No safety/permission consideration</Caveat> for an agent that emits raw device gestures.
+
+## Critiques and Questions
+1. "Error propagation from parsing" is asserted but never quantified (no parser recall/precision), and Table 10 shows HTML *helps* — so the parsing critique is really about latency/practicality, not accuracy.
+2. GPT-4V / PaLM numbers are imported from other papers, not re-run uniformly; the small margin over BC-history would benefit from variance reporting.
+3. The GoogleApps gap is attributed to using only 10% of its training data, but the paper notes full data does not even fix it ("possibly data imbalance", Appx C.1) without deeper diagnosis.
+
+<SelfCheck q="Within chain-of-action, which component carries almost all the +5.74 benefit — past action history or the future action plan?" a="The future action plan: removing it drops overall accuracy from 74.27 to 68.81 (−5.46), while removing past action history alone drops it only to 73.78 (−0.49) (Tab.3/9, p.7,15)." />
+
+## Glossary
+- <Term def="Android in the Wild: a 715K-episode device-control benchmark, 30K unique instructions, 350+ apps/sites, 5 subsets">AITW</Term>
+- <Term def="screen-wise action matching: correct actions / episode length; click correct within 14% screen distance, scroll correct on same axis">action matching score</Term>
+- <Term def="prior-SOTA Behavioural Cloning agent (Rawles et al. 2023) using screen + action history with OCR/BERT/icon embeddings">BC-history</Term>
+- <Term def="frozen vision encoder (blip2_t5_instruct) providing screen image features">BLIP-2</Term>
+
+{/* NOTES_START */}
+### Personal notes
+The most reusable insight is empirical: predicting the future action-type plan carries nearly all of the chain-of-action benefit (74.27 → 68.81 when removed), while feeding past action history alone contributes little (74.27 → 73.78). And the failure is spatial, not semantic: action-type 90%+ but click region only ~67%. For modern harnesses this argues that a strong VLM (better grounding) plus a cheap future-action-type prefix should dominate this design.
+
+Follow-up actions: add AITW / SeeClick / CogAgent as related; compare HTML/accessibility-tree vs pixel-only agents on the observation-interface axis; check the repo for the action-string format and coordinate normalization (github.com/cooelf/Auto-GUI). arXiv v4 (COLM 2024) is current.
+{/* NOTES_END */}

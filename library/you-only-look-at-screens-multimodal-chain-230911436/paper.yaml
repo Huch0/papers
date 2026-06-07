@@ -40,7 +40,7 @@ versions:
   source: arxiv
   source_url: https://arxiv.org/abs/2309.11436
   pdf_path: library/you-only-look-at-screens-multimodal-chain-230911436/v1/paper.pdf
-  summary_path: library/you-only-look-at-screens-multimodal-chain-230911436/v1/summary.md
+  summary_path: library/you-only-look-at-screens-multimodal-chain-230911436/v1/summary.mdx
   metadata_path: library/you-only-look-at-screens-multimodal-chain-230911436/v1/metadata.yaml
   fetched_at: '2026-06-06T07:57:30Z'
   source_updated_at: null
@@ -50,7 +50,7 @@ versions:
   summary_status: full
   extraction_status: full
   created_at: '2026-06-06T07:57:30Z'
-  updated_at: '2026-06-06T08:17:44Z'
+  updated_at: '2026-06-07T03:55:06Z'
 relations:
   duplicate_candidates: []
   related_papers: []

@@ -74,7 +74,7 @@ scoring:
 artifacts:
   pdf: library/visualwebarena-evaluating-multimodal-agents-on-realistic-visual-240113649/v1/paper.pdf
   extraction: library/visualwebarena-evaluating-multimodal-agents-on-realistic-visual-240113649/v1/extraction.txt
-  summary: library/visualwebarena-evaluating-multimodal-agents-on-realistic-visual-240113649/v1/summary.md
+  summary: library/visualwebarena-evaluating-multimodal-agents-on-realistic-visual-240113649/v1/summary.mdx
   code_url: null
   project_url: null
   dataset_url: null
@@ -84,3 +84,4 @@ status:
   summarized: true
   triaged: true
   user_read_status: unread
+  summary_format: mdx

@@ -19,7 +19,8 @@ const summaries = defineCollection({
       triage_label: z.string().nullable().optional(),
       triage_confidence: z.string().nullable().optional(),
       source_link: z.string().nullable().optional(),
-      summary_date: z.string().optional(),
+      // tolerate YAML auto-parsing an unquoted date into a Date object
+      summary_date: z.coerce.string().optional(),
     })
     .passthrough(),
 });

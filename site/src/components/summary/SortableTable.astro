@@ -1,0 +1,7 @@
+---
+// .astro wrapper so the React island hydrates even when used via the MDX components map
+// (client: directives don't apply to map-provided components directly). Hydrates on scroll.
+import Island from "./SortableTableIsland.tsx";
+const { columns = [], rows = [] } = Astro.props;
+---
+<Island client:visible columns={columns} rows={rows} />

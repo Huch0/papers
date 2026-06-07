@@ -12,6 +12,12 @@
 
 <WhyItMatters>1–2 lines: relevance to my interests / current trends.</WhyItMatters>
 
+{/* Headline numbers — scannable. 3–4 items. */}
+<KeyStats items={[
+  { value: "NN%", label: "the headline metric", sub: "model / setting" },
+  { value: "N", label: "scale (tasks/params)", sub: "context" },
+]} />
+
 ## Motivation
 The problem and the gap in prior work that makes it worth solving. Problem only — not the solution.
 
@@ -37,9 +43,11 @@ The headline result(s) in context: <Evidence src="Tab.X, p.Y">the number vs base
 Flag <Weak>single-run / no-variance / abstract-vs-table mismatch</Weak> where relevant.
 
 <Pass title="Full results">
-  <ResultsTable
-    columns={["Setting", "Metric", "Score", "Baseline"]}
-    rows={[["…","…","…","…"]]} />
+  {/* <SortableTable> is an interactive React island — click a header to sort. Use it for
+      multi-row comparisons; use <ResultsTable> for small static tables. */}
+  <SortableTable
+    columns={["Method", "Metric", "Score"]}
+    rows={[["…", "…", 0]]} />
 </Pass>
 
 ## Implications

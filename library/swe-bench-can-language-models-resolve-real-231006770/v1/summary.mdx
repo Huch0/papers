@@ -1,0 +1,91 @@
+---
+canonical_key: arxiv-2310.06770
+version_key: v1
+title: "SWE-bench: Can Language Models Resolve Real-World GitHub Issues?"
+authors:
+  - Carlos E. Jimenez
+  - John Yang
+  - Alexander Wettig
+  - Shunyu Yao
+  - Kexin Pei
+  - Ofir Press
+  - Karthik Narasimhan
+venue: ICLR
+year: 2024
+tags: [foundational, benchmark, swe-agent, execution-based-eval, test-based-eval, environment, evaluation-harness]
+topic_groups: [software_engineering_agents, agent_harness]
+triage_label: MUST_READ
+triage_confidence: high
+source_link: https://arxiv.org/abs/2310.06770v3
+summary_date: "2026-06-07"
+---
+
+<TLDR>SWE-bench turns 2,294 real merged GitHub issue→pull-request pairs into an execution-based benchmark where a model must edit a whole repository so the hidden, issue-resolving tests pass — and frontier models of the time resolved almost none.</TLDR>
+
+<WhyItMatters>This is the artifact that moved coding-agent evaluation from function-level synthesis to **repository-level, test-validated issue resolution**. Nearly everything in my <Term def="agents that resolve real software tasks in repositories, judged by tests">SWE-agent</Term> track reports on a SWE-bench variant, so it is necessary context, not optional.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "2,294", label: "test task instances", sub: "12 popular Python repos" },
+  { value: "1.96%", label: "best resolve rate", sub: "Claude 2 + BM25 retrieval" },
+  { value: "~19k", label: "training instances", sub: "37 separate repos" },
+  { value: "exec", label: "evaluation", sub: "fail→pass + pass→pass tests" },
+]} />
+
+## Motivation
+Prior code benchmarks (<Term def="164 hand-written function-completion problems with unit tests">HumanEval</Term>, MBPP) test self-contained functions with short context, and had largely saturated. They do not test what real software engineering demands: long-context code understanding, edits spanning multiple files, and interaction with an execution environment. The gap: a *realistic, scalable, hard-to-game* benchmark whose ground truth comes from real developer behavior.
+
+## Contribution (what's new)
+<Claim>The novelty is the *mining pipeline + test-gated metric*, not a model.</Claim> The insight that survives deleting "we propose": **a real merged PR that both resolves an issue and edits tests already contains a verifiable task** — the gold patch is the reference, and the touched tests become an objective, execution-based grader. Because instances can be drawn continuously from new issues, the benchmark can refresh to resist <Term def="when eval data leaks into training data, inflating scores">contamination</Term> — a property a static, hand-written benchmark cannot offer.
+
+## Research questions
+Can language models resolve real GitHub issues end-to-end — and how far below human/expert performance are they when judged by actual tests rather than string similarity?
+
+## Methodology
+Mine merged PRs that (a) close an issue and (b) modify the repo's test files; the gold patch is the solution and the touched tests are the grader. Give the model the issue text + the repo at the pre-PR commit; it must emit a patch. Success = applying the patch makes the relevant **fail-to-pass** tests pass while **pass-to-pass** tests stay green.
+
+<Pass title="Method details (pipeline, retrieval, SWE-Llama)">
+<Stepper steps={[
+  { title: "Scrape", body: "Pull requests across 12 popular Python repos that reference/close an issue." },
+  { title: "Filter", body: "Keep PRs that edit tests AND where the repo installs and tests go fail→pass with the gold patch." },
+  { title: "Formulate", body: "Input = issue + codebase at base commit; output = a unified-diff patch applied with git/patch." },
+  { title: "Grade", body: "Execution-based: fail-to-pass + pass-to-pass test gates; metric = % of instances resolved." },
+]} />
+Long repos exceed context windows, so the main experiments feed code via **BM25 retrieval** (an "oracle" setting supplies the gold files). **SWE-Llama** fine-tunes CodeLlama on ~19k held-out-repo instances to study whether open models adapt to the patch-generation format.
+</Pass>
+
+## Main result
+The headline, verified in the text: <Evidence src="§1, §5">the best configuration — Claude 2 with a BM25 retriever — resolves only **1.96%** of issues</Evidence>; frontier models of late 2023 essentially fail the benchmark. <Weak>Low scores partly reflect the BM25 retrieval bottleneck, not only reasoning/editing ability — the oracle-retrieval setting isolates this only partially.</Weak>
+
+Where SWE-bench sits versus earlier code benchmarks (click a header to sort):
+
+<SortableTable
+  columns={["Benchmark", "Granularity", "Exec-based", "Repo-level", "# tasks"]}
+  rows={[
+    ["HumanEval", "function", "yes", "no", 164],
+    ["MBPP", "function", "yes", "no", 974],
+    ["SWE-bench", "repo issue", "yes", "yes", 2294],
+  ]} />
+
+## Implications
+Established the now-standard execution-based, repository-level evaluation and the contamination-resistant "issues after training cutoff" idea. Directly enabled the <Term def="agent-computer interface: a model-tuned command/observation layer for operating a repo">ACI</Term>/SWE-agent line and the SWE-bench-Lite / Verified / Multimodal derivatives.
+
+## Limitations
+- <Limit>Test-derived ground truth can be under- or over-specified: a correct patch that differs from the gold one may fail, and the gated tests may not fully characterize the issue.</Limit>
+- <Limit>Python-only, 12 repos → limited external validity across languages/ecosystems.</Limit>
+- <Limit>The released static split is contamination-susceptible over time despite the refreshable design.</Limit>
+
+## Critiques and Questions
+1. How much of the near-zero score is retrieval vs. reasoning? The oracle setting helps but doesn't fully decompose it.
+2. Could a model "resolve" tests without truly fixing the issue (reward hacking the gated tests)? Worth probing on the harder instances.
+
+<SelfCheck q="Why is SWE-bench harder to game than a similarity-based code benchmark?" a="Success is decided by executing the repo's real fail-to-pass and pass-to-pass tests on the model's patch — not by string/semantic similarity to a reference — so superficially-plausible but non-working edits fail." />
+
+## Glossary
+- <Term def="apply the model's patch, run the repo's tests; the relevant tests must go from failing to passing while previously-passing tests stay green">execution-based evaluation</Term>
+- <Term def="tests that fail on the buggy code and pass once the issue is fixed; the core success signal">fail-to-pass tests</Term>
+- <Term def="BM25: a classical bag-of-words retrieval ranking used here to select which repo files to show the model">BM25 retrieval</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

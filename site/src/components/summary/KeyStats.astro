@@ -1,0 +1,14 @@
+---
+interface Stat { value: string; label: string; sub?: string }
+interface Props { items: Stat[] }
+const { items = [] } = Astro.props;
+---
+<div class="keystats">
+  {items.map((s) => (
+    <div class="keystat">
+      <div class="kv">{s.value}</div>
+      <div class="kl">{s.label}</div>
+      {s.sub && <div class="ks">{s.sub}</div>}
+    </div>
+  ))}
+</div>

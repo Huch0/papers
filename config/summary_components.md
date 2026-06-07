@@ -28,7 +28,9 @@ behavior lives in the site; here is the authoring contract.
 ## Data-driven interactive primitives (you supply data/props, not code)
 | Component | Props | Use |
 |---|---|---|
-| `<ResultsTable columns={[…]} rows={[[…]]} />` | string[] / string[][] | numeric results |
+| `<KeyStats items={[{value,label,sub}]} />` | objects | scannable headline-number strip (put near the top) |
+| `<SortableTable columns={[…]} rows={[[…]]} />` | string[] / (string\|number)[][] | **interactive** results table — click a header to sort (React island) |
+| `<ResultsTable columns={[…]} rows={[[…]]} />` | string[] / string[][] | small static results table |
 | `<ClaimEvidence rows={[{claim, evidence, verdict}]} />` | objects | claim→evidence→verdict map |
 | `<Stepper steps={[{title, body}]} />` | objects | walk an algorithm/method |
 | `<Chart kind="bar\|line" data={[{label, value}]} />` | objects | re-plot an extracted result |

@@ -21,10 +21,13 @@ import Figure from "../../components/summary/Figure.astro";
 import MathBlock from "../../components/summary/MathBlock.astro";
 import Compare from "../../components/summary/Compare.astro";
 import SelfCheck from "../../components/summary/SelfCheck.astro";
+import KeyStats from "../../components/summary/KeyStats.astro";
+import SortableTable from "../../components/summary/SortableTable.astro";
 
 const components = {
   TLDR, WhyItMatters, Pass, Claim, Evidence, Weak, Limit, Term,
   ResultsTable, ClaimEvidence, Stepper, Chart, Figure, MathBlock, Compare, SelfCheck,
+  KeyStats, SortableTable,
 };
 
 export async function getStaticPaths() {

@@ -72,3 +72,11 @@ ul.catalog .tags { font-size: .78rem; color: var(--mut); }
 .hidden { display: none !important; }
 
 .dark { --ink:#e8e8e8; --mut:#9a9a9a; --line:#333; --bg:#141414; --soft:#1d1d1d; }
+
+/* KeyStats strip */
+.keystats { display: flex; flex-wrap: wrap; gap: .6rem; margin: .8rem 0; }
+.keystat { flex: 1 1 130px; border: 1px solid var(--line); border-radius: 8px; padding: .5rem .7rem; background: var(--soft); }
+.keystat .kv { font-size: 1.4rem; font-weight: 700; color: var(--accent); line-height: 1.1; }
+.keystat .kl { font-size: .8rem; color: var(--ink); margin-top: .15rem; }
+.keystat .ks { font-size: .72rem; color: var(--mut); }
+table.data.sortable th:hover { background: #e8e8e8; }

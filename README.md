@@ -201,6 +201,29 @@ See `docs/website-requirements.md` and `docs/adr/`.
   branch (prod at root, PR previews at `/pr-preview/pr-N/`). Set repo Pages source to
   `gh-pages`; add collaborators as repo members so their PR branches get previews.
 
+## Reading tracker (read / unread) — per person
+Track which summaries **you've** read and filter the catalog to **only your unread** ones.
+It's per-user and stored in your browser; nothing is committed (ADR-0007).
+
+- **Mark read:** a **"Mark read"** toggle on each catalog card and on every paper page
+  (manual — click again to mark unread). Read cards are dimmed; unread ones show a dot.
+- **Filter:** the catalog **Status** facet → **All / Unread / Read**, with an "N unread"
+  count. Pick **Unread** to see only what's left.
+- **Updates re-surface:** read state is keyed to the version + summary date, so when a paper
+  gets a new version or an updated summary it returns to **unread** automatically.
+- **Default storage:** your browser's `localStorage` — private to you, instant, and it
+  **survives site re-deploys** (it's per-origin, not part of the deployed files).
+- **Cross-device sync (optional):** header **⇅ Sync** → connect a GitHub token and your
+  read state syncs through a **private Gist** on your own account (debounced push, pull on
+  load). Do this on each site/device you use (localhost and the live site are separate
+  origins, so connect on both — they then share one gist).
+  - **The token MUST have Gist access**, or sync silently fails: a **classic token with
+    the `gist` scope** (easiest — https://github.com/settings/tokens/new?scopes=gist) or a
+    **fine-grained token** with **Account → Gists: Read and write**. The token is stored
+    only in your browser and sent only to GitHub.
+- **Backup / manual move:** the same panel has **Export / Import** (JSON) if you'd rather
+  not use a token.
+
 ## Troubleshooting
 - **arXiv timeouts**: the fetchers retry with exponential backoff; if a run fully
   fails, re-run — errors are logged to `logs/errors.jsonl` and candidates preserved.
@@ -213,3 +236,10 @@ See `docs/website-requirements.md` and `docs/adr/`.
   `/evolve-paper-system`).
 - **Hook noise**: hooks never block normal work except clearly destructive shell
   commands; see `.claude/settings.json` and `.claude/hooks/`.
+- **"Sync failed" in the ⇅ Sync panel**: your GitHub token is missing **Gist** access
+  (authenticating works, but reading/writing the gist doesn't). Reconnect with a classic
+  token that has the `gist` scope, or a fine-grained token with **Account → Gists: Read
+  and write**. localhost and the live site are separate origins — connect on each.
+- **Read state differs between localhost and the live site**: they're separate origins, so
+  connect the **same** Gist token on both (they then sync via one private gist). Also,
+  papers re-appear as **unread** when their version/summary changes — expected.

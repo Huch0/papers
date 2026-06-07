@@ -19,6 +19,10 @@ practical workflow.
   Find your git email with `git config user.email`. Your GitHub login (never your email)
   is stamped into anything you author (`curated_by` / `asked_by`) and shown on the site
   with your avatar. This is the only place raw emails live; it is not published.
+- **Track your reading.** The site has a per-reader read/unread tracker — mark summaries
+  read, filter the catalog to your unread, and optionally sync across devices via a private
+  Gist (needs a `gist`-scoped token). See **README → "Reading tracker"**. It's per-browser
+  and never committed.
 
 ---
 

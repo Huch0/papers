@@ -1,11 +1,19 @@
 ---
 import Base from "../layouts/Base.astro";
 import Catalog from "../components/Catalog.tsx";
-import { loadCatalog } from "../lib/catalog";
+import { getCollection } from "astro:content";
+import { loadCatalog, summaryEntryId } from "../lib/catalog";
+
+// join summary_date from the summaries collection (drives the read-state "marker")
+const sums = await getCollection("summaries");
+const dateById = new Map(sums.map((e) => [e.id, (e.data as any).summary_date ?? null]));
+
 const papers = loadCatalog().filter((p) => p.summary_path).map((p) => ({
   canonical_key: p.canonical_key, title: p.title, authors: p.authors, year: p.year,
   venue: p.venue, tags: p.tags, topic_groups: p.topic_groups,
   triage_label: p.triage_label, score: p.score,
+  latest_version: p.latest_version,
+  summary_date: dateById.get(summaryEntryId(p.summary_path)) ?? null,
 }));
 const base = import.meta.env.BASE_URL;
 ---

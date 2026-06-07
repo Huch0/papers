@@ -22,13 +22,20 @@ export default function SyncButton() {
   const connect = async () => {
     setBusy(true); setMsg(""); setToken(tok.trim());
     const who = await whoami();
-    if (!who) { setToken(""); setBusy(false); setMsg("Invalid token — needs a fine-grained token with Gists: read & write."); return; }
-    try { await pullRemote(); } catch { /* first sync */ }
+    if (!who) { setToken(""); setBusy(false); setMsg("Token didn't authenticate (401). Check you pasted it fully and it hasn't expired."); return; }
+    // Validate Gist access for real — don't show "connected" if gists fail.
+    try { await pullRemote(); }
+    catch (e: any) {
+      setToken("");
+      setBusy(false);
+      setMsg(`Authenticated as ${who}, but Gist access failed (${e?.message || "error"}). Your token needs Gist read/write: a classic token with the 'gist' scope, or a fine-grained token with Account → Gists: Read and write.`);
+      return;
+    }
     setLogin(who); setMsg(`Connected as ${who} — syncing across devices.`); setBusy(false);
     setTimeout(() => location.reload(), 700);
   };
   const off = () => { disconnect(); setLogin(null); setMsg("Disconnected (read state stays local)."); setTimeout(() => location.reload(), 400); };
-  const syncNow = async () => { setBusy(true); try { await pushNow(); await pullRemote(); location.reload(); } catch { setMsg("Sync failed — check your token/connection."); setBusy(false); } };
+  const syncNow = async () => { setBusy(true); try { await pushNow(); await pullRemote(); location.reload(); } catch (e: any) { setMsg(`Sync failed (${e?.message || "error"}). The token likely lacks Gist read/write — reconnect with a 'gist'-scoped (classic) or Account→Gists (fine-grained) token.`); setBusy(false); } };
   const doExport = () => {
     const blob = new Blob([JSON.stringify(getReads(), null, 2)], { type: "application/json" });
     const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "papers-reads.json"; a.click(); URL.revokeObjectURL(a.href);
@@ -59,8 +66,10 @@ export default function SyncButton() {
           ) : (
             <div className="space-y-2">
               <p className="text-xs text-muted-foreground">
-                Optional. Paste a GitHub <a href="https://github.com/settings/tokens?type=beta" target="_blank" rel="noopener" className="underline">fine-grained token</a> with
-                {" "}<b>Account → Gists: Read and write</b>. Stored only in this browser; sent only to GitHub. Without it, read state stays per-browser.
+                Optional cross-device sync. Paste a GitHub token with <b>Gist read/write</b> —
+                a <a href="https://github.com/settings/tokens/new?scopes=gist&description=papers-reads" target="_blank" rel="noopener" className="underline">classic token with the <code>gist</code> scope</a> (easiest),
+                or a <a href="https://github.com/settings/tokens?type=beta" target="_blank" rel="noopener" className="underline">fine-grained token</a> with <b>Account → Gists: Read and write</b>.
+                Stored only in this browser; sent only to GitHub. Without it, read state stays per-browser.
               </p>
               <input type="password" value={tok} onChange={(e) => setTok(e.target.value)} placeholder="github_pat_…"
                 className="w-full border rounded px-2 py-1 text-xs bg-transparent" />

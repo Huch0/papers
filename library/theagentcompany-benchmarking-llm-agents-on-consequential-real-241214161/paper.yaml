@@ -38,7 +38,7 @@ topic_groups:
 tags:
 - foundational
 venue:
-  name: arXiv.org
+  name: arXiv
   tier: workshop_or_minor
   status: unknown
   year: 2024

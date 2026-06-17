@@ -30,6 +30,11 @@ tiers:
       - PLDI
       - FSE
       - ICSE
+      - EACL
+      - COLM
+      - TMLR
+      - ACM MM
+      - MobiCom
 
   strong_preprint_signal:
     # Not a fixed venue list; these are qualitative signals applied to preprints.
@@ -57,6 +62,7 @@ tiers:
 aliases:
   "Advances in Neural Information Processing Systems": NeurIPS
   "Conference on Neural Information Processing Systems": NeurIPS
+  "Neural Information Processing Systems": NeurIPS
   "International Conference on Machine Learning": ICML
   "International Conference on Learning Representations": ICLR
   "Annual Meeting of the Association for Computational Linguistics": ACL
@@ -65,5 +71,19 @@ aliases:
   "ACM SIGSOFT International Symposium on the Foundations of Software Engineering": FSE
   "International Conference on Software Engineering": ICSE
   "Conference on Human Factors in Computing Systems": CHI
+  "International Conference on Human Factors in Computing Systems": CHI
+  "International Joint Conference on Artificial Intelligence": IJCAI
+  "European Conference on Computer Vision": ECCV
+  "IEEE International Conference on Computer Vision": ICCV
+  "International Conference on Computer Vision": ICCV
+  "Conference of the European Chapter of the Association for Computational Linguistics": EACL
+  "North American Chapter of the Association for Computational Linguistics": NAACL
+  "AAAI Conference on Artificial Intelligence": AAAI
+  "Knowledge Discovery and Data Mining": KDD
+  "ACM Multimedia": ACM MM
+  "ACM/IEEE International Conference on Mobile Computing and Networking": MobiCom
+  "Transactions on Machine Learning Research": TMLR
+  "Trans. Mach. Learn. Res.": TMLR
+  "Conference on Language Modeling": COLM
   "CoRR": arXiv
   "arXiv.org": arXiv

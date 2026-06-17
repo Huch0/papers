@@ -28,7 +28,7 @@ topic_groups:
 tags:
 - foundational
 venue:
-  name: International Conference on Machine Learning
+  name: ICML
   tier: A_star
   status: unknown
   year: 2022

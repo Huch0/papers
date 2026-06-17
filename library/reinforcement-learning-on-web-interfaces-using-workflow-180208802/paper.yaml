@@ -22,9 +22,9 @@ topic_groups:
 tags:
 - foundational
 venue:
-  name: arXiv
-  tier: workshop_or_minor
-  status: preprint
+  name: ICLR
+  tier: A_star
+  status: accepted
   year: 2018
 user:
   read_status: unread

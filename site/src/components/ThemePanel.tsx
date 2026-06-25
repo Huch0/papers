@@ -8,12 +8,19 @@ const PRESETS = [
   { id: "pastel", label: "Pastel" },
 ];
 const FONTS = [
-  { id: "", label: "Preset" },
-  { id: "legible", label: "Legible" },
-  { id: "serif", label: "Serif" },
-  { id: "sans", label: "Sans" },
-  { id: "mono", label: "Mono" },
+  { id: "legible", label: "Atkinson Hyperlegible" },
+  { id: "serif", label: "Newsreader" },
+  { id: "sans", label: "Hanken Grotesk" },
+  { id: "mono", label: "IBM Plex Mono" },
 ];
+// Body font each preset uses when no explicit typeface override is set.
+const PRESET_FONT: Record<string, string> = {
+  readable: "Atkinson Hyperlegible",
+  "reading-room": "Newsreader",
+  "lab-notes": "Hanken Grotesk",
+  terminal: "IBM Plex Mono",
+  pastel: "Hanken Grotesk",
+};
 const ACCENTS = [
   { id: "", label: "Preset", color: "transparent" },
   { id: "#8a2f2a", label: "Oxblood", color: "#8a2f2a" },
@@ -95,7 +102,10 @@ export default function ThemePanel() {
             {PRESETS.map((p) => <Chip key={p.id} on={preset === p.id} onClick={() => applyPreset(p.id)}>{p.label}</Chip>)}
           </Group>
           <Group label="Typeface">
-            {FONTS.map((f) => <Chip key={f.id || "preset"} on={font === f.id} onClick={() => applyFont(f.id)}>{f.label}</Chip>)}
+            <Chip on={font === ""} onClick={() => applyFont("")}>
+              Default ({PRESET_FONT[preset] ?? "Atkinson Hyperlegible"})
+            </Chip>
+            {FONTS.map((f) => <Chip key={f.id} on={font === f.id} onClick={() => applyFont(f.id)}>{f.label}</Chip>)}
           </Group>
           <Group label="Accent">
             {ACCENTS.map((a) => (

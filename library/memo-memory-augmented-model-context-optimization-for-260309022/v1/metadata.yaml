@@ -1,0 +1,89 @@
+canonical_key: arxiv-2603.09022
+version_key: v1
+title: 'MEMO: Memory-Augmented Model Context Optimization for Robust Multi-Turn Multi-Agent LLM Games'
+authors:
+- Yunfei Xie
+- Kevin Wang
+- Bobby Cheng
+- Jianzhu Yao
+- Zhizhou Sha
+- Alexander Duffy
+- Yihan Xi
+- Hongyuan Mei
+- Cheston Tan
+- Chen Wei
+- Pramod Viswanath
+- Zhangyang Wang
+abstract: 'Multi-turn, multi-agent LLM game evaluations often exhibit substantial run-to-run variance.
+  In long-horizon interactions, small early deviations compound across turns and are amplified by multi-agent
+  coupling. This biases win rate estimates and makes rankings unreliable across repeated tournaments.
+  Prompt choice worsens this further by producing different effective policies. We address both instability
+  and underperformance with MEMO (Memory-augmented MOdel context optimization), a self-play framework
+  that optimizes inference-time context by coupling retention and exploration. Retention maintains a persistent
+  memory bank that stores structured insights from self-play trajectories and injects them as priors during
+  later play. Exploration runs tournament-style prompt evolution with uncertainty-aware selection via
+  TrueSkill, and uses prioritized replay to revisit rare and decisive states. Across five text-based games,
+  MEMO raises mean win rate from 25.1% to 49.5% for GPT-4o-mini and from 20.9% to 44.3% for Qwen-2.5-7B-Instruct,
+  using $2,000$ self-play games per task. Run-to-run variance also drops, giving more stable rankings
+  across prompt variations. These results suggest that multi-agent LLM game performance and robustness
+  have substantial room for improvement through context optimization. MEMO achieves the largest gains
+  in negotiation and imperfect-information games, while RL remains more effective in perfect-information
+  settings. All code is open-source and available here: https://github.com/openverse-ai/MEMO'
+venue: ICML
+year: 2026
+source: arxiv
+source_url: https://arxiv.org/abs/2603.09022v2
+pdf_url: https://arxiv.org/pdf/2603.09022v2
+pdf_sha256: 94738266b732db01267f570e4eb97a5b206706a6bc6b4bbc4a7baac2a5662578
+fetched_at: '2026-07-18T11:14:44Z'
+source_updated_at: '2026-03-18T18:40:09Z'
+ids:
+  doi: null
+  arxiv_id: 2603.09022v2
+  arxiv_base_id: '2603.09022'
+  arxiv_version: v2
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- agent-memory
+- icml2026-picks
+- multi-agent
+- prompt-optimization
+topic_groups:
+- agent_harness
+- general_agent_methods
+scoring:
+  score: 44.2
+  label: TRACK_ONLY
+  confidence: high
+  rationale: 'score=44 -> TRACK_ONLY | strong: venue_quality(1.00), artifact_availability(0.80), recency(0.80)
+    | interests: agent_harness:group:agent_harness, general_agent_methods:group:general_agent_methods'
+  matched_interests:
+  - agent_harness:group:agent_harness
+  - general_agent_methods:group:general_agent_methods
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 0.795
+    venue_quality: 1.0
+    harness_relevance: 0.0
+    novelty: 0.0
+    artifact_availability: 0.8
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/memo-memory-augmented-model-context-optimization-for-260309022/v1/paper.pdf
+  extraction: library/memo-memory-augmented-model-context-optimization-for-260309022/v1/extraction.txt
+  summary: library/memo-memory-augmented-model-context-optimization-for-260309022/v1/summary.mdx
+  code_url: https://github.com/openverse-ai/MEMO
+  project_url: https://yunfeixie233.github.io/MEMO/
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread
+  summary_format: mdx

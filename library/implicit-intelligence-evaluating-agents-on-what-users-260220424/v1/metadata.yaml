@@ -1,0 +1,76 @@
+canonical_key: arxiv-2602.20424
+version_key: v1
+title: Implicit Intelligence -- Evaluating Agents on What Users Don't Say
+authors:
+- Ved Sirdeshmukh
+- Marc Wetter
+abstract: Real-world requests to AI agents are fundamentally underspecified. Natural human communication
+  relies on shared context and unstated constraints that speakers expect listeners to infer. Current agentic
+  benchmarks test explicit instruction-following but fail to evaluate whether agents can reason about
+  implicit requirements spanning accessibility needs, privacy boundaries, catastrophic risks, and contextual
+  constraints. We present Implicit Intelligence, an evaluation framework testing whether AI agents can
+  move beyond prompt-following to become genuine goal-fulfillers, paired with Agent-as-a-World (AaW),
+  a harness where interactive worlds are defined in human-readable YAML files and simulated by language
+  models. Our scenarios feature apparent simplicity in user requests, hidden complexity in correct solutions,
+  and discoverability of constraints through environmental exploration. Evaluating 16 frontier and open-weight
+  models across 205 scenarios, we find that even the best-performing model achieves only 48.3% scenario
+  pass rate, revealing substantial room for improvement in bridging the gap between literal instruction-following
+  and human-like contextual reasoning.
+venue: ICML
+year: 2026
+source: arxiv
+source_url: https://arxiv.org/abs/2602.20424v1
+pdf_url: https://arxiv.org/pdf/2602.20424v1
+pdf_sha256: 2625e09420317299788cea05ce4e5b96eb1d2118c18313d95be2590cc0c73a3b
+fetched_at: '2026-07-18T11:14:59Z'
+source_updated_at: '2026-02-23T23:46:55Z'
+ids:
+  doi: null
+  arxiv_id: 2602.20424v1
+  arxiv_base_id: '2602.20424'
+  arxiv_version: v1
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- benchmark
+- environment
+- evaluation-harness
+- icml2026-picks
+topic_groups:
+- agent_harness
+- general_agent_methods
+scoring:
+  score: 46.9
+  label: TRACK_ONLY
+  confidence: high
+  rationale: 'score=47 -> TRACK_ONLY | strong: venue_quality(1.00), recency(0.75), interest_fit(0.73)
+    | interests: agent_harness:group:agent_harness, general_agent_methods:group:general_agent_methods'
+  matched_interests:
+  - agent_harness:group:agent_harness
+  - general_agent_methods:group:general_agent_methods
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 0.752
+    venue_quality: 1.0
+    harness_relevance: 0.52
+    novelty: 0.0
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/implicit-intelligence-evaluating-agents-on-what-users-260220424/v1/paper.pdf
+  extraction: library/implicit-intelligence-evaluating-agents-on-what-users-260220424/v1/extraction.txt
+  summary: library/implicit-intelligence-evaluating-agents-on-what-users-260220424/v1/summary.mdx
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread
+  summary_format: mdx

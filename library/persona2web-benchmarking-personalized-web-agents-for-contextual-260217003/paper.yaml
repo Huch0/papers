@@ -1,0 +1,58 @@
+canonical_key: arxiv-2602.17003
+slug: persona2web-benchmarking-personalized-web-agents-for-contextual-260217003
+title: 'Persona2Web: Benchmarking Personalized Web Agents for Contextual Reasoning with User History'
+authors:
+- Serin Kim
+- Sangam Lee
+- Dongha Lee
+year: 2026
+primary_ids:
+  doi: null
+  arxiv_base_id: '2602.17003'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2602.17003v3
+- https://arxiv.org/pdf/2602.17003v3
+topic_groups:
+- agent_harness
+- computer_use_agents
+tags:
+- benchmark
+- icml2026-picks
+- web-agent
+venue:
+  name: ICML
+  tier: A_star
+  status: accepted
+  year: 2026
+user:
+  read_status: unread
+  triage_label: SKIM
+  triage_confidence: high
+  notes: null
+milestone: null
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v3
+  source: arxiv
+  source_url: https://arxiv.org/abs/2602.17003v3
+  pdf_path: library/persona2web-benchmarking-personalized-web-agents-for-contextual-260217003/v1/paper.pdf
+  summary_path: library/persona2web-benchmarking-personalized-web-agents-for-contextual-260217003/v1/summary.mdx
+  metadata_path: library/persona2web-benchmarking-personalized-web-agents-for-contextual-260217003/v1/metadata.yaml
+  fetched_at: '2026-07-18T11:14:53Z'
+  source_updated_at: '2026-05-27T12:15:49Z'
+  arxiv_version: v3
+  pdf_sha256: 5a93dd1a07898e9ec0ee92f42adf014ddfd51ff61910505ccb5f4d775d026935
+  pdf_bytes: 3321521
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-07-18T11:14:53Z'
+  updated_at: '2026-07-18T11:30:07Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

@@ -10,16 +10,16 @@ import { loadCatalog, summaryEntryId } from "../../lib/catalog";
 export async function getStaticPaths() {
   const cat = loadCatalog();
   const summaries = await getCollection("summaries");
-  const byId = new Map(summaries.map((e) => [e.id, e]));
+  const byId = new Map(summaries.map((e) => [e.id.toLowerCase(), e]));
   const qaEntries = await getCollection("qa");
-  const qaById = new Map(qaEntries.map((e) => [e.id, e]));
+  const qaById = new Map(qaEntries.map((e) => [e.id.toLowerCase(), e]));
   const concepts = await getCollection("concepts");
   const conceptTitle = new Map(concepts.map((c) => [c.id, (c.data as any).title || c.id]));
   return cat
     .map((p) => {
       const id = summaryEntryId(p.summary_path);
       const entry = id ? byId.get(id) : undefined;
-      const qa = qaById.get(`${p.slug}/${p.latest_version}/qa`);
+      const qa = qaById.get(`${p.slug}/${p.latest_version}/qa`.toLowerCase());
       const related = (p.knowledge_concepts || [])
         .filter((s: string) => conceptTitle.has(s))
         .map((s: string) => ({ slug: s, title: conceptTitle.get(s)! }));

@@ -1,0 +1,74 @@
+canonical_key: arxiv-2602.02103
+version_key: v1
+title: How Far Ahead Do LLMs Plan? Uncovering the Latent Horizon in Chain-of-Thought Reasoning
+authors:
+- Liyan Xu
+- Mo Yu
+- Fandong Meng
+- Jie Zhou
+abstract: 'Chain-of-thought (CoT) reasoning has become a central mechanism for eliciting multi-step reasoning
+  in Large Language Models (LLMs). Yet recent evidence presents a tension: hidden states appear to already
+  encode future reasoning before CoT fully unfolds, while explicit steps still remain crucial for tasks
+  requiring compositional computation. To deepen the understanding between LLM''s internal states and
+  its verbalized reasoning trajectories, we investigate the latent planning strength of LLMs, through
+  our probing method, Tele-Lens, applying to hidden states across diverse task domains. Our empirical
+  results indicate that LLMs exhibit a myopic horizon, primarily conducting incremental transitions without
+  precise global planning. Leveraging this characteristic, we propose a hypothesis on enhancing uncertainty
+  estimation of CoT, which we validate that a sparse set of pivot positions can effectively represent
+  the uncertainty of the entire path. We further underscore the significance of exploiting CoT dynamics,
+  and demonstrate that automatic recognition of CoT bypass can be achieved without performance degradation.
+  Our code, data and models are released at https://github.com/lxucs/tele-lens.'
+venue: ICML
+year: 2026
+source: arxiv
+source_url: https://arxiv.org/abs/2602.02103v2
+pdf_url: https://arxiv.org/pdf/2602.02103v2
+pdf_sha256: 85e0f5b525816403cc6b53c268449b9f84ecb242357b7bd9f9aaa590ff51875f
+fetched_at: '2026-07-18T11:14:21Z'
+source_updated_at: '2026-05-28T09:17:14Z'
+ids:
+  doi: null
+  arxiv_id: 2602.02103v2
+  arxiv_base_id: '2602.02103'
+  arxiv_version: v2
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- artifacts-released
+- icml2026-picks
+topic_groups:
+- general_agent_methods
+scoring:
+  score: 36.3
+  label: TRACK_ONLY
+  confidence: medium
+  rationale: 'score=36 -> TRACK_ONLY | strong: venue_quality(1.00), recency(0.93), artifact_availability(0.55)
+    | interests: general_agent_methods:group:general_agent_methods'
+  matched_interests:
+  - general_agent_methods:group:general_agent_methods
+  negative_signals: []
+  subscores:
+    interest_fit: 0.402
+    recency: 0.93
+    venue_quality: 1.0
+    harness_relevance: 0.0
+    novelty: 0.0
+    artifact_availability: 0.55
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/how-far-ahead-do-llms-plan-uncovering-260202103/v1/paper.pdf
+  extraction: library/how-far-ahead-do-llms-plan-uncovering-260202103/v1/extraction.txt
+  summary: library/how-far-ahead-do-llms-plan-uncovering-260202103/v1/summary.mdx
+  code_url: https://github.com/lxucs/tele-lens
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread
+  summary_format: mdx

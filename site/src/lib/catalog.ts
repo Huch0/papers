@@ -47,9 +47,12 @@ export function loadCatalog(): PaperEntry[] {
 // entry id ("<slug>/vN/summary"), so the catalog can join to the rendered body.
 export function summaryEntryId(summaryPath: string | null): string | null {
   if (!summaryPath) return null;
+  // Lowercased: Astro's glob loader slugifies collection ids (mixed-case slugs like
+  // openreview-id suffixes would never match otherwise). Callers must lowercase e.id too.
   return summaryPath
     .replace(/^library\//, "")
-    .replace(/\.(md|mdx)$/, "");
+    .replace(/\.(md|mdx)$/, "")
+    .toLowerCase();
 }
 
 // Distinct, sorted facet values across the catalog.

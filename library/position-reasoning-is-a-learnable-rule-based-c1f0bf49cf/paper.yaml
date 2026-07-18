@@ -1,0 +1,54 @@
+canonical_key: title-92c1f0bf49cf
+slug: position-reasoning-is-a-learnable-rule-based-c1f0bf49cf
+title: 'Position: Reasoning is a Learnable Rule-Based Process'
+authors:
+- Rachel Lawrence
+- Jacqueline Maasch
+year: 2026
+primary_ids:
+  doi: null
+  arxiv_base_id: null
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://jmaasch.github.io/reasoning/
+topic_groups:
+- general_agent_methods
+tags:
+- icml2026-picks
+- position-paper
+venue:
+  name: ICML
+  tier: A_star
+  status: accepted
+  year: 2026
+user:
+  read_status: unread
+  triage_label: SKIP
+  triage_confidence: medium
+  notes: null
+milestone: null
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: ICML 2026 (site + slides/poster)
+  source: manual
+  source_url: https://jmaasch.github.io/reasoning/
+  pdf_path: null
+  summary_path: library/position-reasoning-is-a-learnable-rule-based-c1f0bf49cf/v1/summary.mdx
+  metadata_path: library/position-reasoning-is-a-learnable-rule-based-c1f0bf49cf/v1/metadata.yaml
+  fetched_at: '2026-07-18T11:15:18Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: null
+  pdf_bytes: null
+  summary_status: full
+  extraction_status: none
+  created_at: '2026-07-18T11:15:18Z'
+  updated_at: '2026-07-18T11:28:29Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

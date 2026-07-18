@@ -1,0 +1,58 @@
+canonical_key: arxiv-2602.20424
+slug: implicit-intelligence-evaluating-agents-on-what-users-260220424
+title: Implicit Intelligence -- Evaluating Agents on What Users Don't Say
+authors:
+- Ved Sirdeshmukh
+- Marc Wetter
+year: 2026
+primary_ids:
+  doi: null
+  arxiv_base_id: '2602.20424'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2602.20424v1
+- https://arxiv.org/pdf/2602.20424v1
+topic_groups:
+- agent_harness
+- general_agent_methods
+tags:
+- benchmark
+- environment
+- evaluation-harness
+- icml2026-picks
+venue:
+  name: ICML
+  tier: A_star
+  status: accepted
+  year: 2026
+user:
+  read_status: unread
+  triage_label: TRACK_ONLY
+  triage_confidence: high
+  notes: null
+milestone: null
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v1
+  source: arxiv
+  source_url: https://arxiv.org/abs/2602.20424v1
+  pdf_path: library/implicit-intelligence-evaluating-agents-on-what-users-260220424/v1/paper.pdf
+  summary_path: library/implicit-intelligence-evaluating-agents-on-what-users-260220424/v1/summary.mdx
+  metadata_path: library/implicit-intelligence-evaluating-agents-on-what-users-260220424/v1/metadata.yaml
+  fetched_at: '2026-07-18T11:15:00Z'
+  source_updated_at: '2026-02-23T23:46:55Z'
+  arxiv_version: v1
+  pdf_sha256: 2625e09420317299788cea05ce4e5b96eb1d2118c18313d95be2590cc0c73a3b
+  pdf_bytes: 865614
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-07-18T11:15:00Z'
+  updated_at: '2026-07-18T11:26:58Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

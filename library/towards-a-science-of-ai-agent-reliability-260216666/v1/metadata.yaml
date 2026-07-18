@@ -1,0 +1,78 @@
+canonical_key: arxiv-2602.16666
+version_key: v1
+title: Towards a Science of AI Agent Reliability
+authors:
+- Stephan Rabanser
+- Sayash Kapoor
+- Peter Kirgis
+- Kangheng Liu
+- Saiteja Utpala
+- Arvind Narayanan
+abstract: 'AI agents are increasingly deployed to execute important tasks. While rising accuracy scores
+  on standard benchmarks suggest rapid progress, many agents still continue to fail in practice. This
+  discrepancy highlights a fundamental limitation of current evaluations: compressing agent behavior into
+  a single success metric obscures critical operational flaws. Notably, it ignores whether agents behave
+  consistently across runs, withstand perturbations, fail predictably, or have bounded error severity.
+  Grounded in safety-critical engineering, we provide a holistic performance profile by proposing twelve
+  concrete metrics that decompose agent reliability along four key dimensions: consistency, robustness,
+  predictability, and safety. Evaluating 15 models across two complementary benchmarks, we find that recent
+  capability gains have only yielded small improvements in reliability. By exposing these persistent limitations,
+  our metrics complement traditional evaluations while offering tools for reasoning about how agents perform,
+  degrade, and fail.'
+venue: ICML
+year: 2026
+source: arxiv
+source_url: https://arxiv.org/abs/2602.16666v3
+pdf_url: https://arxiv.org/pdf/2602.16666v3
+pdf_sha256: f6347ad130f009ea385cfa341a32fd1c7d757d65458b4d1d73dae5c3a28a2ccf
+fetched_at: '2026-07-18T11:14:29Z'
+source_updated_at: '2026-06-02T02:15:05Z'
+ids:
+  doi: null
+  arxiv_id: 2602.16666v3
+  arxiv_base_id: '2602.16666'
+  arxiv_version: v3
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- evaluation-harness
+- icml2026-picks
+- reliability-concern
+topic_groups:
+- general_agent_methods
+- agent_harness
+scoring:
+  score: 46.5
+  label: TRACK_ONLY
+  confidence: high
+  rationale: 'score=47 -> TRACK_ONLY | strong: venue_quality(1.00), recency(0.94), interest_fit(0.73)
+    | interests: agent_harness:group:agent_harness, general_agent_methods:group:general_agent_methods'
+  matched_interests:
+  - agent_harness:group:agent_harness
+  - general_agent_methods:group:general_agent_methods
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 0.938
+    venue_quality: 1.0
+    harness_relevance: 0.36
+    novelty: 0.0
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/towards-a-science-of-ai-agent-reliability-260216666/v1/paper.pdf
+  extraction: library/towards-a-science-of-ai-agent-reliability-260216666/v1/extraction.txt
+  summary: library/towards-a-science-of-ai-agent-reliability-260216666/v1/summary.mdx
+  code_url: null
+  project_url: https://hal.cs.princeton.edu/reliability
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread
+  summary_format: mdx

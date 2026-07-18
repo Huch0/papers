@@ -1,0 +1,68 @@
+canonical_key: arxiv-2603.09022
+slug: memo-memory-augmented-model-context-optimization-for-260309022
+title: 'MEMO: Memory-Augmented Model Context Optimization for Robust Multi-Turn Multi-Agent LLM Games'
+authors:
+- Yunfei Xie
+- Kevin Wang
+- Bobby Cheng
+- Jianzhu Yao
+- Zhizhou Sha
+- Alexander Duffy
+- Yihan Xi
+- Hongyuan Mei
+- Cheston Tan
+- Chen Wei
+- Pramod Viswanath
+- Zhangyang Wang
+year: 2026
+primary_ids:
+  doi: null
+  arxiv_base_id: '2603.09022'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2603.09022v2
+- https://arxiv.org/pdf/2603.09022v2
+topic_groups:
+- agent_harness
+- general_agent_methods
+tags:
+- agent-memory
+- icml2026-picks
+- multi-agent
+- prompt-optimization
+venue:
+  name: ICML
+  tier: A_star
+  status: accepted
+  year: 2026
+user:
+  read_status: unread
+  triage_label: TRACK_ONLY
+  triage_confidence: high
+  notes: null
+milestone: null
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v2
+  source: arxiv
+  source_url: https://arxiv.org/abs/2603.09022v2
+  pdf_path: library/memo-memory-augmented-model-context-optimization-for-260309022/v1/paper.pdf
+  summary_path: library/memo-memory-augmented-model-context-optimization-for-260309022/v1/summary.mdx
+  metadata_path: library/memo-memory-augmented-model-context-optimization-for-260309022/v1/metadata.yaml
+  fetched_at: '2026-07-18T11:14:46Z'
+  source_updated_at: '2026-03-18T18:40:09Z'
+  arxiv_version: v2
+  pdf_sha256: 94738266b732db01267f570e4eb97a5b206706a6bc6b4bbc4a7baac2a5662578
+  pdf_bytes: 2235716
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-07-18T11:14:46Z'
+  updated_at: '2026-07-18T11:31:17Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

@@ -1,0 +1,73 @@
+canonical_key: arxiv-2510.26752
+version_key: v1
+title: 'The Oversight Game: Learning to Cooperatively Balance an AI Agent''s Safety and Autonomy'
+authors:
+- William Overman
+- Mohsen Bayati
+abstract: 'As increasingly capable agents are deployed, a central safety challenge is how to retain meaningful
+  human control without modifying the underlying system. We study a minimal control interface in which
+  an agent chooses whether to act autonomously (play) or defer (ask), while a human simultaneously chooses
+  whether to be permissive (trust) or engage in oversight (oversee), and model this interaction as a two-player
+  Markov game. When this game forms a Markov Potential Game, we prove an alignment guarantee: any increase
+  in the agent''s utility from acting more autonomously cannot decrease the human''s value. This establishes
+  a form of intrinsic alignment where the agent''s incentive to seek autonomy is structurally coupled
+  to the human''s welfare. Practically, the framework induces a transparent control layer that encourages
+  the agent to defer when risky and act when safe. While we use gridworld simulations to illustrate the
+  emergence of this collaboration, our primary validation involves an agentic tool-use task in which two
+  30B parameter language models are fine-tuned via independent policy gradient. We demonstrate that even
+  as the agents learn to coordinate on the fly, this framework effectively reduces safety violations in
+  realistic, open-ended environments.'
+venue: ICML
+year: 2025
+source: arxiv
+source_url: https://arxiv.org/abs/2510.26752v2
+pdf_url: https://arxiv.org/pdf/2510.26752v2
+pdf_sha256: 4e981d5bdf337d81b2b840a435ac4f5a5ab12111628ab55b543a3e342414f27f
+fetched_at: '2026-07-18T11:14:36Z'
+source_updated_at: '2026-02-19T20:18:48Z'
+ids:
+  doi: null
+  arxiv_id: 2510.26752v2
+  arxiv_base_id: '2510.26752'
+  arxiv_version: v2
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- icml2026-picks
+- rl-for-agents
+topic_groups:
+- general_agent_methods
+scoring:
+  score: 41.4
+  label: TRACK_ONLY
+  confidence: medium
+  rationale: 'score=41 -> TRACK_ONLY | strong: venue_quality(1.00), recency(0.74), harness_relevance(0.68)
+    | interests: general_agent_methods:group:general_agent_methods'
+  matched_interests:
+  - general_agent_methods:group:general_agent_methods
+  negative_signals: []
+  subscores:
+    interest_fit: 0.402
+    recency: 0.744
+    venue_quality: 1.0
+    harness_relevance: 0.68
+    novelty: 0.0
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/the-oversight-game-learning-to-cooperatively-balance-251026752/v1/paper.pdf
+  extraction: library/the-oversight-game-learning-to-cooperatively-balance-251026752/v1/extraction.txt
+  summary: library/the-oversight-game-learning-to-cooperatively-balance-251026752/v1/summary.mdx
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread
+  summary_format: mdx

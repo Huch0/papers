@@ -1,0 +1,113 @@
+---
+canonical_key: arxiv-2602.02103
+version_key: v1
+title: How Far Ahead Do LLMs Plan? Uncovering the Latent Horizon in Chain-of-Thought Reasoning
+authors:
+- Liyan Xu
+- Mo Yu
+- Fandong Meng
+- Jie Zhou
+venue: ICML
+year: 2026
+tags:
+- artifacts-released
+- icml2026-picks
+topic_groups:
+- general_agent_methods
+triage_label: TRACK_ONLY
+triage_confidence: medium
+source_link: https://arxiv.org/abs/2602.02103v2
+summary_date: '2026-07-18'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>Probing hidden states at every position of full CoT traces across 12 task domains (via <Term def="the paper's probing method: a per-layer bottleneck low-rank adapter that maps a hidden state into the frozen LM head, predicting future 'teleological' targets over the full vocabulary">Tele-Lens</Term>), the paper finds LLM latent planning is myopic — the precise final answer becomes decodable only in the last one or two reasoning steps — then exploits this: uncertainty of a whole CoT is carried by a sparse set of pivot positions (+9 AUROC points from 5 pivots), and probe confidence at the first 5 CoT tokens can auto-bypass thinking with negligible accuracy loss.</TLDR>
+
+<WhyItMatters>If the latent planner is myopic, an agent harness cannot assume the model "has the end in sight" — externalized plans, verifiers, and inference-time search are load-bearing, and the pivot-uncertainty / CoT-bypass recipes are directly reusable as cheap rollout-scoring and thinking-routing signals (the paper's own motivating examples are the adaptive-thinking routers in GPT-5 and Claude Code). One of my ICML 2026 picks for the advisor review.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "~1 step", label: "precise final-answer horizon", sub: "compositional tasks: probe flat at chance until the last step (Tab.1)" },
+  { value: "+9 pts", label: "AUROC from 5 pivot positions", sub: "0.69 vs 0.60 best whole-path baseline, In-Domain LLM (Tab.2)" },
+  { value: "16.2%", label: "CoT bypassed on CSQA", sub: "Qwen3-32B, at −0.03 pts avg accuracy over 12 tasks (Tab.4)" },
+  { value: "12", label: "task domains probed", sub: "3 probe dimensions; Qwen3-8B/32B + GRPO-trained 7B specialist" },
+]} />
+
+## Motivation
+Two literatures disagree about what CoT is doing. <Problem>Probing studies suggest reasoning is largely pre-planned: early hidden states predict subsequent generations, reasoning strength, and final answers before CoT unfolds</Problem> (Pal et al. 2023; Sheng et al. 2025; Dong et al. 2025; Azaria & Mitchell 2023) — implying verbalized CoT may just echo a pre-computed path. Yet <Problem>expressivity theory says Transformers cannot perform compositional multi-step computation in a single forward pass, making intermediate CoT steps functionally indispensable</Problem> (Merrill & Sabharwal 2023; Abbe et al. 2024; Li et al. 2024). <Problem>Prior probing evidence is largely single-domain, so how far ahead the latent "plan" actually reaches — and whether the two camps observe different task regimes — has not been measured</Problem> (§1). The stakes are practical: adaptive-thinking mechanisms (GPT-5's router, Claude Code) allocate reasoning effort by betting the model can internally "sense" input complexity — exactly the planning horizon in question (§1, p.2).
+
+## Contribution (what's new)
+<Novelty>Tele-Lens probes every position of the whole CoT trajectory — not just pre-CoT states — along three teleological dimensions: the next m tokens, the total reasoning length, and the model's own final answer, by bridging each layer's hidden state through a trained bottleneck adapter into the frozen LM head (full-vocabulary prediction, Logit-Lens style)</Novelty> (§2.1). Probing must span the full trace because a horizon is only visible in how decodability evolves along the path; it must run across 12 datasets in three classes because prior single-domain findings conflict. The unifying empirical delta: <Novelty>myopia plus a heuristic gist — early states carry a coarse pattern-matching signal of the answer on semantic tasks, but precise outcomes become decodable only right before CoT completion; both prior camps were right about different regimes</Novelty> (§2.5). On top, the <Novelty>Wooden Barrel hypothesis: a reasoning chain's uncertainty is governed by a sparse set of "reasoning pivots", so top-k aggregation over the most informative positions beats whole-path averages</Novelty> (§3.1), further operationalized as probe-gated CoT bypass (§3.2). The authors claim this is the first work to focus explicitly on the latent planning horizon and its utilization (App.E).
+
+## Research questions
+Q1: To what extent do hidden states encode a global plan for the reasoning roadmap, as opposed to supporting local, incremental state transitions? Q2: How does the planning horizon influence other CoT characteristics — concretely, can CoT dynamics be exploited for uncertainty and necessity estimation? (§1)
+
+## Methodology
+For each rollout, every CoT token's hidden state `H_i^k` (layer k) is transformed by a GeLU bottleneck adapter (rank r = 256) and projected through the frozen LM head; a dedicated adapter is trained per layer per probing dimension on the model's own rollouts, labeled with rollout outcomes (the i-th following token, the model's eventual answer token, total length). Final-answer probing needs a fixed answer space: all 12 tasks are cast so answers map to 20 single tokens (A–F, YES/NO, even/odd, digits 0–9); GSM8K/MATH/AIME are converted to multiple choice with GPT-4.1-generated distractors. Backbones: off-the-shelf Qwen3-32B (primary; Qwen3-8B in uncertainty experiments), plus an <Term def="Qwen2.5-7B-Instruct post-trained with GRPO on the 12 tasks; its short, decisive CoTs are treated as an upper bound on latent planning">In-Domain LLM</Term> to control for confounds of general-purpose models. Analysis layers: 48 of 64 (Qwen3-32B) and 21 of 28 (In-Domain) — probing peaks at intermediate-to-late layers, not the final layer (§2.5.1).
+
+<Pass title="Method details">
+<Stepper steps={[
+  { title: "Tasks (12, three classes; §2.2, App.A)", body: "Explicit compositional, generated with full control: Parity (is the count of a target digit even/odd; length 5-100), Cycle (path existence in a digraph that is one full cycle or two half cycles; 4-100 edges; from Abbe et al. 2024), Subsum (last digit of max non-adjacent subsequence sum; O(n) DP). Implicit compositional: GSM8K, MATH (MATH-500), AIME'25 (30 problems), MuSR, Zebra (ZebraLogic). Knowledge/semantic: CSQA, MMLU, QuALITY (RAG snippets, max 2K context), GPQA. Up to 4000/100/500 train/dev/test problems per task; options shuffled to blunt memorization." },
+  { title: "Rollout + hidden-state harvest (App.A.5)", body: "Both backbones run inference; all test-split token states are kept up to 16,384-token CoTs (train/dev keep 5%/10% sampled tokens). Scale: 2.4M/81K/11M train/dev/test states for Qwen3-32B and 2.5M/57K/2.7M for In-Domain, per layer." },
+  { title: "Adapter training (App.A.6)", body: "Rank 256, GeLU nonlinearity, optional per-offset embedding for subsequent-token probing; LM head frozen. LR 1e-3, batch 8000, linear decay, early stopping on dev, ~5K max steps, V100 GPUs. Reasoning-length probing swaps the LM head for a single regression layer." },
+  { title: "In-Domain LLM training (App.B)", body: "GRPO on Qwen2.5-7B-Instruct over 48K problems; reward = format validity + answer correctness; rollout 16, batch 320 (mini 80), max response 4096, cosine LR 1e-6, DAPO-style clip-higher (0.3 upper / 0.2 lower); converges within 800 steps (Parity slowest). Result: comparable overall accuracy to Qwen3 with ~8x shorter CoTs." },
+  { title: "Uncertainty + bypass protocols (§3)", body: "Uncertainty: AUROC of a confidence score against rollout correctness, last Transformers layer; Tele-Lens variant averages final-answer entropy over the top-k lowest-entropy positions; prober-free variant averages perplexity / entropy / Self-Certainty over the top-k most-uncertain positions. Generated tasks excluded (uncertainty artificially correlates with input length); AIME excluded off-the-shelf (too few negatives). Bypass: generate 5 CoT tokens, compute normalized final-answer entropy over the 20 classes; if any position falls below a threshold, halt and answer with thinking mode disabled." },
+]} />
+
+<MathBlock>{`\\tilde{H}^k_i = \\mathrm{GeLU}\\big(\\,(H^k_i + \\mathrm{Emb}^k(\\delta))\\,A^k\\big)\\,B^k, \\qquad P^k_i = \\mathrm{Softmax}(\\tilde{H}^k_i\\,L)`}</MathBlock>
+
+<MathBlock>{`\\bar{H}(p) = \\Big(-\\sum_{i=1}^{C} p_i \\log p_i\\Big) / \\log C \\in [0,1], \\qquad C = 20`}</MathBlock>
+
+Backbone sanity check (Tab.5, p.20): without CoT the compositional tasks sit at chance (Qwen3-32B: Parity 46.8 vs random 50, Cycle 45.4, Subsum 8.4 vs 10) and jump with CoT to 80.9 / 96.6 / 94.7 — corroborating the expressivity-theory motivation. Qwen3-32B averages 51.7 without vs 86.2 with CoT; the In-Domain 7B averages 79.4 with ~1,315-character CoTs vs ~10,647 for Qwen3-32B, and is best on Parity (98.3), Cycle (97.2), and Zebra (94.9). Responses over 32,768 tokens count as incorrect.
+</Pass>
+
+## Main result
+On explicit compositional tasks, the model's eventual answer is not decodable from hidden states until the computation is essentially finished: <Finding src="Tab.1, p.5">on Parity the probe sits at 0.49–0.52 (chance = 0.5) at every intermediate digit-count position and jumps to 0.97 (In-Domain) / 0.94 (Qwen3-32B) only after the final digit is counted, against an all-counted upper bound of 0.99 / 0.97</Finding>. <Finding src="Fig.2, p.5">In individual traces the final-answer probability stays flat and spikes one step before completion — for Parity after the last count, for Cycle only once a complete path or loop has been traversed</Finding>; <Finding src="Fig.16, p.27">math and logic traces (GSM8K, MATH, Zebra) show the same near-completion emergence</Finding>. The paper's summary: hidden states primarily support immediate local transitions, not long-range global trajectories — a myopic horizon.
+
+<ResultsTable columns={["Parity probe @ position", "−4", "−3", "−2", "−1 (last count)", "0 (upper bound)"]} rows={[
+  ["In-Domain LLM", "0.49", "0.51", "0.51", "0.97", "0.99"],
+  ["Off-the-Shelf (Qwen3-32B)", "0.50", "0.52", "0.51", "0.94", "0.97"],
+]} />
+
+## Key findings
+- <Finding src="Fig.3–4, p.5–6">The early "answer sense" on knowledge tasks is a heuristic gist, not a plan</Finding>: probing accuracy spikes within the first CoT tokens on CSQA/MMLU, but that early signal is less accurate than *direct answering without CoT* on almost all tasks, and far below full CoT — early decodability therefore does not reflect a pre-computed reasoning path.
+- <Finding src="Fig.5, p.6">Foresight over the upcoming path spans about two tokens</Finding>: Top-5 accuracy for subsequent-token prediction exceeds 50% for the next two steps (In-Domain, last layer) and declines steadily with offset — sharpest on semantic/knowledge tasks (MMLU, GPQA); longer lookahead survives only on structurally patterned tasks (Parity, Cycle), and Qwen3-32B is much lower across the board with a significant drop on those same structural tasks (Fig.21–22).
+- <Finding src="Fig.6–7, p.7">No internal clock — and the two apparent exceptions are shortcuts</Finding>: initial states cannot predict total reasoning length; Parity/Subsum length probes correlate only because reasoning length is proportional to the observable input length, while Cycle — where length depends on the hidden path, not the input size — fails, undercutting a global-planning reading.
+- <Finding src="Tab.2, p.8">Five pivot positions beat whole-path uncertainty aggregates by +9 AUROC points</Finding>: averaging Tele-Lens final-answer entropy over the top-5 lowest-entropy positions reaches 0.69 mean AUROC (9 tasks) vs 0.60 for the best full-path baseline (Self-Certainty); per task up to +20 points on MMLU (0.73 vs 0.53). Performance degrades as k grows (Top-50: 0.64).
+- <Finding src="Tab.3, p.9">A prober-free variant works off-the-shelf</Finding>: averaging each general metric over its 100 most-uncertain positions (in CoTs averaging over 7K tokens) improves all three metrics by 3–6 points on Qwen3-32B (perplexity 0.72→0.78, Self-Certainty 0.65→0.70); on Qwen3-8B the effect is roughly neutral (Tab.7). Most tokens are low-entropy "syntactic fillers" (Fig.12), which is why whole-path averages dilute the signal.
+- <Finding src="Tab.4/Tab.8, p.9/24">Probe-entropy gating bypasses CoT where it is unnecessary and never where it is required</Finding>: at threshold 0.1, Qwen3-32B skips thinking on 16.2% of CSQA and 12.4% of MMLU at −0.03 points average accuracy (12 tasks), with 0% bypass on all six explicit/math compositional tasks; the In-Domain model reaches 40.2% (CSQA) and 55.6% (QuALITY) bypass at −0.47 points.
+
+## Implications
+The paper dissolves an apparent contradiction: the pre-planning camp (<Related>Future Lens, Sheng et al. 2025, Dong et al. 2025, answer-anticipation probes</Related>) and the CoT-necessity camp (<Related>Merrill & Sabharwal 2023, Abbe et al. 2024, length-generalization results</Related>) observed different regimes — early hidden states hold a coarse gist on pattern-matchable tasks, while compositional outcomes are computed only through the unfolding CoT. If the model cannot plan the end from the beginning, CoT is best understood as state search, which rationalizes explicit-planning scaffolds (<Related>Plan-and-Solve; planning-in-natural-language for code search, Wang et al. 2025a</Related>) and matters for harness design: plans should be externalized and verified, not presumed latent. The pivot idea connects to <Related>high-entropy minority tokens driving RL gains (Wang et al. 2025b), sampling-based forking-path detection (Bigelow et al. 2025), and step-entropy CoT compression (Li et al. 2026b)</Related>, and the bypass study complements <Related>early-exit methods (Yong et al. 2025; Yang et al. 2026)</Related> by deciding *before* reasoning starts. <FollowUp>Tele-Lens pivots cluster near CoT completion while LM-entropy pivots spread across the whole trace (Fig.8) — combining the two sources is an explicitly flagged open thread.</FollowUp> <FollowUp>For agent loops: probe-gated thinking budgets (skip extended thinking on high-confidence steps) and pivot-based rollout scoring as a cheap verifier for best-of-n or search pruning.</FollowUp> <FollowUp>Whether the myopic horizon replicates outside the Qwen family, and on agentic/tool-use traces rather than QA.</FollowUp>
+
+## Limitations
+- <Caveat>Author-stated: CoT bypass relies on a fixed answer space and is offered as a proof of concept</Caveat>; uncertainty experiments exclude the generated tasks (input-length confound) and AIME off-the-shelf (too few negatives).
+- <Caveat>Single model family: all probing is on Qwen3-8B/32B and a GRPO-tuned Qwen2.5-7B</Caveat> — no cross-family replication, and reasoning-RL models like DeepSeek-R1 are discussed but not probed.
+- <Caveat>The 20-token answer space reshapes tasks</Caveat>: free-form math becomes multiple choice via GPT-4.1 distractors, so probing measures answer-option decodability, not open-ended planning; distractor quality is unaudited.
+- <Caveat>Average-level gains hide per-task regressions</Caveat>: with 100 pivots, Qwen3-32B entropy on MATH drops 0.92→0.70; MuSR stays near chance (~0.47–0.50) under every Qwen3-32B method; GSM8K Self-Certainty starts below chance (0.45). How k (5 vs 100) was selected is not reported.
+- <Caveat>No seeds, variance, or significance for probing/AUROC results</Caveat> (backbone accuracies average 5 runs; probes appear single-run). Off-the-shelf bypass beyond CSQA/MMLU is small (2.8% average).
+
+## Critiques and Questions
+1. The operationalization equates "plan" with decodability of surface outcomes (future tokens, the answer token, length). A model could carry an abstract plan — a strategy or subgoal structure — that no token-level probe reads out; Dong et al. 2025 found exactly such attribute-level predictability. "Myopic" is thus firmly supported for *precise outcome foresight*, weaker as a claim about planning in general.
+2. Negative probing results are bounded by probe capacity: a rank-256 adapter failing to decode does not prove the information is absent. No probe-capacity sweep, random-state control, or shuffled-label control is reported — the inference "not decodable, therefore not planned" carries the usual probing caveat.
+3. Is pivot selection fixing dilution or fixing miscalibration? Qwen3-8B has *longer* CoTs (14.1K vs 10.6K characters on average) yet gains little from pivots while 32B gains a lot — a pure dilution story predicts the opposite ordering. Unclear what property of the 32B distribution makes pivots so much more informative.
+4. The bypass study lacks the obvious baseline: threshold the non-thinking model's own answer-token entropy on the prompt alone, no trained probe needed. Without it, one cannot tell whether the Tele-Lens probe adds routing value over the model's native confidence — the load-bearing comparison for anyone building an adaptive-thinking harness.
+5. The In-Domain LLM as "upper bound" is an assumption, not a measurement: GRPO induces templated traces (Fig.10) that make subsequent-token prediction easy, so its stronger probe scores may reflect trajectory predictability rather than deeper planning capacity.
+
+<SelfCheck q="Why do the high length-probe correlations on Parity and Subsum not count as evidence of global planning, and what makes Cycle the control?" a="For Parity and Subsum, total reasoning length is roughly proportional to the input sequence length, which the model can read directly off the prompt — a shortcut, confirmed by probing input length itself (Fig.7). Cycle's reasoning length depends on the hidden path length between two vertices, not the input size; there the length probe fails, showing there is no genuine internal estimate of remaining reasoning." />
+
+## Glossary
+- <Term def="probing technique that projects intermediate hidden states through the final LM head to read out token predictions per layer; Tele-Lens extends it with a trained adapter and future-position targets">Logit Lens</Term>
+- <Term def="the sparse critical positions ('logical leaps') hypothesized to govern a reasoning chain's reliability, as the shortest stave governs a barrel's capacity">reasoning pivots</Term>
+- <Term def="area under the ROC curve for ranking correct vs incorrect rollouts by a confidence score; 0.5 is chance, 1.0 perfect">AUROC</Term>
+- <Term def="Group Relative Policy Optimization (Shao et al. 2024): RL post-training with group-normalized rewards, used to build the In-Domain LLM">GRPO</Term>
+- <Term def="uncertainty metric of Kang et al. 2025 measuring divergence of the next-token distribution from uniform; the strongest whole-path baseline here">Self-Certainty</Term>
+- <Term def="Qwen3's native mode switch: with thinking, the model emits a CoT before the answer; without, it answers directly — the bypass mechanism toggles this off">thinking mode</Term>
+
+{/* NOTES_START */}
+### Personal notes
+The transferable claim for harness work: treat "the model already knows where it's going" as false by default — confidence signals are only trustworthy at sparse pivots, and precise answers materialize one step before the end. Practical recipes to steal: (1) top-100-most-uncertain-token averaging as a zero-training rollout scorer (Tab.3 — logits only, no probe); (2) probe-entropy-gated thinking bypass as a latency lever, but demand the missing no-probe baseline before adopting. Watch the Qwen-only scope and the fixed-answer-space crutch before citing the myopia claim broadly.
+
+Discussion hooks for the advisor meeting: critique 1 (outcome-decodability vs abstract plans) and critique 4 (missing native-confidence baseline) are the two I would press; also ask whether myopia holds on agentic traces where the "answer space" is an action space. Code: github.com/lxucs/tele-lens.
+{/* NOTES_END */}

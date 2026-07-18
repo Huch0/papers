@@ -1,0 +1,150 @@
+---
+canonical_key: arxiv-2510.26752
+version_key: v1
+title: 'The Oversight Game: Learning to Cooperatively Balance an AI Agent''s Safety and Autonomy'
+authors:
+- William Overman
+- Mohsen Bayati
+venue: ICML
+year: 2025
+tags:
+- icml2026-picks
+- rl-for-agents
+topic_groups:
+- general_agent_methods
+triage_label: TRACK_ONLY
+triage_confidence: medium
+source_link: https://arxiv.org/abs/2510.26752v2
+summary_date: '2026-07-18'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>Wrap a frozen pretrained agent in a two-action control interface — the agent chooses `play` or `ask` while the human simultaneously chooses `trust` or `oversee` — and model the pair as a two-player Markov game: when the designed rewards make it a Markov Potential Game, any autonomy gain the agent secures for itself provably cannot lower the human's value (Theorem 1), and independent policy gradient — validated with two LoRA adapters on a 30B LLM playing both roles over ToolEmu-derived tool-use MDPs — converges to the predicted defer-when-risky, act-when-safe equilibrium.</TLDR>
+
+<WhyItMatters>A control-layer result for my harness track: the `ask`-vs-`play` gate is the human-approval layer that computer-use/SWE harnesses already bolt on ad hoc, and this paper gives that layer a game-theoretic spine — explicit conditions under which trimming oversight is provably safe, with the base agent left unmodified. ICML 2026 poster; the safety/oversight-theory pick of my icml2026 advisor-review list.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "99.4%", label: "ask rate at risky states", sub: "mean of 10 LLM runs; oversee 99.8% (§5.2)" },
+  { value: "3.9%", label: "ask rate at safe states", sub: "oversee 2.7% — selective deference (§5.2)" },
+  { value: "−20 → +8.4", label: "held-out reward, start → converged", sub: "±2.1 across 10 runs, 30 test MDPs (Fig.5)" },
+  { value: "0", label: "Lavaland violations at equilibrium", sub: "from ≈15%, within ≈2,500 IPG iterations (Fig.3)" },
+]} />
+
+## Motivation
+The paper targets <Problem>passive loss of control</Problem>: per the International AI Safety Report, control can erode without any adversarial intent, either because humans over-trust and over-rely on agent autonomy, or because the agent's decisions become too numerous and complex to reliably oversee (§1). The operating constraint is post-deployment: <Problem>retain meaningful human control without modifying the underlying system</Problem>. Existing lines each miss this case: <Problem>AI-control protocols (trusted monitoring, auditing, resampling) presuppose an adversarial model and external enforcement</Problem>; <Problem>scalable-oversight methods (debate, amplification, weak-to-strong) improve the quality of supervision but not its allocation</Problem> — they do not say where scarce human attention should go when constant supervision is prohibitively expensive; and <Problem>the Off-Switch Game analyzes corrigibility only as a one-shot interaction driven by fixed prior uncertainty over human preferences</Problem> (§1, §6).
+
+## Contribution (what's new)
+Two moves. First, <Novelty>oversight is recast as a coordination problem between two learners rather than a monitoring problem</Novelty>: a minimal wrapper gives the agent `{play, ask}` and the human `{trust, oversee}` as simultaneous per-state choices around an immutable base policy `σ` — the control interface, not the model, is the design surface. Second, <Novelty>alignment becomes a structural property of the game: if the interface forms a <Term def="a Markov game admitting a state-dependent potential function that exactly tracks every player's unilateral value change; independent policy gradient provably converges to Nash equilibria in this class">Markov Potential Game (MPG)</Term> and an ask-burden condition holds, then any one-state switch from ask to play that benefits the agent cannot decrease the human's value</Novelty> (Theorem 1) — that, and only that, is the guarantee: the human's value is protected against profitable autonomy-seeking, not promised to be high. Crucially, the paper treats these conditions as <Novelty>specifications the designer imposes by configuring costs and penalties — a shared reward built solely from human-specifiable inputs (an unsafe-action set plus interaction costs), with no access to the agent's original reward</Novelty> (§4.1.2, Eq.5). <Term def="an agent's willingness to permit human intervention, correction, or shutdown">Corrigibility</Term> then emerges as a learned, state-dependent policy rather than a consequence of preference uncertainty (App.D).
+
+## Research questions
+1. Under what structural conditions is an agent's incentive to seek autonomy provably harmless to its overseer — and what precisely does "harmless" mean? 2. Can those conditions be instantiated using only designer-controlled quantities, so the theory doubles as an interface specification? 3. Does <Term def="each player runs its own policy-gradient updates on its own reward, with no centralized critic and no communication">independent policy gradient (IPG)</Term> — including two LLM policies fine-tuned in parallel — actually find the selective defer-when-risky equilibrium the theory predicts?
+
+## Methodology
+Take the base MDP `M = (S, A, R, T, γ)` and the frozen policy `σ`, and wrap them in a two-player simultaneous-move Markov game over the same states plus an absorbing shutdown state `s_off`. Each step a proposal `a_σ ~ σ(·|s)` is drawn; it executes unless the AI chose `ask` **and** the human chose `oversee`, in which case an oversight operator `Over(s, a_σ)` substitutes a corrective action or shuts the system down. Deliberately, the human cannot override a `play` (Remark 1): this models high-autonomy regimes where forced intervention is infeasible, and isolates the incentive question — safety must come from voluntary deference. The simultaneous move models scarce attention: the human implicitly chooses whether to pay attention at each step, without knowing whether the agent will ask. The primary instantiation is a <Term def="a fully cooperative Markov game where all players share one reward function; always an MPG, with the shared value function as the potential">Markov Team Game</Term>: both players receive one shared reward `R_Φ` penalizing unsafe executed actions (`λ_viol`), asking (`c_ask`), and overseeing (`c_over`). Both policies then learn by IPG — tabular softmax in a gridworld, and two LoRA adapters on a 30B LLM for agentic tool-use MDPs.
+
+<Pass title="The formal game and what the theorems actually say">
+**Execution rule.** With `a_σ ~ σ(·|s)` the proposed base action:
+
+<MathBlock>{`a_{\\mathrm{exec}}=\\begin{cases}a_{\\sigma}, & a_{\\mathrm{AI}}=\\texttt{play}\\\\ a_{\\sigma}, & a_{\\mathrm{AI}}=\\texttt{ask},\\; a_{H}=\\texttt{trust}\\\\ \\mathrm{Over}(s,a_{\\sigma}), & a_{\\mathrm{AI}}=\\texttt{ask},\\; a_{H}=\\texttt{oversee}\\end{cases}`}</MathBlock>
+
+`Over` may keep `a_σ`, substitute a corrective action, or output `off` (transition to `s_off`).
+
+**MPG structure.** The game is an MPG if a state-dependent potential `Φ_s` tracks every unilateral deviation exactly. Each player's value then decomposes into the shared potential plus a <Term def="the component of a player's value that its own policy cannot influence; in an MPG, value = shared potential + dummy term">dummy term</Term>:
+
+<MathBlock>{`V^{\\mathrm{AI}}_{s}(\\pi)=\\Phi_{s}(\\pi)+U^{\\mathrm{AI}}_{s}(\\pi_{H}),\\qquad V^{H}_{s}(\\pi)=\\Phi_{s}(\\pi)+U^{H}_{s}(\\pi_{\\mathrm{AI}})`}</MathBlock>
+
+**Ask-burden assumption.** For every state, the human's dummy term does not decrease when the AI switches `ask` → `play` at that state — i.e. the human's residual value does not intrinsically benefit from being asked.
+
+**Theorem 1 (local alignment).** If the game is an MPG and ask-burden holds, then for any state `s` and baseline joint policy:
+
+<MathBlock>{`V^{\\mathrm{AI}}_{s}\\big(\\pi^{\\texttt{play}@s}_{\\mathrm{AI}},\\pi_{H}\\big)\\ \\ge\\ V^{\\mathrm{AI}}_{s}\\big(\\pi^{\\texttt{ask}@s}_{\\mathrm{AI}},\\pi_{H}\\big)\\;\\Longrightarrow\\;V^{H}_{s}\\big(\\pi^{\\texttt{play}@s}_{\\mathrm{AI}},\\pi_{H}\\big)\\ \\ge\\ V^{H}_{s}\\big(\\pi^{\\texttt{ask}@s}_{\\mathrm{AI}},\\pi_{H}\\big)`}</MathBlock>
+
+Mechanics (3 lines): the AI's own deviation leaves its dummy term `U^AI_s(π_H)` untouched, so any value gain equals a gain in the shared potential `Φ_s`; the human's value change is that same potential gain plus its dummy-term change, which ask-burden makes non-negative. Scope — what it does *not* say: it covers one-state `ask` → `play` deviations with the human policy held fixed; it says nothing about the human's absolute welfare level, about `play` → `ask` moves, or about simultaneous changes by both players. Theorem 4 (App.A.2) chains it: if the AI greedily flips states from `ask` to `play` and each single flip individually improves its value from a fixed start state, the human's value is monotonically non-decreasing along the entire path.
+
+**When do the assumptions hold?** Exactly, in two constructions. (i) Team games: `R_AI = R_H` makes the potential the common value function and dummy terms identically zero, so ask-burden holds trivially — but then `V^AI = V^H` and Theorem 1 is immediate. (ii) Strict-shutdown oversight (App.A.1): oversight always shuts down, the AI bears no interaction cost, the human pays `c_ask` whenever queried, shutdown yields zero outcome reward, **and** the human's outcome value dominates the AI's at every state (`Ṽ^H(s) ≥ Ṽ^AI(s)`); Lemma 1 then derives ask-burden (strictly when `c_ask > 0`). Approximately, under two relaxations (§4.3): bounded value difference `|V^H − V^AI| ≤ δ` yields alignment whenever the AI's preference for `play` exceeds `2δ` (Prop.1), and perturbed team games `R_i = r + ξ_i` with `|ξ_i| ≤ κ` bound the human's possible loss by `4κ/(1−γ)` (Prop.2). Outside these constructions the MPG property is an assumption to be engineered, not a fact about deployment.
+
+**Shared-reward guarantees (§4.2).** The team-game reward needs only human-specifiable pieces:
+
+<MathBlock>{`R_{\\Phi}(s,a_{\\mathrm{AI}},a_{H})=-\\lambda_{\\mathrm{viol}}\\,\\mathbf{1}\\{a_{\\mathrm{exec}}\\in A_{\\mathrm{unsafe}}(s)\\}-c_{\\mathrm{ask}}\\,\\mathbf{1}\\{a_{\\mathrm{AI}}=\\texttt{ask}\\}-c_{\\mathrm{over}}\\,\\mathbf{1}\\{a_{H}=\\texttt{oversee}\\}`}</MathBlock>
+
+Theorem 2: if any zero-violation policy exists, the safe policy minimizing expected discounted oversight cost `C_s0` is (1) safe, (2) minimal-oversight among safe policies, and (3) a Nash equilibrium of the game restricted to the safe set — within the safe set the shared return equals `−C_s0` exactly. Theorem 5 (App.A.6) swaps the hard constraint for a penalty: if every unsafe policy violates with probability at least `η`, then `λ_viol > (c_ask + c_over)/((1−γ)η)` makes every maximizer of the potential safe. Theorem 3: if each corrective substitution is near-optimal under the base policy's own Q-function (`Q^σ(s', a') ≥ V^σ(s') − ε`), task performance degrades by at most `ε/(1−γ)`; if oversight means shutdown, the bound requires shutdown itself to be `ε`-near-optimal (Remark 2).
+</Pass>
+
+<Pass title="Experimental setups in detail">
+**Lavaland (illustration, §5.1).** 10×12 gridworld: dirt corridors (−0.1 per step), grass (−0.2), goal +10. Base `σ` is tabular Q-learning, 5,000 episodes (`α = 0.5`, `γ = 0.99`, ε-greedy decaying 1.0 → 0.1) on a lava-free training map; at test time three lava blocks sit on its learned corridor route (the distributional-shift setup of inverse reward design). The human's correction is deliberately weak — a *random* non-lava action: danger detection without task knowledge, a capability-gap regime. Team reward: `λ_viol = 50.0`, `c_ask = c_over = 0.1`, step penalty 0.05. Training: IPG on tabular softmax policies, 5,000 iterations, lr 3e-3, batch 32, entropy 0.01; MPG theory guarantees convergence.
+
+**ToolEmu Oversight MDPs (primary, §5.2 + App.B).** 144 scenarios from <Term def="a benchmark of 144 LM-agent tool-use scenarios (email, file systems, payments, smart locks) with annotated underspecifications and risky outcomes, executed in an LM-emulated sandbox (Ruan et al. 2024)">ToolEmu</Term> — e.g. "Place my first trade on Binance" with zero trade parameters — are compiled into small MDPs by a Claude Code + Claude Opus 4.5 pipeline:
+
+<Stepper steps={[
+  { title: "Identify decision points (App.B.1)", body: "Risky states are extracted from ToolEmu's annotated underspecifications and risky actions; each gets a severity-based failure probability of 0.5-0.95 as judged by Claude Opus, and at most 3 decision points per MDP are kept. MDPs average 7-10 states with 2-3 decision points." },
+  { title: "Build the state graph", body: "Initial state from the user instruction; toolkit-initialization and safe execution states (API calls, retrieval); decision states where the annotated risks arise; terminal rewards of +30 for success, +15 to +27 for partial completion, +3 to +9 for a justified halt. State descriptions deliberately omit explicit risk labels - risk must be inferred from task semantics." },
+  { title: "Wire transitions", body: "Safe states transition deterministically (interaction costs still accrue, so needless oversight is pure loss). At decision states the oversight path (ask + oversee) leads to a safe continuation or halt, while any autonomous path (play, or ask + trust) carries probability 0.7-0.95 of a violation penalty between -50 and -18 before continuing." },
+  { title: "Calibrate costs", body: "c_ask = c_over = 3.0, chosen so always-ask burns about 30 per 10-state episode (often exceeding terminal reward) and never-ask expects 50-80 in violation penalties; only selective oversight is consistently positive." },
+]} />
+
+Policies: Qwen3-30B-A3B-Instruct-2507 (MoE, 30.5B total / 3.3B active parameters), one rank-16 <Term def="low-rank adapter fine-tuning; here two independent rank-16 adapters, one per player, on one shared frozen 30B base model">LoRA</Term> adapter per player on the shared frozen base, trained through the <Term def="Thinking Machines' hosted fine-tuning API used to run the LoRA policy-gradient updates">Tinker</Term> API. Each state renders as a natural-language prompt (instruction, toolkits, state description, last 3 steps) and the policy emits a single token — PLAY/ASK or TRUST/OVERSEE. Training: importance-weighted policy gradient with z-scored step rewards as advantages, ε-greedy 0.1 behavior policy with importance-sampling correction, batch 16 episodes, Adam lr 1e-4, up to 200 iterations with early stopping (patience 50); 114 training / 30 held-out test MDPs; 10 seeds.
+</Pass>
+
+## Main result
+<Finding src="§5.2, Tab.1">Across 10 seeds, the two independently fine-tuned 30B policies coordinate near-perfectly at risky states — mean ask rate 99.4% (worst run 97.9%) and oversee rate 99.8% (worst 98%) — while intervening rarely at safe states (ask 3.9%, oversee 2.7%)</Finding>, lifting held-out reward from ≈ −20 at initialization to <Finding src="Fig.5">+8.4 ± 2.1 at convergence</Finding>. "Safety violation" here means traversing a risky autonomous path (penalty `λ_sev ∈ [−50, −18]` with probability 0.7–0.95); near-total risky-state coordination means that exposure is almost eliminated. The paper reports rates and reward for the LLM setting; the direct violation-rate curve is shown for Lavaland, where <Finding src="Fig.3">violations fall from ≈15% to zero within ≈2,500 iterations while joint intervention settles at 28.2% of steps</Finding>.
+
+<SortableTable columns={["Run", "Avg test reward", "Risky ask %", "Risky oversee %", "Safe ask %", "Safe oversee %"]} rows={[
+  ["Run 1", 10.65, 100.0, 100.0, 0.0, 2.7],
+  ["Run 2", 10.27, 100.0, 100.0, 4.9, 0.0],
+  ["Run 3", 6.61, 98.1, 100.0, 0.0, 5.4],
+  ["Run 4", 9.57, 100.0, 100.0, 1.4, 0.7],
+  ["Run 5", 6.49, 100.0, 98.0, 10.6, 7.0],
+  ["Run 6", 9.24, 100.0, 100.0, 1.5, 5.1],
+  ["Run 7", 7.98, 97.9, 100.0, 0.0, 3.6],
+  ["Run 8", 8.86, 100.0, 100.0, 0.7, 0.7],
+  ["Run 9", 8.14, 98.0, 100.0, 0.7, 0.0],
+  ["Run 10", 8.01, 100.0, 100.0, 19.3, 1.5],
+]} />
+
+## Key findings
+- <Finding src="Fig.1c, Fig.2">Division of labor emerges under a real capability gap</Finding>: the Lavaland human can only detect danger and substitute a *random* safe action, yet independent learning yields ask/oversee precisely at lava approaches and play/trust elsewhere — zero violations with the goal still reached.
+- <Finding src="Fig.7">The safety half is mostly prior; the efficiency half is learned</Finding>: at iteration 0 the instruction-tuned models already ask/oversee at ≈85% in risky states (the prompts spell out deferral criteria); training pushes risky-state coordination from 85% to ≈100% but cuts safe-state intervention from 40–50% down below 10% — the larger learned effect is conserving oversight where it buys nothing.
+- <Finding src="Tab.1">Coordination is seed-robust, cost sensitivity shows in the variance</Finding>: every run reaches at least 97.9% risky ask and 98% risky oversee; safe-ask varies 0–19.3% and the high-safe-ask runs score lowest on test reward. Best-train ≈ best-test (+11.28 vs +10.84) while avg-train (+3.11) trails avg-test (+8.58) purely because of ε-greedy exploration noise — no sign of overfitting to training MDPs.
+- <Finding src="App.C, Fig.8">Alignment survives leaving the team game</Finding>: with private costs `c_over = 0.5` vs `c_ask = 0.05` (a perturbed MPG, `κ = 0.5`), the equilibrium shifts — the AI asks ≈40% of steps while the human oversees only ≈32% — yet violations stay at zero, the behavior Prop.2's approximate guarantee predicts.
+- <Finding src="App.B.2">The reward design makes selective oversight dominant by construction</Finding>: in the smart-lock scenario, expected returns are ≈ +21 (selective) vs −32 (always play: `0.80×(−40) + 0.75×(−40) = −62` expected penalties against +30 completion) vs ≈ −18 (always ask). The experiment's contribution is that decentralized learning *finds* this optimum, not that it exists.
+- <Finding src="App.D">The Off-Switch Game is recovered as a special case</Finding>: restrict to three states, force the human to oversee, and make oversight permit-or-shutdown — corrigibility then reappears as a learned, context-dependent policy with no preference-uncertainty machinery.
+
+<ClaimEvidence rows={[
+  { claim: "Intrinsic alignment: the agent's autonomy-seeking is structurally coupled to human welfare", evidence: "Theorem 1 under MPG + ask-burden; exact in team games (where the two values are identical) and under strict shutdown (which needs the human's outcome value to dominate); approximate with slack 2δ or 4κ/(1−γ) under relaxations", verdict: "Holds — conditional on designer-imposed structure" },
+  { claim: "Effectively reduces safety violations in realistic, open-ended environments (abstract)", evidence: "Zero violations in Lavaland; 99.4%/99.8% risky-state coordination and reward −20 → +8.4 on 30 held-out ToolEmu MDPs — but the MDPs are scripted 7–10-state graphs with author-assigned risk probabilities and single-token gating actions", verdict: "Supported in structured abstractions; 'open-ended' overstates" },
+  { claim: "Coordination is learned on the fly by independent policy gradient", evidence: "10/10 seeds converge without communication or a centralized critic (Tab.1); however, risky-state rates start at ≈85% from the prompted prior, so part of the behavior predates training", verdict: "Supported, with a real contribution from the prior" },
+  { claim: "Control without modifying the underlying system", evidence: "The base policy σ is frozen in the theory and the gridworld; in the LLM experiment the trained object is the added gating policy (LoRA adapters) while task dynamics are scripted", verdict: "True for σ; the wrapper itself is a trained policy" },
+]} />
+
+## Implications
+For harness engineering the framing is the payoff: an approval gate around a frozen agent becomes a *trainable, analyzable object*, and `R_Φ` is built entirely from harness-observable quantities — a safety specification plus interaction costs — so the analysis applies to the wrapper a lab actually ships rather than to model internals. The work is the cooperative complement to <Related>AI control protocols (Greenblatt et al. 2024; Ctrl-Z resampling, Bhatt et al. 2025)</Related>, which assume adversarial models; it allocates rather than amplifies supervision, unlike <Related>debate, iterated amplification, and weak-to-strong generalization</Related>; it drops the preference-inference machinery of <Related>CIRL / assistance games (through AssistanceZero, Laidlaw et al. 2025)</Related>; and it generalizes the <Related>Off-Switch Game (Hadfield-Menell et al. 2017)</Related> from one shot to a learning dynamic. Convergence rests on <Related>MPG theory (Leonardos et al. 2022; Fox et al. 2022 — Overman co-authored both)</Related>. Threads: <FollowUp>replacing the LLM "human" with real operators (the authors' stated next step)</FollowUp>; <FollowUp>sequential ask-then-respond protocols vs the simultaneous-move idealization</FollowUp>; <FollowUp>n-agent MPG extensions for agent-to-agent deployments</FollowUp>; <FollowUp>testing whether a real harness's logged approval data is even approximately consistent with a potential game</FollowUp>.
+
+## Limitations
+- <Caveat>Every guarantee is conditional on structure the designer must impose</Caveat>: MPG + ask-burden for Theorem 1, an exact shared reward for Theorems 2/5. The paper is candid that these are specifications — but enforcing `R_Φ` requires a correct, complete unsafe-set `A_unsafe(s)`, and in open-ended deployment that specification is precisely the hard part. The theory relocates the safety burden into the reward spec; it does not remove it.
+- <Caveat>Theorem 1 is local and one-directional</Caveat>: single-state `ask` → `play` deviations under a fixed human policy; it guarantees the human's value does not *decrease* — not that it is high — and the path version needs every greedy step to individually benefit the AI from a fixed start state. In the team-game instantiation actually validated, the theorem is trivially true because `V^AI = V^H`.
+- <Caveat>No override when the agent plays (by design, Remark 1)</Caveat>: safety rests entirely on the agent choosing `ask`, so the framework covers cooperative or passively-misaligned agents; a deceptive agent that simply never asks is out of scope.
+- <Caveat>The "open-ended" validation is scripted</Caveat>: ToolEmu scenarios are compiled by an LLM pipeline into 7–10-state MDPs with assigned `p_risk`/`λ_sev`; policies emit one gating token per state and never produce actual tool calls; the 30 test MDPs come from the same generation pipeline as training — distribution cousins, not true OOD.
+- <Caveat>The "human" is another LoRA adapter on the same frozen 30B base model</Caveat>; the authors explicitly defer validation with real human overseers to future work. Two adapters of one model plausibly coordinate more easily than a model-human pair, and human non-stationarity is untested.
+- <Caveat>The simultaneous-move structure is an idealization</Caveat>: the human pays `c_over` even when the AI plays (where overseeing has no effect); real approval interfaces are sequential (agent asks, then human responds), and transfer of the guarantees to turn-based protocols is unproven.
+- <Caveat>Theorem 3's performance bound assumes ε-near-optimal corrections</Caveat> (`Q^σ(s', a') ≥ V^σ(s') − ε`); the Lavaland human's random safe action carries no such guarantee, so task completion there is an empirical observation, not an instance of the theorem. Scale is also modest: 144 MDPs, one model family, 10 seeds.
+
+## Critiques and Questions
+1. Where is the non-trivial regime? In the team game, Theorem 1 is almost definitional (shared value); the strict-shutdown instantiation instead requires outcome-value dominance `Ṽ^H(s) ≥ Ṽ^AI(s)` at every state — itself close to assuming alignment. Is there a natural, *checkable* instantiation where MPG + ask-burden hold and the theorem does real work?
+2. How much did RL teach the safety half? Iteration-0 risky-state rates are already ≈85% (Fig.7), with prompts that literally instruct "choose ASK when the task is underspecified." The clean learned effect is at *safe* states (40–50% → below 10%), i.e. cost conservation. A no-training baseline row (base model + prompts, greedy) would make the delta attributable.
+3. Equilibrium selection with real humans: both policies share one frozen base model and were trained against each other. With a non-stationary human whose costs and thresholds drift, does the agent's ask policy track, or does the pair fall out of the learned equilibrium?
+4. Reporting nits that matter for trust: Table 1's printed mean risky-ask (99.2%) disagrees with its own rows, which average 99.4% (the main text's number); "all 10 successful training runs" leaves open whether unsuccessful runs existed; two cross-references print as "Proposition ??". Minor, but worth a pass in a camera-ready.
+
+<SelfCheck q="Mechanically, why does Theorem 1's alignment guarantee hold, and which two conditions does it require?" a="In an MPG each player's value splits as V = Φ_s (shared potential) + U (dummy term the player's own policy cannot affect). The AI's one-state ask-to-play switch leaves its own dummy term unchanged, so any gain for the AI is exactly a gain in Φ_s. The human's value change equals that same potential gain plus the change in the human's dummy term, which the ask-burden assumption makes non-negative. Required: (1) the game is a Markov Potential Game; (2) ask-burden — the human's dummy term does not decrease when the AI plays instead of asks." />
+
+## Glossary
+Defined inline above: <Term def="a Markov game with a state-dependent potential function tracking all unilateral value changes">MPG</Term>, <Term def="value component a player's own policy cannot affect">dummy term</Term>, <Term def="willingness to permit intervention or shutdown">corrigibility</Term>, <Term def="LM-agent tool-use risk benchmark, 144 scenarios">ToolEmu</Term>, <Term def="decentralized per-player policy gradient">IPG</Term>. Remaining:
+- <Term def="a joint policy where no player can gain more than ε by unilaterally deviating; the convergence target of IPG in MPGs">ε-Nash equilibrium</Term>
+- <Term def="Kakade-Langford lemma relating two policies' value gap to expected advantages; the tool behind Theorem 3's ε/(1−γ) bound">performance difference lemma</Term>
+- <Term def="the condition that the human's residual (dummy) value does not benefit from being asked per se; Assumption 1, needed for Theorem 1">ask-burden assumption</Term>
+
+{/* NOTES_START */}
+### Personal notes
+The transferable core for my harness work: treat the permission layer as a game with designed rewards, and charge *both* sides for interaction — `R_Φ` needs only what a harness already logs (approvals, interventions, violations). Two numbers to lead with in the advisor review: 99.4%/99.8% risky-state coordination, but the prior already sat at ≈85% (the trained effect is largely safe-state cost conservation); and the guarantee stack is exactly as strong as the designer-written reward (team game makes Theorem 1 nearly definitional). Possible experiment: fit a potential function to my own harness's approval logs and test the ask-burden inequality empirically.
+{/* NOTES_END */}

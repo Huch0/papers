@@ -1,0 +1,128 @@
+---
+canonical_key: arxiv-2605.02289
+version_key: v1
+title: 'EngiAgent: Fully Connected Coordination of LLM Agents for Solving Open-ended Engineering Problems
+  with Feasible Solutions'
+authors:
+- Xiyuan Zhou
+- Ruixi Zou
+- Xinlei Wang
+- Yuheng Cheng
+- Yan Xu
+- Junhua Zhao
+- Jinjin Gu
+venue: ICML
+year: 2026
+tags:
+- icml2026-picks
+- multi-agent
+topic_groups:
+- general_agent_methods
+triage_label: TRACK_ONLY
+triage_confidence: medium
+source_link: https://arxiv.org/abs/2605.02289v1
+summary_date: '2026-07-18'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>EngiAgent puts an LLM coordinator in front of five role agents (Analyzer, Modeler, Verifier, Solver, Evaluator) so that after every step control can be routed to *any* stage instead of along a fixed pipeline, and on a new 53-task open-ended engineering benchmark this lifts feasible-solution rates to 50.94–75.47% across three LLMs — versus 3.77–28.30% for the best prior agent baselines — at roughly fixed-pipeline cost.</TLDR>
+
+<WhyItMatters>A harness-topology paper for my multi-agent track: it isolates the value of LLM-routed dynamic transitions over a hard-coded pipeline (about +12 points average feasibility, roughly cost-neutral) and doubles as agent-evaluation evidence that text/LLM-judge scores cannot separate feasible from infeasible solutions (Fig.4). For the advisor discussion: the mechanism is a centralized router over a complete transition graph — not N-to-N agent communication — and most of the headline gain comes from the scaffold, not the topology.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "64.15%", label: "feasible rate, GPT-4o", sub: "vs 7.55% best baseline (Tab.1); 75.47% on DeepSeek-V3" },
+  { value: "+11.95 pts", label: "coordinator vs fixed pipeline", sub: "avg of +16.98/+11.32/+7.55 across 3 LLMs (§6.4)" },
+  { value: "53", label: "open-ended engineering tasks", sub: "4 domains; feasibility checked by execution + human experts" },
+  { value: "$0.51", label: "per-problem cost, GPT-4o", sub: "≈ fixed pipeline $0.47; $0.07 on DeepSeek-V3 (Tab.2)" },
+]} />
+
+## Motivation
+LLM systems produce engineering "solutions" that are rarely <Term def="satisfies all mandatory constraints for execution in a real system: data consistency, physical laws, safety limits, and procedural/operational rules; judged as a binary (§3, §5)">feasible</Term>. <Problem>Agents optimized for novelty, formulation elegance, or executable code all sacrifice feasibility</Problem>: in the authors' measurements, autonomous-research agents give feasible solutions on fewer than 10% of problems; the math-modeling agent MM-Agent produces numerical solutions on only 13.21% of engineering tasks despite near-70% math-benchmark scores; and the code-generation agent DS-Agent reaches 62.26% numerical outputs on GPT-4o but only 5.66% feasible (§1, Tab.1). Failures cluster into four types (Fig.2): fancy-but-vague modeling, altering key data, violating physical laws, and over-constraining the model. Structurally, <Problem>existing scaffolds — sequential planners, hierarchical decomposition, fixed-role multi-agent systems — hard-code their routing, so an error surfacing at one stage cannot be sent back to the stage that caused it</Problem> (§2), the verification/coordination deficiency highlighted by <Related>the MAS failure taxonomy of Cemri et al. 2025</Related>.
+
+## Contribution (what's new)
+<Novelty>A fully connected coordinator: after every agent step, an LLM control loop diagnoses the outcome against shared memory and routes control — with targeted fix suggestions — to any of the five agents, turning the workflow into a complete transition graph rather than a pipeline with hard-coded reflection edges</Novelty> (Fig.1, Fig.3). The form follows from the failure analysis: data-extraction, constraint, and solver errors each need a *different* repairer, which static routing cannot select. Second delta: <Novelty>feasibility as a first-class, execution-checked benchmark metric</Novelty> — binary, verified by running numerical/constraint checks with final human confirmation, explicitly not LLM-judged — over 53 tasks with expert-annotated hard-constraint sets. Precision matters here: "fully connected" describes routing *reachability*; communication stays hub-and-spoke through the coordinator, so there is no N-to-N message cost.
+
+## Research questions
+1. Can a role-specialized multi-agent system make LLM engineering solutions feasible rather than merely plausible? 2. Does dynamic any-to-any routing beat a fixed pipeline of the *same* agents, and at what cost? 3. Do text-based judgments track feasibility on open-ended engineering tasks?
+
+## Methodology
+The backbone is the classical operations-research workflow: Analyzer → Modeler → Verifier → Solver → Evaluator. The Analyzer parses the problem into a strict JSON blueprint (variables, parameters, objective, constraints, assumptions, uncertainty); the Modeler compiles it into <Term def="Python algebraic modeling language for optimization; models are handed to solver backends such as GLPK, CBC, IPOPT">Pyomo</Term> code under heavy anti-pattern guardrails; the Verifier checks semantic, constraint, and data consistency; the Solver executes with backend selection and timeouts; an LLM Evaluator scores the full package and gates terminate-vs-restart. The coordinator wraps every transition: on normal output it advances the pipeline, on error it enters diagnosis and assigns the repair to the most appropriate agent, reasoning over a shared memory of debug records (error type, fix strategy, outcome), solution history, current state, and per-agent access counts and success rates (Fig.3). A forced agent switching mechanism breaks repetitive-failure loops. Feasibility of a final solution is judged outside the system: executable numerical/constraint verification against expert-annotated hard-constraint sets, with final human confirmation (§5).
+
+<Pass title="Method details">
+<Stepper steps={[
+  { title: "Blueprint extraction (Analyzer, App.C.1)", body: "The problem statement becomes a hierarchical JSON blueprint: modeling context, decision variables (name/type/domain/shape), parameters whose every value must carry a source_reference tracing it to the problem text ('absolute data integrity'), objective, categorized constraints, plus assumptions, uncertainty sources, trade-offs, and sensitivity factors. A retrieved modeling-method suggestion (domain/subdomain/method/confidence) is injected from a knowledge library whose construction is not documented." },
+  { title: "Code generation (Modeler, App.C.2)", body: "Compiles the blueprint into complete Pyomo code under explicit guardrails: never use pyomo summation(), never apply Python bool/max/min/abs to Pyomo variables, Big-M recipes for conditionals, array-dimension matching rules, a ban on placeholder or truncated code, and a self-check list (all variables and constraints implemented, solver called, 100+ lines)." },
+  { title: "Verification (Verifier, App.C.3)", body: "Hierarchical judgment: FAIL only on catastrophic errors — reversed objective direction, missing core physical/economic laws, missing decision entities; otherwise PASS, treating constraint relaxations and simplifications as acceptable 'pragmatic deviations'. A dynamic tolerance mechanism relaxes standards after 5 consecutive verification failures and again after 8, under an explicit 'Promote Convergence' / 'Default Trust' directive." },
+  { title: "Coordination loop (Fig.3, App.E)", body: "Each routing action records a trigger signal, a natural-language reasoning trace, an actionable strategy, the selected agent, an estimated success likelihood, and a should_continue flag. Example traces: ImportError routes to Modeler; a nonlinear SoC constraint routes to Analyzer for LP-compatible reformulation; solver infeasibility routes to Verifier for semantic diagnosis. Forced switching fires only on repetitive failures; the Evaluator's four-axis assessment (result feasibility, model-problem alignment, engineering validity, overall quality) gates termination." },
+  { title: "Benchmark and evaluation protocol (§5, App.B)", body: "53 tasks rewritten from peer-reviewed papers into self-contained open-ended statements with background, data, and explicit engineering constraints: market/multi-agent decision-making (21), scheduling and resource allocation (12), planning and design (10), control and autonomous systems (10). More than 20 domain experts; two annotators per task extract the mandatory hard-constraint set, a senior PhD adjudicates disagreements (4/53 initial). Complexity is emergent from the generated models and long-tailed: mostly 5-20 constraints, with a tail beyond 50 constraints / 100 parameters (Fig.6). Feasibility is a binary pass over the annotated constraints via executable checks plus human confirmation; the four 0-10 quality dimensions (IE/DR/MO/UH) are text-based judgments, scorer identity not reported." },
+  { title: "Baseline fairness and extensibility (App.F, App.G)", body: "Baselines get identical solver access, minimal enabling fixes only (syntax, unbound variables), and their original prompts and recommended configurations; compute budgets are reported transparently rather than equalized. Two extension tasks — MILP feature-search regression (P7) and solver-free closed-form OLS forecasting (P40) — run with the coordination layer unchanged, as initial evidence the framework is not Pyomo- or solver-bound." },
+]} />
+</Pass>
+
+## Main result
+On all three LLMs, <Finding src="Tab.1, p.6">EngiAgent (Coord.) reaches 64.15% feasible on GPT-4o, 50.94% on Gemini-2.5 Flash, and 75.47% on DeepSeek-V3-671B, versus best-baseline feasible rates of 7.55%, 3.77%, and 28.30%</Finding> — the abstract's "average seven-fold improvement" (per-model ratios: 8.5x, 13.5x, 2.7x). Against the ablated fixed pipeline of the *same* agents, <Finding src="§6.4, p.8">the coordinator adds +16.98 (GPT-4o), +11.32 (Gemini), and +7.55 (DeepSeek) points of feasibility at similar or lower cost</Finding>. Num. = share of tasks with a concrete numerical solution; Feas. = share satisfying all annotated hard constraints.
+
+<SortableTable columns={["Method", "LLM", "Num. (%)", "Feas. (%)"]} rows={[
+  ["Zero-shot", "GPT-4o", 22.64, 5.66],
+  ["ResearchAgent", "GPT-4o", 15.09, 3.77],
+  ["DS-Agent", "GPT-4o", 62.26, 5.66],
+  ["MM-Agent", "GPT-4o", 13.21, 7.55],
+  ["EngiAgent (Fixed)", "GPT-4o", 47.17, 47.17],
+  ["EngiAgent (Coord.)", "GPT-4o", 66.04, 64.15],
+  ["Zero-shot", "Gemini-2.5 Flash", 0, 0],
+  ["ResearchAgent", "Gemini-2.5 Flash", 1.89, 0],
+  ["DS-Agent", "Gemini-2.5 Flash", 60.38, 0],
+  ["MM-Agent", "Gemini-2.5 Flash", 9.43, 3.77],
+  ["EngiAgent (Fixed)", "Gemini-2.5 Flash", 45.28, 39.62],
+  ["EngiAgent (Coord.)", "Gemini-2.5 Flash", 52.83, 50.94],
+  ["Zero-shot", "DeepSeek-V3-671B", 0, 0],
+  ["ResearchAgent", "DeepSeek-V3-671B", 9.43, 7.55],
+  ["DS-Agent", "DeepSeek-V3-671B", 77.36, 28.30],
+  ["MM-Agent", "DeepSeek-V3-671B", 11.32, 5.66],
+  ["EngiAgent (Fixed)", "DeepSeek-V3-671B", 73.58, 67.92],
+  ["EngiAgent (Coord.)", "DeepSeek-V3-671B", 79.25, 75.47],
+]} />
+
+## Key findings
+- <Finding src="Tab.2, p.7">Dynamic routing costs about the same as the fixed pipeline — or less</Finding>: GPT-4o $0.51 vs $0.47 for +16.98 points; on Gemini it is *cheaper* ($0.67 vs $0.90; 813k vs 867k tokens) and on DeepSeek cheaper and faster ($0.07 vs $0.09; 1251s vs 1650s). Targeted repairs shorten debug loops rather than adding overhead.
+- <Finding src="§6.2, p.7">EngiAgent nearly closes the numerical-vs-feasible gap: 1.89 / 1.89 / 3.78 points across the three LLMs</Finding> — where DS-Agent's gap is 56.60 points on GPT-4o and 60.38 on Gemini (60.38% numerical, 0.00% feasible).
+- <Finding src="Fig.5, p.8">Ablation ordering on GPT-4o feasibility: full 64.15 → w/o forced switching 62.26 → w/o verifier 50.94 → w/o coordinator 47.17 → w/o prompt engineering 41.51</Finding>: prompt engineering (−22.64) and the coordinator (−16.98) matter most, then the verifier (−13.21); forced switching barely affects quality (−1.89) but saves tokens and cost (172k/$0.51 vs 196k/$0.58).
+- <Finding src="Tab.1 + Fig.5">Most of the headline gain is the scaffold, not the topology</Finding>: the fixed-pipeline variant already scores 47.17% vs 7.55% for the best external baseline on GPT-4o; full connectivity adds the remaining +16.98.
+- <Finding src="Fig.5, p.8">Removing the verifier *raises* the numerical rate to 71.70% while feasibility falls to 50.94%</Finding> — the verifier deliberately trades throughput for validity, the same tension the paper diagnoses in code-generation baselines.
+- <Finding src="Fig.4, §6.3, p.7">Text-based quality scores cannot separate feasible from infeasible solutions</Finding>: score distributions overlap heavily, and on DeepSeek, MM-Agent *outscores* EngiAgent on average text quality (8.12 vs 7.24) while producing 5.66% vs 75.47% feasible solutions.
+
+## Implications
+For harness builders the transferable pattern is an **LLM-routed state machine**: keep a typed stage graph, let a coordinator with structured memory (error history, per-agent success rates) choose transitions, and add a last-resort forced switch — here worth roughly 12 points at zero marginal cost. It extends the fixed-topology line (<Related>ReAct-style sequential planning, HuggingGPT hierarchical decomposition, AgentVerse fixed-role coordination</Related>), operationalizes the verification gaps named by <Related>Cemri et al.'s "Why do multi-agent LLM systems fail?"</Related>, and builds on the group's own <Related>EngiBench</Related>. For evaluation work, Fig.4 is reusable ammunition against LLM-judge-only scoring of open-ended agent outputs. <FollowUp>Whether an LLM-routed transition graph beats hand-tuned routing in SWE/computer-use harnesses at similar cost</FollowUp>; <FollowUp>decentralized topologies (AgentsNet) vs this centralized router as agent count grows</FollowUp>; <FollowUp>a strong reasoning model with a solver tool as a single-agent baseline — is the MAS layer necessary at all?</FollowUp>
+
+## Limitations
+- <Caveat>53 tasks, apparently a single run, no seeds or variance</Caveat>: one task = 1.89 points, so several deltas (forced switching −1.89; DeepSeek coordinator gain +7.55 = 4 tasks) sit near noise scale.
+- <Caveat>Benchmark construction, hard-constraint annotation, and final feasibility confirmation all come from the authors' team; blinding to system identity is not reported</Caveat> — and the system was co-designed with the benchmark's error taxonomy.
+- <Caveat>The 0-10 quality dimensions are text-based judgments with an unreported scorer</Caveat>; by the paper's own §6.3 argument these are inflated, so only the feasibility column carries real evidential weight.
+- <Caveat>Topology claims are tested at exactly 5 fixed roles with one centralized coordinator</Caveat>: no scaling in agent count, no decentralized comparison, iteration caps not reported, and the coordinator is a single point of failure whose context grows with memory.
+- <Caveat>The Verifier's convergence-promoting tolerance (relax after 5, then 8 consecutive failures; default to PASS; constraint relaxation framed as positive)</Caveat> is in tension with the claim of "ensuring feasibility at every stage" — end-metric integrity rests on the external human check, not the internal one.
+- <Caveat>Domain skew: optimization-modeling tasks concentrated in power/energy (every worked example is a power-system problem); per-domain results are not reported</Caveat>; the non-Pyomo/no-solver extension is only 2 tasks (App.G).
+- <Caveat>Baselines are adapted out-of-domain</Caveat> (ResearchAgent, DS-Agent, MM-Agent were built for other task families); no generic MAS frameworks or reasoning-model single agents in the comparison.
+
+## Critiques and Questions
+1. **The name oversells the mechanism.** "Fully connected" is any-to-any routing *reachability* through one hub LLM, not fully connected agent communication. The evidence supports "dynamic centralized routing beats a static pipeline"; cost stays flat precisely because nothing quadratic is happening.
+2. **The seven-fold headline is not reconstructible from Table 1.** Per-model best-baseline ratios are 8.5x / 13.5x / 2.7x (mean of ratios ≈ 8.2x; ratio of means ≈ 4.8x); the averaging is never specified. The well-supported number is the ~+12-point average gain over the fixed pipeline.
+3. **Baseline framing inflates the delta.** MM-Agent and DS-Agent never targeted feasibility, and zero-shot scoring 0.00% numerical on both Gemini and DeepSeek (vs 22.64% on GPT-4o) suggests strict output-format requirements penalize unstructured baselines (my inference — the paper does not analyze this). The fixed-vs-coordinator ablation is the meaningful comparison.
+4. **Internal inconsistencies.** Table 1's DeepSeek zero-shot row reports feasible-subset scores (Avg 6.44) despite a 0.00% feasible rate; the framework is once called "EngiLLM" (App.C); a routing trace targets a sixth agent name, `solution_verifier` (App.E). Minor, but worth checking the repo before trusting details.
+5. **Does the tolerance mechanism launder infeasibility into "pragmatic deviations"?** Solutions that pass internal verification by relaxing constraints are then judged against the expert-annotated hard set — but altering-key-data drift *below* that bar would still count as feasible. A per-error-type breakdown of final outcomes would answer this; none is given.
+6. **The coordinator itself is never stress-tested.** All five App.E routing traces are curated; routing-decision failure statistics and calibration of the coordinator's `estimated_success_rate` are not reported.
+
+<SelfCheck q="Mechanically, what makes EngiAgent's coordination 'fully connected', and what does it NOT mean?" a="After every agent step, one LLM coordinator diagnoses the outcome against shared memory (debug records, solution history, current state, per-agent access counts and success rates) and can hand control — with targeted fix suggestions — to any of the five stage agents, replacing a pipeline's hard-coded reflection edges with a complete transition graph. It is not N-to-N peer messaging: all communication is hub-and-spoke through the coordinator, which is why token cost stays near the fixed pipeline's ($0.51 vs $0.47 on GPT-4o)." />
+
+## Glossary
+- <Term def="mixed-integer linear program; the dominant model class in the benchmark's worked examples, solved via GLPK/CBC">MILP</Term>
+- <Term def="numerical-solution rate: fraction of tasks where a concrete numerical solution is produced at all">Num.</Term> / <Term def="feasible-solution rate: fraction of tasks whose solution satisfies every annotated hard constraint, checked by execution + human experts">Feas.</Term>
+- <Term def="LLM agent framework for real-world mathematical modeling (Liu et al. 2025b); the strongest feasibility baseline on GPT-4o and Gemini">MM-Agent</Term>
+- <Term def="case-based-reasoning agent for automated data science (Guo et al. 2024); highest numerical rates among baselines but near-zero feasibility">DS-Agent</Term>
+- <Term def="last-resort coordinator mechanism that forcibly reassigns the task to a different agent when the same agent fails repeatedly, preventing infinite debug loops">forced agent switching</Term>
+
+{/* NOTES_START */}
+### Personal notes
+For the advisor discussion, decompose the claim: the scaffold (roles + verifier + prompt engineering) takes GPT-4o feasibility 7.55% → 47.17%; the coordinator takes 47.17% → 64.15%. "Full connectivity" is an LLM-routed transition policy, cost-neutral because it is centralized — nothing quadratic is being bought or paid for. The most portable ideas for our harness: (1) guideline-grounded router + structured debug memory + forced-switch guard as a drop-in replacement for hand-coded reflection edges; (2) Fig.4 as citable evidence that LLM-judge scores are invalid for open-ended agent outputs when an execution-grounded check exists. Check github.com/AI4Engi/EngiAgent for the coordinator prompt, iteration caps, and whether routing logs are released.
+{/* NOTES_END */}

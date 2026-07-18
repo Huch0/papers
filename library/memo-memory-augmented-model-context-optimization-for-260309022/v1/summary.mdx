@@ -1,0 +1,149 @@
+---
+canonical_key: arxiv-2603.09022
+version_key: v1
+title: 'MEMO: Memory-Augmented Model Context Optimization for Robust Multi-Turn Multi-Agent LLM Games'
+authors:
+- Yunfei Xie
+- Kevin Wang
+- Bobby Cheng
+- Jianzhu Yao
+- Zhizhou Sha
+- Alexander Duffy
+- Yihan Xi
+- Hongyuan Mei
+- Cheston Tan
+- Chen Wei
+- Pramod Viswanath
+- Zhangyang Wang
+venue: ICML
+year: 2026
+tags:
+- agent-memory
+- icml2026-picks
+- multi-agent
+- prompt-optimization
+topic_groups:
+- agent_harness
+- general_agent_methods
+triage_label: TRACK_ONLY
+triage_confidence: high
+source_link: https://arxiv.org/abs/2603.09022v2
+summary_date: '2026-07-18'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>A weight-free self-play harness for two-player LLM games that optimizes only the inference-time context — tournament-style prompt evolution selected by a <Term def="Bayesian skill rating (Herbrich et al. 2006): each player's skill is a Gaussian with mean μ and uncertainty σ, updated from match outcomes">TrueSkill</Term> lower-confidence bound, a persistent CRUD-maintained memory bank of trajectory-distilled insights injected as priors, and prioritized replay of rare states — roughly doubling mean win rate (25.1→49.5% GPT-4o-mini; 20.9→44.3% Qwen2.5-7B) within 2,000 self-play games per task.</TLDR>
+
+<WhyItMatters>Squarely harness engineering: every gain comes from optimizing prompt + memory *around* frozen models, with RL as the explicit comparison point. Its evaluation angle — trivial prompt rewordings flip multi-agent leaderboards — is direct ammunition for my agent-benchmark run-to-run-variance concerns. ICML 2026 poster; advisor-review pick.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "25.1→49.5%", label: "mean win rate, GPT-4o-mini", sub: "5 games × 3 held-out opponents (Tab.2)" },
+  { value: "20.9→44.3%", label: "mean win rate, Qwen2.5-7B", sub: "same protocol (Tab.2)" },
+  { value: "6.4% vs 44.9%", label: "mean run-to-run RSE vs baseline", sub: "GPT-4o-mini, the ~7× stability claim (Tab.2)" },
+  { value: "2,000", label: "self-play games per task", sub: "8 candidates × 5 gens × 50 games; 19× fewer than RL (Fig.1b)" },
+]} />
+
+## Motivation
+<Problem>Multi-turn, multi-agent LLM game evaluations have substantial run-to-run variance</Problem>: each output becomes the next input, so small early deviations compound into divergent trajectories; multi-agent coupling amplifies them (one agent's inconsistency perturbs the other's best responses); and some LLMs are nondeterministic even under nominally deterministic decoding (§1). This biases win-rate estimates and destabilizes rankings across repeated tournaments. The paper quantifies the prompt half of the problem: <Finding src="Appx.A, Fig.5">five semantically equivalent stylistic rewordings of the Kuhn Poker prompt (gladiator / technical / spiritual / casual / spy themes) reshuffle a six-frontier-model round-robin leaderboard — pairwise <Term def="rank correlation over all pairs: 1 = identical rankings, 0 = uncorrelated, negative = reversed">Kendall's τ</Term> between prompt-variant leaderboards spans 0.50 down to −0.50</Finding>. Meanwhile <Problem>automatic prompt optimizers (TextGrad, MIPRO, GEPA) were built for static tasks: they update from a local batch of trajectories and retain nothing across rounds</Problem>, so in path-dependent games — where different tournaments surface different decisive states and rare failure modes — the optimization itself becomes run-dependent and high-variance.
+
+## Contribution (what's new)
+<Novelty>Treat the game context (system prompt + injected memory) as the optimization target, and make the optimizer *cumulative*: a persistent memory bank of insights distilled from completed self-play trajectories, merged CRUD-style (add if novel, merge if similar, delete both on contradiction) across generations and injected as inference-time priors into 75% of candidates</Novelty>. The form is forced by why GEPA-style evolution fails here: memoryless prompt search rediscovers and forgets game-specific lessons every run. Two supporting mechanisms handle game noise: <Novelty>uncertainty-aware candidate selection via a TrueSkill lower-confidence bound (μ − kσ)</Novelty>, because raw win counts over ~50 games confuse luck with skill, and <Novelty>prioritized replay of rare trajectory prefixes (inverse-frequency priority, stored with environment seeds)</Novelty>, because decisive states will not recur by chance. The ablation is the argument: exploration alone +3.3 points, memory alone +10.4, combined +24.3 (Tab.3).
+
+## Research questions
+(1) How sensitive are multi-turn multi-agent game outcomes and rankings to inference-time context? (2) Can context optimization alone — no weight updates — match RL self-play, and at what interaction budget and run-to-run stability? (3) Which ingredient drives gains: structured exploration (tournament + replay) or retention (persistent memory)? (4) Do optimized contexts transfer zero-shot across games and across models?
+
+## Methodology
+Formalized as a two-player, turn-based, zero-sum, partially observable Markov game; the context is the pair (instruction prompt, injected memory). MEMO maintains 8 candidate contexts over 5 generations. Each generation: every candidate plays 50 self-play games against a fixed anchor — the same base model running the default prompt (roles swapped in asymmetric games) — then TrueSkill-LCB scores pick survivors into a persistent elite pool. Discarded slots are refilled by random style-guided prompt edits or memory-augmented edits. After each generation, the model reflects on sampled trajectories (the template targets the highest-outcome-variance states) to extract typed insights that are CRUD-merged into the bank; 75% of next-generation candidates get a sampled subset appended, and 40% of games resume from prioritized replay prefixes. Total: 2,000 games per task. Five text games from <Term def="open competitive text-game suite with online TrueSkill ranking (Guertler et al. 2025)">TextArena</Term> and <Term def="benchmark combining strategic planning, cooperative/competitive play, and negotiation (Yao et al. 2025)">SPIN-Bench</Term>.
+
+<Pass title="Method details, hyperparameters, and evaluation protocol">
+<Stepper steps={[
+  { title: "Tournament + uncertainty-aware selection (§3.1)", body: "Population N=8. Each candidate plays 50 games/generation against the fixed default-prompt anchor (two role-swapped games per round in asymmetric games). TrueSkill models each candidate's skill as a Gaussian; survivors are kept by the lower-confidence bound S(c) = μ − kσ with k=1, penalizing high-uncertainty candidates so a lucky 3-for-3 cannot displace a reliably strong context. A persistent pool P retains the best contexts across generations; the final output is the highest-scoring member of P." },
+  { title: "Context proposal operators (§3.1, Appx.D)", body: "Refill via (a) random proposals: sample one of ~45 catalogued playstyles (aggressive, minimax-oriented, deceptive, trap-setting, ...) and apply length-bounded edits to the base context that must preserve legality and interface constraints; (b) memory-augmented updates: targeted prompt edits conditioned on insights sampled from the bank. Generation 0 is all-random (empty bank)." },
+  { title: "Reflection into the memory bank (§3.2, Appx.E–F)", body: "After each generation the model reviews sampled completed trajectories — states with the highest win/loss variance — and emits typed insights (rule clarifications, legality constraints, strategy priors). Merge operations: ADD if not similar to any stored insight; EDIT to merge/generalize similar ones; REMOVE both sides of a contradiction. At the next generation a compact subset is appended to ρ=75% of candidates at inference time; the same bank also conditions the memory proposal operator. Bank size and subset size: not reported." },
+  { title: "Prioritized replay (§3.3)", body: "Buffer of capacity 100,000 stores trajectory prefixes turn-by-turn with the environment seed; invalid moves are kept to preserve the true course of play. Sampling weight is inverse-frequency priority raised to α=0.6; with probability β=0.4 a game resumes from a sampled prefix instead of starting fresh. Sensitivity (Tab.5–6, TwoDollar): β is the most sensitive knob — always-replay (β=1.0) collapses to 31.1% vs 61.1% at β=0.4; the largest tested buffer wins; intermediate ρ in 0.25–0.75 beats both extremes." },
+  { title: "Budget and evaluation (§4.2–4.3)", body: "One fixed configuration everywhere (no per-task tuning): 8 × 5 × 50 = 2,000 self-play games per task. Evaluation: 3 independent optimization runs; each final context plays 50 games × 3 held-out opponents (Grok-4-Fast-Non-Reasoning, Gemini-2.5-Flash-Lite, Qwen3-235B-A22B-Instruct-2507) at temperature 1.0. Reported: mean win rate and mean per-game RSE across runs. Baselines: TextGrad/MIPRO/GEPA are author-adapted to games via offline tournament trajectories and action-matching scoring rules (Appx.H); RL baselines (UnstableBaselines = LoRA + REINFORCE, SPIRAL) train a single policy and evaluate the best checkpoint over three 50-game sets." },
+]} />
+
+<MathBlock>{`S(c) = \\mu_c - k\\,\\sigma_c, \\qquad p_i = \\frac{\\mathrm{priority}(\\tau_i)^{\\alpha}}{\\sum_j \\mathrm{priority}(\\tau_j)^{\\alpha}}, \\qquad \\mathrm{priority}(\\tau) = \\frac{1}{\\mathrm{count}(\\tau)}`}</MathBlock>
+</Pass>
+
+## Main result
+<Finding src="Tab.2, p.8">On GPT-4o-mini, MEMO reaches 49.5% mean win rate vs 25.1% for the default prompt and 36.7% for the best prompt-optimization baseline (MIPRO), with the lowest mean <Term def="relative standard error: 100 × std/(mean·√n) over n=3 runs, computed per game then averaged over games; lower = more run-to-run stable">RSE</Term> (6.4% vs 44.9% baseline)</Finding>. On Qwen2.5-7B, <Finding src="Tab.2, p.8">MEMO reaches 44.3% — 0.7 points *below* the RL baseline UnstableBaselines (45.0%) on mean win rate, but using 19× fewer games (2,000 vs 38,000) and with RSE 6.1% vs the RL run's 43.3%</Finding>. A third base model replicates the direction: <Finding src="Tab.14">Gemini-2.5-Flash improves 27.4%→40.8% (no RSE reported)</Finding>.
+
+<SortableTable columns={["Model", "Method", "SimpNeg %", "TwoDollar %", "Kuhn %", "Briscola %", "SimpTak %", "Mean %", "RSE %"]} rows={[
+  ["GPT-4o-mini", "Baseline (static)", 31.3, 32.2, 39.1, 0.3, 21.4, 25.1, 44.9],
+  ["GPT-4o-mini", "CoT (static)", 27.8, 25.7, 46.5, 30.4, 24.8, 31.1, 28.7],
+  ["GPT-4o-mini", "ToT (static)", 26.3, 27.0, 51.7, 45.1, 23.8, 34.8, 36.5],
+  ["GPT-4o-mini", "TextGrad (prompt-opt)", 42.0, 44.6, 55.6, 7.1, 23.6, 34.6, 18.4],
+  ["GPT-4o-mini", "MIPRO (prompt-opt)", 38.4, 50.9, 55.1, 19.7, 19.1, 36.7, 12.4],
+  ["GPT-4o-mini", "GEPA (prompt-opt)", 36.8, 40.4, 52.2, 3.3, 26.9, 32.0, 11.3],
+  ["GPT-4o-mini", "MEMO (ours)", 54.9, 52.4, 55.6, 42.7, 41.8, 49.5, 6.4],
+  ["Qwen2.5-7B", "Baseline (static)", 24.0, 17.1, 45.3, 2.8, 15.1, 20.9, 30.1],
+  ["Qwen2.5-7B", "CoT (static)", 23.8, 18.7, 42.0, 25.8, 13.6, 24.8, 43.4],
+  ["Qwen2.5-7B", "ToT (static)", 27.1, 20.7, 42.2, 22.7, 15.1, 25.6, 40.2],
+  ["Qwen2.5-7B", "TextGrad (prompt-opt)", 37.1, 29.3, 52.8, 7.1, 22.4, 29.9, 21.7],
+  ["Qwen2.5-7B", "MIPRO (prompt-opt)", 42.4, 47.5, 53.8, 2.2, 20.9, 33.4, 7.3],
+  ["Qwen2.5-7B", "GEPA (prompt-opt)", 34.4, 31.7, 55.8, 3.3, 19.3, 28.8, 14.8],
+  ["Qwen2.5-7B", "UnstableBaselines (RL)", 41.1, 30.4, 52.7, 53.3, 47.3, 45.0, 43.3],
+  ["Qwen2.5-7B", "SPIRAL (RL)", 45.7, "–", 56.7, "–", 32.7, "–", "–"],
+  ["Qwen2.5-7B", "MEMO (ours)", 48.0, 48.4, 60.0, 31.1, 34.0, 44.3, 6.1],
+]} />
+
+## Key findings
+- <Finding src="Tab.3, p.9">Memory is the dominant mechanism; exploration alone barely helps</Finding>: over a 23.8% three-game base, tournament-only adds +3.3, memory-only +10.4, tournament+memory +24.3, and replay a further +2.1 to 50.2% — retention turns memoryless prompt search into cumulative learning (table below).
+- <Finding src="Fig.1b; Tab.11">Sample- and token-efficient vs alternatives</Finding>: 60% on Kuhn Poker at 2,000 games where RL needs 38,000 (Qwen); optimizer output-token cost 91K vs MIPRO 354K and GEPA 114K (TextGrad uses ~1K but cannot learn multi-turn behavior). Gameplay tokens for the 2,000 games are excluded from this accounting.
+- <Finding src="Tab.2">Where MEMO wins tracks game type — and RL keeps two games</Finding>: largest MEMO gains in negotiation and Kuhn Poker; UnstableBaselines beats MEMO on <Term def="Italian 40-card trick-taking game: capture point cards (A=11, 3=10) under a trump suit">Briscola</Term> (53.3% vs 31.1%) and <Term def="4×4 stone-placement connection game: connect two opposite board edges, no stacking">SimpleTak</Term> (47.3% vs 34.0%) on Qwen. The abstract's "RL remains more effective in perfect-information settings" undersells that Briscola — an imperfect-information game — is also an RL win.
+- <Finding src="Tab.4, p.9">Optimized contexts transfer zero-shot across games, asymmetrically</Finding>: SimpleTak→KuhnPoker +25.9 points and TwoDollar→SimpleTak +26.4, but Briscola→SimpleTak −7.1; protocol-level skills (turn management, action formatting, short-horizon planning) travel while payoff-specific heuristics need structural overlap.
+- <Finding src="Fig.4, p.10">Cross-model transfer helps weaker models and can hurt stronger ones</Finding>: a GPT-4o-mini-optimized context lifts Gemini-2.5-Flash-Lite on all three tested games (up to +35 on TwoDollar) but drops Grok-4-Fast on exactly its strongest games (−8.0 Briscola, −6.0 Kuhn Poker) — transferred heuristics fill capability gaps but conflict with native strategies.
+- <Finding src="Appx.M">Stored insights encode strategy, not trivia</Finding>: pressure-based betting balanced against hand strength (Kuhn), probing the opponent's asymmetric resource valuations before offering (SimpleNegotiation — a fact never stated in the rules), and deadline-pressure tactics (TwoDollar).
+
+<ResultsTable columns={["Tournament", "Memory", "Replay", "TwoDollar", "KuhnPoker", "Briscola", "Mean", "Δ vs base"]} rows={[
+  ["–", "–", "–", "32.2%", "39.1%", "0.3%", "23.8%", "–"],
+  ["✓", "–", "–", "24.7%", "54.7%", "2.0%", "27.1%", "+3.3"],
+  ["–", "✓", "–", "34.2%", "42.0%", "26.3%", "34.2%", "+10.4"],
+  ["✓", "–", "✓", "32.0%", "54.2%", "38.7%", "41.6%", "+17.8"],
+  ["✓", "✓", "–", "48.7%", "57.2%", "38.4%", "48.1%", "+24.3"],
+  ["✓", "✓", "✓", "52.4%", "55.6%", "42.7%", "50.2%", "+26.4"],
+]} />
+
+## Implications
+Reframes evaluation context as an optimizable part of the measured system rather than a fixed wrapper — for harness work, the actionable reading is that a large share of "model capability" in interactive settings is actually context quality. It extends the experiential line of <Related>ReAct → Reflexion → ExpeL (persistent insight rules for static tasks)</Related> into adversarial multi-agent games, and tempers <Related>GEPA's "reflective prompt evolution can outperform RL" claim</Related>: in path-dependent games, evolution without retention loses badly (GEPA 32.0% vs MEMO 49.5% on GPT-4o-mini), and persistent memory is what closes the gap. For evaluation practice it argues — with <Related>Mizrahi et al.'s multi-prompt evaluation call</Related> — for prompt-variation reporting over single-prompt leaderboards. <FollowUp>The obvious missing experiment: re-run the Appendix A Kendall-τ ranking study *with* MEMO-optimized contexts to actually test the "stable rankings" claim</FollowUp>. <FollowUp>Port the TrueSkill-LCB candidate gate and the CRUD memory bank to non-game agent harnesses (SWE/web agents), where run-to-run variance has the same compounding structure</FollowUp>. <FollowUp>Hybrid split suggested by Tab.2: RL weights for perfect-information planning, context+memory for negotiation and hidden-information games</FollowUp>.
+
+## Limitations
+- <Caveat>Games only, and small ones</Caveat>: five two-player zero-sum text games (Kuhn Poker has 3 cards; SimpleTak is a 4×4 board); base models are small (GPT-4o-mini, 7B) and opponents are non-reasoning tiers. Nothing shows the recipe on open-ended agent tasks.
+- <Caveat>Variance reduction is not demonstrated separately from win-rate gains</Caveat>: RSE divides by the mean and the per-game average is dominated by near-zero-mean games (baseline Briscola 0.3%). Recomputing absolute per-game std from Tabs.7–9/12 (GPT-4o-mini): MEMO averages 5.3 points ≈ MIPRO 5.3, *above* GEPA 3.2 — the "most stable" headline rests on the relative metric.
+- <Caveat>The ranking-stability claim is never measured post-treatment</Caveat>: the abstract promises "more stable rankings across prompt variations", but the Kendall-τ experiment exists only for unoptimized contexts.
+- <Caveat>The 19× efficiency figure is one game and one model</Caveat> (Kuhn Poker, Qwen; Fig.1b), with the RL games-to-60% read off a single training run.
+- <Caveat>Everything rests on 3 runs, with no significance testing</Caveat>; compute cost beyond optimizer tokens — 2,000 multi-turn games per task per run, both players billed, across 5 games × 2 models × 3 runs plus ablations — is not reported in dollars or wall-clock (the acknowledgments thank two organizations for covering experiment costs).
+- <Caveat>Optimization plays a fixed default-prompt copy of the base model, and per-opponent robustness is weak</Caveat>: Tab.13 shows MEMO's SimpleNegotiation win rate is 94.0% vs Gemini-2.5-Flash-Lite but 30.7% vs Grok-4-Fast (std across opponents up to 37 points) — "robust" means run-to-run, not opponent-to-opponent.
+
+## Critiques and Questions
+
+<ClaimEvidence rows={[
+  { claim: "Context optimization roughly doubles mean win rate (25.1→49.5% GPT-4o-mini; 20.9→44.3% Qwen2.5-7B) in 2,000 games/task", evidence: "Tab.2: 5 games × 3 held-out opponents × 50 games × 3 optimization runs; GPT-4o-mini row reproduces exactly from per-trial Tab.12; replicated directionally on Gemini-2.5-Flash (Tab.14)", verdict: "Supported (minor Qwen inconsistencies, see below)" },
+  { claim: "Run-to-run variance drops ~7× (mean RSE 44.9→6.4%)", evidence: "RSE is mean-normalized and averaged per game, so rescuing Briscola from 0.3% mechanically collapses it; in absolute std MEMO (5.3 pts) ≈ MIPRO (5.3), above GEPA (3.2)", verdict: "Partially supported — stability metric entangled with win-rate gains" },
+  { claim: "19× more sample-efficient than RL", evidence: "Fig.1b only: one game (Kuhn Poker), one model (Qwen), one RL training run; 2,000 vs 38,000 games", verdict: "Supported for that setting; generalized in the abstract" },
+  { claim: "Gives more stable rankings across prompt variations", evidence: "Appx.A shows instability WITHOUT MEMO (Kendall τ down to −0.50); no post-MEMO ranking experiment is run", verdict: "Not demonstrated" },
+  { claim: "Persistent memory is the dominant mechanism", evidence: "Tab.3 ablation ladder: memory-only +10.4 vs tournament-only +3.3; tournament+memory +24.3 — but 3 games, GPT-4o-mini only", verdict: "Supported at limited scope" },
+]} />
+
+1. The stability story is the paper's most quotable claim and its weakest measurement. Is there any matched-mean comparison where MEMO shows lower absolute dispersion than a baseline? The released tables cannot answer it, and the baseline's per-trial data (needed for its absolute std) is not published at all.
+2. Internal inconsistencies worth raising: Qwen MEMO Briscola/SimpleTak are 31.1/34.0 in Tab.2 but 31.5/36.9 in per-trial Tab.12 (mean 44.3 vs 45.0), and the printed 6.1% RSE is not reproducible from Tab.12's stds (I get ~7.0); Table 4's caption says columns = source game while the header ("Training Game") and three of four in-text examples imply rows = source; the intro's "6.4% compared to 43.3%" pairs a GPT-4o-mini number with what is actually the RL baseline's RSE (the static baseline's is 44.9%).
+3. Baseline strength is author-implemented adaptation: MIPRO/GEPA are driven by an action-matching proxy score the authors themselves argue is ill-defined for games, so part of MEMO's margin over them may be adaptation quality rather than method. SPIRAL is missing 2 of 5 games with no explanation.
+4. Generality of the harness is less turnkey than presented: the released reflection/memory prompts (Appx.E–F) are board-game flavored ("cell 3", X/O board-reading guides), and per-game instantiation is not described. Also unreported: bank size over time, injected subset size, trajectories reflected per generation.
+5. Outcome adjudication and contamination: TwoDollar's victory condition includes "reach any deal while being appropriately sympathetic" — who or what judges sympathy is unspecified, a potential judge channel in one of five games. And Kuhn Poker's equilibrium strategy is textbook material almost surely in pretraining data, so some memory "insights" (bet more with K) look like elicitation of memorized strategy rather than discovery — harmless for method comparison, but it inflates the learning narrative.
+
+<SelfCheck q="Why does MEMO select surviving prompt candidates with a TrueSkill lower-confidence bound rather than raw win rate, and who is the opponent during optimization?" a="With ~50 stochastic games per candidate per generation, raw win counts confuse luck with skill — a 3-for-3 context may just be lucky. TrueSkill models each candidate's skill as a Gaussian (μ, σ) and MEMO keeps candidates by S(c) = μ − kσ with k=1, penalizing uncertainty so only reliably winning contexts survive. During optimization every candidate plays a fixed anchor: the same base model running the default prompt (roles swapped in asymmetric games); the three held-out opponent models appear only at evaluation time." />
+
+## Glossary
+- <Term def="TextArena resource-trading game: 10 turns of offers over wheat/wood/sheep/brick/ore with private per-player valuations">SimpleNegotiation</Term> / <Term def="classroom negotiation game (via SPIN-Bench): split a fixed $2.00 pot within 20 rounds under private asymmetric instructions; no deal means both get nothing">TwoDollar</Term> / <Term def="3-card (J,Q,K) simplified poker: ante 1 chip, one betting round of check/bet/call/fold; played over 3 deals here">Kuhn Poker</Term>
+- <Term def="gradient-via-text prompt optimizer: a text loss critiques trajectories and is back-propagated as natural-language edits (Yuksekgonul et al. 2024)">TextGrad</Term> / <Term def="Bayesian search over (instruction, few-shot) combinations scored by a task metric, via DSPy (Opsahl-Ong et al. 2024)">MIPRO</Term> / <Term def="reflective evolutionary prompt search with Pareto-based candidate selection (Agrawal et al. 2025)">GEPA</Term>
+- <Term def="lightweight async multi-agent RL library for TextArena; here LoRA rank-16 + REINFORCE on Qwen2.5-7B">UnstableBaselines</Term> / <Term def="self-play RL framework framing multi-turn reasoning as zero-sum games (Liu et al. 2025)">SPIRAL</Term>
+- <Term def="create/read/update/delete — the database-style operation set MEMO uses to reconcile new insights with the stored bank">CRUD</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Three things to steal for our harness work: (1) the TrueSkill-LCB gate as a cheap selection rule for any noisy A/B over agent configs; (2) the Appendix A protocol — five stylistic prompt paraphrases + Kendall-τ across leaderboards — as a ready-made audit for our own multi-agent evals; (3) the RSE lesson in reverse: never report mean-normalized variance when means differ, since lifting the mean masquerades as stabilizing. Discussion point for advisor: MEMO is essentially GEPA + ExpeL-style persistent memory + prioritized replay glued by TrueSkill — the delta is integration, not any single new idea, but the ablation (+3.3 exploration vs +10.4 memory) is a genuinely useful decomposition for harness design. Open question I'd push on: everything is optimized against a fixed default-prompt self-opponent; does the memory bank encode the game or the anchor opponent? The 94% vs 30.7% per-opponent spread suggests some of both. Code: github.com/openverse-ai/MEMO.
+{/* NOTES_END */}

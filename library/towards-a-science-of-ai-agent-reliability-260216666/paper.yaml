@@ -1,0 +1,61 @@
+canonical_key: arxiv-2602.16666
+slug: towards-a-science-of-ai-agent-reliability-260216666
+title: Towards a Science of AI Agent Reliability
+authors:
+- Stephan Rabanser
+- Sayash Kapoor
+- Peter Kirgis
+- Kangheng Liu
+- Saiteja Utpala
+- Arvind Narayanan
+year: 2026
+primary_ids:
+  doi: null
+  arxiv_base_id: '2602.16666'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2602.16666v3
+- https://arxiv.org/pdf/2602.16666v3
+topic_groups:
+- agent_harness
+- general_agent_methods
+tags:
+- evaluation-harness
+- icml2026-picks
+- reliability-concern
+venue:
+  name: ICML
+  tier: A_star
+  status: accepted
+  year: 2026
+user:
+  read_status: unread
+  triage_label: TRACK_ONLY
+  triage_confidence: high
+  notes: null
+milestone: null
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v3
+  source: arxiv
+  source_url: https://arxiv.org/abs/2602.16666v3
+  pdf_path: library/towards-a-science-of-ai-agent-reliability-260216666/v1/paper.pdf
+  summary_path: library/towards-a-science-of-ai-agent-reliability-260216666/v1/summary.mdx
+  metadata_path: library/towards-a-science-of-ai-agent-reliability-260216666/v1/metadata.yaml
+  fetched_at: '2026-07-18T11:14:31Z'
+  source_updated_at: '2026-06-02T02:15:05Z'
+  arxiv_version: v3
+  pdf_sha256: f6347ad130f009ea385cfa341a32fd1c7d757d65458b4d1d73dae5c3a28a2ccf
+  pdf_bytes: 1901122
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-07-18T11:14:31Z'
+  updated_at: '2026-07-18T11:26:49Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

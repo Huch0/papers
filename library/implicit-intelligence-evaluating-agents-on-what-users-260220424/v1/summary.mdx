@@ -1,0 +1,132 @@
+---
+canonical_key: arxiv-2602.20424
+version_key: v1
+title: Implicit Intelligence -- Evaluating Agents on What Users Don't Say
+authors:
+- Ved Sirdeshmukh
+- Marc Wetter
+venue: ICML
+year: 2026
+tags:
+- benchmark
+- environment
+- evaluation-harness
+- icml2026-picks
+topic_groups:
+- agent_harness
+- general_agent_methods
+triage_label: TRACK_ONLY
+triage_confidence: high
+source_link: https://arxiv.org/abs/2602.20424v1
+summary_date: '2026-07-18'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>A 205-scenario benchmark showing that even the best frontier model (GPT-5.2-pro, 48.3% strict pass rate) usually fails to satisfy requirements users leave unsaid — privacy, accessibility, irreversibility, context — delivered on Agent-as-a-World (AaW), a harness where each interactive environment is a single YAML file simulated turn-by-turn by an LLM.</TLDR>
+
+<WhyItMatters>AaW is the cheapest published environment-harness pattern I know — declarative YAML worlds + an LM simulator + state-based rubrics, no per-domain engineering — directly reusable in my harness/eval work, and it targets underspecification, a blind spot shared by every explicit-instruction agent benchmark I use. ICML 2026 poster; advisor-review pick.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "48.3%", label: "best scenario pass rate", sub: "GPT-5.2-pro; NSS 72.7% (Tab.2)" },
+  { value: "205", label: "scenarios, 4 categories", sub: "iOS-grounded, adversarially mined" },
+  { value: "16", label: "models evaluated", sub: "frontier + open-weight" },
+  { value: "93.3%", label: "world-model exact-match consistency", sub: "Claude Opus 4.5, best of 3 candidates (A.4)" },
+]} />
+
+## Motivation
+Real requests are <Problem>fundamentally underspecified: "delete old documents" silently excludes files without backups; "share the party photos" assumes location metadata gets scrubbed</Problem> — yet current agent benchmarks (SWE-bench, WebArena, AgentBench, GAIA, Tau-bench) <Problem>fully specify ground truth in the task description, so success measures literal compliance rather than whether the user's actual goal was served</Problem> (§1, §2.1). On the environment side there is a cost tension: <Problem>engineered testbeds (WebArena, ALFWorld) demand heavy per-domain engineering, while static task descriptions leave no world to explore</Problem> — and implicit constraints are only fairly testable if the agent *could* discover them by probing (§4.1). The framing is the evaluation-side instrument for <Term def="agents optimizing the stated objective in ways that violate human intent (Krakovna et al. 2020)">specification gaming</Term> (§2.4).
+
+## Contribution (what's new)
+(1) <Novelty>A benchmark whose ground truth is deliberately absent from the instruction</Novelty>: each scenario pairs an apparently simple request with hidden execution rules whose consequences are discoverable via read-only observation actions, graded by binary rubrics over final state and trajectory — so "did the agent infer what wasn't said" becomes mechanically checkable across four categories (implicit reasoning, catastrophic risk, privacy/security, accessibility). (2) <Novelty>Agent-as-a-World: the entire interactive environment is one YAML file — context, entities with state and typed-return actions, hidden execution rules, rubric — with an LLM as the simulator</Novelty>, so a new domain costs a text file instead of a simulator codebase. (3) An <Novelty>adversarial construction loop — a Planner LLM drafts a scenario, a frontier attempter plays it, the Planner mutates it until the attempter fails</Novelty> — with human fairness gates layered on top (§5).
+
+## Research questions
+Can frontier agents infer and satisfy unstated-but-discoverable requirements, or do they optimize literal compliance? Is an LLM consistent enough to serve as the environment simulator for reproducible evaluation? And where exactly does implicit reasoning break — exploration, configuration, or state stewardship?
+
+## Methodology
+Three LM roles with a deliberate information partition. The **Primary Agent** (model under test) sees only the user prompt and entity/action descriptions — no entity state (it must call `get_*`/`list_*` actions to observe) and no execution rules. The **World Model** (fixed: Claude Opus 4.5) sees state plus the hidden execution rules and executes each action — validate availability, check preconditions, apply effects, update state, respond per the action's `returns` template — but never sees the rubric. The **Evaluator** (GPT-5.2-high) sees everything — rubric, full trajectory with rationales, execution feedback, final world state — and marks each criterion pass/fail (§4.3–4.4, §6.2). Episodes run up to 50 steps until the agent signals `TASK_COMPLETE`. Scenarios are built so wrong paths *succeed silently* ("soft failures" — the world never warns; only the rubric catches the violation, Listing 3). Metrics: <Term def="Scenario Pass Rate: fraction of scenarios where ALL rubric criteria pass (strict conjunction)">SPR</Term> and <Term def="Normalized Scenario Score: mean fraction of criteria passed per scenario (partial credit)">NSS</Term> (§6.3).
+
+<Pass title="Method details: YAML anatomy, construction pipeline, world-model selection">
+**Scenario YAML (§4.2, §5.5, A.1).** Five blocks: metadata (id, category, user prompt); world context (time, device, user traits); 3–5 entities, each with key–value state and 2–4 actions whose `returns` field precisely specifies output format and state changes; 3+ hidden execution rules visible only to the World Model (e.g. a newly connected audio device inherits the previous device's mono/balance settings); 3+ rubric criteria over final state or action sequences (e.g. balance between 0.45 and 0.55). The worked example (`ios-accessibility-mono-balance`) requires inferring that sharing one AirPod each demands Mono Audio *and* centered balance; GPT-5 passes 4/4 by querying state before acting (A.1.2).
+
+<Stepper steps={[
+  { title: "Seed (§5.1)", body: "Each scenario starts from: one of 303 iOS Shortcuts actions (a community-compiled directory spanning 7 domains — apps 103, media 66, documents 48, scripting 45, location 18, web 16, sharing 7), a PersonaHub persona (age/occupation/health diversity), and a target category. iOS grounding is claimed as ecological validity; the evaluation target is claimed domain-agnostic." },
+  { title: "Adversarial synthesis (§5.2, Listings 3-5)", body: "A Planner LLM drafts the YAML; it is executed against a rotating attempter (GPT-5 series, Claude Opus/Sonnet, Gemini 3 Pro); if the attempter passes, the Planner minimally mutates the scenario (timing constraints, order dependencies, hidden side effects) and retries until the attempter fails or an iteration cap is hit. Leakage guardrails: neutral entity/action names, no rubric requirements encoded in visible state." },
+  { title: "Human validation (§5.3)", body: "An author refines the draft; two independent experts then check Logical Consistency (discoverable without tricks), Shared Expectations (no author idiosyncrasies), and Rubric Objectivity (binary conditions). Unanimous consensus is required. No inter-annotator statistics, expert identities, or rejection counts are reported." },
+  { title: "Difficulty gate + dataset QA (§5.3, §5.6)", body: "Keep a scenario only if at least one frontier panel model (GPT-5.2, GPT-5, Claude Opus 4.5, Claude Sonnet 4.5, Gemini 3 Pro) fails it (score at or below 70%) while at least one passes at 100%; scenarios everyone passes are discarded. Dataset-level checks: rough category/model balance to limit mining bias, plus embedding-based near-duplicate removal. Funnel counts: not reported." },
+]} />
+
+**World Model selection (§7.2, A.4).** Candidates were stress-tested on 55 scenarios with repeated runs (275 executions, 172 unique action signatures) under two metrics: *exact-match* consistency (identical action + identical parameters must produce identical feedback and state changes) and *action-type* consistency (same action type touches the same state variables). Threshold ≥90% on both. Claude Opus 4.5 was the only qualifier (93.29% exact / 98.64% action-type); GPT-5 (83.63/97.00) and Gemini 3 Pro (85.19/96.29) failed exact-match, hallucinating minor variations in values and feedback strings across identical runs. All 16 evaluated models — including Opus 4.5 itself — face the same fixed World Model.
+
+**Evaluator validity (§6.2).** GPT-5.2-high judges each criterion from trajectory + final state with explicit reasoning. The paper reports comparing evaluator judgments against human annotations on a randomly sampled subset with high agreement — but no sample size, agreement percentage, or kappa is given.
+</Pass>
+
+## Main result
+On the strict all-criteria metric, <Finding src="Tab.2, p.9">the best of 16 models, GPT-5.2-pro, passes only 48.3% of scenarios (NSS 72.7%)</Finding> — violating at least one unstated requirement in over half of episodes, which the authors contrast with near-ceiling frontier scores on established benchmarks. The 95% bootstrap CIs are roughly ±4–7 pp, so <Finding src="Tab.2">the top two (GPT-5.2-pro 48.3±6.8, GPT-5 44.9±6.8) are statistically inseparable</Finding>. Per-category leaders split across vendors: Claude Opus 4.5 on catastrophic risk (50.0), GPT-5.2-pro on privacy (47.8) and implicit reasoning (51.4), GPT-5 on accessibility (48.5).
+
+<SortableTable columns={["Model", "SPR %", "NSS %", "Implicit", "Catastrophic", "Privacy", "Access."]} rows={[
+  ["GPT-5.2-pro", 48.3, 72.7, 51.4, 48.2, 47.8, 42.4],
+  ["GPT-5", 44.9, 71.4, 41.4, 48.2, 43.5, 48.5],
+  ["Claude Opus 4.5", 39.5, 68.0, 30.0, 50.0, 41.3, 39.4],
+  ["Gemini 3 Pro", 38.5, 67.3, 45.7, 35.7, 30.4, 39.4],
+  ["GPT-5.2", 33.7, 62.3, 24.3, 39.3, 37.0, 39.4],
+  ["Gemini 3 Flash", 30.2, 59.8, 32.9, 37.5, 19.6, 27.3],
+  ["Claude Sonnet 4.5", 28.3, 59.8, 25.7, 35.7, 17.4, 36.4],
+  ["DeepSeek V3p1", 27.3, 58.4, 31.4, 32.1, 21.7, 18.2],
+  ["DeepSeek R1", 22.4, 51.4, 17.1, 23.2, 19.6, 36.4],
+  ["GPT-5.1", 20.5, 53.2, 15.7, 30.4, 15.2, 21.2],
+  ["GPT-4.1", 18.5, 49.4, 21.4, 19.6, 10.9, 21.2],
+  ["Llama 4 Maverick", 18.0, 52.3, 18.6, 19.6, 10.9, 24.2],
+  ["GPT-OSS-120B", 16.1, 52.8, 18.6, 10.7, 17.4, 18.2],
+  ["Llama 4 Scout", 11.2, 43.4, 12.9, 14.3, 6.5, 9.1],
+  ["GPT-OSS-20B", 9.8, 44.5, 11.4, 8.9, 6.5, 12.1],
+  ["Gemma 3n E4B", 4.9, 37.8, 7.1, 5.4, 4.3, 0.0],
+]} />
+
+Category columns are SPR on that category's scenario subset (counts 70/56/46/33); Accessibility has only 33 scenarios, so its column moves in ~3-pp steps and per-category CIs are not reported.
+
+## Key findings
+- <Finding src="Tab.2, p.9">Progress within model families is non-monotonic</Finding>: GPT-5 (44.9) beats both its predecessor GPT-4.1 (18.5) and its successors GPT-5.1 (20.5) and GPT-5.2 (33.7); reasoning-tuned DeepSeek R1 (22.4) trails general-purpose V3p1 (27.3). The authors read this as implicit intelligence tracking training emphasis, not capability scaling — but see the mining confound below.
+- <Finding src="Tab.2">Safety-adjacent skills dissociate</Finding>: the catastrophic-risk leader (Opus 4.5, 50.0) and the privacy leader (GPT-5.2-pro, 47.8) are different models, and open-weight models "often proceed with dangerous operations that frontier models refuse"; best open model trails the frontier by 21 pp (27.3 vs 48.3).
+- <Finding src="Tab.5, A.6">Extended thinking does not fix it</Finding>: +1.4 pp (GPT-5.2) and +1.5 pp (Opus 4.5) at best, and −3.4 pp for GPT-5 — evidence that contextual inference is prior-bound rather than inference-compute-bound.
+- <Finding src="§7.3, A.5">Failures concentrate in three mechanical patterns</Finding> (156 partial-failure traces; patterns required to recur across ≥3 models and ≥5 scenarios): *insufficient exploration* — 73% of AirPlay scenarios failed because agents never called `get_playback_route()` and configured the wrong device (8 models); *incomplete configuration* — 89% enabled Mono Audio for AirPod-sharing but only 11% also centered balance (11 models); *no state stewardship* — 64% of temporally-scoped requests ("while I read") got permanent changes with no revert plan (10 models).
+- <Finding src="A.5.5">Category-specific signatures</Finding>: catastrophic-risk failures skip cheap verification (68% archived files without checking `get_file_metadata()`, catching `pending_legal` files); privacy failures are over-sharing by default (exporting minors' full PII when name/age/emergency-contact suffices); accessibility failures are modality confusion (Classic vs Smart Invert errors in 56% of display scenarios).
+- <Finding src="A.5.6">The success signature is cheap</Finding>: passing agents issue a read-only query before mutating, verify the *effective* outcome in the target app (not just the setting), and prefer minimal-scope tools (Magnifier over global text size) — often a single verification call separates pass from fail.
+
+## Implications
+For agent evaluation, this stakes out a measurable axis orthogonal to tool-use competence — the paper positions it against <Related>saturating explicit-instruction benchmarks (AgentBench, GAIA, Tau-bench, EIFBENCH)</Related> and as a complement to <Related>runtime-governance frameworks (MI9, AURA) and the specification-gaming literature</Related>. For harness builders, AaW joins the <Related>LM-as-simulator line (Li et al. 2025b; SimuRA)</Related> but flips it from training/planning to evaluation, with a reusable QA idea: the two-level consistency analyzer (exact-match vs action-type) for certifying any LM-simulated environment. <FollowUp>Whether the three failure patterns can be trained away with exploration-rewarding objectives — the delta is often one read-only call</FollowUp>; <FollowUp>the authors' proposed extension separating implicit inference from strategic clarification-asking as two scored skills</FollowUp>; <FollowUp>porting the YAML + fixed-simulator + state-rubric pattern (and the consistency analyzer) into my own harness experiments</FollowUp>.
+
+## Limitations
+- <Caveat>The "deterministic executor" claim outruns the measurement</Caveat>: exact-match consistency is 93.3%, i.e. roughly 1 in 15 identical action executions produced different feedback or state changes; the main text's "98.6% consistency" (§7.2, §8) is the *looser* action-type metric, while the discussion's claim that identical action sequences produce identical simulations is precisely the construct measured at 93.3% (A.4, Tab.4). Execution rules are natural language interpreted by the World Model, not code.
+- <Caveat>Ground truth is authors + two experts</Caveat>: unanimous consensus is required, but there are no inter-annotator agreement statistics, no expert identities/recruitment details, and no rejection counts; the authors themselves concede scenarios reflect their perspective and that expectations (e.g. data minimization) vary culturally (§8, A.5.5).
+- <Caveat>Evaluator validation is unquantified</Caveat>: "high agreement" with human annotators on "a randomly sampled subset" — no N, no statistic (§6.2). And the evaluator (GPT-5.2-high) is a sibling of two evaluated models.
+- <Caveat>The difficulty gate bakes failure into the dataset</Caveat>: every retained scenario defeats ≥1 of five named frontier models, and the refine loop mutates scenarios until an attempter fails — so the 48.3% ceiling (and plausibly the non-monotonic family ordering) is partly a property of adversarial selection against those specific models, not of a natural task distribution. Scenarios all models pass are discarded; the "model balance" mitigation is asserted without numbers.
+- <Caveat>Single-turn norm: agents cannot ask clarifying questions</Caveat> (§8) — the benchmark scores acting-as-the-user-would-want, though for several scenarios a real assistant's best move is to ask.
+- <Caveat>Scenario realism is tool-call-level iOS, not real devices or GUIs</Caveat>: ~300 native actions from a community-compiled Shortcuts directory, no third-party apps, and validity decays as iOS evolves; some scenarios lean on iOS trivia (the Live Captions locale-fallback scenario — 88% miss rate — is flagged by the authors themselves as possibly testing domain knowledge, A.5.5).
+- <Caveat>No code/dataset release is reported in the paper</Caveat>; reproducibility rests on appendix prompts. Cost/tokens per run: not reported. Repeats/seeds for the main table: not reported (bootstrap CIs resample scenarios, not runs).
+
+## Critiques and Questions
+1. **Circularity is argued, not tested.** The World-Model defense (returns templates, rubric invisibility, consistency-only selection, same simulator for all) is coherent, but the decisive experiment is missing: re-run a subset with GPT-5 or Gemini 3 Pro as World Model and show the agent *ranking* is stable. Without that cross-simulator ablation, a stylistic-familiarity advantage for Claude-like agents (Opus 4.5 ranks 2nd; the WM's feedback phrasing is Claude-generated) can't be excluded — even if the 93.3%-consistency executor role makes a large bias unlikely.
+2. **The evaluator's "deterministic state verification" defense covers only part of the rubric space.** State criteria (`balance` in 0.45–0.55) are mechanical; but trajectory criteria ("verified backup status *before* any delete") and negative criteria require parsing long action logs — exactly where LLM judges drift. With agreement unquantified and GPT-5.2-high judging its own siblings, the judge-validity story is thinner than the discussion section implies.
+3. **How much of "48.3%" is the task, and how much is the gate?** Retention requires a frontier failure at ≤70% score, and the Planner explicitly evolves scenarios until attempters fail. A model outside the attempter/gate panel (e.g. all open-weight models) faces a distribution mined against *other* models — arguably fairer for them, differently biased for the panel. The non-monotonicity headline (GPT-5 beating GPT-5.1/5.2) would be more convincing on a held-out, non-mined scenario set.
+4. **Norm contestability.** Several "implicit requirements" encode preferences reasonable users differ on: restoring Ocean background sounds after reading (58% "failure"), minimizing roster fields, defaulting to en-GB in Kenya. Two-expert unanimity is a thin basis for calling these *the* ground truth; a user-study measuring what people actually expect would anchor the benchmark far better.
+5. **Metric framing.** SPR is a conjunction over 3–5 criteria, so headline difficulty partly reflects criterion count; NSS (best 72.7%) tells a notably milder story and criteria counts vary per scenario. Which single criterion most often breaks an otherwise-passing run is never reported — that histogram would separate "misses the implicit requirement entirely" from "misses one dependent sub-step."
+6. **What I'd steal regardless of the critiques**: the three-way information partition (agent sees prompt+actions; simulator sees state+rules; judge sees rubric) is a clean, general recipe for making hidden-constraint evals cheap, and the exact-match/action-type consistency analyzer is a reusable certification gadget for any LM-simulated environment.
+
+<SelfCheck q="Where does the implicit requirement live in an AaW scenario, and why can neither the agent nor the World Model leak it?" a="It lives only in the evaluation rubric, which is visible solely to the Evaluator. The agent gets just the user prompt and entity/action descriptions (not even entity state — it must call observation actions), and the World Model gets state plus hidden execution rules but no rubric; it mechanically executes actions per their returns templates, giving identical, neutral feedback to cautious and reckless trajectories alike. The violation only becomes visible when the Evaluator checks the trajectory and final state against the rubric." />
+
+## Glossary
+- <Term def="Agent-as-a-World: the paper's harness — a single YAML file defines context, entities, actions, hidden rules, and rubric; an LLM simulates the world turn by turn">AaW</Term>
+- <Term def="hidden natural-language constraints in the YAML (preconditions, side effects, domain logic) visible to the World Model but never to the agent">execution rules</Term>
+- <Term def="retention filter: keep a scenario only if at least one of five named frontier models scores at or below 70% while at least one scores 100%">difficulty gate</Term>
+- <Term def="the frontier model that plays a candidate scenario during synthesis; the Planner mutates the scenario until this model fails">attempter</Term>
+- <Term def="a 1B-persona synthetic dataset (Ge et al. 2025) sampled here for demographic/contextual scenario diversity">PersonaHub</Term>
+- <Term def="Apple's user-automation framework; a community-compiled directory of 303 of its actions grounds the benchmark's action space">iOS Shortcuts</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Harness pattern worth replicating: (1) the three-way information partition (agent / simulator / judge) plus typed `returns` templates is the whole trick — hidden-constraint evals without writing a simulator; (2) the exact-match vs action-type consistency analyzer is a drop-in QA gate for any LM-simulated environment we build; (3) if we ever adopt the Planner-attempter-refine mining loop, freeze a held-out model panel first, or cross-model comparisons inherit the gate bias documented here.
+
+For the advisor discussion: the sharpest weaknesses are the unquantified evaluator-human agreement, the missing cross-World-Model ablation, and the 93.3-vs-98.6 consistency number slippage between A.4 and the main text — all three are checkable claims, not taste. Open question I care about: does the "one read-only call separates pass from fail" finding mean exploration is a trainable shallow behavior, or is inferring *which* query to make the hard part?
+{/* NOTES_END */}

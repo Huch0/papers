@@ -1,0 +1,140 @@
+---
+canonical_key: arxiv-2602.16666
+version_key: v1
+title: Towards a Science of AI Agent Reliability
+authors:
+- Stephan Rabanser
+- Sayash Kapoor
+- Peter Kirgis
+- Kangheng Liu
+- Saiteja Utpala
+- Arvind Narayanan
+venue: ICML
+year: 2026
+tags:
+- evaluation-harness
+- icml2026-picks
+- reliability-concern
+topic_groups:
+- general_agent_methods
+- agent_harness
+triage_label: TRACK_ONLY
+triage_confidence: high
+source_link: https://arxiv.org/abs/2602.16666v3
+summary_date: '2026-07-18'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>Princeton (HAL group) decomposes agent reliability into twelve accuracy-independent metrics along four safety-critical-engineering dimensions — consistency, robustness, predictability, safety — and profiles 15 models (2024–2026) on GAIA and τ-bench, finding that accuracy rose at ~0.22–0.23/yr while overall reliability rose at only 0.03/yr (GAIA, p=0.08) to 0.09/yr (τ-bench).</TLDR>
+
+<WhyItMatters>Squarely in my agent-evaluation-methodology lane (ICML 2026 advisor-review pick): it operationalizes exactly the things single-number agent benchmarks hide — run-to-run variance (pass@k vs pass∧k), paraphrase/format sensitivity, and confidence validity — as a reusable multi-run/multi-condition protocol on the HAL harness. The perturbation and K-run design is directly transferable to my own harness work.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "+0.03/yr", label: "GAIA reliability trend", sub: "vs +0.23/yr accuracy; r=0.46, p=0.08 (Fig.7-8)" },
+  { value: "15 x 2 x 5", label: "models x benchmarks x runs/task", sub: "GAIA 165 tasks; τ-bench 26 verified airline tasks" },
+  { value: "12", label: "accuracy-independent metrics", sub: "4 dimensions; safety excluded from aggregate R" },
+  { value: "0.36-0.46", label: "below-chance confidence AUROC", sub: "4 of 15 models on τ-bench (Fig.12)" },
+]} />
+
+## Motivation
+<Problem>The dominant agent-evaluation paradigm compresses behavior into a single mean success rate, which cannot distinguish an agent that fails predictably on a fixed task subset from one that fails randomly at the same rate, nor benign formatting errors from catastrophic ones like deleting files</Problem> (§1). High-profile deployment failures (Replit's assistant deleting a production database, Operator's unauthorized purchase, the NYC business chatbot giving illegal advice) came from agents that looked capable in internal evaluation; an Anthropic survey of 80k+ people found unreliability the most-cited AI concern. <Problem>ML research treats prompt sensitivity, inference nondeterminism, calibration, and harm evaluation as isolated phenomena, with no unified, computable reliability framework</Problem> — in stark contrast to aviation/nuclear/automotive practice, where reliability is a certifiable, multi-dimensional property with explicit tail-risk quantification (§2, Tab.1).
+
+## Contribution (what's new)
+The delta that survives deleting "we propose": <Novelty>a HELM-style unification — four reliability dimensions distilled from cross-domain safety standards, instantiated as twelve concrete metrics that are computable from ordinary benchmark runs and designed to be independent of raw accuracy</Novelty> (consistency normalizes variance by max Bernoulli variance; robustness uses perturbed/baseline accuracy ratios). On top of it, <Novelty>the first longitudinal reliability profile of frontier agents: 15 models spanning 24 months, showing per-dimension where progress is real (calibration, safety on τ-bench) and where it is absent (consistency, discrimination)</Novelty> (Fig.8). The framing must take this decomposed form because a single aggregate — like accuracy itself — would re-hide the uneven progress it exposes.
+
+## Research questions
+Has agent reliability improved alongside capability over recent model generations? Which of the four dimensions lag, and do scale or reasoning training help? Can qualitative safety-critical principles be translated into metrics measurable with today's benchmarks?
+
+## Methodology
+Two complementary benchmarks under one protocol: <Term def="General AI Assistants benchmark: open-ended web browsing + file + code tasks; 165 validation tasks in 3 difficulty levels; exact-match grading; humans score >90%">GAIA</Term> (ReAct-style HAL generalist scaffold) and <Term def="multi-turn airline customer-service simulation with tool calls against a database; success = final DB state matches target; restricted here to the 26 of 50 airline tasks Cuadron et al. 2025 verified as correctly labeled">τ-bench</Term> (tool-calling scaffold). Each task runs K=5 times at temperature 0 (reasoning models: provider defaults), so residual variance is non-sampling stochasticity (floating-point non-associativity, batch effects). Perturbation arms: J=5 GPT-4o-generated naturalistic paraphrases (Rprompt), fault injection at p=0.2 over 7 fault types (Rfault), medium-intensity tool/format perturbations like camelCase keys and date-format shifts (Renv). Confidence is post-hoc self-assessment (0–100 with full trace in context); safety is a GPT-4o judge checking benchmark-specific constraints and scoring severity (§4.1, App.F).
+
+<MathBlock>{`C_{\\text{out}} = \\tfrac{1}{T}\\textstyle\\sum_{t}(2\\hat{p}_t - 1)^2, \\qquad R = \\tfrac{1}{3}(R_{\\text{Con}} + R_{\\text{Pred}} + R_{\\text{Rob}}), \\qquad R_{\\text{Saf}} = 1-(1-S_{\\text{comp}})(1-S_{\\text{harm}})`}</MathBlock>
+
+Safety is deliberately excluded from aggregate R: violations are a tail phenomenon that averaging would mask (§3.5).
+
+<Pass title="The twelve metrics and protocol details">
+<Stepper steps={[
+  { title: "Consistency (4 metrics, §3.1, Tab.2)", body: "Outcome Cout = mean of (2p̂t−1)² over tasks — per-task Bernoulli variance normalized by its max (0.25), so 1 = deterministic outcome (success OR failure). Trajectory: distributional Cd (1 − mean pairwise Jensen-Shannon divergence between action-type distributions across the 5 runs) and sequential Cs (1 − mean normalized Levenshtein distance between action sequences). Resource Cres = exp(−mean coefficient of variation) over cost/time/API-calls, conditioned on successful runs (App.C.1.1). Aggregate: RCon = (Cout + (Cd+Cs)/2 + Cres)/3." },
+  { title: "Robustness (3 metrics, §3.2)", body: "Each is min(Acc_perturbed/Acc_baseline, 1). Faults: 7 types (timeout 30%, HTTP-500 25%, rate-limit 20%, network 15%, partial 5%, invalid 3%, empty 2%) injected per call with p=0.2; a scripted recovery schedule p(i)=0.3+0.2i over up to 3 retries means a triggered fault persists with probability 0.7·0.5·0.3 ≈ 0.105. Environment: 3 intensity presets (mild=renaming only; medium=+date/time/number formats, response wrapping; severe=+abbreviations, nested-flat flips, noise); parameter renames are transparently reversed before execution. Prompts: 4 paraphrase levels (mild/medium/strong/naturalistic; naturalistic used by default), generated once and cached; the τ-bench user simulator gets matching style directives." },
+  { title: "Predictability (3 metrics, §3.3)", body: "Calibration Pcal = 1 − ECE (binned |confidence − accuracy|); discrimination PAUROC = probability a success outranks a failure by confidence; Brier Pbrier = 1 − mean squared confidence error (proper scoring rule; RPred = Pbrier). Confidence comes only from post-hoc self-rating — the authors argue logits, trained probes, and judge ensembles are unavailable to typical API users, so this measures what deployments can actually get (App.F.3.4). Parse failures fall back to an error-count heuristic." },
+  { title: "Safety (2 metrics, §3.4)", body: "Compliance Scomp = fraction of tasks with zero constraint violations; harm Sharm = 1 − E[max violation weight | violating task], weights low=0.25/med=0.5/high=1.0 from a GPT-4o judge scoring 0–10 severity. τ-bench constraints: unauthorized modifications, financial accuracy, identity verification, policy circumvention (+PII, destructive ops, data minimization in App Fig.18); GAIA constraints: PII handling, accurate information, safe code execution. RSaf = 1 − P(violation)·E[severity|violation], the classical Kaplan-Garrick risk product." },
+  { title: "Models (Tab.3)", body: "OpenAI: GPT-4 Turbo, GPT-4o mini, o1, GPT-5.2, GPT-5.2 (medium), GPT-5.5. Google: Gemini 2.5 Pro/Flash, 3.1 Pro, 3.5 Flash. Anthropic: Claude 3 Haiku, 3.5 Haiku, Sonnet 4, Opus 4.5, Opus 4.7. Releases 2024-03 to 2026-05; categories efficient/frontier/reasoning. Run on the HAL harness with Weave logging; 10-min (GAIA) / 5-min (τ-bench) task timeouts; results at hal.cs.princeton.edu/reliability." },
+]} />
+</Pass>
+
+## Main result
+Capability and reliability have decoupled. On GAIA, accuracy improves at <Finding src="Fig.7">+0.23/yr (r=0.80) while overall reliability improves at +0.03/yr (r=0.46, p=0.08 — not significant)</Finding>; on τ-bench, +0.22/yr accuracy vs +0.09/yr reliability (r=0.86). Regressing reliability on accuracy gives slopes of only <Finding src="Fig.7-8">0.18 (GAIA, r=0.76) and 0.33 (τ-bench, r=0.92)</Finding> — a point of accuracy buys a fraction of a point of reliability, and less the more open-ended the tasks. Per dimension on GAIA, <Finding src="Fig.8a">consistency (r=−0.14, slope −0.01/yr) and safety (r=−0.17) show no improvement at all over 24 months; only predictability trends up (r=+0.75, +0.09/yr)</Finding>. All three providers cluster together — an industry-wide plateau, not a vendor problem (Fig.1).
+
+<SortableTable columns={["Model", "Release", "Cout GAIA", "Rprompt GAIA", "Pcal τ", "AUROC τ", "Compliance τ"]} rows={[
+  ["GPT-4 Turbo", "2024-04", 0.73, 0.71, 0.59, 0.46, 0.79],
+  ["GPT-4o mini", "2024-07", 0.75, 0.92, 0.34, 0.36, 0.72],
+  ["o1", "2024-12", 0.58, 1.00, 0.83, 0.52, 0.83],
+  ["GPT-5.2", "2025-12", 0.58, 0.73, 0.73, 0.57, 0.95],
+  ["GPT-5.2 (medium)", "2025-12", 0.65, 0.74, 0.77, 0.54, 0.88],
+  ["GPT-5.5", "2026-04", 0.60, 0.91, 0.89, 0.72, 0.94],
+  ["Gemini 2.5 Flash", "2025-04", 0.73, 0.69, 0.60, 0.53, 0.86],
+  ["Gemini 2.5 Pro", "2025-03", 0.73, 0.82, 0.77, 0.67, 0.88],
+  ["Gemini 3.1 Pro", "2026-02", 0.83, 0.86, 0.83, 0.57, 0.94],
+  ["Gemini 3.5 Flash", "2026-05", 0.84, 0.88, 0.81, 0.52, 0.97],
+  ["Claude 3 Haiku", "2024-03", 0.84, 0.66, 0.33, 0.41, 0.36],
+  ["Claude 3.5 Haiku", "2024-10", 0.82, 0.82, 0.46, 0.42, 0.68],
+  ["Claude Sonnet 4", "2025-05", 0.76, 0.83, 0.90, 0.67, 0.92],
+  ["Claude Opus 4.5", "2025-11", 0.84, 0.77, 0.90, 0.70, 0.96],
+  ["Claude Opus 4.7", "2026-04", 0.84, 0.96, 0.93, 0.70, 0.88],
+]} />
+
+## Key findings
+- <Finding src="Fig.2, Fig.11">Outcome consistency is the hardest metric everywhere — agents that can solve a task often do not solve it every time</Finding>: the pass@k vs pass∧k gap made concrete; the three newest OpenAI models have the *lowest* overall consistency on GAIA (RCon 0.59–0.62 vs 0.80–0.81 for Claude 3.5 Haiku / Opus 4.5 / 4.7).
+- <Finding src="Fig.11, §G.3">A "what but not when" pattern: distributional trajectory consistency far exceeds sequential</Finding> — agents pick the same action *types* across runs but reorder them (e.g. GPT-5.5 on GAIA: Cd 0.71 vs Cs 0.53), which the authors read as unstable planning/execution rather than unstable tool choice.
+- <Finding src="Fig.17, Fig.3">Fault and environment robustness are near ceiling (mostly 0.91–1.00), but prompt robustness is the differentiator</Finding>: naturalistic rephrasings alone cost up to a third of accuracy on GAIA (Claude 3 Haiku 0.66, Gemini 2.5 Flash 0.69, GPT-5.2 0.73; Opus 4.5 only 0.77) — models absorb genuine technical failures yet trip on surface-level wording, especially where the environment does not constrain the solution path.
+- <Finding src="Fig.4, Fig.12-16">Calibration has genuinely improved (Claude Opus 4.5 hits ECE 0.030 on GAIA; Opus 4.7 is the only under-confident model), but discrimination has not</Finding>: on τ-bench four older models rank failures *above* successes (AUROC 0.36–0.46) and selective-prediction curves are near-random for most models; on GAIA discrimination even regresses in some recent models (Opus 4.7 at 0.63 vs GPT-4 Turbo 0.75). Well-calibrated averages with no per-task warning signal are a false sense of safety.
+- <Finding src="Fig.5, Fig.18">Safety violations dropped sharply with model generation (violation rate 0.64 for Claude 3 Haiku vs 0.03–0.05 for Gemini 3.5 Flash / Opus 4.5 / GPT-5.2), with financial accuracy the most common violation class</Finding> — but progress is not monotone (Opus 4.7 compliance 0.88 regresses vs Opus 4.5's 0.96), and constraint-level analysis exists only for τ-bench.
+- <Finding src="Fig.9, Fig.19">Reasoning training buys accuracy much faster than reliability: +0.22/+0.24 accuracy (GAIA/τ-bench) vs +0.03/+0.05 outcome consistency, and GAIA discrimination *drops* 0.75→0.69</Finding>; larger models often have *worse* consistency than smaller ones (more solution paths → more run-to-run variance), and benchmark structure matters — the structured τ-bench shows reliability gains that open-ended GAIA does not (§G.2).
+
+## Implications
+For evaluation methodology this is a template: reliability requires multi-run protocols (K>1 with variance reporting), generative/parameterized benchmarks (rename fields, inject faults) rather than fixed test sets, and temporal re-evaluation (Rec.1) — and reliability requirements should scale with autonomy: a 90%-accuracy agent is a fine copilot but an unacceptable unattended system (Rec.4). It also shows benchmark quality is a reliability confounder: on the corrected τ-bench subset, measured predictability improves almost universally, because flawed answer keys punish justified confidence as overconfidence (Fig.6) — an argument for <Related>Cuadron et al. 2025-style benchmark verification</Related> before drawing calibration conclusions. Lineage: extends <Related>HELM's multi-metric philosophy (Liang et al. 2022)</Related> to agents, builds on <Related>τ-bench's pass∧k (Yao et al. 2024)</Related>, <Related>Vendrow et al. 2025 (benchmarks track capability, not reliability)</Related>, the <Related>HAL harness (Kapoor et al. 2025)</Related>, and <Related>Thinking Machines' nondeterminism analysis (He 2025)</Related>. <FollowUp>Whether SWE-agent/computer-use scaffolds (Claude Code, Codex — named as planned future work) change the reliability profile; scaffold-level retries and validators could buy consistency that model scaling has not.</FollowUp> <FollowUp>Formalizing operating envelopes / failure semantics for agents (App.D.3's admitted gap vs classical reliability engineering).</FollowUp> <FollowUp>Optimizing directly for these metrics — and how quickly they Goodhart once targeted (the impact statement itself warns metrics can be gamed).</FollowUp>
+
+## Limitations
+- <Caveat>Two benchmarks, one scaffold each</Caveat>: GAIA (165 tasks) + τ-bench airline reduced to 26 verified tasks; the authors concede other scaffolds "could yield qualitatively different reliability profiles" (§6) — trend claims ride on 15 model×2 settings.
+- <Caveat>Safety numbers come from a GPT-4o judge with no reported human validation or judge-agreement figures</Caveat>; judge validity is itself a reliability concern the authors acknowledge. Total evaluation cost: Not reported.
+- <Caveat>Temperature 0 throughout</Caveat>, so measured consistency is an upper bound on what accuracy-maximizing (nonzero-temperature) deployments would see — the authors state this may overestimate achievable reliability.
+- <Caveat>Aggregation is subjective</Caveat>: uniform dimension weights, RPred = Brier only, safety excluded from R — so headline "reliability" is one of many possible summaries (they invite alternatives).
+- <Caveat>Statistical resolution is thin</Caveat>: K=5 runs, 26 τ-bench tasks, AUROC over ~26 outcomes; error bars are ±1 SEM clipped to [0,1], and no confidence intervals are given for the reliability metrics themselves — cross-model deltas of 0.03–0.05 are within noise.
+- <Caveat>Scope excludes adversarial robustness and alignment</Caveat>; "safety" means bounded operational severity only (§1 Scope).
+
+## Critiques and Questions
+<ClaimEvidence rows={[
+  { claim: "Four dimensions 'emerge consistently' from safety-critical engineering", evidence: "Narrative survey of standards (App.D.2); authors self-describe the synthesis as empirical-synthetic, not axiomatic, and concede classical constructs (failure semantics, operational profile) remain undefined for agents (App.D.3)", verdict: "Plausible framing, not a derivation" },
+  { claim: "Metrics evaluate reliability independently of task success", evidence: "True by construction per metric, but measured R still tracks accuracy at r=0.76 (GAIA) / 0.92 (τ-bench), and Cout is maximal for a model that consistently fails", verdict: "Partially supported" },
+  { claim: "Capability gains have not yielded reliability gains", evidence: "GAIA reliability +0.03/yr (p=0.08) vs accuracy +0.23/yr; consistency r=−0.14 and safety r=−0.17 flat-to-negative; τ-bench +0.09 vs +0.22/yr (Fig.7-8)", verdict: "Supported — on these two benchmarks/scaffolds" },
+  { claim: "These metrics would have flagged Replit/Operator/NYC-chatbot failures pre-deployment", evidence: "Retrospective mapping table only (Tab.7); no predictive validation on any held-out incident", verdict: "Speculative" },
+  { claim: "When violations occur, most are low-to-moderate severity", evidence: "Fig.18's conditional severity scores run 0.27–0.75 (mean ≈0.43), implying the typical violating task's worst violation is medium-or-worse under their own weights", verdict: "Tension with own data" },
+]} />
+
+1. **Consistent failure counts as consistency.** Claude 3 Haiku ties for the best GAIA outcome consistency (0.84) while having the worst compliance (0.36) and low accuracy — `(2p̂−1)²` rewards determinism in either direction. The dashboard-level reading the paper encourages ("consistency stagnated") conflates models becoming *less deterministic* with models moving from always-fail toward sometimes-succeed; a capability-conditioned consistency (e.g. among solved tasks) would disentangle this. The authors notice the mechanism in the difficulty analysis (§G.6) but not in the headline trend.
+2. **The fault-robustness ceiling is partly built into the protocol.** With recovery probability 0.3+0.2i per attempt, an injected fault survives all three retries only ~10.5% of the time (~2% of calls at p=0.2). Near-1.0 Rfault may say more about the injector's leniency than about agent fault-handling; the "models handle technical failures gracefully" contrast with prompt fragility (§4.2) is weaker than it reads.
+3. **One judge, many roles.** GPT-4o generates the paraphrases, and grades safety/severity — the same family as an evaluated model, with no inter-judge or human agreement reported. If the judge systematically under-flags its own family's violation style, provider comparisons in Fig.18 inherit that bias. Unclear.
+4. **Is the elicitation or the model being measured?** Predictability uses a single post-hoc 0–100 self-rating (with an error-count heuristic on parse failure). Defensible as "what API users can do", but then discrimination trends confound model self-knowledge with prompt-format compliance; τ-bench's below-chance AUROCs could partly be elicitation artifacts. The paper cannot distinguish these.
+5. **What licenses the aggregate R?** With RPred=Brier, uniform weights, and safety carved out, R is a design choice presented alongside a "science" framing; no sensitivity analysis of conclusions to aggregation is reported. The per-dimension results (Fig.8) are the trustworthy layer; treat R and Fig.1 as illustration.
+
+<SelfCheck q="Why can a weak, unsafe model score at the top on outcome consistency, and how should Cout therefore be read?" a="Cout averages (2p̂t−1)² over tasks, which is maximal when per-task success rates sit near 0 or 1 — a model that deterministically fails scores identically to one that deterministically succeeds. Claude 3 Haiku ties for the best GAIA Cout (0.84) despite the worst τ-bench compliance (0.36). Cout measures determinism, not quality, so it must always be read jointly with accuracy — which is exactly why the authors keep reliability metrics separate from, not a replacement for, capability metrics." />
+
+## Glossary
+- <Term def="probability that all k independent runs of a task succeed, versus pass@k which needs only one; the gap between them is outcome inconsistency">pass∧k</Term>
+- <Term def="Expected Calibration Error: confidence-binned mean absolute gap between stated confidence and empirical accuracy; Pcal = 1 − ECE">ECE</Term>
+- <Term def="probability that a randomly chosen success received higher self-confidence than a randomly chosen failure; 0.5 = chance">AUROC (discrimination)</Term>
+- <Term def="proper scoring rule combining calibration and discrimination: mean squared error between confidence and the 0/1 outcome; reported as 1 − Brier">Brier score</Term>
+- <Term def="symmetrized, bounded divergence between two probability distributions; used here between action-type distributions of two runs">Jensen-Shannon divergence</Term>
+- <Term def="minimum number of edits turning one action sequence into another, normalized by the longer length; used for sequential trajectory consistency">Levenshtein distance</Term>
+- <Term def="Holistic Agent Leaderboard: Princeton's standardized agent-evaluation harness with cost tracking and trace logging; this paper's execution infrastructure">HAL</Term>
+- <Term def="scaffold pattern interleaving reasoning text with tool actions and observations; used for the GAIA agent">ReAct</Term>
+- <Term def="abstaining on low-confidence predictions to raise accuracy on the retained subset; accuracy-coverage curves visualize it">selective prediction</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Discussion points for the advisor meeting: (1) the metric-validity angle — Cout's consistent-failure inflation and the scripted fault recovery are the two places where the measurement itself, not the models, produces the shape of the result; (2) the harness angle — everything here is model-level reliability under a *fixed* scaffold; our interest is the converse (how much reliability the scaffold can add: retries, validators, plan pinning), which they explicitly defer to future work (Claude Code/Codex named); (3) the τ-bench-clean result (Fig.6) is quietly one of the most useful findings for us: benchmark label noise shows up as fake overconfidence, so calibration studies on unverified benchmarks are suspect.
+
+Provenance trivia: v3 fixed a community-spotted bug in the outcome-consistency formula from the earlier preprint, and the acknowledgements say ICML reviewers pushed to retitle toward "measurement" but the authors kept the title for citation continuity — the "science" is aspirational by their own admission (App.D.3: "working operationalization, not a redefinition"). Interactive per-model dashboard: hal.cs.princeton.edu/reliability.
+{/* NOTES_END */}

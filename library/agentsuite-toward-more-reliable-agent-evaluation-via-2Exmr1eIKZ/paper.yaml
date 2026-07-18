@@ -1,0 +1,67 @@
+canonical_key: openreview-2Exmr1eIKZ
+slug: agentsuite-toward-more-reliable-agent-evaluation-via-2Exmr1eIKZ
+title: 'AgentSuite: Toward More Reliable Agent Evaluation via a Component-Based Benchmark Auditing Pipeline'
+authors:
+- Hyewon Suh
+- Binfei Ji
+- Seojune Lee
+- Rishi Khare
+- Basit Khan
+- Hyunjun Kim
+- Tianyi Zhang
+- Venkat Krishna Srinivasan
+- Peter Belcak
+- Shizhe Diao
+- Pavlo Molchanov
+- Yingyan Celine Lin
+- Zhen Dong
+year: 2026
+primary_ids:
+  doi: null
+  arxiv_base_id: null
+  openreview_id: 2Exmr1eIKZ
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://openreview.net/forum?id=2Exmr1eIKZ
+topic_groups:
+- agent_harness
+tags:
+- benchmark
+- evaluation-harness
+- icml2026-picks
+- tool-use
+venue:
+  name: ICML
+  tier: unknown
+  status: unknown
+  year: 2026
+user:
+  read_status: unread
+  triage_label: SKIP
+  triage_confidence: high
+  notes: null
+milestone: null
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: OpenReview (metadata-only)
+  source: openreview
+  source_url: https://openreview.net/forum?id=2Exmr1eIKZ
+  pdf_path: null
+  summary_path: library/agentsuite-toward-more-reliable-agent-evaluation-via-2Exmr1eIKZ/v1/summary.mdx
+  metadata_path: library/agentsuite-toward-more-reliable-agent-evaluation-via-2Exmr1eIKZ/v1/metadata.yaml
+  fetched_at: '2026-07-18T11:15:19Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: null
+  pdf_bytes: null
+  summary_status: triage_only
+  extraction_status: none
+  created_at: '2026-07-18T11:15:19Z'
+  updated_at: '2026-07-18T11:22:58Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

@@ -1,0 +1,61 @@
+canonical_key: arxiv-2605.02289
+slug: engiagent-fully-connected-coordination-of-llm-agents-260502289
+title: 'EngiAgent: Fully Connected Coordination of LLM Agents for Solving Open-ended Engineering Problems
+  with Feasible Solutions'
+authors:
+- Xiyuan Zhou
+- Ruixi Zou
+- Xinlei Wang
+- Yuheng Cheng
+- Yan Xu
+- Junhua Zhao
+- Jinjin Gu
+year: 2026
+primary_ids:
+  doi: null
+  arxiv_base_id: '2605.02289'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2605.02289v1
+- https://arxiv.org/pdf/2605.02289v1
+topic_groups:
+- general_agent_methods
+tags:
+- icml2026-picks
+- multi-agent
+venue:
+  name: ICML
+  tier: A_star
+  status: accepted
+  year: 2026
+user:
+  read_status: unread
+  triage_label: TRACK_ONLY
+  triage_confidence: medium
+  notes: null
+milestone: null
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v1
+  source: arxiv
+  source_url: https://arxiv.org/abs/2605.02289v1
+  pdf_path: library/engiagent-fully-connected-coordination-of-llm-agents-260502289/v1/paper.pdf
+  summary_path: library/engiagent-fully-connected-coordination-of-llm-agents-260502289/v1/summary.mdx
+  metadata_path: library/engiagent-fully-connected-coordination-of-llm-agents-260502289/v1/metadata.yaml
+  fetched_at: '2026-07-18T11:15:14Z'
+  source_updated_at: '2026-05-04T07:26:12Z'
+  arxiv_version: v1
+  pdf_sha256: 586ae1b5cd99379c5e0a434584a11eba2db0f273cfdb22249f6f514442e6ef06
+  pdf_bytes: 1052186
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-07-18T11:15:14Z'
+  updated_at: '2026-07-18T11:28:36Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

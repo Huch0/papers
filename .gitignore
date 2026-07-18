@@ -7,6 +7,8 @@ logs/migrations/
 
 # === Not shared: PDFs stay local-only Harness inputs; the site links to source URLs ===
 library/**/paper.pdf
+library/**/slides.pdf
+library/**/poster.pdf
 # Extraction text is regenerated from the PDF locally for summarizing
 library/**/extraction.txt
 library/**/extraction.structure.json

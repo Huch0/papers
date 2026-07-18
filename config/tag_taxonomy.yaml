@@ -58,6 +58,9 @@ tags:
     - industry-report
     - reproducible
     - artifacts-released
+  collections:
+    # Curated reading lists (e.g. papers picked up at a conference).
+    - icml2026-picks
 
 # Tags that signal a paper should be kept even if score is borderline.
 keep_signals:

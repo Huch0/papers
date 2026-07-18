@@ -101,3 +101,11 @@ Each entry: date, trigger, change, files touched, migration status.
   Agent S2, UI-TARS-2). Measured vs last turn's 5 MD summaries (same paper types):
   same content (words 1.00x), artifact 1.27x bytes, generation cost ~1.03x — NOT 2-4x.
   Decision on default format pending user review.
+
+## 2026-07-18 — `collections` tag group + icml2026-picks
+
+- Added a `collections` group to config/tag_taxonomy.yaml with the first entry
+  `icml2026-picks`: a curated reading list of agent papers the user picked up while
+  attending ICML 2026 (10 papers ingested with this tag in the same change).
+  The pattern is reusable for future conferences (e.g. `neurips2026-picks`).
+- Requested by user: "Add a special tag for this list."

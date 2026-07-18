@@ -1,0 +1,62 @@
+canonical_key: title-92c1f0bf49cf
+version_key: v1
+title: 'Position: Reasoning is a Learnable Rule-Based Process'
+authors:
+- Rachel Lawrence
+- Jacqueline Maasch
+abstract: Not reported
+venue: ICML
+year: 2026
+source: manual
+source_url: https://jmaasch.github.io/reasoning/
+pdf_url: null
+pdf_sha256: null
+fetched_at: '2026-07-18T11:15:18Z'
+source_updated_at: null
+ids:
+  doi: null
+  arxiv_id: null
+  arxiv_base_id: null
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- position-paper
+- icml2026-picks
+topic_groups:
+- general_agent_methods
+scoring:
+  score: 25.6
+  label: SKIP
+  confidence: medium
+  rationale: 'score=26 -> SKIP | strong: recency(1.00), venue_quality(1.00), interest_fit(0.40) | interests:
+    general_agent_methods:group:general_agent_methods | negatives: abstract_only'
+  matched_interests:
+  - general_agent_methods:group:general_agent_methods
+  negative_signals:
+  - abstract_only
+  subscores:
+    interest_fit: 0.402
+    recency: 1.0
+    venue_quality: 1.0
+    harness_relevance: 0.0
+    novelty: 0.0
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: null
+  extraction: null
+  summary: library/position-reasoning-is-a-learnable-rule-based-c1f0bf49cf/v1/summary.mdx
+  code_url: https://github.com/jmaasch/valid_reasoning
+  project_url: https://jmaasch.github.io/reasoning/
+  dataset_url: null
+status:
+  downloaded: false
+  extracted: false
+  summarized: true
+  triaged: true
+  user_read_status: unread
+  summary_format: mdx

@@ -1,0 +1,77 @@
+canonical_key: arxiv-2602.17003
+version_key: v1
+title: 'Persona2Web: Benchmarking Personalized Web Agents for Contextual Reasoning with User History'
+authors:
+- Serin Kim
+- Sangam Lee
+- Dongha Lee
+abstract: 'Large language models have advanced web agents, yet current agents lack personalization capabilities.
+  Since users rarely specify every detail of their intent, practical web agents must be able to interpret
+  ambiguous queries by inferring user preferences and contexts. To address this challenge, we present
+  Persona2Web, the first benchmark for evaluating personalized web agents on the real open web, built
+  upon the clarify-to-personalize principle, which requires agents to resolve ambiguity based on user
+  history rather than relying on explicit instructions. Persona2Web consists of: (1) user histories that
+  reveal preferences implicitly over long time spans, (2) ambiguous queries that require agents to infer
+  implicit user preferences, and (3) a reasoning-aware evaluation framework that enables fine-grained
+  assessment of personalization. We conduct extensive experiments across various agent architectures,
+  backbone models, history access schemes, and queries with varying ambiguity levels, revealing key challenges
+  in personalized web agent behavior. For reproducibility, our codes and datasets are publicly available
+  at https://serin-kimm.github.io/Persona2Web/.'
+venue: ICML
+year: 2026
+source: arxiv
+source_url: https://arxiv.org/abs/2602.17003v3
+pdf_url: https://arxiv.org/pdf/2602.17003v3
+pdf_sha256: 5a93dd1a07898e9ec0ee92f42adf014ddfd51ff61910505ccb5f4d775d026935
+fetched_at: '2026-07-18T11:14:51Z'
+source_updated_at: '2026-05-27T12:15:49Z'
+ids:
+  doi: null
+  arxiv_id: 2602.17003v3
+  arxiv_base_id: '2602.17003'
+  arxiv_version: v3
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- benchmark
+- icml2026-picks
+- web-agent
+topic_groups:
+- computer_use_agents
+- agent_harness
+scoring:
+  score: 54.7
+  label: SKIM
+  confidence: high
+  rationale: 'score=55 -> SKIM | strong: venue_quality(1.00), recency(0.93), interest_fit(0.91) | interests:
+    agent_harness:group:agent_harness, computer_use_agents:web agent, computer_use_agents:group:computer_use_agents'
+  matched_interests:
+  - agent_harness:group:agent_harness
+  - computer_use_agents:web agent
+  - computer_use_agents:group:computer_use_agents
+  negative_signals: []
+  subscores:
+    interest_fit: 0.91
+    recency: 0.928
+    venue_quality: 1.0
+    harness_relevance: 0.0
+    novelty: 0.55
+    artifact_availability: 0.0
+    evaluation_quality: 0.55
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/persona2web-benchmarking-personalized-web-agents-for-contextual-260217003/v1/paper.pdf
+  extraction: library/persona2web-benchmarking-personalized-web-agents-for-contextual-260217003/v1/extraction.txt
+  summary: library/persona2web-benchmarking-personalized-web-agents-for-contextual-260217003/v1/summary.mdx
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread
+  summary_format: mdx

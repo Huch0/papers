@@ -1,0 +1,78 @@
+---
+canonical_key: openreview-2Exmr1eIKZ
+version_key: v1
+title: 'AgentSuite: Toward More Reliable Agent Evaluation via a Component-Based Benchmark Auditing Pipeline'
+authors:
+- Hyewon Suh
+- Binfei Ji
+- Seojune Lee
+- Rishi Khare
+- Basit Khan
+- Hyunjun Kim
+- Tianyi Zhang
+- Venkat Krishna Srinivasan
+- Peter Belcak
+- Shizhe Diao
+- Pavlo Molchanov
+- Yingyan Celine Lin
+- Zhen Dong
+venue: ICML
+year: 2026
+tags:
+- benchmark
+- evaluation-harness
+- tool-use
+- icml2026-picks
+topic_groups:
+- agent_harness
+triage_label: SKIP
+triage_confidence: high
+source_link: https://openreview.net/forum?id=2Exmr1eIKZ
+summary_date: '2026-07-18'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>AgentSuite is a unified runner for LLM tool-use/agent benchmarks that ships cleaned and filtered variants of eight-plus benchmark suites, with defective tasks identified by COBA — a taxonomy-grounded, two-stage (benchmark-aware rules, then LLM-as-Judge) auditing pipeline with human verification.</TLDR>
+
+<WhyItMatters>Benchmark auditing is squarely in my evaluation-methodology lane: it audits exactly the harness benchmarks I track (tau-bench, tau2-bench, BFCL v3/v4, ACEBench) and quantifies how much reported agent scores ride on defective tasks.</WhyItMatters>
+
+<Caveat>**Triage-only, repository-based summary — no paper text was available.** The OpenReview forum and its PDF endpoint (id 2Exmr1eIKZ) are bot-walled from this environment and there is no arXiv version (the repo's own pipeline citation still carries a placeholder arXiv id). Everything below is grounded solely in the public GitHub repository (Agent-Suite/AgentSuite); all claims about the paper's experiments and results — the issue taxonomy's contents, pipeline precision/recall, how model scores shift between Original and Filtered — are "Not reported". The only numbers cited are counts read directly from repo files. Venue: found at ICML 2026, but **acceptance status is unverified** (venue status recorded as "unknown") — do not cite this as an accepted ICML 2026 paper. Upgrade path: download the PDF from the OpenReview page in a browser and re-run `/add-paper` with `--pdf` to replace this with a full summary.</Caveat>
+
+<KeyStats items={[
+  { value: "8", label: "benchmark suites audited", sub: "COBA pipeline (pipeline/README.md)" },
+  { value: "2-stage", label: "rules then LLM judge", sub: "with human verification (repo)" },
+  { value: "38%", label: "max tasks flagged in a split", sub: "tau2-bench airline 50 to 31 (README)" },
+]} />
+
+## Motivation
+Per the repo's framing, <Problem>agent benchmarks contain identifiable task-level defects — e.g. "malformed tools, incorrect ground truth" (README) — spanning "benchmark tasks, tools, evaluation, and environments" (pipeline/README.md)</Problem>, so <Problem>reported agent scores conflate model failures with benchmark defects, undermining evaluation reliability and cross-benchmark comparability</Problem>. The paper's own statement of the gap versus prior benchmark-quality work is unavailable (see caveat above).
+
+## Contribution (what's new)
+Two deliverables, per the repo:
+- <Novelty>COBA (Component-Based Benchmark Auditing): a pipeline that "operationalizes a structured taxonomy of benchmark task-level issues and applies a two-stage process combining rule-based detection and LLM-based assessment, with human verification"</Novelty> (src: pipeline/README.md). Stage 1 applies benchmark-aware deterministic rules for "structural or misalignment issues"; Stage 2 uses <Term def="using an LLM to grade or flag items instead of a deterministic checker">LLM-as-Judge</Term> for "more subtle or semantic issues that are difficult to capture via rules".
+- <Novelty>AgentSuite: one-touch execution of the audited benchmarks plus cleaned benchmark variants that "mitigate identifiable evaluation issues while preserving comparability with original benchmark settings"</Novelty> (src: README), surfaced as Original-vs-Filtering scores on a public Hugging Face leaderboard.
+
+## Methodology
+As far as the repo documents it — the paper's method section is unavailable.
+
+**What the audit consumes.** Recorded evaluation trajectories, not live runs: per-model JSONL files containing the full message/tool-call trace plus an eval result; "This pipeline does NOT run benchmark evaluations" (src: pipeline/README.md). The default Stage-2 judge is google/gemini-2.5-pro-thinking-on, with an optional rebuttal round (`--rebuttal`).
+
+**What it outputs.** Per benchmark: identified issue cases per task, rule-based and LLM-based filtering decisions, "alignment with human-labeled ground truth" (precision/recall against a `human_labelled_ground_truth/` set), and retention statistics (src: pipeline/README.md).
+
+**Benchmarks audited.** ACEBench, <Term def="Berkeley Function-Calling Leaderboard (the gorilla project); v3 adds multi-turn, v4 agentic tasks">BFCL</Term> v3 and v4, ComplexFuncBench, <Term def="tool-agent-user benchmarks simulating retail/airline (tau2 adds telecom) customer-service agents with a simulated user">tau-bench and tau2-bench</Term>, DrafterBench, NexusBench (src: pipeline/README.md); the runner additionally wraps MultiChallenge, for 11 runnable configs including separate BFCL prompting and function-calling modes (src: README). The corresponding harnesses (gorilla, tau-bench, tau2-bench, ACEBench, ...) are vendored in the repo tree.
+
+**Cleaned variants.** Flagged tasks live in per-benchmark `<bench>_issues.csv` manifests feeding two variants: **Filtered** drops flagged tasks and re-scores existing results with no reruns (the launch variant); **Fixed** applies targeted repairs on fixed data and drops unfixable tasks (src: README). <Finding src="README">Repo-documented filtered task counts: ACEBench 1023 to 999, ComplexFuncBench 1000 to 871, tau-bench airline 50 to 39 and retail 115 to 109, tau2-bench airline 50 to 31, retail 114 to 102, telecom 114 to 104</Finding> — flag rates from roughly 2% of a suite up to 38% of a split. <Finding src="README">DrafterBench issues found by the audit were reported upstream and fixed there</Finding>, so no additional filtering is applied to it.
+
+## Caveats
+- <Caveat>Paper text unavailable — this entire summary is repo-based (see the prominent caveat at top)</Caveat>: the issue taxonomy's actual categories, the human-verification protocol, the pipeline's precision/recall values, and whether/how model rankings change between Original and Filtered are all "Not reported".
+- <Caveat>ICML 2026 acceptance unverified</Caveat>: treat as "presented/found at ICML 2026, acceptance status unverified".
+- <Caveat>The repo itself scopes the fix: cleaned variants address "identifiable and verifiable issues" but "do not attempt to exhaustively correct all possible sources of noise"</Caveat> (src: README).
+- <Caveat>Audit validity hinges on the LLM judge and the human-labeled ground truth; the repo names the alignment metrics but not their values, and Fixed variants are unsupported for NexusBench/MultiChallenge</Caveat> (src: README, pipeline/README.md).
+- <FollowUp>After upgrading with the PDF: what the component taxonomy actually is, the audit's precision/recall vs humans, and whether Filtered scores reorder current frontier agents on the Hugging Face leaderboard.</FollowUp>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

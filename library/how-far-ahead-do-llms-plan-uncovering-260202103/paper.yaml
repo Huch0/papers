@@ -1,0 +1,57 @@
+canonical_key: arxiv-2602.02103
+slug: how-far-ahead-do-llms-plan-uncovering-260202103
+title: How Far Ahead Do LLMs Plan? Uncovering the Latent Horizon in Chain-of-Thought Reasoning
+authors:
+- Liyan Xu
+- Mo Yu
+- Fandong Meng
+- Jie Zhou
+year: 2026
+primary_ids:
+  doi: null
+  arxiv_base_id: '2602.02103'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2602.02103v2
+- https://arxiv.org/pdf/2602.02103v2
+topic_groups:
+- general_agent_methods
+tags:
+- artifacts-released
+- icml2026-picks
+venue:
+  name: ICML
+  tier: A_star
+  status: accepted
+  year: 2026
+user:
+  read_status: unread
+  triage_label: TRACK_ONLY
+  triage_confidence: medium
+  notes: null
+milestone: null
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v2
+  source: arxiv
+  source_url: https://arxiv.org/abs/2602.02103v2
+  pdf_path: library/how-far-ahead-do-llms-plan-uncovering-260202103/v1/paper.pdf
+  summary_path: library/how-far-ahead-do-llms-plan-uncovering-260202103/v1/summary.mdx
+  metadata_path: library/how-far-ahead-do-llms-plan-uncovering-260202103/v1/metadata.yaml
+  fetched_at: '2026-07-18T11:14:24Z'
+  source_updated_at: '2026-05-28T09:17:14Z'
+  arxiv_version: v2
+  pdf_sha256: 85e0f5b525816403cc6b53c268449b9f84ecb242357b7bd9f9aaa590ff51875f
+  pdf_bytes: 3941840
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-07-18T11:14:24Z'
+  updated_at: '2026-07-18T11:27:11Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

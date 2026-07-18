@@ -1,0 +1,134 @@
+---
+canonical_key: arxiv-2606.02470
+version_key: v1
+title: 'MCP-Persona: Benchmarking LLM Agents on Real-World Personal Applications via Environment Simulation'
+authors:
+- Wenhao Wang
+- Peizhi Niu
+- Gongyi Zou
+- Xiyuan Yang
+- Jingxing Wang
+- Haoting Shi
+- Yaxin Du
+- Jingyi Chai
+- Xianghe Pang
+- Shuo Tang
+- Yanfeng Wang
+- Siheng Chen
+venue: ICML
+year: 2026
+tags:
+- api-agent
+- benchmark
+- environment
+- icml2026-picks
+- tool-use
+topic_groups:
+- computer_use_agents
+- agent_harness
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2606.02470v1
+summary_date: '2026-07-18'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>MCP-Persona (ICML 2026) benchmarks LLM agents on 173 human-verified tasks over account-bound personal applications — Lark, Slack, WeCom, Rednote, Instagram, Reddit, email, Notion, Obsidian — by *simulating* their MCP servers: real APIs are traversed with valid and adversarial calls, an LLM compiles the observed behavior into executable Python simulators over a user-rooted state tree, and the best of 13 agents (Claude-Sonnet-4.5) reaches only 38.66/100 checkpoint accuracy.</TLDR>
+
+<WhyItMatters>Squarely my core territory — API/MCP computer-use agents graded inside a simulated environment: the traverse-then-codegen simulator, context-tree state store, and CRUD-executor grading are directly reusable harness patterns, and its failure taxonomy (under-exploration, skipped ID resolution, long-context decay) reads as a design checklist for agent scaffolds. Auto-triage ranked it top of my ICML 2026 advisor-review batch.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "38.66", label: "best overall Acc (of 100)", sub: "Claude-Sonnet-4.5; every model below 50 (Tab.3)" },
+  { value: "173", label: "human-verified tasks", sub: "24 MCP servers (12 personalized), 140 tools, loop of up to 20 rounds" },
+  { value: "10.40%", label: "best SR-0.8", sub: "share of tasks with Acc above 0.8 — end-to-end success is rare" },
+  { value: "93.8", label: "simulator F1 vs real Lark server", sub: "doc-only mock: 53.3 (Tab.4, 50 replayed traces)" },
+]} />
+
+## Motivation
+Agents acting through the <Term def="Model Context Protocol — the open standard exposing external tools and data sources to LLMs as typed, callable functions">MCP</Term> face a benchmarking hole exactly where usage is densest: <Problem>the highest-impact personal applications — social media, enterprise chat, email, notes — are tied to individual accounts and local state, and no prior benchmark evaluates agents there</Problem> (§1). Existing suites test generic information-seeking tools (<Related>MCP-Universe, MCPToolBench++</Related>); personalization-oriented ones rely on synthetic tools whose behavior distributions deviate from real systems (<Related>AppWorld, PersonaBench, Tau-bench's airline/retail domains</Related>); and <Related>ToolAthlon</Related> uses real Notion/email tools but omits social media and enterprise collaboration precisely because those environments are account-bound and permission-sensitive (§2.2, Tab.1). The authors name three blockers: <Problem>realistic deployment needs private data and heavy setup, privacy restricts sharing personal contexts, and keeping a stable, reproducible executable environment that simulates many heterogeneous users is technically non-trivial</Problem> (§1).
+
+## Contribution (what's new)
+<Novelty>Tool-Traverse: ground the simulator in observed server behavior, not documentation — probe each real server (on dedicated test accounts) with human-written seed calls plus LLM-generated adversarial calls, then prompt an LLM to compile the recorded call→response traces into a per-tool executable Python kernel that acts as the environment's state-transition function</Novelty> (§3.1). The form is forced by a measured failure: <Finding src="Tab.4">a documentation-only simulator reaches just 53.3 F1 against real Lark behavior, because docs omit implicit constraints and error handling — it over-rejects valid inputs from hallucinated constraints and emits generic error templates</Finding>. Around it sit <Novelty>Context-Tree, a user-rooted typed-entity tree (User→Chat→Message, User→Calendar→Event) serving as the single mutable state that simulators execute against and graders diff</Novelty> (§3.2), and <Novelty>Persona-Gen, which samples dependency-preserving tool chains, then deliberately deletes <Term def="parameters required for tool execution but omitted from the instruction, recoverable by querying environment state (e.g. a coworker's user id)">implicit context</Term> so tasks force environment exploration rather than slot-filling</Novelty> (§3.3).
+
+## Research questions
+(1) Can SOTA agents operate account-bound personal apps when required parameters live in environment state, not the instruction? (2) Can traversal-grounded, LLM-written code simulators replicate real personalized MCP servers faithfully enough for an open, privacy-preserving benchmark? (3) Which interventions move performance — skill documents, tool-candidate pruning, distractor context?
+
+## Methodology
+The agent receives an instruction, candidate tools (up to 140 across 24 servers), and necessary plus unnecessary context, then runs a tool-calling loop of at most 20 rounds against LLM-generated Python simulators whose only state is a JSON context-tree (App.A.2). Grading is hybrid: <Term def="a graded sub-task boundary inside a task, scored 0/0.5/1 independently by the judge">checkpoint</Term>-level scoring by a GPT-4o judge, plus execution-based verification that abstracts every personalized tool as CRUD on the context file and checks actual state diffs via dedicated Create/Update/Delete executors; search-type checkpoints compare against human-executed ground truth (§3.4). Metrics: Acc (mean checkpoint score), SR-0.8 (share of tasks with Acc above 0.8), Exec-Acc (executor-verified correctness over human-specified execution steps).
+
+<Pass title="Environment and task construction details">
+<Stepper steps={[
+  { title: "Server + tool collection (§3.1, Tab.8)", body: "12 personalized MCP servers are manually curated and deployed with dedicated test accounts and pre-configured tokens: Lark, Slack, WeCom (collaboration), Xiaohongshu/Rednote, Reddit, Instagram, Telegram, Discord (social), Gmail, 163-Email (email), Notion, Obsidian (content management). Information-seeking servers (Amap, Baidu-maps, Medical, Tushare, Mcpollinations, Context7, Monitor, Deepseek, Deep-research) are harvested automatically via the MCP-Flow pipeline. Total: 140 tools, 78 personalized." },
+  { title: "Authentic function-call traversal (§3.1.1)", body: "Annotators write valid seed calls per tool schema (semantically valid, e.g. IDs that exist); a Self-Instruct-style Self-FC step expands the pool. An LLM then perturbs seeds into adversarial calls across four error types — type mismatch, schema violation, boundary condition, semantic conflict — all executed against the live servers. A second LLM discriminates whether each error response is the server's structured error vs an unexpected failure; only verified (call, response, metadata) tuples enter the pool." },
+  { title: "Code-as-Simulation (§3.1.2)", body: "Per server, an LLM writes a Dynamic Context Handler (load/save/query/modify over the context file) and, per tool, a Python simulation kernel conditioned on the input schema, the behavioral traces, and the handler API. Kernels validate inputs, check entity existence (a calendar id must exist before event creation), and reproduce the real server's decision boundaries and exact error messages; they run sandboxed and persist state changes across turns." },
+  { title: "Context-Tree user state (§3.2, Tab.2)", body: "The entity hierarchy is distilled from the traversal pool with human-in-the-loop consolidation, typically rooted at User; children are id-indexed maps, non-containment relations are foreign-key references. Fields are populated by one of four methods: Enumerate (fixed set), Free-Form (LLM), Random (LLM-synthesized generator with format constraints), or Authentic (sanitized real content, e.g. actual Rednote posts, with sensitive fields like phone numbers replaced by fakes). Cross-entity linking then wires references (chat members, attendees)." },
+  { title: "Persona-Gen task synthesis (§3.3)", body: "Tool chains are sampled at dependency-unit level under five constraints: dependency preservation, at least one personalized tool, deduplication, coherence (upstream outputs feed downstream inputs), and human-reviewed realism. An LLM drafts placeholder instruction skeletons from chains + API docs; placeholders are instantiated from the context-tree; fuzzification deletes implicit context the agent must recover from the environment. Annotators align instruction-context-chain, scale query quantities, and prune derivable context to raise difficulty — yielding 173 tasks." },
+  { title: "Evaluation protocol (§3.4, App.A.2, B.2)", body: "Checkpoints sit at sub-task boundaries (970 total across 173 tasks) in four classes: Generic Search and Personalized Search (graded against human-executed ground-truth responses), Personalized Operation (state-altering; CreateDataExecutor / UpdateDataExecutor / DeleteDataExecutor verify the actual context diff, with an LLM judging completion), and Other (log-based fallback). The checkpoint judge is GPT-4o (gpt-4o-2024-11-20), scoring 0/0.5/1." },
+]} />
+
+<MathBlock>{`K_t \\approx f_t : (C_{\\mathrm{current}},\\, x) \\rightarrow (C_{\\mathrm{new}},\\, y)`}</MathBlock>
+
+Task mix (derived from Fig.2a shares of 173): 98 single-server tasks (Lark 20, Rednote 20, Notion/Obsidian/Slack/Email 10 each, WeCom 8, Instagram 6, Reddit 4) and 75 cross-server tasks (Lark-Centric 43, Rednote-Centric 24, Hodgepodge 8). Necessary context per task spans 0-14 items (Fig.2d). Telegram and Discord appear in the server list but have no dedicated task slice — whether they serve only as distractor candidates is Unclear.
+</Pass>
+
+## Main result
+<Finding src="Tab.3">No model reaches 50 in either checkpoint or execution accuracy: Claude-Sonnet-4.5 leads at 38.66 Acc / 10.40 SR-0.8 / 41.50 Exec-Acc, with GPT-5 second at 36.99 / 6.94 / 41.45</Finding>. End-to-end completion is rare — SR-0.8 tops out at 10.40% and bottoms at 0.66% (Gemini-2.5-Pro); OpenAI's reasoning models (o3, o4-mini) and Qwen3-Coder land mid-pack, so neither long reasoning nor coding specialization rescues personalized tool use.
+
+<SortableTable columns={["Model", "Overall Acc", "SR-0.8", "Exec-Acc", "Content Mgmt", "Email", "Hodgepodge"]} rows={[
+  ["Claude-Sonnet-4.5", 38.66, 10.40, 41.50, 19.76, 43.63, 12.50],
+  ["GPT-5", 36.99, 6.94, 41.45, 22.57, 47.17, 12.50],
+  ["Claude-Opus-4.1", 34.52, 7.05, 36.77, 13.56, 9.71, 25.00],
+  ["o4-mini", 30.70, 5.78, 34.73, 21.22, 53.83, 6.25],
+  ["o3", 29.79, 5.20, 30.27, 14.55, 41.08, 37.50],
+  ["Qwen3-Max-Latest", 27.54, 5.75, 29.23, 11.67, 11.71, 18.75],
+  ["Qwen3-235B-A22B", 26.75, 4.07, 21.83, 12.12, 13.71, 31.25],
+  ["GPT-4o", 25.56, 4.35, 20.02, 7.58, 12.57, 25.00],
+  ["DeepSeek-V3", 25.29, 3.47, 27.52, 11.48, 30.79, 18.75],
+  ["Grok-4", 24.58, 6.68, 22.49, 11.82, 5.71, 37.50],
+  ["Qwen3-Coder", 23.93, 3.65, 20.14, 13.18, 8.29, 6.25],
+  ["Gemini-2.5-Pro", 20.68, 0.66, 13.38, 22.24, 20.92, 6.25],
+  ["Gemini-3-Pro", 16.91, 1.79, 5.78, 11.03, 36.92, 6.25],
+]} />
+
+## Key findings
+- <Finding src="Tab.3, §4.2">Content management is the weakest single-server category for most models (column range 7.58-22.57)</Finding>: navigating and editing long documents collapses as tool payloads inflate the context. The prose also claims email is easiest "for most models", but in the extracted table social media is the top single-server column for 9 of 13 rows, and email is wildly model-variant (o4-mini 53.83 vs Grok-4 5.71, Claude-Opus-4.1 9.71) — I mark the email claim only partially supported.
+- <Finding src="§4.6">Three failure archetypes dominate sampled traces</Finding>: *under-exploration* (the agent never queries the environment for implied information — e.g. it messages a hallucinated WeCom recipient although the context held the supervisor's Lark `user_id`); *skipping dependent steps* (substituting a phone number for a `user_id` instead of resolving it via `user_batchGetId`, or fabricating IDs, causing execution errors or silent termination); and *long-context degradation* as context-tree payloads stack across turns.
+- <Finding src="Tab.4">The simulator is behaviorally close to the real Lark server: 94.0% outcome agreement, 93.8 F1, METEOR 0.8703 (vs 58.0 / 53.3 / 0.3214 for the doc-only mock), with only 1 false positive and 2 false negatives over 50 replayed traces</Finding> — traversal data lets the generated code reproduce server-specific error codes and nested response formats, roughly tripling response similarity.
+- <Finding src="Tab.5">Skill documents help modestly and unevenly</Finding>: GPT-5 on the Lark subset climbs 37.50 → 42.50 → 45.00 Acc (none → OpenClaw → hand-refined skills) and 64.29 → 80.36 Exec-Acc, but Claude-Sonnet-4.5 on Rednote *declines* with skills (Exec-Acc 18.75 → 15.63) and DeepSeek-V3's Lark Acc drops (20.80 → 16.60) — procedural guidance is not uniformly consumable.
+- <Finding src="Tab.6, Tab.9">Pruning candidate tools to ground-truth servers lifts Acc for 4 of 5 models, but the claimed distractor-context vulnerability is only partially supported</Finding>: GPT-5 drops 41.04 → 36.99 Acc when five DBpedia distractor paragraphs are appended, yet three of five models stay flat or improve slightly — the caption's "sensitivity" outruns the data.
+- <Finding src="Tab.7, Fig.3">The GPT-4o judge matches humans on 91.5% of 970 checkpoints (GPT-5 traces only), erring mainly by over-strictness toward alternative-tool solutions; Exec-Acc runs slightly above Acc, suggesting human-annotated execution checks are less noisy than LLM-segmented checkpoints. GPT-5 is the cost frontier at $0.09/task; spend does not correlate with accuracy</Finding>.
+
+## Implications
+For harness builders this is a reusable recipe: traverse a real account-bound service once (seed + adversarial calls on test accounts), compile the behavior into code simulators, hang all state on a typed entity tree, and grade by state diff — reproducible, privacy-preserving evaluation of apps that cannot be run live, a middle path between fully synthetic environments (<Related>Tau-bench, AppWorld, PersonaBench</Related>) and live-service suites (<Related>MCP-Universe, ToolAthlon, LiveMCP-101</Related>). It extends the same group's <Related>MCP-Flow</Related> server-harvesting line, and the skills ablation speaks directly to the <Related>Anthropic Skills / OpenClaw</Related> ecosystem the intro frames as the motivating trend. <FollowUp>Whether simulator fidelity holds beyond Lark and under agent-generated (not replayed) call distributions</FollowUp>; <FollowUp>traversal traces as training data for tool-use finetuning</FollowUp>; <FollowUp>adding a simulated user (Tau-bench-style) for multi-turn preference elicitation, which "persona" evaluation arguably requires</FollowUp>; <FollowUp>privacy/safety scoring, which the impact statement calls for but the benchmark does not implement</FollowUp>.
+
+## Limitations
+- <Caveat>Fidelity evidence is narrow: validated on one server (Lark, 14 tools) with 50 replayed traces, judged by an LLM (temperature 0.1, rule-based fallback), and the authors scope the claim to "operation-dominated" servers</Caveat> — the other 11 personalized simulators are unvalidated, and replaying recorded calls does not probe the out-of-distribution calls agents actually emit (§4.3, App.A.2).
+- <Caveat>Persona without preferences: the "persona" is a populated account-state tree; no preference or history modeling, no interactive user, and the agent's handling of sensitive data is never scored</Caveat> — privacy figures only as a construction constraint (faked phone numbers, sanitized posts) and in the impact statement. The benchmark measures state-grounded tool use, not personalization-as-alignment.
+- <Caveat>Judge circularity: GPT-4o both segments checkpoints and scores them, including for models stronger than itself; the 91.5% human-alignment figure comes from GPT-5's traces alone, and documented over-strictness penalizes valid alternative tool paths without correction</Caveat> (§4.7).
+- <Caveat>Ecosystem skew and contamination risk: roughly two-thirds of tasks center on Chinese platforms (Lark, Rednote, WeCom ≈ 115 of 173 including cross-server sets); the underlying MCP repos and platform docs are public and likely in pretraining data; authentic Rednote content seeds contexts; contamination is never discussed</Caveat>.
+- <Caveat>Reporting hygiene: single runs, no variance; the model roster shifts across tables (Fig.3 adds GPT-5.5, Gemini-3.1-Pro, Qwen3.5-Plus, MiniMax-M2.5, Kimi-K2.5 absent from Tab.3; Tab.10 lists Gemini-2.5-Flash with no results anywhere); Fig.2 says 24 servers while Tab.8 enumerates 21; GPT-5's 41.04 Acc in the ablations vs 36.99 in the main table is never reconciled</Caveat>.
+- <Caveat>Small subsets: Hodgepodge is ~8 tasks (4.62%) and every model's score there is a multiple of 6.25, so "hardest subset" rankings are noise-prone</Caveat> — o3, Grok-4, and Qwen3-235B actually score *higher* there than on the larger cross-server sets.
+
+## Critiques and Questions
+1. How much of the ~60-point failure headroom is simulator artifact? Fidelity was measured by replaying recorded calls on one server; a mid-task agent hits the simulator with calls far off the traversal distribution, where LLM-written kernels may silently accept invalid requests — the false-positive mode the authors themselves call most harmful. A per-server fidelity audit, or an agent-in-the-loop A/B of real Lark vs simulated Lark, would make the headline numbers trustworthy.
+2. Is MCP-Persona measuring *personalization* or just *stateful grounding*? Nothing tests preferences, history, or user-specific adaptation; the capability actually stressed is implicit-state resolution plus cross-app ID plumbing. What would tasks look like if they required trading off conflicting user preferences?
+3. Why judge with GPT-4o when the Exec-Acc machinery already exists? Gating checkpoint scores on execution outcomes and reserving the LLM judge for search-type checkpoints would remove most of the judge-validity surface (over-strictness, capacity limits) that §4.7 itself documents.
+4. Several ablation narratives are underdetermined: the distractor "vulnerability" (Tab.9) holds for 2 of 5 models, tool pruning's Exec-Acc effect is mixed, and with single runs there are no error bars to arbitrate. The cross-table accounting (server totals, rosters, GPT-5's two overall numbers) needs the repo's exact per-table configs before building on it.
+5. Positioning check: "first benchmark for real-world personalized MCP tools" rests on Tab.1's coverage matrix; ToolAthlon already had real personal Notion/email tools, so the genuine delta is social media + enterprise collaboration coverage via simulation — narrower than the abstract's framing, though real.
+
+<SelfCheck q="Why does MCP-Persona traverse live servers with both valid and adversarial calls before generating simulator code, instead of generating simulators directly from tool documentation?" a="Documentation misses implicit constraints and error-handling logic: a doc-only simulator reached just 53.3 F1 against real Lark behavior, over-rejecting valid inputs due to hallucinated constraints and emitting generic error templates. Executing human seed calls plus LLM-generated adversarial calls (type mismatches, schema violations, boundary conditions, semantic conflicts) against the real server records its actual decision boundaries and exact error payloads; an LLM then compiles those traces into per-tool Python kernels, reaching 93.8 F1 and roughly triple the response similarity (METEOR 0.8703 vs 0.3214)." />
+
+## Glossary
+- <Term def="ByteDance's enterprise collaboration suite (Feishu in China): chat, calendar, docs, contacts">Lark</Term>, <Term def="Xiaohongshu, a Chinese lifestyle social platform of posts, comments, and search">Rednote</Term>, <Term def="WeChat Work, Tencent's enterprise messenger">WeCom</Term> — the platforms carrying most tasks.
+- <Term def="open-source personal-AI-assistant ecosystem; ClawHub distributes community-written skill documents">OpenClaw</Term> — source of the public skills tested in Tab.5.
+- <Term def="expanding a small human-written seed set of function calls by LLM generation, after Self-Instruct">Self-FC</Term> — how the function-call pool is grown before traversal.
+- <Term def="Create/Read/Update/Delete — the four state operations every personalized tool is abstracted into for execution-based grading">CRUD</Term>.
+
+{/* NOTES_START */}
+### Personal notes
+Transferable core for our harness: (1) traverse-then-codegen beats doc-mocking by +40 F1 — if we ever simulate an account-bound API, budget for recording real traces *including induced failures*, since error-message fidelity is what keeps agent retry behavior realistic; (2) the context-tree + CRUD-executor pattern gives execution-based grading without live accounts; (3) their failure taxonomy suggests scaffold interventions: an explicit resolve-IDs-before-acting step and a budgeted environment-exploration phase.
+
+For the advisor discussion: press on fidelity generalization (one server, replayed calls, LLM-judged) and on whether "Persona" is misnamed statefulness; contrast with ToolAthlon's live-tool approach and Tau-bench's simulated user. Check the repo (github.com/wwh0411/MCP-Persona) for per-table eval configs — the 41.04 vs 36.99 GPT-5 discrepancy and the roster drift need resolving before citing numbers.
+{/* NOTES_END */}

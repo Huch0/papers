@@ -1,0 +1,83 @@
+canonical_key: arxiv-2605.02289
+version_key: v1
+title: 'EngiAgent: Fully Connected Coordination of LLM Agents for Solving Open-ended Engineering Problems
+  with Feasible Solutions'
+authors:
+- Xiyuan Zhou
+- Ruixi Zou
+- Xinlei Wang
+- Yuheng Cheng
+- Yan Xu
+- Junhua Zhao
+- Jinjin Gu
+abstract: Engineering problem solving is central to real-world decision-making, requiring mathematical
+  formulations that not only represent complex problems but also produce feasible solutions under data
+  and physical constraints. Unlike mathematical problem solving, which operates on predefined formulations,
+  engineering tasks demand open-ended analysis, feasibility-driven modeling, and iterative refinement.
+  Although large language models (LLMs) have shown strong capabilities in reasoning and code generation,
+  they often fail to ensure feasibility, which limits their applicability to engineering problem solving.
+  To address this challenge, we propose EngiAgent, a multi-agent system with a fully connected coordinator
+  that simulates expert workflows through specialized agents for problem analysis, modeling, verification,
+  solving, and solution evaluation. The fully connected coordinator enables flexible feedback routing,
+  overcoming the rigidity of prior pipeline-based reflection methods and ensuring feasibility at every
+  stage of the process. This design not only improves robustness to diverse failure cases such as data
+  extraction errors, constraint inconsistencies, and solver failures, but also enhances the overall quality
+  of problem solving. Empirical results across four representative domains demonstrate that EngiAgent
+  achieves substantial improvements in feasibility compared to prior approaches, establishing a new paradigm
+  for feasibility-oriented engineering problem solving with LLMs. Our source code and data are available
+  at https://github.com/AI4Engi/EngiAgent.
+venue: ICML
+year: 2026
+source: arxiv
+source_url: https://arxiv.org/abs/2605.02289v1
+pdf_url: https://arxiv.org/pdf/2605.02289v1
+pdf_sha256: 586ae1b5cd99379c5e0a434584a11eba2db0f273cfdb22249f6f514442e6ef06
+fetched_at: '2026-07-18T11:15:13Z'
+source_updated_at: '2026-05-04T07:26:12Z'
+ids:
+  doi: null
+  arxiv_id: 2605.02289v1
+  arxiv_base_id: '2605.02289'
+  arxiv_version: v1
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- icml2026-picks
+- multi-agent
+topic_groups:
+- general_agent_methods
+scoring:
+  score: 38.1
+  label: TRACK_ONLY
+  confidence: medium
+  rationale: 'score=38 -> TRACK_ONLY | strong: venue_quality(1.00), recency(0.88), artifact_availability(0.55)
+    | interests: general_agent_methods:reflection, general_agent_methods:group:general_agent_methods'
+  matched_interests:
+  - general_agent_methods:reflection
+  - general_agent_methods:group:general_agent_methods
+  negative_signals: []
+  subscores:
+    interest_fit: 0.501
+    recency: 0.884
+    venue_quality: 1.0
+    harness_relevance: 0.0
+    novelty: 0.0
+    artifact_availability: 0.55
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/engiagent-fully-connected-coordination-of-llm-agents-260502289/v1/paper.pdf
+  extraction: library/engiagent-fully-connected-coordination-of-llm-agents-260502289/v1/extraction.txt
+  summary: library/engiagent-fully-connected-coordination-of-llm-agents-260502289/v1/summary.mdx
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread
+  summary_format: mdx

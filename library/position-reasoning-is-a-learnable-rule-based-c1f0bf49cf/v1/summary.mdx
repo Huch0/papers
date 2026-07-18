@@ -1,0 +1,120 @@
+---
+canonical_key: title-92c1f0bf49cf
+version_key: v1
+title: 'Position: Reasoning is a Learnable Rule-Based Process'
+authors:
+- Rachel Lawrence
+- Jacqueline Maasch
+venue: ICML
+year: 2026
+tags:
+- position-paper
+- icml2026-picks
+topic_groups:
+- general_agent_methods
+triage_label: SKIP
+triage_confidence: medium
+source_link: https://jmaasch.github.io/reasoning/
+summary_date: '2026-07-18'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>This ICML 2026 position paper gives AI reasoning an operational, method-agnostic definition — the iterated, exact application of learnable rules to beliefs and evidence, emitting an auditable state trace — and argues that a reasoning process's *validity* comes from exact rule application alone, independent of how rules are selected and of external truth (soundness).</TLDR>
+
+<WhyItMatters>I evaluate agent "reasoning" constantly; this framework supplies vocabulary for separating harness-induced behavior (deterministic tool steps are auditable rule applications) from model reasoning (an unvalidated selection policy), and its "reasoning zombie" construct names why benchmark scores alone can never establish reasoning. Conceptual anchor of my ICML 2026 advisor-review picks.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "3", label: "core theses", sub: "define-then-measure · rule-based process · validity" },
+  { value: "7", label: "core ingredients of reasoning", sub: "process, goal, rules, evidence, prior/current beliefs, states" },
+  { value: "6", label: "domains instantiated", sub: "deduction → RL → next-token prediction (slides p.34)" },
+  { value: "23", label: "checklist items", sub: "reporting guidelines, App. A (checklist PDF)" },
+]} />
+
+<Caveat>Provenance: this summary is based on the authors' ICML slides (38 pp.), poster, published checklist PDF (the paper's App. A), project site, and repo README. The full paper text (PhilArchive) was not machine-accessible (HTTP 403), so section-level anchors into the paper and any fine-grained claims not present in these materials — notably the formal r-zombie treatment and the ICML-mandated Alternative Views section — are marked "Unclear".</Caveat>
+
+## Motivation
+<Problem>"Reasoning" in generative AI has no agreed operational definition — definitions are imprecise, overloaded, misaligned with historical treatments, or absent entirely</Problem> (slides p.7). This breeds mismeasurement, an illusion of shared understanding, and unverifiable construct validity: claims of emergent reasoning are commonplace while a cited survey concedes "there is not a clear definition of what it entails", goalposts shift, and <Problem>strong benchmark performance gets conflated with reasoning itself</Problem> (slides p.8). The deeper evaluation problem: LRMs' black-box design and natural-language interface make it hard to <Problem>differentiate true reasoning from reasoning-like speech</Problem> — outputs may arise from memorization, guessing, or Clever Hans effects rather than reasoning (slides p.8). The field has drifted "from proofs to benchmarks", and benchmarks suffer weak construct validity, contamination, gaming, and selective reporting — AI evaluation "has yet to mature into a proper 'science'" (slides p.16). Stakes: reasoning is a necessary (not sufficient) precondition for AGI, and usership of LRMs outpaces evidence of trustworthiness (slides p.11).
+
+## Contribution (what's new)
+<Novelty>An operational, method-agnostic definition of reasoning as a *process* of exact rule application — not an output — over evolving states of beliefs, evidence, and rules, where the rules themselves are learnable, defeasible, and updatable by meta rules</Novelty> (poster; slides p.18-33). The definition must take this form because (a) product-based evaluation cannot separate reasoners from emulators — only process-level criteria can (slides p.13-16); and (b) restricting rules to fixed symbolic axioms would exclude neural and probabilistic systems, whereas the authors see no justification for "reinventing reasoning" for generative AI and explicitly reject the symbolic-vs-deep-learning dichotomy (slides p.9; project site). On top of the definition sit two decouplings: <Novelty>validity (internal: each transition arises from applying a rule in the current rule set) is separated from soundness (external: premises true under evaluation), and both are separated from rule *selection* — any properly-typed rule application is valid regardless of the algorithm that chose it</Novelty> (slides p.31-32). Deliverables: Algorithm 1 with an auditable trace (plus a runnable notebook in the repo), the <Term def="reasoning zombie: a system that superficially behaves as an autonomous reasoner but lacks the internal mechanisms necessary for validity">r-zombie</Term> construct, and a 23-item community checklist for communicating AI reasoning research (checklist App. A).
+
+## Research questions
+What should "reasoning" mean in AI, operationally, such that construct-valid measurement becomes possible — and can one definition span symbolic, neural, and neuro-symbolic methods? What makes a reasoning process *valid*, and how does validity relate to soundness, to how rules are selected, and to goal attainment?
+
+## Methodology
+This is a definitional/argumentative paper, not an empirical one. The method: distill seven core ingredients of reasoning from historical treatments (Broome's "rule-governed operation", logic, bounded rationality) — process, goal, rules, evidence, prior beliefs, current beliefs, evolving states (slides p.21-28); formalize them as typed components plus an explicit algorithm (slides p.29-33); demonstrate method-agnosticism by instantiating six disparate domains in the same schema (slides p.34); and derive reporting norms as a checklist (App. A). A key design choice: the reasoner's *goal* is encoded in the stopping rule, and validity is deliberately not tied to attaining it (slides p.23).
+
+<Pass title="The formal machinery (slides p.29-33; poster)">
+State at step t is a triple of beliefs, evidence, and rules; reasoning is iterated rule application:
+
+<MathBlock>{`S_t := \\langle B_t, E_t, R_t \\rangle, \\qquad B_t = r(B_{t-1}, E_t) \\ \\text{for some rule } r \\in R_{t-1}`}</MathBlock>
+
+Rules are operators whose operands are information — evidence is *extrinsic* (a stream, possibly fixed at t=0), beliefs are *intrinsic* (intermediate conclusions of prior steps; defeasible, e.g. overwritten during backtracking). Two rule types: local rules typed `B × E → B` update beliefs; meta rules typed `R × B × E → R` update the rule set itself — rule learning and revision are first-class. The reasoner adds selectors (local `s_L`, meta `s_M`), a stopping rule `s_stop : S → {0,1}`, and a trace writer. Rules can be theorems, functions, policies, decision boundaries, premises — including rules for stochasticity, uncertainty, and approximation: "exact" means executing the rule as specified, not determinism (slides p.18, 24). In the paper's own numbering, informal reasoning is Def. 2.1, reasoner Def. 2.2, formal reasoning Def. 2.4, validity Def. 2.7 (per README and checklist cross-references); other numbered definitions are Unclear.
+
+<Stepper steps={[
+  { title: "Ingest evidence", body: "Advance the extrinsic evidence stream: E′ ← E_t+1. Evidence may come from interaction with an environment (as in RL) or be given retrospectively." },
+  { title: "Select, then apply, a local rule", body: "Selector s_L picks a local rule from the current rule set; beliefs update by exact application: B′ ← r_L(B, E′). Selection is where agency, intelligence, or creativity enter — random selection is admissible; execution demands exactness and rigor (slides p.22)." },
+  { title: "Select, then apply, a meta rule", body: "Selector s_M picks a meta rule; the rule set updates: R′ ← r_M(R, B′, E′). This is where learning and rule revision live." },
+  { title: "Write the auditable trace", body: "Append tr(S, r_L, r_M, S′) to the reasoning trace, advance the state, loop until s_stop fires; return final beliefs plus the trace. The repo notebook implements this loop for a toy logic domain to show validity can be audited in code (README)." },
+]} />
+
+Domain instantiations (slides p.34; goal column abbreviated away):
+
+<ResultsTable columns={["Domain", "Beliefs", "Evidence", "Rules"]} rows={[
+  ["Logical deduction", "derived formulas in proof state", "premises, fixed at t=0", "modus ponens, intro/elim rules"],
+  ["Bayesian inference", "current posterior", "newly observed data", "Bayes' rule + conjugate/approx. updates"],
+  ["Reinforcement learning", "value estimates, policy params", "observed transitions + rewards", "TD / policy-gradient updates, meta rules on lr/architecture"],
+  ["Nonmonotonic logic", "accepted (defeasible) conclusions", "new, possibly conflicting info", "revision + retraction rules, meta rules"],
+  ["Turing machine", "tape + head + control state", "input word at t=0", "transition function δ"],
+  ["Next-token prediction", "current token given prefix", "prompt at initialization", "chain rule, Markov assumptions, MLE formulae"],
+]} />
+</Pass>
+
+## Main result
+For a position paper the "result" is the thesis structure; my verdicts assess the argument as reconstructable from slides/poster:
+
+<ClaimEvidence rows={[
+  { claim: "T1 — Define, then measure: operational definitions must be stated and construct validity of reasoning evaluation justified against them", evidence: "Psychometrics framing (operationalization per APA, slides p.6); benchmark-critique literature — contamination, gaming, SOTA hacking, weak construct validity (slides p.16)", verdict: "Well supported; continuous with the measurement-theory position lineage" },
+  { claim: "T2 — Reasoning is a learnable rule-based process: exact rule application, not an output; rules span theorems to decision boundaries, incl. stochastic/approximate rules", evidence: "Continuity with Broome and historical treatments (slides p.22); six-domain instantiation (slides p.34)", verdict: "Coherent and genuinely method-agnostic — but breadth is bought at the cost of discriminative power (see Critiques)" },
+  { claim: "T3 — Rule-based reasoning is valid: validity arises from exact rule application, independent of rule selection", evidence: "Any properly-typed rule application yields a valid transition, and validity is independent of soundness — hence of the selection algorithm and of ground truth (Claim, slides p.32; Broome: reasoning one is *permitted*, not required, to do)", verdict: "Internally consistent; hinges on a mechanistic reading of transitions arising from rule application" },
+]} />
+
+## Key findings
+- <Finding src="slides p.31-32">Validity, soundness, and rule selection are three independent axes</Finding>: a transition is valid iff it arises from applying a rule in the current rule set; it is additionally sound iff all premises in beliefs/evidence/rules hold under external evaluation; and validity is invariant to the selection algorithm, "regardless of external ground truth". A valid reasoner can be wrong — and validity is auditable without ground truth.
+- <Finding src="slides p.22-23">Agency lives in selection; validity lives in execution</Finding>: rule selection is where intelligence or creativity enter (random selection is explicitly admissible); execution requires exactness. Validity is also "not necessarily tied to successful attainment of a goal" — valid ≠ successful.
+- <Finding src="poster">"Learnable" is structural, not rhetorical</Finding>: rules are operators over information, split into local rules (update beliefs) and meta rules (update the rule set), so learned, defeasible, continuously-updated rules — and stochastic/approximate ones — are inside the definition, not exceptions to it.
+- <Finding src="slides p.34">One schema instantiates six domains</Finding>, from logical deduction through RL to Turing machines and probabilistic next-token prediction — the demonstration of method-agnosticism (and, flip side, of near-universality; see Critiques).
+- <Finding src="project site">The r-zombie makes behavioral evaluation insufficient in principle</Finding>: a system that "superficially behaves as an autonomous reasoner but lacks the internal mechanisms necessary for validity" is output-indistinguishable from a reasoner, so any purely output-level benchmark under-determines reasoning claims. Formal treatment in the paper: Unclear.
+- <Finding src="checklist App. A p.17">The 23-item checklist operationalizes the position as reporting norms</Finding>: notable items — 2.3 (is each new belief *provably* obtained by exact rule application? hypotheses required absent proof), 2.4 (provenance of rules: learned vs axiomatic; how meta-rule updates are obtained), 3.1-3.2 (construct validity of evals justified against the stated definitions; metrics must measure *both* process quality and output quality), 4.3 (are reasoning traces theoretically guaranteed faithful to the internal process?), 4.6 (no excessive claims in titles/abstracts/marketing).
+
+## Implications
+If adopted, the burden of proof for "model X reasons" inverts: authors must declare the rule set, beliefs, and evidence up front, then show transitions arise from exact rule application — benchmark scores alone can never establish reasoning because r-zombies exist. For my work the sharpest payoff is an agent-systems reading: in a tool-using agent, the harness's deterministic tool executions are exact rule applications with a faithful-by-construction trace (tool logs are the trace of Algorithm 1), while the LLM plays rule/action *selector* — so per T3 the process can be valid regardless of the opaque, stochastic selection policy, and validity claims attach to the harness layer while "the model reasons" claims need separate mechanism-level evidence. Checklist items 3.2 (process metrics, not just output metrics) and 4.3 (trace faithfulness) transfer directly to agent evaluation, where CoT is unfaithful but tool logs are not. The paper sits in the <Related>construct-validity position lineage (Herrmann et al. ICML 2024; Wallach et al. ICML 2025; Alaa et al. on medical LLM benchmarks) and the evaluation-science program (Weidinger et al. 2025)</Related>, against the <Related>benchmark-crisis literature (LiveBench; "Benchmarking is Broken", NeurIPS 2025) and the Clever Hans line (Lapuschkin et al. 2019)</Related>, with philosophical grounding in <Related>Broome's *Rationality Through Reasoning* (2013), Chollet's process-vs-product distinction, and Simon's procedural rationality</Related>. <FollowUp>Read the PhilArchive full text for the formal r-zombie definition and the Alternative Views section</FollowUp>; <FollowUp>run the repo notebook and try recasting one of my agent-eval traces as declared rules + audit</FollowUp>; <FollowUp>compare with Hendrycks et al.'s AGI definition (cited as R1) for how the two operationalizations compose</FollowUp>.
+
+## Limitations
+- <Caveat>No empirical component in the available materials</Caveat>: no case study applying the definition or checklist to a real LRM/agent system end-to-end; the only implementation is a toy logic notebook. Whether the paper contains worked LLM case studies: Unclear.
+- <Caveat>Verification inside opaque models is deferred, not solved</Caveat>: for an end-to-end LRM, checking that a belief "arises from" exact rule application requires faithful traces or mechanism identification; the checklist concedes this by accepting hypotheses in lieu of proof (2.3) and treating trace faithfulness as an open reporting item (4.3).
+- <Caveat>Discriminative power depends on the declared rule level</Caveat>: the schema's own Turing-machine and next-token rows show essentially any computational process is a valid reasoner over *some* rule set; exclusion is delegated to checklist 4.5's contextual judgment ("useful, nontrivial reasoning beyond standard ML inference"), which is not formally defined.
+- <Caveat>Source coverage</Caveat>: the full paper (PhilArchive) was inaccessible; the abstract, Alternative Views, formal r-zombie definition, and Defs. 2.3/2.5/2.6 could not be recovered — marked Unclear throughout.
+
+## Critiques and Questions
+1. **What does the definition exclude?** By the authors' own p.34 table, a Turing machine — hence every terminating program, including vanilla LM decoding — instantiates valid reasoning over machine-level rules. The operational content therefore lives less in the definition than in the *declaration discipline* the checklist imposes (which rule set a claim quantifies over, stated before evaluation). That is a real contribution, but it means "valid reasoning" is a property of a system *under a description*, not of a system simpliciter — the paper's title thesis is weaker than it sounds without the checklist attached.
+2. **"Arises from" must be causal-mechanistic or the r-zombie contrast collapses.** Memorized replay of a proof produces transitions extensionally identical to rule applications; if consistency-with-a-rule sufficed, the replayer would be a valid reasoner and the r-zombie would be incoherent. The slides never state the causal reading explicitly (Unclear whether the paper does) — this is the load-bearing philosophical joint.
+3. **Does it operationalize measurement or relocate it?** Split verdict: for systems with explicit declared state (provers, Bayesian pipelines, agent harnesses), validity auditing is genuinely mechanical — Algorithm 1's trace makes it a log-check needing no ground truth. For the LRMs that motivated the paper, it converts "does it reason?" into a mechanism-identification problem that interpretability cannot yet answer — a measurement *contract*, not a measurement *procedure*. The honest contribution is relocating the null hypothesis: absent process evidence, claim emulation, not reasoning.
+4. **Validity is a floor, not a merit.** A system looping a typed identity rule reasons validly forever while going nowhere; validity certifies procedural integrity, not competence or progress (those live in the goal/stopping rule, soundness, and unmodeled selection quality). Their own 4.6 (claim hygiene) cuts both ways: "provably valid reasoning" would make excellent misleading marketing.
+5. **What would count as a counterexample?** Either a consensus reasoner with no non-trivial rule description (intuitive/analogical leaps — the framework risks absorbing these post hoc as "learned rules", which flirts with unfalsifiability), or a consensus non-reasoner satisfying domain-level validity (the replayer of #2). The authors anticipate the objections I can see in the slides — symbolic revanchism (p.9, learnable/defeasible rules), stochasticity (p.22, random selection admissible), success-conflation (p.23) — but the official Alternative Views rebuttals are Unclear from the available materials.
+
+<SelfCheck q="An agent selects rules with an opaque neural policy, applies each selected rule exactly, but one premise in its evidence stream is false. Is its reasoning process valid? Is it sound?" a="Valid: every transition arises from exact application of a rule in the current rule set, and validity is independent of the selection algorithm and of external ground truth (slides p.32). Not sound: soundness additionally requires all premises encoded by beliefs, evidence, and rules to be true under external evaluation (slides p.31)." />
+
+## Glossary
+- <Term def="a definition in terms of the operations by which a construct can be observed and measured (APA); the paper's Thesis 1 demands one before any reasoning measurement">operational definition</Term>
+- <Term def="the degree to which an evaluation actually measures the construct it claims to measure; unverifiable when the construct is undefined">construct validity</Term>
+- <Term def="revisable in light of new information — beliefs can be overwritten (e.g. backtracking) and rules retracted; a first-class property in this framework">defeasible</Term>
+- <Term def="large reasoning model — an LLM trained/prompted to emit long chain-of-thought before answering; the paper's motivating system class">LRM</Term>
+- r-zombie and local/meta rules are defined inline above.
+
+{/* NOTES_START */}
+### Personal notes
+The keeper idea for my agent-eval work: harness = rule-application layer (tool logs are a faithful trace; validity is auditable), model = selection policy (validity does not depend on it). That split turns "did the agent reason?" into two separable questions with different evidence standards. Use checklist 3.2/4.3 as review questions for agent-eval papers. Before citing in the advisor review, pull the PhilArchive text manually for the Alternative Views section and the formal r-zombie definition — my critique #1 (near-universality) and #2 (causal reading of "arises from") may be answered there.
+{/* NOTES_END */}

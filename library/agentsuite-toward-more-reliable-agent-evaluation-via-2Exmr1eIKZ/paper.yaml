@@ -1,6 +1,6 @@
 canonical_key: openreview-2Exmr1eIKZ
 slug: agentsuite-toward-more-reliable-agent-evaluation-via-2Exmr1eIKZ
-title: 'AgentSuite: Toward More Reliable Agent Evaluation via a Component-Based Benchmark Auditing Pipeline'
+title: 'AgentSuite: Toward More Reliable Agent Evaluation with a Component-Based Benchmark Auditing Pipeline'
 authors:
 - Hyewon Suh
 - Binfei Ji
@@ -24,6 +24,7 @@ primary_ids:
   openalex_id: null
 canonical_urls:
 - https://openreview.net/forum?id=2Exmr1eIKZ
+- https://openreview.net/pdf?id=2Exmr1eIKZ
 topic_groups:
 - agent_harness
 tags:
@@ -33,12 +34,12 @@ tags:
 - tool-use
 venue:
   name: ICML
-  tier: unknown
-  status: unknown
+  tier: A_star
+  status: accepted
   year: 2026
 user:
   read_status: unread
-  triage_label: SKIP
+  triage_label: SKIM
   triage_confidence: high
   notes: null
 milestone: null
@@ -60,6 +61,22 @@ versions:
   extraction_status: none
   created_at: '2026-07-18T11:15:19Z'
   updated_at: '2026-07-18T11:22:58Z'
+- version_key: v2
+  version_label: ICML 2026 camera-ready (PMLR 306)
+  source: openreview
+  source_url: https://openreview.net/forum?id=2Exmr1eIKZ
+  pdf_path: library/agentsuite-toward-more-reliable-agent-evaluation-via-2Exmr1eIKZ/v2/paper.pdf
+  summary_path: library/agentsuite-toward-more-reliable-agent-evaluation-via-2Exmr1eIKZ/v2/summary.mdx
+  metadata_path: library/agentsuite-toward-more-reliable-agent-evaluation-via-2Exmr1eIKZ/v2/metadata.yaml
+  fetched_at: '2026-07-19T12:04:30Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: 2c7c91f3aab411df69d8ae2255dab111cf3109547e36ed12c8c38923a1021dce
+  pdf_bytes: 870614
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-07-19T12:04:30Z'
+  updated_at: '2026-07-19T12:16:29Z'
 relations:
   duplicate_candidates: []
   related_papers: []

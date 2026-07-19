@@ -1,0 +1,88 @@
+canonical_key: openreview-2Exmr1eIKZ
+version_key: v2
+title: 'AgentSuite: Toward More Reliable Agent Evaluation with a Component-Based Benchmark Auditing Pipeline'
+authors:
+- Hyewon Suh
+- Binfei Ji
+- Seojune Lee
+- Rishi Khare
+- Basit Khan
+- Hyunjun Kim
+- Tianyi Zhang
+- Venkat Krishna Srinivasan
+- Peter Belcak
+- Shizhe Diao
+- Pavlo Molchanov
+- Yingyan (Celine) Lin
+- Zhen Dong
+abstract: Reliable evaluation of large language model (LLM) agents depends critically on benchmark validity,
+  yet modern agent benchmarks often contain hidden flaws arising from interactions among user instructions,
+  environments, tools, ground-truth trajectories, and evaluation protocols. These flaws confound model
+  errors with benchmark artifacts and undermine leaderboard-based comparisons. We propose COBA (COmponent-based
+  Benchmark Auditing), an automated pipeline for diagnosing and filtering validity issues in agent benchmarks.
+  COBA decomposes agent tasks into four standardized components—User, Environment, Ground Truth, and Evaluation—and
+  operationalizes a component-level issue taxonomy using hybrid rule-based detectors and taxonomy-guided
+  LLM evaluation. Across six widely used agent benchmarks, COBA achieves strong alignment with expert
+  judgments, with F1 scores between 0.791 and 0.874. It complements manual verification of tau^2-bench
+  by identifying issues missed due to benchmark complexity, and generalizes to previously unseen benchmarks
+  with minimal adaptation. Our analysis shows that benchmark flaws are widespread and materially affect
+  evaluation outcomes, demonstrating that component-based auditing provides a scalable foundation for
+  more reliable and interpretable agent evaluation. We release AgentSuite, a unified benchmark-running
+  platform that includes the COBA auditing pipeline and audited benchmark variants.
+venue: ICML
+year: 2026
+source: openreview
+source_url: https://openreview.net/forum?id=2Exmr1eIKZ
+pdf_url: https://openreview.net/pdf?id=2Exmr1eIKZ
+pdf_sha256: 2c7c91f3aab411df69d8ae2255dab111cf3109547e36ed12c8c38923a1021dce
+fetched_at: '2026-07-19T12:04:30Z'
+source_updated_at: null
+ids:
+  doi: null
+  arxiv_id: null
+  arxiv_base_id: null
+  arxiv_version: null
+  openreview_id: 2Exmr1eIKZ
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- benchmark
+- evaluation-harness
+- tool-use
+- icml2026-picks
+topic_groups:
+- agent_harness
+scoring:
+  score: 53.4
+  label: SKIM
+  confidence: high
+  rationale: 'score=53 -> SKIM | strong: recency(1.00), venue_quality(1.00), interest_fit(0.73) | interests:
+    agent_harness:group:agent_harness, general_agent_methods:agent evaluation'
+  matched_interests:
+  - agent_harness:group:agent_harness
+  - general_agent_methods:agent evaluation
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 1.0
+    venue_quality: 1.0
+    harness_relevance: 0.52
+    novelty: 0.0
+    artifact_availability: 0.55
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/agentsuite-toward-more-reliable-agent-evaluation-via-2Exmr1eIKZ/v2/paper.pdf
+  extraction: library/agentsuite-toward-more-reliable-agent-evaluation-via-2Exmr1eIKZ/v2/extraction.txt
+  summary: library/agentsuite-toward-more-reliable-agent-evaluation-via-2Exmr1eIKZ/v2/summary.mdx
+  code_url: https://github.com/Agent-Suite/AgentSuite
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread
+  summary_format: mdx

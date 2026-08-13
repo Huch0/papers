@@ -1,0 +1,81 @@
+canonical_key: arxiv-2304.05128
+version_key: v1
+title: Teaching Large Language Models to Self-Debug
+authors:
+- Xinyun Chen
+- Maxwell Lin
+- Nathanael Schärli
+- Denny Zhou
+abstract: Large language models (LLMs) have achieved impressive performance on code generation. However,
+  for complex programming tasks, generating the correct solution in one go becomes challenging, thus some
+  prior works have designed program repair approaches to improve code generation performance. In this
+  work, we propose Self-Debugging, which teaches a large language model to debug its predicted program
+  via few-shot demonstrations. In particular, we demonstrate that Self-Debugging can teach the large language
+  model to perform rubber duck debugging; i.e., without any human feedback on the code correctness or
+  error messages, the model is able to identify its mistakes by investigating the execution results and
+  explaining the generated code in natural language. Self-Debugging achieves the state-of-the-art performance
+  on several code generation benchmarks, including the Spider dataset for text-to-SQL generation, TransCoder
+  for C++-to-Python translation, and MBPP for text-to-Python generation. On the Spider benchmark where
+  there are no unit tests to verify the correctness of predictions, Self-Debugging with code explanation
+  consistently improves the baseline by 2-3%, and improves the prediction accuracy on problems of the
+  hardest level by 9%. On TransCoder and MBPP where unit tests are available, Self-Debugging improves
+  the baseline accuracy by up to 12%. Meanwhile, by leveraging feedback messages and reusing failed predictions,
+  Self-Debugging notably improves sample efficiency, and can match or outperform baseline models that
+  generate more than 10x candidate programs.
+venue: arXiv
+year: 2023
+source: arxiv
+source_url: https://arxiv.org/abs/2304.05128v2
+pdf_url: https://arxiv.org/pdf/2304.05128v2
+pdf_sha256: 020e06b1fb9e1d4b6c33016a9471e8bd31f8ecfd7a22335d85956c14efa39f75
+fetched_at: '2026-08-13T07:14:35Z'
+source_updated_at: '2023-10-05T09:12:07Z'
+ids:
+  doi: null
+  arxiv_id: 2304.05128v2
+  arxiv_base_id: '2304.05128'
+  arxiv_version: v2
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- execution-based-eval
+- tde-related-work
+topic_groups:
+- software_engineering_agents
+scoring:
+  score: 15.0
+  label: SKIP
+  confidence: high
+  rationale: 'score=15 -> SKIP | strong: interest_fit(0.91), novelty(0.55), venue_quality(0.40) | interests:
+    software_engineering_agents:program repair, software_engineering_agents:group:software_engineering_agents
+    | negatives: old_in_fast_area'
+  matched_interests:
+  - software_engineering_agents:program repair
+  - software_engineering_agents:group:software_engineering_agents
+  negative_signals:
+  - old_in_fast_area
+  subscores:
+    interest_fit: 0.91
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 0.55
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/teaching-large-language-models-to-self-debug-230405128/v1/paper.pdf
+  extraction: library/teaching-large-language-models-to-self-debug-230405128/v1/extraction.txt
+  summary: library/teaching-large-language-models-to-self-debug-230405128/v1/summary.mdx
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread
+  summary_format: mdx

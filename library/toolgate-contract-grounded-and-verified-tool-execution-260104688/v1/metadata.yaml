@@ -1,0 +1,84 @@
+canonical_key: arxiv-2601.04688
+version_key: v1
+title: 'ToolGate: Contract-Grounded and Verified Tool Execution for LLMs'
+authors:
+- Yanming Liu
+- Xinyue Peng
+- Jiannan Cao
+- Xinyi Wang
+- Songhang Deng
+- Jintao Chen
+- Jianwei Yin
+- Xuhong Zhang
+abstract: Large Language Models (LLMs) augmented with external tools have demonstrated remarkable capabilities
+  in complex reasoning tasks. However, existing frameworks rely heavily on natural language reasoning
+  to determine when tools can be invoked and whether their results should be committed, lacking formal
+  guarantees for logical safety and verifiability. We present \textbf{ToolGate}, a forward execution framework
+  that provides logical safety guarantees and verifiable state evolution for LLM tool calling. ToolGate
+  maintains an explicit symbolic state space as a typed key-value mapping representing trusted world information
+  throughout the reasoning process. Each tool is formalized as a Hoare-style contract consisting of a
+  precondition and a postcondition, where the precondition gates tool invocation by checking whether the
+  current state satisfies the required conditions, and the postcondition determines whether the tool's
+  result can be committed to update the state through runtime verification. Our approach guarantees that
+  the symbolic state evolves only through verified tool executions, preventing invalid or hallucinated
+  results from corrupting the world representation. Experimental validation demonstrates that ToolGate
+  significantly improves the reliability and verifiability of tool-augmented LLM systems while maintaining
+  competitive performance on complex multi-step reasoning tasks. This work establishes a foundation for
+  building more trustworthy and debuggable AI systems that integrate language models with external tools.
+venue: arXiv
+year: 2026
+source: arxiv
+source_url: https://arxiv.org/abs/2601.04688v1
+pdf_url: https://arxiv.org/pdf/2601.04688v1
+pdf_sha256: bc576eed888f6c2113953523c4c1a8fa3b9014202fc275b5d704199443250308
+fetched_at: '2026-08-13T07:14:53Z'
+source_updated_at: '2026-01-08T07:56:45Z'
+ids:
+  doi: null
+  arxiv_id: 2601.04688v1
+  arxiv_base_id: '2601.04688'
+  arxiv_version: v1
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- tde-related-work
+- tool-use
+- verifier
+topic_groups:
+- agent_harness
+- general_agent_methods
+scoring:
+  score: 35.4
+  label: TRACK_ONLY
+  confidence: high
+  rationale: 'score=35 -> TRACK_ONLY | strong: interest_fit(0.73), recency(0.61), venue_quality(0.40)
+    | interests: agent_harness:group:agent_harness, general_agent_methods:group:general_agent_methods'
+  matched_interests:
+  - agent_harness:group:agent_harness
+  - general_agent_methods:group:general_agent_methods
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 0.614
+    venue_quality: 0.4
+    harness_relevance: 0.36
+    novelty: 0.0
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/toolgate-contract-grounded-and-verified-tool-execution-260104688/v1/paper.pdf
+  extraction: library/toolgate-contract-grounded-and-verified-tool-execution-260104688/v1/extraction.txt
+  summary: library/toolgate-contract-grounded-and-verified-tool-execution-260104688/v1/summary.mdx
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread
+  summary_format: mdx

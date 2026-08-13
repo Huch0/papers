@@ -38,9 +38,9 @@ topic_groups:
 tags:
 - foundational
 venue:
-  name: arXiv
-  tier: workshop_or_minor
-  status: unknown
+  name: TMLR
+  tier: A_star
+  status: accepted
   year: 2025
 user:
   read_status: unread

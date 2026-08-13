@@ -1,0 +1,125 @@
+---
+canonical_key: arxiv-2407.18901
+version_key: v1
+title: 'AppWorld: A Controllable World of Apps and People for Benchmarking Interactive Coding Agents'
+authors:
+- Harsh Trivedi
+- Tushar Khot
+- Mareike Hartmann
+- Ruskin Manku
+- Vinty Dong
+- Edward Li
+- Shashank Gupta
+- Ashish Sabharwal
+- Niranjan Balasubramanian
+venue: arXiv
+year: 2024
+tags:
+- benchmark
+- environment
+- execution-based-eval
+- foundational
+- tde-related-work
+topic_groups:
+- computer_use_agents
+- agent_harness
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2407.18901v1
+summary_date: '2026-08-13'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>AppWorld pairs a fully controllable simulator of 9 day-to-day apps (457 APIs over a 101-table database) with 750 interactive-coding tasks graded purely mechanically — hidden state-based unit tests over the before/after database diff that accept any valid solution path while flagging collateral damage — and the best 2024 agent (GPT-4o + ReAct) solves only 48.8% of normal and 30.2% of challenge tasks.</TLDR>
+
+<WhyItMatters>TDE's planned testbed and the existence proof for its adjudication substrate: grading is environment-computed state-diff containment — tolerant of alternative solution paths, sensitive to collateral damage, with no LLM judge anywhere. The boundary TDE builds on: these tests are a *hidden* post-hoc evaluator, written by benchmark authors against setup-private ground truth and run only after the agent self-declares completion via `task_completed`; AppWorld provides no agent-side acceptance suite, no red–green loop, and no pre/postcondition gates on state-changing actions (its ReAct prompt merely *advises* care before irreversible changes, App.K p.33) — precisely the layer TDE proposes to add on top. Also core to my computer-use-agent and evaluation-methodology tracks.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "48.8 / 30.2", label: "best TGC, Test-N / Test-C", sub: "GPT-4o + ReAct; SGC 32.1 / 13.0 (Tab.3)" },
+  { value: "750", label: "tasks = 250 scenarios × 3", sub: "avg 9.5 unique APIs (max 26), ~50 code lines" },
+  { value: "457", label: "APIs across 9 apps", sub: "101-table DB, ~370K rows, ~100K LoC, 14 months" },
+  { value: "98%", label: "engine code coverage", sub: "1,780 unit tests guard the simulator itself" },
+]} />
+
+## Motivation
+<Problem>Existing tool-use benchmarks require only a linear sequence of 1–4 API calls</Problem> — no rich control flow, no writing code iteratively against environment feedback — although real day-to-day tasks (order groceries for a household) span multiple apps with reasoning over intermediate results (§1, p.2). Worse, <Problem>they grade by comparing against a reference solution via an LLM or human judge, which breaks when a complex task admits many equally valid solutions</Problem> (§1, p.2). Finally, <Problem>responsible agent development lacks a stable, reproducible environment where arbitrary agent behavior has no real-world consequences</Problem> (§2, p.3) — and an agent can wreck state in ways a reference comparison never checks.
+
+## Contribution (what's new)
+<Novelty>State-diff containment as the grading rule</Novelty>: associate each task with expected changes and allowed-but-optional changes, compute the database diff `D∆` between start and final states, and assert both `Cexpect ⊆ D∆` (goal achieved) and `D∆ ⊆ Cexpect ∪ Callow` (no collateral damage) via per-task unit tests (§3.2, p.5–6). The form is forced: valid final states cannot be enumerated (any t-shirt brand/color yields a different DB), and neither can the ways to cause damage — but both are decidable on the small diff. This only works because of the second delta: <Novelty>a fully controllable engine — resettable database plus frozen time — that makes every task's start state exact and lets Setup programs engineer well-definedness, distractors, hurdles, and contrast sets into the DB itself</Novelty> (§2.2, §3.1). On top sit a <Novelty>scenario-consistency metric (SGC)</Novelty> and an <Novelty>unseen-app challenge split (Test-C) that forces reading API documentation instead of replaying memorized calls</Novelty> (§3.4, p.7).
+
+## Research questions
+Can current LLM agents autonomously complete realistic multi-app tasks that require rich, interactive code — and how far short do they fall? And can complex agent tasks be evaluated mechanically: process-agnostic, robust to solution diversity, and sensitive to unrequested side effects, without LLM or human judges?
+
+## Methodology
+The **Engine** implements 9 apps (Gmail, Venmo, Amazon, Spotify, Splitwise, SimpleNote, Todoist, Phone, FileSystem) as 457 REST-style APIs (avg 50/app, 1,470 arguments) over a 101-table SQLite database, plus helper apps ApiDocs and Supervisor; it is populated procedurally *through its own rigorously tested APIs* (invoked "in the past" for temporal realism) into the digital lives of 106 fictitious related people, ~370K rows (§2, p.3–4). Agents work in a Jupyter-style stateful Python shell with informative stack traces and frozen task time (App.C). The **Benchmark** instantiates 250 scenarios × 3 tasks via Task Generators, each combining a Setup program (engineers the four task properties), an Evaluation program (the state-diff assertions), and a Validation Solution whose end-to-end pass proves the task solvable (§3, Fig.3). Benchmarking runs 6 agent methods over 4 base LLMs plus 2 specialized agents (§4).
+
+<Pass title="Method details">
+<Stepper steps={[
+  { title: "Setup (§3.1)", body: "Per scenario, pick a supervisor and placeholder values, then mutate a copy of Base DB (and time) so every task: is well-defined (presuppositions hold), has distractors (similar-but-wrong orders, notes, emails), has realistic hurdles (expired default card), and forms a contrast set with its 2 siblings (different conditions, e.g. preferred color available vs not). 15% of tasks are QA with a ground-truth answer field (fn.13)." },
+  { title: "Evaluation (§3.2, App.D)", body: "Hidden per-task assertions over the start-vs-final DB diff, computed hash-based (per-row record_hash + per-table counters) in under 0.6 s/task. Missing information is recovered by joining diff rows with start/final tables (fn.15). Each assertion is paired with a natural-language statement — future work may use these to simulate precise feedback to the agent (fn.16). Metrics: TGC (all tests pass) and SGC (all tests pass on all 3 tasks of a scenario)." },
+  { title: "Validation Solutions (§3.3)", body: "Author-written programmatic solutions using minimal internal knowledge of the Setup (e.g. a regex matching how a workout note is formatted); running them from the Task DB must pass the Evaluation suite, giving end-to-end tests of solvability that also protect against future engine changes." },
+  { title: "Splits (§3.4)", body: "Train 105 / Dev 60 / Test-N 168 / Test-C 417. Test-C tasks each need at least one API from a designated unseen app (Amazon, Gmail). Per-task stats (Tab.2): Test-N* 1.5 apps, 8.2 unique APIs, 41.3 solution lines, 5.9 eval tests; Test-C 2.0 apps, 10.5 APIs, 56.9 lines, 8.0 tests. 86% of tasks need a unique API set; 52 app combinations." },
+  { title: "Agents (§4.1, App.E)", body: "ReAct (thought + code, explores docs via ApiDocs, max 100 LLM calls, 20K-char trajectory truncation), PlanExec (plan then ReAct-style step execution), FullCodeRefl (one-shot code + up to 5 Reflexion-style retries on stack traces), IPFunCall (batched parallel function calls, 15 turns), plus fine-tuned CodeAct (Mistral-7B) and ToolLLaMA. Code-based methods get docs for APIs chosen by an LLM API-predictor, since full documentation is ~142K tokens." },
+  { title: "Base LLMs (§4.1, App.E.7)", body: "GPT-4o (gpt-4o-2024-05-13), GPT-4 Turbo (gpt-4-turbo-2024-04-09), LLaMA-3-70B-chat, DeepSeek-Coder-33B-instruct; greedy decoding. GPT-4 excluded after scoring 5–18% below GPT-4o at 6x cost; Gemini Pro 1.5 scored below LLaMA3 (TGC 20.2 vs 24.4, App.F.5)." },
+]} />
+Engine reliability: 1,780 unit tests (34K LoC) with 98% coverage of the 26K-LoC API code; response schemas auto-generated from code via FastAPI to remove documentation drift (§2.2, p.4). Serverless design (in-memory SQLite + FastAPI TestClient) loads a task DB in under 0.5 s (App.C, p.14).
+</Pass>
+
+## Main result
+<Finding src="Tab.3, p.8">The best agent, GPT-4o + ReAct, reaches only 48.8 TGC on Test-N and 30.2 on Test-C; the next-best LLM (GPT-4 Turbo) peaks at 32.7 / 17.5, the best open model (LLaMA3 + FullCodeRefl) at 24.4 / 7.0, and the specialized fine-tuned agents CodeAct and ToolLLaMA solve zero tasks</Finding>. Scenario-level consistency is far lower still (32.1 / 13.0 for the best agent).
+
+<SortableTable columns={["Agent (LLM · method)", "Test-N TGC", "Test-N SGC", "Test-C TGC", "Test-C SGC"]} rows={[
+  ["GPT-4o · ReAct", 48.8, 32.1, 30.2, 13.0],
+  ["GPT-4o · PlanExec", 44.6, 23.2, 19.7, 7.9],
+  ["GPT-4o · FullCodeRefl", 33.9, 26.8, 19.2, 12.2],
+  ["GPT-4o · IPFunCall", 32.1, 16.1, 18.0, 10.1],
+  ["GPT-4 Turbo · PlanExec", 32.7, 16.1, 11.0, 3.6],
+  ["GPT-4 Turbo · ReAct", 26.8, 12.5, 17.5, 5.8],
+  ["LLaMA-3-70B · FullCodeRefl", 24.4, 17.9, 7.0, 4.3],
+  ["DeepSeek-33B · FullCodeRefl", 13.1, 8.9, 5.8, 2.9],
+  ["Mistral-7B · CodeAct", 0.0, 0.0, 0.0, 0.0],
+  ["LLaMA · ToolLLaMA", 0.0, 0.0, 0.0, 0.0],
+]} />
+
+## Key findings
+- <Finding src="§4.2, p.8">Task-to-scenario scores drop 30–50%</Finding>: agents cannot consistently solve all three contrast variants of one scenario — the reliability gap (SGC) is larger than the capability gap (TGC).
+- <Finding src="Fig.4, p.8">Performance collapses with difficulty</Finding>: ReAct's Test-C TGC falls from 58.3 (level 1) to 21.0 (level 3), and tasks whose solutions need 60+ code lines score below 20 TGC.
+- <Finding src="§4.3, p.8">API retrieval is not the main bottleneck</Finding>: giving Oracle APIs adds at most +7.8 (Test-N) / +9.8 (Test-C) TGC — best 54.8 / 35.2 — and the API predictor already scores 87 / 71 F1; the difficulty lies in using APIs inside complex interactive code and adapting to errors.
+- <Finding src="App.F.2–F.3, p.9,18">Prompt engineering does not close the gap</Finding>: more, nearest-neighbor, or reordered demonstrations gain up to +6.6 TGC on Test-N, nothing on Test-C, and no variant beats 48.8.
+- <Finding src="§4.3, p.9">GPT-4o's failure modes are verification-shaped</Finding>: hallucinating facts instead of interacting (inventing a roommate's email), hallucinating API fields/schemas, *partially* following instructions (approving all payment requests instead of only roommates'), commonsense slips (added-date vs release-date), and forgetting past actions then repeating work until the 100-call budget dies.
+- <Finding src="App.A, p.13">Many tasks have a strong interaction requirement</Finding>: they provably cannot be solved by one-shot code because required facts sit in free-form content (a workout note) that must be read mid-episode — and ablating response schemas from docs would force this on every task.
+
+## Implications
+AppWorld establishes state-diff adjudication as the reference design for grading app agents — the substrate TDE adopts wholesale — and extends <Related>contrast-set consistency evaluation (Gardner et al. 2020)</Related> from classifiers to agents via SGC. It positions itself against <Related>reference-comparison tool benchmarks (ToolLLM, API-Bank, RestGPT, ToolTalk, Gorilla)</Related> and is modality-complementary to <Related>UI-navigation worlds (WebArena, OSWorld, AndroidWorld, Mind2Web)</Related>, which lack a controllable personal-data ecosystem (App.G). <FollowUp>Footnote 16 is an explicit hook toward TDE-style layers: every assertion carries a natural-language paraphrase intended for future simulated feedback — i.e., the authors themselves anticipate surfacing test signals to agents.</FollowUp> <FollowUp>The engine's properties that TDE needs are already measured: sub-0.5 s task resets, frozen time, deterministic replays, and a fast DB-diff primitive an agent-side suite could query.</FollowUp> <FollowUp>Stated extensions: a UI layer on the same backend (state-based evaluators survive unchanged), multi-agent coordination tasks, and bootstrapped training data.</FollowUp>
+
+## Limitations
+- <Caveat>API-only modality</Caveat>: no browser/mobile UI control; the authors note a UI could be built atop the backend with evaluators unchanged (§7, p.10).
+- <Caveat>Single-assistant tasks only</Caveat>: one supervisor per task; multi-agent coordination is simulatable but unexplored (§7).
+- <Caveat>Too small to train on</Caveat>: 105 train tasks; quality-first hand construction precluded scale (§7).
+- <Caveat>Solvability is proven by exactly one gold path per task</Caveat>: end-to-end tests show the validation solution passes, but the completeness of the allowed-changes set for *unanticipated* correct strategies is never measured — the false-negative rate of the suites is Not reported (§3.3, inferred).
+- <Caveat>Single greedy runs of 2024 model snapshots, no variance or seeds; ~$10K cost capped exploration</Caveat> (App.E.7–E.8, p.17).
+- <Caveat>Task design reflects North-American/European daily life; parts of the DB text were ChatGPT-generated</Caveat> (§8, p.10).
+
+## Critiques and Questions
+1. How often do the hidden suites reject correct-but-creative behavior? `Callow` is hand-anticipated per scenario; a legitimate solution touching an unanticipated table fails the containment check. Contrast sets test agent robustness, but nothing symmetric tests *evaluator* robustness.
+2. Difficulty levels are the authors' subjective hand labels, and there is no human baseline — 48.8% is interpretable as "hard" only on the assumption that well-definedness engineering fully removed ambiguity.
+3. SGC over exactly 3 variants is coarse: one flaky variant zeroes the scenario, conflating inconsistency with per-variant difficulty spread.
+4. Sharpest point for TDE's novelty defense: the evaluation programs read setup-private ground truth (e.g. `private_data.workout_duration_mins`, the expected playlist's song ids in Listing 3, p.26–27), so the hidden tests *cannot in principle* be handed to the agent without leaking the answer. An agent-side acceptance suite must be compiled from the instruction alone — a genuinely different artifact whose fidelity to the hidden suite (precision/recall of self-verification) AppWorld cannot measure and TDE must.
+
+<SelfCheck q="How does AppWorld decide an episode succeeded without comparing the agent's actions to a reference solution, and why does this catch collateral damage?" a="It computes the diff between the task's start and final database states and runs hidden per-task assertions checking containment in both directions: every expected change appears in the diff, and the diff contains nothing beyond expected plus explicitly allowed changes. Any unrequested mutation — deleting a wish list, initiating a return — necessarily surfaces in the diff and violates the second containment, so side effects are caught without enumerating the ways they could occur." />
+
+## Glossary
+- <Term def="Task Goal Completion: percentage of tasks where the agent passes every evaluation test">TGC</Term> / <Term def="Scenario Goal Completion: percentage of scenarios where the agent passes all tests on all 3 task variants; a consistency metric">SGC</Term>
+- <Term def="the 3 task variants of one scenario, differing in placeholder values and starting DB states, jointly testing robust rather than lucky completion">contrast set</Term>
+- <Term def="unrequested changes to world state made while solving a task, e.g. deleting a wish list while placing an order">collateral damage</Term>
+- <Term def="test split (417 tasks) where every task needs an API from an app unseen in train/dev (Amazon, Gmail), forcing documentation reading over memorized calls">Test-C</Term>
+- <Term def="a task that provably cannot be solved by one-shot code because required facts live in free-form environment content that must be read mid-episode">strong interaction requirement</Term>
+- <Term def="an LLM prompted to shortlist relevant APIs from all API descriptions, since full documentation (~142K tokens) exceeds practical context">API predictor</Term>
+- <Term def="the shared 101-table, ~370K-row database of 106 fictitious people's app activity; each task gets its own modified copy (Task DB)">Base DB</Term>
+
+{/* NOTES_START */}
+### Personal notes
+The load-bearing asymmetry for TDE: AppWorld's tests are written *backwards* from setup-private expected values (the evaluator literally imports `private_data`), while a TDE acceptance suite must be written *forwards* from the instruction plus whatever the agent can observe. Same mechanical substrate, opposite information direction — that is the one-line novelty defense. Reusable assets for TDE experiments: the DB-diff primitive (App.D) as the query surface for agent-compiled assertions; validation solutions as oracle agents; fn.16's NL-paired assertions as a supervision/ablation channel. Note the survey's "ACL 2024 Best Resource Paper" is external to this v1 preprint (venue here: arXiv).
+{/* NOTES_END */}

@@ -357,7 +357,9 @@ def derive_canonical_key(ids: dict, title: str = "") -> str:
     """Derive a stable canonical key from identifiers, falling back to title hash."""
     arx = ids.get("arxiv_base_id")
     if arx:
-        return f"arxiv-{arx}"
+        # Legacy arXiv ids carry an archive prefix with a slash (e.g. "cs/0207008").
+        # Keys are used as URL path segments, so they must not contain "/".
+        return f"arxiv-{arx.replace('/', '-')}"
     doi = ids.get("doi")
     if doi:
         return "doi-" + _NON_ALNUM.sub("-", doi.lower()).strip("-")

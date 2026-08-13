@@ -1,0 +1,113 @@
+---
+canonical_key: arxiv-2304.05128
+version_key: v1
+title: Teaching Large Language Models to Self-Debug
+authors:
+- Xinyun Chen
+- Maxwell Lin
+- Nathanael Schärli
+- Denny Zhou
+venue: arXiv
+year: 2023
+tags:
+- execution-based-eval
+- tde-related-work
+topic_groups:
+- software_engineering_agents
+triage_label: SKIP
+triage_confidence: high
+source_link: https://arxiv.org/abs/2304.05128v2
+summary_date: '2026-08-13'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>Self-Debugging few-shot-prompts a frozen LLM to iteratively repair its own generated code — execute it, explain it line-by-line (<Term def="explaining code line-by-line to an inanimate listener to notice bugs without expert guidance (Hunt & Thomas 2000)">rubber duck debugging</Term>), emit a feedback message, regenerate — reaching state-of-the-art on Spider text-to-SQL, TransCoder C++-to-Python, and MBPP without any additional training.</TLDR>
+
+<WhyItMatters>TDE related work (cat. B — execution-feedback program repair). Shares TDE's central premise: the red–green iterate-until-pass loop, plus direct evidence that mechanical execution signal beats model self-critique (ablating execution collapses or even reverses the gains). Differs on exactly the axes TDE de-circularizes: the model itself adjudicates success whenever tests are absent (Spider) or partially hidden (MBPP); the unit tests are handed over with the task, never compiled from the instruction; verification targets one function's I/O, not final world state; and the "execution trace" feedback is model-simulated, not environment-computed. One correction to my survey note: trace feedback helps consistently only in the no-execution ablation — alongside real unit tests it can hurt (Codex TransCoder: 91.6 UT vs 87.9 UT+Trace).</WhyItMatters>
+
+<KeyStats items={[
+  { value: "92.5%", label: "TransCoder pass@1", sub: "Codex, UT+Expl. vs 80.4 baseline (Tab.2b)" },
+  { value: "84.1%", label: "Spider dev accuracy (SOTA)", sub: "Codex +Expl. vs LEVER 81.9 (Tab.1a)" },
+  { value: "+9%", label: "extra-hard Spider problems", sub: "63.9 → 72.9 with debugging (Fig.6b)" },
+  { value: ">10x", label: "sample efficiency", sub: "MBPP 75.6 @ n=10 vs LEVER 68.9 @ n=100 (Tab.1b)" },
+]} />
+
+## Motivation
+<Problem>Complex programming tasks are rarely solved in one generation attempt</Problem>, and the standard remedy — sample many candidates and rerank by execution — typically needs tens of samples (§1). <Problem>Prior program-repair approaches require training a separate repair model</Problem> (DeepFix, DrRepair, trace-trained repair), and <Problem>prior evidence suggested LLMs cannot correct their own code without external feedback</Problem> such as unit tests or human instructions (Chen et al. 2023a) — model-generated critique had shown value in natural-language and reasoning domains, but not yet in code (§1, §3).
+
+## Contribution (what's new)
+<Novelty>A training-free debugging loop — Generation → Explanation → Feedback — in which the model acquires all feedback itself: it executes its code and either reads unit-test results or infers correctness by explaining its own code line-by-line and comparing the explanation against the problem</Novelty>. The design follows from how the baseline fails: bare "is it correct?" feedback produces no gain when no tests exist (Spider Simple: 81.3 → 81.3), so the model is made to emit an intermediate, comparable artifact — the explanation — against which question–code mismatch becomes visible. A second delta: <Novelty>a controlled taxonomy of feedback formats (Simple / +unit-test execution / +explanation / +simulated trace) that isolates how much of self-repair is carried by real execution versus self-generated judgment</Novelty> (§3, §5.2.2).
+
+## Research questions
+(1) Can a frozen LLM identify and fix its own coding errors via prompting alone? (2) Which feedback content matters — a bare correct/wrong bit, unit-test execution results, self-explanation, a self-simulated trace — and how much of the gain requires real code execution? (3) Is debugging a better use of inference budget than sampling more candidates?
+
+## Methodology
+One turn = generate code → execute it → explain it → emit a feedback message; iterate until the feedback declares the code correct or a cap of 10 turns is hit (§3, §5). Who adjudicates termination differs by benchmark, and this is the load-bearing detail: on TransCoder the loop stops mechanically when all 10 given unit tests pass; on Spider (no tests) the model itself declares correctness by comparing its explanation of the executed SQL (the real returned table is placed in the prompt) with its explanation of the question; on MBPP one of three tests is visible, so that test gates mechanically but the model must still self-judge overall correctness even when it passes (§4). A program passes unit tests when `P(i_k) = o_k` for every given input-output pair (§2).
+
+<Pass title="Method details">
+<Stepper steps={[
+  { title: "Feedback formats (§3)", body: "Simple: one sentence stating correct/wrong, nothing else. UT: adds runtime errors and failed-assertion results from executing the given unit tests. Expl: rubber-duck line-by-line self-explanation of the predicted code. Trace: the model narrates intermediate execution steps line-by-line — explicitly model-generated, with no access to real intermediate execution states. On TransCoder/MBPP even Simple uses execution to decide correctness; only the message content is bare." },
+  { title: "Spider protocol (§4.1)", body: "3 steps: (1) explain the question and infer its return type (number of columns); (2) execute the SQL, put the returned table (first 2 rows) in the prompt, and explain the SQL clause-by-clause; (3) compare the two explanations and predict correctness; stop when judged correct. Baseline prompt 5-shot; feedback prompts 9-shot." },
+  { title: "TransCoder protocol (§4.2)", body: "C++-to-Python, 560 problems, 10 unit tests each, all visible in the problem description. Debugging applies only to programs failing some test, so the model never predicts the feedback bit; iterate until all tests pass or 10 turns. 2-shot feedback prompts; initial translation prompt from PaLM (3-shot)." },
+  { title: "MBPP protocol (§4.3)", body: "500 text-to-Python problems, 3 unit tests each; the first is in the prompt, 2 stay hidden for evaluation. Passing the visible test does not imply success, so the model must still infer correctness. Simple/UT prompts have 6 exemplars; UT+Expl only 3 (context-length limit)." },
+  { title: "Setup (§5)", body: "Models: code-davinci-002 (Codex), gpt-3.5-turbo, gpt-4, StarCoder (15.5B). Initial generation: greedy (temperature 0) for one program; temperature 0.7 when sampling several, then execution-based selection (majority vote on execution results, filtered by given tests). All debugging steps use greedy decoding. Max 10 turns; successful sessions mostly end within 3." },
+]} />
+</Pass>
+
+## Main result
+On Spider, <Finding src="Tab.1a, p.9">Codex + explanation feedback reaches 84.1 on the dev set — above trained rerankers (LEVER 81.9, T5-3B + N-best 80.6) and prompting-only reranking (MBR-Exec 75.2, Coder-Reviewer 74.5)</Finding>, starting from execution-selected 32-sample predictions (81.3). On TransCoder, <Finding src="Tab.2b, p.9">Codex goes 80.4 → 92.5 pass@1 with unit-test + explanation feedback (+12.1); GPT-4 goes 77.3 → 90.4</Finding>. On sample efficiency, <Finding src="Tab.1b, p.9">MBPP reaches 75.6 from n=10 initial samples vs LEVER's 68.9 at n=100 — matching or beating baselines that draw over 10x more candidates</Finding>.
+
+<SortableTable columns={["Benchmark", "Feedback", "Codex", "GPT-3.5", "GPT-4", "StarCoder"]} rows={[
+  ["TransCoder", "Baseline", 80.4, 89.1, 77.3, 70.0],
+  ["TransCoder", "Simple", 89.3, 91.6, 80.9, 72.9],
+  ["TransCoder", "UT", 91.6, 92.7, 88.8, 76.4],
+  ["TransCoder", "UT + Expl.", 92.5, 92.7, 90.4, 76.6],
+  ["TransCoder", "UT + Trace", 87.9, 92.3, 89.5, 73.6],
+  ["MBPP", "Baseline", 61.4, 67.6, 72.8, 47.2],
+  ["MBPP", "Simple", 68.2, 70.8, 78.8, 50.6],
+  ["MBPP", "UT", 69.4, 72.2, 80.6, 52.2],
+  ["MBPP", "UT + Expl.", 69.8, 74.2, 80.4, 52.2],
+  ["MBPP", "UT + Trace", 70.8, 72.8, 80.2, 53.2],
+]} />
+
+## Key findings
+- <Finding src="Tab.3, p.10">Real execution is the load-bearing signal</Finding>: without unit-test execution, TransCoder Codex falls from 92.5 to at best 83.9, and Simple feedback on MBPP drops below the baseline (57.6 vs 61.4); the authors note GPT-3.5/GPT-4 "tend to be overconfident in their own initial predictions" — self-adjudication is the weak link.
+- <Finding src="Fig.6, p.10">Gains concentrate on hard problems and buy sample efficiency</Finding>: extra-hard Spider +9.0 (63.9 → 72.9); greedy + debugging (80.8) matches the 16-sample baseline (80.7), and 8 samples + debugging (82.5) beats the 32-sample baseline (81.3).
+- <Finding src="§5.2.1, App.C">One turn does most of the work</Finding>: Spider improvement after turn 1 is within 0.1%; a single TransCoder turn with full feedback adds around 12%; successful sessions mostly end within 3 of the 10 allowed turns.
+- <Finding src="Tab.2b, §5.2.2">The simulated trace is not a free win</Finding>: with real unit tests, UT+Trace underperforms UT alone for Codex on TransCoder (87.9 vs 91.6); its "consistent improvement" holds only in the no-execution ablation — and the trace is model-imagined, never a real interpreter trace.
+- <Finding src="Tab.4, §5.2.3">What gets fixed is mostly near-miss code</Finding>: Spider fixes are small edits to complex queries (wrong WHERE 25.7%, missing DISTINCT 17.1%, wrong JOIN 14.3%); 60–70% of TransCoder/MBPP successes fix output mismatches in close-to-correct code, over 30% of TransCoder fixes address cross-language semantics (e.g. Python float vs C++ integer division), and over 10% of MBPP fixes just reorder or retype function arguments.
+- <Finding src="Fig.8b, App.C.1">Explanation has standalone value</Finding>: prompting Codex to explain the C++ source before translating — with no debugging at all — adds a consistent 2–3% on TransCoder.
+
+## Implications
+This is the code-domain anchor of the <Related>prompting-with-self-feedback line (Reflexion, Self-Refine, RCI, DERA)</Related>, distinguished by grounding the feedback in real execution rather than pure introspection, and the training-free counterpart to <Related>trained repair models (DeepFix, DrRepair, CodeRL) and human-feedback repair (ILF, Chen et al. 2023a)</Related>; it complements <Related>execution-based selection/reranking (MBR-Exec, Coder-Reviewer, LEVER, AlphaCode-style filtering)</Related> by reusing failed samples instead of discarding them. For TDE it supplies citable evidence for both halves of the premise: mechanical verification outperforms LLM self-judgment, and self-adjudication fails through overconfidence when execution is removed. <FollowUp>Deriving the acceptance tests from the instruction itself (the CodeT direction) instead of assuming they are given — the step from here toward TDE's compiled acceptance suites.</FollowUp> <FollowUp>Replacing the simulated trace with a real interpreter trace — the untested mechanical variant of their weakest feedback format.</FollowUp>
+
+## Limitations
+- <Caveat>On TransCoder the gate and the grader are the same 10 visible tests</Caveat>: debugging directly optimizes the evaluation metric, with no held-out tests to detect overfitting-to-tests (MBPP's 2 hidden tests partially probe this; Spider has no tests at all).
+- <Caveat>The self-judge is never audited</Caveat>: no precision/recall of the model's "the prediction is correct" stop decisions is reported — only end-task accuracy; false-green declarations are invisible in the results.
+- <Caveat>Function-scale, stateless artifacts in three domains</Caveat> (SQL queries, single Python functions); nothing multi-step, stateful, or agentic; headline results ride on the now-deprecated code-davinci-002, and GPT-3.5/4 gains on Spider are much smaller (71.1 → 72.2, 73.2 → 73.6).
+- <Caveat>Mixed starting conditions muddy cross-cell comparison</Caveat>: the Spider Codex baseline is execution-selected from 32 samples while other cells start from greedy decoding, and GPT-3.5/4 use zero-shot debugging prompts where Codex uses few-shot (App.A).
+- <Caveat>Single runs, no variance or significance testing; token/compute cost of debugging turns is not reported</Caveat> — efficiency is argued in samples, not tokens.
+
+## Critiques and Questions
+1. What is the false-green rate on Spider — how often is wrong SQL declared correct and the loop stopped? The 84.1 aggregates over unaudited self-judgments; a per-decision confusion matrix would show whether explanation actually fixes adjudication or merely edits more queries.
+2. Does TransCoder-repaired code generalize beyond the 10 tests it was debugged against? Passing the same suite that supplied the feedback is the weakest possible success criterion; Unclear from the paper.
+3. Given the paper's own "importance of code execution" finding, why is the trace format only ever model-simulated? A real trace is the obvious ablation and would separate "trace content helps" from "the model can't simulate execution".
+4. The GPT-4-worse-than-Codex-on-Spider anomaly is attributed to weaker few-shot following, with zero-shot being over 10% worse as indirect support — but SQL-specific capability differences are never disentangled from prompt-format sensitivity.
+
+<SelfCheck q="On which of the three benchmarks does the Self-Debugging loop terminate on a mechanical signal, and who decides elsewhere?" a="TransCoder: mechanical — iterate until the predicted Python passes all 10 given unit tests (or the 10-turn cap). Spider: no tests exist, so the model itself compares its explanation of the executed SQL against its explanation of the question and declares correctness. MBPP: the single visible test gates mechanically, but 2 of 3 tests stay hidden, so the model must still self-judge overall correctness even after the visible test passes." />
+
+## Glossary
+- <Term def="10K+-example text-to-SQL benchmark (Yu et al. 2018); evaluation here on the dev set; problem descriptions carry no unit tests">Spider</Term>
+- <Term def="parallel-function code-translation test set (Roziere et al. 2020); here 560 C++-to-Python problems with 10 unit tests each, all visible">TransCoder</Term>
+- <Term def="Mostly Basic Python Problems (Austin et al. 2021); 500 test problems, 3 unit tests each, only the first shown in the prompt">MBPP</Term>
+- <Term def="picking the sampled program whose execution output is most frequent among non-erroring samples, after filtering by any given unit tests">execution-based selection</Term>
+- <Term def="code-davinci-002 (OpenAI); the few-shot-strong code model carrying the headline results">Codex</Term>
+- <Term def="open-source 15.5B code LLM (Li et al. 2023)">StarCoder</Term>
+- <Term def="fraction of problems solved by the single final prediction">pass@1</Term>
+
+{/* NOTES_START */}
+### Personal notes
+For the TDE novelty defense, the two quotable facts are: (1) Table 3 — removing mechanical execution collapses or reverses the gains and the authors themselves blame model overconfidence, i.e. self-adjudication is documented as the failure mode; (2) §3 — the feedback bit "can be determined by asking the model itself" and the trace has "no access to intermediate execution states": every non-test signal in this loop is circular in exactly the sense TDE removes. The tests it does use are given with the task and grade function I/O, not compiled from the instruction and not evaluated over final world state.
+{/* NOTES_END */}

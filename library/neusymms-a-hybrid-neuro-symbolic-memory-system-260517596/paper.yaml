@@ -1,0 +1,58 @@
+canonical_key: arxiv-2605.17596
+slug: neusymms-a-hybrid-neuro-symbolic-memory-system-260517596
+title: 'NeuSymMS: A Hybrid Neuro-Symbolic Memory System for Persistent, Self-Curating LLM Agents'
+authors:
+- Mujahid Sultan
+- Sri Thuraisamy
+- Daya Rajaratnam
+year: 2026
+primary_ids:
+  doi: null
+  arxiv_base_id: '2605.17596'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2605.17596v2
+- https://arxiv.org/pdf/2605.17596v2
+topic_groups:
+- agent_harness
+- general_agent_methods
+tags:
+- agent-memory
+- tde-related-work
+- verifier
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2026
+user:
+  read_status: unread
+  triage_label: TRACK_ONLY
+  triage_confidence: high
+  notes: null
+milestone: null
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v2
+  source: arxiv
+  source_url: https://arxiv.org/abs/2605.17596v2
+  pdf_path: library/neusymms-a-hybrid-neuro-symbolic-memory-system-260517596/v1/paper.pdf
+  summary_path: library/neusymms-a-hybrid-neuro-symbolic-memory-system-260517596/v1/summary.mdx
+  metadata_path: library/neusymms-a-hybrid-neuro-symbolic-memory-system-260517596/v1/metadata.yaml
+  fetched_at: '2026-08-13T07:18:32Z'
+  source_updated_at: '2026-05-20T23:19:31Z'
+  arxiv_version: v2
+  pdf_sha256: dd0d0e4a36fbda69785d15d11f356a740492f484d8ee3d4057979afdde4edd88
+  pdf_bytes: 176922
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-08-13T07:18:32Z'
+  updated_at: '2026-08-13T13:01:30Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

@@ -1,0 +1,117 @@
+---
+canonical_key: arxiv-2605.16142
+version_key: v1
+title: Property-Guided LLM Program Synthesis for Planning
+authors:
+- André G. Pereira
+- Augusto B. Corrêa
+- Jendrik Seipp
+venue: arXiv
+year: 2026
+tags:
+- tde-related-work
+- verifier
+topic_groups:
+- general_agent_methods
+triage_label: SKIP
+triage_confidence: medium
+source_link: https://arxiv.org/abs/2605.16142v2
+summary_date: '2026-08-13'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>Replaces the numeric fitness scores of LLM program synthesis with a formal property check that halts evaluation at the first violation and hands the LLM a concrete counterexample; a CEGIS-style repair loop synthesizes Python planning heuristics satisfying the <Term def="every alive state reachable from the initial state via strictly improving transitions has a strictly improving successor; guarantees hill climbing reaches a goal">direct property</Term>, letting plain hill climbing solve 623.3/900 out-of-distribution IPC 2023 test tasks with ~7.4x fewer LLM calls than score-based sampling.</TLDR>
+
+<WhyItMatters>The cleanest synthesis-time instance of TDE's inner loop: mechanical verification (a DFS property checker, never an LLM judge) emits counterexamples that act as red tests, iterated red→green until the check passes — and its ablation (623.3 → 412.3 tasks when counterexamples are swapped for a scalar score) is citable evidence that the actionable counterexample, not iteration, does the work. It differs exactly where TDE claims novelty: the spec (direct property + PDDL goal) is given formally rather than compiled from a natural-language instruction, verification runs offline over a declarative world model on training tasks rather than over the live final world state of each execution, and no environment-evaluated pre/postconditions gate actions at run time.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "623.3/900", label: "OOD tasks solved by pure hill climbing", sub: "vs 573 S&S+GBFS, 298 FF+GBFS (Tab.1)" },
+  { value: "7.4x", label: "fewer LLM calls per domain", sub: "3.4 avg candidates vs fixed 25 (§4)" },
+  { value: "~1,150x", label: "cheaper candidate evaluation", sub: "10.75 min vs 206.25 CPU-h per domain" },
+  { value: "1/2,700", label: "test evaluations violating the property", sub: "OOD generalization, 3 runs x 900 tasks" },
+]} />
+
+## Motivation
+<Problem>LLM program-synthesis pipelines rank candidates by bare numeric scores — tests passed, solution value — which say nothing about *why* a candidate failed</Problem>, so systems in the <Related>AlphaCode / FunSearch / AlphaEvolve / EoH line</Related> must generate and evaluate many candidates per problem, inflating both inference and evaluation cost (§1). <Term def="counterexample-guided inductive synthesis: a synthesizer proposes candidates, a verifier checks them against a formal spec and returns a concrete failing input on violation">CEGIS</Term> from formal methods replaces the score with a concrete witness, yet <Problem>has seen little use with LLMs</Problem>. In classical planning — a known weak spot for end-to-end LLMs — the state-of-the-art LLM-heuristic method (<Related>Corrêa et al., NeurIPS 2025</Related>) <Problem>samples a fixed budget of 25 candidates per domain and selects by training coverage: cost is fixed regardless of difficulty and the selection signal is still only a score</Problem> (§1, §4).
+
+## Contribution (what's new)
+<Novelty>A counterexample-driven repair loop with the LLM as CEGIS synthesizer and a property checker as verifier: validation stops at the first state violating the direct property and returns that state, its heuristic value, and all successors with their values as the repair signal</Novelty> — to the authors' knowledge the first use of LLMs to synthesize planning heuristics via property-guided repair (§1, p.2). The design must take this form because a score cannot say what to fix, whereas <Novelty>a direct-property violation is precisely a state where hill climbing would strand, so the counterexample localizes the exact flaw the next candidate must remove — and early stopping makes failed candidates cheap to reject</Novelty>. Targeting *direct* rather than the stronger <Term def="descending and dead-end avoiding: every alive state has a strictly improving, solvable successor — even states a planner would never expand">DDA</Term> property confines the requirement to the subgraph hill climbing can actually traverse (§3.1).
+
+## Research questions
+1. Does property-guided synthesis cut LLM inference and candidate-evaluation cost versus score-based sample-and-select, while improving heuristic quality? 2. Does directness validated only on small training tasks generalize to much larger out-of-distribution test tasks? 3. Is the property check itself — not generic iterative repair — the source of the gain?
+
+## Methodology
+One candidate at a time: the LLM (Gemini 3.1 Pro) writes a domain-dependent heuristic as Python code; a DFS-based validator that only pushes strictly improving successors checks the direct property over the training tasks, stopping at the first counterexample; the repair prompt carries the property definition, the failing task, the counterexample, and *every* previously failed heuristic with its feedback; the loop runs until the full training set passes or the budget (10 repairs) is exhausted. The verified heuristic is injected into the Pyperplan planner and run with plain <Term def="hill climbing: local search that greedily moves to a strictly better successor; memory-light but incomplete — fails at plateaus and local minima">HC</Term> on the IPC 2023 Learning Track test set (10 domains, 90 OOD tasks each; 5 min / 8 GiB per run; averages over 3 independent runs).
+
+<Pass title="Method details">
+<Stepper steps={[
+  { title: "Target property (§2, §3.1)", body: "Direct (orig. 'wet DDA', Dold & Helmert 2024) relaxes DDA (Seipp et al. 2016): only states reachable from s0 via strictly improving transitions need an improving successor. DDA implies direct, not conversely; direct still guarantees HC reaches a goal (Prop.1). Per-task synthesis is as hard as plan existence (EXPSPACE-hard for lifted PDDL), so the loop amortizes: one domain-general heuristic from a small training set." },
+  { title: "Validation (§3.3)", body: "DFS from s0; at each expanded non-goal state s, fail unless some successor has h(s') < h(s); otherwise push only improving successors. In dead-end domains a second failure kind fires when an improving transition reaches a state with no applicable action — feedback suggests valuing it at or above its parent so HC never enters. 30 s / 8 GiB per task; if the limit is hit without a counterexample the task counts as passed. First counterexample aborts the rest of the training set." },
+  { title: "Prompts (§3.2, App.D)", body: "Initial prompt = Corrêa et al.'s (domain file, smallest+largest training tasks, example heuristics from two disjoint domains, planner code, checklist) — it does NOT ask for directness. The repair prompt adds the direct-property definition, the failing task, the failure feedback (state, h value, successors with h values), and the full history of failed heuristics with their feedback." },
+  { title: "Evaluation setting (§4)", body: "10 IPC 2023 Learning Track domains (Blocksworld, Childsnack, Ferry, Floortile, Miconic, Rovers, Satellite, Sokoban, Spanner, Transport); test set is OOD — training main-domain parameters top out at 30 or below while test tasks reach the hundreds (max 980, Fig.3). Pyperplan on PyPy 7.3.9, AMD EPYC 7742; Ferry and Satellite transformed to eliminate negative preconditions. Baselines: FF heuristic and re-run sample-and-select, both under GBFS and HC." },
+]} />
+
+<MathBlock>{`\\text{direct: } \\forall s \\in S^{\\downarrow} \\;\\exists s' \\in \\mathrm{succ}(s): h(s') < h(s), \\text{ each such } s' \\text{ a goal or in } S^{\\downarrow}`}</MathBlock>
+
+where `S↓` is the set of alive states reachable from `s0` via strictly improving transitions (Def.2).
+</Pass>
+
+## Main result
+<Finding src="Tab.1, p.7">Direct heuristics with hill climbing solve 623.3 of 900 OOD test tasks — no open list, no backtracking — vs 573 for sample-and-select with <Term def="greedy best-first search: expands the open-list state with the lowest heuristic value; complete but may backtrack extensively">GBFS</Term> and 298 for the FF heuristic with GBFS</Finding>. Crucially, <Finding src="Tab.1, §4">the same sample-and-select heuristics under HC collapse to 430 (FF to 30)</Finding> — the gain comes from the property the loop trains for, not from swapping the search algorithm.
+
+<SortableTable columns={["Domain", "FF+GBFS", "S&S+GBFS", "S&S+HC", "Cov.+HC", "Direct+HC (ours)"]} rows={[
+  ["Blocksworld", 23, 84, 90, 49.7, 77.3],
+  ["Childsnack", 12, 58, 70, 46.7, 71.7],
+  ["Ferry", 45, 67, 71, 49.3, 72.3],
+  ["Floortile", 11, 30, 0, 15.7, 40.7],
+  ["Miconic", 61, 83, 7, 34.0, 90.0],
+  ["Rovers", 29, 44, 12, 20.7, 42.7],
+  ["Satellite", 35, 57, 60, 57.3, 55.7],
+  ["Sokoban", 29, 30, 0, 12.7, 30.0],
+  ["Spanner", 30, 66, 79, 79.0, 75.0],
+  ["Transport", 23, 54, 41, 47.3, 68.0],
+  ["Total (900)", 298, 573, 430, 412.3, 623.3],
+]} />
+
+## Key findings
+- <Finding src="Tab.3, §4">3.37 ± 2.99 candidates per run (101 total over 30 runs, max 11) vs a fixed 25 for sample-and-select — roughly a 7.4x inference-cost reduction</Finding>: eight of ten domains converge within at most 5 candidates per run; Sokoban (mean 9.00) and Floortile (8.33) are the outliers.
+- <Finding src="§4, p.6">Candidate-evaluation cost drops from a reported 206.25 CPU-hours to 10.75 minutes per domain (~1.15 × 10³ reduction)</Finding>: stopping at the first counterexample makes failed candidates cheap, whereas sample-and-select must run GBFS for all 25 candidates.
+- <Finding src="Tab.1, §4 Ablation">Swapping the property check for numeric coverage feedback (Cov.) in the *same* loop matches sample-and-select under GBFS (572.7 vs 573) but crashes to 412.3 under HC</Finding>: iterative repair alone is not the ingredient — the concrete counterexample is.
+- <Finding src="§4, pp.7-8">Across 2,700 OOD test evaluations, exactly one halts on a direct-property violation (in Floortile)</Finding>: directness learned on small tasks generalizes, including zero violations on PSPACE-complete Sokoban; all other unsolved tasks are timeouts, not property failures. The repair loop also always converged on training within the iteration budget.
+- <Finding src="Fig.4">On tasks solved by both methods, direct+HC expands fewer states than S&S+GBFS, sometimes by several orders of magnitude</Finding>.
+- <Finding src="§4 Qualitative">Counterexamples surface genuine reasoning flaws</Finding>: Blocksworld's initial heuristic penalized mutual-blocking deadlocks only in holding states, not arm-empty ones, creating a local minimum (h=4 with all successors at 5); the repaired heuristic builds a dependency graph over misplaced blocks and penalizes cycles in the arm-empty state itself, restoring descent. Satellite's repair replaced an unordered per-goal cost sum with per-satellite ordered action-sequence counting, so each improving move removes a real remaining step.
+
+## Implications
+Positions counterexample-guided repair as a drop-in upgrade over score-based candidate ranking *whenever a checkable property with actionable counterexamples exists* — the paper's explicit generalization (§7). It inherits <Related>CEGIS (Solar-Lezama et al. 2005; Jha et al. 2010; Abate et al. 2018)</Related> and joins <Related>Orvalho et al. 2025</Related> as the few LLM-era instances; it directly builds on <Related>Corrêa et al. NeurIPS 2025 (sample-and-select, the baseline)</Related> and on planning theory for the target — <Related>Seipp et al. 2016 (DDA)</Related>, <Related>Dold & Helmert 2024 (direct/wet DDA)</Related>, with <Related>Francès et al. 2019</Related> having proven DDA for restricted feature-based heuristics. <FollowUp>Mechanically proving directness domain-wide (Abdulaziz et al. 2022), possibly with LLM-powered theorem provers, would upgrade the empirical generalization to a certificate</FollowUp>. <FollowUp>Whether runtime agent harnesses can import the same substitution — environment-computed counterexamples in place of reward scores or LLM judges — is exactly the TDE bet</FollowUp>.
+
+## Limitations
+- <Caveat>Requires a formally checkable property with actionable counterexamples; where none exists, or training tasks expose no meaningful counterexamples, the loop degenerates to score-based ranking</Caveat> (§6, author-stated).
+- <Caveat>Verification is bounded and training-only: 30 s per validation task, timeouts silently count as "direct", and passing training certifies nothing about unseen tasks</Caveat> (§3.3, §6) — the strong OOD result is empirical, not guaranteed.
+- <Caveat>Unconstrained Python heuristics are harder to interpret and formally verify than structured representations</Caveat> such as fixed feature sets or linear potentials (§6).
+- <Caveat>Single LLM (Gemini 3.1 Pro), three runs, and large per-domain variance in places (Blocksworld ±11.5, Satellite ±14.5, Rovers ±13.6; Tab.2)</Caveat>; Direct+HC is not uniformly best per domain — S&S+HC wins Blocksworld (90 vs 77.3), Satellite (60 vs 55.7), and Spanner (79 vs 75).
+- <Caveat>Classic IPC domains are plausibly in the LLM's training data; contamination and obfuscation analyses are deferred to prior work</Caveat> (§4 Scope; refs [16], [12]).
+- <Caveat>Unit-cost satisficing setting only; plan quality/length is not reported</Caveat>.
+
+## Critiques and Questions
+1. Roughly 277 of 900 test evaluations per run end in timeouts that are neither solutions nor property violations. Is that slow Python heuristic evaluation, very long descents (strict decrease over real-valued h bounds nothing), or something else? The paper does not decompose the timeouts.
+2. The 1.15 × 10³ evaluation-cost factor compares their measured 10.75 min/domain against 206.25 CPU-hours *as reported* in Corrêa et al. [16] — a cited figure, not a re-measurement under matched hardware — so the factor's precision is softer than stated.
+3. The initial prompt never mentions directness; the property enters only via repair prompts. Would asking for a direct heuristic upfront cut iterations further? Untested.
+4. On 3 of 10 domains, score-selected heuristics under HC beat the property-trained ones — S&S's GBFS-coverage selection evidently sometimes yields near-direct heuristics for free; when and why is unexplored. (Minor: Tab.1 and Tab.2 disagree on Cov.+GBFS Sokoban, 26.0 vs 26.67.)
+5. The hard step for transferring this beyond planning is assumed away: planning theory supplies the property and PDDL supplies the goal test. Nothing addresses obtaining a checkable spec from an informal task description.
+
+<SelfCheck q="Why does the loop target the direct property rather than the stronger descending-and-dead-end-avoiding (DDA) property?" a="DDA demands an improving successor at every alive state, including states hill climbing would never visit (Fig.2a's state a), making it needlessly hard to satisfy and synthesize. Direct (wet DDA) requires improvement only along states reachable from s0 via strictly improving transitions — exactly the subgraph HC can traverse — still guarantees HC reaches a goal, and every violation yields a local, actionable counterexample: the stuck state, its heuristic value, and all successors with theirs." />
+
+## Glossary
+- <Term def="Planning Domain Definition Language: declarative encoding of planning tasks; the domain file gives predicates/actions, the task file gives objects, initial state, and goal">PDDL</Term>
+- <Term def="delete-relaxation heuristic (Hoffmann & Nebel 2001) computed by solving the task while ignoring delete effects; the classical satisficing baseline, not designed to be direct">FF heuristic</Term>
+- <Term def="planning where any plan counts regardless of length; contrasted with optimal planning">satisficing planning</Term>
+- <Term def="Corrêa et al.'s baseline: sample 25 candidate heuristics per domain with an LLM, keep the one with highest GBFS training coverage">sample-and-select (S&S)</Term>
+- <Term def="benchmark of the 2023 International Planning Competition Learning Track: 10 domains with small training tasks and 90 much larger, out-of-distribution test tasks each">IPC 2023 Learning Track</Term>
+- <Term def="ablation replacing the property check with numeric coverage feedback (which task timed out, how many states expanded) in the same repair loop">Cov.</Term>
+
+{/* NOTES_START */}
+### Personal notes
+For TDE the load-bearing citation is the ablation: same loop, same budget, counterexample feedback vs scalar coverage feedback → 623.3 vs 412.3 under HC. That is the cleanest published isolation of "structured mechanical red tests beat numeric scores" I have seen in an LLM synthesis loop. But everything happens at synthesis time over a *declarative model* (PDDL semantics compute succ(s) and the goal test) with a *given* formal property — no NL→spec compilation, no live-environment final-state suite, no per-action gating; verification is even resource-bounded (timeout counts as pass), so their "green" is weaker than it looks. Novelty-defense phrasing: TDE moves the CEGIS verifier from offline program synthesis into the runtime execution loop of an agent acting on a live environment.
+{/* NOTES_END */}

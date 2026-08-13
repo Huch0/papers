@@ -1,0 +1,124 @@
+---
+canonical_key: arxiv-2208.05950
+version_key: v1
+title: Interactive Code Generation via Test-Driven User-Intent Formalization
+authors:
+- Shuvendu K. Lahiri
+- Sarah Fakhoury
+- Aaditya Naik
+- Georgios Sakkas
+- Saikat Chakraborty
+- Madanlal Musuvathi
+- Piali Choudhury
+- Curtis von Veh
+- Jeevana Priya Inala
+- Chenglong Wang
+- Jianfeng Gao
+venue: arXiv
+year: 2022
+tags:
+- tde-related-work
+- test-based-eval
+topic_groups:
+- software_engineering_agents
+- agent_harness
+triage_label: SKIP
+triage_confidence: high
+source_link: https://arxiv.org/abs/2208.05950v2
+summary_date: '2026-08-13'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>TiCoder makes LLM code generation test-first and interactive: it compiles ambiguous natural-language intent into LLM-generated candidate unit tests, asks the user for a YES/NO/UNDEFINED verdict on one ranked test at a time, and uses pure runtime execution to prune and re-rank a fixed pool of code suggestions against the approved tests — lifting Codex pass@1 by 22.49–37.71 absolute points on MBPP and 24.79–53.98 on HumanEval within 1–5 simulated queries.</TLDR>
+
+<WhyItMatters>For TDE this is the closest SE-side precedent for the front half of the loop: ambiguous NL intent is formalized as executable tests *before* any code is trusted (test-first ordering), the approved suite binds the intent's scope falsifiably, and all checking is mechanical — runtime execution, never an LLM judge. It differs exactly where TDE lives: it verifies one pure function's input–output behavior for a human-in-the-loop, not environment state transitions — no actions, no Hoare-style pre/postcondition gating, and no red–green iteration (candidates are only filtered from a fixed pool, never regenerated until green), with the user (a reference-implementation oracle in evaluation) as the intent adjudicator rather than the environment. Its accept@1 data — the top-ranked generated test matches intent for only 61.12% (MBPP) / 73.17% (HumanEval) of problems — is hard evidence that NL-to-test compilation is noisy enough to require a validation mechanism.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "+22.49 pp", label: "pass@1 after 1 user query", sub: "MBPP: 70.73% vs Codex 48.24%" },
+  { value: "+53.98 pp", label: "pass@1 after 5 user queries", sub: "HumanEval: 84.47% vs 30.49%" },
+  { value: "1.7 / 1.5", label: "avg queries to an approved test", sub: "MBPP / HumanEval; 87.12% / 95.73% succeed within 10" },
+  { value: "427 + 164", label: "problems, one model", sub: "sanitized MBPP + modified HumanEval, Codex code-davinci-002" },
+]} />
+
+## Motivation
+<Problem>Natural language intent is ambiguous and has no formal semantics, so the correctness of LLM-generated code cannot even be stated, let alone checked</Problem>: an MBPP docstring like "sequences of lowercase letters joined with an underscore" admits several plausible programs with different behaviors (§I, p.1). Users then <Problem>struggle to vet suggestions they cannot run — accepting buggy code, rejecting correct code, and linearly scanning long naturalness-ranked candidate lists</Problem> (§I, p.1). The established cure in <Term def="programming by example: intent expressed as input-output examples, disambiguated by synthesizer-generated distinguishing examples">PBE</Term> — generate distinguishing examples and ask the user — <Problem>does not transfer to general-purpose code generation: mainstream languages have no symbolic engine to solve for distinguishing inputs, and users do not volunteer tests alongside NL intent</Problem> (§I, p.1–2).
+
+## Contribution (what's new)
+<Novelty>Interactive test-driven code generation (ITDCG): LLM-generated tests become the medium for formalizing user intent</Novelty> — a lightweight 3-valued verdict (YES / NO / UNDEFINED) on one test at a time prunes every candidate that disagrees with the answer, so the returned ranked list is guaranteed consistent with all approved tests, and the approved tests persist as regression tests. The form is forced by the setting: with no implementation to test against and no symbolic reasoner for Python, <Novelty>seed tests must come from an off-the-shelf LLM, and all subsequent pruning, mutation, and ranking use only runtime execution feedback</Novelty> — where <Term def="oracle-guided inductive synthesis: iteratively query an oracle to distinguish candidate programs">OGIS</Term>-style interactive synthesis needs constraint solvers and asks users to produce outputs, TiCoder needs only a sandbox and asks membership-style yes/no questions (§VII, p.10–11). It also contributes <Novelty>cost-aware metrics — pass@k@m and accept@m — that price accuracy in user queries</Novelty>, evaluated at scale by letting the hidden reference implementation answer as the user.
+
+## Research questions
+1. RQ1 — does the interactive workflow improve the accuracy of code suggestions?
+2. RQ2 — how does the correctness of generated code and tests scale with the number of user queries?
+3. RQ3 — which design components (prompt choice, test mutation, test/code ranking) carry the effect?
+
+## Methodology
+One LLM round, then pure execution: per problem, Codex (code-davinci-002) is sampled once for 100 code candidates and 50 test candidates (temperature 0.8, top-p 0.95, responses cached); tests are statically and dynamically mutated, ranked by how evenly they split the code pool, and posed to the user one at a time; each answer prunes the pool and the surviving codes are re-ranked by tests passed. The "user" is simulated by the benchmark's reference implementation (Def. IV.1, p.8). Datasets: sanitized MBPP (427 problems) and HumanEval (164) with docstring I/O examples deliberately removed — otherwise simple rules could mine guaranteed-correct tests from the prompt (§IV-B, p.7). Metrics: <Term def="pass@k after m user queries; pass@k is the chance that at least one of k ranked suggestions passes all hidden tests, so pass@k@0 is standard pass@k">pass@k@m</Term> and <Term def="equals 1 if at least one of the first m proposed tests is consistent with the user intent, else 0">accept@m</Term>.
+
+<Pass title="Algorithm and component details">
+<Stepper steps={[
+  { title: "Generate once (Alg.1, l.1–2)", body: "CodePrompt = file prefix + NL docstring + function header. TestPrompt appends a placeholder function body plus a test-function header ending in an open assert; the body is either the literal statement pass (default) or choose(G) — splice in the first generated code suggestion. 100 codes + 50 tests per problem; the LLM is never queried again." },
+  { title: "Mutate tests (§III-B, §III-C)", body: "Static: truncate a non-parsing test to its longest parsing prefix; single-assert keeps only the first assertion, since every extra assert is another failure point. Dynamic assert-rewrite-all: for every test (i, o) and every candidate f′, add the test (i, f′(i)) — if any candidate is correct, some test now agrees with it; most useful when outputs range over large value spaces." },
+  { title: "Rank tests: discriminative (§III-D)", body: "Split candidates into pass/fail sets per test and prefer tests that split the pool most evenly; runtime exceptions and precondition failures count in neither set. Reference points: ideal ranking (unrealizable — needs correctness labels; maximizes pruning of incorrect code) and random." },
+  { title: "Query and prune (Alg.1, l.10–16)", body: "YES: add the test to T+ and drop candidates failing it. NO: drop candidates passing it. UNDEFINED (precondition violation such as asserting SqRoot(-4) == -2, parse error, flaky output): drop nothing. Repeat up to MaxRounds or until tests run out." },
+  { title: "Rank codes: passing-tests (§III-E)", body: "Score each candidate by the number of remaining test suggestions it passes, descending. Output: ranked candidates, all consistent with T+, plus T+ as a regression suite." },
+  { title: "Oracle-simulated user (Def. IV.1)", body: "The hidden reference implementation answers: YES if it terminates on i with output o; NO if it terminates with a different output; UNDEFINED on syntax errors, runtime exceptions, or infinite loops. This assumes user intent is exactly the reference semantics." },
+]} />
+
+<MathBlock>{`s_{\\mathrm{discr}}(t) = \\min(|G_t^{+}|,|G_t^{-}|)\\,/\\,\\max(|G_t^{+}|,|G_t^{-}|) \\qquad (0\\ \\text{if the max is } 0)`}</MathBlock>
+</Pass>
+
+## Main result
+With a single simulated query, <Finding src="Fig.5, §V-A, p.8">TiCoder reaches pass@1@1 = 70.73% on MBPP — +22.49 pp over sampled Codex (48.24%) and ahead of greedy Codex at temperature 0 (61.59%), the unranked interactive Baseline (52.69%), and interaction-free CodeT (63.70%)</Finding>. On HumanEval it reaches <Finding src="Fig.5, §V-A, p.8">55.28% (+24.79 pp over 30.49%) but trails CodeT (58.54%) in the default configuration; a non-default configuration (59.62%) or a second query overtakes CodeT, and TiCoder beats CodeT at k = 2, 5, 10 on both datasets</Finding>.
+
+<SortableTable columns={["Method", "User queries m", "MBPP pass@1", "HumanEval pass@1"]} rows={[
+  ["Codex (t=0.8)", 0, 48.24, 30.49],
+  ["Codex (t=0, 1 sample)", 0, 61.59, 44.02],
+  ["CodeT (authors' reimpl.)", 0, 63.70, 58.54],
+  ["Baseline (raw tests, unranked)", 1, 52.69, 37.80],
+  ["TiCoder (default)", 1, 70.73, 55.28],
+  ["TiCoder (default)", 5, 85.95, 84.47],
+  ["IdealTests (hidden tests, bound)", 1, 87.35, 90.85],
+  ["IdealTests (hidden tests, bound)", 5, 89.70, 90.85],
+]} />
+
+All values are expectations over each dataset from one cached Codex sample set (100 codes, 50 tests); rows with m = 0 consume no user effort. IdealTests replaces generated tests with the datasets' hidden tests (3 per MBPP problem, 1 per HumanEval problem) under ideal ranking; its m = 1 values are derived from the gaps stated in §V-A (16.62 / 35.57 pp behind TiCoder's pass@1@1), and pass@100 caps everything at 89.70% / 90.85%.
+
+## Key findings
+- <Finding src="Fig.6, p.8">Interaction compounds only through the full machinery</Finding>: TiCoder climbs 70.73 → 85.95 (MBPP) and 55.28 → 84.47 (HumanEval) from m = 1 to 5, while the stripped Baseline crawls 52.69 → 61.36 and 37.8 → 50.61; TiCoder overtakes zero-interaction CodeT after 1 query on MBPP and 2 on HumanEval (§V-B, p.9).
+- <Finding src="Fig.7, p.9">LLM test generation mis-states intent often enough to need the filter</Finding>: the first-ranked generated test matches intent for only 61.12% (MBPP) / 73.17% (HumanEval) of problems; within the 10-query cap 87.12% / 95.73% reach an approved test, taking 1.7 / 1.5 queries on average — and the accepted tests are non-vacuous, since they visibly prune incorrect code.
+- <Finding src="Fig.6, p.8–9">Test mutation beats even oracle ranking of unmutated tests</Finding>: TiCoder with its realizable discriminative ranker outperforms BaselineIdeal (ideal ranking over raw Codex tests) by 10.72 pp (MBPP) and 13.74 pp (HumanEval) at m = 5 — the enlarged test pool, not ranking finesse, carries much of the gain.
+- <Finding src="Tab.II–III, p.9">Test ranking is the highest-leverage component</Finding>: replacing discriminative with random ranking drops pass@1@1 from 70.72 to 63.23 (MBPP) and 55.27 to 48.44 (HumanEval), and pass@1@5 from 85.94 to 71.89 and 84.47 to 57.76 — by far the largest ablation deltas.
+- <Finding src="§V-A, p.8">Substantial headroom remains in both test quality and ranking</Finding>: TiCoder trails the IdealTests bound by 16.62 pp (MBPP) and 35.57 pp (HumanEval) at pass@1@1, and ideal ranking of its own generated tests would add up to 13.58 / 14.29 pp; at larger m IdealRanking nearly matches IdealTests, i.e. generated-plus-mutated tests approach hidden-test pruning power.
+- <Finding src="Tab.III, p.9–10">No configuration dominates across datasets or metrics</Finding>: on HumanEval two ablations beat the default at pass@1@1 — the `choose(G)` test prompt (59.62, which also beats CodeT) and dropping single-assert (59.37) — while the default, chosen on MBPP pass@1@1, wins on MBPP.
+
+## Implications
+Reframes generated tests from a self-consistency ranking heuristic (<Related>CodeT, AlphaCode — rank codes and tests by mutual agreement, no user, no guarantees</Related>) into user-approved partial specifications, and transplants <Related>OGIS and interactive program synthesis (Jha et al., Le et al., Ji et al.)</Related> from solver-backed DSLs to arbitrary-language LLM codegen using membership-style queries in the spirit of <Related>Angluin's automata learning</Related>. Every accepted suggestion ships with an approved regression test — the spec outlives the generation episode. <FollowUp>The journal version (per the TDE survey: IEEE TSE 2024) reportedly adds a 15-programmer user study — this arXiv v2 explicitly defers a user study to future work, so check there whether human answers preserve the oracle-simulated gains.</FollowUp> <FollowUp>§II-B claims the framework generalizes to stateful-API tests (test-prefix plus output predicate) and symbolic postconditions (e.g. output is a permutation of the input) — the unimplemented bridge from function-I/O checking toward the state-transition verification TDE targets.</FollowUp> <FollowUp>Filter-only today: combining approved tests with repair or regeneration would turn this into a genuine red–green loop.</FollowUp>
+
+## Limitations
+- <Caveat>Oracle-simulated users only</Caveat>: intent is defined as the reference implementation's semantics; answer errors, cognitive effort, and genuinely underdetermined intent are outside the evaluation — the authors defer a user study to future work (§VI, p.10).
+- <Caveat>Filter-only pipeline capped by the initial sample</Caveat>: the pool is fixed at 100 Codex samples, so no amount of interaction can exceed pass@100 (89.70% MBPP / 90.85% HumanEval); there is no repair or regeneration.
+- <Caveat>Two Python function-level benchmarks on one deprecated model</Caveat>: sanitized MBPP + modified HumanEval with code-davinci-002 (public access withdrawn March 2023); the authors flag non-representativeness of real-world development and replicability risk (§VI, p.10).
+- <Caveat>HumanEval was modified (docstring examples removed)</Caveat>, so its numbers are not comparable to standard HumanEval results elsewhere.
+- <Caveat>Single cached generation, point estimates only</Caveat> — no variance, seeds, or significance reporting.
+
+## Critiques and Questions
+1. The claimed invariant that pruning "never prunes a correct (as defined by the hidden tests) code suggestion" (§II-D, p.4) quietly equates correctness with reference semantics on every queried input: a candidate that passes all hidden tests but diverges from the reference on some generated input would be pruned under the oracle's answer. With real users — whose intent is fuzzier than any reference implementation — the guarantee degrades to consistency-with-answers.
+2. The headline comparison is cost-asymmetric: TiCoder's pass@1@1 spends a user interaction that the Codex and CodeT rows do not, and on HumanEval the default actually loses to interaction-free CodeT (55.28 vs 58.54) until a non-default configuration or a second query. A cost model over queries (the paper's own accept@m machinery) applied to the headline claim would be more honest.
+3. The 1.7 / 1.5 average-queries statistic conditions on success within the 10-query cap; for the 12.88% of MBPP problems where no test is ever approved, intent formalization failed — and their code accuracy is not reported separately.
+4. Everything hinges on tests being input–output pairs over deterministic pure functions; the UNDEFINED verdict quarantines state, nondeterminism, and precondition violations rather than handling them, and the promised richer specifications (§II-B) remain unimplemented.
+
+<SelfCheck q="After the user answers NO to a proposed test (i, o), what exactly does TiCoder prune, and why does an UNDEFINED answer prune nothing?" a="NO prunes every candidate c with c(i) == o — those exhibit the rejected behavior; YES conversely keeps the test and prunes candidates with c(i) != o. UNDEFINED means the test itself is ill-posed for the intended function (precondition violation, parse error, flaky or non-deterministic output), so agreement or disagreement with it carries no information about intent, and the candidate pool is left untouched." />
+
+## Glossary
+- <Term def="crowd-sourced Python programming benchmark from Google; the sanitized 427-problem subset is used here">MBPP</Term>
+- <Term def="164 hand-written Python problems introduced with Codex; docstring I/O examples were removed for this evaluation">HumanEval</Term>
+- <Term def="OpenAI code LLM used for all generation via inference-only API; public access withdrawn March 2023">Codex code-davinci-002</Term>
+- <Term def="contemporary non-interactive method ranking code and LLM-generated tests by mutual execution agreement; reimplemented as a baseline">CodeT</Term>
+- <Term def="static test mutation keeping only the first assertion of a generated test">single-assert</Term> / <Term def="dynamic test mutation replacing a test's expected output with the value a candidate implementation actually returns">assert-rewrite-all</Term>
+
+{/* NOTES_START */}
+### Personal notes
+The three fault lines that matter for the TDE novelty defense: (1) artifact vs world — TiCoder's tests assert `f(i) == o` on a pure function, never a predicate over post-action environment state; (2) filter vs iterate — Alg.1 guarantees the output pool is a subset of the initial 100 samples (repair is mentioned once, hypothetically), whereas TDE's red–green loop drives the actor until the suite passes; (3) who adjudicates — a human (or reference oracle) validates each compiled test, whereas TDE wants the environment to evaluate the suite with no human and no LLM judge. Reusable datum: accept@1 of 61.12% / 73.17% is the cleanest published measure of NL-to-test compilation fidelity at function level — cite it when arguing an acceptance suite cannot be trusted un-validated. Also note the UNDEFINED verdict as a germ of precondition-awareness: a test outside the function's domain is unanswerable, which rhymes with TDE's precondition gating.
+{/* NOTES_END */}

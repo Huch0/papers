@@ -1,0 +1,121 @@
+---
+canonical_key: arxiv-2608.02645
+version_key: v1
+title: Verified Tool Calls Improve LLM Agent Reliability Under Non-Atomic Failures
+authors:
+- Isham Kalappurackal Mansoor
+- Abhishek Phadke
+- Pratip Rana
+venue: arXiv
+year: 2026
+tags:
+- reliability-concern
+- tde-related-work
+- tool-use
+- verifier
+topic_groups:
+- agent_harness
+triage_label: TRACK_ONLY
+triage_confidence: high
+source_link: https://arxiv.org/abs/2608.02645v1
+summary_date: '2026-08-13'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>A model-agnostic tool wrapper — read-only postcondition verification, verify-before-retry, and idempotency keys — stops LLM agents from blindly retrying <Term def="a tool call whose response does not faithfully encode the state transition: the action may have executed even though the agent saw a timeout, stale read, or partial result">non-atomic</Term> tool failures, cutting duplicate side effects from 72–76% to 20% of runs at high fault rates in a seeded fault-injection simulator, without modifying the LLM.</TLDR>
+
+<WhyItMatters>CLOSEST-WORK #4 for TDE (survey category C), threatening the postcondition axis. Shares with TDE: per-action postcondition predicates evaluated against external world state (mechanically, via read-only state queries, in all experiments), verify-before-retry as a hard gate on recovery, and a harness-level mechanism invisible to the model. Differs on every other axis: postconditions are hand-written per task (automatic construction is explicitly deferred to future work, §8), nothing is compiled from the NL instruction, there is no acceptance suite and no red–green loop, no preconditions at all, and the gate fires only on the *retry path after an ambiguous response* — a clean SUCCESS response is trusted unverified. §4.4 moreover explicitly admits LLM-based verifiers for unstructured state, so the framework does not commit to de-circularized adjudication as a principle. Its sharpest TDE-adjacent claim: final-state task success alone obscures unsafe execution paths — directly relevant to state-diff-graded testbeds like AppWorld.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "72→20%", label: "duplicate rate, high fault", sub: "baseline→wrapped, activate_customer; invoice 76→20% (Fig.4)" },
+  { value: "+36 pp", label: "task success, high fault", sub: "activate_customer 64→100%, p=0.0016 — the only significant success gain" },
+  { value: "80% vs 72%", label: "verify-only beats full wrapper", sub: "ablation task success; duplicates 20% vs 28% (Fig.3)" },
+  { value: "300", label: "total agent runs", sub: "2 tasks x 3 fault levels x 2 methods x 25 episodes, Gemini Flash-Lite" },
+]} />
+
+## Motivation
+Agent stacks from ReAct and Toolformer through MCP-era frameworks <Problem>treat the tool response as a faithful oracle of what happened in the world</Problem> — formally, they assume atomicity, `r ≡ (S → S′)` for a call `(a, r, S, S′)` (§2.1). Real distributed infrastructure violates this in four ways the paper taxonomizes (§2.3): timeout-after-dispatch, delayed visibility under <Term def="a consistency model where writes propagate asynchronously, so a read immediately after a successful write may return stale state">eventual consistency</Term>, partial success (a compound action half-applies yet may return HTTP 200), and stale conflicts from concurrent writers. The result is that <Problem>the response channel (what the agent sees) and the effect channel (what actually changed on the server) diverge, so the agent's belief state drifts from ground truth even when agent and tool are each individually correct</Problem> (§2.2). Naive recovery then compounds the damage: <Problem>retrying an action that silently succeeded is not a correction but a duplication</Problem> (the lost-payment-response example, §3.2). Reflection-style methods (Reflexion, LATS) only address reasoning/planning failures; ToolBench and AgentBench evaluate under clean, deterministic tool behavior; and <Problem>the distributed-systems remedies — idempotency keys, consistency-aware reads — have not been systematically incorporated into LLM-agent architectures</Problem> (§3.3).
+
+## Contribution (what's new)
+<Novelty>Formalizing non-atomic tool failure as a distinct agent-reliability problem</Novelty> — atomicity as `r ≡ (S → S′)` plus the four-mode failure taxonomy — and <Novelty>a lightweight wrapper enforcing three principles: effect–response separation (verify the postcondition in world state, never trust the response channel alone), verify-before-retry (no retry is ever issued unless a read-only verifier confirms the intended change is absent), and idempotent execution (every attempt of the same logical operation carries a deterministic <Term def="a deterministic token sent with every attempt of the same logical operation so the server can deduplicate retries, guaranteeing at most one effect per key">idempotency key</Term>)</Novelty> (§4.1). The form is forced by the failure analysis: because a missing response does not imply a missing effect, the retry decision must be grounded in independently read state; and because a retry can race a delayed success, it must be server-deduplicable. Explicitly positioned as system-level — no model changes (§3.4).
+
+## Research questions
+1. Does verifying external state before retrying reduce duplicate side effects and false completions under injected non-atomic failures, relative to naive retry? 2. Which component — verification or retry — drives the gains? 3. Can this live purely in the harness, holding the model fixed?
+
+## Methodology
+A ReAct-style LangGraph loop (LLM node picks tool calls, tool node executes) driven by Google Gemini Flash-Lite at temperature 0.0; methods differ only in system prompt and the wrapper logic around the tool node (§4.6). Per action `a`, a three-valued verifier `Va` reads world state and returns True / False / Unknown — Unknown absorbs eventual-consistency reads instead of forcing a false negative (§4.4). On an ambiguous tool response the wrapper backs off, verifies, and re-executes only on False, with budget `MAX_TOOL_RETRIES_PER_CALL = 1` and key `k = hash(agent_id, action_type, payload, timestamp_bucket)` (§4.5). Evaluation is in a simulated tool environment with explicit ground-truth state and deterministically seeded fault injection (base_seed 42, incremented per episode; identical fault streams across methods), 2 multistage tasks x 3 fault levels x 2 methods x 25 episodes = 300 runs; success is graded on the final world state (§5, §4.3).
+
+<Pass title="Method details">
+**Task suite and postconditions (§4.2–4.3).** `activate_customer` (create record, set status ACTIVE, send *exactly one* welcome message — stresses duplicate side effects) and `record_invoice` (update row, create record, set status RECORDED — stresses partial writes). Success is a boolean predicate over post-dispatch state `S′`: for activation, `C(S′) = [customer.status = "activate"] ∧ [customer.activated_at ≠ null]`; for invoicing, `C(S′) = [row.exists] ∧ [row.invoice_id = a.invoice_id] ∧ [row.amount = a.amount]`. Three stated implications: verifier *completeness* is required (existence-only checks pass on partial success); postconditions encode domain knowledge that cannot be inferred from the API alone — generalizable but costing per-task engineering; and verifier false negatives under delayed visibility make the verify-only variant over-suppress.
+
+**Verifier implementations (§4.4).** Direct state reads, API polling, or — for unstructured state — LLM-based interpretation. Verification is read-only, so repeated checks are side-effect-free. In the experiments the verifiers are hand-designed state reads over the simulator.
+
+<Stepper steps={[
+  { title: "Dispatch", body: "execute(a, key=k). The baseline prompt instead instructs the agent to retry failed calls directly, without checking external state and without idempotency keys." },
+  { title: "Read response", body: "SUCCESS returns success immediately — with no verification. A definitive FAILURE returns failure — the wrapper never retries definitive failures, only ambiguous ones." },
+  { title: "Ambiguous response", body: "wait(backoff(i)), then result = V(current_state). TRUE returns success (the action landed; retry suppressed). UNKNOWN continues the loop (wait and re-verify — the eventual-consistency escape hatch). FALSE re-executes with the same idempotency key." },
+  { title: "Budget exhausted", body: "Return failure. Ambiguous intermediate states are resolved inside the wrapper and never surfaced to the model." },
+]} />
+
+**Fault injection (§5.3, Tab.1).** Per-call fault probabilities, same seed sequence for every method:
+
+<ResultsTable columns={["Fault level", "Timeout", "Delayed visibility", "Partial success", "Conflict"]} rows={[
+  ["Low", "0.05", "0.05", "0.03", "0.02"],
+  ["Medium", "0.20", "0.15", "0.10", "0.05"],
+  ["High", "0.35", "0.25", "0.15", "0.10"],
+]} />
+
+**Metrics (§5.4).** §5.4 announces "five metrics" but defines two: task success rate (final world state satisfies all task postconditions) and duplicate action rate (repeated side effects for a should-happen-once action), with Wilson score CIs and Cohen's h "where appropriate" — no h values appear anywhere in the paper. The ablation (baseline vs verify-only vs full verify-before-retry) is a *separate* run configuration on `activate_customer` at medium fault only; the paper states its absolute rates are incomparable to the main figures, and its sample size is not reported (its ~58%/~42% baseline rates are not multiples of 1/25).
+</Pass>
+
+## Main result
+Across fault levels the wrapped agent holds `activate_customer` task success at <Finding src="Fig.2, Fig.4">100% while the baseline degrades 92→84→64%, and cuts duplicate side effects from 20/44/72% (baseline, low/med/high) to 0/16/20%</Finding>; on `record_invoice`, where baseline success is already 96–100%, the wrapper's effect is almost entirely on safety: <Finding src="Fig.4">duplicates drop 32→0%, 52→16%, 76→20%</Finding>. Figure 4's per-cell table (transcribed below) is the precise record — note which deltas carry statistical weight at n=25:
+
+<SortableTable columns={["Task", "Fault", "Base succ %", "Wrap succ %", "p (succ)", "Base dup %", "Wrap dup %", "p (dup)"]} rows={[
+  ["activate_customer", "low", 92, 100, 0.4898, 20, 0, 0.0502],
+  ["activate_customer", "medium", 84, 100, 0.1099, 44, 16, 0.0622],
+  ["activate_customer", "high", 64, 100, 0.0016, 72, 20, 0.0005],
+  ["record_invoice", "low", 100, 100, 1.0, 32, 0, 0.004],
+  ["record_invoice", "medium", 96, 96, 1.0, 52, 16, 0.0157],
+  ["record_invoice", "high", 96, 100, 1.0, 76, 20, 0.0002],
+]} />
+
+## Key findings
+- <Finding src="Fig.2, §6.1">The reliability gap widens with fault severity</Finding>: the wrapper's headline +36 pp success gain appears at high fault on `activate_customer`; at low fault the gap is 8 pp and non-significant.
+- <Finding src="Fig.4">The success benefit is task-dependent and mostly non-significant</Finding>: only high-fault `activate_customer` reaches significance (p=0.0016); all `record_invoice` success deltas are +0 to +4 pp at p=1.0. The wrapper helps *task success* mainly where duplicates themselves violate the objective ("exactly one welcome message"); elsewhere it buys safety, not success.
+- <Finding src="Fig.3, §6.3">Verification, not retry, drives the gains</Finding>: in the ablation, verify-only reaches ~80% success / ~20% duplicates vs the full verify-before-retry wrapper's ~72% / ~28% (baseline ~58% / ~42%) — adding the retry arm *hurt* both metrics in this run, and only verify-only's improvement over baseline carries a significance marker. The authors' own conclusion: retries create fresh chances for duplication and new faults, and "should be used carefully rather than automatically."
+- <Finding src="§6.4, §7">Final-state success obscures unsafe execution</Finding>: baseline `record_invoice` scores 96–100% task success while duplicating writes in up to 76% of runs — the paper argues reliable tool-use evaluation must measure whether the agent reached the final state *safely*, not just whether it is correct.
+- <Finding src="Fig.4">Residual duplicates persist under the wrapper</Finding>: 16% (medium) and 20% (high) of wrapped runs still produce duplicates on *both* tasks — identical values across tasks — despite verification plus idempotency keys; the mechanism behind these residuals is never analyzed (see Critiques).
+
+## Implications
+The paper imports a distributed-systems discipline — <Term def="a messaging pattern where operations may be delivered multiple times but consumers deduplicate them, approximating exactly-once effects">at-least-once delivery with idempotent consumers</Term> — into the agent tool-calling loop, and argues future agent frameworks and tool APIs should expose stronger execution semantics (idempotency keys, operation identifiers, status endpoints) so harnesses can recover from ambiguity without touching the model (§7). It sits in a fast-forming 2026 cluster on tool-execution reliability: <Related>ToolGate (contract-grounded, pre/postcondition-verified tool execution — ref [14], the nearest neighbor and closer to Hoare-style gating than this paper)</Related>, <Related>Atomix (transactional tool use, cited only via a review website)</Related>, <Related>the ERR recoverability measure [1] and failure taxonomies for tool-augmented LLMs [2, 12]</Related>, while positioning against <Related>ReAct/Toolformer's response-as-oracle assumption and Reflexion/LATS-style reasoning-level retries</Related>. <FollowUp>ToolGate [14] should be pulled into the TDE corpus — it claims precondition checks this paper lacks.</FollowUp> <FollowUp>§8's call for automatically constructing or learning postcondition verifiers is precisely the NL→suite compilation gap TDE fills; watch for follow-ups that attempt it.</FollowUp> <FollowUp>The confidence-based recovery proposal (combine verifier, response, idempotency, and history signals to choose retry / wait / escalate / halt) as a soft alternative to TDE's hard gating.</FollowUp>
+
+## Limitations
+- <Caveat>Simulator-only evidence</Caveat>: a controlled environment with injected faults and two representative workflows; the authors concede production APIs have failure modes (stale reads, auth failures, rate limits) the study may not capture (§7, §8).
+- <Caveat>Hand-designed, task-specific verifiers</Caveat>: postconditions are engineered per task; the wrapper "cannot eliminate failures when the verifier itself observes outdated or incomplete state" (§7). Auto-construction is future work.
+- <Caveat>Tiny scale, single model, single seed base</Caveat>: n=25 per cell, one model (Gemini Flash-Lite), base_seed 42; most success deltas are non-significant, and no variance across seeds is reported.
+- <Caveat>The ablation — the paper's most interesting result — is methodologically weakest</Caveat>: separate incomparable configuration, one task, one fault level, unreported n.
+- <Caveat>Metrics under-delivered</Caveat>: "five metrics" announced, two defined; Cohen's h invoked but never reported.
+
+## Critiques and Questions
+1. **Partial success bypasses the verifier.** Algorithm 1 verifies only after an AMBIGUOUS response; a clean SUCCESS short-circuits immediately. But the paper's own Failure Mode 3 "may return HTTP 200… or surface no error at all" (§2.3) — exactly the case the per-call verifier never sees. §4.2's promise that verifiers "check the actual task postconditions rather than only object existence" does not fix a check that never runs; how mode-3 faults are caught mid-episode is unclear.
+2. **Residual wrapped duplicates are unexplained.** If idempotency keys guarantee at most one effect per key, the 16–20% wrapped duplicate rates must come from key rotation (the `timestamp_bucket`), from the simulator not honoring keys, or from the *plan level* — the LLM re-issuing the logical action as a new call with a new key, which evades both defenses. The identical 0/16/20% pattern on both tasks suggests a fault-schedule artifact. The paper never disaggregates.
+3. **Pseudocode does not implement the claimed loop.** As printed, with N=1 the retry issued on a False verification is never followed by another response read — the loop exhausts and returns failure regardless of the retry's outcome — and definitive failures are never retried at all (the one case where a retry is guaranteed safe). Presumably the implementation differs, but the algorithm as written cannot produce "retry, then confirm."
+4. **Internal significance contradiction.** §6.4 claims duplicate reduction "is significant across all tested settings," but Figure 4's own p-values show `activate_customer` low (p=0.0502) and medium (p=0.0622) missing the 0.05 threshold; §6.2's list of significant cells also omits invoice-medium (p=0.0157), which qualifies.
+5. **The baseline is prompted into pathology.** The baseline system prompt *instructs* the agent to retry blindly and omit idempotency keys. That mirrors common practice, but the comparison partly measures an instructed failure mode rather than the model's natural recovery behavior; an un-instructed baseline is absent.
+
+<SelfCheck q="Under the wrapper, when does the postcondition verifier actually run, and which of the paper's four failure modes can therefore bypass verification entirely?" a="Verification runs only after an AMBIGUOUS tool response, following a backoff wait. A clean SUCCESS response returns immediately without verification, so Partial Success — which the paper notes may return HTTP 200 with no surfaced error — never triggers the per-call verifier and is caught, if at all, only by the task-level grading of final state. Delayed visibility, by contrast, is handled inside verification via the three-valued logic: an inconclusive read returns Unknown, and the wrapper waits and re-verifies instead of retrying." />
+
+## Glossary
+- <Term def="the pathway through which a tool action modifies world state, as distinct from the response channel through which the agent hears about it; non-atomicity is their divergence">effect channel</Term>
+- <Term def="delivery semantics where an operation may execute multiple times under retries; contrasted with exactly-once, which guarantees a single application per logical operation">at-least-once vs exactly-once</Term>
+- <Term def="the agent paradigm interleaving reasoning traces and tool actions, each step conditioned on environment feedback; the loop architecture used here via LangGraph">ReAct</Term>
+- <Term def="a binomial confidence interval with better small-sample coverage than the normal approximation; used for the success/duplicate proportions">Wilson score interval</Term>
+- <Term def="a standardized effect size for the difference between two proportions; announced in §5.4 but no values are reported">Cohen's h</Term>
+
+{/* NOTES_START */}
+### Personal notes
+For the TDE novelty defense, the precise deltas against this paper: (1) their postconditions are hand-authored per task — the paper itself names automatic verifier construction as the missing piece (§8), which is TDE's NL→acceptance-suite compiler; (2) verification is recovery-time only — it gates the retry path after ambiguous responses, never first execution (no preconditions) and never task completion (no suite, no red–green loop; the final-state predicate exists only as the *evaluation metric*, invisible to the agent); (3) the framework tolerates LLM-based verifiers for unstructured state (§4.4), so mechanical adjudication is an implementation choice here, not a principle — TDE makes de-circularization constitutive. Their strongest reusable ammunition for TDE: the §6.4 argument that final-state-only grading hides unsafe execution paths (duplicate external writes with a correct end state) — an argument *for* acceptance suites that encode side-effect counts (their "exactly one welcome message" is final-state checkable), and a caveat for pure state-diff grading in AppWorld. Also reusable: the ablation's warning that unverified retry is net-harmful. Chase ToolGate [14] — pre+postcondition contracts, likely a bigger threat than this paper.
+{/* NOTES_END */}

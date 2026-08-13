@@ -1,0 +1,89 @@
+canonical_key: arxiv-2402.01817
+version_key: v1
+title: LLMs Can't Plan, But Can Help Planning in LLM-Modulo Frameworks
+authors:
+- Subbarao Kambhampati
+- Karthik Valmeekam
+- Lin Guan
+- Mudit Verma
+- Kaya Stechly
+- Siddhant Bhambri
+- Lucas Saldyt
+- Anil Murthy
+abstract: There is considerable confusion about the role of Large Language Models (LLMs) in planning and
+  reasoning tasks. On one side are over-optimistic claims that LLMs can indeed do these tasks with just
+  the right prompting or self-verification strategies. On the other side are perhaps over-pessimistic
+  claims that all that LLMs are good for in planning/reasoning tasks are as mere translators of the problem
+  specification from one syntactic format to another, and ship the problem off to external symbolic solvers.
+  In this position paper, we take the view that both these extremes are misguided. We argue that auto-regressive
+  LLMs cannot, by themselves, do planning or self-verification (which is after all a form of reasoning),
+  and shed some light on the reasons for misunderstandings in the literature. We will also argue that
+  LLMs should be viewed as universal approximate knowledge sources that have much more meaningful roles
+  to play in planning/reasoning tasks beyond simple front-end/back-end format translators. We present
+  a vision of {\bf LLM-Modulo Frameworks} that combine the strengths of LLMs with external model-based
+  verifiers in a tighter bi-directional interaction regime. We will show how the models driving the external
+  verifiers themselves can be acquired with the help of LLMs. We will also argue that rather than simply
+  pipelining LLMs and symbolic components, this LLM-Modulo Framework provides a better neuro-symbolic
+  approach that offers tighter integration between LLMs and symbolic components, and allows extending
+  the scope of model-based planning/reasoning regimes towards more flexible knowledge, problem and preference
+  specifications.
+venue: Proceedings of the 41 st International Conference on Machine Learning, Vienna, Austria. PMLR 235,
+  2024
+year: 2024
+source: arxiv
+source_url: https://arxiv.org/abs/2402.01817v3
+pdf_url: https://arxiv.org/pdf/2402.01817v3
+pdf_sha256: 8f79507f1fb1f1d6b4e086be2c2401df6775f091ae158efdc291116cfe6b720c
+fetched_at: '2026-08-13T07:18:26Z'
+source_updated_at: '2024-06-12T01:13:11Z'
+ids:
+  doi: null
+  arxiv_id: 2402.01817v3
+  arxiv_base_id: '2402.01817'
+  arxiv_version: v3
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- position-paper
+- tde-related-work
+- verifier
+topic_groups:
+- general_agent_methods
+scoring:
+  score: 19.3
+  label: SKIP
+  confidence: high
+  rationale: 'score=19 -> SKIP | strong: venue_quality(1.00), interest_fit(0.73), harness_relevance(0.36)
+    | interests: software_engineering_agents:verifier, general_agent_methods:verifier, general_agent_methods:group:general_agent_methods
+    | negatives: old_in_fast_area'
+  matched_interests:
+  - software_engineering_agents:verifier
+  - general_agent_methods:verifier
+  - general_agent_methods:group:general_agent_methods
+  negative_signals:
+  - old_in_fast_area
+  subscores:
+    interest_fit: 0.73
+    recency: 0.0
+    venue_quality: 1.0
+    harness_relevance: 0.36
+    novelty: 0.0
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/llms-can-t-plan-but-can-help-240201817/v1/paper.pdf
+  extraction: library/llms-can-t-plan-but-can-help-240201817/v1/extraction.txt
+  summary: library/llms-can-t-plan-but-can-help-240201817/v1/summary.mdx
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread
+  summary_format: mdx

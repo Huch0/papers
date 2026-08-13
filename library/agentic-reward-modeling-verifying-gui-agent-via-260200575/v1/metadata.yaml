@@ -1,0 +1,81 @@
+canonical_key: arxiv-2602.00575
+version_key: v1
+title: 'Agentic Reward Modeling: Verifying GUI Agent via Progressive Trajectory-Grounded Interaction'
+authors:
+- Chaoqun Cui
+- Jing Huang
+- Shijing Wang
+- Liming Zheng
+- Qingchao Kong
+- Zhixiong Zeng
+abstract: Reinforcement learning with verifiable rewards (RLVR) provides a promising pathway for continuously
+  advancing GUI agents, yet existing reward modeling paradigms face complementary limitations. Rule-based
+  methods suffer from poor scalability and cannot handle open-ended tasks. LLM-as-a-Judge methods enable
+  scalable trajectory verification but remain passive and are constrained by partial state observability,
+  since key evidence often resides in latent environment states beyond the trajectory. Recent active environment
+  interaction methods mitigate observability issues but tend to over-rely on probing while under-utilizing
+  direct trajectory evidence, leading to verification inefficiency. To address these challenges, we advocate
+  a trajectory-grounded interactive verification paradigm. We introduce VAGEN, a framework that employs
+  a tool-augmented verifier agent governed by a Progressive Verification Mechanism, which follows a surface-to-latent
+  and cheap-to-expensive design philosophy to extract trajectory evidence and probe environment states
+  in a proactive end-to-end manner. Experiments on OSWorld-Verified and AndroidWorld benchmarks demonstrate
+  that VAGEN significantly improves evaluation accuracy with a favorable performance-efficiency trade-off.
+venue: arXiv
+year: 2026
+source: arxiv
+source_url: https://arxiv.org/abs/2602.00575v2
+pdf_url: https://arxiv.org/pdf/2602.00575v2
+pdf_sha256: 7d82ce7f4630ce5d02ecfd7757b2e3afe8cc8dbe4429ccceccf396245f672163
+fetched_at: '2026-08-13T07:17:41Z'
+source_updated_at: '2026-07-25T06:54:35Z'
+ids:
+  doi: null
+  arxiv_id: 2602.00575v2
+  arxiv_base_id: '2602.00575'
+  arxiv_version: v2
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- llm-judge
+- reward-model
+- tde-related-work
+topic_groups:
+- computer_use_agents
+scoring:
+  score: 62.0
+  label: SKIM
+  confidence: high
+  rationale: 'score=62 -> SKIM | strong: recency(0.99), interest_fit(0.91), harness_relevance(0.84) |
+    interests: computer_use_agents:GUI agent, computer_use_agents:group:computer_use_agents, software_engineering_agents:verifier,
+    general_agent_methods:verifier'
+  matched_interests:
+  - computer_use_agents:GUI agent
+  - computer_use_agents:group:computer_use_agents
+  - software_engineering_agents:verifier
+  - general_agent_methods:verifier
+  negative_signals: []
+  subscores:
+    interest_fit: 0.91
+    recency: 0.99
+    venue_quality: 0.4
+    harness_relevance: 0.84
+    novelty: 0.55
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.7
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/agentic-reward-modeling-verifying-gui-agent-via-260200575/v1/paper.pdf
+  extraction: library/agentic-reward-modeling-verifying-gui-agent-via-260200575/v1/extraction.txt
+  summary: library/agentic-reward-modeling-verifying-gui-agent-via-260200575/v1/summary.mdx
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread
+  summary_format: mdx

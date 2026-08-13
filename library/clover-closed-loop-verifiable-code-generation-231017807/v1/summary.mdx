@@ -1,0 +1,116 @@
+---
+canonical_key: arxiv-2310.17807
+version_key: v1
+title: 'Clover: Closed-Loop Verifiable Code Generation'
+authors:
+- Chuyue Sun
+- Ying Sheng
+- Oded Padon
+- Clark Barrett
+venue: arXiv
+year: 2023
+tags:
+- tde-related-work
+- verifier
+topic_groups:
+- software_engineering_agents
+triage_label: SKIP
+triage_confidence: high
+source_link: https://arxiv.org/abs/2310.17807v4
+summary_date: '2026-08-13'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>Clover reduces the question of whether LLM-generated code is correct to consistency checking over a triangle of artifacts — code, formal Dafny annotations, and a docstring — via six directed checks (one deductive verification plus five LLM-reconstruct-then-compare tests), accepting only if all pass; on the hand-built CloverBench it accepts 87% of correct instances (k=10) while accepting 0 of 240 adversarial incorrect variants.</TLDR>
+
+<WhyItMatters>CLOSEST-WORK #8 for TDE, on the guaranteed-carry axis: Clover shares TDE's core move — the natural-language intent must be carried into a formal, checkable artifact, and acceptance is gated on checks passing — and its measured zero-false-positive filter is strong evidence that such carry is enforceable. It differs exactly as the survey says: it verifies a static program artifact's internal consistency, not environment state transitions — no agent loop, no actions, no world-state postconditions — but one survey nuance needs sharpening: its checking is only partly mechanical. The two docstring-facing equivalence checks are adjudicated by a GPT-4 judge the authors admit skews toward acceptance — precisely the LLM-judge circularity TDE removes; only the code-vs-annotation edge (Dafny verifier) and annotation equivalence (Dafny lemma) are fully formal, and code equivalence is 5-point I/O sampling.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "87%", label: "correct instances accepted", sub: "CloverBench ground truth, 52/60 at k=10 (Tab.1)" },
+  { value: "0/240", label: "adversarial accepts", sub: "4 mutation categories x 60, at k=1 and k=10 (Tab.1)" },
+  { value: "6", label: "wrong human-written programs found", sub: "in external MBPP-DFY-50; 0 false positives (§4.4)" },
+  { value: "39/60", label: "NL → verified code end-to-end", sub: "docstring-only generation, 20 tries + Clover filter (Fig.2c)" },
+]} />
+
+## Motivation
+<Problem>There is no trustworthy, scalable way to ensure the correctness of LLM-generated code</Problem>: the best practice is a human expert in the loop, which caps scale, while studies find developers with AI assistants write more insecure code with higher confidence (§1, p.1-2). Formal verification could give mathematical guarantees — modeling and proof are largely automated by deductive verifiers — but <Problem>producing the formal specification is the showstopper: it traditionally requires significant human expertise</Problem> (§1, p.2). Worse, <Problem>a verifier alone is gameable: annotations can be weakened until trivially satisfiable and still verify, so a Dafny-soundness-only filter accepts 100% of the paper's adversarial mutants</Problem> (§4.5, p.15).
+
+## Contribution (what's new)
+<Novelty>Reduce correctness checking to consistency checking</Novelty>: insist that generation (by any process) emit three components — code, annotations, docstring — then accept only if six directed pairwise checks all pass. The engine is <Novelty>reconstruction testing: an LLM re-derives one component from another, and the result is compared to the original with the strongest equivalence oracle the target domain affords</Novelty> — a Dafny lemma proof for annotations (exact), input/output tests for code (strong but imprecise), a GPT-4 judgment for docstrings (weak). The design must take this form because the verifier edge cannot see under-specification: trivial annotations still verify but cannot regenerate equivalent code (anno-complete fails), and a tampered docstring regenerates different annotations that fail formal equivalence (doc2anno). Also contributed: the CloverBench dataset (60 hand-written, single-method Dafny programs, each with a ground-truth variant, 4 adversarial incorrect variants, 5 I/O tests, and an annotation-equivalence template) and a single-edge probabilistic analysis of reconstruction testing (Theorem 3, A.1).
+
+## Research questions
+(1) Can consistency among code, formal annotations, and docstrings be checked automatically so that incorrect instances are rejected with zero false positives while most correct instances are accepted? (2) Is GPT-4 already capable enough at a low-resource verification language (Dafny) to make the paradigm feasible, including fully automatic natural-language-to-verified-code generation?
+
+## Methodology
+Two phases. Generation (studied only as a feasibility demo) produces code + annotations + docstring; the verification phase is agnostic to how they were produced. Verification runs six checks: anno-sound (Dafny verifies code against annotations — the only non-reconstruction edge), anno-complete (regenerate code from annotations alone; I/O-equivalence vs the original), doc2code and doc2anno (regenerate code / annotations from the docstring; I/O / formal-lemma equivalence), and anno2doc / code2doc (regenerate the docstring; GPT-4 semantic-equivalence judgment). Each reconstruction gets up to m=3 tries with Dafny compiler feedback; the whole battery can be repeated k times, passing if any run passes. Instantiation: GPT-4 with Dafny 4.0.0.50303 / Z3 4.8.12; loop invariants and asserts count as code, "annotations" means pre/postconditions only (§4.3).
+
+<Pass title="Method details: the six checks, adversarial construction, and theory">
+<Stepper steps={[
+  { title: "anno-sound (code vs annotations)", body: "Dafny formally verifies that the code satisfies the pre/postconditions — standard deductive verification, exact. All 60 ground-truth examples pass by construction (Tab.2)." },
+  { title: "anno-complete (annotations to code)", body: "GPT-4 regenerates code from the anonymized signature plus annotations alone, up to 3 tries with compiler feedback; equivalence vs the original code is checked by running both on 5 stored test inputs. This is what rejects trivially weak annotations: too little information cannot regenerate equivalent code." },
+  { title: "doc2anno (docstring to annotations)", body: "GPT-4 regenerates annotations from the docstring; equivalence is proven formally by instantiating a per-example Dafny lemma template (pre_eq and post_eq lemmas, A.7). Sound but incomplete: Dafny can fail to prove genuinely equivalent annotations (the only-once example)." },
+  { title: "doc2code (docstring to code)", body: "GPT-4 regenerates code from the docstring with compiler-only feedback (so no annotation leakage); 5-input I/O equivalence vs the original." },
+  { title: "anno2doc / code2doc (to docstring)", body: "GPT-4 writes 3 independent docstrings from the annotations (resp. from the code, with preconditions embedded as asserts); a separate, memoryless GPT-4 call judges semantic equivalence against the original docstring; the check passes if any of the 3 matches." },
+  { title: "Repetition and prompts", body: "The battery is run k times (k=1 or 10); a check passes if any run passes. Zero-shot prompts (listed in A.7); Verus prompts add a few syntax examples because the specification format is new." },
+]} />
+
+Adversarial construction (Tab.3, p.14): mutate any subset of the three components while keeping the instance verifiable by Dafny — C1 mutates only the docstring (strengthen/weaken); C2 only weakens annotations; C3 weakens annotations and docstring simultaneously and consistently; C6 mutates code and annotations consistently with each other but not the docstring. C4/C5 (code mutated without annotations) are omitted because the soundness check trivially rejects them; C7 (all three mutated) is omitted as either nonsense or effectively a different ground truth.
+
+Theory (A.1): modeling the LLM as a transfer model over semantic equivalence classes, a single reconstruction edge accepts consistent pairs with probability at least `l * pc * c1` and inconsistent pairs with probability at most `u * pc * (1 - c0) + (1 - pc) * (1 - c0) + c0` (Theorem 3), under a consistency-alignment assumption (`c1` near 1, `c0` near 0) and a concentration assumption (probability mass at least `l` on the correct equivalence class, at most a negligible `u` on any other). The full six-check conjunction is deliberately not analyzed — the edges are empirically correlated (A.2) — and the analysis assumes a perfect equivalence oracle.
+</Pass>
+
+## Main result
+On CloverBench, <Finding src="Tab.1, p.13">Clover accepts 45/60 (75%) of ground-truth instances at k=1 and 52/60 (87%) at k=10, while accepting 0/60 in every adversarial category at both k values</Finding> — 100% rejection of 240 incorrect variants engineered to pass the Dafny soundness check. Raising k lifts true-positive acceptance with no measured false-positive cost, even though every per-edge adversarial rejection rate individually drops with k (Tab.4) — the robustness lives in the conjunction. Externally, <Finding src="§4.4, p.15">on MBPP-DFY-50 Clover accepts 89% of in-scope correct programs (k=10) with 0 false positives, and its rejections exposed 6 genuinely incorrect human-written programs</Finding>.
+
+<SortableTable columns={["Setting (n)", "Accept k=1", "Accept k=10"]} rows={[
+  ["CloverBench ground truth (60)", "75%", "87%"],
+  ["Adversarial C1: docstring mutated (60)", "0%", "0%"],
+  ["Adversarial C2: annotations weakened (60)", "0%", "0%"],
+  ["Adversarial C3: both weakened, consistent (60)", "0%", "0%"],
+  ["Adversarial C6: code+annotations mutated (60)", "0%", "0%"],
+  ["MBPP-DFY-50 in-scope correct (27)", "Not reported", "89%"],
+  ["Verus ground truth (41)", "32/41", "36/41"],
+]} />
+
+## Key findings
+- <Finding src="§4.5, p.15">A soundness-only filter — the verifier alone, as in prior Dafny-generation work — would accept 100% of the adversarial set; the six-check conjunction accepts none</Finding>: the discriminative power comes from the completeness and docstring edges, not the verifier itself.
+- <Finding src="Tab.4, p.16">doc2anno is the sharpest single check</Finding>: regenerated annotations are compared by formal lemma proof, and it alone rejects 100% of C2 and C6, 95% of C1 (57/60), and 73% of C3 (44/60) at k=1 — the paper attributes this to Dafny guaranteeing that only logically equivalent annotations are accepted.
+- <Finding src="§4.3, p.14">The docstring-equivalence judge is the weak link</Finding>: anno2doc and code2doc accept 100% / 97% of ground truth partly because the GPT-4 judge "skews towards acceptance" — information omissions or additions go unnoticed unless the docstrings directly contradict (it does detect contradictions, A.2).
+- <Finding src="Tab.6, A.2, p.28-29">The six edges are complementary and correlated</Finding>: aggregate ground-truth acceptance (0.75) exceeds the 0.59 product of per-edge rates because easy examples pass everything; conversely in C1 and C3 no single edge rejects everything, yet the conjunction still rejects all 60.
+- <Finding src="Fig.2, p.13">End-to-end feasibility: 39/60 programs are generated fully automatically from the docstring alone</Finding> — GPT-4 gets at least one correct answer within 20 tries on 41/60, and Clover accepts a correct answer for 39 of those 41 while never accepting an incorrect one; relatedly, GPT-4 synthesizes code from annotations for 53/60 (vs 41/60 single-try) and annotations from code for 41/60 (vs 28/60), with Dafny feedback driving most of the gain.
+- <Finding src="Tab.7, A.5, p.31-32">The paradigm is currently GPT-4-dependent</Finding>: CodeLlama-34b passes all six checks on only 2/60 ground-truth examples (doc2anno 2/60, doc2code 2/60); most reconstruction failures even for GPT-4 are Dafny 4.0 syntax errors (missing `modifies`/`reads` clauses), usually repaired via compiler feedback (A.4.5).
+
+## Implications
+The reusable idea is the reduction of correctness to cross-artifact consistency with per-domain-strongest equivalence oracles — the strongest existing evidence in this corpus that utterance-to-formal-artifact "carry" can be enforced as a filter with (measured) zero false positives. It positions itself against <Related>dafny-synthesis (Misu et al. 2024, source of MBPP-DFY-50) and MCTS-based verified multi-step synthesis (Brandfonbrener et al. 2024), both generation-focused and soundness-check-only</Related>, and against <Related>generated-unit-test filtering (CodeT line)</Related>, which A.4.2 argues is less robust than annotations. For TDE the boundary is clean: Clover gates acceptance of a static artifact triple pre-hoc, never gates actions, and never inspects environment state; its "closed loop" is the artifact triangle plus bounded regenerate-with-feedback retries, not an act-observe loop. <FollowUp>Whether reconstruction testing lifts from program artifacts to runtime acceptance suites — e.g. regenerating the instruction from a world-state test suite and checking equivalence as a suite-validation step for TDE</FollowUp>. <FollowUp>Replacing the GPT-4 docstring judge with a mechanical check — the open weak link the authors themselves flag</FollowUp>. <FollowUp>The Verus port (32/41 at k=1, 36/41 at k=10, §4.6) as evidence the paradigm is verifier-agnostic</FollowUp>.
+
+## Limitations
+- <Caveat>Textbook-level scope: 60 single-method programs with no helper functions</Caveat>; 17/50 of MBPP-DFY-50 is out of scope (15 need helper functions/predicates, 2 have docstrings too imprecise to determine unique outputs) (§4.4).
+- <Caveat>Assumes docstrings precise enough to unambiguously determine a unique output for every input</Caveat> (§3.2) — excludes most real-world natural-language task descriptions.
+- <Caveat>Docstring equivalence is a GPT-4 judgment that the authors state skews toward acceptance</Caveat> (§4.3); and consistency is internal only — if code, annotations, and docstring all miss the same edge case, Clover cannot detect it, and a misaligned oracle cannot be corrected without human intervention (A.4.1).
+- <Caveat>Zero false positives is an empirical result on 240 hand-constructed mutants, not a guarantee</Caveat>: the theory covers one edge, assumes a perfect equivalence oracle, and admits the concentration bound `u` may be non-negligible with real tools (A.1).
+- <Caveat>Code equivalence is 5 I/O tests per program</Caveat> — the only execution-grounded signal in the system, acknowledged as imprecise beyond textbook difficulty (§3.2).
+- <Caveat>Cost/latency not reported</Caveat> (up to 6 checks x 3 tries x k=10 GPT-4-plus-Dafny calls per instance); checks functional correctness only, not performance or implementation constraints (A.4.1); data contamination is possible and only mitigated by anonymizing function names (A.4.4).
+
+## Critiques and Questions
+1. Acceptance is model-relative: "the annotations are complete" is operationalized as "GPT-4 can regenerate equivalent code from them," so the verdict is a property of the checker's LLM, not of the artifact — 3 of 9 MBPP-DFY-50 rejections were false negatives, and the same artifacts score 2/60 under CodeLlama-34b. A Clover certificate does not transfer across models or time.
+2. The adversarial set never attacks the weakest link: C1-C3-C6 mutations are semantic strengthenings/weakenings that the formal doc2anno edge catches. An adversary crafting paraphrase-level docstring drift — wrong in ways that survive annotation regeneration — would face only the acceptance-skewed GPT-4 docstring judge. The 100% rejection rate is real but measured against mutations aimed at the strong edges.
+3. How much of the 87%-vs-0% separation is textbook difficulty? At higher complexity, 5-point I/O equivalence will start passing inequivalent code (false positives) while the lemma template will start failing equivalent annotations (false negatives) — the two oracles degrade in opposite directions, and the paper explicitly defers both.
+4. Through a TDE lens: everything is adjudicated pre-hoc over the artifact triple; beyond 5 sample executions, no actual runtime behavior or environment effect is ever observed, so the "guarantee" is about spec-artifact coherence, not about what the code does to a world.
+
+<SelfCheck q="An adversarial C2 instance weakens the annotations so that the code still verifies. Which Clover check is designed to catch it, and how?" a="doc2anno: GPT-4 regenerates annotations from the unchanged docstring, and Dafny formally proves (via the pre_eq/post_eq lemma template) whether they are equivalent to the given weakened annotations. Since the docstring still describes the full behavior, the regenerated annotations are stronger than the weakened ones, the equivalence lemma fails, and the instance is rejected — doc2anno rejected 100% of C2 at both k=1 and k=10 (Tab.4). anno-complete helps too: overly weak annotations often cannot regenerate equivalent code." />
+
+## Glossary
+- <Term def="programming language with first-class deductive verification: an SMT-backed verifier (Z3) checks code against requires/ensures annotations, and a compiler produces runnable binaries">Dafny</Term>
+- <Term def="formal specifications at function level — preconditions, postconditions, loop invariants; in Clover's checks, annotations means pre/postconditions only, while invariants and asserts count as code">annotations</Term>
+- <Term def="proving code meets its annotation-defined specification by discharging verification conditions with SMT solvers (Floyd-Hoare tradition)">deductive verification</Term>
+- <Term def="ask an LLM to re-derive component B from component A alone, then check the reconstruction is equivalent to the original B; five of Clover's six checks work this way">reconstruction testing</Term>
+- <Term def="number of independent repetitions of each check; a check passes if any repetition passes (evaluated at 1 and 10)">k</Term>
+- <Term def="50 Dafny programs hand-translated from Python MBPP by Misu et al. 2024 (dafny-synthesis); Clover found 6 of them incorrect">MBPP-DFY-50</Term>
+- <Term def="deductive verification tool for a subset of Rust; more performant but less automatic and less mature than Dafny">Verus</Term>
+
+{/* NOTES_START */}
+### Personal notes
+For the TDE novelty defense, the precise characterization: Clover's adjudication is mechanical on exactly two of six edges (anno-sound via the Dafny verifier; the equivalence half of doc2anno via the lemma template), execution-sampled on two (anno-complete, doc2code via 5 I/O tests — environment-computed but 5-point), and LLM-judged on two (anno2doc, code2doc). So "de-circularized" holds on the formal side only; the natural-language edge remains circular, and the authors concede that judge skews accept. TDE's deltas to state: (a) the verified object is the final world state after acting, not a static artifact triple; (b) per-action gating with environment-evaluated pre/postconditions — Clover gates nothing at act time; (c) red-green iteration until the suite passes — Clover's loop is bounded regenerate-with-feedback (m=3, best-of-k) and pure filtering; (d) no LLM judge anywhere in TDE's adjudication path. Shared DNA worth crediting: acceptance gated on all checks passing, and the insight that generation should emit the spec artifact alongside the code so carry can be checked at all. Curio: Table 13 includes a Claude-API code-generation ablation column.
+{/* NOTES_END */}

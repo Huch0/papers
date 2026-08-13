@@ -1,0 +1,80 @@
+canonical_key: arxiv-2605.16142
+version_key: v1
+title: Property-Guided LLM Program Synthesis for Planning
+authors:
+- André G. Pereira
+- Augusto B. Corrêa
+- Jendrik Seipp
+abstract: 'LLMs have shown impressive success in program synthesis, discovering programs that surpass
+  prior solutions. However, these approaches rely on simple numeric scores to signal program quality,
+  such as the value of the solution or the number of passed tests. Because a score offers no guidance
+  on why a program failed, the system must generate and evaluate many candidates hoping some succeed,
+  increasing LLM inference and evaluation costs. We study a different approach: property-guided LLM program
+  synthesis. Instead of scoring programs after evaluation, we check whether a candidate satisfies a formally
+  defined property. When the property is violated, we stop the evaluation early and provide the LLM with
+  a concrete counterexample showing exactly how the program failed. This feedback drastically reduces
+  both the number of program generations and the evaluation cost, and can guide the LLM to generate stronger
+  programs. We evaluate this approach on PDDL planning domains, asking the LLM to synthesize direct heuristic
+  functions: every state reachable by strictly improving transitions has a strictly improving successor.
+  A heuristic with this property leads hill-climbing algorithm directly to a goal state. A counterexample-guided
+  repair loop generates one candidate program, checks the property over a training set, and returns the
+  first case that violates the property. We evaluate our approach on ten planning domains with an out-of-distribution
+  test set. The synthesized heuristics are effectively direct on virtually all test tasks, and compared
+  to the best prior generation method our approach generates seven times fewer programs per domain on
+  average, solves more tasks without using search, and requires several orders of magnitude less computation
+  to evaluate candidates. Whenever a problem admits a verifiable property, property-guided LLM synthesis
+  can reduce cost and improve program quality.'
+venue: arXiv
+year: 2026
+source: arxiv
+source_url: https://arxiv.org/abs/2605.16142v2
+pdf_url: https://arxiv.org/pdf/2605.16142v2
+pdf_sha256: 753dd2e46c8eb9fb6a21737691ab07b0ae2447f51be81bf90a4318c0d74eaf00
+fetched_at: '2026-08-13T07:18:13Z'
+source_updated_at: '2026-05-18T14:26:59Z'
+ids:
+  doi: null
+  arxiv_id: 2605.16142v2
+  arxiv_base_id: '2605.16142'
+  arxiv_version: v2
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- tde-related-work
+- verifier
+topic_groups:
+- general_agent_methods
+scoring:
+  score: 29.2
+  label: SKIP
+  confidence: medium
+  rationale: 'score=29 -> SKIP | strong: recency(0.86), novelty(0.55), interest_fit(0.40) | interests:
+    general_agent_methods:group:general_agent_methods'
+  matched_interests:
+  - general_agent_methods:group:general_agent_methods
+  negative_signals: []
+  subscores:
+    interest_fit: 0.402
+    recency: 0.862
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 0.55
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/property-guided-llm-program-synthesis-for-planning-260516142/v1/paper.pdf
+  extraction: library/property-guided-llm-program-synthesis-for-planning-260516142/v1/extraction.txt
+  summary: library/property-guided-llm-program-synthesis-for-planning-260516142/v1/summary.mdx
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread
+  summary_format: mdx

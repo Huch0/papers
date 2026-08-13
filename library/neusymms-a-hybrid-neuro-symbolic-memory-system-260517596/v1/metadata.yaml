@@ -1,0 +1,74 @@
+canonical_key: arxiv-2605.17596
+version_key: v1
+title: 'NeuSymMS: A Hybrid Neuro-Symbolic Memory System for Persistent, Self-Curating LLM Agents'
+authors:
+- Mujahid Sultan
+- Sri Thuraisamy
+- Daya Rajaratnam
+abstract: We present NeuSymMS, an adaptive memory system that enables large language model (LLM) agents
+  to learn, remember, and reason about users across sessions via a hybrid neuro-symbolic architecture.
+  NeuSymMS couples neural fact extraction from unstructured dialogue using LLMs and a CLIPS-based expert
+  system that classifies, deduplicates, and reconciles facts under explicit lifecycle rules. The system
+  represents knowledge as subject-relation-value triples stored in relational database management system.
+  It supports user/agents/agent-to-agent scoping, and implements a dual-horizon (short-term and long-term)
+  memory model. IT leverages access-based promotion and time-based pruning of the memory on both horizpons.
+  NeuSymMS maintains continuity of memory while avoiding context-window bloat and cross-entity contamination.
+  We argue that this architecture offers a practical path to trustworthy, auditable memory for production
+  agentic systems and discuss its novelty relative to log retrieval, summarization, and key-value approaches.
+venue: arXiv
+year: 2026
+source: arxiv
+source_url: https://arxiv.org/abs/2605.17596v2
+pdf_url: https://arxiv.org/pdf/2605.17596v2
+pdf_sha256: dd0d0e4a36fbda69785d15d11f356a740492f484d8ee3d4057979afdde4edd88
+fetched_at: '2026-08-13T07:18:32Z'
+source_updated_at: '2026-05-20T23:19:31Z'
+ids:
+  doi: null
+  arxiv_id: 2605.17596v2
+  arxiv_base_id: '2605.17596'
+  arxiv_version: v2
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- agent-memory
+- tde-related-work
+- verifier
+topic_groups:
+- agent_harness
+- general_agent_methods
+scoring:
+  score: 37.1
+  label: TRACK_ONLY
+  confidence: high
+  rationale: 'score=37 -> TRACK_ONLY | strong: recency(0.87), interest_fit(0.73), novelty(0.55) | interests:
+    agent_harness:group:agent_harness, general_agent_methods:group:general_agent_methods'
+  matched_interests:
+  - agent_harness:group:agent_harness
+  - general_agent_methods:group:general_agent_methods
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 0.866
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 0.55
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/neusymms-a-hybrid-neuro-symbolic-memory-system-260517596/v1/paper.pdf
+  extraction: library/neusymms-a-hybrid-neuro-symbolic-memory-system-260517596/v1/extraction.txt
+  summary: library/neusymms-a-hybrid-neuro-symbolic-memory-system-260517596/v1/summary.mdx
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread
+  summary_format: mdx

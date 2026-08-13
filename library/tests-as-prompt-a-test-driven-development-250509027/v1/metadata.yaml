@@ -1,0 +1,72 @@
+canonical_key: arxiv-2505.09027
+version_key: v1
+title: 'Tests as Prompt: A Test-Driven-Development Benchmark for LLM Code Generation'
+authors:
+- Yi Cui
+abstract: We introduce WebApp1K, a novel benchmark for evaluating large language models (LLMs) in test-driven
+  development (TDD) tasks, where test cases serve as both prompt and verification for code generation.
+  Unlike traditional approaches relying on natural language prompts, our benchmark emphasizes the ability
+  of LLMs to interpret and implement functionality directly from test cases, reflecting real-world software
+  development practices. Comprising 1000 diverse challenges across 20 application domains, the benchmark
+  evaluates LLMs on their ability to generate compact, functional code under the constraints of context
+  length and multi-feature complexity. Our findings highlight instruction following and in-context learning
+  as critical capabilities for TDD success, surpassing the importance of general coding proficiency or
+  pretraining knowledge. Through comprehensive evaluation of 19 frontier models, we reveal performance
+  bottlenecks, such as instruction loss in long prompts, and provide a detailed error analysis spanning
+  multiple root causes. This work underscores the practical value of TDD-specific benchmarks and lays
+  the foundation for advancing LLM capabilities in rigorous, application-driven coding scenarios.
+venue: arXiv
+year: 2025
+source: arxiv
+source_url: https://arxiv.org/abs/2505.09027v1
+pdf_url: https://arxiv.org/pdf/2505.09027v1
+pdf_sha256: 4e182c5cf989f772416633a0f6059e9673183cfa5e1e88e19c943dfaa02a839e
+fetched_at: '2026-08-13T07:13:43Z'
+source_updated_at: '2025-05-13T23:47:12Z'
+ids:
+  doi: null
+  arxiv_id: 2505.09027v1
+  arxiv_base_id: '2505.09027'
+  arxiv_version: v1
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- benchmark
+- tde-related-work
+- test-based-eval
+topic_groups:
+- software_engineering_agents
+scoring:
+  score: 32.9
+  label: SKIP
+  confidence: high
+  rationale: 'score=33 -> SKIP | strong: novelty(0.80), interest_fit(0.73), venue_quality(0.40) | interests:
+    software_engineering_agents:group:software_engineering_agents'
+  matched_interests:
+  - software_engineering_agents:group:software_engineering_agents
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 0.35
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 0.8
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/tests-as-prompt-a-test-driven-development-250509027/v1/paper.pdf
+  extraction: library/tests-as-prompt-a-test-driven-development-250509027/v1/extraction.txt
+  summary: library/tests-as-prompt-a-test-driven-development-250509027/v1/summary.mdx
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread
+  summary_format: mdx

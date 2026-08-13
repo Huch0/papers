@@ -1,0 +1,143 @@
+---
+canonical_key: arxiv-2310.01798
+version_key: v1
+title: Large Language Models Cannot Self-Correct Reasoning Yet
+authors:
+- Jie Huang
+- Xinyun Chen
+- Swaroop Mishra
+- Huaixiu Steven Zheng
+- Adams Wei Yu
+- Xinying Song
+- Denny Zhou
+venue: arXiv
+year: 2023
+tags:
+- foundational
+- reliability-concern
+- tde-related-work
+topic_groups:
+- general_agent_methods
+triage_label: READ_SOON
+triage_confidence: medium
+source_link: https://arxiv.org/abs/2310.01798v2
+summary_date: '2026-08-13'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>An ICLR 2024 critique (Google DeepMind / UIUC) showing that <Term def="self-correction using only the model's own capabilities: it must both critique its answer and decide whether to keep it, with no external feedback of any kind">intrinsic self-correction</Term> does not improve LLM reasoning and usually degrades it — and tracing the gains reported by prior work to three evaluation flaws: oracle ground-truth stop labels, inference-cost-unfair baselines, and under-specified initial prompts.</TLDR>
+
+<WhyItMatters>This is the empirical backbone of TDE's de-circularization thesis: the paper's core diagnosis is that LLMs cannot judge the correctness of their own reasoning (mischanges outnumber fixes, Fig.1), so adjudication must come from outside the model — and its own remedy section names the ideal, "the code executor serves as the perfect verifier" when the task is specified with unit tests (§6). That is precisely what TDE operationalizes: a compiled, environment-evaluated acceptance suite over final world state, iterated red–green. The paper is critique plus evaluation guidelines, not a harness — it builds no mechanism — and its oracle experiments (Tab.2) quantify the headroom a sound stop-signal unlocks, i.e. the gap TDE's mechanical checks aim to fill.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "8.8% vs 7.6%", label: "broken vs fixed by self-correction", sub: "Correct⇒Incorrect vs Incorrect⇒Correct, GPT-3.5 on GSM8K (Fig.1)" },
+  { value: "75.8 → 38.1", label: "CommonSenseQA after one round", sub: "GPT-3.5-Turbo, intrinsic self-correction (Tab.3)" },
+  { value: "+8.4 / +13.9", label: "oracle-label gains that vanish intrinsically", sub: "GPT-3.5, GSM8K / CommonSenseQA (Tab.2 vs Tab.3)" },
+  { value: "88.2 vs 83.0", label: "self-consistency vs multi-agent debate, 9 responses", sub: "GSM8K, gpt-3.5-turbo-0301 (Tab.7)" },
+]} />
+
+## Motivation
+Self-correction had become the fashionable remedy for LLM unreliability, but the claimed successes hide a paradox the paper opens with: <Problem>if an LLM possesses the ability to self-correct, why doesn't it simply offer the correct answer in its first attempt?</Problem> (§1). The headline improvements in prior work — RCI (Kim et al. 2023) and Reflexion (Shinn et al. 2023) — <Problem>use ground-truth oracle labels to decide when to stop correcting, so the loop already knows whether each answer is right</Problem>; that signal is unavailable in exactly the deployments self-correction is meant to serve (§2–3). Beyond labels, <Problem>the literature defines "self-correction" ambiguously (internal vs external feedback), compares multi-response methods against single-response baselines, and hides task requirements in the feedback prompt rather than the initial one</Problem> (§2, Tab.1) — so it was unclear whether any measured gain reflects genuine self-correction at all.
+
+## Contribution (what's new)
+<Novelty>Isolating intrinsic self-correction — the model must also decide, by itself, whether its answer is wrong — as the setting that actually tests the self-correction claim</Novelty>, and showing that under it every tested model gets worse on reasoning benchmarks. The second delta is a three-part evaluation audit with a matched control for each flaw (Tab.1): <Novelty>remove the oracle labels (vs RCI/Reflexion); compare multi-agent debate against self-consistency at equal response counts (vs Du et al.); move the task constraint into the initial prompt (vs Self-Refine)</Novelty> — each control makes the claimed improvement vanish or invert. What survives is the diagnosis: <Finding src="§3.3, p.4">the fundamental issue is that LLMs cannot properly judge the correctness of their reasoning</Finding>; a feedback prompt is just extra conditioning that can bias the model away from an already near-optimal first answer.
+
+## Research questions
+1. Can LLMs correct their own reasoning errors using only inherent capabilities — no oracle labels, tools, humans, or other external feedback?
+2. Where do the reported improvements of self-correction-style methods (RCI, Reflexion, multi-agent debate, Self-Refine) actually come from?
+3. What does a fair evaluation of self-correction require (feedback source, inference cost, prompt design)?
+
+## Methodology
+Three-step prompting replicated from the source papers: (1) generate an initial answer (this is the Standard Prompting score), (2) prompt the model to review its answer and produce feedback, (3) answer again given that feedback — at most two correction rounds (1, 3, 5 model calls). Two regimes are contrasted: oracle, where the ground-truth label stops the loop as soon as the answer is correct (the Kim/Shinn protocol), and intrinsic, where the model alone decides whether to keep its answer. Models: `gpt-3.5-turbo-0613` (full evaluation sets), GPT-4 (accessed 2023/08/29), `gpt-4-1106-preview`, and `Llama-2-70b-chat` (200 sampled questions per dataset; 100 for HotpotQA); temperature 1 for GPT-3.5/GPT-4, 0 for GPT-4-Turbo/Llama-2. Benchmarks: <Term def="1,319 grade-school math word problems (Cobbe et al. 2021)">GSM8K</Term>, <Term def="multi-choice commonsense questions; the 1,221-question dev set is used (Talmor et al. 2019)">CommonSenseQA</Term>, and <Term def="open-domain multi-hop QA, tested closed-book on the same 100 questions as Reflexion, scored by exact match">HotpotQA</Term>. Section 4 replicates multi-agent debate with Du et al.'s exact prompts (`gpt-3.5-turbo-0301`, 3 agents, 2 debate rounds) on the full GSM8K test set against self-consistency at matched response counts. Section 5 re-runs Self-Refine's Constrained Generation task (CommonGen-Hard, concept-coverage metric, `gpt-3.5-turbo-0613`) after adding the omitted constraint to the initial prompt.
+
+<Pass title="Prompts and setup details">
+- Kim et al.-style prompts for GPT-3.5/GPT-4 (with added format instructions for automatic scoring): "Review your previous answer and find problems with your answer." then "Based on the problems you found, improve your answer." HotpotQA uses Shinn et al.'s prompt unchanged.
+- Default feedback prompt for GPT-4-Turbo/Llama-2: "Assume that this answer could be either correct or incorrect. Review the answer carefully and report any serious problems you find." Two alternatives are also tested (Tab.5–6): "Review your previous answer and determine whether it's correct. If wrong, find the problems with your answer." and "Verify whether your answer is correct, and provide an explanation."
+- Self-Refine fix (§5, Fig.8): the original Madaan et al. initial prompt never states that all 20–30 concepts must appear; the authors add `Write a reasonable paragraph that includes *ALL* of the above concepts` to the initial instruction and re-measure.
+- Footnote 1: the answer-change analysis omits HotpotQA because the 100-question sample is too small for meaningful statistics.
+</Pass>
+
+## Main result
+<Finding src="Tab.3–4, p.4–5">Under intrinsic self-correction, accuracy drops for every model on every benchmark — no model/benchmark/round combination beats standard prompting (the single flat case is GPT-4 on HotpotQA after round 1)</Finding> — while the identical protocol with oracle labels "improves" GPT-3.5 by +8.4 (GSM8K) and +13.9 (CommonSenseQA) and GPT-4 by up to +10.0 (HotpotQA) (Tab.2), exposing prior gains as label leakage rather than self-correction. Each round also multiplies cost: 3 calls after round 1, 5 after round 2.
+
+<SortableTable columns={["Model / benchmark", "Standard", "Round 1", "Round 2", "Net change"]} rows={[
+  ["GPT-3.5 · GSM8K", 75.9, 75.1, 74.7, "−1.2"],
+  ["GPT-3.5 · CommonSenseQA", 75.8, 38.1, 41.8, "−34.0"],
+  ["GPT-3.5 · HotpotQA", 26.0, 25.0, 25.0, "−1.0"],
+  ["GPT-4 · GSM8K", 95.5, 91.5, 89.0, "−6.5"],
+  ["GPT-4 · CommonSenseQA", 82.0, 79.5, 80.0, "−2.0"],
+  ["GPT-4 · HotpotQA", 49.0, 49.0, 43.0, "−6.0"],
+  ["GPT-4-Turbo · GSM8K", 91.5, 88.0, 90.0, "−1.5"],
+  ["GPT-4-Turbo · CommonSenseQA", 84.0, 81.5, 83.0, "−1.0"],
+  ["Llama-2-70B-chat · GSM8K", 62.0, 43.5, 36.5, "−25.5"],
+  ["Llama-2-70B-chat · CommonSenseQA", 64.0, 37.5, 36.5, "−27.5"],
+]} />
+
+<Pass title="Oracle-label contrast (Tab.2) and answer-change breakdown (Fig.1)">
+With ground-truth labels stopping the loop (correct answers can never be overwritten):
+
+<ResultsTable columns={["Model", "GSM8K", "CommonSenseQA", "HotpotQA"]} rows={[
+  ["GPT-3.5 Standard", "75.9", "75.8", "26.0"],
+  ["GPT-3.5 Self-Correct (Oracle)", "84.3", "89.7", "29.0"],
+  ["GPT-4 Standard", "95.5", "82.0", "49.0"],
+  ["GPT-4 Self-Correct (Oracle)", "97.5", "85.5", "59.0"],
+]} />
+
+How answers change after two intrinsic rounds (percent of all evaluated questions, Fig.1):
+
+<ResultsTable columns={["Model · benchmark", "No change", "Inc⇒Inc", "Inc⇒Corr", "Corr⇒Inc"]} rows={[
+  ["GPT-3.5 · GSM8K", "74.7", "8.9", "7.6", "8.8"],
+  ["GPT-3.5 · CommonSenseQA", "42.8", "11.6", "5.8", "39.8"],
+  ["GPT-4 · GSM8K", "90.5", "0.0", "1.5", "8.0"],
+  ["GPT-4 · CommonSenseQA", "90.5", "1.5", "3.0", "5.0"],
+  ["GPT-4-Turbo · GSM8K", "96.0", "0.5", "1.0", "2.5"],
+  ["GPT-4-Turbo · CommonSenseQA", "88.0", "1.0", "5.0", "6.0"],
+  ["Llama-2 · GSM8K", "40.0", "23.5", "5.5", "31.0"],
+  ["Llama-2 · CommonSenseQA", "40.0", "16.5", "8.0", "35.5"],
+]} />
+
+Note: the Inc⇒Inc slice for GPT-4 · GSM8K is unlabeled in Fig.1; 0.0 is implied (labeled slices sum to 100) and is consistent with Tab.3's net −6.5. Every row above reconciles exactly with the round-2 accuracy deltas in Tab.3–4 (net = Inc⇒Corr minus Corr⇒Inc).
+</Pass>
+
+## Key findings
+- <Finding src="Tab.2 vs Tab.3, p.4">The oracle is the method</Finding>: with ground-truth stop labels GPT-3.5 gains +8.4/+13.9/+3.0 and GPT-4 +2.0/+3.5/+10.0 (GSM8K/CommonSenseQA/HotpotQA); removing the labels flips every gain into a loss. The authors call the Tab.2 numbers "indicative of an oracle's performance", not of self-correction.
+- <Finding src="Fig.1, p.6">The failure is mis-judgment, not inability to revise: correct⇒incorrect changes outnumber incorrect⇒correct ones for every model</Finding> — GPT-3.5 on GSM8K breaks 8.8% of answers while fixing 7.6%; on CommonSenseQA it breaks 39.8% while fixing 5.8%, because distractor options look plausible and the feedback prompt biases the model toward switching (§3.3). In the worked example, a correct 75.00 on the yogurt problem is confidently revised to an incorrect 37.50 (Fig.2).
+- <Finding src="Tab.5–6, p.5">No feedback prompt rescues it</Finding>: across three feedback prompts GPT-4-Turbo stays at or below standard prompting (best 91.0 vs 91.5 GSM8K; 83.5 vs 84.0 CommonSenseQA), and Llama-2 collapses under all of them (as low as 24.0 vs 64.0 on CommonSenseQA round 1).
+- <Finding src="Fig.1, p.6">Stronger models resist degradation mainly by not changing anything</Finding>: GPT-4-Turbo keeps its answer 96.0% of the time on GSM8K (GPT-4 90.5%, Llama-2 40.0%) — with capability, intrinsic self-correction trends toward a costly no-op rather than a fixer.
+- <Finding src="Tab.7, p.7">Multi-agent debate is disguised self-consistency</Finding>: replicated on the full GSM8K test set, debate barely beats self-consistency at 3 responses (83.2 vs 82.5) and loses at matched counts — 85.3 vs 83.2 at 6 responses, 88.2 vs 83.0 at 9. The gain comes from selection among generations ("consistency"), not from agents correcting each other; the voting is model-driven instead of count-based.
+- <Finding src="Tab.8, p.7">Self-Refine's reported gain came from a handicapped initial prompt</Finding>: simply stating the all-concepts constraint up front scores 81.8 concept coverage — beating Madaan et al.'s prompt-plus-self-correction pipeline (67.0 reported; 61.1 replicated) — and applying their self-correction on top of the informative prompt *drops* coverage to 75.1, at 7 calls vs 1.
+
+## Implications
+The paper's constructive core, italicized on p.6: <Finding src="p.6">determining how to prevent correct⇒incorrect mischanges is "the key to ensuring the success of self-correction"</Finding> — and since the model cannot supply that judgment itself, it must come from outside. §6 says where: <Related>self-debugging with code-execution feedback (Chen et al. 2023b), where, with unit tests specified, "the code executor serves as the perfect verifier"</Related>; <Related>tool-interactive critiquing with search/calculators (CRITIC, Gou et al. 2023)</Related>; <Related>trained verifiers and process supervision (Cobbe et al. 2021; Lightman et al. 2023; Shepherd, Wang et al. 2023b)</Related>. It also sets evaluation norms later work is held to: report inference-cost analyses, use cost-matched self-consistency as the baseline, and put equal prompt effort into initial generation and feedback. For TDE the lineage is direct: <FollowUp>the oracle protocol is verifier-guided retry — the same red–green loop TDE runs — but TDE replaces the unavailable ground-truth label with a compiled acceptance suite evaluated by the environment over final world state; how closely a compiled suite approaches the oracle's +8-to-14-point headroom is the quantitative question TDE inherits</FollowUp>. <FollowUp>Whether post-2024 RL-trained reasoning models move the "yet" — the paper tests prompting-only correction on 2023 models</FollowUp>. <Related>Converging negative evidence it cites: Gou et al. 2023 and Zhou et al. 2023a (self-correction much weaker without external feedback) and Wang et al. 2023a (LLMs easily swayed by misleading feedback)</Related>.
+
+## Limitations
+- <Caveat>Scope is reasoning only</Caveat>: the authors state self-correction can genuinely help where the model *can* assess its output against the task — e.g. style or safety alignment (Bai et al. 2022; Ganguli et al. 2023) — the distinction being assessability, not correction itself (§7).
+- <Caveat>Small evaluation slices for most models, single runs, no variance</Caveat>: 200 sampled questions (100 for HotpotQA) for GPT-4/GPT-4-Turbo/Llama-2; no error bars or significance tests anywhere, despite temperature-1 decoding for GPT-3.5/GPT-4; the HotpotQA answer-change analysis is omitted for small n (footnote 1).
+- <Caveat>Closed API models pinned only by kernel name or access date</Caveat> (GPT-4 "accessed 2023/08/29"), so exact reproduction is impossible as endpoints drift.
+- <Caveat>At most two correction rounds and three feedback prompts</Caveat>: the prompt search is small, and the paper itself shows results vary with the feedback prompt.
+- <Caveat>The oracle/intrinsic dichotomy leaves the practically relevant middle — imperfect external verifiers — untested</Caveat>: the paper establishes the endpoints but not how much verifier quality is needed before correction pays.
+
+## Critiques and Questions
+1. The title claims one quantifier more than the evidence: what is shown is that 2023-era models with *prompted, reflective* correction degrade. GPT-4-Turbo's losses are small (−1.5/−1.0) with 96.0% answer retention and partial round-2 recovery (88.0 → 90.0 on GSM8K), so the capability trend points toward self-correction becoming an expensive no-op — a different asymptote than "degrades", and the one that matters for extrapolation.
+2. Headline numbers are single-run point estimates, several at temperature 1: GPT-4's HotpotQA 49.0 → 43.0 is six questions out of 100. The cross-model, cross-benchmark consistency is persuasive; no individual number is.
+3. The oracle experiment is under-read as a *positive* result: given only a binary stop signal, GPT-3.5 recovers +8.4 on GSM8K and +13.9 on CommonSenseQA — evidence that verifier-guided retry works when the verifier is sound. The paper frames Tab.2 purely as a flaw in prior evaluations; it is also the strongest argument for building mechanical verifiers (TDE's bet).
+4. "Cannot self-correct" is operationalized as generic review prompts. Structured self-verification — substituting an answer back into the problem, or code-based self-verification (Zhou et al. 2023a, cited as consistent) — is never tested, so the demonstrated claim is strictly "cannot self-correct via reflective prompting".
+5. The multi-agent-debate analysis equates debate with consistency on one benchmark (GSM8K) and one model family; whether critique-style interaction helps on tasks where majority voting is undefined (open-ended generation) is left open.
+
+<SelfCheck q="Why does the same self-correction protocol improve accuracy in Table 2 but reduce it in Tables 3–4?" a="Table 2 uses ground-truth oracle labels to stop the loop the moment an answer is correct, so correct answers can never be overwritten and only wrong ones are retried. In the intrinsic setting the model itself must judge correctness — which it cannot do reliably — so correct⇒incorrect mischanges (8.8% on GSM8K, 39.8% on CommonSenseQA for GPT-3.5) outweigh genuine fixes and net accuracy falls." />
+
+## Glossary
+- <Term def="ground-truth answer labels used to halt the correction loop as soon as the answer is correct; RCI and Reflexion rely on them for their reasoning gains">oracle labels</Term>
+- <Term def="sample multiple chain-of-thought answers independently and take a majority vote (Wang et al. 2022); the cost-matched baseline any multi-response method must beat">self-consistency</Term>
+- <Term def="several LLM instances (possibly copies of one model) exchange and critique answers over rounds before answering (Du et al. 2023)">multi-agent debate</Term>
+- <Term def="Kim et al. 2023, 'Language Models can Solve Computer Tasks': recursively criticize and improve, stopped by answer correctness">RCI</Term>
+- <Term def="Shinn et al. 2023: agents verbally reflect on failure and retry; its HotpotQA gains here trace to oracle stop signals">Reflexion</Term>
+- <Term def="Madaan et al. 2023: the same LLM generates feedback on its output and refines it iteratively">Self-Refine</Term>
+- <Term def="hard split of constrained text generation: write one coherent paragraph containing all 20–30 given concepts, scored by concept coverage">CommonGen-Hard</Term>
+
+{/* NOTES_START */}
+### Personal notes
+For the TDE related-work section (category B, de-circularization allies), the citable assets are: (1) Fig.1's mischange asymmetry — 8.8 vs 7.6 on GSM8K, 39.8 vs 5.8 on CommonSenseQA — as the empirical form of "the model cannot be its own judge"; (2) the Tab.2-vs-Tab.3 oracle gap as proof that verifier-guided retry works iff the verifier is sound — TDE's acceptance suite is the mechanical stand-in for that oracle; (3) §6's executor-as-perfect-verifier line as the paper recommending, but not building, what TDE builds. Sharpest boundary to draw: this paper evaluates single-shot QA with label-equality oracles; TDE targets stateful agent tasks where the "label" is a predicate over final world state — checkable without ground truth, richer than answer equality. Careful when citing the survey's phrasing: 7.6%/8.8% are fractions of all instances (percentage points), not of initially-incorrect responses.
+{/* NOTES_END */}

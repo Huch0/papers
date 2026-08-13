@@ -1,0 +1,106 @@
+---
+canonical_key: arxiv-2605.17596
+version_key: v1
+title: 'NeuSymMS: A Hybrid Neuro-Symbolic Memory System for Persistent, Self-Curating LLM Agents'
+authors:
+- Mujahid Sultan
+- Sri Thuraisamy
+- Daya Rajaratnam
+venue: arXiv
+year: 2026
+tags:
+- agent-memory
+- tde-related-work
+- verifier
+topic_groups:
+- agent_harness
+- general_agent_methods
+triage_label: TRACK_ONLY
+triage_confidence: high
+source_link: https://arxiv.org/abs/2605.17596v2
+summary_date: '2026-08-13'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>NeuSymMS is a production memory layer for LLM agents (inside the proprietary Nexa platform) that confines the LLM to parsing dialogue into subject–relation–value candidate facts and delegates every memory decision — classification, deduplication, contradiction resolution, and short-/long-term lifecycle — to a deterministic <Term def="C Language Integrated Production System: NASA-origin, public-domain expert-system shell whose forward-chaining rules fire on pattern-matched facts">CLIPS</Term> rule engine; it is an architecture paper with no quantitative evaluation.</TLDR>
+
+<WhyItMatters>TDE relation (survey cat. I — confirmed against the paper): it shares TDE's de-circularization instinct — the LLM only parses, and every adjudication is mechanical (CLIPS rules emitting auditable `reason` strings, never an LLM judge) — and it explicitly revives the Doyle/de Kleer truth-maintenance lineage that TDE positions itself as superseding. But its verifier faces inward: it enforces consistency among LLM-extracted **memory facts**, never correctness of **world state** — no executable acceptance suite, no pre/postcondition gating of state-changing actions, no task-completion criterion. A clean foil for the novelty defense: beliefs are checked against other beliefs, not against the environment, so mechanical ≠ grounded.</WhyItMatters>
+
+## Motivation
+Deployed LLM assistants behave as persistent agents but treat conversation history as ephemeral context. The paper sorts prior persistent-memory work into three families — conversation-log retrieval, LLM summarization, and key-value/knowledge-graph storage — and argues all three are <Problem>noisy, expensive, and ill-suited to contradictions and temporal change in user state</Problem> (§I, p.1). Specifically: retrieval pipelines (RAG, DPR) treat transcripts as immutable documents with <Problem>no notion of user-level belief revision when information changes</Problem> (§II, p.2); summarization <Problem>sacrifices atomicity, so individual facts cannot be updated or retracted</Problem> (§II, p.2); long-context models still degrade lost-in-the-middle style (§II, p.2); and knowledge-graph work motivates triples but not how to extract and maintain them over evolving dialogue in production (§II, p.2). Meanwhile, <Problem>decades of mature symbolic machinery — rule engines, truth maintenance, expert systems — sit largely unused in modern agentic memory</Problem> (§I, p.1).
+
+## Contribution (what's new)
+A division of labor placed exactly at the language/decision boundary: <Novelty>the LLM is used strictly as a parser that turns dialogue into candidate subject–relation–value triples, while every memory decision is made by a deterministic CLIPS forward-chaining engine that emits auditable `engine-decision` facts carrying `reason` strings</Novelty> (§I, §IV). The form follows the diagnosed failure: the weak point of prior families is the decision layer — where LLM judgment is nondeterministic and costly — whereas rules are deterministic, zero-API-cost, and inspectable, but cannot read language. Two supporting mechanisms: <Novelty>a dual-horizon (short-/long-term) lifecycle in which `access_count` is the importance signal — promotion at three accesses, time-based pruning — instead of a learned importance scorer</Novelty> (§IV.E, p.5), and <Novelty>three-tier user/agent/flow scoping where only user-scoped facts are ever injected into prompts</Novelty> (§III.C, p.3). Note the register: this is a production-architecture paper; the contributions are claimed properties of a deployed design, not measured results.
+
+## Research questions
+Can classical expert-system machinery replace LLM judgment for agent-memory curation — deterministic, auditable contradiction handling and lifecycle management at near-zero marginal cost — with the LLM confined to language interpretation? Subordinately: where should the neural/symbolic boundary sit in a multi-tenant agent platform, and can cognitive-psychology-style dual-store lifecycles (rehearsal → promotion, decay → pruning) govern what an agent retains?
+
+## Methodology
+NeuSymMS sits between user conversations and a provider-agnostic LLM gateway (LiteLLM). Pre-turn read path: query PostgreSQL for active, user-scoped triples; order by `memory_type` (long-term first), then `access_count`, then recency; cap the injection (e.g. 30 facts); format as a plain-text `[Memory -- Known facts about this user]` block in the system prompt. Post-turn write path: a lightweight extractor LLM (`gpt-4.1-mini`, temperature 0.1, at most 10 facts per turn) emits JSON candidates with `subject`, `relation`, `value`, `confidence`, `scope`; CLIPS 6.4 then runs three rule phases — classify, reconcile, store — whose decisions are applied to the fact table.
+
+<Pass title="Method details">
+<Stepper steps={[
+  { title: "Extract (§IV.A, p.4)", body: "A lightweight LLM acts strictly as a fact-extraction engine over the turn, emitting a JSON array of candidate facts with subject, relation, value, confidence, scope. Negation must be encoded in the relation itself (no_longer_has, lost, stopped, died). If the extractor is unavailable, the system returns an empty fact list and the platform runs without memory rather than failing the request." },
+  { title: "Classify (§IV.C, p.4)", body: "CLIPS rules pattern-match relation/value to assign one of nine semantic categories (personal, preference, task, relationship, skill, context, instruction, temporal, other; a catch-all rule labels the rest other). Claimed benefits of rules over an LLM here: determinism, microsecond-level latency, zero API cost, transparent pattern-to-category mapping." },
+  { title: "Reconcile (§IV.D, p.4-5)", body: "Per request, only that user's active facts plus the candidates enter CLIPS working memory (no cross-user contamination). Values are normalized (lower-casing, Unicode normalization, punctuation/whitespace cleanup), then compared by Levenshtein similarity against a fixed 0.85 threshold to decide whether two values name the same entity. Same subject and relation with a different value: retract the old fact, store the new one (typically as long_term) — latest-value-wins for single-valued relations like works_at and lives_in. Multi-valued relations like speaks_language keep each distinct value as its own fact; a negation retracts only the matched value, and the negated form is never persisted." },
+  { title: "Store / promote / prune (§IV.E, p.5)", body: "Pre-filters discard candidates with confidence below 0.3 and skip exact duplicates. Category rules auto-store personal, preference, instruction, and skill facts as long_term; other categories default to short_term with access_count initialized to 0. A short_term fact is promoted to long_term once access_count reaches 3; a background job deactivates short_term facts older than 24 hours with access_count 0. Temporal validity is represented only by creation/last-access timestamps — no validity intervals (deferred to future work)." },
+]} />
+
+- **Data model** (§III.B, p.3): each fact is a triple plus `scope` (`user` | `agent` | `flow`), `category`, `memory_type` (`short_term` | `long_term`), `confidence` (0–1), `access_count`, `source_text`, timestamps, and an `is_active` flag for soft deletion (reversible deactivation, "historical analysis").
+- **CLIPS working memory** (§IV.B, p.4): three core templates — `memory-fact`, `candidate-fact`, `engine-decision` (`fact-id`, `action`, `reason`) — plus a `prompt-context` template (`keywords`, `intent`, `turn-number`) "to support relevance-aware rules"; how prompt-context is actually used by rules is not detailed (Unclear).
+- **Worked write path** (§IV.F, p.5): "I just started a new job at Google in Mountain View. I speak Python and Go." → four candidates → stored `works_at Meta` and `lives_in Menlo Park` are retracted and replaced as long-term facts; the two `speaks_language` facts are auto-promoted to long-term by category rules.
+- **Read format** (§IV.H, p.5-6): injected block lines look like `[LT/skill] user speaks_language Python`; ordering is long-term first, then access count, then recency.
+- **Stack and ops** (§V, p.6): Django REST Framework + PostgreSQL; CLIPSPy bindings run CLIPS 6.4 in-process; LiteLLM abstracts OpenAI/Anthropic/Google/Azure; a React Memory tab lets users view, search, filter, edit, and bulk-clear facts. Targeted indexes include `(subject, relation)` specifically to make contradiction lookup efficient.
+</Pass>
+
+## Main result
+There is none. <Finding src="§VII.A, p.7">The paper reports no quantitative results of any kind — "A full quantitative evaluation is left to future work"</Finding>; §VI ("Results and Discussion") is a qualitative recapitulation of the design's claimed properties. The stated evaluation roadmap:
+
+<ResultsTable columns={["Roadmap item (§VII.A, p.7)", "Contents (planned, not executed)"]} rows={[
+  ["Benchmarks", "LoCoMo, LongMemEval, AMA-Bench, MEMORYARENA"],
+  ["Baselines", "Mem0, MemGPT/AMEM, LiCoMemory, TELEMEM, GraphRAG/Semantic Anchoring, AMAC"],
+  ["Metrics", "task success, retrieval accuracy, multi-session consistency, read/write latency, token and compute cost, multi-tenant throughput"],
+]} />
+
+## Key findings
+No empirical findings exist; these are the load-bearing design-level claims, none empirically validated:
+- <Finding src="§VI.A, p.6">Claimed: memory decisions are zero-API-cost, low-latency, and rule-justified</Finding> — every `engine-decision` carries a `reason` string, giving an inspectable audit trail; no latency, cost, or throughput numbers are reported.
+- <Finding src="§IV.D, p.4-5">Belief revision is a deterministic retract-on-conflict policy</Finding>: same `subject`+`relation` with a different value ⇒ retract old, store new; negations trigger retraction and are never stored. The paper presents this as mirroring Doyle/de Kleer truth maintenance, but there are no justification or dependency structures — nothing cascades.
+- <Finding src="§IV.E, p.5">`access_count` doubles as the importance model</Finding>: rehearsal-style promotion (three accesses) plus 24-hour decay replaces the separate importance scorers of generative-agents-style memory, grounding salience in actual agent usage.
+- <Finding src="§III.C, p.3">Isolation is by construction: only user-scoped facts ever reach a prompt</Finding>; agent- and flow-scoped facts are reserved for analytics and user inspection — this is the entire cross-entity-contamination defense.
+- <Finding src="§VI.B, p.6">Memory is an enhancement, not a dependency</Finding>: extraction failure ⇒ no update; CLIPS failure ⇒ candidates stored as short-term; read failure ⇒ the agent answers without memory.
+- <Finding src="§IV.G, p.5">No embeddings anywhere</Finding>: the read path is an indexed SQL query, capped and string-concatenated into the system prompt — explicitly contrasted with RAG/DPR-style retrieval pipelines.
+
+## Implications
+NeuSymMS is the cleanest current example of re-importing <Related>the expert-systems stack — Forgy's Rete, Doyle's TMS, de Kleer's assumption-based TMS, CLIPS itself</Related> — into LLM-agent memory, against the embedding-retrieval mainstream of <Related>Mem0, MemGPT, A-Mem, and generative-agents-style scored retrieval</Related>. Its load-bearing pattern — LLM-as-parser feeding a deterministic decision core — is TDE's de-circularization move applied to a different object: NeuSymMS adjudicates the agent's *beliefs about a user*, TDE adjudicates the *environment's final state*. Internal consistency of a belief store is strictly weaker than mechanical verification of outcomes, because the fact base here is only as true as its LLM extractor. <FollowUp>TELEMEM (contradiction-aware consolidation) and AMA-Bench/MEMORYARENA as the emerging evaluation surface for contradiction handling</FollowUp>; <FollowUp>whether the promised LoCoMo/LongMemEval evaluation materializes in a later version</FollowUp>; <FollowUp>open-vocabulary relation drift as the generic failure mode of rule-matched memory — what canonicalizes `works_at` vs `employed_by`?</FollowUp>
+
+## Limitations
+- <Caveat>Zero empirical evaluation — no benchmarks, ablations, latency/cost measurements, or user data</Caveat>; author-stated ("left to future work", §VII.A), so every property claim (contamination prevention, contradiction quality, cost) is untested.
+- <Caveat>Consistency without grounding</Caveat>: facts enter only via LLM extraction with self-reported confidence, and latest-value-wins ignores stored confidence — one wrong extraction silently overwrites a correct long-term fact; no fact is ever checked against an external source.
+- <Caveat>Contradiction detection fires only on an exact subject+relation match with string-similar values (Levenshtein 0.85)</Caveat>: synonym relations (`employed_by` vs `works_at`), cross-relation contradictions, and non-lexical aliases escape it entirely.
+- <Caveat>Timestamps only — no temporal validity intervals; negation and uncertainty handling acknowledged as immature</Caveat> (§IV.E, §VII).
+- <Caveat>Single proprietary deployment (Nexa); no code, data, or artifacts released; single-team industrial provenance</Caveat>.
+- <Caveat>Manuscript hygiene is poor: unresolved macros in the PDF text (e.g. "tokenworksat"), typos, and placeholder references — [9] is literally marked "placeholder entry", and LoCoMo is attributed to "J. Doe, A. Smith" in [6] while cited correctly as Maharana et al. in [33]</Caveat>.
+
+## Critiques and Questions
+1. Determinism is only half the loop. The rule engine is deterministic, but its entire input — relations, values, confidences, scopes — comes from a temperature-0.1 LLM over an open vocabulary. Nothing enforces a closed relation ontology (classification even needs a catch-all rule), so end-to-end memory behavior is not deterministic; the paper never confronts this gap.
+2. The truth-maintenance framing oversells. Doyle/de Kleer systems track justifications and propagate retractions through dependency networks; NeuSymMS implements pairwise retract-on-conflict with latest-value-wins. Invoking TMS borrows authority the mechanism does not implement.
+3. For a system claimed to run in production, the absence of even operational statistics — fact volumes, retraction and promotion rates, measured read/write latency — is conspicuous; those need no benchmark, only logging.
+4. Privacy posture is thinner than claimed: soft deletion (`is_active`) retains data "for historical analysis"; whether the UI's Clear All hard-deletes is not reported, yet the compliance story leans on that UI.
+
+<SelfCheck q="When a candidate fact conflicts with a stored fact, what exactly triggers a retraction in NeuSymMS, and which conflicts can it not see?" a="A retraction fires only when candidate and stored fact share subject and relation: for single-valued relations a different value means retract-old/store-new (latest-value-wins); for multi-valued relations, negation retracts only the value matched by normalized Levenshtein similarity at threshold 0.85. Conflicts expressed through different relations (employed_by vs works_at), non-lexical aliases, or paraphrased extractions never match a rule pattern, so contradictory facts coexist silently." />
+
+## Glossary
+- <Term def="Forgy 1982 algorithm for efficient many-patterns/many-objects matching; the engine behind CLIPS-class production-rule systems">Rete</Term>
+- <Term def="truth maintenance system (Doyle 1979): keeps a belief base consistent by tracking justifications for beliefs and retracting those whose support fails; de Kleer 1986 generalized it to explicit assumption tracking (ATMS)">TMS</Term>
+- <Term def="subject-relation-value unit of knowledge, RDF-style, e.g. user works_at Google">triple</Term>
+- <Term def="data-driven rule execution: the engine fires whichever rules match the current fact set, chaining forward from facts to conclusions">forward chaining</Term>
+- <Term def="open-source gateway exposing one API over OpenAI, Anthropic, Google, Azure and other LLM providers; makes the memory layer provider-agnostic">LiteLLM</Term>
+- <Term def="iVedha's enterprise agentic-AI platform that hosts NeuSymMS in production; a flow is its multi-agent workflow unit">Nexa</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Read as a foil for the TDE related-work section: the one contemporary system that literally ships Doyle-lineage truth maintenance inside an agent stack — and it still only polices beliefs, not actions or outcomes. Common ground to cite: "LLM as parser, verifier mechanical". The TDE delta to state: verified against the world's final state, not against other beliefs; gating execution, not curating memory. If a later version lands with the promised LoCoMo/LongMemEval numbers, re-triage.
+{/* NOTES_END */}

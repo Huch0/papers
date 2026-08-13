@@ -1,0 +1,133 @@
+---
+canonical_key: arxiv-2505.07087
+version_key: v1
+title: Applying Cognitive Design Patterns to General LLM Agents
+authors:
+- Robert E. Wray
+- James R. Kirk
+- John E. Laird
+venue: arXiv
+year: 2025
+tags:
+- position-paper
+- survey
+- tde-related-work
+topic_groups:
+- general_agent_methods
+triage_label: SKIP
+triage_confidence: medium
+source_link: https://arxiv.org/abs/2505.07087v2
+summary_date: '2026-08-13'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>Three cognitive-architecture veterans argue that <Term def="an abstract functional role — e.g. reconsideration, knowledge compilation, episodic memory — that recurs across cognitive and agent architectures, specified independently of algorithm or representation">cognitive design patterns</Term> are a productive analytic lens on Agentic LLM systems, and use the lens to audit two well-known systems, name two patterns the LLM-agent field has skipped, and nominate one pattern that is genuinely new to LLMs.</TLDR>
+
+<WhyItMatters>Direct ammunition for the TDE related-work section, arriving from the opposite tradition: this paper independently names the two gaps TDE attacks — Agentic LLM loops make no *explicit commitment* (ReAct maps onto observe-decide-act minus the commit step) and have no *reconsideration / belief-revision* mechanism — and it flags that the LLM-native substitute, step-wise reflection, is self-adjudicated, "as potentially unreliable as the initial response" and possibly unbounded (§3.3, p.9). TDE reads as the missing external arbiter for exactly that slot: the runtime acceptance suite over the final world state is the explicit commitment, red-green iteration is reconsideration, and mechanical environment-computed grading supplies the "external/oracular feedback" this paper says step-wise reflection lacks. It differs in kind, not degree: ten pages of analysis with no executable gating, no pre/postconditions, no benchmark, no experiment.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "0", label: "experiments run", sub: "position paper; every claim is analytic" },
+  { value: "3 / 9", label: "episodic-memory criteria fully met", sub: "Generative Agents audit (Tab.3, p.7)" },
+  { value: "7", label: "cognitive design patterns cataloged", sub: "Tab.1, p.3 — ACT-R / Soar / BDI examples" },
+  { value: "18", label: "Agentic LLM systems mapped", sub: "22 entries across 7 patterns (Tab.2, p.5)" },
+]} />
+
+## Motivation
+<Problem>More than one hundred cognitive architectures have been built in largely disparate traditions</Problem> (§1, p.1), and although they have converged on a shared functional picture of cognition, that accumulated knowledge is not transferring into the Agentic LLM field, which is <Problem>growing fast without a shared vocabulary for what its systems functionally *do*</Problem>. The authors argue the transfer fails because of the level at which comparison usually happens: <Problem>comparing implementations hides commonality</Problem> — saying "Soar uses a JTMS" and "this BDI architecture runs decision-theoretic calculations over memory instances" makes it easy to miss that both occupy one functional role, reconsideration and more broadly belief revision (§2, p.4). Comparison at the level of whole architectures, meanwhile, is too coarse to say anything actionable. Prior calls to draw lessons from cognitive architecture for LLM agents (Sumers et al.'s CoALA, Sypherd and Belle) are acknowledged but characterized as <Problem>high-level proposals rather than fine-grained comparative instruments</Problem> (§1, p.2).
+
+## Contribution (what's new)
+The delta is an *abstraction level*, not a system. <Novelty>Name the functional role and drop the algorithm: a cognitive design pattern is the reusable slot (reconsideration, knowledge compilation, episodic memory, 3-stage commitment), and any architecture either fills it, fills it partially, or leaves it empty.</Novelty> The design must take this form precisely because the two available alternatives fail in opposite directions — implementation-level comparison obscures shared function, architecture-level comparison yields no testable claims. The second delta is using the catalog as a <Novelty>diagnostic that converts "this system is missing something" into named, falsifiable research questions</Novelty>: ReAct has no commitment step, so *would adding one improve reasoning?*; Generative Agents' memory satisfies 3 of 9 episodic-memory criteria, so *what changes if agents can deliberately construct retrieval cues?* The third, smaller delta is a claim that the traffic runs both ways — LLMs, which intermix content and control rather than obeying a fixed control flow, can generate patterns cognitive architecture never had (§3.3, p.9).
+
+## Research questions
+Stated explicitly (§3, p.4): **(1)** Which cognitive design patterns are already evident in Agentic LLM systems? **(2)** Which patterns look apt for Agentic LLMs but are not yet mainstream? **(3)** Do the distinctive properties of Agentic LLMs suggest genuinely *new* cognitive design patterns?
+
+## Methodology
+No experiments and no dataset — the method is structured comparative analysis. The authors curate a pattern catalog from prior comparative work, instantiate each pattern with ACT-R, Soar, and BDI examples (Tab.1, p.3), map recent Agentic LLM systems onto the same patterns (Tab.2, p.5), then run two detailed case audits (ReAct against observe-decide-act; Generative Agents against a nine-criterion episodic-memory specification adapted from Nuxoll and Laird 2012), argue two patterns are under-exploited, and nominate one new one. The authors state up front that an exhaustive survey per question is "too broad for a conference paper" (§3, p.4), so the examples are chosen to illustrate rather than to cover.
+
+<Pass title="Method details">
+<Stepper steps={[
+  { title: "Define the pattern (§2, p.2)", body: "By analogy to software design patterns: an abstract, customizable description of a solution to a recurring design problem. A cognitive design pattern denotes a process/function or representation/memory that routinely recurs in agents and architectures, eliding both implementation and algorithm." },
+  { title: "Catalog (Tab.1, p.3)", body: "Seven patterns: observe-decide-act; 3-stage memory commitment; hierarchical decomposition; short-term (context) memory; ahistorical KR/memory (semantic); historical KR/memory (episodic); procedural KR/memory — each with ACT-R, Soar, and BDI instantiations, plus retrieval and learning sub-rows (activation-mediated association, encoding specificity, chunking / production compilation)." },
+  { title: "The worked pattern: 3-stage commitment (Fig.1, p.3)", body: "Most systems store/erase in two stages. Many architectures instead use three: generate candidates for a memory slot, run a selection/commitment process to pick one, then allow reconsideration after commitment — which can end in retraction, deselection (the choice is demoted back to a candidate), or reaffirmation. BDI does this over plans/intentions, Soar over operators; Soar's reconsideration for one memory type is a specialized JTMS." },
+  { title: "Map (Tab.2, p.5)", body: "Assign recent Agentic LLM systems to patterns. Footnote 3 concedes the list is 'purposely inclusive' and does not distinguish full from partial realizations of a pattern." },
+  { title: "Audit (§3.1, pp.5-7)", body: "Two case studies. ReAct is aligned against the BDI observe-decide-act cycle (Fig.2, p.6). Generative Agents is scored against nine characteristics of episodic memory grouped into learning and retrieval (Tab.3, p.7)." },
+  { title: "Predict (§3.2-3.3, pp.7-10)", body: "Name two absent-but-apt patterns (reconsideration, knowledge compilation) with mechanism-level reasons for their absence, then nominate step-wise reflection as an LLM-native pattern and situate it against reconsideration, Self-reflection, and metacognitive reflection." },
+]} />
+
+<ResultsTable columns={["Cognitive design pattern", "Agentic LLM exemplars cited (Tab.2, p.5)"]} rows={[
+  ["Observe-decide-act", "ReAct, Reflexion"],
+  ["Hierarchical decomposition", "Voyager, ADaPT, DeAR, Tree of Thoughts, Graph of Thoughts"],
+  ["Knowledge compilation", "NL: ExpeL, Reflexion; structured: Voyager, LLMRG, Zhu and Simmons' cognitive agent framework"],
+  ["Context memory", "MemGPT, LONGMEM"],
+  ["Ahistorical KR/memory", "A-MEM, WISE, MemoryBank"],
+  ["Historical KR/memory", "Generative Agents, MemoryBank"],
+  ["Procedural KR/memory", "ProgPrompt, Voyager, Self-evolving GPT"],
+]} />
+</Pass>
+
+## Main result
+There is no headline number, because there is no experiment. The paper's one concrete, checkable output is the Generative Agents audit: <Finding src="Tab.3, p.7">of nine characteristics of episodic memory, Generative Agents' memory stream fully satisfies three (autobiographical, variable length, spontaneous retrieval), partially satisfies two, half-satisfies one, outright fails two, and one is unclear</Finding> — a system widely cited as the exemplar of LLM episodic memory, whose own authors, the paper notes, never claimed it was one (§3.1, p.6).
+
+<SortableTable columns={["Characteristic", "Stage", "In Generative Agents?", "Why"]} rows={[
+  ["Automatic", "Learning", "Semi", "A periodic process evaluates memories and saves a subset"],
+  ["Autobiographical", "Learning", "Yes", "Recorded in 3rd person, but agents understand them as about themselves"],
+  ["Autonoetic", "Learning", "?", "Unclear how agents separate current understanding from memory of past experience"],
+  ["Episodic segmentation", "Learning", "No", "Spans and reflection prompts use pre-defined static periods, e.g. every 100 observations"],
+  ["Variable length", "Learning", "Yes", "Reflections can span variable lengths of experience"],
+  ["Cue-based", "Retrieval", "Partial", "Objects present in the agent's situation are used as cues"],
+  ["Spontaneous", "Retrieval", "Yes", "Retrieval is a recurring, automated process"],
+  ["Deliberate", "Retrieval", "No", "Agents cannot deliberately construct cues or attempt retrieval"],
+  ["Encoding specificity", "Retrieval", "Partial", "Relevance (1 of 3 retrieval criteria) uses semantic similarity, not cue-specificity"],
+]} />
+
+## Key findings
+- <Finding src="§3.1, p.5">ReAct instantiates observe-decide-act but drops the commitment stage</Finding>: it splits internal (thought) from external (action) steps, which is the observe and act halves, but nothing in the loop makes or holds an explicit commitment the way BDI intentions or Soar operator selection do. The authors turn this into a direct empirical question they do not run: would adding commitment beat plain ReAct (§3.1, p.6)?
+- <Finding src="§3.2, p.8">Reconsideration is absent from mainstream Agentic LLMs, and there is a substrate-level reason</Finding>: chat-tuned LLMs resist major redirection of their own token trajectory, and LLMs alone are unreliable non-monotonic reasoners (citing Leidinger et al. 2024). Context-management schemes like MemGPT support redirection only indirectly, by forgetting or paging out past context — a workaround, not a belief-revision mechanism.
+- <Finding src="§3.2, pp.8-9">Knowledge compilation exists in LLM agents only as offline, translate-to-another-form caching, never as online compilation</Finding>: Voyager compiles reasoning into executable JavaScript skills, LLMRG into structured graphs, Zhu and Simmons into Soar productions; Reflexion caches reflections but that buys within-task transfer with "little/no across-task transfer"; ExpeL comes closest of anything the authors found, yet requires an explicit training stage, "in sharp contrast with the online use of knowledge compilation for problem solving in ACT-R and Soar."
+- <Finding src="§3.2, p.9">A named prediction: the utility problem will resurface</Finding>: knowledge compilation only pays if similar situations recur and if memory plus retrieval stay cheap. Cognitive architecture spent decades on expensive-chunk mitigation (Minton 1990; Tambe et al. 1990), and the authors predict LLM agents will need the same specialized machinery once compilation becomes routine.
+- <Finding src="§3.3, pp.9-10">Step-wise reflection is nominated as a genuinely new pattern, and diagnosed as structurally fragile in the same breath</Finding>: it emerges because LLM computation intermixes content and control rather than following a fixed architectural control flow, with self-consistency as its sophisticated instance. But the evaluator is the same unreliable generator, so the pattern is "possibly recursive and unbounded in the worst case", and — the load-bearing distinction — it asks the model to judge correctness "without external/oracular feedback", unlike Self-reflection (Renze and Guven), where an external process supplies the verdict, and unlike metacognitive reflection over whole trajectories (Soar retrospection, Reflexion).
+- <Finding src="§2, p.4">The methodological claim underneath everything: the functional role, not the algorithm, is the right unit of comparison</Finding> — Soar's specialized JTMS and BDI's decision-theoretic intention reconsideration look unrelated at implementation level and identical at role level, and only the role level generates transferable questions about LLM agents.
+
+## Implications
+Positions cognitive design patterns as a complement to the <Related>Common Model of Cognition (Laird, Lebiere, Rosenbloom 2017)</Related>, and proposes "Comparative Cognitive Architecture" as an emerging discipline (§4, p.10) — a functionally motivated catalog that, unlike the Common Model, does not care whether a pattern is human-plausible. The lineage it draws on is explicit and old: <Related>Soar and its chunking, ACT-R and production compilation, the BDI family, Doyle's 1979 JTMS, Nuxoll and Laird's episodic memory</Related>; on the LLM side it engages <Related>CoALA (Sumers et al. 2023) and Sypherd and Belle 2024</Related> as the nearest prior attempts to import architecture lessons. <FollowUp>The unrun ReAct-plus-commitment experiment is the cheapest testable claim in the paper and nobody in it runs it.</FollowUp> <FollowUp>Online knowledge compilation for LLM agents, with utility-problem control borrowed from Minton and Tambe, looks like a real open research line.</FollowUp> <FollowUp>The step-wise-reflection critique points straight at externally grounded verification as the fix — the paper identifies the disease (self-adjudication) and stops short of the cure.</FollowUp>
+
+## Limitations
+- <Caveat>No experiments, no data, no code, no artifact of any kind</Caveat>: every claim is analytic and every "prediction" is unfalsified. The paper is honest about being a position paper, but that means nothing in it is evidence in the usual sense.
+- <Caveat>Deliberately non-exhaustive, by the authors' own statement</Caveat> (§3, p.4): two case audits, seven patterns, and a Table 2 that footnote 3 admits is "purposely inclusive" and "does not distinguish full vs. partial realizations of cognitive design patterns."
+- <Caveat>The catalog is asserted, not derived</Caveat>: the seven patterns come from the authors' own long line of comparative analyses, with an ACT-R/Soar/BDI-centric selection bias, and the paper offers no criterion for what qualifies as a pattern, how patterns are individuated, or when a catalog is complete.
+- <Caveat>The audit rubric has no scoring definition</Caveat>: "Semi", "Partial", and "?" in Tab.3 are unexplained judgments, and "Autobiographical: Yes" is granted even though memories are stored in the 3rd person. A second analyst could plausibly score this table differently.
+- <Caveat>Internal inconsistency on knowledge compilation</Caveat>: Tab.2 (p.5) lists it among patterns "evident in recent Agentic LLM research" with five exemplars, while §3.2 (p.8) opens by calling it one of two patterns "not yet been taken up in the Agentic LLM mainstream." The footnote about partial realizations softens this but does not remove it.
+- <Caveat>Time-stamped snapshot</Caveat>: the state of the art surveyed is mid-2025, and the "not yet mainstream" claims are exactly the kind that decay fastest.
+- <Caveat>Whether human episodic-memory criteria *should* be requirements for an LLM agent is assumed rather than argued</Caveat>: the paper acknowledges Generative Agents never claimed to implement episodic memory, then scores it against nine human-memory characteristics anyway.
+
+## Critiques and Questions
+1. The diagnostic has no decision procedure. Nothing in the paper distinguishes "this system is missing a necessary function" from "this pattern is an artifact of symbolic architectures and does not apply to a substrate with in-context state." A transformer that keeps a plan alive in context may be making an implicit commitment that is functionally adequate; the paper assumes an absent *explicit* stage is a deficiency without arguing the case.
+2. The single most testable claim in the paper — commitment-augmented ReAct beats ReAct — is posed and abandoned. Given three authors from the architecture that pioneered the commitment cycle, running it seems more valuable than describing it.
+3. How reproducible is Tab.3? Without a rubric, the audit's persuasive force rests entirely on author authority, which is a weak foundation for a table presented as the paper's main result.
+4. Step-wise reflection is diagnosed as unreliable because the evaluator inherits the generator's unreliability, and the paper explicitly notes Self-reflection avoids this by taking feedback from "an external process." That is the resolution, sitting one sentence away, and the paper does not follow it to its conclusion: reliability requires an arbiter that is not the model. This is precisely TDE's premise, and it is somewhat striking that a paper from the cognitive-architecture tradition — where reconsideration is triggered by a truth-maintenance system operating over justifications, i.e. mechanically — does not observe that the LLM-agent field's regression is having replaced a mechanical arbiter with a stochastic one.
+5. Small accuracy slip: §3.2 (p.9) attributes the Soar-production-generation work to "Zhu and Reid [70]", but reference [70] is Zhu, F. and Simmons, R., *Bootstrapping Cognitive Agents with a Large Language Model* (AAAI 2024). Minor, but it is the kind of thing to check before citing the claim onward.
+
+<SelfCheck q="Why do the authors insist that Soar's JTMS and a BDI architecture's decision-theoretic intention reconsideration are 'the same thing', and what does that buy them when analyzing LLM agents?" a="Because both occupy one functional role — reconsideration, and more broadly belief revision and context/memory management — even though their algorithms and representations share nothing (§2, p.4). Abstracting to the role is what makes the commonality visible at all. The payoff is that the role becomes a slot you can check any system against: run Agentic LLM systems past the reconsideration slot and it is empty, which converts a vague intuition that LLM agents are brittle about changing course into a specific, named architectural gap with an associated research question." />
+
+## Glossary
+- <Term def="an abstract functional role or representation that recurs across cognitive and agent architectures, specified independently of algorithm and implementation — the paper's central unit of analysis">cognitive design pattern</Term>
+- <Term def="justification-based truth maintenance system (Doyle 1979); maintains beliefs together with their justifications and retracts them mechanically when support disappears. Soar uses a specialized JTMS as the reconsideration process for one type of memory element">JTMS</Term>
+- <Term def="evaluating whether a prior commitment such as a goal or plan should still hold; a non-monotonic step that can end in retraction, deselection, or reaffirmation">reconsideration</Term>
+- <Term def="caching the result of expensive multi-step reasoning into a compact form for immediate reuse in similar future situations — macro-operators in STRIPS, chunking in Soar, production compilation in ACT-R">knowledge compilation</Term>
+- <Term def="the failure mode where the cost of storing and matching compiled knowledge exceeds the reasoning it saves; a decades-long concern in ACT-R and Soar (Minton 1990, Tambe et al. 1990)">utility problem</Term>
+- <Term def="Tulving and Thomson 1973: retrieval succeeds when present cues match the context encoded with the memory; the paper's sharpest criticism of Generative Agents is that its relevance score uses semantic similarity instead">encoding specificity</Term>
+- <Term def="the ability to know that a remembered event is a memory of one's own past experience rather than current knowledge; scored as unclear for Generative Agents">autonoetic</Term>
+- <Term def="belief-desire-intention; the family of agent architectures whose deliberation cycle runs desire, intention, and intention reconsideration">BDI</Term>
+- <Term def="prompting the model to evaluate its own previous response step by step, with self-consistency as its sophisticated instance; the paper's candidate LLM-native pattern, and self-adjudicated by construction">step-wise reflection</Term>
+- <Term def="large reasoning models such as OpenAI o1 and DeepSeek R1, in which fine-grained multi-step reasoning is reinforced during token generation at high inference cost">LRM</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Best use for TDE: this is an *independent, cross-tradition corroboration* of the gap, from people with no stake in the LLM-agent framing. Two quotable moves. (1) ReAct maps to observe-decide-act "but lacks the step that explicitly makes commitments" — a 40-year-old architectural cycle says the modern agent loop is missing its commit stage, which is a clean way to motivate compiling the instruction into an explicit, machine-checkable acceptance suite. (2) Step-wise reflection is "as potentially unreliable as the initial response", "possibly recursive and unbounded", and operates "without external/oracular feedback" — the tightest one-sentence statement of the circularity problem I have seen in the related-work pile, and it comes from the JTMS side of the house, where reconsideration was always mechanical.
+
+Framing for the novelty defense: this paper diagnoses, TDE instantiates. It supplies the slot names (commitment, reconsideration) and the failure argument (self-adjudication), and stops there; it proposes no executable mechanism, no pre/postcondition gating, no state-diff grading, no benchmark. Cite it as motivation-side support, not as a competing method — there is no method here to compete with.
+
+Watch: v1 was titled "Architectural Precedents for General Agents using Large Language Models"; v2 (13 Jun 2025, the ingested one) is the retitle. Same work, same authors, submitted to AGI-25. Any citation of the old title resolves here.
+{/* NOTES_END */}

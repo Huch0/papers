@@ -1,0 +1,77 @@
+canonical_key: arxiv-2603.17973
+version_key: v1
+title: 'TDAD: Test-Driven Agentic Development - Reducing Code Regressions in AI Coding Agents via Graph-Based
+  Impact Analysis'
+authors:
+- Pepe Alonso
+- Sergio Yovine
+- Victor A. Braberman
+abstract: AI coding agents can resolve real-world software issues, yet they frequently introduce regressions
+  -- breaking tests that previously passed. Current benchmarks focus almost exclusively on resolution
+  rate, leaving regression behavior under-studied. This paper presents TDAD (Test-Driven Agentic Development),
+  an open-source tool that performs pre-change impact analysis for AI coding agents. TDAD builds a dependency
+  map between source code and tests so that before committing a patch, the agent knows which tests to
+  verify and can self-correct. The map is delivered as a lightweight agent skill -- a static text file
+  the agent queries at runtime. Evaluated on SWE-bench Verified with two open-weight models running on
+  consumer hardware (Qwen3-Coder 30B, 100 instances; Qwen3.5-35B-A3B, 25 instances), TDAD reduced regressions
+  by 70% (6.08% to 1.82%) compared to a vanilla baseline. In contrast, adding TDD procedural instructions
+  without targeted test context increased regressions to 9.94% -- worse than no intervention at all. When
+  deployed as an agent skill with a different model and framework, TDAD improved issue-resolution rate
+  from 24% to 32%, confirming that surfacing contextual information outperforms prescribing procedural
+  workflows. All code, data, and logs are publicly available at https://github.com/pepealonso95/TDAD.
+venue: arXiv
+year: 2026
+source: arxiv
+source_url: https://arxiv.org/abs/2603.17973v2
+pdf_url: https://arxiv.org/pdf/2603.17973v2
+pdf_sha256: 73655110d9b4e91f671af2b9d7a431cb73c11189bcaee5469437f13719515264
+fetched_at: '2026-08-13T07:14:00Z'
+source_updated_at: '2026-03-19T17:12:15Z'
+ids:
+  doi: null
+  arxiv_id: 2603.17973v2
+  arxiv_base_id: '2603.17973'
+  arxiv_version: v2
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- tde-related-work
+- test-based-eval
+topic_groups:
+- software_engineering_agents
+scoring:
+  score: 58.7
+  label: SKIM
+  confidence: high
+  rationale: 'score=59 -> SKIM | strong: interest_fit(1.00), artifact_availability(0.80), recency(0.75)
+    | interests: software_engineering_agents:coding agent, software_engineering_agents:SWE-bench, software_engineering_agents:group:software_engineering_agents'
+  matched_interests:
+  - software_engineering_agents:coding agent
+  - software_engineering_agents:SWE-bench
+  - software_engineering_agents:group:software_engineering_agents
+  negative_signals: []
+  subscores:
+    interest_fit: 1.0
+    recency: 0.748
+    venue_quality: 0.4
+    harness_relevance: 0.36
+    novelty: 0.55
+    artifact_availability: 0.8
+    evaluation_quality: 0.0
+    trend_signal: 0.7
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/tdad-test-driven-agentic-development-reducing-code-260317973/v1/paper.pdf
+  extraction: library/tdad-test-driven-agentic-development-reducing-code-260317973/v1/extraction.txt
+  summary: library/tdad-test-driven-agentic-development-reducing-code-260317973/v1/summary.mdx
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread
+  summary_format: mdx

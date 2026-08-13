@@ -1,0 +1,63 @@
+canonical_key: arxiv-2601.04688
+slug: toolgate-contract-grounded-and-verified-tool-execution-260104688
+title: 'ToolGate: Contract-Grounded and Verified Tool Execution for LLMs'
+authors:
+- Yanming Liu
+- Xinyue Peng
+- Jiannan Cao
+- Xinyi Wang
+- Songhang Deng
+- Jintao Chen
+- Jianwei Yin
+- Xuhong Zhang
+year: 2026
+primary_ids:
+  doi: null
+  arxiv_base_id: '2601.04688'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2601.04688v1
+- https://arxiv.org/pdf/2601.04688v1
+topic_groups:
+- agent_harness
+- general_agent_methods
+tags:
+- tde-related-work
+- tool-use
+- verifier
+venue:
+  name: ACL
+  tier: A_star
+  status: accepted
+  year: 2026
+user:
+  read_status: unread
+  triage_label: TRACK_ONLY
+  triage_confidence: high
+  notes: null
+milestone: null
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v1
+  source: arxiv
+  source_url: https://arxiv.org/abs/2601.04688v1
+  pdf_path: library/toolgate-contract-grounded-and-verified-tool-execution-260104688/v1/paper.pdf
+  summary_path: library/toolgate-contract-grounded-and-verified-tool-execution-260104688/v1/summary.mdx
+  metadata_path: library/toolgate-contract-grounded-and-verified-tool-execution-260104688/v1/metadata.yaml
+  fetched_at: '2026-08-13T07:14:55Z'
+  source_updated_at: '2026-01-08T07:56:45Z'
+  arxiv_version: v1
+  pdf_sha256: bc576eed888f6c2113953523c4c1a8fa3b9014202fc275b5d704199443250308
+  pdf_bytes: 3414267
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-08-13T07:14:55Z'
+  updated_at: '2026-08-13T07:36:35Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

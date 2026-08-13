@@ -1,0 +1,61 @@
+canonical_key: arxiv-2504.11703
+slug: progent-securing-ai-agents-with-privilege-control-250411703
+title: 'Progent: Securing AI Agents with Privilege Control'
+authors:
+- Tianneng Shi
+- Jingxuan He
+- Zhun Wang
+- Hongwei Li
+- Linyu Wu
+- Wenbo Guo
+- Dawn Song
+year: 2025
+primary_ids:
+  doi: null
+  arxiv_base_id: '2504.11703'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2504.11703v3
+- https://arxiv.org/pdf/2504.11703v3
+topic_groups:
+- agent_harness
+tags:
+- tde-related-work
+- tool-use
+- verifier
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2025
+user:
+  read_status: unread
+  triage_label: SKIM
+  triage_confidence: high
+  notes: null
+milestone: null
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v3
+  source: arxiv
+  source_url: https://arxiv.org/abs/2504.11703v3
+  pdf_path: library/progent-securing-ai-agents-with-privilege-control-250411703/v1/paper.pdf
+  summary_path: library/progent-securing-ai-agents-with-privilege-control-250411703/v1/summary.mdx
+  metadata_path: library/progent-securing-ai-agents-with-privilege-control-250411703/v1/metadata.yaml
+  fetched_at: '2026-08-13T07:15:06Z'
+  source_updated_at: '2026-05-14T02:36:38Z'
+  arxiv_version: v3
+  pdf_sha256: 6b96e0a25ddd5df8afc368e8f8f3798bf911caf40db23945617cc5d1f2f36f26
+  pdf_bytes: 975363
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-08-13T07:15:06Z'
+  updated_at: '2026-08-13T10:17:54Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

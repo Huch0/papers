@@ -1,0 +1,79 @@
+canonical_key: arxiv-2603.08806
+version_key: v1
+title: 'Test-Driven AI Agent Definition (TDAD): Compiling Tool-Using Agents from Behavioral Specifications'
+authors:
+- Tzafrir Rehan
+abstract: 'We present Test-Driven AI Agent Definition (TDAD), a methodology that treats agent prompts
+  as compiled artifacts: engineers provide behavioral specifications, a coding agent converts them into
+  executable tests, and a second coding agent iteratively refines the prompt until tests pass. Deploying
+  tool-using LLM agents in production requires measurable behavioral compliance that current development
+  practices cannot provide. Small prompt changes cause silent regressions, tool misuse goes undetected,
+  and policy violations emerge only after deployment. To mitigate specification gaming, TDAD introduces
+  three mechanisms: (1) visible/hidden test splits that withhold evaluation tests during compilation,
+  (2) semantic mutation testing via a post-compilation agent that generates plausible faulty prompt variants,
+  with the harness measuring whether the test suite detects them, and (3) spec evolution scenarios that
+  quantify regression safety when requirements change. We evaluate TDAD on SpecSuite-Core, a benchmark
+  of four deeply-specified agents spanning policy compliance, grounded analytics, runbook adherence, and
+  deterministic enforcement. Across 24 independent trials, TDAD achieves 92% v1 compilation success with
+  97% mean hidden pass rate; evolved specifications compile at 58%, with most failed runs passing all
+  visible tests except 1-2, and show 86-100% mutation scores, 78% v2 hidden pass rate, and 97% regression
+  safety scores. The implementation is available as an open benchmark at https://github.com/f-labs-io/tdad-paper-code.'
+venue: arXiv
+year: 2026
+source: arxiv
+source_url: https://arxiv.org/abs/2603.08806v1
+pdf_url: https://arxiv.org/pdf/2603.08806v1
+pdf_sha256: dab7b6d3da5b028d6535ab8c10c966e9c60abf2b9fb695c61416fc999d85fbda
+fetched_at: '2026-08-13T07:13:55Z'
+source_updated_at: '2026-03-09T18:04:54Z'
+ids:
+  doi: null
+  arxiv_id: 2603.08806v1
+  arxiv_base_id: '2603.08806'
+  arxiv_version: v1
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- evaluation-harness
+- prompt-optimization
+- tde-related-work
+- test-based-eval
+topic_groups:
+- agent_harness
+- software_engineering_agents
+scoring:
+  score: 47.2
+  label: TRACK_ONLY
+  confidence: high
+  rationale: 'score=47 -> TRACK_ONLY | strong: interest_fit(0.91), recency(0.73), artifact_availability(0.55)
+    | interests: agent_harness:group:agent_harness, software_engineering_agents:coding agent, software_engineering_agents:group:software_engineering_agents'
+  matched_interests:
+  - agent_harness:group:agent_harness
+  - software_engineering_agents:coding agent
+  - software_engineering_agents:group:software_engineering_agents
+  negative_signals: []
+  subscores:
+    interest_fit: 0.91
+    recency: 0.729
+    venue_quality: 0.4
+    harness_relevance: 0.52
+    novelty: 0.0
+    artifact_availability: 0.55
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/test-driven-ai-agent-definition-tdad-compiling-260308806/v1/paper.pdf
+  extraction: library/test-driven-ai-agent-definition-tdad-compiling-260308806/v1/extraction.txt
+  summary: library/test-driven-ai-agent-definition-tdad-compiling-260308806/v1/summary.mdx
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread
+  summary_format: mdx

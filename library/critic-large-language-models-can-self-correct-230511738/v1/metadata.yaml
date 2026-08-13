@@ -1,0 +1,79 @@
+canonical_key: arxiv-2305.11738
+version_key: v1
+title: 'CRITIC: Large Language Models Can Self-Correct with Tool-Interactive Critiquing'
+authors:
+- Zhibin Gou
+- Zhihong Shao
+- Yeyun Gong
+- Yelong Shen
+- Yujiu Yang
+- Nan Duan
+- Weizhu Chen
+abstract: Recent developments in large language models (LLMs) have been impressive. However, these models
+  sometimes show inconsistencies and problematic behavior, such as hallucinating facts, generating flawed
+  code, or creating offensive and toxic content. Unlike these models, humans typically utilize external
+  tools to cross-check and refine their initial content, like using a search engine for fact-checking,
+  or a code interpreter for debugging. Inspired by this observation, we introduce a framework called CRITIC
+  that allows LLMs, which are essentially "black boxes" to validate and progressively amend their own
+  outputs in a manner similar to human interaction with tools. More specifically, starting with an initial
+  output, CRITIC interacts with appropriate tools to evaluate certain aspects of the text, and then revises
+  the output based on the feedback obtained during this validation process. Comprehensive evaluations
+  involving free-form question answering, mathematical program synthesis, and toxicity reduction demonstrate
+  that CRITIC consistently enhances the performance of LLMs. Meanwhile, our research highlights the crucial
+  importance of external feedback in promoting the ongoing self-improvement of LLMs.
+venue: arXiv
+year: 2023
+source: arxiv
+source_url: https://arxiv.org/abs/2305.11738v4
+pdf_url: https://arxiv.org/pdf/2305.11738v4
+pdf_sha256: ed5cbff53c8ff550b72d6abba0d7e4d83c5d214d61d0fafde10cbe4bbfc31a5b
+fetched_at: '2026-08-13T07:14:24Z'
+source_updated_at: '2024-02-21T12:59:21Z'
+ids:
+  doi: null
+  arxiv_id: 2305.11738v4
+  arxiv_base_id: '2305.11738'
+  arxiv_version: v4
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- tde-related-work
+- tool-use
+- verifier
+topic_groups:
+- general_agent_methods
+scoring:
+  score: 8.6
+  label: SKIP
+  confidence: medium
+  rationale: 'score=9 -> SKIP | strong: novelty(0.55), interest_fit(0.40), venue_quality(0.40) | interests:
+    general_agent_methods:group:general_agent_methods | negatives: old_in_fast_area'
+  matched_interests:
+  - general_agent_methods:group:general_agent_methods
+  negative_signals:
+  - old_in_fast_area
+  subscores:
+    interest_fit: 0.402
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.36
+    novelty: 0.55
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/critic-large-language-models-can-self-correct-230511738/v1/paper.pdf
+  extraction: library/critic-large-language-models-can-self-correct-230511738/v1/extraction.txt
+  summary: library/critic-large-language-models-can-self-correct-230511738/v1/summary.mdx
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread
+  summary_format: mdx

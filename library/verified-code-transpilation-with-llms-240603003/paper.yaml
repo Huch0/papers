@@ -1,0 +1,58 @@
+canonical_key: arxiv-2406.03003
+slug: verified-code-transpilation-with-llms-240603003
+title: Verified Code Transpilation with LLMs
+authors:
+- Sahil Bhatia
+- Jie Qiu
+- Niranjan Hasabnis
+- Sanjit A. Seshia
+- Alvin Cheung
+year: 2024
+primary_ids:
+  doi: null
+  arxiv_base_id: '2406.03003'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2406.03003v1
+- https://arxiv.org/pdf/2406.03003v1
+topic_groups:
+- software_engineering_agents
+tags:
+- tde-related-work
+- verifier
+venue:
+  name: NeurIPS
+  tier: A_star
+  status: accepted
+  year: 2024
+user:
+  read_status: unread
+  triage_label: SKIP
+  triage_confidence: high
+  notes: null
+milestone: null
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v1
+  source: arxiv
+  source_url: https://arxiv.org/abs/2406.03003v1
+  pdf_path: library/verified-code-transpilation-with-llms-240603003/v1/paper.pdf
+  summary_path: library/verified-code-transpilation-with-llms-240603003/v1/summary.mdx
+  metadata_path: library/verified-code-transpilation-with-llms-240603003/v1/metadata.yaml
+  fetched_at: '2026-08-13T07:18:07Z'
+  source_updated_at: '2024-06-05T07:10:30Z'
+  arxiv_version: v1
+  pdf_sha256: 54f8526fe5f9b06c7dc663b59b8ba93927bea9434f14f6165e2596591636e697
+  pdf_bytes: 820932
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-08-13T07:18:07Z'
+  updated_at: '2026-08-13T10:38:57Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

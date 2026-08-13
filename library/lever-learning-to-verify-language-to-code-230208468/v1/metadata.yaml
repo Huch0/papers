@@ -1,0 +1,85 @@
+canonical_key: arxiv-2302.08468
+version_key: v1
+title: 'LEVER: Learning to Verify Language-to-Code Generation with Execution'
+authors:
+- Ansong Ni
+- Srini Iyer
+- Dragomir Radev
+- Ves Stoyanov
+- Wen-tau Yih
+- Sida I. Wang
+- Xi Victoria Lin
+abstract: The advent of large language models trained on code (code LLMs) has led to significant progress
+  in language-to-code generation. State-of-the-art approaches in this area combine LLM decoding with sample
+  pruning and reranking using test cases or heuristics based on the execution results. However, it is
+  challenging to obtain test cases for many real-world language-to-code applications, and heuristics cannot
+  well capture the semantic features of the execution results, such as data type and value range, which
+  often indicates the correctness of the program. In this work, we propose LEVER, a simple approach to
+  improve language-to-code generation by learning to verify the generated programs with their execution
+  results. Specifically, we train verifiers to determine whether a program sampled from the LLMs is correct
+  or not based on the natural language input, the program itself and its execution results. The sampled
+  programs are reranked by combining the verification score with the LLM generation probability, and marginalizing
+  over programs with the same execution results. On four datasets across the domains of table QA, math
+  QA and basic Python programming, LEVER consistently improves over the base code LLMs(4.6% to 10.9% with
+  code-davinci-002) and achieves new state-of-the-art results on all of them.
+venue: arXiv
+year: 2023
+source: arxiv
+source_url: https://arxiv.org/abs/2302.08468v3
+pdf_url: https://arxiv.org/pdf/2302.08468v3
+pdf_sha256: 9f7535fae850deaedbb0215e28f82c66cbca2305c3006ea42f3bdb41a52290ee
+fetched_at: '2026-08-13T07:14:29Z'
+source_updated_at: '2023-09-01T17:37:42Z'
+ids:
+  doi: null
+  arxiv_id: 2302.08468v3
+  arxiv_base_id: '2302.08468'
+  arxiv_version: v3
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- execution-based-eval
+- tde-related-work
+- verifier
+topic_groups:
+- software_engineering_agents
+- general_agent_methods
+scoring:
+  score: 20.8
+  label: SKIP
+  confidence: high
+  rationale: 'score=21 -> SKIP | strong: interest_fit(0.91), novelty(0.55), venue_quality(0.40) | interests:
+    software_engineering_agents:verifier, software_engineering_agents:group:software_engineering_agents,
+    general_agent_methods:verifier, general_agent_methods:group:general_agent_methods | negatives: old_in_fast_area'
+  matched_interests:
+  - software_engineering_agents:verifier
+  - software_engineering_agents:group:software_engineering_agents
+  - general_agent_methods:verifier
+  - general_agent_methods:group:general_agent_methods
+  negative_signals:
+  - old_in_fast_area
+  subscores:
+    interest_fit: 0.91
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.36
+    novelty: 0.55
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/lever-learning-to-verify-language-to-code-230208468/v1/paper.pdf
+  extraction: library/lever-learning-to-verify-language-to-code-230208468/v1/extraction.txt
+  summary: library/lever-learning-to-verify-language-to-code-230208468/v1/summary.mdx
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread
+  summary_format: mdx

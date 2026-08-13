@@ -1,0 +1,111 @@
+---
+canonical_key: arxiv-2309.16436
+version_key: v1
+title: 'Neuro Symbolic Reasoning for Planning: Counterexample Guided Inductive Synthesis using Large Language
+  Models and Satisfiability Solving'
+authors:
+- Sumit Kumar Jha
+- Susmit Jha
+- Patrick Lincoln
+- Nathaniel D. Bastian
+- Alvaro Velasquez
+- Rickard Ewetz
+- Sandeep Neema
+venue: arXiv
+year: 2023
+tags:
+- tde-related-work
+- verifier
+topic_groups:
+- general_agent_methods
+triage_label: SKIP
+triage_confidence: medium
+source_link: https://arxiv.org/abs/2309.16436v1
+summary_date: '2026-08-13'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>Places an instruct-tuned LLM as the inductive learner inside a classical <Term def="counterexample-guided inductive synthesis: a learner proposes candidates, a verifier checks them against a formal spec and returns counterexamples, looping until a candidate verifies">CEGIS</Term> loop — the LLM proposes blocks-world plans, the Z3 <Term def="satisfiability modulo theories: SAT solving extended with theories such as integers and uninterpreted functions; Z3 is the solver used here">SMT</Term> solver verifies each candidate against the formal spec and feeds counterexamples (down to an infeasible plan prefix) back into the dialog until the plan provably satisfies the specification, which is itself autoformalized from natural language by the LLM.</TLDR>
+
+<WhyItMatters>Direct TDE relative (survey cat. G), and the survey's read holds on inspection: it shares the mechanical, non-LLM iterate-until-pass verification loop — Z3, never a judge model, adjudicates, and failure feedback drives regeneration (a red–green analog with fault-localized counterexamples as the failing tests). It differs on the execution axis: it verifies a plan artifact offline against an LLM-autoformalized transition model — nothing ever executes, so there is no final-world-state acceptance suite and no runtime action gating (its Hoare-style per-action pre/postcondition constraints exist, but as a static model for whole-plan checking, not as execution guards). Sharpest lesson for TDE's novelty defense: its "provably correct" guarantee is only relative to an unverified LLM-written spec — the same instruction-to-spec compilation trust TDE must confront, except TDE's verdicts are computed by the actual environment rather than by a model of it.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "19/20", label: "GPT-4 verified plans, 3 blocks", sub: "with Z3 CEGIS loop (Fig.2)" },
+  { value: "2/20", label: "GPT-4 at 10 blocks", sub: "the scaling cliff (Fig.3)" },
+  { value: "6", label: "LLMs compared", sub: "GPT-4 down to Ada (0/20); 20 problems per size" },
+]} />
+
+## Motivation
+<Problem>LLMs hallucinate, and in formal artifacts — plans, code, specifications for safety-critical systems — a bug is catastrophic rather than merely wrong</Problem>; the authors argue the lossy encoding of knowledge in LLMs means simply scaling data and models will not fix this (§1, p.2). The surveyed remedies fail structurally: <Problem>fine-tuning needs unclear amounts of domain data, degrades fluency and in-context ability, and has documented failures; knowledge graphs demand expensive curation; memory-augmented architectures sacrifice scalability — and LLMs are highly sensitive to task-irrelevant syntactic variations, so curating for a combinatorial query space is unrealistic</Problem> (§2, pp.2–3). From the other side, <Problem>formal synthesis provides guarantees but requires deep expertise to formalize problems, locking out non-experts, and its solver-based learners scale poorly</Problem> (§1–2).
+
+## Contribution (what's new)
+<Novelty>Adopt the CEGIS architecture but replace the classical solver-based learner with an LLM, keeping a formal verifier (Z3) as the counterexample-producing oracle</Novelty> — the deductive engine is used only where it is cheap (checking one candidate is far faster than synthesizing a plan by combinatorial search), while generation exploits the LLM's scalability and its dialog/in-context learning to absorb counterexamples across turns. Two supporting deltas: <Novelty>fault-localizing feedback — the verifier can return an infeasible plan prefix such that any completion is incorrect, ruling out a whole class of plans rather than one sample</Novelty> (§4, p.6); and <Novelty>the formal spec pipeline is itself LLM-generated — natural-language operator semantics are autoformalized into Z3 Python API constraints, so the user interacts in natural language end-to-end</Novelty> (App.A). Extends the authors' earlier iterative-prompting report [JJL+23].
+
+## Research questions
+Can counterexamples from a deductive verifier, appended to the dialog, steer instruct LLMs to formally verified plans? How does verified-synthesis success scale across model tiers (GPT-4 to Ada) and problem sizes (3–10 blocks)? Can the formalization step itself be delegated to the LLM so non-experts get provable outputs from natural language alone?
+
+## Methodology
+Formal-synthesis framing (§3): a concept is a set of examples `c ⊆ E`, a specification is a set of correct concepts `Φ ⊆ C ⊆ 2^E`, and the learner accesses `Φ` only through an oracle interface `O ⊆ Q × R` of query/response types. Restricting the oracle to a counterexample-producing verifier makes the scheme CEGIS, an instance of <Term def="oracle-guided inductive synthesis (Jha & Seshia 2017): generalizes CEGIS to arbitrary oracle query/response interfaces">OGIS</Term> — with the LLM in the learner role instead of a decision procedure. Evaluation domain: <Term def="the classical planning benchmark: pick-up/put-down/stack/unstack blocks to reach a goal configuration">blocks world</Term> (`blocksworld-4ops`), problems stated in PDDL-style s-expressions, with GPT-4, GPT-3.5 Turbo, Davinci, Curie, Babbage, and Ada as learners and Z3 as the verifier.
+
+<Pass title="Method details">
+<Stepper steps={[
+  { title: "Autoformalize the domain (App.A–B)", body: "The user states each operator's semantics in natural language; the LLM is prompted to translate them into first-order logic in Z3 Python API syntax, given a State skeleton exposing per-state table/hand/stacked/clear/handsfree predicates. The produced constraints — preconditions, effects, and frame conditions for pick-up, put-down, stack, unstack — become the deployed transition model." },
+  { title: "Propose (learner = LLM)", body: "The prompt contains the PDDL-style problem plus two worked examples (problem and plan delimited by START-PLAN / END-PLAN markers); the LLM emits a candidate plan in the same machine-parseable format." },
+  { title: "Verify (oracle = Z3)", body: "Z3 checks the candidate against initial state, goal, and transition constraints. Checking a single solution is much faster than solving the planning problem by combinatorial search — the stated reason the deductive engine sits in the verifier role only." },
+  { title: "Counterexample feedback", body: "On failure the dialog is extended either with the incorrect sequences flagged as not valid, or with richer fault localization: a prefix of the plan such that any completion is incorrect ('Any plan with the following prefix is not correct'), eliminating a whole class of candidates." },
+  { title: "Iterate to verified", body: "Regeneration continues until Z3 accepts. The final response carries the formally verified plan plus a human-readable natural-language justification." },
+]} />
+</Pass>
+
+## Main result
+On 20 random 3-block problems under the full loop, <Finding src="Fig.2, p.7">GPT-4 reaches a verified plan on 19/20, GPT-3.5 Turbo on 12/20, while Davinci, Curie, and Babbage manage 2/20 each and Ada 0/20</Finding>. Scaling the strongest model, <Finding src="Fig.3, p.7">GPT-4 drops 19 → 11 → 11 → 9 across 3/4/5/6 blocks and to 2/20 at 10 blocks</Finding>.
+
+<SortableTable columns={["Model", "3 blocks", "4 blocks", "5 blocks", "6 blocks", "10 blocks"]} rows={[
+  ["GPT-4", 19, 11, 11, 9, 2],
+  ["GPT-3.5 Turbo", 12, 4, 6, 1, "—"],
+  ["Davinci", 2, "—", "—", "—", "—"],
+  ["Curie", 2, "—", "—", "—", "—"],
+  ["Babbage", 2, "—", "—", "—", "—"],
+  ["Ada", 0, "—", "—", "—", "—"],
+]} />
+
+Verified plans out of 20 random problems per size, all with the verifier in the loop ("—" = not reported). No loop-free baseline success rate is reported anywhere.
+
+## Key findings
+- <Finding src="Fig.2, p.7">The loop is gated on model capability</Finding>: counterexample dialog lifts GPT-4 and GPT-3.5 Turbo but leaves the older GPT-3-family models near zero (2/20; Ada 0/20) — the verifier can only steer a model able to use feedback (exact model variants: Not reported).
+- <Finding src="Fig.3, p.7">Verified-synthesis success collapses with problem size</Finding>: GPT-4 solves only 2/20 at 10 blocks. The verifier guarantees soundness of accepted plans; it does not confer search ability.
+- <Finding src="Fig.4, p.8">GPT-3.5 Turbo's size curve is non-monotonic (12, 4, 6, 1 for 3/4/5/6 blocks)</Finding>: with 20 problems per size, single runs, and no variance reporting, run-to-run noise is clearly substantial.
+- <Finding src="§4, pp.5–7">Fault localization works end-to-end in the worked 6-block example</Finding>: Z3 returns a 5-step infeasible prefix ending in `pick-up b2` (illegal because b2 sits on b3 and pick-up applies only to table blocks), and the regenerated plan diverges exactly at that step (`unstack b2 b3`) and verifies.
+- <Finding src="App.A, p.11">The formal spec is produced by the LLM itself</Finding> from natural-language operator descriptions via the prompt "Translate the following into first-order logic using the formatting of Z3 Python API…" — making the pipeline natural-language-in, verified-plan-out.
+- <Finding src="Figs.5–7, pp.8,13–14">Iteration counts are reported only graphically</Finding>: per-problem trial counts on a 0–10 axis for 3/4/5/6 blocks, with no aggregate statistics and no explicitly stated trial cap.
+
+## Implications
+An early (Sep 2023) concrete instance of the sound-verifier-in-the-loop recipe: the lineage is <Related>CEGIS (Solar-Lezama et al. 2006) and oracle-guided inductive synthesis (Jha & Seshia 2017)</Related>, with the learner swapped for an LLM; the authors frame it as an "adversarial variant of in-context learning" (§5) and it extends their <Related>formal-methods-guided iterative prompting report [JJL+23]</Related>. It responds to the <Related>Valmeekam et al. "LLMs still can't plan" critiques [VOSK22, VSM+23]</Related> not by making the LLM plan better but by making wrongness mechanically detectable and iterating. <FollowUp>LLM-Modulo-style frameworks (Kambhampati et al. 2024) generalize exactly this pattern — compare how they handle spec provenance and feedback granularity.</FollowUp> <FollowUp>The unmeasured ablation here — invalid-only flag vs infeasible-prefix feedback — maps directly onto the TDE question of how much failure detail an acceptance suite should surface to the agent.</FollowUp>
+
+## Limitations
+- <Caveat>Single toy domain (blocks world), 20 problems per size, single runs, no variance or significance</Caveat>; arXiv v1, not peer-reviewed; code/artifacts: Not reported.
+- <Caveat>No baselines of any kind</Caveat>: no loop-free LLM success rate, no classical planner (blocks world is solved instantly by e.g. Fast Downward), no SMT-only synthesis comparison — so the "verification is much faster than synthesis" scalability argument for using an LLM learner is asserted, never measured (no wall-clock or token costs).
+- <Caveat>The trial budget and failure semantics are unstated</Caveat>: success counts presumably mean "verified within the (unstated) budget", which softens cross-model comparisons.
+- <Caveat>The correctness guarantee is relative to an LLM-autoformalized spec that is itself never verified</Caveat> — and the appendix's displayed encodings contain apparent bugs: put-down's frame axiom `ForAll([x], And(x != block, …))` conjoins instead of implying (asserting a contradiction for `x = block`), and pick-up misuses `patterns=[x != the_block]` as if instantiation patterns were a guard. Whether corrected encodings were used in the actual runs is Unclear.
+
+## Critiques and Questions
+1. Spec-trust circularity: the loop de-circularizes adjudication of the *plan* (Z3, not an LLM, judges), but re-introduces LLM trust one level up at the *spec* — a plan "provably correct" against a buggy autoformalized transition model proves nothing about the intended task. The paper neither validates the generated constraints nor discusses this gap.
+2. Why an LLM learner for this domain at all? Z3 can synthesize blocks-world plans directly by bounded unrolling of the same transition relation. Without a planner or SMT-synthesis baseline or any timing, the demonstrated case for the LLM is accessibility (natural-language front end), not capability or speed.
+3. Is the counterexample doing the work? With no retry-without-feedback control, the causal contribution of counterexamples vs plain resampling is unmeasured; likewise the value of prefix-level over invalid-only feedback is never isolated, despite being the paper's most distinctive mechanism.
+
+<SelfCheck q="In this CEGIS instantiation, which component is the learner, which is the oracle, and what exactly does the oracle return when a candidate plan fails?" a="The instruct LLM is the inductive learner proposing candidate plans; the Z3 SMT solver is the verification oracle. On failure, feedback is appended to the dialog: either the incorrect sequences flagged as not valid, or — richer — an infeasible prefix of the plan such that any completion is incorrect, which rules out a whole class of candidate plans at once." />
+
+## Glossary
+- <Term def="counterexample-guided inductive synthesis (Solar-Lezama et al. 2006): propose–verify–refute loop originally built on solvers for program sketching">CEGIS</Term>
+- <Term def="oracle-guided inductive synthesis: CEGIS generalized to arbitrary oracle interfaces of query/response types (Jha & Seshia 2017)">OGIS</Term>
+- <Term def="the contract O ⊆ Q × R of query and response types through which the learner may access the specification">oracle interface</Term>
+- <Term def="automatic translation of natural-language statements into formal logic; here done by the LLM into Z3 Python API constraints">autoformalization</Term>
+- <Term def="constraints asserting what does not change across an action; mis-stating them over- or under-constrains the transition model, as in the appendix's put-down encoding">frame axioms</Term>
+- <Term def="efficient SMT solver from Microsoft Research (de Moura & Bjørner 2008); the verification engine used here">Z3</Term>
+
+{/* NOTES_START */}
+### Personal notes
+For the TDE novelty defense this is the cleanest pre-LLM-Modulo instance of LLM-in-CEGIS: the loop shape matches TDE (mechanical adjudication, iterate to green, fault-localized counterexamples as failing tests), but everything happens pre-execution against a model — a verified plan is not an achieved world state, and there is no per-action runtime gating even though the encoding is literally per-action pre/postconditions. The residual trust hole — the LLM-autoformalized spec, visibly buggy in the shown appendix encodings — is exactly the instruction-to-suite compilation risk TDE must argue about; TDE's structural advantage is that the environment, not a model, computes the verdict. Cite alongside [JJL+23] and LLM-Modulo when drawing the offline-artifact-verification vs environment-state-verification line.
+{/* NOTES_END */}

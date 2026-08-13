@@ -1,0 +1,112 @@
+---
+canonical_key: arxiv-2502.07786
+version_key: v1
+title: Counterexample Guided Program Repair Using Zero-Shot Learning and MaxSAT-based Fault Localization
+authors:
+- Pedro Orvalho
+- Mikoláš Janota
+- Vasco Manquinho
+venue: arXiv
+year: 2024
+tags:
+- tde-related-work
+- verifier
+topic_groups:
+- software_engineering_agents
+triage_label: SKIP
+triage_confidence: high
+source_link: https://arxiv.org/abs/2502.07786v1
+summary_date: '2026-08-13'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>Repairs buggy student C programs by wrapping zero-shot ~7B open LLMs in a <Term def="Counterexample-Guided Inductive Synthesis: alternate a synthesizer proposing candidates with a mechanical verifier that returns a counterexample on failure, until the specification is met">CEGIS</Term> loop — MaxSAT-based fault localization deletes the minimal set of suspect statements to form a bug-free sketch, the LLM fills the holes, and a Decider executes the candidate against the assignment's IO test suite, feeding one failing test back as a counterexample — repairing more programs with smaller patches than symbolic APR tools for all six LLMs evaluated.</TLDR>
+
+<WhyItMatters>The archetypal CEGIS-shaped TDE relative (survey cat. G): synthesize → mechanically verify → concrete failing test as feedback, with the LLM excluded from adjudication (the Decider is plain test execution) and even the LLM's writable region fixed mechanically by MaxSAT fault localization. It differs precisely where TDE lives: the oracle is a pre-existing, lecturer-authored IO test suite for a fixed assignment — nothing is compiled from the NL instruction at runtime — it verifies program text, not final environment state in an agent loop, and there is no per-action pre/postcondition gating. Also a sharp data point for SWE-agent harness design: mechanical verification plus concrete counterexamples lets 4-bit 3.8–8B models beat specialized symbolic tools.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "48.3%", label: "best single LLM+prompt, no ref. impl.", sub: "Granite + sketch (Sk De-TS): 691/1431 (Tab.2)" },
+  { value: "34.6%", label: "best symbolic baseline (CLARA)", sub: "Verifix 6.3%; same 90 s limit" },
+  { value: "1.14", label: "mean CEGIS iterations", sub: "89% of repairs succeed on attempt 1 (p.7)" },
+  { value: "1,431", label: "buggy student C programs", sub: "C-Pack-IPAs; six open 3.8–8B LLMs, 4-bit" },
+]} />
+
+## Motivation
+Programming courses enroll thousands of students, and personalized feedback on <Term def="introductory programming assignment — a small program written for a beginner course exercise">IPAs</Term> costs faculty substantial time. <Problem>Symbolic FM-based repair tools (CLARA, Verifix) produce high-quality fixes but are slow and require the buggy program and a correct implementation to share the same control-flow graph</Problem> — otherwise they return a structural mismatch error; within the paper's 90 s budget <Term def="clustering-based symbolic repair tool (PLDI 2018): aligns the buggy program with clustered correct student submissions">CLARA</Term> repairs only 495/1431 programs (34.6%) and <Term def="implementation-driven symbolic repair tool (TOSEM 2022): MaxSMT-aligns the buggy program with the lecturer's reference">Verifix</Term> 91 (6.3%) (p.5–6). <Problem>LLMs are fast but rewrite extensively instead of minimally, and when a reference implementation appears in the prompt they copy it outright, ignoring instructions not to</Problem> (p.2–3) — invasive patches students cannot learn from. In the motivating max-of-three example, neither CLARA, Verifix, nor basic-prompted Granite/CodeGemma can fix a 12-line, two-bug program within 90 s (p.2–3).
+
+## Contribution (what's new)
+<Novelty>A division of labor in which formula-based fault localization decides where the fix may go, a <Term def="the model performs the task from instructions alone — no task-specific examples in the prompt, no fine-tuning">zero-shot</Term> LLM decides what text goes there, and test execution decides whether it worked</Novelty> — repair becomes constrained string completion. The MaxSAT-localized minimal diagnosis is deleted outright, so the LLM sees a bug-free sketch whose `@ HOLE N @` placeholders bound the patch surface by construction, attacking both baseline failures at once (symbolic CFG-brittleness; LLM over-editing and copying). <Novelty>A CEGIS loop closes the system: each failed candidate triggers a feedback prompt carrying one concrete failing IO test as a counterexample</Novelty>. In the motivating example, the two-hole sketch lets Granite and CodeGemma repair in a single interaction a program neither could fix from a basic prompt (p.2–3). Claimed as the first LLM-repair work guided by formula-based fault localization (p.8).
+
+## Research questions
+RQ1: Do SOTA LLMs repair IPAs better than semantic repair tools? RQ2: Which prompt configurations matter? RQ3: Does FM-based fault localization improve LLM-driven APR? RQ4: Does providing a reference implementation help? RQ5: What does counterexample guidance add? (p.4)
+
+## Methodology
+A four-module pipeline (Fig.1, p.3): <Term def="the authors' MaxSAT/model-based-diagnosis fault localizer (FM 2024); aggregates all failing tests into one formula and enumerates minimal diagnoses">CFaults</Term> marks the minimal set of buggy statements; a prompt generator builds one of three prompt families — basic (raw buggy program), FIXME-annotated, or hole-sketch — optionally adding the assignment description, test suite, a correct program, and the counterexample loop; the LLM synthesizes a candidate; the Decider executes it on the IO test suite and on failure returns one failing test. Evaluated on <Term def="benchmark of C90 student programs from an intro course (by the same authors); here its 1,431 compiling but semantically incorrect submissions">C-Pack-IPAs</Term> with six open instruction-tuned LLMs (Granite 8B, CodeGemma 7B, CodeLlama 7B, Gemma 7B, Llama3 8B, Phi3-mini 3.8B), 4-bit quantized on one 16 GB GPU, 90 s / 10 GB per repair. Metrics: programs repaired, plus a patch-quality distance score built on <Term def="tree edit distance: minimum insertions/deletions/substitutions turning one AST into another">TED</Term> that penalizes larger-than-necessary patches (Eq.1, p.5).
+
+<Pass title="Method details">
+<Stepper steps={[
+  { title: "Localize (MaxSAT FL)", body: "CFaults encodes the program plus all failing test cases into a unified MaxSAT formula (model-based diagnosis) and enumerates minimal diagnoses — the smallest statement sets explaining every failing test. The FL module is explicitly pluggable." },
+  { title: "Sketch + prompt", body: "Each diagnosed statement is replaced by `@ HOLE N @`, yielding a bug-free program sketch (Listing 3). The prompt = command ('Complete all the @ HOLES N @ in the incomplete program below'), IPA description (De), IO test suite (TS), optionally a correct program — lecturer reference (RI) or the AST-closest prior correct student submission (CPA) — and the sketch. Alternatives: basic prompt ('Fix all semantic bugs... Modify the code as little as possible') or FIXME-annotated prompt marking each localized line." },
+  { title: "Synthesize (zero-shot LLM)", body: "An off-the-shelf instruction-tuned model completes the holes: Granite 8B, CodeGemma 7B, CodeLlama 7B, Gemma 7B, Llama3 8B, Phi3-mini 3.8B (128K context). All 4-bit quantized to fit a 16 GB RTX A4000, run via HuggingFace Pipeline; no fine-tuning, no in-context examples." },
+  { title: "Decide + feedback (CE)", body: "The Decider runs the candidate on the full test suite (repair tasks on a Xeon Silver 4210R, 10 GB memory, 90 s timeout). On failure, a feedback message — 'Your previous suggestion was incorrect! Try again. Code only.' — plus one failing test's input and expected output is appended, and the LLM re-synthesizes. Among successful repairs: min 1, mean 1.14, max 7 iterations." },
+]} />
+
+<MathBlock>{`ds(T_f, T_o, T_r) = \\max\\Big(0,\\; 1 - \\frac{\\mathrm{TED}(T_f, T_o)}{\\mathrm{TED}(T_r, T_o)}\\Big)`}</MathBlock>
+
+Here `T_o`, `T_f`, `T_r` are the ASTs of the buggy, LLM-fixed, and reference programs. The score is 0 when the patch is as far from the original as wholesale replacement by the reference (i.e. copying), and approaches 1 for minimal edits; Table 3 reports its sum over each configuration's successfully repaired programs. Baselines: CLARA (needs a cluster of correct submissions) repairs 495, times out on 154 (10.8%); Verifix (needs the lecturer reference) repairs 91, fails on 93.5% — both demand an exact control-flow-graph match and a variable bijection.
+</Pass>
+
+## Main result
+<Finding src="Tab.2, p.6">Bug-free sketches improve all six LLMs over the same prompt without localization; the best no-reference configuration, Granite + Sk De-TS, repairs 691/1431 (48.3%), vs CLARA 34.6% and Verifix 6.3%</Finding>. An all-LLM <Term def="best result per program across LLMs and/or configurations — an oracle upper bound, not a deployable selector">portfolio</Term> with sketches + counterexamples repairs 907 (63.4%), and 1,013 (70.8%) over all no-reference configurations; adding reference implementations pushes it to 1,190 (83.2%) — but largely via copying (see Key findings). Programs repaired (of 1,431, no reference implementation):
+
+<SortableTable columns={["LLM", "De-TS (basic)", "FIXME De-TS", "Sk De-TS", "Sk De-TS-CE", "Portfolio (all configs)"]} rows={[
+  ["Granite 8B", 626, 566, 691, 681, 846],
+  ["CodeGemma 7B", 597, 592, 682, 688, 823],
+  ["Llama3 8B", 564, 535, 578, 591, 851],
+  ["CodeLlama 7B", 492, 481, 573, 561, 712],
+  ["Gemma 7B", 496, 446, 532, 534, 670],
+  ["Phi3-mini 3.8B", 494, 460, 547, 535, 621],
+  ["Portfolio (all LLMs)", 842, 796, 900, 907, 1013],
+]} />
+
+## Key findings
+- <Finding src="Tab.2, p.6">Sketches are the load-bearing component: vs the basic prompt they add +85 (CodeGemma), +81 (CodeLlama), +65 (Granite), +53 (Phi3), +36 (Gemma) repairs — but only +14 for Llama3</Finding>: the FL signal pays off most for the code-specialized models, and the strongest general model is nearly indifferent to it.
+- <Finding src="Tab.2, p.6">FIXME annotations — the same FL information as comments instead of holes — reduce repairs for every LLM in the no-reference setting</Finding> (e.g. Granite 566 vs 626; portfolio 796 vs 842): localization only helps when it reshapes the artifact, so the paper's RQ3 answer ("Sketches or even FIXME annotations" help) is supported by the evidence for sketches only.
+- <Finding src="p.7">The CEGIS loop barely iterates: mean 1.14 iterations (max 7), and 89% of successful repairs pass on the first attempt</Finding>; counterexamples give consistent gains only for CodeGemma (+6 to +9) and Llama3 (+13 to +26), mixed or negative elsewhere — the title's counterexample guidance is the smallest lever in the system.
+- <Finding src="Tab.2–3 + Fig.2, p.6–7">Reference implementations inflate counts but corrupt patch quality: Granite reaches 876 repairs (61.2%) with Sk De-TS-CE-RI, yet 442 of them (50.5%) are verbatim copies (TED 0 to the reference), and its cumulative distance score drops from 533.6 to 334.5</Finding> — mean per-repair quality roughly 0.78 → 0.38 (computed from Tab.2–3).
+- <Finding src="Tab.4, p.6">On the subset CLARA structurally cannot repair (54.7% of the benchmark), Granite + Sk De-TS still fixes 290 programs (37.0%)</Finding> — the hybrid covers exactly the control-flow blind spot that defeats alignment-based symbolic tools.
+- <Finding src="Tab.5, p.6">Repair rate collapses with <Term def="count of independent paths through a program's control flow; a standard structural complexity metric">cyclomatic complexity</Term>: from 76.5% (CodeGemma, Q1: 1.0–2.5) to at best 17.1% (Granite, Q4: 7.0–26; CLARA 10.9%)</Finding> — every method, symbolic or neural, struggles above complexity 7.
+
+## Implications
+Evidence that verifier-in-the-loop harness design substitutes for model scale: small, quantized, off-the-shelf models — chosen deliberately for classroom cost and student-data privacy — beat specialized symbolic tools once localization and adjudication are mechanical. The lineage is <Related>CEGIS and sketch-based synthesis (Solar-Lezama et al. 2005/2006; Jha et al. 2010)</Related> plus <Related>MaxSAT fault localization (Bug-Assist, Jose & Majumdar 2011; model-based diagnosis, Reiter 1987; CFaults, FM 2024)</Related>; it contrasts with <Related>RING (few-shot repair using FL from error messages, AAAI 2023)</Related> and <Related>PyDex (iterative Codex querying for Python IPAs, OOPSLA 2024)</Related>. The v1 PDF carries the AAAI 2025 copyright block. <FollowUp>Whether FL-derived holes transfer to repo-scale APR (SWE-bench-style), where minimal diagnoses and full-suite execution are far costlier</FollowUp>; <FollowUp>held-out-test evaluation to measure how often hole fills overfit the given suite</FollowUp>.
+
+## Limitations
+- <Caveat>No held-out tests: "repaired" means passing the same suite that supplies the counterexamples</Caveat>, so patch overfitting is unmeasured — the distance score penalizes oversized rewrites, not wrong-but-plausible hole fills.
+- <Caveat>Single benchmark of small C90 intro assignments, authored by the same group</Caveat>; generalization beyond IPAs is untested, and everything collapses above cyclomatic complexity 7.
+- <Caveat>No variance, seeds, or significance testing; decoding parameters (temperature, samples per query) are not reported</Caveat> — "significantly improves" is colloquial, not statistical.
+- <Caveat>The 90 s budget structurally penalizes the slow symbolic baselines (CLARA times out on 10.8%)</Caveat>; whether FL time counts inside the budget is Unclear.
+- <Caveat>Only 3.8–8B open models under 4-bit quantization</Caveat> (a deliberate cost/privacy choice); frontier-model behavior with sketches is unknown.
+- <Caveat>Table 3's distance score is a sum over repaired programs</Caveat>, conflating repair count with per-patch quality; per-repair means are never reported.
+
+## Critiques and Questions
+1. The RQ3 conclusion overstates FIXME annotations: without a reference implementation they reduce repairs for all six LLMs. Why annotating fails while deleting works (attention to residual buggy text? instruction-following limits?) is exactly the interesting question, and it goes unasked.
+2. Internal count inconsistency: the CLARA-fail subset is stated as "738 programs (54.7%)", but 54.7% of 1,431 is ~782, and Table 4's percentages are consistent with a ~782 denominator (e.g. 290/782 = 37.1%); CLARA's outcome row (495 + 154 + 738 = 1,387) also fails to sum to 1,431. The 738 looks like a typo for 782.
+3. The text claims Granite "leads" without reference implementations at 59.1%, but Llama3's portfolio row is higher (851, 59.5%); Granite leads per-configuration, not on portfolios.
+4. MaxSAT FL is only as sound as the test suite: with weak suites the minimal diagnosis can delete the wrong lines, and FL precision (how often holes land on the true bug) is never measured.
+5. Since 89% of repairs need one iteration, how much of the win is localization vs iteration? A budget-matched ablation (basic prompt with more CE rounds vs sketch with none) would isolate it; Sk De-TS ≈ Sk De-TS-CE in Tab.2 already hints the loop is nearly vestigial.
+
+<SelfCheck q="In this paper's CEGIS loop, what plays the verifier, and what exactly does the LLM receive when its candidate fails?" a="The Decider — plain execution of the candidate program against the assignment's IO test suite; no LLM judges anything. On failure, the prompt generator sends a feedback message stating the previous suggestion was incorrect, plus one concrete counterexample (a failing input with its expected output), and asks for revised code only." />
+
+## Glossary
+- <Term def="formula-based fault localization: encode the program and its failing tests as a MaxSAT optimization and enumerate minimal statement sets (diagnoses) explaining the failures; built on model-based diagnosis">FBFL</Term>
+- <Term def="partially incomplete program in which every localized buggy statement is replaced by a placeholder hole to be synthesized">program sketch</Term>
+- <Term def="per-repair patch-quality score in `[0,1]` (Eq.1): 0 when the fix is as large as copying the reference, near 1 for minimal edits">distance score</Term>
+- <Term def="prompt-content abbreviations: De = assignment description, TS = test suite, CE = counterexample feedback, RI = lecturer reference implementation, CPA = AST-closest prior correct student program, Sk = hole sketch, FIXME = buggy-line comments">De/TS/CE/RI/CPA/Sk</Term>
+- <Term def="optimization version of SAT: find an assignment maximizing the number of satisfied clauses of a CNF formula">MaxSAT</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Ingested for the TDE related-work corpus (survey cat. G). Reusable mechanics for TDE: (1) the verifier returns a concrete counterexample, not a scalar score — the red test is the feedback signal; (2) the formal component also constrains the LLM's writable region (holes), a static cousin of TDE's per-action gating; (3) adjudication is execution-only. Asymmetries to cite in the novelty defense: the suite is human-authored and pre-existing (no NL→suite compilation), the oracle is program IO rather than world state, there is no runtime action gating, and the CEGIS iteration is nearly vestigial here (89% one-shot) — mechanical localization, not the loop, carries the result. Venue: AAAI-25 per the copyright block (arXiv v1 dated 19 Dec 2024).
+{/* NOTES_END */}

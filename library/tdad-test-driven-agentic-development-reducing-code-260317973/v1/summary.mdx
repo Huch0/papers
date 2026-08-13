@@ -1,0 +1,115 @@
+---
+canonical_key: arxiv-2603.17973
+version_key: v1
+title: 'TDAD: Test-Driven Agentic Development - Reducing Code Regressions in AI Coding Agents via Graph-Based
+  Impact Analysis'
+authors:
+- Pepe Alonso
+- Sergio Yovine
+- Victor A. Braberman
+venue: arXiv
+year: 2026
+tags:
+- tde-related-work
+- test-based-eval
+topic_groups:
+- software_engineering_agents
+triage_label: SKIM
+triage_confidence: high
+source_link: https://arxiv.org/abs/2603.17973v2
+summary_date: '2026-08-13'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>TDAD statically indexes a Python repo into a code–test dependency graph, exports the at-risk tests as a grep-able `test_map.txt` plus a 20-line agent skill, and has the coding agent verify exactly those tests before submitting — cutting test-level regressions on SWE-bench Verified by 70% (6.08% → 1.82%), while procedural TDD prompting *without* that context made regressions worse than doing nothing.</TLDR>
+
+<WhyItMatters>For TDE this is the "tests gate the agent" idea in its QA/regression form: mechanical, pytest-executed verification the agent must run before submission, with a self-correction loop — but the tests are *pre-existing* repo tests selected by static impact analysis, not an acceptance suite compiled from the instruction; task completion is still adjudicated externally by SWE-bench's F2P tests, and there is no per-action pre/postcondition gating. Its TDD Prompting Paradox — prescribing a test-first *procedure* in the prompt hurts, surfacing targeted test *context* helps — is direct evidence for TDE's choice to make red–green a harness-enforced mechanism rather than a prompt instruction. (Distinct from Rehan's same-acronym "Test-Driven AI Agent Definition"; the paper itself disambiguates.)</WhyItMatters>
+
+<KeyStats items={[
+  { value: "70%", label: "test-level regression cut", sub: "6.08% → 1.82%, 100 SWE-bench Verified instances, Qwen3-Coder 30B" },
+  { value: "9.94%", label: "regression with TDD prompt alone", sub: "vs 6.08% vanilla — the TDD Prompting Paradox" },
+  { value: "+8pp", label: "resolution as a portable skill", sub: "24% → 32%, Phase 2: Qwen3.5-35B-A3B + OpenCode" },
+  { value: "12% → 60%", label: "resolution via auto-improvement loop", sub: "15 iterations, 10-instance eval, 0% regression" },
+]} />
+
+## Motivation
+<Problem>AI coding agents frequently break previously-passing tests</Problem>: the vanilla baseline here caused 562 <Term def="PASS_TO_PASS: tests that passed before the gold patch and must still pass after; failures are regressions">P2P</Term> failures across 100 SWE-bench Verified instances — about 6.5 broken tests per generated patch (§1). Yet <Problem>benchmarks report resolution rate almost exclusively; regression data is collected by the SWE-bench harness but never surfaced in leaderboards</Problem>, which the authors argue creates a perverse incentive rewarding aggressive patching (§2.1, §6.2). External evidence backs the concern: METR found roughly half of 296 SWE-bench-passing patches would not be merged by real maintainers, and Ehsani et al. find CI/CD failures and regressions among the top rejection reasons for 33k agent-authored PRs. Mechanically, <Problem>preventing regressions requires dependency awareness the agent lacks</Problem> — running all tests is too slow, running nearby tests misses indirect dependencies, and classical <Term def="regression test selection: classical SE techniques for choosing which tests to re-run after a change">RTS</Term> assumes a post-commit CI consumer, not a context-window-limited agent that must verify *before* submission (§1, §2.2).
+
+## Contribution (what's new)
+<Novelty>Pre-change, graph-based test-impact analysis delivered as static, grep-able context</Novelty>: a `test_map.txt` mapping source files to their tests plus a 20-line `SKILL.md` ("fix, grep, verify"), so at runtime the agent needs only grep and pytest — no MCP server, graph database, or API calls. The load-bearing insight, stated by the authors: <Novelty>agents do not need to be told *how* to do TDD; they need to be told *which* tests to check</Novelty>. The design must take this form because the failure mode of the obvious alternative is measured in-paper: procedural TDD instructions crowd repository context out of a small model's 32K window and induce ambitious multi-file edits without localization, *increasing* regressions. Secondary deltas: elevating regression rate to a first-class benchmark metric, and an autonomous auto-improvement loop in which an agent iteratively rewrites TDAD's own skill and heuristics.
+
+## Research questions
+(1) Does surfacing which tests are at risk reduce agent regressions without sacrificing resolution? (2) Do procedural TDD instructions help or hurt when the agent is not told which tests to verify? (3) Does the mechanism generalize as a reusable skill across a different model and agent framework? (4) Can an agent-driven outer loop improve the tool itself without gaming the metric?
+
+## Methodology
+Stage 1 indexes a Python repository with the stdlib `ast` module into a code–test graph (File/Function/Class/Test nodes; CONTAINS/CALLS/IMPORTS/TESTS/INHERITS edges); a test linker attaches tests to code by naming conventions, then prefix matching, then directory proximity. Stage 2 scores impacted tests with four parallel strategies and exports the map. Evaluation uses the official SWE-bench Docker harness in two phases: Phase 1 (100 instances, Qwen3-Coder 30B, 4-bit, llama.cpp, 32K context, temperature 0, 15 min/instance; Vanilla vs TDD-Prompt vs GraphRAG+TDD) and Phase 2 (25 diverse instances, Qwen3.5-35B-A3B 4-bit MoE with 3B active params on Apple Silicon + the OpenCode v1.2.24 agent; baseline vs TDAD skill). Primary metric: test-level regression rate = total P2P failures / total P2P tests over non-empty patches (empty patches are excluded from P2P evaluation).
+
+<Pass title="Method details">
+<Stepper steps={[
+  { title: "Indexing (§3.3)", body: "AST parser extracts function/class definitions, imports, and call targets (recursive visitor handling attribute chains). Tests identified by convention: test_*.py / *_test.py files, test_* functions, Test* classes. Graph builder resolves calls via module-scoped names." },
+  { title: "Test linking (§3.3)", body: "Three strategies in priority order: naming conventions (test_foo.py → foo.py, incl. underscore-prefixed scientific-Python variants), progressive prefix truncation, directory proximity for ambiguous stems. Monolithic test modules (Django's tests.py) get a dedicated nearest-non-test-ancestor proximity algorithm." },
+  { title: "Impact scoring (§3.4)", body: "Four strategies with balanced-profile weights — Direct 0.95, Transitive (1–3 call hops) 0.70, Coverage (file-level) 0.80, Imports 0.50 — merged with confidence values 1.0 / 0.56 / 0.5 / 0.45; the max score wins when a test surfaces via several strategies. Tiers: `high ≥ 0.8, medium 0.5–0.8, low < 0.5`; default cap 50 tests; conservative/balanced/aggressive profiles. Constants were set heuristically, then refined by the auto-loop." },
+  { title: "Delivery (§3.5–3.6)", body: "test_map.txt (one mapping per line) + 20-line SKILL.md. Backend migrated from Neo4j+Docker to in-memory NetworkX (pip install tdad, pickle persistence); Neo4j remains optional via TDAD_BACKEND=neo4j." },
+  { title: "Auto-improvement loop (Alg.1, §5.5)", body: "Each iteration a Claude Code agent makes one focused change to TDAD's files; unit tests gate acceptance; a 5–25-instance SWE-bench eval decides keep/revert against the best snapshot (lateral moves kept for exploration). Anti-gaming: the eval script is SHA-256-checksummed and read-only; 5 consecutive reverts force a restore." },
+]} />
+
+<MathBlock>{`\\mathrm{score} = (1 - c_w)\\cdot w_{\\mathrm{strategy}} + c_w\\cdot \\mathrm{confidence}, \\qquad c_w = 0.3`}</MathBlock>
+</Pass>
+
+## Main result
+<Finding src="Tab.4, p.4">GraphRAG+TDD cut P2P failures 72% vs vanilla (562 → 155) and 81% vs TDD-only (799 → 155), dropping test-level regression rate from 6.08% to 1.82% and catastrophic regressions (all P2P tests failing) from 3 to 1</Finding> — at the cost of 2pp resolution (31% → 29%) and a lower generation rate (86% → 74%).
+
+<SortableTable columns={["Metric", "Vanilla", "TDD Prompt", "GraphRAG+TDD"]} rows={[
+  ["Resolution rate (%)", 31, 31, 29],
+  ["Generation rate (%)", 86, 75, 74],
+  ["Total P2P tests", 9245, 8040, 8536],
+  ["P2P failures", 562, 799, 155],
+  ["Test-level regression (%)", 6.08, 9.94, 1.82],
+  ["Instance-level regression (%)", 30.2, 33.3, 33.3],
+  ["Catastrophic instances", 3, 5, 1],
+]} />
+
+The instance-level rates *appear* to contradict the headline; the paper shows this is a denominator artifact of GraphRAG's lower generation rate (25 regressing instances of 74 generated vs vanilla's 26 of 86) and argues test-level rate is primary because it captures severity — a patch breaking 322 tests is not the same as one breaking 1 (§5.1).
+
+## Key findings
+- <Finding src="Tab.4, §5.2">TDD Prompting Paradox: TDD workflow instructions without the test map increased regressions to 9.94% — 42% more P2P failures than vanilla, and 5 catastrophic instances vs 3</Finding>: verbose procedure pushed repository context out of the 32K window, and "ambition without localization" caused collateral damage; on django-13089, TDD prompting failed 352/352 P2P tests where vanilla failed 4 (Tab.5).
+- <Finding src="§5.2">The gain requires graph-derived context, not prompt brevity</Finding>: shortening the prompt without the map (119 → 49 lines) *decreased* resolution 30% → 20% in prior experiments, while 49-line vanilla and 119-line TDD both resolved 31% — only a short prompt *plus* the test map improved outcomes.
+- <Finding src="§5.3">The 2pp resolution dip is abstention, not worse patches</Finding>: GraphRAG+TDD produced more empty patches (26% vs 14%) when the map signaled risk; among patches actually generated, it was no less likely to resolve the issue.
+- <Finding src="§5.3">No configuration produced a patch that was simultaneously resolved and regressed ("Resolved w/ regr." = 0)</Finding>: for this model, correct fixes and regressions are disjoint failure modes, so verification gates that suppress harmful patches cost little resolution.
+- <Finding src="Tab.6, §5.4">As a portable skill (different model + OpenCode framework), TDAD raised resolution 24% → 32% and generation 40% → 68%</Finding>; with both arms at 0% regression on these 25 instances, the mechanism differed from Phase 1 — the code–test graph doubled as structural context that helped the agent navigate and produce patches at all.
+- <Finding src="Tab.7, §5.5">The auto-improvement loop took resolution 12% → 60% (vs 24% vanilla on the same 10-instance eval) with 0% regression throughout; only 4 of 15 iterations were accepted</Finding>: the single biggest win was simplifying SKILL.md from 107 lines of 9-phase TDD instructions to 20 lines (12% → 50% alone), and every rejected attempt to make the skill *more* prescriptive decreased resolution.
+
+## Implications
+The paper distills a design principle for agent tooling — *context over procedure*: information density beats procedural completeness for small-context agents, echoing the context-quality claims of <Related>GraphRAG-style graph-structured retrieval (Edge et al.)</Related>. It adapts <Related>classical RTS (Elbaum et al., Legunsen et al., Gligoric et al., Chianti)</Related> to a pre-commit, agent-consumed setting, and joins <Related>METR's maintainer-merge audit and Ehsani et al.'s failed-PR study</Related> in pushing regression to first-class status — proposing `net score = resolution rate − α · regression rate` with `α > 1` (§6.2). It explicitly disambiguates itself from <Related>Rehan's same-acronym TDAD ("Test-Driven AI Agent Definition", arXiv 2603.08806), which validates TDD for agent *behavior compliance*, not code patches</Related>. <FollowUp>Whether the TDD Prompting Paradox persists for frontier models with long contexts — the authors' own future-work question</FollowUp>; <FollowUp>Tree-sitter-based multi-language support and dynamic coverage integration</FollowUp>; <FollowUp>whether SWE-bench leaderboards adopt P2P surfacing</FollowUp>.
+
+## Limitations
+- <Caveat>Small samples, no significance tests</Caveat>: 100 (Phase 1) and 25 (Phase 2) instances; the authors argue the 562 → 155 effect is large enough to be practical but concede smaller effects could be noise.
+- <Caveat>Two small, 4-bit-quantized local models under stress-test conditions</Caveat>: baselines of 31% and 24% sit far below the ~52% (Qwen3-Coder 30B, full scaffolds) and 69.2% (Qwen3.5-35B-A3B) reference numbers, and the paradox may not transfer to frontier models where instructions consume a smaller context fraction (§4.2, §6.4).
+- <Caveat>Python-only, static analysis</Caveat>: cannot capture dynamic dispatch, monkey-patching, or runtime-generated code (§6.3).
+- <Caveat>Auto-loop evaluated on a fixed 10-instance set</Caveat> — overfitting risk, mitigated only by the accepted changes being structural and generalizing to the disjoint 25-instance Phase 2 set (§6.4).
+- <Caveat>Sequential (not interleaved) configuration runs</Caveat>; time-dependent confounds are argued away via temperature 0 and Docker isolation (§6.4).
+- <Caveat>Construct validity: all P2P failures weighted equally, and the P2P set may not cover every affected code path</Caveat> (§6.4).
+
+## Critiques and Questions
+1. **No map-without-TDD-prompt arm in Phase 1.** GraphRAG+TDD bundles the test map *with* TDD instructions, so the map's isolated effect on regressions is never directly measured; the prompt-length ablations come from unspecified "prior experiments" whose 30%/20% numbers match no Table 4 configuration.
+2. **Phase 2 arithmetic doesn't close.** Table 6 reports "Generated 17/25 (68%)" but "Res. of generated 8/13 (62%)" — the denominator 13 is unexplained against 17 non-empty patches (8/17 would be 47%). Similarly, instance-level regression for GraphRAG is 25/74 = 33.8%, reported as 33.3%. Minor, but sloppy reporting in the paper's own tables.
+3. **Comparisons are not paired.** The three Phase 1 configs generated patches on different instance subsets (86/75/74 non-empty; P2P pools 9,245/8,040/8,536), so part of the test-level reduction could come from abstaining on precisely the riskiest instances. The paper frames abstention as a feature ("knew what it didn't know") but reports no per-instance paired analysis.
+4. **The auto-loop accepts on resolution only.** 0% regression is an observed outcome, not an acceptance criterion, and 10-instance evals make the 12% → 60% trajectory noise-prone; the claimed convergence "by iteration 5" sits oddly with accepted changes at iterations 12 and 13.
+5. **Phase 2's +8pp resolution rests on n=25 with acknowledged non-determinism** (four instances gained, two baseline wins lost) — directionally encouraging, not conclusive.
+
+<SelfCheck q="Both the TDD-prompt arm and TDAD invoke the same 'verify before you commit' philosophy — why did one raise regressions to 9.94% while the other cut them to 1.82%?" a="The prompt-only arm prescribes procedure: verbose TDD instructions consumed scarce context tokens (pushing out repository context the 30B model needed) and encouraged ambitious multi-file fixes without saying which tests were at risk. TDAD replaces procedure with targeted context: a 20-line skill plus a grep-able test_map.txt frees context and points verification at the specific at-risk tests, so the agent can run them and self-correct before submitting." />
+
+## Glossary
+- <Term def="tests that passed before the gold patch and must still pass after the agent's patch; failures count as regressions">PASS_TO_PASS (P2P)</Term> / <Term def="issue-specific tests the patch must make pass; passing all of them counts as resolution">FAIL_TO_PASS (F2P)</Term>
+- <Term def="human-validated 500-instance subset of SWE-bench drawn from 12 popular Python repositories">SWE-bench Verified</Term>
+- <Term def="a static instruction file (here 20 lines) plus artifacts the agent consults at runtime with ordinary tools like grep">agent skill</Term>
+- <Term def="the paper's Phase 1 configuration name: TDD prompt + SKILL.md + test_map.txt; the label nods to graph-structured retrieval, not a specific external system">GraphRAG+TDD</Term>
+- <Term def="the open-source coding-agent framework (v1.2.24) used in Phase 2">OpenCode</Term>
+- <Term def="an instance where the agent's patch fails every P2P test">catastrophic regression</Term>
+
+{/* NOTES_START */}
+### Personal notes
+TDE framing: TDAD solves the *selection* problem (which existing tests are at risk of a code change) statically, before commit; TDE's core is the *compilation* problem (which assertions over final world state define task success) at runtime. Both make verification mechanical (pytest, not an LLM judge) and both gate submission on green. The paradox result is the most quotable datum for TDE's novelty defense: prompt-prescribed test-discipline backfires (6.08% → 9.94%) while environment-supplied, targeted test context works (→ 1.82%) — i.e., the discipline belongs in the harness, not the prompt. Watch the name collision: Rehan's arXiv 2603.08806 uses the same acronym for behavioral-spec-compiled agent prompts (97.2% "regression safety") — cite the right one.
+{/* NOTES_END */}

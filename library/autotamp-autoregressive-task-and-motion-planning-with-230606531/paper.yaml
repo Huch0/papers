@@ -1,0 +1,59 @@
+canonical_key: arxiv-2306.06531
+slug: autotamp-autoregressive-task-and-motion-planning-with-230606531
+title: 'AutoTAMP: Autoregressive Task and Motion Planning with LLMs as Translators and Checkers'
+authors:
+- Yongchao Chen
+- Jacob Arkin
+- Charles Dawson
+- Yang Zhang
+- Nicholas Roy
+- Chuchu Fan
+year: 2023
+primary_ids:
+  doi: null
+  arxiv_base_id: '2306.06531'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2306.06531v3
+- https://arxiv.org/pdf/2306.06531v3
+topic_groups:
+- general_agent_methods
+tags:
+- planner-executor-verifier
+- tde-related-work
+venue:
+  name: ICRA
+  tier: A_star
+  status: accepted
+  year: 2024
+user:
+  read_status: unread
+  triage_label: SKIP
+  triage_confidence: medium
+  notes: null
+milestone: null
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v3
+  source: arxiv
+  source_url: https://arxiv.org/abs/2306.06531v3
+  pdf_path: library/autotamp-autoregressive-task-and-motion-planning-with-230606531/v1/paper.pdf
+  summary_path: library/autotamp-autoregressive-task-and-motion-planning-with-230606531/v1/summary.mdx
+  metadata_path: library/autotamp-autoregressive-task-and-motion-planning-with-230606531/v1/metadata.yaml
+  fetched_at: '2026-08-13T07:15:55Z'
+  source_updated_at: '2024-03-22T00:21:04Z'
+  arxiv_version: v3
+  pdf_sha256: 5568c05e4f10251e309493df6b5c661634e0f6942d8b5aba63cbe49e9cbdd701
+  pdf_bytes: 4509506
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-08-13T07:15:55Z'
+  updated_at: '2026-08-13T10:24:52Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

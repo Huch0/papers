@@ -1,0 +1,60 @@
+canonical_key: arxiv-2604.26615
+slug: tdd-governance-for-multi-agent-code-generation-260426615
+title: TDD Governance for Multi-Agent Code Generation via Prompt Engineering
+authors:
+- Tarlan Hasanli
+- Shahbaz Siddeeq
+- Bishwash Khanal
+- Pyry Kotilainen
+- Tommi Mikkonen
+- Pekka Abrahamsson
+year: 2026
+primary_ids:
+  doi: null
+  arxiv_base_id: '2604.26615'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2604.26615v1
+- https://arxiv.org/pdf/2604.26615v1
+topic_groups:
+- software_engineering_agents
+tags:
+- multi-agent
+- tde-related-work
+- test-based-eval
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2026
+user:
+  read_status: unread
+  triage_label: TRACK_ONLY
+  triage_confidence: high
+  notes: null
+milestone: null
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v1
+  source: arxiv
+  source_url: https://arxiv.org/abs/2604.26615v1
+  pdf_path: library/tdd-governance-for-multi-agent-code-generation-260426615/v1/paper.pdf
+  summary_path: library/tdd-governance-for-multi-agent-code-generation-260426615/v1/summary.mdx
+  metadata_path: library/tdd-governance-for-multi-agent-code-generation-260426615/v1/metadata.yaml
+  fetched_at: '2026-08-13T07:14:07Z'
+  source_updated_at: '2026-04-29T12:43:22Z'
+  arxiv_version: v1
+  pdf_sha256: 5c26d221e58c79c378c6e79518403f964950a4b921613405bb07c5b99da8139f
+  pdf_bytes: 1849949
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-08-13T07:14:07Z'
+  updated_at: '2026-08-13T10:17:40Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

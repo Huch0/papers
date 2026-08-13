@@ -1,0 +1,76 @@
+canonical_key: arxiv-2606.09863
+version_key: v1
+title: 'From Confident Closing to Silent Failure: Characterizing False Success in LLM Agents'
+authors:
+- Laksh Advani
+abstract: 'LLM agents can fail silently by asserting task completion when the environment state shows
+  otherwise. We study this failure mode, false success, across two agent benchmarks: 9,876 tau2-bench
+  trajectories from 8 model families and 1,879 AppWorld trajectories from 4 model families with text-independent
+  ground truth. False success is common but varies by setting: 45--48% of failures in single-control tau2-bench
+  domains, 3% in dual-control telecom, and 75.8% among AppWorld self-assessing coding-agent trajectories
+  with explicit status claims. LLM judges fail reliably: no configuration across 5 judges, 5 prompt strategies,
+  and full task specifications exceeds AUROC 0.65 on tau2-bench, and the same judges reach only 0.54 AUROC
+  on AppWorld API-call traces. Judges rely on surface completion proxies -- confident closing language
+  in tau2-bench and coarse action-sequence volume in AppWorld -- rather than verified state changes. Lightweight
+  TF-IDF detectors achieve task-disjoint AUROC 0.83 on tau2-bench and 0.95 on AppWorld, recovering 4--8x
+  more false successes than the best judge at the same flag rate with 3,300x lower latency. These results
+  suggest that production monitoring should use lightweight, domain-calibrated detectors as triage signals
+  rather than relying on LLM judges as the primary monitor for false success.'
+venue: arXiv
+year: 2026
+source: arxiv
+source_url: https://arxiv.org/abs/2606.09863v1
+pdf_url: https://arxiv.org/pdf/2606.09863v1
+pdf_sha256: ab1307fdaaf97841bd09296bca225b736e8e9a712002ac123b1fab663f35ba6a
+fetched_at: '2026-08-13T07:14:47Z'
+source_updated_at: '2026-06-01T00:13:23Z'
+ids:
+  doi: null
+  arxiv_id: 2606.09863v1
+  arxiv_base_id: '2606.09863'
+  arxiv_version: v1
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- evaluation-harness
+- llm-judge
+- reliability-concern
+- tde-related-work
+topic_groups:
+- agent_harness
+- general_agent_methods
+scoring:
+  score: 38.7
+  label: TRACK_ONLY
+  confidence: high
+  rationale: 'score=39 -> TRACK_ONLY | strong: recency(0.89), interest_fit(0.73), venue_quality(0.40)
+    | interests: agent_harness:group:agent_harness, general_agent_methods:group:general_agent_methods'
+  matched_interests:
+  - agent_harness:group:agent_harness
+  - general_agent_methods:group:general_agent_methods
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 0.887
+    venue_quality: 0.4
+    harness_relevance: 0.36
+    novelty: 0.0
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/from-confident-closing-to-silent-failure-characterizing-260609863/v1/paper.pdf
+  extraction: library/from-confident-closing-to-silent-failure-characterizing-260609863/v1/extraction.txt
+  summary: library/from-confident-closing-to-silent-failure-characterizing-260609863/v1/summary.mdx
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread
+  summary_format: mdx

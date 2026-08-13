@@ -32,9 +32,9 @@ topic_groups:
 tags:
 - foundational
 venue:
-  name: arXiv
+  name: NeurIPS
   tier: workshop_or_minor
-  status: unknown
+  status: accepted
   year: 2025
 user:
   read_status: unread

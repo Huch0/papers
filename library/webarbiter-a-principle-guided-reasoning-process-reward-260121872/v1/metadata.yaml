@@ -1,0 +1,81 @@
+canonical_key: arxiv-2601.21872
+version_key: v1
+title: 'WebArbiter: A Principle-Guided Reasoning Process Reward Model for Web Agents'
+authors:
+- Yao Zhang
+- Shijie Tang
+- Zeyu Li
+- Zhen Han
+- Volker Tresp
+abstract: 'Web agents hold great potential for automating complex computer tasks, yet their interactions
+  involve long-horizon, sequential decision-making with irreversible actions. In such settings, outcome-based
+  supervision is sparse and delayed, often rewarding incorrect trajectories and failing to support inference-time
+  scaling. This motivates the use of Process Reward Models (WebPRMs) for web navigation, but existing
+  approaches remain limited: scalar WebPRMs collapse progress into coarse, weakly grounded signals, while
+  checklist-based WebPRMs rely on brittle template matching that fails under layout or semantic changes
+  and often mislabels superficially correct actions as successful, providing little insight or interpretability.
+  To address these challenges, we introduce WebArbiter, a reasoning-first, principle-inducing WebPRM that
+  formulates reward modeling as text generation, producing structured justifications that conclude with
+  a preference verdict and identify the action most conducive to task completion under the current context.
+  Training follows a two-stage pipeline: reasoning distillation equips the model with coherent principle-guided
+  reasoning, and reinforcement learning corrects teacher biases by directly aligning verdicts with correctness,
+  enabling stronger generalization. To support systematic evaluation, we release WebPRMBench, a comprehensive
+  benchmark spanning four diverse web environments with rich tasks and high-quality preference annotations.
+  On WebPRMBench, WebArbiter-7B outperforms the strongest baseline, GPT-5, by 9.1 points. In reward-guided
+  trajectory search on WebArena-Lite, it surpasses the best prior WebPRM by up to 6.4 points, underscoring
+  its robustness and practical value in complex web tasks.'
+venue: arXiv
+year: 2026
+source: arxiv
+source_url: https://arxiv.org/abs/2601.21872v2
+pdf_url: https://arxiv.org/pdf/2601.21872v2
+pdf_sha256: be01f5f24694981094da90223238dcc3b9e89c9c3a547b92d4ebac7180574c68
+fetched_at: '2026-08-13T07:17:47Z'
+source_updated_at: '2026-04-09T17:48:11Z'
+ids:
+  doi: null
+  arxiv_id: 2601.21872v2
+  arxiv_base_id: '2601.21872'
+  arxiv_version: v2
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- llm-judge
+- tde-related-work
+topic_groups:
+- computer_use_agents
+scoring:
+  score: 61.5
+  label: SKIM
+  confidence: high
+  rationale: 'score=62 -> SKIM | strong: novelty(1.00), interest_fit(0.91), recency(0.79) | interests:
+    computer_use_agents:web agent, computer_use_agents:group:computer_use_agents'
+  matched_interests:
+  - computer_use_agents:web agent
+  - computer_use_agents:group:computer_use_agents
+  negative_signals: []
+  subscores:
+    interest_fit: 0.91
+    recency: 0.788
+    venue_quality: 0.4
+    harness_relevance: 0.52
+    novelty: 1.0
+    artifact_availability: 0.55
+    evaluation_quality: 0.0
+    trend_signal: 0.7
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/webarbiter-a-principle-guided-reasoning-process-reward-260121872/v1/paper.pdf
+  extraction: library/webarbiter-a-principle-guided-reasoning-process-reward-260121872/v1/extraction.txt
+  summary: library/webarbiter-a-principle-guided-reasoning-process-reward-260121872/v1/summary.mdx
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread
+  summary_format: mdx

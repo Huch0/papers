@@ -1,0 +1,110 @@
+---
+canonical_key: arxiv-2406.03003
+version_key: v1
+title: Verified Code Transpilation with LLMs
+authors:
+- Sahil Bhatia
+- Jie Qiu
+- Niranjan Hasabnis
+- Sanjit A. Seshia
+- Alvin Cheung
+venue: arXiv
+year: 2024
+tags:
+- tde-related-work
+- verifier
+topic_groups:
+- software_engineering_agents
+triage_label: SKIP
+triage_confidence: high
+source_link: https://arxiv.org/abs/2406.03003v1
+summary_date: '2026-08-13'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>LLMLIFT replaces the hand-engineered symbolic search inside verified lifting with a prompted LLM: GPT-4 drafts both the DSL translation (as a Python-IR expression) and the loop invariants needed to prove it, an SMT theorem prover mechanically certifies functional equivalence before anything is emitted, and the resulting compilers match or beat four bespoke symbolic transpilers with roughly 100-line prompts instead of 1000+ LoC of expert heuristics.</TLDR>
+
+<WhyItMatters>For TDE this is the cleanest pure instance of the synthesize-then-mechanically-verify pattern: an LLM proposes, a theorem prover — never an LLM judge — adjudicates, and rejected candidates loop back until verification passes (a red–green loop over proofs, exactly the de-circularized adjudication TDE wants). The deltas are equally clean: the verified property is static program equivalence of side-effect-free functions, the specification already exists in formal form (the source program itself), and there is no environment, no agent/action loop, and no runtime pre/postcondition gating — TDE's hard problems (compiling an NL instruction into the acceptance oracle; gating state-changing actions over evolving world state) never arise here.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "137/138", label: "benchmarks verified", sub: "4 DSLs, aggregated from §4.1–4.4; symbolic tools 130/138" },
+  { value: "6×", label: "faster on average (claimed)", sub: "verified code + proof vs symbolic VL tools (§1)" },
+  { value: "~100", label: "prompt lines per DSL", sub: "vs ≈1000–1200 LoC of expert heuristics (TACO case)" },
+  { value: "23/23 vs 20/23", label: "two-phase vs single-phase", sub: "PS-then-invariant beats joint generation (§4.5)" },
+]} />
+
+## Motivation
+Porting code into DSLs (Spark, TACO, packet-switch ISAs) unlocks domain-specific optimization, but <Problem>manual rewriting is tedious, bug-prone, and may silently change semantics</Problem>. <Problem>LLM transpilers give no functional-correctness guarantee and hallucinate APIs for low-resource DSLs</Problem> — a GPT-3.5 C++-to-TACO attempt invents non-existent TACO functions (Fig. 3). <Term def="translating code in a lower-level general-purpose language to equivalent code in a DSL, with machine-checked functional equivalence obtained via program synthesis">Verified lifting (VL)</Term> does guarantee correctness, but <Problem>every VL tool needs a per-DSL symbolic synthesizer plus hand-written search-space descriptions and heuristics (≈1000–1200 LoC per domain), or a parallel source–target corpus for neural search</Problem>. And <Problem>LLMs cannot simply write the verification artifacts directly, because prover languages like SMT-LIB are low-resource in training data</Problem>.
+
+## Contribution (what's new)
+<Novelty>Use the LLM as the search procedure of verified lifting — generating both the candidate program and its proof annotations (loop invariants) together — while keeping a theorem prover as the sole adjudicator of correctness</Novelty>; the authors claim this is the first formally-verified LLM code transpilation. The enabling design choice: <Novelty>Python as the intermediate representation</Novelty> — DSL operator semantics are shown to the model as ordinary Python functions, and candidates/invariants are emitted as Python, sidestepping both unfamiliar DSL syntax and SMT-LIB generation; deterministic rewrite rules bridge to the prover and, after verification, to concrete DSL syntax. Because the prover decides and the LLM only proposes, model errors cost retries, never soundness — the same argument that motivated symbolic VL, now with the expensive search commoditized.
+
+## Research questions
+Can an LLM replace the symbolic search in verified lifting — proposing both the lifted program and the invariants a prover needs — while formal equivalence is still mechanically guaranteed? Does one prompt template generalize across DSLs with no per-DSL heuristics, fine-tuning, or training corpus? And how should generation be decomposed (program-then-proof vs jointly)?
+
+## Methodology
+The specification is the source program itself: find a <Term def="the candidate translation: a composition of DSL operators, expressed in the Python IR, that summarizes the source program">program summary (PS)</Term> and <Term def="a predicate over loop state that holds before and after every loop iteration; required to prove equivalence when the source has loops">loop invariants</Term> such that `∀σ. S(σ) = T(σ)` for every input state `σ`. GPT-4 (temperature 0.7, same prompts across all four domains) proposes; a syntactic parser filters; cvc5/z3 verify; only verified summaries are rewritten into DSL syntax.
+
+<Pass title="Method details">
+<Stepper steps={[
+  { title: "Formulation (§3.1)", body: "Source and target are side-effect-free functions. Search for PS in grammar G and invariants Inv in grammar GI such that equivalence holds for all input states (Eqs. 1–2). Invariants follow the templated VL structure f(i) AND e(Tlang) — an expression over loop indexes conjoined with an expression built from target-language operators (Eq. 3), much narrower than general invariant synthesis." },
+  { title: "Prompt (§3.3, Fig. 4, App. B)", body: "Three parts: a task instruction ('rewrite using only these functions'), the DSL operator semantics written as Python functions (the IR), and the source program as the specification. No fine-tuning, no parallel corpus; the same structure serves all four DSLs (~100 lines for TACO)." },
+  { title: "Two-phase generation", body: "Zero-shot prompt for the PS; then a one-shot prompt for invariants, which appends an assertion equating the return variable to the already-generated PS so the invariant is conditioned on it. Invariants are Boolean Python, not SMT-LIB. Budgets: 50 queries for PS, 10 invariant queries per PS." },
+  { title: "Filter + verify loop (App. A)", body: "A parser rejects candidates using constructs the prover-side translation lacks (for-loops, list comprehensions). Surviving PS+Inv pairs are translated to prover syntax and checked by cvc5/z3. If no invariant verifies, the PS is presumed wrong and fed back into the prompt as a negative example ('These generated programs are incorrect. Do not generate the same.'). No counterexamples are returned to the model — feedback is binary exclusion." },
+  { title: "Code generation", body: "The verified PS is translated to concrete DSL syntax by simple user-provided pattern-matching rewrite rules — easy to write because the PS is already phrased in target-language operators." },
+]} />
+
+<MathBlock>{`\\exists\\, PS \\in G\\;\\; \\exists\\, Inv \\in G_I\\;\\; \\forall \\sigma .\\; \\phi(\\sigma, PS, Inv, S), \\qquad \\phi \\triangleq S(\\sigma) = T(\\sigma)`}</MathBlock>
+</Pass>
+
+## Main result
+Across four DSL domains, <Finding src="§4.1–4.4">LLMLIFT verifies 137 of 138 benchmarks (aggregate) vs 130/138 for the specialized symbolic tools — 7 more benchmarks, roughly 6× faster on average (claimed), with per-DSL build effort dropping from ≈1000–1200 LoC of expert heuristics to a ~100-line prompt</Finding>.
+
+<SortableTable columns={["Domain (benchmarks)", "Baseline tool", "Solved: baseline → LLMLIFT", "Avg time: baseline → LLMLIFT", "Baseline heuristic LoC"]} rows={[
+  ["Spark / distributed (45)", "MetaLift", "40 → 44", "~3 min → under 1 min", "≈1000"],
+  ["Packet processing (10)", "MetaLift (Domino)", "10 → 10", "6 s → 2 s", "≈1100"],
+  ["TACO tensor algebra (60)", "C2TACO", "57 → 60", "41 s → 2 s", "1000+"],
+  ["Tensor IR (23)", "Tenspiler", "23 → 23", "115.14 s → 95.89 s", "≈1200"],
+]} />
+
+## Key findings
+- <Finding src="§4.1, p.7">The 4 Spark benchmarks LLMLIFT wins are exactly MetaLift's 1-hour timeouts</Finding>: LLM guessing beats symbolic search where the search space blows up; one Spark benchmark resists both tools and is never analyzed.
+- <Finding src="§4.3, App.C">Enumerative search hits a depth wall LLMLIFT does not</Finding>: the 3 TACO benchmarks C2TACO misses all need expression depth greater than 4 and stay unsolved even at a 1-day timeout (≈30k candidates enumerated); on 10 synthetic benchmarks of expression length 5–10, C2TACO solves 0/10 in 90 minutes while LLMLIFT solves 10/10 in under 2 s each.
+- <Finding src="§4.4, p.8">The heuristics LLMLIFT deletes are load-bearing for symbolic tools</Finding>: with its ≈1200 LoC of expert optimizations removed, Tenspiler collapses from 23/23 to 5/23 (1-hour timeout); heuristic-free LLMLIFT solves 23/23 and is still faster (95.89 s vs 115.14 s average).
+- <Finding src="§4.5, p.9">Decomposition matters: generating PS then invariant solves 23/23 tensor benchmarks vs 20/23 for joint single-prompt generation</Finding> — the authors hypothesize that conditioning the invariant on a fixed PS simplifies both tasks.
+- <Finding src="Tab.1, p.9">On the TACO suites, C2TACO dips on mathfu (91.6%), simpl_array (90%), and darknet (92.8%) while LLMLIFT scores 100% on all 8 suites</Finding>.
+- <Finding src="App.D">Both LLM failure modes are absorbed by the pipeline</Finding>: syntactic errors (Python constructs the SMT translation lacks) die at the parser; semantic errors (wrong term structure) die at the prover — neither can surface as incorrect output, so the LLM affects completeness and cost only.
+
+## Implications
+For synthesis, this reframes verified lifting: the search algorithm — historically the core research contribution — becomes a commodity LLM, and per-DSL engineering shrinks to writing operator semantics in Python. It sits on the <Related>verified-lifting lineage (Casper, MetaLift, C2TACO, Tenspiler, the Domino packet-transaction compiler)</Related>, against <Related>TransCoder-style neural transpilation (Roziere et al. 2020), which the authors name as closest prior work but which verifies nothing</Related>, and it fuses the previously separate <Related>LLM-invariant-generation thread (Pei et al. 2023, Chakraborty et al. 2023, Lemur)</Related> with code generation. <FollowUp>Feeding prover counterexamples back to the model (CEGIS-style) instead of binary "incorrect — do not repeat" exclusion</FollowUp>; <FollowUp>verifying the trusted edges (IR operator semantics, Python-to-SMT translation, PS-to-DSL rewrites)</FollowUp>; <FollowUp>whether the propose/prove split survives settings where the formal spec itself must first be synthesized from natural language — precisely TDE's setting</FollowUp>.
+
+## Limitations
+- <Caveat>Narrow program class: side-effect-free single-function kernels, with invariants restricted to the templated form `f(i) ∧ e(Tlang)`</Caveat> — far from whole-program or stateful transpilation.
+- <Caveat>The proof covers only the IR-level program summary</Caveat>: the hand-written Python operator semantics, the Python-to-prover translation, and the final PS-to-DSL rewrite rules are trusted, unverified components — a wrong operator definition yields a valid proof about the wrong thing.
+- <Caveat>Single model (GPT-4 at temperature 0.7), single runs, no variance; consumed query counts and API cost are not reported</Caveat>, and the single- vs two-phase ablation covers one domain "due to budget constraints".
+- <Caveat>The headline "1000×" less build effort is not derivable from the reported numbers</Caveat>: ≈1000–1200 LoC vs ~100 prompt lines is ~10×; the basis for 1000× is Unclear.
+- <Caveat>No quantitative unverified-LLM baseline</Caveat>: direct-to-DSL failure is shown only as a single GPT-3.5 anecdote (Fig. 3); training-data contamination of the public benchmark suites is not discussed.
+
+## Critiques and Questions
+1. Contamination: BLAS, darknet, mathfu, and the MetaLift Spark suite are public, and correct DSL translations of such classic kernels plausibly exist in GPT-4's training data. Soundness is immune, but the solve-rate and speed advantages may not transfer to genuinely new DSLs — the very case ("DSLs the model has never seen") the motivation leads with; every DSL evaluated has public artifacts.
+2. The loop discards most of the verifier's signal: cvc5/z3 can produce counterexamples, yet the prompt only receives "these are incorrect". How many of the 50×10 query budget a typical benchmark consumes is not reported, so the efficiency margin is characterized only by wall-clock.
+3. Wall-clock comparisons conflate GPT-4 API latency with local solver time on unspecified hardware, and the "6× average" flattens per-domain ratios spanning roughly 1.2× (Tenspiler) to 20× (TACO).
+4. Is the two-phase advantage (23/23 vs 20/23, one domain, n=23) robust, or within single-run noise at temperature 0.7?
+
+<SelfCheck q="If GPT-4 hallucinates a wrong translation or a wrong invariant, can LLMLIFT emit incorrect DSL code?" a="Not through the verified path: every candidate must pass the syntactic parser and then an SMT-prover proof of ∀σ. S(σ) = T(σ), so LLM errors cost only retry budget (incompleteness), never soundness. The residual risk lives in the trusted, unverified components: the hand-written Python semantics of the DSL operators, the Python-to-SMT translation, and the final rewrite from verified summary to concrete DSL syntax." />
+
+## Glossary
+- <Term def="syntax-guided synthesis: program synthesis where a user-supplied grammar restricts the candidate space; the classical framing of VL's search (Alur et al. 2013)">SyGuS</Term>
+- <Term def="satisfiability-modulo-theories prover (cvc5 and z3 here); decides the universally-quantified equivalence query given the invariants">SMT solver</Term>
+- <Term def="tensor algebra compiler whose einsum-like language generates optimized CPU/GPU kernels (Kjolstad et al. 2017)">TACO</Term>
+- <Term def="packet-transaction language plus compiler mapping C-like data-plane algorithms to programmable-switch 'atom' instructions (Sivaraman et al. 2016)">Domino</Term>
+- <Term def="verified-lifting compiler from sequential C++ to a common tensor IR with 6 hardware/software backends (Qiu et al. 2024); 37 operators — the paper's most complex DSL">Tenspiler</Term>
+- <Term def="prior general verified-lifting framework (Bhatia et al., ECOOP 2023) built on the Rosette symbolic solver; the baseline for the Spark and Domino domains">MetaLift</Term>
+- <Term def="enumerative search-based C++ to TACO lifting tool (Magalhaes et al. 2023); the baseline for the TACO domain">C2TACO</Term>
+
+{/* NOTES_START */}
+### Personal notes
+For the TDE related-work section, the precise characterization: LLMLift is guess-and-check with a formal oracle — LLM proposes program + proof, SMT prover adjudicates, failed candidates are excluded (binary feedback, no counterexamples), iterate until the prover passes or budget runs out. Shares with TDE: mechanical adjudication (never an LLM judge), iterate-until-green, and the "write in a high-resource language, compile to the checker's formalism" move (Python IR → SMT mirrors NL → executable acceptance suite). Differs: the spec is given and formal (the source program), not synthesized from NL; the property is timeless functional equivalence, not final-world-state predicates; verification happens at synthesis time, not as a runtime gate on state-changing actions; no environment at all. Note the inverted trust structure: LLMLift's trusted base is human-written (IR semantics, rewrites) with LLM-generated artifacts fully checked; TDE's acceptance suite is itself LLM-compiled, so TDE must defend suite validity — a problem this paper never faces.
+{/* NOTES_END */}

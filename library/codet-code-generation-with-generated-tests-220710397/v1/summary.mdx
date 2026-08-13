@@ -1,0 +1,110 @@
+---
+canonical_key: arxiv-2207.10397
+version_key: v1
+title: 'CodeT: Code Generation with Generated Tests'
+authors:
+- Bei Chen
+- Fengji Zhang
+- Anh Nguyen
+- Daoguang Zan
+- Zeqi Lin
+- Jian-Guang Lou
+- Weizhu Chen
+venue: arXiv
+year: 2022
+tags:
+- tde-related-work
+- test-based-eval
+topic_groups:
+- software_engineering_agents
+triage_label: SKIP
+triage_confidence: high
+source_link: https://arxiv.org/abs/2207.10397v2
+summary_date: '2026-08-13'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>CodeT prompts the same code LLM to also write assert-style test cases, executes every sampled solution against every generated test, groups solutions that pass identical test subsets into RANSAC-style consensus sets scored by both agreeing solutions and passed tests, and returns the top set's solution — lifting zero-shot HumanEval pass@1 with code-davinci-002 from 47.0% to 65.8% with no labels, no training, and no human tests.</TLDR>
+
+<WhyItMatters>Category-A anchor for the TDE related-work map: CodeT shares TDE's core move — the model synthesizes executable tests for its own output, and verification is mechanical execution, never an LLM judge. It differs on every load-bearing TDE element: the tests re-rank a fixed pool of already-sampled programs post hoc (no red–green loop, no regeneration on failure); nothing gates completion — the top consensus set is returned regardless of how weak it is; the oracle is unverified same-model output made useful only statistically (toxic tests and shared misconceptions defeat it, §4.4); and everything is stateless function I/O — no world state, no actions, no pre/postconditions. Its failure anatomy (consensus collapses when the model's misunderstanding is systematic) is direct ammunition for TDE's environment-evaluated de-circularization, and its test-leakage ablation (App.B) is a clean evaluation-methodology caution.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "65.8%", label: "HumanEval pass@1", sub: "code-davinci-002 + CodeT; baseline 47.0% (Tab.2)" },
+  { value: "+18.8", label: "abs. pass@1 gain", sub: "20+ pts over prior SOTA 42.7% (Inala et al. 2022)" },
+  { value: "≤500", label: "generated tests / problem", sub: "100 samples × first 5 asserts; zero labels or training" },
+]} />
+
+## Motivation
+Code LLMs put correct programs in the sample pool but cannot pick them out: <Problem>code-cushman-001 reaches 77.4% <Term def="a problem counts as solved if any of k chosen solutions passes all ground-truth tests; pass@k is the percentage of solved problems (unbiased estimate over n samples)">pass@k</Term> at k=100 on HumanEval but only 33.5% at k=1 — selection, not generation, is the bottleneck</Problem> (§1). Execution against tests is the natural selector, but <Problem>manual test suites are costly, and in Copilot-style deployment users will not supply tests for every problem</Problem> (§1). Prior selectors <Problem>need extra assets: trained verifiers or rankers (Cobbe et al. 2021; Inala et al. 2022), fine-tuned test generators (Tufano et al. 2020; AlphaCode), or pre-existing tests and user interaction (Shi et al. 2022; Lahiri et al. 2022)</Problem> (§5).
+
+## Contribution (what's new)
+Two deltas. (1) <Novelty>Zero-shot test generation from the very model that writes the solutions</Novelty>: append a three-part instruction to the context — a `pass` function-body placeholder, a comment "check the correctness of [entry point]", and an `assert` stem — and sample input–output assertions; no search-based suite synthesis (EvoSuite, Pynguin) and no fine-tuning (§2.1). (2) <Novelty>Dual execution agreement: group solutions by the exact subset of generated tests they pass (same functionality) and score each group by agreeing-solutions × passed-tests</Novelty>, in the spirit of <Term def="random sample consensus — robust fitting that keeps the hypothesis supported by the largest set of agreeing observations amid noisy data">RANSAC</Term> (§2.2). The dual form is forced by how single signals fail: counting passed tests alone rewards permissive wrong functionality because the tests are noisy, and counting agreeing solutions alone (self-consistency / AlphaCode clustering) rewards trivial or systematically wrong solutions — both ablated to be worse, sometimes below baseline (Tab.13).
+
+## Research questions
+1. Can candidate selection close the pass@1-vs-pass@100 gap with zero labels, training, or human-written tests? 2. Are both sides of the agreement — test count and solution consensus — necessary? 3. How good are LLM-generated tests (accuracy, toxicity, coverage), does their quality bound the gain, and do better tests transfer to weaker models?
+
+## Methodology
+From the same model and the same context (example I/O stripped), sample N code solutions and, with the test instruction, up to 500 asserts per problem (first 5 syntactically valid asserts from each of 100 samples). Execute every solution on every test (0.1 s timeout). Solutions passing exactly the same test subset form a <Term def="the pairs formed by a group of solutions that pass exactly the same generated tests, together with those tests; CodeT's unit of ranking">consensus set</Term>; score it `f(S) = |S_x| * |S_y|` (in practice `sqrt(|S_x|) * |S_y|`, which consistently helps); return a solution from the top-scoring set, or from the top-k sets for pass@k.
+
+<Pass title="Method details">
+<Stepper steps={[
+  { title: "Test-case generation (§2.1)", body: "Context c = docstring + signature with example I/O removed (to avoid leaking real tests); instruction p = pass placeholder + intent comment + assert stem; sample Y = M(concat(c, p)). With original contexts the model copies real example tests, inflating results (App.B) — so stripping them is load-bearing for fair evaluation." },
+  { title: "Consensus construction (§2.2)", body: "RANSAC view: draw a (solution, test) pair; if the solution passes the test it is a hypothetical inlier; collect all agreeing pairs — Sx = solutions passing exactly the same tests, Sy = the tests they pass. In practice they skip sampling and enumerate: run all N × M pairs and partition solutions by passed-test signature into K sets (avg 26.8 sets/problem, median 25.5, for cushman on HumanEval; top-1 sets hold 9.8 solutions on average — App.C)." },
+  { title: "Scoring and selection", body: "f(S) = |Sx| · |Sy|, with sqrt damping on |Sx| in practice (App.A): passing more tests should matter more than having more functional twins — sqrt beats linear consistently (Fig.8). Top-k sets give the k picks; if fewer sets than k exist, selection cycles from the top." },
+  { title: "Setup (§3, App.A)", body: "Models: code-cushman-001, code-davinci-001, code-davinci-002, InCoder-6B, CodeGen-Mono-16B. Benchmarks: HumanEval 164, MBPP-sanitized 427, APPS 5,000 (three tiers), CodeContests 165; n = 100/100/50/1,000; T = 0.8, top-p 0.95, max 300 tokens. Baseline = unbiased pass@k estimator, except baseline pass@1 which is greedy decoding at T = 0. APPS/CodeContests are recast zero-shot: description as comment + a 'def solution(stdin: str) -> str' header. AlphaCode-C replication: take CodeT's test inputs, cluster solutions by outputs, rank clusters by size (App.I)." },
+]} />
+</Pass>
+
+## Main result
+<Finding src="Tab.2, p.5">With code-davinci-002, CodeT lifts zero-shot HumanEval pass@1 from 47.0% to 65.8% (+18.8 absolute) — more than 20 points above the best previously reported 42.7% (Inala et al. 2022) — and MBPP pass@1 from 58.1% to 67.7% (+9.6)</Finding>. Every model gains (pass@1 +4.2 to +18.8), <Finding src="Tab.2, p.5">CodeT's pass@2 roughly matches the baseline's pass@10</Finding> (75.1 vs 74.9 for davinci-002 on HumanEval), and AlphaCode-C trails CodeT on every model–benchmark pair. On the harder benchmarks with davinci-002, <Finding src="Tab.3, p.6">APPS Introductory goes 27.2→34.6, Interview 5.1→8.1, Competition 1.8→2.2, and CodeContests 0.7→2.1 pass@1 (7.5→9.9 pass@100)</Finding> — consistent but shrinking gains as generation itself becomes the bottleneck. Pass@100 is unchanged by construction: selection cannot add correct programs.
+
+<SortableTable columns={["Model", "Benchmark", "Baseline p@1", "AlphaCode-C p@1", "CodeT p@1"]} rows={[
+  ["code-cushman-001", "HumanEval", 33.5, 39.6, 44.5],
+  ["code-davinci-001", "HumanEval", 39.0, 41.6, 50.2],
+  ["code-davinci-002", "HumanEval", 47.0, 55.1, 65.8],
+  ["InCoder-6B", "HumanEval", 16.4, 17.7, 20.6],
+  ["CodeGen-Mono-16B", "HumanEval", 29.7, 27.3, 36.7],
+  ["code-cushman-001", "MBPP", 45.9, 51.5, 55.4],
+  ["code-davinci-001", "MBPP", 51.8, 56.2, 61.9],
+  ["code-davinci-002", "MBPP", 58.1, 62.0, 67.7],
+  ["InCoder-6B", "MBPP", 21.3, 26.7, 34.4],
+  ["CodeGen-Mono-16B", "MBPP", 42.4, 41.0, 49.5],
+]} />
+
+## Key findings
+- <Finding src="Tab.13, p.17">Both halves of the agreement are load-bearing: ranking by passed-test count alone (`f'' = |S_y|`) falls below even the no-selection baseline for code-cushman-001 (29.9 vs 33.5 pass@1) and code-davinci-001 (35.0 vs 39.0), and solution-cluster size alone (`f' = |S_x|`, the self-consistency analogue) trails CodeT everywhere (55.9 vs 65.8 for davinci-002)</Finding>. AlphaCode-C trails even `f'` because trivial solutions (constant or echo outputs) cluster into large wrong groups (App.I); CodeT is robust to them — filtering the ~9% trivial solutions shifts results by at most 0.6 points (Tab.8).
+- <Finding src="Fig.4, p.7">Test quality tracks the gain</Finding>: Codex-generated tests concentrate near perfect accuracy with low <Term def="a generated test that some generated solution passes but the canonical ground-truth solution fails — a test rewarding wrong functionality">toxicity</Term>, CodeGen/InCoder tests are markedly noisier, and those two models see the smallest CodeT gains. Coverage echoes it: 94.0–95.7% statement coverage for all models except CodeGen at 78.2%, which also yields only 55.6 valid tests/problem vs ~382–411 for the rest (Tab.10–11).
+- <Finding src="Tab.4, p.7">Better tests transfer: swapping in code-davinci-002's tests lifts InCoder-6B MBPP pass@1 by +15.9 (to 50.3) and CodeGen-Mono-16B HumanEval pass@1 by +11.0 (to 47.7)</Finding> — weak models already generate correct solutions a better oracle can find; cushman with davinci-002's tests (47.1) matches davinci-002's own greedy baseline (47.0).
+- <Finding src="Tab.5, p.8">Ten generated tests already buy +9.5 pass@1 for davinci-002 (56.5 vs 47.0)</Finding>; returns plateau once test sampling reaches ~50 and ~3 asserts are kept per sample, so the oracle can be made cheap in deployment.
+- <Finding src="§4.4, p.9">Failure anatomy: with code-cushman-001 on HumanEval, 53/164 problems had a correct solution generated but not ranked top-1; ~80% are blamed on the model misunderstanding the problem — its wrong solutions and wrong tests then agree with each other — and ~20% on ambiguous descriptions, uncovered corner cases, or missing imports</Finding>. Fig.5a shows the flip side: the correct set won despite passing fewer tests (218 vs 226) because it held more agreeing solutions.
+- <Finding src="App.B, Tab.6">Leaving real example I/O in the context inflates CodeT to 74.8 pass@1 (davinci-002) because generated tests copy the real ones</Finding> — the reason all main results strip examples, and a general caution for any evaluation whose oracle is generated from a context embedding ground truth.
+
+## Implications
+CodeT made generate-your-own-oracle the standard zero-training, inference-time boost for code generation: pure prompting beat <Related>trained verifiers and rankers (Cobbe et al. 2021; Inala et al. 2022)</Related> and <Related>AlphaCode's output-clustering (Li et al. 2022b)</Related>, and it generalizes <Related>self-consistency (Wang et al. 2022)</Related> from answer-string agreement to execution agreement. The durable negative lesson is that consensus verification collapses precisely when the model's misunderstanding is systematic — the oracle and the candidate share a prior. <FollowUp>Lahiri et al. 2022 (interactive test-driven user-intent formalization), the cited sibling where a human validates generated tests before they are trusted</FollowUp>; <FollowUp>whether execution-agreement selection has any analogue for stateful agent tasks, where output equality means comparing world states rather than return values</FollowUp>; <FollowUp>flipping the suite from ranker to gate — iterate until the suite passes before declaring completion — which is exactly the TDE move and is absent here</FollowUp>.
+
+## Limitations
+- <Caveat>Selection-only: CodeT cannot add correct programs, so baseline pass@n is a hard ceiling (its pass@100 equals the baseline's by construction) and gains shrink where generation is the bottleneck — CodeContests pass@1 reaches only 2.1%</Caveat>.
+- <Caveat>The oracle is unverified model output</Caveat>: toxicity is nonzero even for Codex (Fig.4b), and in the one-shot setting CodeT-Filter fails to beat simple filtering by the provided example tests on CodeContests (9.6 vs 9.9 pass@1) — the authors blame low-quality generated tests (App.G, Tab.9).
+- <Caveat>Scope: stateless, single-function, executable Python with I/O asserts and a 0.1 s timeout</Caveat> — author-stated: it only works for executable code generation and adds test-generation compute (§6). No side effects, environments, or repo-level tasks; sandboxing/safety of running generated code is not discussed.
+- <Caveat>Compute is not equalized: CodeT pass@1 consumes ~100 solution samples plus ~100 test samples plus up to N × M executions per problem, versus one greedy sample for baseline pass@1 (App.A)</Caveat>; the extra cost is acknowledged but never quantified.
+- <Caveat>No variance or significance reporting; potential Codex-era contamination of HumanEval/MBPP is not discussed; headline numbers are on nonstandard example-stripped contexts</Caveat>, so they are not directly comparable with standard-benchmark reporting.
+
+## Critiques and Questions
+1. The independence assumption (§2.2, assumption 1) is structurally false: solutions and tests are drawn from the same model conditioned on the same, possibly ambiguous, context, so their errors are correlated by construction — the reported ~80%-misunderstanding failure share is that correlation made visible. The RANSAC analogy is loose: RANSAC's observations come from an external world, while CodeT's observations are more samples from the hypothesis generator itself.
+2. The Baseline column mixes regimes: baseline pass@1 is greedy decoding at T = 0 while CodeT selects from 100 samples at T = 0.8 (App.A), so "+18.8" bundles selection quality with a 100×+ sampling budget; no equal-compute alternative besides AlphaCode-C is offered.
+3. Which HumanEval number should the field cite — the modified-context 65.8 or the original-context 74.8 (App.B)? The paper argues, convincingly, that 74.8 is inflated by test leakage, but the coexistence of both invites over-claiming downstream.
+
+<SelfCheck q="Why does CodeT score a consensus set by the product of agreeing solutions and passed tests instead of just ranking solutions by how many generated tests they pass?" a="Because each single signal fails alone. Generated tests are noisy, so a permissive wrong functionality can pass more tests (Fig.5a: the wrong set passed 226 tests vs the correct set's 218 but had fewer agreeing solutions), while clustering alone rewards trivial or systematically wrong solutions that agree with each other. Table 13 shows test-count-only ranking falls below even the no-selection baseline for code-cushman-001 (29.9 vs 33.5 pass@1) and solution-count-only trails CodeT everywhere; only the product — with sqrt damping on the solution count — is robust." />
+
+## Glossary
+- <Term def="164 hand-written Python problems with hidden ground-truth tests (avg 7.77/problem); Chen et al. 2021">HumanEval</Term>, <Term def="sanitized crowd-sourced Python problems, 427 used here, avg 3.1 ground-truth tests">MBPP</Term>, <Term def="5,000 coding-site problems in Introductory / Interview / Competition tiers, avg 20.99 tests">APPS</Term>, <Term def="165 Codeforces competitive-programming problems, avg 203.7 tests; from the AlphaCode paper">CodeContests</Term>
+- <Term def="majority voting over sampled final answers (Wang et al. 2022); CodeT's f-prime ablation is its code analogue over functional-equivalence classes">self-consistency</Term>
+- <Term def="the authors' replication of AlphaCode's clustering: run solutions on generated test inputs, group by identical outputs, rank clusters by size">AlphaCode-C</Term>
+- <Term def="the paper's evaluation regime: example input–output cases removed from every problem context so real tests cannot leak into generated ones">zero-shot setting</Term>
+
+{/* NOTES_START */}
+### Personal notes
+For the TDE novelty defense this is the cleanest category-A citation: self-generated executable tests, mechanically executed — and the cleanest contrast: ranker not gate, fixed pool not red–green loop, function I/O not world state, statistically-laundered oracle not environment-evaluated conditions. Quotable ammunition: Tab.13's `f''` result — naively trusting pass-counts on generated tests is worse than no selection at all for weaker models — argues that raw generated-test signals need either statistical agreement (CodeT) or environment-side verification (TDE). Venue note: harness metadata records arXiv v2 (Nov 2022); the survey calls it ICLR 2023 — confirm the OpenReview record when citing.
+{/* NOTES_END */}

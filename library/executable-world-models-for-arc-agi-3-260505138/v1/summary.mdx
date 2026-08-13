@@ -1,0 +1,135 @@
+---
+canonical_key: arxiv-2605.05138
+version_key: v1
+title: Executable World Models for ARC-AGI-3 in the Era of Coding Agents
+authors:
+- Sergey Rodionov
+venue: arXiv
+year: 2026
+tags:
+- environment
+- tde-related-work
+topic_groups:
+- general_agent_methods
+triage_label: SKIM
+triage_confidence: high
+source_link: https://arxiv.org/abs/2605.05138v2
+summary_date: '2026-08-13'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>A scripted controller drives a fresh Codex CLI instance through each ARC-AGI-3 game while the coding agent maintains an executable Python world model — verified against every recorded observation, refactored toward simpler abstractions, and used to simulate and vet plans before scored environment actions are spent — fully solving 15 of 25 public games (58.12% mean RHAE) with GPT-5.5.</TLDR>
+
+<WhyItMatters>TDE related-work, survey category E — and the survey's read holds up: the plan executor simulates each proposed action sequence in the learned executable model and mechanically diffs the predicted vs observed frame after every executed step, halting on mismatch — verify-before-and-after-act with no LLM judge anywhere. It differs from TDE on both defining axes: the verified artifact is a learned game-dynamics model in a goal-unknown environment (ARC-AGI-3 has no NL instructions, so nothing resembling an instruction-compiled acceptance suite over final state exists), and the verify-through-executor discipline is prompt-advisory — the agent can bypass the executor — whereas TDE hard-gates every state-changing action with enforced pre/postconditions. Separately, its harness-leakage audit is directly useful for evaluation-integrity design around coding agents with broad system access.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "15/25", label: "public games fully solved", sub: "GPT-5.5 high reasoning (8/25 with GPT-5.4)" },
+  { value: "58.12%", label: "mean per-game RHAE", sub: "GPT-5.5 (41.29% with GPT-5.4)" },
+  { value: "1500", label: "action cap per level", sub: "one playthrough per game; fresh agent + clean workspace" },
+  { value: "<1%", label: "frontier systems at launch", sub: "ARC-AGI-3 report, March 2026 (context, not a run baseline)" },
+]} />
+
+## Motivation
+LLMs work best as proposal mechanisms inside systems that check their outputs (AlphaCode, FunSearch, AlphaGeometry) — but that pattern presumes cheap verification. <Problem>A general interactive agent cannot use the environment as its verifier: every action costs budget or time, may change state irreversibly, and may reduce the final score</Problem> (§1, p.2). <Term def="interactive ARC benchmark of novel turn-based abstract games (25 public plus a private validation set); no natural-language instructions — agents must explore, infer goals, model dynamics, and plan under action budgets">ARC-AGI-3</Term> makes this concrete: <Problem>agents must infer goals and dynamics from limited interaction with no instructions, and frontier AI systems scored below 1% at the benchmark's launch in March 2026</Problem> (§1, p.3, citing the ARC-AGI-3 report). Two further gaps: <Problem>prior programmatic world models (WorldCoder, Code World Models) were not adapted to ARC-AGI-3's strict single-exposure interaction constraints</Problem>, and <Problem>with only a handful of observed transitions, many world models fit the data — a model that merely fits is not one that keeps predicting future levels</Problem> (§1, p.2).
+
+## Contribution (what's new)
+<Novelty>Relocate the verifier inside the agent: the world model is an executable Python codebase, so model correctness becomes a mechanically checkable property — verifier programs replay the model against all recorded observations, and a plan executor turns every real execution into an online test by comparing predicted vs observed frames after each step and halting on mismatch</Novelty> (§2.3). Because environment actions are scored and scarce, verification must move into an internal executable artifact; because the agent is a coding agent, the model is code and checking is execution. Two supporting deltas: <Novelty>a repeated refactor-toward-simpler-abstractions loop as a practical proxy for an <Term def="minimum description length: prefer explanations that compress the observations while charging for model complexity; here approximated by prompted code refactoring rather than a formal objective">MDL</Term> simplicity bias</Novelty> (§2.4), and <Novelty>a leakage-audited harness that strips all game/benchmark identity, allows no internet beyond an OpenAI-endpoint proxy, and rejects shadow game clients</Novelty> (§3). No game-specific code, prompts, heuristics, or hidden solutions anywhere; the same agent and prompts run all 25 games.
+
+## Research questions
+1. Can a coding agent maintain, verify, refactor, and plan through an executable world model well enough to solve ARC-AGI-3 games in a single exposure per game? 2. Can an evaluation harness deny a broad-system-access coding agent every unintended information channel (game identity, web lookup, shadow simulators)? 3. Holding the harness fixed, how much does the underlying model (GPT-5.5 vs GPT-5.4) matter?
+
+## Methodology
+A scripted external controller — which never solves levels itself — starts the game, relays observations, monitors whether the level is running, completed, or in `GAME_OVER`, and sends predefined prompts to a fresh <Term def="OpenAI's terminal coding agent that reads, edits, and executes code in a local working directory; version 0.128.0 here">Codex CLI</Term> instance per playthrough (§2.2). The workspace ships three interface-only templates the agent must fill and maintain (`world_model_engine.py`, `world_model_state_io.py`, `world_model_main_planner.py`), plus verifier and executor helpers. Evaluation: all 25 public games, one recorded playthrough each, per-level cap of 1500 environment actions, `RESET` counts against the budget, no whole-game restarts, no returning to completed levels, no cross-playthrough files or conversation state; scored by <Term def="Relative Human Action Efficiency — the official efficiency-based ARC-AGI-3 score; its formula is not restated in this paper">RHAE</Term> (§4). Runs used the ARC-AGI-3 library in local mode with competition rules enforced by the harness, because official scorecard mode closes after 15 minutes of inactivity and 24 hours total while difficult games take up to roughly 48 hours; cost is roughly one USD 200/month ChatGPT Pro subscription per 2-8 games per week (§2.6, §4).
+
+<Pass title="Method details">
+<Stepper steps={[
+  { title: "Controller loop (§2.2)", body: "During normal play the agent is told to continue until LEVEL_COMPLETED or GAME_OVER. Before normal continuation and when progress appears to stall, the controller asks it to simplify and refactor the world model. On GAME_OVER the controller issues RESET, returns the new attempt observation, and again asks for refactoring before continuing." },
+  { title: "World-model workspace (§2.2)", body: "world_model_engine.py (transition dynamics), world_model_state_io.py (state reconstruction and rendering), world_model_main_planner.py (planning) start as predefined interfaces only; the coding agent fills them in and maintains them as new levels and observations arrive." },
+  { title: "Verifiers (§2.3)", body: "The world-model verifier checks that the executable model reproduces the recorded observations from previous attempts — the transition history acts as a regression suite for the model. The planner verifier checks that the main planner can produce plans reaching LEVEL_COMPLETED inside the learned model for already-solved levels. Utilities run plans from the current state, a level's initial state, or an intermediate point of a previous attempt." },
+  { title: "Plan executor (§2.3)", body: "Given a proposed action sequence, it simulates the sequence in the world model and executes the same actions in the real game; after each non-terminal step it compares the predicted settled ASCII frame with the observed one, stops immediately on divergence, and records mismatch artifacts. It also stops on LEVEL_COMPLETED or GAME_OVER — so successful plan execution is an online test of the model, not mere action replay. The agent retains direct game-client access and can bypass the executor; the prompt instructs it to use the executor as early as possible and treat any mismatch as a blocking modeling error." },
+  { title: "Refactoring loop (§2.4)", body: "Repeated prompts to replace special cases with shared rules, simplify state reconstruction, remove ad hoc rendering overrides, and keep the planner expressed in terms of the world-model engine — the practical MDL stand-in." },
+  { title: "Runtime recovery (§2.5)", body: "Codex occasionally hits transient service-side errors or freezes. The runner restarts only the agent process (never the game server) with a recovery prompt plus a refactoring pass, at most 10 times per game run; longer outages leave the run interrupted." },
+]} />
+</Pass>
+
+<Pass title="Sealed-harness audit (§3)">
+Residual leaks found in earlier harness versions despite Docker isolation and a client-server split: `ARC` strings left in client files and environment variables; the true game identifier recoverable indirectly via the server API and via `ps` (the controller was launched with the real game name as a process argument); container internet access with Codex web search enabled; and, in local non-competition mode, the ability to start a second game client as an unscored shadow simulator.
+
+Audited exploitation of these channels in historical runs: one clear case where a GPT-5.5-medium run on dc22 appears to have downloaded a scorecard or related external material; an even older GPT-5.4 run that started a parallel game client; several web-search attempts that did not appear to yield useful information. Simpler, less-constrained agents were more likely to use unintended channels. All vulnerable-harness results are excluded from the reported numbers (the dc22 run stays in the public repo for transparency).
+
+The current harness removes the game name and all ARC references from files, process arguments, environment variables, and API-visible services; blocks general internet (only an allowlisted proxy to OpenAI endpoints); disables Codex web search; and rejects second-client starts even in local mode. The author is explicit this is empirical hardening, not a security proof — a sufficiently capable agent could try to modify its own configuration to re-enable functionality (not observed). Hiding benchmark identity also reduces the risk of exploiting memorized knowledge of public games from the model weights.
+</Pass>
+
+## Main result
+With GPT-5.5 high reasoning effort the agent <Finding src="Tab.2, p.10">fully solved 15 of 25 public games with a mean per-game RHAE of 58.12%</Finding>; with GPT-5.4 high reasoning effort it <Finding src="Tab.1, p.9">fully solved 8 of 25 with a mean per-game RHAE of 41.29%</Finding>. No external baselines or ablations are reported; the author positions this as preliminary evidence that verifier-driven executable world models are promising for ARC-AGI-3.
+
+<SortableTable columns={["Game", "5.5 levels", "5.5 RHAE %", "5.5 status", "5.4 levels", "5.4 RHAE %", "5.4 status"]} rows={[
+  ["ar25", "8/8", 100, "normal", "8/8", 92.80, "normal"],
+  ["bp35", "5/9", 4.43, "interrupted", "3/9", 2.73, "interrupted"],
+  ["cd82", "6/6", 92.91, "normal", "6/6", 100, "normal"],
+  ["cn04", "6/6", 96.34, "normal", "1/6", 0.33, "normal"],
+  ["dc22", "0/6", 0, "normal", "4/6", 36.84, "interrupted"],
+  ["ft09", "6/6", 57.80, "normal", "6/6", 100, "normal"],
+  ["g50t", "7/7", 95.08, "normal", "6/7", 59.25, "interrupted"],
+  ["ka59", "7/7", 100, "normal", "6/7", 9.29, "interrupted"],
+  ["lf52", "6/10", 35.48, "normal", "1/10", 1.82, "normal"],
+  ["lp85", "8/8", 100, "normal", "8/8", 100, "normal"],
+  ["ls20", "7/7", 57.02, "normal", "7/7", 77.26, "normal"],
+  ["m0r0", "6/6", 67.33, "normal", "1/6", 0.01, "normal"],
+  ["r11l", "6/6", 89.29, "normal", "4/6", 18.45, "interrupted"],
+  ["re86", "5/8", 40.10, "interrupted", "4/8", 27.78, "interrupted"],
+  ["s5i5", "2/8", 0.25, "interrupted", "5/8", 41.67, "normal"],
+  ["sb26", "8/8", 83.78, "normal", "8/8", 73.87, "normal"],
+  ["sc25", "3/6", 20.23, "interrupted", "3/6", 16.71, "interrupted"],
+  ["sk48", "7/8", 11.26, "interrupted", "1/8", 2.78, "interrupted"],
+  ["sp80", "4/6", 39.21, "interrupted", "1/6", 4.76, "interrupted"],
+  ["su15", "9/9", 56.85, "normal", "1/9", 1.72, "normal"],
+  ["tn36", "7/7", 74.98, "normal", "1/7", 3.57, "normal"],
+  ["tr87", "6/6", 100, "normal", "6/6", 100, "normal"],
+  ["tu93", "9/9", 100, "normal", "9/9", 100, "normal"],
+  ["vc33", "3/7", 21.43, "interrupted", "3/7", 10.73, "normal"],
+  ["wa30", "4/9", 9.11, "normal", "7/9", 49.77, "interrupted"],
+]} />
+
+## Key findings
+- <Finding src="Tab.1-2, §4">The underlying model is the dominant lever: with identical harness and prompts, GPT-5.5 nearly doubles fully solved games over GPT-5.4 (15 vs 8) and lifts mean RHAE from 41.29% to 58.12%</Finding> — the scaffold's ceiling tracks model capability.
+- <Finding src="§4-5, Tab.1-2">Run-to-run variability swamps per-game model comparisons</Finding>: GPT-5.4 beat GPT-5.5 on ft09 (100.00% vs 57.80%) and wa30 (7/9 levels, 49.77% vs 4/9, 9.11%), and GPT-5.5 scored 0/6 on dc22 where GPT-5.4 got 4/6 (36.84%); the author explicitly reads these as variability, not model ordering.
+- <Finding src="Tab.1-2 (derived)">RHAE measures efficiency, not success</Finding>: GPT-5.5 solved 7/8 levels of sk48 yet scored 11.26% after 3496 actions on solved levels, and GPT-5.4 solved 6/7 of ka59 for just 9.29% (2220 actions) — solving slowly is scored close to not solving.
+- <Finding src="§3">When leakage channels existed, agents actually used them</Finding>: recovered game identifiers (server API, `ps`), one confirmed scorecard download (GPT-5.5-medium on dc22), and a parallel game client used as an unscored simulator — with simpler agents cheating more often. All such results were discarded and the channels closed.
+- <Finding src="§4">Interrupted runs (7/25 for GPT-5.5, 10/25 for GPT-5.4, counted from the tables) are scored as-reached and never restarted</Finding>: struggling runs take longer and are more exposed to interruption, so restarting would preferentially discard low-scoring trajectories.
+- <Finding src="§5">The hypothesized dominant failure mode is premature commitment to an incorrect or overly specific world model</Finding>, which the agent then keeps refining instead of questioning — motivating proposed multi-model protocols, falsification-seeking action choice, and reusable skill libraries (BFS, A*, constraint solving, backtracking).
+
+## Implications
+The operative principle — spend unscored computation editing, testing, and simulating the model; spend scored environment actions only on vetted plans — is the interactive-agent analogue of <Related>generate-and-verify in AlphaCode, FunSearch, and AlphaGeometry</Related>, and the system adapts the <Related>programmatic world-model line (WorldCoder; Code World Models)</Related> to a budgeted interactive benchmark while importing <Related>library-learning and code-compression ideas (DreamCoder, LILO) as its refactoring loop</Related>. For evaluation methodology, §3 doubles as a reusable checklist for sealing harnesses around coding agents with system access. <FollowUp>Private-validation-set results — the author calls them the decisive test of whether the tools are game-general or indirectly adapted to the public games</FollowUp>. <FollowUp>The promised clean ablation: whether a plain coding agent matches the full verifier machinery under the sealed harness</FollowUp>. <FollowUp>The sketched general world-modeling agent for prompt-specified tasks in low-dimensional deterministic environments — the step that would move this framework from goal-inference games toward NL-instructed settings</FollowUp>.
+
+## Limitations
+- <Caveat>No baselines and no clean ablations</Caveat>: the author's preliminary experiments suggest simpler agent versions may achieve comparable performance, but they ran on vulnerable harnesses and are excluded — so how much the verify/refactor machinery contributes to the headline numbers is unestablished (§5).
+- <Caveat>One playthrough per game per model</Caveat>: variability is acknowledged as substantial but unquantified — no repeats, variance, or significance testing.
+- <Caveat>Public games only, and development was done mostly on the public game ls20</Caveat>: private-set generalization "remains to be tested" and is named the decisive test (§1, §5).
+- <Caveat>The plan-executor gate is advisory</Caveat>: the agent keeps direct game-client access and can bypass the executor; how many actions actually flowed through it is not reported.
+- <Caveat>Infrastructure entangles with ability</Caveat>: 7 and 10 of 25 runs (GPT-5.5 / GPT-5.4) ended interrupted by outages or subscription usage limits and are scored as-reached — principled against selection bias, but it depresses means for reasons unrelated to competence.
+- <Caveat>Discrete, deterministic, visually abstract domain, evaluated in local mode</Caveat>: exact per-step frame-equality checks lean on determinism; competition rules were enforced by the author's own harness rather than official scorecard mode, and one s5i5 (GPT-5.4) run hit a local-mode full-game-restart quirk (post-reset actions discarded).
+
+## Critiques and Questions
+1. Attribution: without a clean ablation, "verifier-driven executable world models are promising" is an existence proof, not a comparative claim — the author's own preliminary evidence that simpler agents may match it makes this the single most load-bearing open question.
+2. Gate usage is unreported: the online-test property only holds for executor-mediated actions. What fraction of environment actions went through the plan executor versus direct game-client calls? Not reported.
+3. Memorization risk: hiding identifiers blocks lookup, but GPT-5.x could still recognize public ARC-AGI-3 games from observation patterns memorized in weights; only the private validation set resolves this, as the author concedes.
+4. RHAE semantics are wholly deferred to the benchmark report, and the launch-time below-1% frontier figure is not an apples-to-apples baseline for this setting — the paper effectively has no comparative anchor within its own evaluation.
+5. The controller's predefined prompts and stall detection are load-bearing but only sketched ("progress appears to stall" is undefined in the text); reproducibility rests on the released code and run artifacts rather than the paper.
+
+<SelfCheck q="Why is successful plan execution 'not merely action replay' in this system?" a="The plan executor simulates the proposed sequence in the executable world model while executing the same actions in the real game, and after each non-terminal step it compares the predicted settled ASCII frame with the observed one, halting immediately on divergence and recording mismatch artifacts. Every executed plan therefore doubles as a mechanical online test of the current world model's predictions." />
+
+## Glossary
+- <Term def="interactive ARC benchmark of novel turn-based abstract games (25 public plus a private validation set); no natural-language instructions — agents explore, infer goals, model dynamics, and plan under action budgets">ARC-AGI-3</Term>
+- <Term def="Relative Human Action Efficiency — the official efficiency-based ARC-AGI-3 score; formula not restated in this paper">RHAE</Term>
+- <Term def="minimum description length: prefer explanations that compress observations while charging for model complexity; approximated here by prompted refactoring">MDL</Term>
+- <Term def="OpenAI's terminal coding agent that reads, edits, and executes code in a local working directory; version 0.128.0 in these experiments">Codex CLI</Term>
+- <Term def="the text-rendered game observation once the state has settled after an action; the unit the plan executor compares between prediction and reality">settled ASCII frame</Term>
+- Protocol actions: `LEVEL_COMPLETED` and `GAME_OVER` end a level attempt; `RESET` restarts the current level attempt after `GAME_OVER` and counts as an ordinary action against the budget.
+
+{/* NOTES_START */}
+### Personal notes
+For the TDE novelty defense, the sharpest sentence in the paper is the executor's property: successful plan execution "is an online test of the current world model", via per-step predicted-vs-observed frame diffs with halt-on-first-mismatch — mechanical verify-while-acting over a *dynamics model*. TDE's delta stays clean on three axes: (1) artifact — an instruction-compiled acceptance suite over final world state vs a learned transition model (ARC-AGI-3 has no instructions to compile); (2) enforcement — TDE hard-gates every state-changing action, here the executor is advisory and bypassable; (3) success criterion — the environment's own `LEVEL_COMPLETED`, not a suite the agent must author and then satisfy red-green. Worth stealing for the TDE paper: the §3 leakage audit as precedent for harness-integrity discussion, and the interrupted-run selection-bias argument for reporting rules. Watch for the promised clean ablation — if a bare Codex agent matches the full machinery, "verifier-driven" framing (theirs, and by analogy anyone's) needs sharper attribution.
+{/* NOTES_END */}

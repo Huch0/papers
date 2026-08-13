@@ -1,0 +1,107 @@
+---
+canonical_key: arxiv-cs-0207008
+version_key: v1
+title: Agent Programming with Declarative Goals
+authors:
+- F. S. de Boer
+- K. V. Hindriks
+- W. van der Hoek
+- J. -J. Ch. Meyer
+venue: arXiv
+year: 2002
+tags:
+- foundational
+- tde-related-work
+topic_groups:
+- general_agent_methods
+triage_label: READ_SOON
+triage_confidence: medium
+source_link: https://arxiv.org/abs/cs/0207008v1
+summary_date: '2026-08-13'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>Introduces GOAL, an agent programming language whose agents act on *declarative* goals (goals-to-be) instead of plans, compiles the blind-commitment strategy into its operational semantics — a goal is dropped exactly when the agent believes it achieved — and pairs the language with a matching programming logic (an `enabled` precondition predicate, Hoare triples `{ϕ} a {ψ}` over mental-state formulas, and UNITY-style temporal operators) that is proven sound and relatively complete, demonstrated by verifying an example agent from its program text alone.</TLDR>
+
+<WhyItMatters>The classical (pre-LLM) anchor for TDE's action gates: in GOAL, axioms for an `enabled` predicate specify each action's precondition and Hoare triples specify its post/frame conditions — the exact formal shape of TDE's per-action pre/postconditions — and success is a declarative condition on a state, the ancestor of TDE's acceptance suite over the final state. The deltas that carry the novelty defense: GOAL evaluates every condition over the agent's *mental state* (belief/goal bases), never the environment; verification is a design-time hand proof, not a runtime gate; blind commitment discharges goals on *believed* achievement — precisely the self-adjudication TDE de-circularizes with environment-computed checks; and programs are hand-written logic, with no natural-language compilation. Cite to preempt "TDE is just GOAL/BDI with an LLM."</WhyItMatters>
+
+## Motivation
+Early agent research produced <Term def="belief-desire-intention: the family of agent models and modal logics built on mental attitudes such as belief, goal, and intention">BDI</Term>-style modal logics that formally defined belief, goal, and intention, but <Problem>the relation of these agent logics to practical frameworks "remains unclear, however, to this day"</Problem> (§1, p.2). The diagnosed cause: <Problem>every agent programming language of the era — Agent-0's commitments, AgentSpeak(L)'s intentions, 3APL's goals, ConGolog's programs, PLACA's plans — implements goals as structures built from actions ("goals-to-do"), never as the end state to be realised ("goals-to-be")</Problem> (§1, p.2). With nothing in program execution denoting a desired state, <Problem>modal logics with belief and goal modalities could not be used to specify or verify agent programs</Problem>, leaving the theory-practice gap open; declarative goals are additionally motivated as a new abstraction mechanism that better matches the intuitive concept of an intelligent agent (§1, p.2).
+
+## Contribution (what's new)
+<Novelty>A language (GOAL) whose mental state is exactly a belief base plus a declarative goal base — no plan or intention component — with action selection conditioned on both</Novelty> (Defs 2.1, 2.6-2.7). The bridge to logic runs through goal dynamics: <Novelty>a commitment strategy from agent-logic theory (blind commitment: drop a goal iff it is believed achieved) is built into the semantics itself, as the mental-state transformer</Novelty> (Def 2.8, p.10). On top sits <Novelty>a programming logic formally derived from that same semantics — `enabled` axioms as preconditions, Hoare triples over mental-state formulas for effects and frames, and UNITY-style `unless` / `ensures` / leads-to temporal operators — so that everything proven in the logic is a property of the program</Novelty> (§4). The form is forced: as long as "goal" names a control structure, a goal modality has no denotation in execution; making goals denote state conditions, with their lifecycle tied to beliefs, is what lets proofs and programs meet (§1, p.3).
+
+## Research questions
+1. Can declarative goals-to-be be given a computational (operational) semantics inside an agent programming language? 2. Can a belief/goal logic plus a temporal logic be interpreted over that semantics soundly and completely, so that proofs are agent properties? 3. Can temporal correctness of an agent be established from the program text alone, without reasoning over traces?
+
+## Methodology
+A GOAL agent is `⟨Π, Σ0, Γ0⟩`: a set of conditional actions `ϕ → do(a)` plus an initial mental state `⟨Σ, Γ⟩` of beliefs and goals drawn from one propositional language (Defs 2.1, 2.7). Rationality constraints: beliefs consistent; no goal already believed (`Bφ → ¬Gφ`); goals individually — not jointly — consistent, so mutually inconsistent goals may coexist (achievable in some temporal order). Capabilities are belief updates, a partial function `T(a, Σ)` whose undefinedness models non-enabledness; the transformer `M` extends `T` with blind commitment (delete whatever the new beliefs entail from the goal base) and defines the goal-update actions `adopt(φ)` / `drop(φ)` (Def 2.8). Execution: a conditional action may take a step iff its mental condition holds and its capability is enabled; the meaning of an agent is its set of weakly fair infinite traces, where a scheduled-but-disabled action idles (Defs 2.9-2.11). Verification: user-supplied `enabled` axioms and belief-level Hoare triples per capability, built-in rules for goal dynamics, and temporal properties reduced to per-action triples.
+
+<Pass title="The formal machinery, layer by layer">
+<MathBlock>{`M(a,\\langle\\Sigma,\\Gamma\\rangle)\\;=\\;\\bigl\\langle\\, T(a,\\Sigma),\\;\\Gamma\\setminus\\{\\psi\\in\\Gamma \\mid T(a,\\Sigma)\\models_C\\psi\\}\\,\\bigr\\rangle \\qquad (a\\in Bcap,\\; T(a,\\Sigma)\\ \\mathrm{defined})`}</MathBlock>
+
+<Stepper steps={[
+  { title: "Mental states and a deliberately weak goal modality (Defs 2.1-2.3, Lemma 2.4)", body: "Beliefs satisfy KD (consistent, closed under consequence; KD45-equivalent since operators are not nested). Goals: Gψ holds iff ψ is in the goal base, which is closed only under consistent, not-yet-believed logical weakenings. G does not distribute over implication and goals do not conjoin — Gφ ∧ G¬φ is satisfiable. Axioms: ¬Gfalse (A3), Bφ → ¬Gφ (A4), entailed subgoals only while unbelieved (A5). The system ⊢M is sound and complete (Thm 2.5, p.7)." },
+  { title: "Enabledness: the precondition layer (§2.4, Tab.3, p.12)", body: "enabled(ϕ → do(a)) ↔ ϕ ∧ enabled(a) (E1); drop(φ) is always enabled (E2); adopt(φ) is enabled iff φ is consistent and not believed (R3/R4); a belief capability is enabled iff T(a,·) is defined (R5). The extended system ⊢ME is sound and complete (Thm 2.13, p.13)." },
+  { title: "Blind commitment as the transformer M (Def 2.8, p.10)", body: "For a belief capability, M updates Σ by T and deletes every goal the new belief base entails. adopt(φ) adds φ plus its not-yet-believed consequences, and only if φ is consistent and unbelieved; drop(φ) removes every goal entailing φ — drop(true) clears the goal base, drop(false) removes nothing." },
+  { title: "Hoare triples with idle-step semantics (Defs 4.1-4.2, Tab.5)", body: "Total-correctness reading: if the precondition holds and a is enabled, the postcondition holds in the successor state; if a is not enabled, the attempt is an idle step and the postcondition must hold in the unchanged state — hence {ϕ} a {ϕ} whenever ϕ → ¬enabled(a). Triples for conditional actions are interpreted over the agent's fair traces: they are properties of the agent, not of the action in isolation." },
+  { title: "Basic action theories: the user specifies beliefs only (§4.2, Tabs.4-10)", body: "Per capability the user writes enabled axioms, effect triples, and frame triples about beliefs. Goal dynamics come from built-in rules: persistence {Gφ} a {Bφ ∨ Gφ} for a ≠ drop(φ); adopt/drop (non-)effect rules; structural Consequence/Conjunction/Disjunction rules; and a rule lifting capability triples to conditional actions (justified by Lemma 4.3)." },
+  { title: "A relatively complete Hoare calculus (§4.3, Thm 4.11, p.25)", body: "Substitution-based axioms for adopt and drop plus Dijkstra-style weakest liberal preconditions (Def 4.8) give soundness (Lemma 4.7) and completeness — relative to an assumed complete axiomatization of the belief capabilities (absolute completeness is blocked by Godel's incompleteness for standard domains, p.22)." },
+  { title: "Temporal layer and the reduction theorems (§4.4)", body: "init and weak until, with always/eventually derived; UNITY operators defined on top: ϕ unless ψ, ϕ ensures ψ, and leads-to as the transitive disjunctive closure of ensures. Thm 4.15: an unless property holds iff every program action satisfies {ϕ ∧ ¬ψ} b {ϕ ∨ ψ}. Thm 4.16: if additionally some action establishes ψ, then ϕ ensures ψ — this direction needs weak fairness." },
+  { title: "Worked example: an Internet book-shopping agent (§3, §5)", body: "Four conditional actions (goto website, search, put in shopping cart, pay cart), initial goal bought(T) ∧ bought(I) for two book titles. The proof uses an invariant (only one current webpage), a stable property status(book), belief-level frame axioms, then a chain of seven ensures steps composed by leads-to transitivity and disjunction (pp.32-34)." },
+]} />
+</Pass>
+
+## Main result
+This is a theory paper: no implementation, no benchmark, no quantitative results — the deliverables are metatheorems plus one worked correctness proof. The headline: <Finding src="Thm 4.15-4.16, p.27-28">temporal safety (`unless`) and liveness (`ensures`, leads-to) properties of a GOAL agent reduce to finitely many per-action Hoare triples, so agent properties are proven by inspecting the program text — never by reasoning over traces, whose number is exponential in program size</Finding> (p.27).
+
+<ResultsTable columns={["Result", "What it establishes", "Anchor"]} rows={[
+  ["⊢M sound + complete", "logic of KD beliefs and weak declarative goals over mental states", "Thm 2.5, p.7"],
+  ["⊢ME sound + complete", "adds the enabled precondition predicate to the mental-state logic", "Thm 2.13, p.13"],
+  ["⊢H sound + relatively complete", "Hoare calculus for adopt/drop/conditional actions via weakest liberal preconditions, relative to a complete belief-capability axiomatization", "Lem 4.7 + Thm 4.11, pp.23-25"],
+  ["unless ⟺ Hoare triples", "safety: SA satisfies ϕ unless ψ iff every action b satisfies {ϕ ∧ ¬ψ} b {ϕ ∨ ψ}", "Thm 4.15, p.27"],
+  ["ensures ⇐ Hoare triples", "liveness: all actions preserve and at least one establishes, under weak fairness", "Thm 4.16, p.28"],
+  ["Shopping agent proven correct", "Bcond ∧ G(bought(T) ∧ bought(I)) leads-to B(bought(T) ∧ bought(I))", "§5.1-5.3, pp.29-34"],
+]} />
+
+## Key findings
+- <Finding src="Lem.2.4, p.6">A usable goal modality must be logically weak</Finding>: G is closed under logical equivalence but does not distribute over implication and does not aggregate (`Gφ ∧ Gψ` does not yield `G(φ ∧ ψ)`); mutually inconsistent goals are legal because they may be achieved sequentially, so only per-goal consistency is required (Def 2.1).
+- <Finding src="Def 2.8, p.10">A commitment strategy can *be* the semantics</Finding>: blind commitment is not an axiom about agents but the definition of state update — after every action, goals entailed by the new belief base are deleted. Success adjudication is thereby internalized to the agent's beliefs.
+- <Finding src="Tab.4 + p.19">Goal persistence is a derived Hoare triple, and maintenance-like goals come for free</Finding>: `{Gφ} a {Bφ ∨ Gφ}` for `a ≠ drop(φ)`; dually, with goal base `{p ∧ q}` and belief base `{p}`, p is not a goal — but if an action retracts the belief p, the agent has the goal p again.
+- <Finding src="§4.2.1, p.18">Only belief-level Hoare triples need user specification</Finding>: effects and persistence of goals are derivable from the built-in adopt/drop/commitment rules — a genuine economy of axiomatization for the programmer.
+- <Finding src="Def 4.1 + Tab.5, pp.16/20">Failed actions are idle steps inside the logic</Finding>: a non-enabled action verifies its postcondition in the unchanged state, which makes the triples total-correctness statements and makes `enabled` the load-bearing precondition predicate ("Axioms for the predicate enabled specify the preconditions of actions", p.16).
+- <Finding src="§5.1, pp.29-30">"Correct" terminates in belief, not world state</Finding>: the proven property is `Bcond ∧ G(bought(T) ∧ bought(I))` leads-to `B(bought(T) ∧ bought(I))` — the agent comes to *believe* it bought both books; the correctness class "the agent realises its initial goals" is expressed by formulas like `Gφ → ⋄¬Gφ` (p.29).
+
+## Implications
+The paper closed a decade-old gap by making an agent logic provably about an agent program, and did so by importing <Related>UNITY (Chandy & Misra) and Dijkstra's weakest-precondition method from concurrent-program verification</Related> into mental-state programs. It is the origin of the <Related>GOAL agent-language line (Hindriks et al.) and a sibling of the authors' 3APL; it defines itself against the procedural family Agent-0, AgentSpeak(L) (later Jason), PLACA, ConGolog</Related>, and it operationalizes commitment-strategy theory from <Related>Rao & Georgeff and Cohen & Levesque's "intention is choice with commitment"</Related>. For TDE, this is the cleanest classical statement of the schema "per-action `{pre} a {post}` + declarative success condition + success-gated goal dropping" — instantiated over *beliefs at design time*. TDE re-instantiates the same schema over *environment state at runtime* with mechanical evaluation; that substrate-and-time shift, plus NL-to-suite compilation, is exactly what GOAL leaves outside its formalism. <FollowUp>Model checking of agent programs (the later AJPF/MCAPL line) as the automated descendant of this hand proof theory</FollowUp>; <FollowUp>whether GOAL's economy result transfers to TDE — specify per-action effects once, derive goal/suite dynamics — with environment-evaluated predicates replacing B-formulas</FollowUp>.
+
+## Limitations
+- <Caveat>Propositional core only: no variables, parameter passing, or first-order features</Caveat> — the example's variables are "a means for abbreviation" (§2.1 p.4, §3 p.14, §6).
+- <Caveat>Basic actions only — no plans, sequencing, or composition; no nesting of B and G; no communication primitives</Caveat>; combining GOAL with 3APL-style planning is left open (§6).
+- <Caveat>No implementation, tooling, or empirical component</Caveat>: implementability is asserted ("rather straightforward to implement") with an acknowledged need to restrict the logical reasoning (§7); every step requires classical-entailment checks and the closed goal base may be infinite (Def 2.1).
+- <Caveat>Verification is design-time and relative</Caveat>: user-supplied effect/frame axioms are trusted as true, and completeness of the Hoare calculus is relative to a complete belief-capability axiomatization (§4.3); liveness additionally assumes a weakly fair scheduler (Def 2.10, Thm 4.16).
+- <Caveat>The environment never appears in the semantics</Caveat>: actions are belief updates, so whether beliefs track the world is out of scope — blind commitment will discharge a goal on a false belief with nothing external to catch it (inferred; belief-world divergence is not discussed).
+
+## Critiques and Questions
+1. The proof theory certifies belief coherence, not task success: effect axioms such as `{B current website(book)} put in shopping cart(book) {B(in cart(book) ∧ current website(ContentCart))}` (p.18) assert transitions of the belief base. A proven-correct GOAL agent with a broken perception/update layer still "achieves" every goal. This is precisely the adjudication gap TDE moves to runtime, environment-computed checks.
+2. Blind commitment makes belief the referee, with a sharp corner: a false belief `Bφ` both deletes the goal `φ` (Def 2.8) and disables `adopt(φ)` (R3/R4), so a false positive cannot even be corrected by re-adoption until the belief is retracted.
+3. A formal wrinkle left implicit: the maintenance-goal reactivation story (p.19) relies on the standing closure constraint of Def 2.1(iii), yet the transformer `M` (Def 2.8) only ever *subtracts* goals — how the goal base regains `p` after a belief retraction is not defined by `M`. Unclear whether the goal base is meant to be re-closed after every update.
+4. Proof labor and scaling: seven `ensures` steps, an invariant, a stable property, and per-capability frame axioms for a four-rule agent, all by hand (the paper points at UNITY verification tools, ref [33]); and the `ensures` reduction is proven one-directional (Thm 4.16, ⇒) unlike the `unless` iff (Thm 4.15), so completeness of the temporal layer over Hoare triples is not established.
+
+<SelfCheck q="Under GOAL's default semantics, when is a goal removed from the goal base without any explicit drop action, and who adjudicates that removal?" a="After every belief-updating action, the mental-state transformer M deletes exactly those goals that the updated belief base entails (Def 2.8) — the blind-commitment strategy: drop a goal iff it is believed achieved. Adjudication is therefore internal: the agent's own beliefs decide success; the environment never appears in the semantics." />
+
+## Glossary
+- <Term def="a goal stated as a declarative description of the end state to be realised (an achievement condition), not a recipe of actions">goal-to-be</Term> vs <Term def="a goal implemented as a plan or action structure, as in Agent-0, AgentSpeak(L), 3APL, ConGolog, PLACA">goal-to-do</Term>
+- <Term def="commitment strategy in which an agent drops a goal if and only if it believes the goal has been achieved; GOAL's built-in default, overridable only by drop(φ)">blind commitment</Term>
+- <Term def="Chandy & Misra's parallel-programming formalism; GOAL borrows its program shape (a set of guarded actions run under fairness) and its unless/ensures/leads-to proof method">UNITY</Term>
+- <Term def="modal system of consistent belief closed under consequence (KD); adding positive and negative introspection gives KD45, equivalent here because operators are not nested">KD / KD45</Term>
+- <Term def="Dijkstra's weakest condition under which attempting an action guarantees a given postcondition; the engine of the relative-completeness proof">weakest liberal precondition</Term>
+- <Term def="scheduling assumption that no action continuously enabled from some point on is never taken; required for the liveness theorem">weak fairness</Term>
+- <Term def="a Hoare triple that also guarantees a successor state exists for the attempt, rather than asserting the postcondition only if the action happens to execute">total correctness</Term>
+
+{/* NOTES_START */}
+### Personal notes
+GOAL ↔ TDE mapping for the related-work section: `enabled(a)` axioms ↔ TDE precondition gates; belief-level effect/frame Hoare triples ↔ TDE postconditions; declarative goal base + blind commitment ("goal gone iff believed achieved") ↔ red-green termination ("done iff suite passes"). The two load-bearing inversions TDE makes: (1) evaluation substrate — GOAL's pre/postconditions are mental-state formulas (B/G), TDE's are environment-computed predicates on world state; (2) verification time — GOAL proves properties of the program text before execution, TDE gates each action and the completion claim during execution. Most citable single fact: GOAL's own correctness proof terminates in `B(bought(T) ∧ bought(I))` — belief of success — the cleanest classical illustration that agent verification historically adjudicated against the agent's self-model. Also worth noting in the paper: GOAL has no plan/intention component at all (mental state = beliefs + goals), so it is BDI-family by lineage, not by literal B-D-I structure.
+{/* NOTES_END */}

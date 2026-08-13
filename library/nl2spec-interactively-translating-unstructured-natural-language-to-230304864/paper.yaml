@@ -1,0 +1,59 @@
+canonical_key: arxiv-2303.04864
+slug: nl2spec-interactively-translating-unstructured-natural-language-to-230304864
+title: 'nl2spec: Interactively Translating Unstructured Natural Language to Temporal Logics with Large
+  Language Models'
+authors:
+- Matthias Cosler
+- Christopher Hahn
+- Daniel Mendoza
+- Frederik Schmitt
+- Caroline Trippel
+year: 2023
+primary_ids:
+  doi: null
+  arxiv_base_id: '2303.04864'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2303.04864v1
+- https://arxiv.org/pdf/2303.04864v1
+topic_groups:
+- general_agent_methods
+tags:
+- tde-related-work
+- verifier
+venue:
+  name: CAV
+  tier: A_star
+  status: accepted
+  year: 2023
+user:
+  read_status: unread
+  triage_label: SKIP
+  triage_confidence: medium
+  notes: null
+milestone: null
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v1
+  source: arxiv
+  source_url: https://arxiv.org/abs/2303.04864v1
+  pdf_path: library/nl2spec-interactively-translating-unstructured-natural-language-to-230304864/v1/paper.pdf
+  summary_path: library/nl2spec-interactively-translating-unstructured-natural-language-to-230304864/v1/summary.mdx
+  metadata_path: library/nl2spec-interactively-translating-unstructured-natural-language-to-230304864/v1/metadata.yaml
+  fetched_at: '2026-08-13T07:15:36Z'
+  source_updated_at: '2023-03-08T20:08:53Z'
+  arxiv_version: v1
+  pdf_sha256: dcaac50892633aee0f310844836b73bc8aade6e5e2662174e006b0621bd615f2
+  pdf_bytes: 1533512
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-08-13T07:15:36Z'
+  updated_at: '2026-08-13T10:24:37Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

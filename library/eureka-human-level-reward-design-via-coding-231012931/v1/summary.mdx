@@ -1,0 +1,119 @@
+---
+canonical_key: arxiv-2310.12931
+version_key: v1
+title: 'Eureka: Human-Level Reward Design via Coding Large Language Models'
+authors:
+- Yecheng Jason Ma
+- William Liang
+- Guanzhi Wang
+- De-An Huang
+- Osbert Bastani
+- Dinesh Jayaraman
+- Yuke Zhu
+- Linxi Fan
+- Anima Anandkumar
+venue: arXiv
+year: 2023
+tags:
+- reward-model
+- rl-for-agents
+- tde-related-work
+topic_groups:
+- general_agent_methods
+triage_label: SKIP
+triage_confidence: medium
+source_link: https://arxiv.org/abs/2310.12931v2
+summary_date: '2026-08-13'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>Eureka (ICLR 2024) turns GPT-4 into an autonomous reward engineer: given raw environment source code plus a one-line task description, it evolves executable reward programs — sampling candidates, scoring each by actually training policies with GPU-accelerated RL, and mutating the best via a textual <Term def="automated feedback string listing the scalar values of every reward component and the task fitness at intermediate policy checkpoints during training">reward reflection</Term> — matching or beating expert human rewards on 24 of 29 robot tasks with no task-specific prompting.</TLDR>
+
+<WhyItMatters>TDE survey category D, and the survey's analysis holds up against the paper: Eureka shares TDE's core move — compile NL (plus environment code) into executable code that the environment, never an LLM judge, computes over state — but its artifact is a dense shaped REWARD selected by argmax-fitness over many full RL training runs at design time, not a decidable acceptance suite gating completion of a single run, and there are no per-action pre/postconditions. The paper sharpens the delta further: Eureka *presupposes* a benchmark-given ground-truth fitness `F` (App.H names tasks lacking a definable `F` as a limitation), whereas TDE's central job is to synthesize the acceptance check itself from the instruction. Its execute-observe-revise loop against mechanical feedback is the design-time cousin of TDE's runtime red-green loop.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "83%", label: "tasks at/above expert human rewards", sub: "24/29 tasks, 10 robot morphologies (Fig.4)" },
+  { value: "+52%", label: "avg. normalized improvement", sub: "scores clipped to [0, 3] per task (App.D)" },
+  { value: "−28.6%", label: "without reward reflection", sub: "avg normalized score, Isaac ablation (§4.3)" },
+  { value: "80", label: "reward candidates per run", sub: "5 iterations × 16 samples; 5 restarts (§3.2)" },
+]} />
+
+## Motivation
+<Problem>Reward design is the practical bottleneck of RL</Problem>: the paper cites a survey where 92% of polled RL practitioners report manual trial-and-error reward design and 89% call their final rewards sub-optimal (§1, p.2). <Problem>LLMs excel as high-level semantic planners but had not cracked low-level dexterous skill learning</Problem> such as pen spinning (§1). And <Problem>the prior LLM-for-reward approach, L2R, requires a hand-written motion-description template and a manually implemented reward API per environment</Problem> — its output can only set parameters of pre-defined primitives, capping expressivity and blocking scale to new tasks (§1, §4.1).
+
+## Contribution (what's new)
+<Novelty>Treat reward design as evolutionary search over free-form executable reward programs, with the LLM as mutation operator and the environment as evaluator.</Novelty> Three choices make this work with zero task-specific prompting: (1) <Novelty>environment source code as context</Novelty> — any reward is a function of the environment's state/action variables, so showing the observation code lets GPT-4 zero-shot write executable rewards without templates; (2) <Novelty>i.i.d. batch sampling plus in-context mutation</Novelty> — the probability that all 16 samples in an iteration are buggy decays exponentially, and the best candidate seeds the next generation; (3) <Novelty>reward reflection</Novelty> — the fitness score alone has no credit assignment and reward quality is RL-algorithm-dependent, so Eureka instead feeds back per-component scalar trajectories from training, enabling targeted edits (§3.3). GPU-accelerated IsaacGym evaluation (up to three orders of magnitude faster policy learning) is what makes 80 candidate evaluations per run affordable (§1).
+
+## Research questions
+Can a coding LLM, given only environment code and a task sentence, generate reward functions that rival expert human reward engineering across diverse embodiments? Which loop components — evolution, reflection — carry the improvement? Can the same loop absorb human input (reward initializations, textual feedback) without any gradient updates?
+
+## Methodology
+Per environment: sample K=16 reward programs from GPT-4 (`gpt-4-0314`) given the task description and trimmed environment observation code; train a PPO policy with each executable candidate; score it with the benchmark's ground-truth <Term def="task fitness function: the benchmark-provided ground-truth metric of policy quality, e.g. a binary success indicator on Dexterity tasks; identical to the Sparse baseline reward">fitness F</Term>; build the reward reflection from the best candidate's training statistics; repeat for 5 iterations, with 5 independent restarts, keeping the argmax. Evaluation covers 29 tasks on 10 robot morphologies: 9 IsaacGym environments plus all 20 tasks of the Bidexterous Manipulation (Dexterity) benchmark — both released around/after GPT-4's knowledge cutoff, limiting contamination (§4).
+
+<Pass title="Method details">
+<Stepper steps={[
+  { title: "Environment as context (§3.1, App.D)", body: "An automatic, task-agnostic script extracts only the compute_observations portion of the environment class — enough to expose all state/action variables, small enough for the context window, and free of simulator internals. The prompt adds only generic tips: return the total reward plus a dictionary of named components, use temperature parameters for any transformed component, and only consume existing environment attributes." },
+  { title: "Evolutionary search (§3.2)", body: "Each iteration samples 16 i.i.d. rewards; for every environment tested, the first batch already contains at least one executable program. Later iterations condition on the previous best reward, its reflection, and a mutation prompt. Context is trimmed to be Markovian: only the last reward and its reflection are kept." },
+  { title: "Reward reflection (§3.3)", body: "The feedback string lists each reward component's values at fixed policy checkpoints (plus max/mean/min), success rates, and episode lengths, with analysis hints: near-zero success means rewrite everything; a flat component is unoptimizable as written (rescale, rewrite, or drop it); dominant magnitudes must be rescaled." },
+  { title: "Evaluation protocol (§4.2, App.D)", body: "Intermediate candidates get 1 PPO run; each final reward gets 5 independent PPO runs, reporting the average of the maximum task-metric value over 10 evenly-spaced checkpoints. Isaac tasks report a human-normalized score; Dexterity reports raw success rates. PPO hyperparameters are the benchmark defaults, tuned for the Human rewards. Compute: one 8×A100 station, each Eureka run under one day; each RL run needs at most 8GB, so 4 V100s suffice." },
+]} />
+
+<MathBlock>{`R_{\\text{Eureka}} = \\arg\\max_{R \\sim \\text{LLM}(l, M, \\text{prompt})} F(\\mathcal{A}_M(R))`}</MathBlock>
+
+The human-normalized score is `(Method − Sparse) / |Human − Sparse|`; for the abstract's average-improvement figure, per-task scores are clipped to the range 0 to 3 before averaging because of large outliers (App.D). The L2R baseline is re-implemented with its API primitives built from the original human rewards' components — an intentional advantage granted to L2R (§4.1, App.C).
+</Pass>
+
+## Main result
+<Finding src="Fig.4, §4.3">Eureka exceeds or matches expert human rewards on all 9 Isaac tasks and 15 of 20 Dexterity tasks (24/29 = 83%), with an average normalized improvement of 52%</Finding>; gains concentrate on high-dimensional dexterity environments, while L2R is competitive only on low-dimensional tasks (CartPole, BallBalance) despite being granted human reward components. Statistical backing is unusually solid: mean/median/IQM and probability-of-improvement with 95% CIs over 100 RL runs all favor Eureka (App.F, Fig.11-12). Separately, <Finding src="Fig.7, §4.3">Eureka rewards plus a two-stage curriculum (pre-train pen reorientation, then fine-tune on spinning waypoint sequences) yield the first simulated Shadow Hand pen-spinning policies — while both from-scratch and pre-trained-only policies complete zero cycles</Finding>.
+
+<SortableTable columns={["Comparison", "Metric", "Eureka", "Baseline"]} rows={[
+  ["Isaac, 9 tasks (Fig.4)", "human-normalized score", "at/above human on 9/9", "Human = 1.0"],
+  ["Dexterity, 20 tasks (Fig.4)", "success rate", "at/above human on 15/20", "Human"],
+  ["Kettle (Fig.13)", "success rate", 0.90, "0.02 Human / 0.07 L2R"],
+  ["Pen (Fig.13)", "success rate", 0.47, "0.74 Human"],
+  ["BlockStack (Fig.13)", "success rate", 0.14, "0.69 Human"],
+  ["Mujoco Humanoid (Tab.4)", "forward velocity", 7.68, "5.92 Human"],
+]} />
+
+## Key findings
+- <Finding src="Fig.5">Evolution, not just more sampling, drives the gains</Finding>: cumulative-best performance rises every iteration, and an ablation that spends the same budget on 32 first-attempt samples without iteration stays below Eureka from iteration 2 onward on both benchmarks.
+- <Finding src="§4.3, Fig.14">Reward reflection is load-bearing on hard tasks</Finding>: replacing it with bare fitness snapshots cuts the average Isaac normalized score by 28.6%, with losses concentrated in high-dimensional tasks (Humanoid 1.28 to 0.34, Ant 0.94 to 0.18) and none on trivial ones (Cartpole 1.00 either way).
+- <Finding src="Fig.6, Fig.16, App.G.2">Eureka rewards are genuinely novel, not paraphrases of human rewards</Finding>: Pearson correlation with human rewards falls as tasks get harder (ShadowHand 0.09, Anymal 0.38 vs Humanoid 0.97, BallBalance 0.95), and some rewards are *negatively* correlated yet far better (FrankaCabinet normalized score 11.98 at correlation −0.30).
+- <Finding src="Fig.8, App.G.3">Human reward initialization uniformly helps</Finding>: Eureka seeded with the human reward beats both vanilla Eureka and Human on every selected Dexterity task regardless of the human reward's quality (Kettle 0.11 to 0.91; CatchUnderarm 0.33 to 0.64) — supporting the authors' hypothesis that humans pick the right state variables but compose them poorly.
+- <Finding src="Fig.9, §4.4">Textual human feedback trades fitness for alignment</Finding>: substituting colloquial human sentences for the automated reflection (1 sample/iteration) produces a Humanoid that runs slower (5.58 vs 7.53 forward velocity) but is preferred 15/20 vs 5/20 in a 20-person user study — direct evidence that argmax on F alone drifts from human intent.
+- <Finding src="Fig.15, Tab.4, Fig.10">The recipe generalizes but is backbone- and tuning-sensitive</Finding>: GPT-3.5 degrades yet stays at/above human on most Isaac tasks (ShadowHand 1.40, AllegroHand 1.78 — but FrankaCabinet collapses to 0.02); the loop transfers unchanged to Mujoco/numpy (7.68 vs human 5.92); Eureka rewards train faster but less smoothly, since PPO hyperparameters were tuned for the human rewards.
+
+## Implications
+Establishes the durable pattern behind LLM-written evaluators: the LLM writes white-box scoring code, the environment executes it mechanically, and execution statistics ground the next edit. Against the lineage: <Related>L2R (Yu et al. 2023)</Related> is the templated predecessor it obsoletes; <Related>classic evolutionary reward search (Niekum et al. 2010; Chiang et al. 2019; Faust et al. 2019)</Related> searched only parameters inside fixed templates; <Related>foundation-model reward models (VIP, LIV, MineDojo, VLM success detectors)</Related> emit scalar black-box rewards that cannot be inspected, edited, or improved in-context — Eureka's free-form reward *code* is precisely what enables reflection and human co-editing. <FollowUp>VLM-generated textual feedback replacing the human in EUREKA-HF (App.H)</FollowUp>; <FollowUp>model-predictive control as a faster inner-loop optimizer (App.H)</FollowUp>; <FollowUp>for TDE: keep the mechanical-feedback loop shape but move it to runtime — synthesize a decidable acceptance suite per instruction instead of a shaped reward per task family</FollowUp>.
+
+## Limitations
+- <Caveat>Simulation-only evidence</Caveat>: App.H cites "the preliminary real-robot experiment in App. F" (Sim2Real hopping), but no such experiment exists in App.F of this v2 PDF — a dangling reference; real-world applicability is argued, not demonstrated, here.
+- <Caveat>The ground-truth fitness F must exist and be human-definable</Caveat> (App.H): Eureka optimizes toward a given mechanical metric; it never synthesizes the success criterion itself, and where F is unavailable it falls back to a human in the loop (§4.4).
+- <Caveat>One simulator, one RL algorithm, hyperparameters tuned for the Human baseline</Caveat>: "human-level" is specific to this stack, and by the paper's own §3.3 argument (reward quality is optimizer-dependent) results may not transfer across RL algorithms.
+- <Caveat>Selection under noise</Caveat>: intermediate candidates are ranked by a single PPO run, and the final metric is an average of per-run *maxima* over 10 checkpoints — a max-based protocol that favors peaky training curves.
+- <Caveat>The 52% headline depends on clipping normalized scores to the range 0 to 3</Caveat> per task before averaging (App.D); the raw distribution is heavy-tailed (FrankaCabinet near 12).
+
+## Critiques and Questions
+1. The abstract says Eureka "outperforms human experts on 83% of the tasks", but §4.3's accounting is "exceeds or performs on par" on 24/29 — the tie-vs-win split is never reported, and Fig.13 shows Human clearly ahead on several Dexterity tasks (Pen 0.74 vs 0.47, BlockStack 0.69 vs 0.14, BottleCap 0.91 vs 0.32).
+2. Reward hacking against F is unexamined: candidates are selected purely by argmax over F, so anything F under-specifies is invisible to the search — and the EUREKA-HF study itself demonstrates the resulting misalignment (fast but unnatural gaits). A systematic audit of F-gaming behaviors is missing.
+3. Winner's curse in the search curve: with 80 single-seed evaluations per run, part of Fig.5's monotone "cumulative best" plausibly measures selection of lucky training seeds rather than genuinely better rewards; per-iteration bests are never re-verified with multi-seed evaluation during search.
+4. The human baseline is a fixed artifact, not equal-budget human effort: Eureka spends up to 400 training runs per environment, while the human rewards are whatever the benchmark authors shipped. "Human-level reward design" compares automation to a static reference, not to an expert given the same trial budget.
+5. Contamination is controlled for the benchmark *code* (post-cutoff release) but not the task *types*: near-1.0 correlations on classic tasks (Humanoid 0.97, BallBalance 0.95) suggest GPT-4 reproduces standard reward idioms there, so the novelty evidence really rests on the harder, less common tasks.
+
+<SelfCheck q="Why does Eureka feed per-component training statistics (reward reflection) to the LLM instead of just the task fitness score, and what evidence shows this matters?" a="The fitness score is holistic: it gives no credit assignment, so it cannot say which reward term failed or why, and whether a reward works depends on the RL algorithm's ability to optimize each term as written. Reward reflection tracks every named component's values across policy checkpoints, letting the LLM spot flat (unoptimizable) or mis-scaled components and edit them specifically. Ablating it cuts the average Isaac human-normalized score by 28.6%, with the largest drops on high-dimensional tasks (Humanoid 1.28 to 0.34)." />
+
+## Glossary
+- <Term def="providing dense incremental learning signal for a ground-truth objective that is itself sparse or hard to optimize directly">reward shaping</Term> / <Term def="reward design problem (Singh et al. 2010): find R whose optimized policy maximizes a fitness function F that can only be queried">RDP</Term>
+- <Term def="NVIDIA's GPU-parallel physics simulator; runs thousands of environment instances on one GPU, making per-candidate RL training cheap">IsaacGym</Term>
+- <Term def="Bidexterous Manipulation benchmark (Chen et al. 2022): 20 two-Shadow-Hand tasks (handover, kettle pouring, block stacking) with binary success fitness">Dexterity</Term>
+- <Term def="Language-to-Rewards (Yu et al. 2023): two LLM stages fill a hand-written motion template, then translate it into calls to a manually implemented reward API">L2R</Term>
+- <Term def="(Method − Sparse) / |Human − Sparse|; 1.0 means parity with the expert human reward">human normalized score</Term>
+- <Term def="anthropomorphic five-finger robot hand with 20+ actuated DoF; the platform for the pen-spinning demonstration">Shadow Hand</Term>
+- <Term def="here: Eureka's gradient-free variant of RL from human feedback — human text replaces the automated reflection; no model weights are updated">in-context RLHF</Term>
+
+{/* NOTES_START */}
+### Personal notes
+The crisp line for the TDE novelty defense: Eureka de-circularizes *scoring* (environment computes both the reward and the fitness; no LLM judge anywhere) but not *specification* — the acceptance criterion F is an input to the problem, not an output. TDE inverts exactly that: compile the acceptance suite itself from the instruction, decide a single run red-green at runtime, and gate individual actions with pre/postconditions; Eureka instead runs a design-time outer loop where each "test" is an entire RL training. Transferable harness idea: reward reflection's "expose named components as a dict, feed back their scalar trajectories" is the same shape as exposing per-assertion pass/fail traces from an acceptance suite. Artifacts: prompts/envs/rewards promised open-source; project page eureka-research.github.io.
+{/* NOTES_END */}

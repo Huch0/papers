@@ -1,0 +1,125 @@
+---
+canonical_key: arxiv-2505.09027
+version_key: v1
+title: 'Tests as Prompt: A Test-Driven-Development Benchmark for LLM Code Generation'
+authors:
+- Yi Cui
+venue: arXiv
+year: 2025
+tags:
+- benchmark
+- tde-related-work
+- test-based-eval
+topic_groups:
+- software_engineering_agents
+triage_label: SKIP
+triage_confidence: high
+source_link: https://arxiv.org/abs/2505.09027v1
+summary_date: '2026-08-13'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>WebApp1K is a 1,000-task benchmark in which two Jest unit tests are simultaneously the entire prompt and the verification for generating a single-file React app, and its evaluation of 19 frontier LLMs argues that instruction following and in-context learning — not general coding ability — are what test-driven code generation actually measures.</TLDR>
+
+<WhyItMatters>Category-A related work for TDE: it shares tests-as-specification and mechanical, environment-computed pass/fail (a real Jest run, never an LLM judge), and two findings feed TDE directly — pretraining priors override written specs (App. D), an argument for external mechanical adjudication, and pass@1 collapses when the suite doubles (Tab. 9), a sizing caution for TDE's compiled acceptance suites. It differs exactly where TDE claims novelty: a one-shot ("transactional") program-generation benchmark whose tests are authored offline by humans plus GPT-4o — no agent control loop, no environment state, no runtime NL-to-suite compilation, no red–green iteration, no pre/postcondition gating.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "0.952", label: "best single-feature pass@1", sub: "o1-preview, 19 models (Tab. 6)" },
+  { value: "1,000", label: "TDD tasks / 20 domains", sub: "React apps; tests are the whole prompt (~0.5K tokens)" },
+  { value: "0.75", label: "best duo-feature pass@1", sub: "claude-3.5-sonnet; o1-preview falls to 0.652 (Tab. 9)" },
+  { value: "0.302 → 0.885", label: "TDD → TLD pass@1", sub: "llama-v3p1-405b once violated tests are retrofitted (Tab. 8)" },
+]} />
+
+## Motivation
+A coding task has two parts — a prompt and test-based verification — and <Problem>as tasks scale up, natural-language prompts grow long and drift out of alignment with the verifying tests, fixable only by human calibration</Problem> (§5.1, citing SWE-bench Verified). In mature software, tests — not prose — are the de facto specification (TDD), yet <Problem>existing benchmarks either follow test-last development (HumanEval/MBPP style: NL prompt, tests hidden) or are only "partial TDD" (SWE-bench: tests are one slice of a long context of logs, code, and issue text)</Problem> (Tab. 2). Moreover, <Problem>well-represented domains (LeetCode algorithms, JSON parsing) can be recited from pretraining, so they cannot isolate the ability to capture instructions from tests</Problem> (§1).
+
+## Contribution (what's new)
+<Novelty>Unify prompt and verification into the same executable artifact: the test suite is the entire specification, so spec/verifier misalignment is impossible by construction</Novelty> — passing means exactly complying with what was asked. For that to measure instruction capture rather than recitation, the benchmark must live in an <Novelty>untapped application-layer semantic space: 1,000 mini web-app scenarios across 20 domains</Novelty>, with React's SPA style keeping every solution to one compact `App.js` (median 35–46 LOC) the harness can hook mechanically. The paper claims the first dedicated TDD benchmark (§5.5) and its headline insight: <Novelty>TDD success is bottlenecked by instruction following and in-context learning, not coding proficiency</Novelty> — shown by a counterfactual where minimally retrofitting the violated tests lifts weak models from 0.07–0.33 to 0.64–0.885 pass@1.
+
+## Research questions
+What capabilities determine LLM success when executable tests are the sole specification? Are failures coding failures or instruction-capture failures? And how does success scale as more features (test cases) are packed into a single prompt?
+
+## Methodology
+Each task pairs a success test and a failure test (Jest + React Testing Library + `fetchMock`): mock an API response, simulate user actions, then assert exact mock-call counts and on-screen text. The prompt (~0.5K tokens) is the raw test code plus `Generate App.js to pass the tests below ... RETURN CODE ONLY`. Metric: pass@k with n = 10 samples per task (n = 1 for reasoning models, due to cost) over 19 models with shared, grid-searched decoding parameters. A duo-feature upgrade merges two tasks into one prompt (4 tests, ~1K tokens). Failure logs are mined into a seven-type error taxonomy, and a TLD counterfactual re-scores failing code against minimally edited tests.
+
+<Pass title="Benchmark construction and experiment details">
+<Stepper steps={[
+  { title: "Construction (App. A)", body: "Self-Instruct-style pipeline: humans propose 20 application domains and 5 categories per domain; 10 one-sentence scenarios per category yield 1,000 scenarios; GPT-4o then generates the success/failure test pair for each." },
+  { title: "Verification (§2.3)", body: "The output must be a single-file React SPA following a fixed template; the Jest suite runs against it; pass@1/5/10 are computed from up to 10 runs per task." },
+  { title: "Error taxonomy (Tab. 7)", body: "A version mismatch (deprecated React functions — preference alignment); B text mismatch, C API-call-count mismatch, E invalid fetch-mock signature (in-context learning); D uninstalled module, G missing UI element (instruction following); F scope violation (pretraining knowledge). The capability mapping is self-described conjecture." },
+  { title: "TLD counterfactual (§3.6)", body: "For type A/B/D failures, edit the violated test — roll back the React version, retrofit the expected text/attribute, refactor the mock — restricted to single-statement scope with unchanged test structure, then re-run." },
+  { title: "Decoding setup (App. B)", body: "temperature 0.2, top p 0.8, top k 40, chosen by grid search over 100 tasks; open models served via Fireworks; same parameters for all models." },
+]} />
+</Pass>
+
+## Main result
+<Finding src="Tab. 6, p.4">Reasoning models lead single-feature WebApp1K — o1-preview 0.952, o1-mini 0.939, DeepSeek-R1 0.927 pass@1 — ahead of gpt-4o-2024-08-06 (0.885) and claude-3.5-sonnet (0.8808), while small open models sit near the floor (llama-v3-8b 0.0679)</Finding>. Doubling the suite reshuffles the board: <Finding src="Tab. 9, p.7">on duo-feature tasks every model drops sharply and claude-3.5-sonnet takes SOTA at 0.75 while o1-preview falls to 0.652</Finding>.
+
+<SortableTable columns={["Model", "Single-feature pass@1", "Duo-feature pass@1"]} rows={[
+  ["o1-preview", 0.952, 0.652],
+  ["o1-mini", 0.939, 0.667],
+  ["deepseek-r1", 0.927, 0.687],
+  ["gpt-4o-2024-08-06", 0.885, 0.531],
+  ["claude-3.5-sonnet", 0.8808, 0.75],
+  ["deepseek-v3", 0.8723, 0.585],
+  ["gemini-2.0-thinking", 0.859, 0.58],
+  ["deepseek-v2.5", 0.834, 0.49],
+  ["gemini-2.0-flash", 0.822, 0.578],
+  ["mistral-large-2", 0.7804, 0.449],
+]} />
+
+## Key findings
+- <Finding src="Tab. 8, p.6">TDD failure is mostly instruction violation, not broken code</Finding>: retrofitting the violated tests (TLD) lifts the seven weakest models from 0.0679–0.3323 to 0.64–0.885 pass@1 (full table below).
+- <Finding src="§3.6, p.6">Syntax is essentially solved</Finding>: only 172 of 160,000 solutions fail to build (0.1%); reasoning models, Claude 3.5, and Mistral Large 2 produce zero syntax errors.
+- <Finding src="§3.4, Fig. 4, p.5">93% of failure logs contain a singular or twin error</Finding> — typically one bug violating both tests — so failures are near-misses rather than incoherent code.
+- <Finding src="Fig. 5, p.5">No model is immune to any of the seven error types</Finding>, even though raw error counts differ by an order of magnitude between the best and worst models — same vulnerabilities, different rates.
+- <Finding src="Tab. 16, p.15">No prompt variant helps universally</Finding>: one-round error debugging (feeding back failed code plus the log) swings from -79% (deepseek-v2) to +111% (llama-v3-70b) relative pass@1; the authors recommend no advanced prompting for TDD tasks.
+- <Finding src="App. D, p.15-18">Pretraining priors preempt written specs</Finding>: on ticketSubmission the tests demand backend validation (API called once, then 'Title is required' displayed), but every non-reasoning model implements the more idiomatic frontend validation; on the duo-feature raw format (two differently named default imports of one module), o1 models score 0 — the first, plan-scoped reasoning step commits to splitting the code into two modules and never recovers.
+
+TLD counterfactual (Tab. 8, p.6):
+
+<ResultsTable columns={["Model", "TDD pass@1", "TLD pass@1"]} rows={[
+  ["llama-v3-70b", "0.3323", "0.6400"],
+  ["mixtral-8x22b", "0.3074", "0.8000"],
+  ["llama-v3p1-405b", "0.3020", "0.8850"],
+  ["llama-v3p1-8b", "0.2512", "0.7550"],
+  ["mixtral-8x7b", "0.1269", "0.7300"],
+  ["llama-v3p1-70b", "0.1027", "0.7900"],
+  ["llama-v3-8b", "0.0679", "0.6500"],
+]} />
+
+## Implications
+Making the spec and the verifier the same executable object eliminates prompt/verification drift by construction — the same de-circularization instinct as TDE, applied offline to a benchmark rather than at runtime inside an agent harness. It positions itself against <Related>algorithmic TLD benchmarks (HumanEval, MBPP) and "partial TDD" problem-solving benchmarks (SWE-bench)</Related>, and against prior TDD-prompting studies <Related>(Mathews & Nagappan 2024; Murr et al. 2023; Piya & Sullivan 2023)</Related>, which studied TDD prompts but built no benchmark. Notably, the paper itself quietly contains an unaudited NL-to-test compilation step — GPT-4o writes the tests from one-sentence scenarios — which is exactly the compile-fidelity question TDE must answer explicitly. <FollowUp>Does instruction loss impose an effective size budget on compiled acceptance suites — how many postconditions fit in a prompt before clauses silently drop?</FollowUp> <FollowUp>Would iterative red–green execution (deliberately excluded by the paper's transactional framing) recover the duo-feature collapse?</FollowUp>
+
+## Limitations
+- <Caveat>The specification itself is GPT-4o-authored and unaudited</Caveat>: no human validation of test correctness or fidelity to the scenario is reported, so some hard tasks may be hard because the generated spec is unnatural — the paper's own case study shows specs contradicting best practice.
+- <Caveat>Tiny suites over tiny programs</Caveat>: 2 (or 4) tests per task against single-file React components of median 35–46 LOC — far from real TDD's evolving suites; Tab. 2's "module scope" label is generous.
+- <Caveat>Reasoning-model numbers are single-sample</Caveat> (n = 1 per task); no variance, seeds, or significance testing anywhere.
+- <Caveat>Framework-version ambiguity is scored as model error</Caveat>: the prompt never pins a React version, yet type-A "version mismatch" counts against the model — arguably benchmark underspecification relabeled as a "preference alignment" deficit.
+- <Caveat>Internal inconsistencies suggest stale appendix numbers</Caveat>: the conclusion says 18 LLMs vs the abstract's and Tab. 6's 19; Tab. 22 lists deepseek-v2 at pass@1 0.7002 (Tab. 6's value for qwen2.5-coder-32b), and Fig. 12 captions give gemini-2.0-thinking 0.6813 and gemini-2.0-flash 0.57 vs Tab. 6's 0.859 and 0.822.
+- <Caveat>Contamination is unaddressed</Caveat>: the benchmark and leaderboard are public, and the "untapped semantic space" claim is asserted, not measured.
+- <Caveat>The TLD counterfactual covers only the seven weakest open models</Caveat>; no retrofit numbers for top models.
+
+## Critiques and Questions
+1. Does the TLD retrofit preserve semantics? "No semantic drift" is enforced structurally (single-statement edits), not verified behaviorally — a retrofitted expectation is by definition a different spec, so TLD pass@1 measures "the code does something coherent," a strictly weaker criterion than compliance. The instruction-vs-coding dichotomy would be firmer with independent validation of the edited tests.
+2. The root-cause-to-capability mapping (Tab. 7) is conjecture presented as taxonomy — the paper says "we further conjecture" — and §3.5's claim that all LLMs "possess the same knowledge and capabilities" rests only on all error types being nonzero everywhere.
+3. Is duo-feature degradation attention decay or task interference? The paper suspects attention decay (Liu et al. 2024) but runs no positional test (e.g., shuffling test order and tracking which feature's tests fail); "instruction loss" is diagnosed from a handful of summarized reasoning chains.
+4. The hardest tasks are hard precisely because the spec is anti-idiomatic (backend- vs frontend-validation trap). That is a legitimate stressor — real TDD specs do override priors — but it conflates "unpopular instructions" with "long instructions" as sources of difficulty.
+
+<SelfCheck q="What experiment shows that weak models' WebApp1K failures are instruction-following failures rather than coding failures, and what is its sharpest number?" a="The TLD counterfactual (§3.6): keep the generated code, minimally edit the violated tests (single-statement edits — roll back the React version, retrofit expected text, refactor mocks), and re-score. llama-v3p1-405b jumps from 0.302 (TDD) to 0.885 (TLD) pass@1 — the code was functional; it just violated the test-specified contract." />
+
+## Glossary
+- <Term def="test-driven development task: the unit tests are simultaneously the whole prompt and the verification; there is no natural-language task description">TDD task</Term>
+- <Term def="test-last development: natural-language prompt with tests used only to verify afterwards (HumanEval style); also names the counterfactual where tests are edited to fit the generated code">TLD</Term>
+- <Term def="probability that at least one of k sampled solutions passes all tests (Chen et al. 2021); here up to n = 10 samples per task, n = 1 for reasoning models">pass@k</Term>
+- <Term def="single-page application: the whole app lives in one component file, letting the harness pin the output to a single App.js">SPA</Term>
+- <Term def="Jest utility that stubs HTTP endpoints and records calls; tests assert exact call counts and mocked status codes against it">fetchMock</Term>
+- <Term def="bootstrapping method where an LLM expands human seed tasks into a large task set (Wang et al. 2023); here GPT-4o expands 100 human seeds into 1,000 test pairs">Self-Instruct</Term>
+- <Term def="the paper's name for a required behavior present in the input tests that never surfaces in the model's output or reasoning chain">instruction loss</Term>
+
+{/* NOTES_START */}
+### Personal notes
+For the TDE related-work section, cite as category A (tests-as-specification, mechanical pass/fail) with three load-bearing points: (1) the TLD flip (0.302 → 0.885) shows compliance with a test-specified contract, not coding ability, is the binding constraint — supporting TDE's premise that the spec must be enforced mechanically rather than inferred; (2) the duo-feature collapse (0.952 → 0.652 for o1-preview) is empirical grounding for a suite-size budget when TDE compiles instructions into acceptance suites; (3) App. D's prior-preemption cases are direct evidence that model priors override written specs, i.e., adjudication must be environment-evaluated. Novelty defense: WebApp1K is one-shot program generation with offline-authored tests — no control loop, no world state, no runtime compilation, no per-action gating; its GPT-4o test authoring is unaudited, the exact compile-fidelity gap TDE addresses head-on.
+{/* NOTES_END */}

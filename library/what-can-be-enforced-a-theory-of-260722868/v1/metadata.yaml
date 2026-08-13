@@ -1,0 +1,74 @@
+canonical_key: arxiv-2607.22868
+version_key: v1
+title: What Can Be Enforced? A Theory of Certified Runtime Safety for Tool-Using Agents
+authors:
+- Shawn Ray
+abstract: Runtime guardrails act before irreversible tool calls, but their guarantees depend on what policy
+  state is representable, what a judge observes, and whether intervention changes future behavior. We
+  separate three questions. First, relative to fixed oracle predicates, a deterministic gate enforces
+  exactly the nonempty safety policies whose good prefixes its register model recognizes; policy nontriviality
+  is undecidable with two decrementable counters but in PSPACE for a separable monotone fragment. Second,
+  under a fixed exogenous law, Neyman-Pearson gives the exact false-block/miss frontier and conformal
+  calibration gives a finite-sample marginal certificate, possibly via block-all. Third, once blocking
+  changes future proposals, static scores and ungated trajectories need not identify the closed-loop frontier;
+  a specified finite controlled model instead yields an occupancy program. Bounded representation attacks
+  add a robustness margin, so benign calibration alone does not transfer. Experiments target these distinctions
+  through static diagnostics, controlled-model enumeration, representation rewrites, and paired closed-loop
+  reruns.
+venue: arXiv
+year: 2026
+source: arxiv
+source_url: https://arxiv.org/abs/2607.22868v1
+pdf_url: https://arxiv.org/pdf/2607.22868v1
+pdf_sha256: 07f5e2261de40d9a44c79fa6246fc1e0e6af4170a70787fda5059093ef64ae1a
+fetched_at: '2026-08-13T07:15:24Z'
+source_updated_at: '2026-07-24T19:14:26Z'
+ids:
+  doi: null
+  arxiv_id: 2607.22868v1
+  arxiv_base_id: '2607.22868'
+  arxiv_version: v1
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- position-paper
+- tde-related-work
+- verifier
+topic_groups:
+- agent_harness
+- general_agent_methods
+scoring:
+  score: 44.4
+  label: TRACK_ONLY
+  confidence: high
+  rationale: 'score=44 -> TRACK_ONLY | strong: recency(0.99), interest_fit(0.73), novelty(0.55) | interests:
+    agent_harness:group:agent_harness, general_agent_methods:group:general_agent_methods'
+  matched_interests:
+  - agent_harness:group:agent_harness
+  - general_agent_methods:group:general_agent_methods
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 0.99
+    venue_quality: 0.4
+    harness_relevance: 0.36
+    novelty: 0.55
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/what-can-be-enforced-a-theory-of-260722868/v1/paper.pdf
+  extraction: library/what-can-be-enforced-a-theory-of-260722868/v1/extraction.txt
+  summary: library/what-can-be-enforced-a-theory-of-260722868/v1/summary.mdx
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread
+  summary_format: mdx

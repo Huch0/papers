@@ -1,0 +1,58 @@
+canonical_key: arxiv-2603.10505
+slug: safe-and-scalable-web-agent-learning-via-260310505
+title: Safe and Scalable Web Agent Learning via Recreated Websites
+authors:
+- Hyungjoo Chae
+- Jungsoo Park
+- Alan Ritter
+year: 2026
+primary_ids:
+  doi: null
+  arxiv_base_id: '2603.10505'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2603.10505v1
+- https://arxiv.org/pdf/2603.10505v1
+topic_groups:
+- agent_harness
+- computer_use_agents
+tags:
+- execution-based-eval
+- tde-related-work
+- training-environment
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2026
+user:
+  read_status: unread
+  triage_label: TRACK_ONLY
+  triage_confidence: high
+  notes: null
+milestone: null
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v1
+  source: arxiv
+  source_url: https://arxiv.org/abs/2603.10505v1
+  pdf_path: library/safe-and-scalable-web-agent-learning-via-260310505/v1/paper.pdf
+  summary_path: library/safe-and-scalable-web-agent-learning-via-260310505/v1/summary.mdx
+  metadata_path: library/safe-and-scalable-web-agent-learning-via-260310505/v1/metadata.yaml
+  fetched_at: '2026-08-13T07:17:35Z'
+  source_updated_at: '2026-03-11T07:58:53Z'
+  arxiv_version: v1
+  pdf_sha256: 34bc089a17725c7a15b55c83be272240d06f8098714064599c0c5490a0e086ee
+  pdf_bytes: 20179357
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-08-13T07:17:35Z'
+  updated_at: '2026-08-13T10:34:34Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

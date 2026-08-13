@@ -1,0 +1,79 @@
+canonical_key: arxiv-2306.06531
+version_key: v1
+title: 'AutoTAMP: Autoregressive Task and Motion Planning with LLMs as Translators and Checkers'
+authors:
+- Yongchao Chen
+- Jacob Arkin
+- Charles Dawson
+- Yang Zhang
+- Nicholas Roy
+- Chuchu Fan
+abstract: For effective human-robot interaction, robots need to understand, plan, and execute complex,
+  long-horizon tasks described by natural language. Recent advances in large language models (LLMs) have
+  shown promise for translating natural language into robot action sequences for complex tasks. However,
+  existing approaches either translate the natural language directly into robot trajectories or factor
+  the inference process by decomposing language into task sub-goals and relying on a motion planner to
+  execute each sub-goal. When complex environmental and temporal constraints are involved, inference over
+  planning tasks must be performed jointly with motion plans using traditional task-and-motion planning
+  (TAMP) algorithms, making factorization into subgoals untenable. Rather than using LLMs to directly
+  plan task sub-goals, we instead perform few-shot translation from natural language task descriptions
+  to an intermediate task representation that can then be consumed by a TAMP algorithm to jointly solve
+  the task and motion plan. To improve translation, we automatically detect and correct both syntactic
+  and semantic errors via autoregressive re-prompting, resulting in significant improvements in task completion.
+  We show that our approach outperforms several methods using LLMs as planners in complex task domains.
+  See our project website https://yongchao98.github.io/MIT-REALM-AutoTAMP/ for prompts, videos, and code.
+venue: The 2024 International Conference on Robotics and Automation
+year: 2023
+source: arxiv
+source_url: https://arxiv.org/abs/2306.06531v3
+pdf_url: https://arxiv.org/pdf/2306.06531v3
+pdf_sha256: 5568c05e4f10251e309493df6b5c661634e0f6942d8b5aba63cbe49e9cbdd701
+fetched_at: '2026-08-13T07:15:54Z'
+source_updated_at: '2024-03-22T00:21:04Z'
+ids:
+  doi: null
+  arxiv_id: 2306.06531v3
+  arxiv_base_id: '2306.06531'
+  arxiv_version: v3
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- planner-executor-verifier
+- tde-related-work
+topic_groups:
+- general_agent_methods
+scoring:
+  score: 7.4
+  label: SKIP
+  confidence: medium
+  rationale: 'score=7 -> SKIP | strong: novelty(0.55), interest_fit(0.40), harness_relevance(0.36) | interests:
+    general_agent_methods:group:general_agent_methods | negatives: old_in_fast_area'
+  matched_interests:
+  - general_agent_methods:group:general_agent_methods
+  negative_signals:
+  - old_in_fast_area
+  subscores:
+    interest_fit: 0.402
+    recency: 0.0
+    venue_quality: 0.3
+    harness_relevance: 0.36
+    novelty: 0.55
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/autotamp-autoregressive-task-and-motion-planning-with-230606531/v1/paper.pdf
+  extraction: library/autotamp-autoregressive-task-and-motion-planning-with-230606531/v1/extraction.txt
+  summary: library/autotamp-autoregressive-task-and-motion-planning-with-230606531/v1/summary.mdx
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread
+  summary_format: mdx

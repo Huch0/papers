@@ -1,0 +1,66 @@
+canonical_key: arxiv-2406.09187
+slug: guardagent-safeguard-llm-agents-by-a-guard-240609187
+title: 'GuardAgent: Safeguard LLM Agents by a Guard Agent via Knowledge-Enabled Reasoning'
+authors:
+- Zhen Xiang
+- Linzhi Zheng
+- Yanjie Li
+- Junyuan Hong
+- Qinbin Li
+- Han Xie
+- Jiawei Zhang
+- Zidi Xiong
+- Chulin Xie
+- Carl Yang
+- Dawn Song
+- Bo Li
+year: 2024
+primary_ids:
+  doi: null
+  arxiv_base_id: '2406.09187'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2406.09187v3
+- https://arxiv.org/pdf/2406.09187v3
+topic_groups:
+- agent_harness
+tags:
+- llm-judge
+- tde-related-work
+- verifier
+venue:
+  name: ICML
+  tier: A_star
+  status: accepted
+  year: 2024
+user:
+  read_status: unread
+  triage_label: SKIP
+  triage_confidence: high
+  notes: null
+milestone: null
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v3
+  source: arxiv
+  source_url: https://arxiv.org/abs/2406.09187v3
+  pdf_path: library/guardagent-safeguard-llm-agents-by-a-guard-240609187/v1/paper.pdf
+  summary_path: library/guardagent-safeguard-llm-agents-by-a-guard-240609187/v1/summary.mdx
+  metadata_path: library/guardagent-safeguard-llm-agents-by-a-guard-240609187/v1/metadata.yaml
+  fetched_at: '2026-08-13T07:15:18Z'
+  source_updated_at: '2025-05-29T03:09:05Z'
+  arxiv_version: v3
+  pdf_sha256: 845a62cfc19be17894280e71e1669fdd3de5715ac8f9f41ef0206db941eb7d38
+  pdf_bytes: 12885656
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-08-13T07:15:18Z'
+  updated_at: '2026-08-13T10:18:51Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

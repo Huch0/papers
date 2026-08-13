@@ -109,3 +109,14 @@ Each entry: date, trigger, change, files touched, migration status.
   attending ICML 2026 (10 papers ingested with this tag in the same change).
   The pattern is reusable for future conferences (e.g. `neurips2026-picks`).
 - Requested by user: "Add a special tag for this list."
+
+## 2026-07-19 — tde-related-work collection + robotics/SE/FM venue tiers
+
+- Added `tde-related-work` to the `collections` tag group: the related-work corpus
+  for the user's "Test-Driven Execution" (TDE) research (51 papers ingested from the
+  user's novelty survey; 1 survey entry — WebArena Verified — has no fetchable source
+  and was logged to errors.jsonl instead).
+- Extended config/venues.yaml A_star tiers + aliases with CoRL, ICRA, IROS, CAV, and
+  IEEE TSE so the robotics/formal-methods/SE anchors in this corpus are credited
+  correctly (previously they would have landed in workshop_or_minor).
+- Requested by user: "Add this papers to the library and write the summaries."

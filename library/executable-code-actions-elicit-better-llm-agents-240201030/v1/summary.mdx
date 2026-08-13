@@ -1,0 +1,118 @@
+---
+canonical_key: arxiv-2402.01030
+version_key: v1
+title: Executable Code Actions Elicit Better LLM Agents
+authors:
+- Xingyao Wang
+- Yangyi Chen
+- Lifan Yuan
+- Yizhe Zhang
+- Yunzhu Li
+- Hao Peng
+- Heng Ji
+venue: arXiv
+year: 2024
+tags:
+- foundational
+- tde-related-work
+- tool-use
+topic_groups:
+- general_agent_methods
+- agent_harness
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2402.01030v4
+summary_date: '2026-08-13'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>CodeAct consolidates an LLM agent's entire environment-facing action space into executable Python emitted turn by turn against a live interpreter — execution results and tracebacks become the next observation — validated by a 17-LLM comparison against JSON/text actions (up to +20.7% absolute on the new M3ToolEval benchmark) and distilled into the 7k-trajectory CodeActInstruct dataset and finetuned 7B CodeActAgent models.</TLDR>
+
+<WhyItMatters>Category-B anchor of the TDE corpus: CodeAct establishes the substrate TDE assumes — executable actions with mechanical environment feedback (interpreter output, tracebacks) in a multi-turn loop — but its verification is either absent or privileged, never compiled from the instruction: in deployment the agent self-declares completion under human supervision, and inside M3ToolEval submitted answers are oracle-checked against pre-annotated gold labels (answer matching, not final-state checks), with no pre/postcondition gating anywhere. Also the direct ancestor of the OpenHands harness line, so core reading for agent-harness design and evaluation methodology.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "+20.7%", label: "abs. success vs next-best format", sub: "gpt-4-1106-preview, M3ToolEval (Tab.3)" },
+  { value: "12/17", label: "LLMs best with CodeAct", sub: "both success rate and fewest turns (Tab.3)" },
+  { value: "7,139", label: "CodeActInstruct trajectories", sub: "5 domains, 10.6M tokens (Tab.4)" },
+  { value: "42.5", label: "CodeActAgent (Mistral) overall avg", sub: "vs 25.6 Mistral Instruct (Tab.5)" },
+]} />
+
+## Motivation
+LLM agents typically emit actions as JSON or text in a pre-defined format. <Problem>Both formats constrain the action space to pre-enumerated tools and cannot compose tools within one action</Problem> — no control flow (loops, conditionals) or data flow (variables carrying one tool's output into another), so every sub-step costs a full LLM turn (§1). Prior code-generating agents (code-as-policies, Voyager, PaL, ViperGPT) do emit programs, but <Problem>mostly as a single-turn static plan: the code cannot be re-adjusted on new observations, and a first-attempt failure is terminal</Problem> (§A) — Voyager iterates, but only over whole skill-function definitions, not atomic actions. Finally, <Problem>no existing tool-use benchmark both requires multi-tool composition in multi-turn interaction and supports comparing action formats</Problem> (Tab.A.7), so the format question had never been measured cleanly.
+
+## Contribution (what's new)
+<Novelty>A unified action space: every agent-to-environment action is a piece of Python run by an interpreter, whose outputs — results, errors, tracebacks — return as the next observation</Novelty>, so multi-tool composition collapses into one action via native control/data flow, and <Term def="revising code in the next turn after observing interpreter errors or tracebacks">self-debug</Term> feedback comes free from the language's existing error infrastructure instead of hand-built plumbing (Tab.1). The form is forced by the baseline failures: JSON/text lack control/data flow by construction, and single-shot code generation lacks the observation loop. Around the framework: <Novelty>M3ToolEval (a format-agnostic composition benchmark), CodeActInstruct (7,139 trajectories filtered to keep error-then-fix behavior), and CodeActAgent (Llama-2/Mistral 7B)</Novelty>, all released.
+
+## Research questions
+RQ1 (§2.2): does pre-training familiarity with code make Python function calls a stronger *atomic* tool-call format than JSON or text? RQ2 (§2.3): does code's control and data flow pay off on complex tasks requiring multi-tool composition? And §3: can open 7B models be finetuned into capable CodeAct agents without losing general ability?
+
+## Methodology
+Define the action space, then vary only the format. §2.1 frames a three-role loop (agent ↔ user in natural language; agent ↔ environment via actions/observations); CodeAct makes every environment action executable Python. Two controlled comparisons across 17 LLMs hold tools and tasks fixed while swapping the action format: <Term def="tool-use benchmark of atomic API calls (Li et al. 2023); correctness = the invoked API's execution output matches the ground-truth API output">API-Bank</Term> level-1 for atomic calls (RQ1) and <Term def="this paper's benchmark: 82 human-curated multi-turn, multi-tool tasks across web browsing, finance, travel planning, science, and information processing; exact-answer-match graded; supports code/JSON/text formats with no third-party-API dependency">M3ToolEval</Term> for composition (RQ2), zero-shot with deliberately simple prompts. Then the open-model recipe: distill multi-turn CodeAct trajectories from closed models on hard instances, filter for self-improvement behavior, mix with general conversation data, full-finetune 7B backbones, and evaluate in- and out-of-domain.
+
+<Pass title="Method details">
+<Stepper steps={[
+  { title: "M3ToolEval protocol (§2.3)", body: "82 human-curated instances, each domain with hand-crafted tools. Per turn the model either emits an action or proposes an answer, which the benchmark verifies by exact match against the gold solution; incorrect submissions get retry feedback. Episodes end on a correct submission or at 10 turns. Metrics: success rate and average turns over all instances." },
+  { title: "CodeActInstruct sources (§3.1)", body: "Five datasets over four use cases: HotpotQA (information seeking via a search API), MATH + APPS (software-package use and self-debugging), WikiTableQuestions repurposed into SQL(sqlite3)- and pandas-based tabular reasoning (external memory), ALFWorld (robot planning). Single-turn datasets are repurposed MINT-style into multi-turn tasks; for code generation an in-context example encourages testing against provided test cases before submitting." },
+  { title: "Trajectory generation + filtering (§3.1, §G)", body: "Down-sample each source to its hardest instances; generate trajectories with gpt-3.5-turbo-0613 (16k for code), claude-1-instant, claude-2, and gpt-4-0613 on problems none of those solve. Keep only trajectories that adhere to code actions; selectively preserve error-then-fix trajectories (promoting self-debug); drop successes whose every execution errored and instruction-following failures. Yield: 6,728 (gpt-3.5/claude) + 411 (gpt-4) = 7,139 trajectories, 10,581,681 Llama-2 tokens." },
+  { title: "Training (§3.2, §D)", body: "Full-parameter SFT of Llama-2-7B (4,096 ctx) and Mistral-7B (16,384 ctx) on CodeActInstruct + 69,230 general conversations (OpenOrca CoT subset, ShareGPT x2, CapyBara). Megatron-LLM fork, 4xA100-40GB, lr 1e-5 cosine, 5 epochs, batch 32; 3rd-epoch checkpoint used." },
+  { title: "Evaluation (§3.2)", body: "MINT with k=5 turns, split into in-domain (MINT contains ALFWorld and MATH) vs out-of-domain; M3ToolEval; text-action generalization on MiniWoB++ (Kim et al. 2023 subset) and ScienceWorld; generic suite MMLU / HumanEval / GSM8K / MT-Bench. Overall average normalizes MT-Bench and excludes in-domain tasks." },
+]} />
+</Pass>
+
+## Main result
+On M3ToolEval, <Finding src="Tab.3, p.4">CodeAct yields the best success rate for 12 of 17 LLMs and the fewest turns for 12 of 17; the best model, gpt-4-1106-preview, reaches 74.4% vs 53.7% (text) and 52.4% (JSON) — a 20.7% absolute gain over the next-best format — in 5.5 turns vs 7.6 (JSON) / 7.7 (text)</Finding>. The abstract's "up to 30% fewer actions" is this turn reduction; gains widen as model capability grows (Fig.1 bottom).
+
+<SortableTable columns={["Model", "CodeAct SR (%)", "JSON SR (%)", "Text SR (%)", "CodeAct avg turns"]} rows={[
+  ["gpt-4-1106-preview", 74.4, 52.4, 53.7, 5.5],
+  ["gpt-4-0613", 67.1, 56.1, 45.1, 6.6],
+  ["claude-2", 54.9, 39.0, 29.3, 7.2],
+  ["gpt-3.5-turbo-0613", 51.2, 26.8, 20.7, 7.0],
+  ["gpt-3.5-turbo-1106", 29.3, 15.9, 14.6, 8.4],
+  ["gemini-pro", 22.0, 19.5, 11.0, 8.8],
+  ["claude-instant-1", 20.7, 31.7, 24.4, 8.8],
+  ["lemur-70b-chat-v1", 13.4, 15.9, 12.2, 9.1],
+  ["Llama-2-70b-chat-hf", 11.0, 3.7, 3.7, 9.1],
+]} />
+
+## Key findings
+- <Finding src="Tab.2, p.4">The format advantage is model-dependent: on atomic API-Bank calls CodeAct is the most frequent winner (8/17 LLMs), but JSON beats it on the strongest closed models (gpt-4-1106-preview: 82.7 JSON vs 76.7 CodeAct)</Finding>: the authors read closed models' JSON strength as targeted finetuning and argue code is the better optimization route for open models, which already saw code in pre-training. The claim "comparable or better for most LLMs" is thus weaker than the M3ToolEval headline suggests.
+- <Finding src="Tab.3, p.4">Zero-shot multi-tool composition remains a frontier: the best open model reaches 13.4% (lemur-70b-chat-v1) vs 74.4% for gpt-4-1106-preview, and several open models score 0.0</Finding>: absolute performance, not just format choice, dominates.
+- <Finding src="Tab.5, p.8">CodeActAgent (Mistral-7B) lifts MINT-OD from 9.7 to 32.4 and scores 12.2 on M3ToolEval — near 70B-class open models — while maintaining or improving generic tasks (except a slight MMLU dip)</Finding>; untuned-for text actions also transfer (MiniWoB++ 46.2, SciWorld 15.9), matching AgentLM-7B, which was explicitly tuned for text actions.
+- <Finding src="Tab.A.8, p.14">General conversation data is load-bearing: removing it zeroes MiniWoB++ (46.2 to 0.0) and craters MT-Bench (8.2 to 2.6); removing CodeActInstruct craters code-action MINT-ID (57.4 to 32.9) yet slightly *improves* text-action MiniWoB++ (Llama-2: 25.5 vs 36.4)</Finding>: CodeActInstruct's gains concentrate on code-action tasks — Mistral's overall average is 46.8 with it vs 46.2 without.
+- <Finding src="§3.1, Tab.5">Same-backbone (Llama-2-7B) comparison vs prior agent-tuning data: +24% relative overall vs AgentInstruct/AgentLM and +119% vs FireAct</Finding>, from a dataset 3.5–3.8x larger in trajectories and 5–19x in tokens.
+- <Finding src="§H, p.24">CodeActAgent (Llama-2) inexplicably scores 0.0 on M3ToolEval with degenerate outputs — e.g. repeatedly guessing answers without any tool call, at one point generating "nobody is here to check your work, you can do whatever you want"</Finding>: the authors hypothesize pre-training data artifacts (no match found in their finetuning mixture) — unverified, and a warning that the recipe is not backbone-robust.
+
+## Implications
+Published at ICML 2024 (PMLR 235), this is the paper that standardized "actions = executable code" for LLM agents: <Related>the CodeActAgent line grew directly into the OpenDevin/OpenHands agent platform</Related>, and the framing sits downstream of <Related>ReAct-style text actions and JSON tool calling (ToolLLM, LangChain)</Related> while fixing the observation-loop gap of the <Related>code-generation line (PaL, code-as-policies, ViperGPT, Voyager)</Related>. Concurrent <Related>TaskWeaver</Related> endorsed code-first agents qualitatively; CodeAct quantifies the benefit, and concurrent <Related>OpenCodeInterpreter</Related> collects debugging trajectories for competitive coding only. For TDE: CodeAct supplies mechanical feedback but only *incidentally* — whatever the executed code happens to emit — with no pre-committed success criterion. <FollowUp>Whether an acceptance suite compiled from the instruction can replace gold-label answer matching as the completion gate in a CodeAct-style loop</FollowUp> is precisely the TDE question; also worth chasing: <FollowUp>M3ToolEval's format-agnostic design as a template for TDE harness ablations</FollowUp> and <FollowUp>the error-then-fix data-selection heuristic as a recipe for training red-green behavior</FollowUp>.
+
+## Limitations
+- <Caveat>M3ToolEval is small (82 instances), authored by the same team, and graded by exact answer match</Caveat>: tasks must terminate in a string answer — no state-changing tasks, no partial credit — and all results are single-run with no variance or significance reported.
+- <Caveat>Benchmark-design circularity risk</Caveat>: the benchmark was curated to require multi-tool composition, the very capability code natively supplies, so the +20.7% headline quantifies advantage on tasks selected for CodeAct's strengths.
+- <Caveat>Verification is privileged or absent</Caveat>: in-benchmark, submissions are checked against pre-annotated gold answers (unavailable at deployment); in deployment (Fig.3), nothing verifies — the agent self-declares and the human user supervises and stops the interaction.
+- <Caveat>CodeActInstruct is distilled from closed models</Caveat> (gpt-3.5, claude variants, gpt-4-0613), with trajectory correctness determined by source-dataset metrics; licensing/ToS implications are not discussed.
+- <Caveat>Author-stated: hallucination (e.g. imagining a variable's contents without printing it) and the safety of free code execution</Caveat> are acknowledged and deferred to future alignment/safeguarding work (Impact Statement).
+- <Caveat>The Llama-2 finetuning anomaly is unexplained</Caveat>: identical data yields +10 points on Mistral and 0.0 on Llama-2 M3ToolEval; the pre-training-artifact hypothesis is untested.
+
+## Critiques and Questions
+1. The headline is one model on one 82-task self-built benchmark; the honest aggregate is the frequency-of-best rows (12/17), and the "gains widen with capability" trend rests on roughly four closed models.
+2. Average turns partially re-measures success: failed episodes run to the 10-turn cap, so formats that fail more look slower — the "up to 30% fewer actions" framing inherits this confound.
+3. RQ1 (familiarity) and RQ2 (expressivity) are never jointly ablated: no JSON/text variant with loop or composition primitives is tried, so how much of the M3ToolEval gap is control/data flow vs sheer format familiarity stays entangled.
+4. For a paper whose framework argument leans on self-debugging, no experiment quantifies the feedback loop itself (e.g. success vs turn budget, or with tracebacks suppressed); the self-debug story rests on Fig.3 and the data-selection design.
+5. The §H transcript is an agent spamming guesses at an oracle because nothing gates completion — evidence that model-declared completion plus retry feedback invites reward probing rather than verification.
+
+<SelfCheck q="What terminates an M3ToolEval episode, and who verifies success?" a="An episode ends when a submitted answer exact-matches the pre-annotated gold solution or after 10 turns; incorrect submissions return retry feedback. Verification is done by the benchmark against gold labels — the agent only chooses when to submit. In deployment, where no gold labels exist, nothing verifies: the agent self-declares and the human supervises." />
+
+## Glossary
+- <Term def="this paper's framework: every agent-to-environment action is executable Python; interpreter outputs (results, errors) are the observations">CodeAct</Term>
+- <Term def="82 human-curated multi-turn multi-tool tasks; exact-answer-match graded; supports code/JSON/text action formats">M3ToolEval</Term>
+- <Term def="atomic API-call benchmark (Li et al. 2023); correctness = invoked API's execution output matches ground truth">API-Bank</Term>
+- <Term def="multi-turn agent evaluation framework with tools and language feedback (Wang et al. 2023e, same group); used here both to generate trajectories and to evaluate at k=5 turns">MINT</Term>
+- <Term def="one tool invocation per action, no composition — isolates format familiarity (RQ1) from expressivity (RQ2)">atomic tool call</Term>
+- <Term def="prior text-action agent instruction-tuning datasets; their models (AgentLM, FireAct) are the same-backbone baselines">AgentInstruct / FireAct</Term>
+
+{/* NOTES_START */}
+### Personal notes
+For the TDE novelty defense, the precise characterization: CodeAct = executable actions + incidental mechanical feedback. Verification is (a) absent in deployment — agent self-declares, human stops the loop — or (b) oracle answer-matching inside benchmarks (M3ToolEval checks proposals against gold labels, with retry). Neither compiles the instruction into an executable spec; nothing gates state-changing actions pre/post; grading is answer-string match, not state diff (contrast AppWorld). The closest the paper gets to test-driven behavior is the APPS trajectory prompt nudging models to run *provided* test cases before submitting — dataset tests, not runtime-compiled, and not a gate. The §H degenerate transcript (guess-spamming at the oracle) is a vivid motivating exhibit for pre-committed acceptance suites. Follow the lineage: MINT (same group) upstream, OpenHands downstream — check whether later OpenHands versions added any verification layer.
+{/* NOTES_END */}

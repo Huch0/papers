@@ -1,0 +1,115 @@
+---
+canonical_key: arxiv-2608.06474
+version_key: v1
+title: 'WebGrader: Training LLMs for Web Development with Self-Evolving Programmatic Grader'
+authors:
+- Boshui Chen
+- Huiping Liu
+- Shaolei Zhang
+venue: arXiv
+year: 2026
+tags:
+- evaluation-harness
+- execution-based-eval
+- tde-related-work
+topic_groups:
+- computer_use_agents
+- agent_harness
+triage_label: TRACK_ONLY
+triage_confidence: high
+source_link: https://arxiv.org/abs/2608.06474v1
+summary_date: '2026-08-13'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>WebGrader autonomously compiles each open-ended website requirement into <Term def="per-flow executable spec: preconditions/fixtures, action sequence, target action, evidence checkpoints, postconditions, mandatory observations, and a criticality weight">Flow Contracts</Term> executed as replayable Playwright browser tests, self-evolves the verifier offline against a fault-injection environment, then freezes it as the functional RL reward — training an 8B policy to 52.01% functional success on WebGen-Bench, +7.88 points over a matched unevolved-script reward.</TLDR>
+
+<WhyItMatters>TDE relation (survey cat. F): this is the website-generation-RL instance of TDE's core move — compile an NL requirement into executable postcondition tests over real browser state, refuse Pass until the requested transition is actually observed, freeze the suite before optimization. One correction to the survey's "mechanical" tag: execution and evidence collection are mechanical, but the final per-flow verdict comes from a fixed evidence-conditioned LLM judge (plus a 30% VLM appearance term) — adjudication is evidence-constrained, not de-circularized. And it stays a training-time reward over an emitted artifact: no runtime action-gating, no agent-side red–green iteration against the suite. TDE's environment-computed verdicts and Hoare-style gates over general app state remain distinct.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "52.01%", label: "FSR on WebGen-Bench", sub: "8B policy; +7.88 vs matched script reward (Tab.1)" },
+  { value: "85% / 95%", label: "verifier recall / clean specificity", sub: "vs 65% / 80% for the base script (Tab.4)" },
+  { value: "0.9248", label: "macro-F1, routed SkillGraph", sub: "vs 0.7896 flat rules at matched ~126K tokens (Tab.2)" },
+  { value: "3.09%", label: "evaluator-side Inconclusive", sub: "of 12,124 RL flow verdicts (Tab.25)" },
+]} />
+
+## Motivation
+RL with verifiable rewards presumes a test oracle, but <Problem>an open-ended website request describes buttons, forms, navigation, and persistent state without supplying the browser actions and state assertions needed to check them</Problem> (§1, p.1). The two existing reward families each miss one property: <Problem>hand-authored browser scripts (WebArena/WorkArena-style evaluators, deterministic HTML tests) are verifiable but not autonomous</Problem> — substantial per-task engineering, rewritten for every new requirement and site structure — while <Problem>VLM and GUI-agent graders are autonomous but not independently verifiable, and may issue verdicts before observing the decisive state</Problem> (p.1-2). The paper's emblematic failure: the page shows a success toast for an add-record action, a surface-level grader accepts, but the table row count never changed (Fig.3, p.12: rows 4 → 4, requested record absent, verdict Fail).
+
+## Contribution (what's new)
+<Novelty>Requirement-first compilation with a no-deletion rule</Novelty>: required flows `F_req(q)` are derived from the requirement alone, before seeing the website; grounding against the source code and live DOM may add selectors, fixtures, and fallback strategies but cannot remove a requirement-derived flow — so a missing control or unexecutable target action is a determinate Fail, never a silent skip, and Pass is issued only after the target action executes and before/after evidence supports the postcondition (Eq.1-2, p.4). <Novelty>Residual-driven verifier self-evolution, frozen before RL</Novelty>: verifier errors on a controlled fault-injection environment are attributed to one of four stages (`z_plan, z_ground, z_evid, z_judge`), mutated into small inspectable skills, promoted only on disjoint-validation gains under a zero-regression constraint, and composed by a routed <Term def="directed graph of promoted verifier skills with prerequisite, composition, and conflict edges; a router activates only the per-case relevant subgraph">SkillGraph</Term> (Eq.3-5). The NAS-inspired loop repairs grader blind spots where they occur instead of accumulating a monolithic rule prompt, then freezes so the reward is stationary. Controlled baselines share initialization, data, rollout budget, sampling, and optimization — only reward construction changes (Tab.24).
+
+## Research questions
+1. Can grader quality be engineered — measured against ground truth, attributed by stage, repaired — before policy training, and does verifier improvement transfer to policy improvement under independently designed evaluation protocols?
+2. Does routed, conflict-aware skill composition beat flat prompt accumulation at a matched token budget?
+
+## Methodology
+Three stages (Fig.2). (a) Build WebGen-Verifier-100, a supervised grader-evaluation environment: 100 verified clean React/Vite apps plus 778 active source-level single-fault variants, split 60/20/20 at page level with private reference traces. (b) Run the base four-stage verifier (plan → ground → execute → judge, all implemented with DeepSeek-v4-flash), attribute residuals, mutate stage-specific skills, promote on the disjoint eval split, and route via the SkillGraph; three rounds, then freeze. (c) Use frozen WebGrader as the GRPO reward for a Qwen3-8B SFT checkpoint: weighted Pass ratio over determinate flows, mixed 70/30 with a frozen GPT-5.4-mini appearance score. Note the adjudication boundary the paper itself draws: "programmatic" means executable tests and structured browser evidence with **model-assisted planning, grounding, and judgment** — deterministic Fail rules cover build/render failure, missing controls, and unexecutable target actions, but the semantic Pass is an LLM verdict conditioned on the collected evidence (p.4).
+
+<Pass title="Method details">
+<Stepper steps={[
+  { title: "Executable environment: WebGen-Verifier-100", body: "100 public WebGen-Instruct queries stratified over ten app categories, each paired with a locally verified clean React/Vite app. Eight source-level single-fault variants per app (localized business-logic edits, no runtime markers) yield 778 active faults from 800 materialized; 22 ambiguous or unstable variants are quarantined. Page-level 60/20/20 Train/Eval/Test split (461/157/160 faults, 282/95/93 flows); a clean app, its variants, and their private references never cross splits. Ground truth has five layers (metadata, Flow Contracts, fault specs, reference action/evidence traces, scoring metadata), all hidden from the verifier, which sees only the requirement and normalized project. Verifier/SFT/RL query sets (100/600/600) are mutually disjoint. Test outcomes never feed back into mutation, promotion, routing, or hyperparameters." },
+  { title: "Base verifier: plan, ground, execute, judge", body: "From the requirement alone, derive required flows; instantiate each as a Flow Contract (preconditions/fixtures, action sequence, target action, evidence checkpoints, postconditions, mandatory observations, criticality weight); compile into Playwright programs grounded against source code and live DOM; execute in Chromium, recording screenshots, DOM snapshots, responses, URL and network events, storage, and refresh outcomes along one browser trajectory; a fixed evidence-conditioned LLM judge compares each trace with its postconditions and returns Pass/Fail/Inconclusive per flow. Inconclusive is reserved for evaluator-side ambiguity, infrastructure exceptions, or malformed verifier output." },
+  { title: "Self-evolution: attribute, mutate, promote, route", body: "Incorrect Train-split verdicts become residuals attributed to planning, grounding, evidence, or judgment. An offline ground-truth-aware Claude Opus 4.8 meta-evaluator (never part of the deployed reward) clusters residuals and proposes skill mutations: a trigger, a localized stage transformation, added evidence obligations, and dependency/composition/conflict relations. A candidate is promoted only if it improves the Eval-split objective (fault recall, clean specificity, inconclusive rate) with zero regressions (Eq.4). Three staged rounds: plan+ground, ground+evidence, then judgment. The router activates 1.46 skills per case on average (84.2% activation precision, 88.6% recall). Registries hold 6 planning, 8 execution/evidence, and 7 judgment skills; representative skills include Executable Fixture, Live-DOM Selector Grounding, Step-Aligned Evidence, and Decisive-Evidence Adjudication (which stops weak visual cues from overriding explicit state evidence)." },
+  { title: "Frozen reward + GRPO", body: "The frozen grader scores each rollout website: weighted Pass ratio over determinate flows — missing functionality stays in the denominator as Fail with zero credit, evaluator-side Inconclusive is excluded, build/render failure zeroes the functional score — mixed 70/30 with a frozen GPT-5.4-mini appearance score on a shared [0,5] scale. GRPO on Qwen3-8B (SFT checkpoint from 600 Claude-Sonnet-4.6 silver examples in WebGen-R1 format): 100 effective VERL updates, 4 queries x 8 completions per update, group-relative advantage, no critic. Cost: mean completed reward job 63.75 s; the verifier consumed ~203M input tokens through checkpoint 100 (Tab.27-29)." },
+]} />
+
+<MathBlock>{`I(q,x)=\\frac{\\sum_{f\\in D(q,x)} w_f\\,\\mathbf{1}[v_f=\\mathrm{Pass}]}{\\sum_{f\\in D(q,x)} w_f},\\qquad R(q,x)=0.7\\cdot 5\\,I(q,x)+0.3\\,A(x)`}</MathBlock>
+</Pass>
+
+## Main result
+On WebGen-Bench (101 held-out requirements, 647 functional cases, GPT-5.4 UI-agent protocol), <Finding src="Tab.1, p.6">WebGrader-RL reaches 52.01% FSR with 100% valid render rate — +7.88 points over the matched VLM+Base-Script-RL baseline while appearance moves only +0.02 (AAS 3.48 vs 3.46), so the gain is functional, not cosmetic</Finding>. The 8B policy <Finding src="Tab.1, Tab.33-34">beats o4-mini (40.65 FSR) and DeepSeek-v4-flash (47.91) on both protocols and beats Qwen3-Coder-480B on WG-core-250 Full Score (44.953 vs 42.504), while remaining behind frontier closed generators (Claude Opus 4.8: 68.20 FSR; GPT-5.5: 62.44)</Finding>.
+
+<SortableTable columns={["Method", "FSR (WebGen-Bench)", "Full Score (WG-core-250)", "TC%"]} rows={[
+  ["Qwen3-8B base", 14.92, 31.160, 27.418],
+  ["WebGen SFT", 33.62, 32.388, 25.640],
+  ["GUI-RL", 41.96, 38.120, 33.861],
+  ["VLM+GUI-RL", 42.66, 37.746, 29.345],
+  ["VLM+Base-Script-RL", 44.13, 38.372, 33.525],
+  ["WebGrader-RL (8B)", 52.01, 44.953, 39.931],
+  ["o4-mini", 40.65, 39.068, 31.668],
+  ["DeepSeek-v4-flash", 47.91, 43.684, 36.103],
+  ["Qwen3-Coder-480B", 53.25, 42.504, 36.328],
+]} />
+
+## Key findings
+- <Finding src="Tab.4, p.7">The evolved verifier beats every grader family it replaces</Finding>: fault recall 85% / clean specificity 95% / precision 99.3% / Inconclusive 3.9%, vs 65/80/96.3/13.3 for the unevolved script, 60/80/96.0/15.0 for a GUI-agent grader, and 20/90/94.1/5.0 for a static rule grader — rule graders barely detect faults; GUI graders miss decisive states.
+- <Finding src="Tab.2, Tab.17">Routing, not rule mass, produces the verifier gain</Finding>: a flat prompt containing every discovered rule costs +29.2% tokens for +0.0083 macro-F1 (0.7813 → 0.7896), while the routed SkillGraph reaches 0.9037 and conflict handling 0.9248 at a matched ~126K-token budget, activating 1.25-1.46 skills per case instead of all 4.0.
+- <Finding src="Tab.5, p.7">Evolution improves execution before judgment</Finding>: the largest stage-diagnostic gains are strong-evidence collection +15.6, mandatory-observation coverage +14.9, post-action state reach +14.4, and target-action execution +13.6 — and recall gains grow with interaction complexity (+24.3 on multi-action stateful faults; +28.1 when restricted to medium/high severity, 0.625 → 0.906, Tab.16).
+- <Finding src="Tab.18, p.13">The promoted skills are causally load-bearing</Finding>: disabling any one of six measured skills changes 8-14 Test verdicts against a repeat-run drift of 2, all six with positive net correctness (evidence checkpoints +7; target-action grounding and executable fixtures +6 each).
+- <Finding src="Tab.36-37, p.17">Policy gains survive independent evaluation and paired statistics</Finding>: on WG-core-250 — deterministic browser tests designed by others — +6.41 TC and +6.58 Full Score over the matched baseline, exact McNemar `p = 7.3e-5` (uniquely correct on 43 tasks vs 13); WebGen-Bench query-macro FSR +5.7 pp, 95% CI [+1.9, +9.5], permutation p = .004; gains span all six functional categories (+4.73 to +15.20, Tab.6).
+- <Finding src="Tab.25-26, p.15">Reward noise is audited and small</Finding>: of 12,124 training flow verdicts, raw Inconclusive is 17.81%, but 1,784 of 2,159 are website-caused `target_not_reached` and count deterministically as Fail, leaving 3.09% evaluator-side; forcing even those to zero credit changes the selected top completion in only 2.96% of GRPO groups.
+
+## Implications
+The closing principle is the transferable one: <Finding src="Conclusion, p.7">when task success is revealed through interaction, reward construction should make the required trajectory and its observable consequences explicit before optimization</Finding>. WebGrader sits between <Related>screenshot/GUI-feedback website RL (WebGen-Agent, WebGen-R1, ReLook)</Related>, which it beats by making postconditions executable, and <Related>hand-scripted functional evaluation (WebArena/WorkArena evaluators; HTMLCure's deterministic tests, whose HTMLBench subset it adopts as WG-core-250)</Related>, which it automates. <Related>InfiniteWeb</Related> is the inverse direction — auto-built verifiable websites to train GUI agents, not website generators — and the <Related>constructed-verification line (VerIF, ReSyn, EigenData, EvolveCoder)</Related> targets instruction following, reasoning, or code rather than requirement-specific browser flows. <FollowUp>Port requirement-to-Flow-Contract compilation from training-time grading to a runtime agent harness (the TDE direction): gate actions and iterate red–green against the suite instead of scoring one-shot generations.</FollowUp> <FollowUp>Whether the evolution loop can run without ground-truth fault injection and a frontier meta-evaluator, e.g. self-supervised residual mining on live rollouts.</FollowUp> <FollowUp>Replacing the evidence-conditioned LLM judge with environment-computed assertions, making the verdict fully mechanical.</FollowUp>
+
+## Limitations
+- <Caveat>Adjudication is not fully mechanical</Caveat>: planning, grounding, and the final semantic verdict are model-assisted (DeepSeek-v4-flash), 30% of the reward is a pure VLM appearance score, and 3.09% of flows remain evaluator-side Inconclusive.
+- <Caveat>Self-evolution needs heavy supervision</Caveat>: a hand-validated 100-app environment with 800 injected faults, private reference traces, and a ground-truth-aware Claude Opus 4.8 meta-evaluator. Autonomy holds per-request at RL time, not for grader development; portability of the frozen SkillGraph beyond React/Vite WebGen-style apps is untested.
+- <Caveat>Known residual blind spots</Caveat>: recall stays at 0.789 on depth-4+ flows and data binding and 0.810 on search/filter/sort (Tab.20-21).
+- <Caveat>Verifier accuracy is measured on isolated single-fault variants</Caveat>; real policy failures are multi-fault and distributionally different, so the 85% recall need not transfer to rollout grading.
+- <Caveat>The headline FSR is itself model-mediated</Caveat> (frozen GPT-5.4 UI-agent pipeline); the deterministic TC% on WG-core-250 is the cleaner check. Single RL run (seed 20260707); no cross-seed variance reported.
+
+## Critiques and Questions
+1. Model-family entanglement: DeepSeek-v4-flash is simultaneously the verifier's engine and a surpassed external generator, and the appearance reward (GPT-5.4-mini) shares a family with the WebGen-Bench evaluator (GPT-5.4). The deterministic TC% transfer mitigates but does not eliminate the worry that the policy partly learned its judges' preferences.
+2. "First to autonomously construct rewards" is front-loaded: per-request grading is autonomous, but the grader's competence was bought with a supervised fault-injection environment plus frontier-model meta-evaluation. The marginal cost of extending to a new domain is not reported.
+3. Frozen-grader blind spots are exploitable in principle: nothing stops GRPO from concentrating on depth-4+ or data-binding behaviors the verifier misses. No reward-hacking audit of trained-policy outputs is reported beyond aggregate transfer.
+4. The Tab.4 baseline graders are thinly specified — the GUI grader's interaction budget and evidence access are unclear, so the 85-vs-60 recall gap may partly reflect budget rather than design.
+
+<SelfCheck q="Why does a website that omits a required feature receive a determinate Fail rather than an Inconclusive or a silently smaller test suite?" a="Required flows are derived from the requirement alone, before the verifier sees the website, and grounding may add selectors, fixtures, and alternative strategies but cannot remove a requirement-derived flow. A missing control or unexecutable target action is therefore a website-caused determinate Fail that stays in the weighted functional score with zero credit. Inconclusive is reserved for evaluator-side ambiguity or infrastructure faults and is excluded from the functional average — so the policy cannot be rewarded for omitting hard functionality." />
+
+## Glossary
+- <Term def="101 held-out website requirements with 647 curated functional cases executed by a GPT-5.4-driven UI navigation agent; FSR = (Yes + 0.5 Partial) / 647">WebGen-Bench</Term>
+- <Term def="fixed 250-task subset of HTMLBench-400 (from HTMLCure); Full Score combines rendering, visual quality, functionality, interactivity, and code quality; TC% is the deterministic browser test-case pass rate">WG-core-250</Term>
+- <Term def="group-relative policy optimization: advantage = (reward minus group mean) / group std over 8 sampled websites per query; clipped surrogate with KL penalty, no critic">GRPO</Term>
+- <Term def="browser-automation framework; grounded Flow Contracts compile to Playwright programs executed in Chromium">Playwright</Term>
+- <Term def="a verifier error newly exposed on the train split, attributed to planning, grounding, evidence, or judgment before being mutated into a candidate skill">residual</Term>
+- <Term def="mean of fault-class and clean-class F1 on the verifier test split, counting an evaluator-side Inconclusive verdict as an error for its ground-truth class">macro-F1</Term>
+- <Term def="valid render rate / average appearance score (1-5, VLM-graded) on WebGen-Bench">VRR / AAS</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Strongest cat.-F neighbor for TDE so far. Shares: requirement-first compilation into executable postcondition tests over real browser state; Pass only after observing the requested transition (before/after, refresh, and persistence evidence); freeze before optimization; missing functionality is a determinate Fail, not silence. Differs — the novelty-defense ammunition: (1) the verdict is an evidence-conditioned LLM judge, not environment-computed — TDE de-circularizes adjudication entirely; (2) it is a training-time reward over emitted websites — the policy never sees the tests, never iterates red–green, and nothing gates actions at runtime; (3) the pre/postconditions annotate the verifier's own test flows, not an acting agent's steps. Borrowable for TDE: the WebGen-Verifier-100 pattern (clean app + injected single-fault variants + private reference traces) is exactly how TDE's instruction-to-suite compiler should itself be validated (mutation-testing the harness); the four-way residual attribution (plan/ground/evidence/judge) maps cleanly onto TDE compiler failure modes; the no-deletion rule for grounding is the right guard against under-specified acceptance suites.
+{/* NOTES_END */}

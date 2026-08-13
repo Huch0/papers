@@ -35,6 +35,11 @@ tiers:
       - TMLR
       - ACM MM
       - MobiCom
+      - CoRL
+      - ICRA
+      - IROS
+      - CAV
+      - IEEE TSE
 
   strong_preprint_signal:
     # Not a fixed venue list; these are qualitative signals applied to preprints.
@@ -85,5 +90,17 @@ aliases:
   "Transactions on Machine Learning Research": TMLR
   "Trans. Mach. Learn. Res.": TMLR
   "Conference on Language Modeling": COLM
+  "Conference on Robot Learning": CoRL
+  "IEEE International Conference on Robotics and Automation": ICRA
+  "International Conference on Robotics and Automation": ICRA
+  "IEEE/RSJ International Conference on Intelligent Robots and Systems": IROS
+  "International Conference on Intelligent Robots and Systems": IROS
+  "Computer Aided Verification": CAV
+  "International Conference on Computer Aided Verification": CAV
+  "IEEE Transactions on Software Engineering": IEEE TSE
+  "IEEE Trans. Software Eng.": IEEE TSE
+  "Advances in Neural Information Processing Systems 38": NeurIPS
+  "IEEE/RJS International Conference on Intelligent RObots and Systems": IROS
+  "Artificial General Intelligence": AGI
   "CoRR": arXiv
   "arXiv.org": arXiv

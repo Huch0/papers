@@ -1,0 +1,74 @@
+canonical_key: arxiv-2608.02645
+version_key: v1
+title: Verified Tool Calls Improve LLM Agent Reliability Under Non-Atomic Failures
+authors:
+- Isham Kalappurackal Mansoor
+- Abhishek Phadke
+- Pratip Rana
+abstract: Large Language Model (LLM) agents rely on external tools to perform multistage tasks. Existing
+  agent frameworks typically assume that tool calls are atomic and return binary success or failure signals.
+  However, real-world systems exhibit non-atomic behaviors such as timeouts after dispatch, delayed visibility,
+  and partial state updates. These mismatches lead to reliability issues including duplicate actions,
+  task success, and unnecessary tool executions. A lightweight, verification-aware tool wrapper is introduced
+  that augments tool calls with postcondition verification, verify-before-retry logic, and idempotency
+  keys. The approach is evaluated in a controlled simulated environment with injected non-atomic failures
+  across multiple task templates. The results demonstrate that the proposed method significantly reduces
+  duplicate actions, while maintaining comparable task success rates. Overall, the findings suggest that
+  strengthening tool interaction semantics is a promising direction for improving LLM agent reliability
+  without requiring modifications to the underlying language model.
+venue: arXiv
+year: 2026
+source: arxiv
+source_url: https://arxiv.org/abs/2608.02645v1
+pdf_url: https://arxiv.org/pdf/2608.02645v1
+pdf_sha256: dee29b0250eb6d40677b1477184662073d995053f28ae111a98dc83b759b74ac
+fetched_at: '2026-08-13T07:15:01Z'
+source_updated_at: '2026-07-31T16:16:14Z'
+ids:
+  doi: null
+  arxiv_id: 2608.02645v1
+  arxiv_base_id: '2608.02645'
+  arxiv_version: v1
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- reliability-concern
+- tde-related-work
+- tool-use
+- verifier
+topic_groups:
+- agent_harness
+scoring:
+  score: 42.6
+  label: TRACK_ONLY
+  confidence: high
+  rationale: 'score=43 -> TRACK_ONLY | strong: recency(1.00), interest_fit(0.73), harness_relevance(0.52)
+    | interests: agent_harness:group:agent_harness'
+  matched_interests:
+  - agent_harness:group:agent_harness
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 1.0
+    venue_quality: 0.4
+    harness_relevance: 0.52
+    novelty: 0.0
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/verified-tool-calls-improve-llm-agent-reliability-260802645/v1/paper.pdf
+  extraction: library/verified-tool-calls-improve-llm-agent-reliability-260802645/v1/extraction.txt
+  summary: library/verified-tool-calls-improve-llm-agent-reliability-260802645/v1/summary.mdx
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread
+  summary_format: mdx

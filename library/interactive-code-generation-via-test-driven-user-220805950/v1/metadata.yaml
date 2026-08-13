@@ -1,0 +1,85 @@
+canonical_key: arxiv-2208.05950
+version_key: v1
+title: Interactive Code Generation via Test-Driven User-Intent Formalization
+authors:
+- Shuvendu K. Lahiri
+- Sarah Fakhoury
+- Aaditya Naik
+- Georgios Sakkas
+- Saikat Chakraborty
+- Madanlal Musuvathi
+- Piali Choudhury
+- Curtis von Veh
+- Jeevana Priya Inala
+- Chenglong Wang
+- Jianfeng Gao
+abstract: 'Large language models (LLMs) have shown great potential in automating significant aspects of
+  coding by producing natural code from informal natural language (NL) intent. However, when interacting
+  with LLMs, users have no guarantees that the code suggestions produced correctly satisfy the intent
+  they provided. In fact, it is hard to define a notion of correctness since natural language can be ambiguous
+  and lacks a formal semantics. In this paper, we propose the workflow of {\it interactive test-driven
+  code generation}, which leverages lightweight user feedback to (a) formalize the user intent using generated
+  tests that can be useful for debugging, and (b) produce an improved set of code suggestions by pruning
+  and ranking candidate code suggestions. We describe a language-agnostic abstract algorithm and a concrete
+  implementation TiCoder. We perform an automated evaluation of TiCoder on the \emph{MBPP} and \emph{HumanEval}
+  code generation benchmarks. Our results are promising with using the OpenAI Codex LLM: our best algorithm
+  improves the \passk{1} code generation accuracy (in absolute percentages) between $22.49\%$ to $37.71\%$
+  for MBPP and between $24.79\%$ to $53.98\%$ for HumanEval using between 1 to 5 simulated user queries.'
+venue: arXiv
+year: 2022
+source: arxiv
+source_url: https://arxiv.org/abs/2208.05950v2
+pdf_url: https://arxiv.org/pdf/2208.05950v2
+pdf_sha256: c034918e88336aefca0447f59877695084f99c5efc59a54ad82ac29939da0df7
+fetched_at: '2026-08-13T07:13:30Z'
+source_updated_at: '2023-10-04T01:53:15Z'
+ids:
+  doi: null
+  arxiv_id: 2208.05950v2
+  arxiv_base_id: '2208.05950'
+  arxiv_version: v2
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- tde-related-work
+- test-based-eval
+topic_groups:
+- software_engineering_agents
+- agent_harness
+scoring:
+  score: 10.3
+  label: SKIP
+  confidence: high
+  rationale: 'score=10 -> SKIP | strong: author_or_lab_signal(1.00), interest_fit(0.73), venue_quality(0.40)
+    | interests: agent_harness:group:agent_harness, software_engineering_agents:group:software_engineering_agents
+    | negatives: old_in_fast_area'
+  matched_interests:
+  - agent_harness:group:agent_harness
+  - software_engineering_agents:group:software_engineering_agents
+  negative_signals:
+  - old_in_fast_area
+  subscores:
+    interest_fit: 0.73
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 0.0
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 1.0
+artifacts:
+  pdf: library/interactive-code-generation-via-test-driven-user-220805950/v1/paper.pdf
+  extraction: library/interactive-code-generation-via-test-driven-user-220805950/v1/extraction.txt
+  summary: library/interactive-code-generation-via-test-driven-user-220805950/v1/summary.mdx
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread
+  summary_format: mdx

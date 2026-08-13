@@ -1,0 +1,60 @@
+canonical_key: arxiv-2411.13768
+slug: evaluation-driven-development-and-operations-of-llm-241113768
+title: 'Evaluation-Driven Development and Operations of LLM Agents: A Process Model and Reference Architecture'
+authors:
+- Boming Xia
+- Qinghua Lu
+- Liming Zhu
+- Zhenchang Xing
+- Dehai Zhao
+- Hao Zhang
+year: 2024
+primary_ids:
+  doi: null
+  arxiv_base_id: '2411.13768'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2411.13768v3
+- https://arxiv.org/pdf/2411.13768v3
+topic_groups:
+- agent_harness
+- general_agent_methods
+tags:
+- evaluation-harness
+- tde-related-work
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2024
+user:
+  read_status: unread
+  triage_label: SKIP
+  triage_confidence: high
+  notes: null
+milestone: null
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v3
+  source: arxiv
+  source_url: https://arxiv.org/abs/2411.13768v3
+  pdf_path: library/evaluation-driven-development-and-operations-of-llm-241113768/v1/paper.pdf
+  summary_path: library/evaluation-driven-development-and-operations-of-llm-241113768/v1/summary.mdx
+  metadata_path: library/evaluation-driven-development-and-operations-of-llm-241113768/v1/metadata.yaml
+  fetched_at: '2026-08-13T07:14:13Z'
+  source_updated_at: '2025-11-17T06:10:41Z'
+  arxiv_version: v3
+  pdf_sha256: 39b3075e8f74dac87f5e4e8a924e5b55546b0d80781c95a81ba48e01ea5c8adf
+  pdf_bytes: 788538
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-08-13T07:14:13Z'
+  updated_at: '2026-08-13T10:17:49Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

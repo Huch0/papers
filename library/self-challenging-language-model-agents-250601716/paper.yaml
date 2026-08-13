@@ -1,0 +1,60 @@
+canonical_key: arxiv-2506.01716
+slug: self-challenging-language-model-agents-250601716
+title: Self-Challenging Language Model Agents
+authors:
+- Yifei Zhou
+- Sergey Levine
+- Jason Weston
+- Xian Li
+- Sainbayar Sukhbaatar
+year: 2025
+primary_ids:
+  doi: null
+  arxiv_base_id: '2506.01716'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2506.01716v1
+- https://arxiv.org/pdf/2506.01716v1
+topic_groups:
+- agent_harness
+- general_agent_methods
+tags:
+- rl-for-agents
+- tde-related-work
+- training-environment
+venue:
+  name: NeurIPS
+  tier: A_star
+  status: accepted
+  year: 2025
+user:
+  read_status: unread
+  triage_label: TRACK_ONLY
+  triage_confidence: high
+  notes: null
+milestone: null
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v1
+  source: arxiv
+  source_url: https://arxiv.org/abs/2506.01716v1
+  pdf_path: library/self-challenging-language-model-agents-250601716/v1/paper.pdf
+  summary_path: library/self-challenging-language-model-agents-250601716/v1/summary.mdx
+  metadata_path: library/self-challenging-language-model-agents-250601716/v1/metadata.yaml
+  fetched_at: '2026-08-13T07:17:10Z'
+  source_updated_at: '2025-06-02T14:23:33Z'
+  arxiv_version: v1
+  pdf_sha256: 3b8cbcfef6e9dcadc881d42ae0bf681b3ee79be696851ba0326b64345d7511e3
+  pdf_bytes: 1093696
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-08-13T07:17:10Z'
+  updated_at: '2026-08-13T07:35:43Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

@@ -1,0 +1,137 @@
+---
+canonical_key: arxiv-2606.17591
+version_key: v1
+title: 'Closing the Feedback Loop: From Experience Extraction to Insight Governance in Verbal Reinforcement
+  Learning'
+authors:
+- Yanwei Cui
+- Xing Zhang
+- Yulong Zhang
+- Li Shao
+- Xiaofeng Shi
+- Guanghui Wang
+- Peiyang He
+venue: arXiv
+year: 2026
+tags:
+- agent-memory
+- reflection
+- tde-related-work
+topic_groups:
+- agent_harness
+- general_agent_methods
+triage_label: TRACK_ONLY
+triage_confidence: high
+source_link: https://arxiv.org/abs/2606.17591v1
+summary_date: '2026-08-13'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>A short ICML 2026 workshop paper arguing that training-free <Term def="agents improve by extracting verbal rules from outcomes and injecting them as context, with frozen model parameters">verbal reinforcement learning</Term> fails in non-stationary environments because agents govern their accumulated rules badly rather than extract them badly, and proposing a rules/evidence/skills architecture with a critic–proposer–curator loop that deprecates (never deletes) unreliable rules.</TLDR>
+
+<WhyItMatters>This is the belief-revision branch of the design space TDE argues against, and it is useful in both directions. Its loop does close on an objective world signal (realized market returns), but credit assignment from that signal to individual rules is performed by an **LLM critic writing natural language**, and what gets verified is the agent's *knowledge across episodes* — never an action, never a completion claim inside a task. Its headline result is nonetheless a citable premise for TDE: ungoverned accumulated experience is worse than no experience at all (−4.9pp directional accuracy, negative Sharpe, vs zero-shot).</WhyItMatters>
+
+<KeyStats items={[
+  { value: "+5.3pp", label: "Dir. accuracy, full loop", sub: "56.5% vs 51.2% zero-shot (Tab.2, p.6)" },
+  { value: "−4.9pp", label: "Dir. accuracy, no governance", sub: "46.3% — accumulated experience hurts" },
+  { value: "1.00", label: "Sharpe, full loop", sub: "vs 0.53 zero-shot and −0.12 ungoverned" },
+  { value: "13.0%", label: "Max drawdown, full loop", sub: "vs 34.5% zero-shot; paper says cut by 60%" },
+]} />
+
+## Motivation
+<Problem>In non-stationary environments, accumulated verbal experience can hurt as much as it helps</Problem> — the paper's *retention–forgetting dilemma* (§2.1, p.2). Retain everything and the context fills with stale, contradictory rules, so whichever rule matches most closely fires and produces confident wrong outputs; discard what fails and the agent has no memory when the regime recurs, paying the learning cost again. Financial regimes, robot wear, and demand seasonality all shift, so the question is not *whether* stored rules go stale but *how the agent manages them when they do*.
+
+<Problem>Existing training-free methods invest heavily in extraction and underinvest in governance</Problem> (Tab.1, p.3), each in a specific way: Reflexion-style *reflective accumulation* never re-evaluates a stored reflection against later outcomes and injects everything equally; ExpeL/TF-GRPO-style *reflective refinement* adds scalar importance scores but rewrites rules **in place**, silently invalidating every evaluation signal previously accumulated about them; *trajectory-informed tips* (Fang et al. 2025) get causal attribution and provenance but a stored tip never accrues evidence from later episodes; the *Meta-MDP experience library* (Flex, Cai et al. 2025b) preserves failure knowledge in a "warning zone" but fixes zone assignment at intake and merges semantically similar entries, erasing which trajectories contributed.
+
+## Contribution (what's new)
+<Novelty>Separate a rule's reliability record from the rule itself, and make that record append-only.</Novelty> Three layers — rules (trigger condition over observable features plus a corrective action), per-rule evidence logs, and skills (priority orderings, conflict resolution, abstention) — are connected by a critic–proposer–curator loop driven by world outcomes. The load-bearing move is <Novelty>deprecate, never delete</Novelty>: a deprecated rule stops entering the context (so no negative transfer) while its evidence survives (so no catastrophic forgetting), which is precisely how the dilemma dissolves. The design must stack this way because each layer answers the failure mode of the one below (§3.1, p.4): rules alone cannot say which to trust — a rule confirmed 3 / contradicted 5 times looks identical to one confirmed 5 / contradicted 3 under a binary active flag; per-rule evidence alone cannot handle interaction between rules; only skills reading *cross-rule* evidence can arbitrate. A secondary contribution is the R1–R4 checklist itself, offered as a design test for any experience-accumulating agent.
+
+## Research questions
+Does the way accumulated experience is **governed** — rather than how much of it there is or how well it was extracted — determine whether a training-free agent improves or degrades under non-stationary world feedback? And what must a system satisfy to escape the retention–forgetting dilemma? The paper's answer to the second is four requirements: R1 outcome-driven evaluation, R2 persistent structured evidence, R3 non-monotonic knowledge lifecycle, R4 compositional governance (§2.2, p.2).
+
+## Methodology
+Model parameters stay frozen; only context changes. Over the learning window the system processes experience in batches: a **critic** compares rule-augmented reasoning against a zero-shot baseline on the *same realized outcome* and says which rules helped, which hurt, and under what conditions; a **proposer** appends those verbal assessments to per-rule evidence logs (never editing a rule) and proposes new rules for uncovered error patterns; a **curator** reads cross-rule evidence to deprecate consistently harmful rules and to evolve skills. At inference the agent sees only the currently active rules plus current skills.
+
+<Pass title="Method details">
+<Stepper steps={[
+  { title: "Layer 1 — Rules (R3)", body: "Natural-language items, each a trigger condition over observable features plus a corrective action. Rules are deprecated, never deleted: a deprecated rule stops firing but its knowledge is preserved (§3.1, p.4)." },
+  { title: "Layer 2 — Evidence (R1, R2)", body: "Every rule carries a persistent, append-only log: which episode, whether the rule helped or hurt, under what conditions, and how it affected the reasoning. Contrasted with Hindsight's scalar confidence scores, which cannot reconstruct why a score moved. Evidence survives deprecation, so the system can explain a deprecation, avoid re-proposing an equivalent rule, and notice when conditions make a deprecated rule relevant again (§3.1, p.4)." },
+  { title: "Layer 3 — Skills (R4)", body: "Higher-order routing read off evidence across rules: which rules occupy the finite context, how to resolve conflicts, when to abstain. Skills evolve as evidence accumulates and are focused by construction because they are derived from evidence rather than generated from scratch (§3.1, p.4)." },
+  { title: "Curation loop", body: "Critic evaluates against outcomes (R1); proposer appends evidence and proposes rules (R2); curator deprecates and evolves skills (R3, R4). Because deprecation and skill evolution read the same persistent evidence, they are mutually consistent — a skill never prioritizes a rule the evidence contradicts (§3.2, p.4-5)." },
+  { title: "Case-study setup (§4.1, p.5)", body: "Financial forecasting, same dataset and protocol as Cui et al. 2026 (a self-citation): daily OHLCV for the top 5 S&P 500 equities (AAPL, AMZN, FB, GOOGL, MSFT), 2013-2016 for learning and 2017 for testing, 20-day candlestick chart inputs, 5-day prediction horizons. Base agent: Qwen3-VL-235B, which reads the chart and emits a directional prediction, scenario forecast, risk parameters, and chain-of-thought. Critic, proposer, and curator: Claude Sonnet 4.6. Learning runs in batches of about 16 samples. Metrics: directional accuracy, scenario accuracy, average return per trade, Sharpe, max drawdown, over 5 evaluation runs." },
+]} />
+
+<MathBlock>{`\\begin{aligned}
+E_k &= \\mathrm{CRITIC}(B_k,\\; L_{k-1},\\; S_{k-1}) \\\\
+\\Xi_k,\\, P_k &= \\mathrm{PROPOSER}(E_k,\\; L_{k-1},\\; \\Xi_{k-1}) \\\\
+L_k,\\, S_k &= \\mathrm{CURATOR}(L_{k-1},\\; S_{k-1},\\; \\Xi_k,\\; P_k)
+\\end{aligned}`}</MathBlock>
+
+Here `L_k` is the rule library, `Ξ_k` the evidence logs, `S_k` the skills after batch `k`, and `B_k = {(x_t, a_t, y_t)}` a batch of inputs, actions, and realized outcomes. At inference the agent runs `π(a | x, L_K, S_K)` — frozen parameters, changed context. The stated key property: `Ξ` is append-only, never deleted or overwritten, even when the rule it concerns is deprecated (§3.3, p.5).
+</Pass>
+
+## Main result
+Everything rests on one table. On the 2017 test set with an identical base agent, <Finding src="Tab.2, p.6">the same accumulated experience moves directional accuracy from 46.3% (ungoverned) to 56.5% (fully governed) around a 51.2% zero-shot baseline</Finding> — i.e. the *sign* of the learning effect is set by the curation loop, not by having experience. Risk metrics move further than accuracy: Sharpe 1.00 vs 0.53 zero-shot and −0.12 ungoverned, max drawdown 13.0% vs 34.5%.
+
+<SortableTable columns={["Method", "Dir. Acc. (%)", "Scen. Acc. (%)", "Avg. Ret. (%)", "Sharpe", "Max DD (%)"]} rows={[
+  ["Zero-shot", 51.2, 23.8, 0.16, 0.53, 34.5],
+  ["Reflective Accumulation", 46.3, 23.3, -0.08, -0.12, 35.2],
+  ["Reflective Refinement", 51.1, 24.7, 0.14, 0.36, 24.4],
+  ["Ours (full curation loop)", 56.5, 29.0, 0.33, 1.00, 13.0],
+]} />
+
+Means over 5 evaluation runs; the paper's standard deviations, omitted above for sortability, are ±2.2 / ±2.9 / ±1.8 / ±1.0 on directional accuracy and ±0.38 / ±0.32 / ±0.18 / ±0.3 on Sharpe (Tab.2, p.6). They matter — see Limitations.
+
+## Key findings
+- <Finding src="Tab.2, p.6">Ungoverned accumulation is worse than no experience at all, on every single metric</Finding>: reflective accumulation loses 4.9pp of directional accuracy, turns average return negative (−0.08%), and produces a negative Sharpe (−0.12). This is the paper's most useful result, and the one whose effect size clears the reported noise most cleanly.
+- <Finding src="Tab.2, p.6">Better extraction with scalar scoring recovers accuracy but does not recover risk-adjusted return</Finding>: reflective refinement returns to 51.1% accuracy (zero-shot parity) with Sharpe 0.36 vs 0.53. The paper reads this as "partial requirements → partial recovery", but at ±0.18 and ±0.38 the two Sharpe intervals overlap heavily, so the *degradation* half of this claim is not actually supported by the reported numbers.
+- <Finding src="Fig.2, p.6">Governance is visible as a widening gap between cumulative and active rules</Finding>: over about 8 learning batches the library grows to roughly 19 cumulative rules while only about 11 stay active (read off the figure; exact counts Not reported). Phases are labeled: pure extraction (9 rules proposed), skills S1/S2 emerging alongside the first deprecations, S3/S4 emerging with the 005/007 → 013 replacement, then S1–S6 consolidated.
+- <Finding src="Tab.3, p.6">Governance consolidates into only six skill themes, and only one of them records a deprecation</Finding>: S3 (absorbed distribution) lists rules 005 and 007 as deprecated; the other five list none. Table 3 names 9 active plus 2 deprecated rules — about 11 of the roughly 19 rules in Fig.2 — so most accumulated rules are not accounted for by any skill, and the full deprecation list is never given.
+- <Finding src="§4.2, p.6">The claimed mechanism is *informed replacement*, not just filtering</Finding>: new rules are said to be shaped by the accumulated evidence of why predecessor rules failed, rather than proposed from current-batch errors alone. This is asserted from the 005/007 → 013 episode; it is never isolated by an ablation.
+- <Finding src="§2.3, p.3">The one clean quantitative support for the curation thesis is borrowed, not produced here</Finding>: the +16.2pp pass-rate gain for curated skill packages vs −1.3pp for self-generated ones comes from SkillsBench (Li et al. 2026), which the paper is careful to describe as a *static* evaluation with no cross-episode feedback, hence not a verbal-RL method.
+
+## Implications
+For TDE, this paper is the clearest available specimen of the **belief-revision route** to trustworthy agent knowledge, and it is worth citing precisely because its loop is closed on an objective signal yet remains only *partly* de-circularized. The terminal signal (realized market return) is mechanical, as TDE demands; but the step from that signal to "rule 007 is unreliable" is executed by an LLM critic emitting verbal assessments, so adjudication is mechanical at the outcome and LLM-mediated at the attribution. The three-layer stack is also indirect evidence *for* TDE's simplification: because natural-language rules are defeasible rather than decidable, the architecture is forced to add a whole governance layer for conflict resolution and abstention — machinery an executable acceptance suite largely does not need, since a test passes or fails against the environment. The differences to state plainly in a related-work section: the loop here runs **between episodes** (batches of ~16) over durable knowledge, whereas TDE's red–green loop runs **within a task** and gates completion; what is verified here is *whether stored knowledge is reliable*, whereas TDE verifies *whether the final world state satisfies the instruction*; and nothing here gates a state-changing action with pre/postconditions.
+
+Lineage worth following: <Related>AGM belief revision (Alchourrón et al. 1985)</Related> supplies the paper's formal justification for deprecate-not-delete via the Relevance and Core-Retainment postulates, with <Related>Kumiho (Park 2026)</Related> as its operational realization over graph-native agent memory and <Related>IMPACT-CYCLE (Kong et al. 2026)</Related> as the provenance-log / dependency-closure analogue — though the paper correctly notes IMPACT-CYCLE corrects *factual* claims within one session rather than managing predictive rules across episodes. The method line it positions against is <Related>Reflexion → ExpeL / TF-GRPO → Flex</Related>, with <Related>Hindsight (Latimer et al. 2025)</Related> and <Related>MemGPT</Related> as the memory substrate it assumes. <FollowUp>SkillsBench (Li et al. 2026) — the curated-vs-self-generated skill gap is the strongest external evidence for the governance thesis and deserves reading directly.</FollowUp> <FollowUp>Meta-curation: the paper's own open question of whether world feedback can evolve the curation mechanism (critic criteria, deprecation thresholds, skill structure), which is currently hand-designed; it points at HyperAgents (Zhang et al. 2026) for metacognitive self-modification.</FollowUp> <FollowUp>Whether the four requirements survive contact with a state-diff-graded environment such as AppWorld, where "did the rule help" is decidable rather than a matter of verbal attribution.</FollowUp>
+
+## Limitations
+- <Caveat>A single domain, a single test year, five tickers, and a predominantly bullish regime</Caveat> (author-stated, §5 and Impact Statement, p.7). The authors explicitly warn the results are not evidence of live-trading viability. Generalization to the "heterogeneous world feedback" landscape they invoke — immediate binary task success, dense robotic control — is untested by construction.
+- <Caveat>The reported ±std is inference-time variance only</Caveat>: the paper reports "5 evaluation runs" against what appears to be a single learned rule library, so nothing in the error bars captures the variability of the curation process itself. A second curation run could plausibly yield a different library.
+- <Caveat>The Sharpe and return separations do not clear their own error bars</Caveat>: full loop 1.00±0.3 vs zero-shot 0.53±0.38 overlap at one standard deviation, and no significance test of any kind is reported. Directional accuracy (56.5±1.0 vs 51.2±2.2) and max drawdown (13.0±4.4 vs 34.5±7.1) do separate at one std; the risk-adjusted-return claims are the weakest link.
+- <Caveat>No ablation of R1–R4 inside the authors' own system</Caveat>: the "partial requirements" rows are *reimplemented prior methods*, not their architecture with a layer removed, so the mapping from a missing requirement to a performance drop is confounded with every other implementation difference. Finding 2's causal reading rests on this substitution.
+- <Caveat>The learning signal is very small</Caveat>: about 8 batches of roughly 16 samples (§4.1 with Fig.2) is on the order of 130 predictions, a tiny slice of the 2013–2016 window for five tickers. Whether governance still dominates extraction at 10x the experience is untested.
+- <Caveat>Natural-language evidence logs grow linearly with episodes, and evidence is weighted uniformly over time</Caveat> (author-stated, §5, p.7); no temporal discounting, which the authors note could speed adaptation at the cost of forgetting rare conditions.
+- <Caveat>Table 1 scores prior work against requirements the authors defined</Caveat>, and "Ours" is the only row with four checkmarks — a framework designed to be satisfied by the proposed system. The R1–R4 taxonomy is a reasonable checklist but is not an independent yardstick.
+- <Caveat>Substantial reporting gaps</Caveat>: no code or artifact link, no prompts, no example rules or evidence entries beyond Table 3's identifiers, no cost/token accounting for a loop that runs three LLM roles per batch, and "scenario accuracy" — a headline metric — is never defined beyond the phrase "scenario forecast".
+
+## Critiques and Questions
+1. **Is this governance, or is it distillation from a stronger model?** The base agent is Qwen3-VL-235B while critic, proposer, and curator are Claude Sonnet 4.6. Every governed rule is therefore text written by a stronger model. The baselines are said to differ "only in how accumulated experience is managed", which should hold the teacher fixed across method rows — but it does not hold against the zero-shot row, so part of the +5.3pp is plausibly teacher knowledge rather than curation.
+2. **Contamination is not discussed at all.** The models are 2026-era and the test set is 2017 price action on AAPL, AMZN, FB, GOOGL, MSFT. Whether the candlestick charts are anonymized as to ticker and date is Unclear. This threatens the absolute numbers more than the relative ordering, but a paper whose headline is a 5.3pp move in directional accuracy on named mega-caps needs to address it.
+3. **Does "same accumulated experience" really hold across rows?** Finding 1–3 are framed as one body of experience managed three ways, but each baseline extracts its own rules under its own regime. If the rule *sets* differ, the paper is comparing pipelines, not governance policies, and its central claim ("only the curation mechanism determines whether the agent improves or degrades") is stronger than the experiment licenses.
+4. **What is the abstention rate, and how much of the drawdown reduction is just trading less?** Skills are said to decide "when to abstain", and max drawdown falls by 60% while average return only doubles from a tiny base. An abstention-driven reduction in exposure would explain much of the risk improvement without any improvement in judgment — the paper reports no trade counts or exposure statistics.
+5. **How does the curator avoid becoming the very thing being critiqued?** Deprecation thresholds, critic criteria, and skill structure are hand-designed and never evaluated; the governance layer is itself an ungoverned, unevidenced set of rules. The paper's own "meta-curation" discussion concedes this.
+
+<SelfCheck q="Why does the architecture keep the evidence log separate from the rule and make it append-only, rather than storing a confidence score on each rule?" a="Because both halves of the retention-forgetting dilemma need the record to outlive the rule. A scalar confidence (as in Hindsight) collapses the trail: when it drops, the system cannot reconstruct which episodes or conditions caused the drop, so it cannot explain a deprecation, avoid re-proposing an equivalent rule, or recognize when a regime returns and a deprecated rule becomes relevant again. In-place rewriting (ExpeL, TF-GRPO) is worse still — it silently invalidates all evidence accumulated about the rule. Append-only evidence that survives deprecation lets a rule stop firing (killing negative transfer) while its history persists (killing catastrophic forgetting)." />
+
+## Glossary
+- <Term def="training-free learning in which outcomes are turned into natural-language rules injected as context; model parameters are never updated">verbal reinforcement learning</Term> / <Term def="objective signals arising from real-world interaction — task outcomes, market returns, demand — that arrive after the agent acts">world feedback</Term>
+- <Term def="retaining stale rules causes negative transfer, while discarding failed rules causes catastrophic forgetting when conditions recur; the paper's central framing">retention–forgetting dilemma</Term>
+- <Term def="R1 outcome-driven evaluation, R2 persistent structured evidence, R3 non-monotonic knowledge lifecycle, R4 compositional governance">R1–R4</Term>
+- <Term def="knowledge can be both added and deactivated, and deactivation is not deletion — the deprecated item and its evidence are preserved">non-monotonic lifecycle</Term>
+- <Term def="Alchourron-Gardenfors-Makinson theory of belief change; its Relevance postulate demands minimal change and Core-Retainment forbids unjustified deletion">AGM belief revision</Term>
+- <Term def="the three curation roles: critic evaluates rules against realized outcomes, proposer appends evidence and proposes rules, curator deprecates rules and evolves skills">critic–proposer–curator</Term>
+- <Term def="fraction of correct up/down predictions over the 5-day horizon; near 50% is chance">directional accuracy</Term> / <Term def="accuracy of the agent's scenario forecast; never defined in the paper">scenario accuracy</Term> / <Term def="mean return divided by its standard deviation — return per unit of risk">Sharpe ratio</Term> / <Term def="largest peak-to-trough loss over the evaluation period; lower is better">maximum drawdown</Term>
+- <Term def="open, high, low, close, volume — the daily price bars rendered into the 20-day candlestick chart the vision-language base agent reads">OHLCV</Term>
+
+{/* NOTES_START */}
+### Personal notes
+For the TDE related-work section this is a *category I* citation and the survey's read of it holds up exactly: AGM lineage (Alchourrón 1985 → Kumiho, IMPACT-CYCLE), knowledge consistency rather than action gating. Two lines worth lifting:
+
+1. The de-circularization is partial in a precisely nameable way — **mechanical at the outcome, LLM-mediated at the attribution**. The critic is Claude Sonnet 4.6 writing verbal assessments of which rule helped. TDE's claim is that the attribution step should also be mechanical (a test either passes or not), which removes the need for the entire skills layer.
+2. Defeasibility is what forces the architecture to be three layers deep. If rules were decidable predicates over world state, conflict resolution and abstention would mostly evaporate. That is a positive argument for TDE's substitution, not just a difference.
+
+Also citable as motivation independent of the belief-revision framing: −4.9pp below zero-shot for ungoverned accumulation is a clean statement that memory without verification is a liability. Watch the weaknesses if leaning on it: single domain, ~130 learning samples, error bars that are inference-only, and no within-system ablation.
+{/* NOTES_END */}

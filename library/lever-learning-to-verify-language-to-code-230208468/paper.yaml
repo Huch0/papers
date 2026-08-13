@@ -1,0 +1,62 @@
+canonical_key: arxiv-2302.08468
+slug: lever-learning-to-verify-language-to-code-230208468
+title: 'LEVER: Learning to Verify Language-to-Code Generation with Execution'
+authors:
+- Ansong Ni
+- Srini Iyer
+- Dragomir Radev
+- Ves Stoyanov
+- Wen-tau Yih
+- Sida I. Wang
+- Xi Victoria Lin
+year: 2023
+primary_ids:
+  doi: null
+  arxiv_base_id: '2302.08468'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2302.08468v3
+- https://arxiv.org/pdf/2302.08468v3
+topic_groups:
+- general_agent_methods
+- software_engineering_agents
+tags:
+- execution-based-eval
+- tde-related-work
+- verifier
+venue:
+  name: ICML
+  tier: A_star
+  status: accepted
+  year: 2023
+user:
+  read_status: unread
+  triage_label: SKIP
+  triage_confidence: high
+  notes: null
+milestone: null
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v3
+  source: arxiv
+  source_url: https://arxiv.org/abs/2302.08468v3
+  pdf_path: library/lever-learning-to-verify-language-to-code-230208468/v1/paper.pdf
+  summary_path: library/lever-learning-to-verify-language-to-code-230208468/v1/summary.mdx
+  metadata_path: library/lever-learning-to-verify-language-to-code-230208468/v1/metadata.yaml
+  fetched_at: '2026-08-13T07:14:30Z'
+  source_updated_at: '2023-09-01T17:37:42Z'
+  arxiv_version: v3
+  pdf_sha256: 9f7535fae850deaedbb0215e28f82c66cbca2305c3006ea42f3bdb41a52290ee
+  pdf_bytes: 1891989
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-08-13T07:14:30Z'
+  updated_at: '2026-08-13T10:10:29Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

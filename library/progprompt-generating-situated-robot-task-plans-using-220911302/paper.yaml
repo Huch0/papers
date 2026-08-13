@@ -1,0 +1,63 @@
+canonical_key: arxiv-2209.11302
+slug: progprompt-generating-situated-robot-task-plans-using-220911302
+title: 'ProgPrompt: Generating Situated Robot Task Plans using Large Language Models'
+authors:
+- Ishika Singh
+- Valts Blukis
+- Arsalan Mousavian
+- Ankit Goyal
+- Danfei Xu
+- Jonathan Tremblay
+- Dieter Fox
+- Jesse Thomason
+- Animesh Garg
+year: 2022
+primary_ids:
+  doi: null
+  arxiv_base_id: '2209.11302'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2209.11302v1
+- https://arxiv.org/pdf/2209.11302v1
+topic_groups:
+- general_agent_methods
+tags:
+- foundational
+- planner-executor-verifier
+- tde-related-work
+venue:
+  name: ICRA
+  tier: A_star
+  status: accepted
+  year: 2023
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: medium
+  notes: null
+milestone: null
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v1
+  source: arxiv
+  source_url: https://arxiv.org/abs/2209.11302v1
+  pdf_path: library/progprompt-generating-situated-robot-task-plans-using-220911302/v1/paper.pdf
+  summary_path: library/progprompt-generating-situated-robot-task-plans-using-220911302/v1/summary.mdx
+  metadata_path: library/progprompt-generating-situated-robot-task-plans-using-220911302/v1/metadata.yaml
+  fetched_at: '2026-08-13T07:16:32Z'
+  source_updated_at: '2022-09-22T20:29:49Z'
+  arxiv_version: v1
+  pdf_sha256: f9106cad86a1e73ecb93366a85cf4845989207ae21a176693a7ecdb02403692a
+  pdf_bytes: 20896192
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-08-13T07:16:32Z'
+  updated_at: '2026-08-13T07:37:28Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

@@ -1,0 +1,83 @@
+canonical_key: arxiv-2207.10397
+version_key: v1
+title: 'CodeT: Code Generation with Generated Tests'
+authors:
+- Bei Chen
+- Fengji Zhang
+- Anh Nguyen
+- Daoguang Zan
+- Zeqi Lin
+- Jian-Guang Lou
+- Weizhu Chen
+abstract: The task of generating code solutions for a given programming problem can benefit from the use
+  of pre-trained language models such as Codex, which can produce multiple diverse samples. However, a
+  major challenge for this task is to select the most appropriate solution from the multiple samples generated
+  by the pre-trained language models. A natural way to evaluate the quality and correctness of a code
+  solution is to run it against a set of test cases, but the manual creation of such test cases is often
+  costly and time-consuming. In this paper, we propose a novel method, CodeT, that leverages the same
+  pre-trained language models to automatically generate test cases for the code samples, thus reducing
+  the human effort and increasing the coverage of the test scenarios. CodeT then executes the code samples
+  using the generated test cases, and performs a dual execution agreement, which considers both the consistency
+  of the outputs against the generated test cases and the agreement of the outputs with other code samples.
+  We conduct comprehensive experiments on four benchmarks, HumanEval, MBPP, APPS and CodeContests, using
+  five different pre-trained language models with varying sizes and capabilities. Our results show that
+  CodeT can significantly improve the performance of code solution selection over previous methods, achieving
+  remarkable and consistent gains across different models and benchmarks. For instance, CodeT improves
+  the pass@1 metric on HumanEval to 65.8%, which represents an absolute improvement of 18.8% over the
+  code-davinci-002 model, and an absolute improvement of more than 20% over the previous state-of-the-art
+  results.
+venue: arXiv
+year: 2022
+source: arxiv
+source_url: https://arxiv.org/abs/2207.10397v2
+pdf_url: https://arxiv.org/pdf/2207.10397v2
+pdf_sha256: ada1c4b233dda1b2376d2e1950329f6f0addaff50244db6114332721dcc8916c
+fetched_at: '2026-08-13T07:13:37Z'
+source_updated_at: '2022-11-23T07:42:10Z'
+ids:
+  doi: null
+  arxiv_id: 2207.10397v2
+  arxiv_base_id: '2207.10397'
+  arxiv_version: v2
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- tde-related-work
+- test-based-eval
+topic_groups:
+- software_engineering_agents
+scoring:
+  score: 12.7
+  label: SKIP
+  confidence: high
+  rationale: 'score=13 -> SKIP | strong: novelty(0.80), interest_fit(0.73), venue_quality(0.40) | interests:
+    software_engineering_agents:group:software_engineering_agents | negatives: old_in_fast_area'
+  matched_interests:
+  - software_engineering_agents:group:software_engineering_agents
+  negative_signals:
+  - old_in_fast_area
+  subscores:
+    interest_fit: 0.73
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 0.8
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/codet-code-generation-with-generated-tests-220710397/v1/paper.pdf
+  extraction: library/codet-code-generation-with-generated-tests-220710397/v1/extraction.txt
+  summary: library/codet-code-generation-with-generated-tests-220710397/v1/summary.mdx
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread
+  summary_format: mdx

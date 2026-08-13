@@ -1,0 +1,88 @@
+canonical_key: arxiv-2410.10934
+version_key: v1
+title: 'Agent-as-a-Judge: Evaluate Agents with Agents'
+authors:
+- Mingchen Zhuge
+- Changsheng Zhao
+- Dylan Ashley
+- Wenyi Wang
+- Dmitrii Khizbullin
+- Yunyang Xiong
+- Zechun Liu
+- Ernie Chang
+- Raghuraman Krishnamoorthi
+- Yuandong Tian
+- Yangyang Shi
+- Vikas Chandra
+- Jürgen Schmidhuber
+abstract: Contemporary evaluation techniques are inadequate for agentic systems. These approaches either
+  focus exclusively on final outcomes -- ignoring the step-by-step nature of agentic systems, or require
+  excessive manual labour. To address this, we introduce the Agent-as-a-Judge framework, wherein agentic
+  systems are used to evaluate agentic systems. This is an organic extension of the LLM-as-a-Judge framework,
+  incorporating agentic features that enable intermediate feedback for the entire task-solving process.
+  We apply the Agent-as-a-Judge to the task of code generation. To overcome issues with existing benchmarks
+  and provide a proof-of-concept testbed for Agent-as-a-Judge, we present DevAI, a new benchmark of 55
+  realistic automated AI development tasks. It includes rich manual annotations, like a total of 365 hierarchical
+  user requirements. We benchmark three of the popular agentic systems using Agent-as-a-Judge and find
+  it dramatically outperforms LLM-as-a-Judge and is as reliable as our human evaluation baseline. Altogether,
+  we believe that Agent-as-a-Judge marks a concrete step forward for modern agentic systems -- by providing
+  rich and reliable reward signals necessary for dynamic and scalable self-improvement.
+venue: arXiv
+year: 2024
+source: arxiv
+source_url: https://arxiv.org/abs/2410.10934v2
+pdf_url: https://arxiv.org/pdf/2410.10934v2
+pdf_sha256: 830911474bce590fa8e549179a309572a28d4e585611bc4d44ef08337765f5f6
+fetched_at: '2026-08-13T07:17:54Z'
+source_updated_at: '2024-10-16T17:54:12Z'
+ids:
+  doi: null
+  arxiv_id: 2410.10934v2
+  arxiv_base_id: '2410.10934'
+  arxiv_version: v2
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- evaluation-harness
+- llm-judge
+- tde-related-work
+topic_groups:
+- agent_harness
+- general_agent_methods
+scoring:
+  score: 19.6
+  label: SKIP
+  confidence: high
+  rationale: 'score=20 -> SKIP | strong: novelty(1.00), interest_fit(0.73), evaluation_quality(0.55) |
+    interests: agent_harness:group:agent_harness, general_agent_methods:group:general_agent_methods |
+    negatives: old_in_fast_area'
+  matched_interests:
+  - agent_harness:group:agent_harness
+  - general_agent_methods:group:general_agent_methods
+  negative_signals:
+  - old_in_fast_area
+  subscores:
+    interest_fit: 0.73
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 1.0
+    artifact_availability: 0.0
+    evaluation_quality: 0.55
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/agent-as-a-judge-evaluate-agents-with-241010934/v1/paper.pdf
+  extraction: library/agent-as-a-judge-evaluate-agents-with-241010934/v1/extraction.txt
+  summary: library/agent-as-a-judge-evaluate-agents-with-241010934/v1/summary.mdx
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread
+  summary_format: mdx

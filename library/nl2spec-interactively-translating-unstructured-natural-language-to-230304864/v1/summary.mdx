@@ -1,0 +1,115 @@
+---
+canonical_key: arxiv-2303.04864
+version_key: v1
+title: 'nl2spec: Interactively Translating Unstructured Natural Language to Temporal Logics with Large
+  Language Models'
+authors:
+- Matthias Cosler
+- Christopher Hahn
+- Daniel Mendoza
+- Frederik Schmitt
+- Caroline Trippel
+venue: arXiv
+year: 2023
+tags:
+- tde-related-work
+- verifier
+topic_groups:
+- general_agent_methods
+triage_label: SKIP
+triage_confidence: medium
+source_link: https://arxiv.org/abs/2303.04864v1
+summary_date: '2026-08-13'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>nl2spec pairs an LLM with a human-in-the-loop web tool to translate unstructured natural-language requirements into <Term def="Linear-time Temporal Logic: propositional logic plus temporal operators U (until), X (next), F (eventually), G (globally); the basis of practical spec languages like PSL, STL, SVA">LTL</Term>, decomposing every translation into editable <Term def="a pair mapping a natural-language fragment of the input to the formula fragment that formalizes it; the unit users add, edit, or delete">sub-translations</Term> so users repair ambiguity and errors locally instead of redrafting the whole formula — lifting accuracy on a 36-instance expert benchmark from 44.4% one-shot to 86.11% interactive.</TLDR>
+
+<WhyItMatters>For TDE this is the NL→spec compiler studied in isolation: it shares the move of compiling unstructured natural language into a decidable, machine-checkable artifact, its sub-translation editing is a concrete mechanism for pinning scope/precedence binding, and its ≥25% ambiguity rate among expert-written one-sentence requirements is quotable evidence that instruction→suite compilation needs an explicit disambiguation step. It differs on every runtime axis TDE cares about: the loop terminates on human approval rather than a mechanically evaluated red–green gate, its confidence scores are LLM self-consistency votes rather than environment-computed verdicts, and the output is an LTL property destined for model checking a system design — no agent, no actions, no conditions over world state.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "86.11%", label: "interactive accuracy", sub: "31/36, Codex backend, ≤3 repair loops (Tab.1)" },
+  { value: "44.4%", label: "initial accuracy, no interaction", sub: "vs 2.7% nl2ltl / 5.5% fine-tuned T-5" },
+  { value: "1.4", label: "translation loops on average", sub: "across the benchmark (§4.2)" },
+  { value: "≥9/36", label: "ambiguous instances (25%)", sub: "expert-written single sentences" },
+]} />
+
+## Motivation
+Verification tasks — <Term def="exhaustively checking a system model against a temporal-logic property">model checking</Term>, synthesis, runtime verification — presuppose a formal specification, but <Problem>writing formal specifications is an error-prone, time-consuming manual task reserved for experts</Problem>, which limits the reach of verification itself (§1). Prior NL→temporal-logic work either <Problem>handles only structured, grammar-constrained natural language</Problem> (specification patterns, robotics datasets) or translates one-shot with a neural model (fine-tuned or GPT-3-based), and <Problem>no previous tool detects or interactively resolves the inherent ambiguity of natural language</Problem> — when a one-shot output is wrong, the user's only recourse is redrafting the entire formalization by hand (§1–2).
+
+## Contribution (what's new)
+<Novelty>Decompose the NL→LTL translation into sub-translations — LLM-generated mappings from subformulas of the produced formalization back to the natural-language fragments they came from — and make those pairs the unit of human interaction</Novelty>: users add, edit, or delete them, and the edits feed back verbatim into the prompt's "Given translations" slot to constrain the next generation (Alg.1, Fig.3). The form is forced by where ambiguity lives: operator precedence and semantic readings attach to sub-formula scope, which an end-to-end formula hides but a fragment-level mapping exposes — and fixing one fragment (e.g. adding parentheses) is far cheaper than redrafting. Secondary deltas: <Novelty>consensus confidence scores computed as votes over multiple sampled runs, with alternative sub-translations selectable in the UI</Novelty>; a model- and domain-agnostic open-source tool (prompts are swappable .txt files, with <Term def="Signal Temporal Logic: an LTL variant over continuous signals with interval-bounded operators like G[2,6]">STL</Term> and smart-home prompts as proofs of concept); and a deliberately adversarial 36-instance expert benchmark.
+
+## Research questions
+(1) Are initial LLM translations of unstructured natural language to LTL good enough to seed an efficient interactive workflow? (2) Does interactively refining sub-translations let users resolve ambiguity and fix erroneous formalizations more cheaply than redrafting? (3) Does sub-translation quality causally drive final-formalization quality?
+
+## Methodology
+A flask frontend/backend around swappable LLMs (Codex code-davinci-002 and Bloom-176B in the study). Each loop: build the prompt from a specification-language header, two few-shot examples, the input sentence, and the current sub-translations; sample the model several times (3 runs, temperature 0.2 in the experiments); parse out an explanation, a sub-translation dictionary, and the final formula; show the highest-vote candidates with vote-share confidence; the user edits sub-translations and reruns until approving the formula (Alg.1). Benchmark: five experts wrote 36 deliberately challenging single-sentence requirements over atomic propositions a–e; a translation counts as correct only if it matches the expert's intended meaning — alternative readings of ambiguous inputs are rejected (§4.1–4.2).
+
+<Pass title="Method details">
+<Stepper steps={[
+  { title: "Prompt anatomy (Fig.3)", body: "Three parts: a specification-language header carrying minimal LTL domain knowledge with chain-of-thought phrasing (lines 1-4); two few-shot examples, each demonstrating input sentence, a Given-translations dictionary, a step-by-step explanation, an explanation dictionary of sub-translations, and the final formula, ended by the FINISH stop token; and the interactive part holding the user's sentence plus current sub-translations. The minimal prompt was frozen before the user study and contains no example with non-empty given translations." },
+  { title: "Interactive loop (Alg.1)", body: "While the user has not approved the formula: compute the interactive prompt from sentence S, few-shot prompt F, and the sub-translation pairs; query model M under parameters P (temperature, number of runs); receive explanation, sub-translations, confidence scores, and final formula; the user adds, edits, deletes, or picks alternative sub-translations; rerun." },
+  { title: "Confidence and parsing", body: "Confidence of each (sub-)translation is its vote share across the sampled runs; the highest-consensus candidate is displayed, alternatives sit in a drop-down. Output formulas are parsed with a standard LTL parser, so syntactic validity is checked mechanically - semantic correctness is not." },
+  { title: "Extendability (App.C, E)", body: "Prompts are plain .txt files: swapping header and examples ports the tool to other spec languages (an STL prompt and a smart-home LTL prompt ship as proofs of concept). Variable conventions are set by seeding one sub-translation - giving 'process 0 terminates' as t_p0 makes the model adopt the naming scheme (s_p1) for the rest of the sentence." },
+]} />
+
+Three sample benchmark instances (§4.1):
+
+<ResultsTable columns={["Natural language", "Intended LTL"]} rows={[
+  ["If b holds then, in the next step, c holds until a holds or always c holds.", "b -> X ((c U a) || G c)"],
+  ["If b holds at some point, a has to hold somewhere beforehand.", "(F b) -> (!b U (a & !b))"],
+  ["One of the following aps will hold at all instances: a,b,c.", "G( a | b | c)"],
+]} />
+</Pass>
+
+## Main result
+On the 36-instance expert set, <Finding src="Tab.1, p.9">nl2spec+Codex translates 44.4% (16/36) correctly with no interaction — versus 2.7% for nl2ltl (Rasa→Declare patterns) and 5.5% for a T-5 fine-tuned on structured data — and reaches 86.11% (31/36) after interactive sub-translation repair, at 1.4 translation loops on average</Finding>.
+
+<SortableTable columns={["Method", "Backend", "Setting", "Correct", "Accuracy %"]} rows={[
+  ["nl2ltl", "Rasa", "one-shot, Declare-pattern output", "1/36", 2.7],
+  ["Fine-tuned LM (Hahn et al. 2022)", "T-5", "trained on structured data", "2/36", 5.5],
+  ["nl2spec", "Bloom-176B", "initial, minimal prompt", "5/36", 13.8],
+  ["nl2spec", "Codex", "initial, minimal prompt", "16/36", 44.4],
+  ["nl2spec", "Codex", "initial, in-distribution prompt", "21/36", 58.3],
+  ["nl2spec", "Codex", "interactive, ≤3 loops", "31/36", 86.11],
+]} />
+
+## Key findings
+- <Finding src="Tab.1, §4.2">In-distribution few-shot examples help only slightly: 58.3% vs 44.4%</Finding> — and 4 of the eval instances sit verbatim in that prompt — so the interactive mechanism, not prompt engineering, carries the method; the authors read this as making ambiguity detection and cheap debugging the valuable contribution.
+- <Finding src="§4.2, p.9">Sub-translations transfer across models with no human involved: of 11 instances Codex solved but Bloom failed, Bloom solves 4 (36.4%) when given Codex's sub-translations as input</Finding> — direct evidence that improving sub-translation quality causally improves the final formalization.
+- <Finding src="§4.2, p.10">At least 9/36 (25%) of expert-written single-sentence requirements are ambiguous, in two classes</Finding>: linguistic ambiguity (operator precedence: "a holds until b holds or always a holds" → tool `(a U (b | G(a)))` vs intended `(a U b) | G a`) and semantic ambiguity ("b must hold in the next two steps" → tool `G((a -> X(X(b))))` vs intended `G (a -> (b | X b))`); both kinds were fixed by editing a single sub-translation.
+- <Finding src="§4.2, p.10">Of 20 initial failures, 15 were repaired within at most 3 loops (1.86 loops on average); the remaining 5 had to be translated by hand</Finding> — the hand-translated residue uses advanced operators or hides temporal meaning in phrasing (e.g. "once a happened, b won't happen again" → `G (a -> X G ! b)`; "a releases b") (App.D).
+- <Finding src="Tab.1, p.9">The open Bloom-176B backend manages only 13.8% initial accuracy vs Codex's 44.4%</Finding>: the framework is model-agnostic, but its floor is set by the backend's pretraining exposure to logic and code.
+
+## Implications
+The durable pattern is <Related>NL→formal-artifact compilation with an inspectable, editable intermediate decomposition</Related> — a repair interface at exactly the granularity where ambiguity lives. Within its lineage it adds the missing disambiguation loop to one-shot neural translation (<Related>fine-tuned LMs (Hahn et al. 2022), DeepSTL, nl2ltl's GPT-3/Rasa→Declare pipeline, Lang2LTL for robot commands</Related>), and the .txt-prompt architecture ports it across spec languages. Threads worth chasing: <FollowUp>replacing the human approval gate with mechanical adjudication — e.g. equivalence or trace-distinguishing checks between candidate readings, which LTL's decidability permits but the paper never uses</FollowUp>; <FollowUp>whether consensus-vote confidence actually flags the ambiguous 25% (calibration is unreported)</FollowUp>; <FollowUp>the robotics NL→LTL branch (Lang2LTL, grounded semantic parsers) as the agent-facing continuation of this line</FollowUp>.
+
+## Limitations
+- <Caveat>The interactive headline is author-in-the-loop, not user-in-the-loop</Caveat>: the expert study only produced the dataset; the 86.11% repair experiment was performed by the authors, who could compare candidates against the known intended formula — a feasibility ceiling, not a usability measurement (§4.1–4.2).
+- <Caveat>36 single-sentence instances over five atomic propositions from five experts</Caveat>; no variance, seeds, or significance reporting; single run configuration (3 samples, temperature 0.2).
+- <Caveat>How "matches the intended meaning" was adjudicated is not reported</Caveat> — no mention of automated equivalence checking — and the in-distribution prompt leaks 4 eval instances into the few-shot examples.
+- <Caveat>Author-stated: reliance on inference-time compute, and initial-translation quality is hostage to how much logic/code/math the backend saw in pretraining</Caveat> (§5).
+- <Caveat>Confidence is LLM self-consistency over 3 samples</Caveat>: uncalibrated, and a low score conflates model uncertainty with genuine input ambiguity.
+
+## Critiques and Questions
+1. The central workflow claim — that verifying and debugging sub-translations is significantly easier than redrafting the formula — is asserted, never measured: no timing, error-rate, or preference comparison against a redrafting baseline, and no non-author users ever ran the loop.
+2. Termination is "while user not approves": with no mechanical check, a user who mis-approves ships a wrong spec and the tool cannot notice. A model-based probe (e.g. sampling traces that distinguish the candidate readings) would de-circularize exactly the adjudication step that remains human here.
+3. Does the model ever override a wrong user-provided sub-translation, or does garbage-in propagate to the final formula? The feedback channel is only ever tested with helpful edits.
+4. With 3 samples at temperature 0.2, the vote-based confidence can take almost no distinct values — how much signal does it carry in practice?
+
+<SelfCheck q="The tool translates 'a holds until b holds or always a holds' with the wrong operator precedence. What does the user do, and why does it work?" a="Edit one sub-translation — 'a holds until b holds' becomes (a U b) with explicit parentheses — instead of rewriting the formula. The edited pair is fed back through the prompt's Given-translations slot, and the regenerated formula comes out as (a U b) | G a as intended: the fragment-level mapping exposes and pins the scope that the end-to-end formula hid." />
+
+## Glossary
+- <Term def="templated LTL-fragment patterns (Pesic and van der Aalst 2006) used in business-process modeling; the restricted output space of the nl2ltl baseline">Declare patterns</Term>
+- <Term def="OpenAI's code-fine-tuned GPT-3 line; the study used the 2022 code-davinci-002, likely in the 176B range">Codex</Term>
+- <Term def="open-source 176B-parameter multilingual LLM (BigScience), accessed via the HuggingFace inference API">Bloom</Term>
+- <Term def="prompting with a task description plus a few worked input-output examples, with no weight updates">few-shot prompting</Term>
+- LTL, STL, sub-translation, model checking: defined inline above.
+
+{/* NOTES_START */}
+### Personal notes
+For the TDE related-work section, cite as category-D evidence for three points: (1) NL→decidable-spec compilation is LLM-feasible on genuinely unstructured input, but one-shot accuracy stalls near 44% even for expert single sentences; (2) ≥25% of expert-written one-sentence requirements were ambiguous, so instruction→suite compilation needs an explicit disambiguation mechanism — nl2spec's is human-elective editing of an inspectable decomposition, a pattern TDE could reuse for surfacing compiled-suite provenance; (3) the loop closes on human approval plus LLM-vote confidence — precisely the adjudication TDE mechanizes with environment-evaluated suites. Sharpest contrast sentence: nl2spec verifies the spec against the human; TDE verifies the world against the spec.
+{/* NOTES_END */}

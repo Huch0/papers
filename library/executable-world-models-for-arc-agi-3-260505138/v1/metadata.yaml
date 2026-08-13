@@ -1,0 +1,80 @@
+canonical_key: arxiv-2605.05138
+version_key: v1
+title: Executable World Models for ARC-AGI-3 in the Era of Coding Agents
+authors:
+- Sergey Rodionov
+abstract: 'We evaluate an initial coding-agent system for ARC-AGI-3 in which the agent maintains an executable
+  Python world model, verifies it against previous observations, refactors it toward simpler abstractions
+  as a practical proxy for an MDL-like simplicity bias, and plans through the model before acting. The
+  system is intentionally direct: it uses a scripted controller, predefined world-model interfaces, verifier
+  programs, and a plan executor, but no hand-coded game-specific logic. The agent-facing prompts, workspace,
+  and controller contain no game-specific code, game-specific prompts, hand-coded heuristics, hidden solutions,
+  or other game-specific information; the same agent and prompts are used across games. Because the coding
+  agent has broad system access, we audit unintended information channels, describe earlier vulnerable
+  harnesses, and explain how the current harness closes observed leakage channels while reducing benchmark-specific
+  information exposure. We report results on the 25 public ARC-AGI-3 games. Each playthrough starts from
+  a fresh agent instance and clean workspace, with no access to files or conversation state from earlier
+  playthroughs. With GPT-5.5 high reasoning effort, the agent fully solved 15 games and achieved a mean
+  per-game RHAE of 58.12%. With GPT-5.4 high reasoning effort, it fully solved 8 games and achieved a
+  mean per-game RHAE of 41.29%. Performance on the private validation set, which is not yet available
+  to us, remains to be tested. Overall, the results provide preliminary evidence that verifier-driven
+  executable world models are a promising approach for ARC-AGI-3 agents. Full run artifacts are released
+  with the code at https://github.com/astroseger/arc-3-agents-baseline1.'
+venue: arXiv
+year: 2026
+source: arxiv
+source_url: https://arxiv.org/abs/2605.05138v2
+pdf_url: https://arxiv.org/pdf/2605.05138v2
+pdf_sha256: dbec3124b0e7549999ac58aa35c9132cd70ae671af0a07eb7d15c32f97582cd6
+fetched_at: '2026-08-13T07:16:58Z'
+source_updated_at: '2026-06-06T19:16:21Z'
+ids:
+  doi: 10.1007/978-3-032-33195-3_15
+  arxiv_id: 2605.05138v2
+  arxiv_base_id: '2605.05138'
+  arxiv_version: v2
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- environment
+- tde-related-work
+topic_groups:
+- general_agent_methods
+scoring:
+  score: 56.9
+  label: SKIM
+  confidence: high
+  rationale: 'score=57 -> SKIM | strong: harness_relevance(1.00), interest_fit(0.91), recency(0.90) |
+    interests: software_engineering_agents:coding agent, software_engineering_agents:verifier, general_agent_methods:verifier,
+    general_agent_methods:group:general_agent_methods'
+  matched_interests:
+  - software_engineering_agents:coding agent
+  - software_engineering_agents:verifier
+  - general_agent_methods:verifier
+  - general_agent_methods:group:general_agent_methods
+  negative_signals: []
+  subscores:
+    interest_fit: 0.91
+    recency: 0.898
+    venue_quality: 0.4
+    harness_relevance: 1.0
+    novelty: 0.0
+    artifact_availability: 0.55
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/executable-world-models-for-arc-agi-3-260505138/v1/paper.pdf
+  extraction: library/executable-world-models-for-arc-agi-3-260505138/v1/extraction.txt
+  summary: library/executable-world-models-for-arc-agi-3-260505138/v1/summary.mdx
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread
+  summary_format: mdx

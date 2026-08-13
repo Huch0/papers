@@ -1,0 +1,54 @@
+canonical_key: arxiv-2605.05138
+slug: executable-world-models-for-arc-agi-3-260505138
+title: Executable World Models for ARC-AGI-3 in the Era of Coding Agents
+authors:
+- Sergey Rodionov
+year: 2026
+primary_ids:
+  doi: 10.1007/978-3-032-33195-3_15
+  arxiv_base_id: '2605.05138'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2605.05138v2
+- https://arxiv.org/pdf/2605.05138v2
+topic_groups:
+- general_agent_methods
+tags:
+- environment
+- tde-related-work
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2026
+user:
+  read_status: unread
+  triage_label: SKIM
+  triage_confidence: high
+  notes: null
+milestone: null
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v2
+  source: arxiv
+  source_url: https://arxiv.org/abs/2605.05138v2
+  pdf_path: library/executable-world-models-for-arc-agi-3-260505138/v1/paper.pdf
+  summary_path: library/executable-world-models-for-arc-agi-3-260505138/v1/summary.mdx
+  metadata_path: library/executable-world-models-for-arc-agi-3-260505138/v1/metadata.yaml
+  fetched_at: '2026-08-13T07:16:58Z'
+  source_updated_at: '2026-06-06T19:16:21Z'
+  arxiv_version: v2
+  pdf_sha256: dbec3124b0e7549999ac58aa35c9132cd70ae671af0a07eb7d15c32f97582cd6
+  pdf_bytes: 364706
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-08-13T07:16:58Z'
+  updated_at: '2026-08-13T10:33:24Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

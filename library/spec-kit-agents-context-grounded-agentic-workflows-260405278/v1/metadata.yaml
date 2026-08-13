@@ -1,0 +1,75 @@
+canonical_key: arxiv-2604.05278
+version_key: v1
+title: 'Spec Kit Agents: Context-Grounded Agentic Workflows'
+authors:
+- Pardis Taghavi
+- Santosh Bhavani
+abstract: Spec-driven development (SDD) with AI coding agents provides a structured workflow, but agents
+  often remain "context blind" in large, evolving repositories, leading to hallucinated APIs and architectural
+  violations. We present Spec Kit Agents, a multi-agent SDD pipeline (with PM and developer roles) that
+  adds phase-level, context-grounding hooks. Read-only probing hooks ground each stage (Specify, Plan,
+  Tasks, Implement) in repository evidence, while validation hooks check intermediate artifacts against
+  the environment. We evaluate 128 runs covering 32 features across five repositories. Context-grounding
+  hooks improve judged quality by +0.15 on a 1-5 composite LLM-as-judge score (+3.0 percent of the full
+  score; Wilcoxon signed-rank, p < 0.05) while maintaining 99.7-100 percent repository-level test compatibility.
+  We further evaluate the framework on SWE-bench Lite, where augmentation hooks improve baseline by 1.7
+  percent, achieving 58.2 percent Pass@1.
+venue: arXiv
+year: 2026
+source: arxiv
+source_url: https://arxiv.org/abs/2604.05278v1
+pdf_url: https://arxiv.org/pdf/2604.05278v1
+pdf_sha256: 83f788edaab29f62af8987bb958ae723ba2f003f85fe09b7f627cc848a0db0b8
+fetched_at: '2026-08-13T07:18:38Z'
+source_updated_at: '2026-04-07T00:26:49Z'
+ids:
+  doi: null
+  arxiv_id: 2604.05278v1
+  arxiv_base_id: '2604.05278'
+  arxiv_version: v1
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- agent-harness
+- tde-related-work
+topic_groups:
+- software_engineering_agents
+- agent_harness
+scoring:
+  score: 49.6
+  label: TRACK_ONLY
+  confidence: high
+  rationale: 'score=50 -> TRACK_ONLY | strong: interest_fit(1.00), recency(0.78), trend_signal(0.70) |
+    interests: agent_harness:group:agent_harness, software_engineering_agents:coding agent, software_engineering_agents:SWE-bench,
+    software_engineering_agents:group:software_engineering_agents'
+  matched_interests:
+  - agent_harness:group:agent_harness
+  - software_engineering_agents:coding agent
+  - software_engineering_agents:SWE-bench
+  - software_engineering_agents:group:software_engineering_agents
+  negative_signals: []
+  subscores:
+    interest_fit: 1.0
+    recency: 0.783
+    venue_quality: 0.4
+    harness_relevance: 0.36
+    novelty: 0.0
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.7
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/spec-kit-agents-context-grounded-agentic-workflows-260405278/v1/paper.pdf
+  extraction: library/spec-kit-agents-context-grounded-agentic-workflows-260405278/v1/extraction.txt
+  summary: library/spec-kit-agents-context-grounded-agentic-workflows-260405278/v1/summary.mdx
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread
+  summary_format: mdx

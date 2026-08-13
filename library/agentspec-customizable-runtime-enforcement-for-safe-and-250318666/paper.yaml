@@ -1,0 +1,56 @@
+canonical_key: arxiv-2503.18666
+slug: agentspec-customizable-runtime-enforcement-for-safe-and-250318666
+title: 'AgentSpec: Customizable Runtime Enforcement for Safe and Reliable LLM Agents'
+authors:
+- Haoyu Wang
+- Christopher M. Poskitt
+- Jun Sun
+year: 2025
+primary_ids:
+  doi: null
+  arxiv_base_id: '2503.18666'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2503.18666v3
+- https://arxiv.org/pdf/2503.18666v3
+topic_groups:
+- agent_harness
+tags:
+- tde-related-work
+- verifier
+venue:
+  name: ICSE
+  tier: A_star
+  status: accepted
+  year: 2026
+user:
+  read_status: unread
+  triage_label: SKIP
+  triage_confidence: high
+  notes: null
+milestone: null
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v3
+  source: arxiv
+  source_url: https://arxiv.org/abs/2503.18666v3
+  pdf_path: library/agentspec-customizable-runtime-enforcement-for-safe-and-250318666/v1/paper.pdf
+  summary_path: library/agentspec-customizable-runtime-enforcement-for-safe-and-250318666/v1/summary.mdx
+  metadata_path: library/agentspec-customizable-runtime-enforcement-for-safe-and-250318666/v1/metadata.yaml
+  fetched_at: '2026-08-13T07:15:12Z'
+  source_updated_at: '2025-07-31T04:00:48Z'
+  arxiv_version: v3
+  pdf_sha256: b4789f7158d9f6710edd6068f40914e955a8910cc567f7d4849a5cd62009c61d
+  pdf_bytes: 751025
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-08-13T07:15:12Z'
+  updated_at: '2026-08-13T10:18:18Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

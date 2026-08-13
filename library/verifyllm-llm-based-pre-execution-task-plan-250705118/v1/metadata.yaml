@@ -1,0 +1,72 @@
+canonical_key: arxiv-2507.05118
+version_key: v1
+title: 'VerifyLLM: LLM-Based Pre-Execution Task Plan Verification for Robots'
+authors:
+- Danil S. Grigorev
+- Alexey K. Kovalev
+- Aleksandr I. Panov
+abstract: 'In the field of robotics, researchers face a critical challenge in ensuring reliable and efficient
+  task planning. Verifying high-level task plans before execution significantly reduces errors and enhance
+  the overall performance of these systems. In this paper, we propose an architecture for automatically
+  verifying high-level task plans before their execution in simulator or real-world environments. Leveraging
+  Large Language Models (LLMs), our approach consists of two key steps: first, the conversion of natural
+  language instructions into Linear Temporal Logic (LTL), followed by a comprehensive analysis of action
+  sequences. The module uses the reasoning capabilities of the LLM to evaluate logical coherence and identify
+  potential gaps in the plan. Rigorous testing on datasets of varying complexity demonstrates the broad
+  applicability of the module to household tasks. We contribute to improving the reliability and efficiency
+  of task planning and addresses the critical need for robust pre-execution verification in autonomous
+  systems. The code is available at https://verifyllm.github.io.'
+venue: arXiv
+year: 2025
+source: arxiv
+source_url: https://arxiv.org/abs/2507.05118v1
+pdf_url: https://arxiv.org/pdf/2507.05118v1
+pdf_sha256: efd4c79f96bac0557b4a020ee215b0891a0438643bb89c487d4e04a634d8d7d2
+fetched_at: '2026-08-13T07:16:45Z'
+source_updated_at: '2025-07-07T15:31:36Z'
+ids:
+  doi: null
+  arxiv_id: 2507.05118v1
+  arxiv_base_id: '2507.05118'
+  arxiv_version: v1
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- tde-related-work
+- verifier
+topic_groups:
+- general_agent_methods
+scoring:
+  score: 32.3
+  label: SKIP
+  confidence: medium
+  rationale: 'score=32 -> SKIP | strong: novelty(0.55), artifact_availability(0.55), interest_fit(0.40)
+    | interests: general_agent_methods:group:general_agent_methods'
+  matched_interests:
+  - general_agent_methods:group:general_agent_methods
+  negative_signals: []
+  subscores:
+    interest_fit: 0.402
+    recency: 0.35
+    venue_quality: 0.4
+    harness_relevance: 0.36
+    novelty: 0.55
+    artifact_availability: 0.55
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/verifyllm-llm-based-pre-execution-task-plan-250705118/v1/paper.pdf
+  extraction: library/verifyllm-llm-based-pre-execution-task-plan-250705118/v1/extraction.txt
+  summary: library/verifyllm-llm-based-pre-execution-task-plan-250705118/v1/summary.mdx
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread
+  summary_format: mdx

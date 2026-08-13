@@ -1,0 +1,89 @@
+canonical_key: arxiv-2407.18901
+version_key: v1
+title: 'AppWorld: A Controllable World of Apps and People for Benchmarking Interactive Coding Agents'
+authors:
+- Harsh Trivedi
+- Tushar Khot
+- Mareike Hartmann
+- Ruskin Manku
+- Vinty Dong
+- Edward Li
+- Shashank Gupta
+- Ashish Sabharwal
+- Niranjan Balasubramanian
+abstract: Autonomous agents that address day-to-day digital tasks (e.g., ordering groceries for a household),
+  must not only operate multiple apps (e.g., notes, messaging, shopping app) via APIs, but also generate
+  rich code with complex control flow in an iterative manner based on their interaction with the environment.
+  However, existing benchmarks for tool use are inadequate, as they only cover tasks that require a simple
+  sequence of API calls. To remedy this gap, we built $\textbf{AppWorld Engine}$, a high-quality execution
+  environment (60K lines of code) of 9 day-to-day apps operable via 457 APIs and populated with realistic
+  digital activities simulating the lives of ~100 fictitious users. We then created $\textbf{AppWorld
+  Benchmark}$ (40K lines of code), a suite of 750 natural, diverse, and challenging autonomous agent tasks
+  requiring rich and interactive code generation. It supports robust programmatic evaluation with state-based
+  unit tests, allowing for different ways of completing a task while also checking for unexpected changes,
+  i.e., collateral damage. The state-of-the-art LLM, GPT-4o, solves only ~49% of our 'normal' tasks and
+  ~30% of 'challenge' tasks, while other models solve at least 16% fewer. This highlights the benchmark's
+  difficulty and AppWorld's potential to push the frontiers of interactive coding agents. The project
+  website is available at https://appworld.dev/.
+venue: arXiv
+year: 2024
+source: arxiv
+source_url: https://arxiv.org/abs/2407.18901v1
+pdf_url: https://arxiv.org/pdf/2407.18901v1
+pdf_sha256: 2ca1feab1559d678c28706acca11caab54a8a76c64dcf9e14d46f7bd33f21487
+fetched_at: '2026-08-13T07:17:04Z'
+source_updated_at: '2024-07-26T17:55:45Z'
+ids:
+  doi: null
+  arxiv_id: 2407.18901v1
+  arxiv_base_id: '2407.18901'
+  arxiv_version: v1
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- benchmark
+- environment
+- execution-based-eval
+- foundational
+- tde-related-work
+topic_groups:
+- computer_use_agents
+- agent_harness
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: interest_fit(0.91), harness_relevance(0.68), novelty(0.55)
+    | interests: agent_harness:tool use, agent_harness:group:agent_harness, computer_use_agents:group:computer_use_agents,
+    software_engineering_agents:coding agent | milestone/foundational floor applied'
+  matched_interests:
+  - agent_harness:tool use
+  - agent_harness:group:agent_harness
+  - computer_use_agents:group:computer_use_agents
+  - software_engineering_agents:coding agent
+  negative_signals: []
+  subscores:
+    interest_fit: 0.91
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.68
+    novelty: 0.55
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/appworld-a-controllable-world-of-apps-and-240718901/v1/paper.pdf
+  extraction: library/appworld-a-controllable-world-of-apps-and-240718901/v1/extraction.txt
+  summary: library/appworld-a-controllable-world-of-apps-and-240718901/v1/summary.mdx
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread
+  summary_format: mdx

@@ -1,0 +1,124 @@
+---
+canonical_key: arxiv-2410.10934
+version_key: v1
+title: 'Agent-as-a-Judge: Evaluate Agents with Agents'
+authors:
+- Mingchen Zhuge
+- Changsheng Zhao
+- Dylan Ashley
+- Wenyi Wang
+- Dmitrii Khizbullin
+- Yunyang Xiong
+- Zechun Liu
+- Ernie Chang
+- Raghuraman Krishnamoorthi
+- Yuandong Tian
+- Yangyang Shi
+- Vikas Chandra
+- Jürgen Schmidhuber
+venue: arXiv
+year: 2024
+tags:
+- evaluation-harness
+- llm-judge
+- tde-related-work
+topic_groups:
+- agent_harness
+- general_agent_methods
+triage_label: SKIP
+triage_confidence: high
+source_link: https://arxiv.org/abs/2410.10934v2
+summary_date: '2026-08-13'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>An LLM-agent judge that gathers its own evidence (project graph, file location, multimodal reading, trajectory retrieval) and then emits per-requirement `<SATISFIED>`/`<UNSATISFIED>` verdicts on developer-agent runs, introduced together with DevAI (55 AI-development tasks, 365 DAG-linked requirements); it agrees with a human-consensus reference about 90% of the time — vs 60–70% for plain LLM-as-a-Judge — at roughly 2% of the human evaluation cost.</TLDR>
+
+<WhyItMatters>This is THE explicit contrast class for TDE. It shares TDE's premise — outcome-only grading is too sparse, so score whole agentic runs against graded, requirement-level milestones (a DAG over the final workspace) — but every adjudication is <b>model-judged</b>: an LLM agent reads artifacts and opines, correctness is defined as alignment with (noisy, 10–30%-disagreeing) human opinion, and nothing in the stack ever executes an acceptance check. TDE de-circularizes exactly this step by making the environment compute the verdict mechanically. Two sharpenings vs the survey line: the evaluation here is post-hoc scoring, not runtime gating (self-improvement use is an outlook only), and trajectory access is optional — black-box final-workspace judging (90.44% on OpenHands) matches gray-box trajectory judging (90.16%), which is itself indirect evidence that final-world-state checking carries most of the signal, as TDE assumes.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "90.44%", label: "human-consensus alignment", sub: "Agent-as-a-Judge, black-box, judging OpenHands (LLM-as-a-Judge: 60.38%)" },
+  { value: "55 / 365", label: "DevAI tasks / requirements", sub: "DAG-linked, binary criteria; +125 unscored soft preferences" },
+  { value: "2.36%", label: "of human evaluation cost", sub: "$30.58 + 118.43 min vs $1,297.50 + 86.5 h" },
+  { value: "1.81%", label: "best full-task solve rate", sub: "GPT-Pilot / OpenHands under human consensus (1 of 55 tasks)" },
+]} />
+
+## Motivation
+<Problem>Agentic systems act step-by-step, but their evaluations are end-only</Problem>: SWE-Bench-style final resolve rates say nothing about where in a long trajectory a system failed, and a proper process-level evaluation by humans is prohibitively expensive (86.5 expert-hours for one pass over three systems here). Existing code benchmarks compound this: <Problem>HumanEval/MBPP are self-contained toy problems, SWE-Bench covers only repair, is partly solvable without agents (over 27%, citing Agentless), and invites Goodhart-style per-task mechanisms</Problem> (§1, §2.1). No benchmark reflects a full development cycle with intermediate reward signals.
+
+## Contribution (what's new)
+<Novelty>Give the judge itself agentic evidence-gathering capabilities</Novelty>: build a graph of the generated workspace, locate the files a requirement refers to, read 33 file formats (code, images, video, docs), optionally retrieve from the developer's trajectory, and only then ask an LLM for a per-requirement binary verdict. The form is forced by the baseline's failure mode: plain LLM-as-a-Judge fails at evidence selection, not judging — the ablation ladder (65.03% with `ask` alone → 90.44% with `graph`+`read`+`locate`) shows the delta is almost entirely evidence collection. Second delta: <Novelty>DevAI, a benchmark whose unit of evaluation is the requirement, not the task</Novelty> — 55 realistic AI-development queries with 365 explicit, binary requirements arranged as dependency DAGs (scored independently (I) or prerequisite-gated (D)) plus 125 softer preferences, yielding graded rather than sparse feedback. Third: a <Novelty>quantified Human-as-a-Judge study</Novelty> showing individual expert judgments are themselves unreliable, motivating the consensus-after-debate reference.
+
+## Research questions
+Can an agentic judge reproduce human-consensus requirement verdicts on full development runs at LLM cost? Which judge capabilities matter? And how far are current developer agents from completing realistic AI-development tasks?
+
+## Methodology
+Run three popular open-source "AI developers" — MetaGPT, GPT-Pilot, OpenHands (each with gpt-4o-2024-05-13 backend, visible 1800 s hard limit) — on all 55 DevAI tasks, capturing workspaces and instrumented trajectories. Three expert humans score every requirement independently (58 h), then debate to consensus (28.5 person-hours); the consensus is the reference. Judges are compared by <Term def="percentage of the 365 requirement verdicts identical to the human consensus">alignment rate</Term>, <Term def="absolute deviation of a judge's aggregate scores from the Human-as-a-Judge consensus numbers">judge shift</Term>, and PR curves, in a <Term def="judge sees only the final generated workspace">black-box</Term> and a <Term def="judge additionally gets carefully hand-collected execution trajectories — nearly inaccessible in practice (App. J)">gray-box</Term> setting.
+
+<Pass title="Judge internals, ablation path, and costs">
+<Stepper steps={[
+  { title: "Eight candidate modules (§4.1, Fig.6)", body: "graph (workspace structure), locate (map requirement → folder/file), read (33 formats, multimodal), search (BM25 snippet search), retrieve (extract relevant segments from long trajectories), ask (verdict LLM), memory (past judgments), planning (action sequencing). The judge's own backend LLM is not reported." },
+  { title: "Keep five, drop three (App. K)", body: "Final config: graph + locate + read + retrieve + ask. Sequentially added on OpenHands: ask 65.03% → +graph 75.95% → +read 82.24% → +locate 90.44% → +search 86.06% (drop; BM25 noise, workspaces of only hundreds of LOC) → +retrieve 90.16% → +planning 88.52% (unstable evidence collection) → +memory 87.97% (judgment errors chain). Replacing BM25 with Sentence-BERT (87.70%) or fuzzy search (85.52%) does not beat simply removing search (90.44%)." },
+  { title: "Verdict protocol (App. L)", body: "System prompt casts the agent as an impartial judge; per requirement it must answer `<SATISFIED>` or `<UNSATISFIED>` with a justification citing collected evidence. Preferences are never scored." },
+  { title: "Trajectory handling (App. K.3)", body: "retrieve matters when trajectories are long/informative: judging GPT-Pilot improves 83.88% → 86.61%. Truncating a trajectory's head is safe (dense final-state info sits at the end); within a step, truncate the middle (errors appear early, file paths at the end)." },
+  { title: "Costs (§4.4, Tab.1)", body: "Human-as-a-Judge: 86.5 h ≈ $1,297.50 at $15/h. Agent-as-a-Judge: $30.58 / 118.43 min (2.36% of cost, 2.28% of time). LLM-as-a-Judge: 10.99 min but still $29.63 — no intelligent context selection. Running one developer system over DevAI costs ~$210.65 / ~14 h on top." },
+]} />
+</Pass>
+
+## Main result
+Across all six judge/system pairs, the agentic judge beats LLM-as-a-Judge, and on OpenHands it exceeds the best individual human: <Finding src="Tab.3, p.9">black-box Agent-as-a-Judge reaches 90.44% alignment on OpenHands vs 60.38% for LLM-as-a-Judge, above the best single human (89.89%) and the individual-human average (85.70%), though below the human majority vote (94.26%)</Finding>. Judge shift falls as low as <Finding src="Tab.3, §4.2">0.27% on Requirements-Met (I) for OpenHands, where LLM-as-a-Judge deviates by 31.42%</Finding>.
+
+Alignment rate (%) with the human consensus over all 365 requirements:
+
+<SortableTable columns={["Judge (setting)", "MetaGPT", "GPT-Pilot", "OpenHands"]} rows={[
+  ["LLM-as-a-Judge (black-box)", 84.15, 65.30, 60.38],
+  ["Agent-as-a-Judge (black-box)", 88.52, 83.88, 90.44],
+  ["LLM-as-a-Judge (gray-box)", 68.86, 71.85, 70.76],
+  ["Agent-as-a-Judge (gray-box)", 92.07, 86.61, 90.16],
+  ["Human individual (average)", 89.34, 84.88, 85.70],
+  ["Human individual (best)", 92.63, 90.98, 89.89],
+  ["Human majority vote", 95.08, 93.98, 94.26],
+]} />
+
+Note a paper-internal inconsistency: §4.2's prose credits OpenHands with "92.07% and 90.44%" (gray/black), but in Table 3 the gray-box OpenHands cell is 90.16% and 92.07% is MetaGPT's gray-box value.
+
+## Key findings
+- <Finding src="Tab.4, App.K">Evidence selection, not judging ability, is the bottleneck</Finding>: alignment climbs 65.03% → 90.44% purely by adding evidence-gathering modules — and extra machinery (search, planning, memory) *lowers* it (86.06/88.52/87.97%), because the verdict LLM is noise-sensitive and memory chains earlier judgment errors into later ones.
+- <Finding src="Tab.3, Tab.4">Trajectory access is nearly moot</Finding>: black-box (workspace-only) 90.44% vs gray-box 90.16% on OpenHands; retrieve helps only where trajectories are long and informative (GPT-Pilot 83.88% → 86.61%). Most of the judgeable signal lives in the final workspace state.
+- <Finding src="Fig.4, Fig.5">The human reference itself is noisy</Finding>: pairwise expert disagreement runs 10–30%; one evaluator (cn9o) erred on 23.77% of GPT-Pilot verdicts; majority voting cuts residual error to 6.01% vs consensus. "Ground truth" here is negotiated opinion, not measurement.
+- <Finding src="Tab.2">Developer agents are far from solving DevAI</Finding>: best systems satisfy ~29% of requirements when prerequisites count (GPT-Pilot 28.96%, OpenHands 28.68%; MetaGPT 6.55%) and fully solve at most 1 of 55 tasks (1.81%); MetaGPT self-terminates on only 41.81% of tasks, OpenHands on 54.54%.
+- <Finding src="§4.2, Fig.7">Alignment rate is inflated by class imbalance</Finding>: since requirements are rarely met, an always-negative judge scores high — LLM-as-a-Judge hits 84.15% on MetaGPT black-box this way; PR curves (shown only for MetaGPT) are needed, where Agent-as-a-Judge tracks the majority vote most closely.
+- <Finding src="§4.4">The ~97.7% cost cut comes from replacing humans, the accuracy from agentic evidence</Finding>: LLM-as-a-Judge costs almost the same in API fees ($29.63 vs $30.58) yet is 20–30 alignment points worse in the practical black-box setting.
+
+## Implications
+The paper names and legitimizes the model-judged branch of agent evaluation: requirement-level graded scoring with an LLM-agent adjudicator, extending <Related>LLM-as-a-Judge (Zheng et al. 2024)</Related> and multi-LLM judge variants (<Related>ChatEval, Auto Arena</Related>), and positioning DevAI against final-score AI-dev benchmarks (<Related>MLAgentBench, ML-Bench, MLE-Bench, SUPER, DS-bench</Related>). Its outlooks push the judge from evaluator to training signal — a process-supervised reward model and a self-play "flywheel" (<Related>Lightman et al. 2023; Pan et al. 2024, autonomous evaluation of digital agents</Related>) — which raises the stakes on judge error. A contemporaneous <Related>Cognition blog on evaluating coding agents (3 weeks before submission)</Related> is cited as convergent industry evidence. <FollowUp>How many of DevAI's 365 requirements (file exists at path, artifact saved, metric written) could be verified by executable predicates instead of a judge — the missing mechanical-checker baseline TDE would supply.</FollowUp> <FollowUp>Robustness of judge agents to adversarial artifacts/prompt injection — the LLM-judge robustness literature is cited (Raina et al.) but never tested.</FollowUp>
+
+## Limitations
+- <Caveat>Every verdict is an LLM opinion about natural-language criteria; the judge reads artifacts but never executes them</Caveat> — and neither did most humans (231a: "No need to run the code"; cn9o "did not execute anything"), so no layer of the stack is grounded in mechanical verification.
+- <Caveat>Correctness is defined as alignment with a human consensus whose own error is acknowledged but unquantified</Caveat>; with 8–14% residual misalignment, per-requirement reward signals would be systematically wrong for self-improvement use.
+- <Caveat>Proof-of-concept scope (authors' framing)</Caveat>: single unnamed judge backend, no prompt/workflow optimization, single run without variance, one domain (small-scale AI development, workspaces of hundreds of LOC — which is why search was moot), 55 tasks.
+- <Caveat>The "better than an individual human" claim holds only partially</Caveat>: in black-box, MetaGPT (88.52% vs 89.34% individual average) and GPT-Pilot (83.88% vs 84.88%) fall below the average lone human; the claim rests mainly on OpenHands and gray-box numbers.
+- <Caveat>125 preferences are collected but no preference-satisfaction results are reported</Caveat>; gray-box trajectories are "nearly inaccessible in practical situations" by the authors' own note; minor internal inconsistencies (92.07% prose vs 90.16% table; 31.24% vs 31.42%; §4.4 swaps the cost/time percentages relative to the intro).
+
+## Critiques and Questions
+1. Circularity: the judge is validated against negotiated human opinion, and the outlook is to use the judge as a reward model for agents — a model judging a model, calibrated on humans who didn't run the code. Nothing anywhere computes ground truth from the environment. This is precisely the adjudication loop TDE proposes to break with environment-evaluated postconditions.
+2. DevAI's requirements were deliberately authored to be "explicit, binary, and straightforward to evaluate" (App. E.2) — i.e., largely mechanically checkable (paths, saved artifacts, file contents). The natural baseline — a scripted verifier over the checkable subset — is absent, so we cannot tell how much of the 90% alignment an LLM-free checker would already achieve. Conversely, the genuinely judgment-requiring criteria (the preferences) are never evaluated, so the framework is untested exactly where model judging would be irreplaceable.
+3. The black-box ≈ gray-box result undercuts the paper's own "step-by-step evaluation" framing: the intermediate feedback is milestone-level over final state, not per-action process supervision, and it is post-hoc — no runtime gating of actions exists here.
+4. Alignment is per-requirement but judge shift is aggregate, and PR curves are shown for MetaGPT only; the OpenHands PR claim has no visible figure. Compensating errors could hide in the aggregate metrics.
+
+<SelfCheck q="Why does Agent-as-a-Judge beat LLM-as-a-Judge by 20–30 points, and which components carry the gain?" a="The gap is evidence selection, not judging: LLM-as-a-Judge dumps raw artifacts into context, while the agent builds a workspace graph, locates the files a requirement names, and reads them (33 formats) before asking for a verdict. Ablations: ask alone 65.03% → +graph 75.95% → +read 82.24% → +locate 90.44%. Trajectory retrieval adds value only for long trajectories (GPT-Pilot +2.73 points), and search/planning/memory reduce alignment by injecting noise or chaining prior judgment errors." />
+
+## Glossary
+- <Term def="the paper's benchmark: 55 realistic AI-development tasks, 365 binary requirements arranged as dependency DAGs, 125 optional soft preferences">DevAI</Term>
+- <Term def="scoring a requirement on its own (I) vs counting it only if its DAG prerequisites are also met (D)">Requirements Met (I)/(D)</Term>
+- <Term def="using a single LLM prompt to evaluate outputs; the baseline this paper extends with agentic evidence-gathering">LLM-as-a-Judge</Term>
+- <Term def="three expert evaluators scoring independently, then debating to a consensus used as the reference standard">Human-as-a-Judge</Term>
+- <Term def="process-supervised reward model — rewards intermediate steps rather than final outcomes; the outlook use-case for the judge">PRM</Term>
+- <Term def="open-source software-agent platform (formerly OpenDevin); the developer agent the judge evaluates best (90.44% black-box alignment)">OpenHands</Term>
+
+{/* NOTES_START */}
+### Personal notes
+For the TDE novelty defense, the load-bearing characterization: Agent-as-a-Judge is post-hoc, model-adjudicated, requirement-level scoring calibrated to human opinion — no execution, no runtime gating, no environment-computed predicate anywhere. Its best pro-TDE datum is accidental: black-box (final-workspace) judging ties gray-box (trajectory) judging, supporting final-world-state verification as the right locus. Its best anti-TDE argument is coverage: an LLM judge can grade any NL requirement (though the paper never tests the subjective ones). Cite the App. E.2 line that requirements were authored "explicit, binary, straightforward to evaluate" — that is exactly the compilable-to-tests regime TDE targets, minus the compiler.
+{/* NOTES_END */}

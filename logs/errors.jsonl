@@ -72,3 +72,4 @@
 {"ts": "2026-06-06T07:55:12Z", "stage": "fetch.arxiv_id", "message": "GET failed: HTTP 429", "url": "http://export.arxiv.org/api/query"}
 {"ts": "2026-06-06T07:55:12Z", "stage": "milestones.resolve", "message": "arxiv 2410.14803: GET http://export.arxiv.org/api/query failed after 4 attempts: HTTP 429"}
 {"ts": "2026-06-06T07:56:20Z", "stage": "fetch.milestone_batch", "message": "GET failed: HTTP 429", "url": "http://export.arxiv.org/api/query"}
+{"ts": "2026-08-13T07:12:16Z", "stage": "tde.resolve", "message": "WebArena Verified (NeurIPS 2025 SEA workshop): no arXiv record; OpenReview bot-walled (Cloudflare challenge); skipped ingest — user can supply PDF to add", "work": "webarena-verified"}

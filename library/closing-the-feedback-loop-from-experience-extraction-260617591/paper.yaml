@@ -1,0 +1,63 @@
+canonical_key: arxiv-2606.17591
+slug: closing-the-feedback-loop-from-experience-extraction-260617591
+title: 'Closing the Feedback Loop: From Experience Extraction to Insight Governance in Verbal Reinforcement
+  Learning'
+authors:
+- Yanwei Cui
+- Xing Zhang
+- Yulong Zhang
+- Li Shao
+- Xiaofeng Shi
+- Guanghui Wang
+- Peiyang He
+year: 2026
+primary_ids:
+  doi: null
+  arxiv_base_id: '2606.17591'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2606.17591v1
+- https://arxiv.org/pdf/2606.17591v1
+topic_groups:
+- agent_harness
+- general_agent_methods
+tags:
+- agent-memory
+- reflection
+- tde-related-work
+venue:
+  name: ICML Workshop
+  tier: workshop_or_minor
+  status: accepted
+  year: 2026
+user:
+  read_status: unread
+  triage_label: TRACK_ONLY
+  triage_confidence: high
+  notes: null
+milestone: null
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v1
+  source: arxiv
+  source_url: https://arxiv.org/abs/2606.17591v1
+  pdf_path: library/closing-the-feedback-loop-from-experience-extraction-260617591/v1/paper.pdf
+  summary_path: library/closing-the-feedback-loop-from-experience-extraction-260617591/v1/summary.mdx
+  metadata_path: library/closing-the-feedback-loop-from-experience-extraction-260617591/v1/metadata.yaml
+  fetched_at: '2026-08-13T07:18:51Z'
+  source_updated_at: '2026-06-16T06:55:55Z'
+  arxiv_version: v1
+  pdf_sha256: 07cfe2a23bbde5555ddeddbf5127270e6317efa2422426ff41bd00d4700f9845
+  pdf_bytes: 246950
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-08-13T07:18:51Z'
+  updated_at: '2026-08-13T13:07:54Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

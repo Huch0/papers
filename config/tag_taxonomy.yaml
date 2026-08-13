@@ -61,6 +61,8 @@ tags:
   collections:
     # Curated reading lists (e.g. papers picked up at a conference).
     - icml2026-picks
+    # Related-work corpus for the user's "Test-Driven Execution" (TDE) research.
+    - tde-related-work
 
 # Tags that signal a paper should be kept even if score is borderline.
 keep_signals:

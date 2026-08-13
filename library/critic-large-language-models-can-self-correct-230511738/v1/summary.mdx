@@ -1,0 +1,123 @@
+---
+canonical_key: arxiv-2305.11738
+version_key: v1
+title: 'CRITIC: Large Language Models Can Self-Correct with Tool-Interactive Critiquing'
+authors:
+- Zhibin Gou
+- Zhihong Shao
+- Yeyun Gong
+- Yelong Shen
+- Yujiu Yang
+- Nan Duan
+- Weizhu Chen
+venue: arXiv
+year: 2023
+tags:
+- tde-related-work
+- tool-use
+- verifier
+topic_groups:
+- general_agent_methods
+triage_label: SKIP
+triage_confidence: medium
+source_link: https://arxiv.org/abs/2305.11738v4
+summary_date: '2026-08-13'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>CRITIC (ICLR 2024) makes a frozen, black-box LLM verify its own output by interacting with external tools — web search for QA, a Python interpreter for math programs, a toxicity API for detoxification — then regenerate conditioned on the tool-grounded critique, iterating verify-then-correct; the identical loop with the tools deleted barely helps or actively hurts, an early systematic demonstration that LLM self-verification is unreliable.</TLDR>
+
+<WhyItMatters>The category-B motivation ally for TDE's de-circularization thesis: it supplies the empirical bedrock (LLMs cannot reliably judge their own outputs; external, tool-grounded signals are what make correction work) while stopping one step short of TDE — tool evidence is folded back into an LLM-authored critique whose verdict decides pass/fail and when to stop, with no pre-committed acceptance suite over final state and no pre/postcondition gating of actions. Its residual failures (wrong verifications, 14.3% wrong corrections, the gap to oracle correction) quantify exactly the adjudication error TDE removes by having the environment compute the verdict mechanically. Beyond TDE: verify-then-correct loops are now standard harness furniture, and the false-negative analysis is a lesson in evaluation methodology.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "+7.7 F1", label: "QA gain over CoT", sub: "ChatGPT, avg of 3 datasets (Tab.1)" },
+  { value: "+7.0", label: "math solve-rate gain", sub: "ChatGPT, avg over PoT (Tab.2)" },
+  { value: "-79.2%", label: "toxicity probability", sub: "ChatGPT, 0.192 to 0.040 (Tab.3)" },
+  { value: "-0.03 F1", label: "same loop without tools", sub: "Davinci-003 QA avg — the negative result" },
+]} />
+
+## Motivation
+<Problem>LLMs hallucinate facts, generate faulty code, and emit toxic content</Problem>, and the standard mitigations — behavior cloning, RLHF, self-training — <Problem>require large-scale human annotation or curated data and do not apply to API-only black-box models</Problem> (§1). A newer line prompts LLMs to critique and revise their own outputs (Self-Refine, Reflexion, CAI, RCI), but <Problem>LLM intrinsic feedback is unreliable — models struggle to verify truthfulness and reasoning correctness — and several contemporaries quietly leaned on oracle ground-truth verification to make refinement work</Problem> (§2, App.C.1). Truthfulness evaluation for open-ended generation from black-box LLMs was largely unstudied (§2).
+
+## Contribution (what's new)
+<Novelty>Ground the critique in tool interaction: the model generates verification text interleaved with text-to-text tool calls (search queries, program execution, toxicity scoring), raw API results are concatenated after each model-generated query, and the corrected output is regenerated conditioned on input + previous output + critique — all as few-shot in-context learning on a frozen model</Novelty> (§3, Alg.1). The form is forced by the failure analysis: intrinsic self-verification is unreliable (App.D.1), so the discriminative signal must come from outside the model, and API-only access plus annotation cost rule out training. The second — arguably more durable — delta is the <Novelty>negative result: across tasks and LLMs, the same verify-then-correct loop without external feedback yields marginal gains or deteriorates performance; the paper claims to be the first to demonstrate this systematically</Novelty> (App.C.1).
+
+## Research questions
+1. Can a frozen black-box LLM verify and progressively amend its own outputs purely through in-context tool interaction, with no extra data or training? 2. Is LLM self-verification/self-correction reliable without external feedback? 3. Are natural-language critiques a better use of extra inference compute than generate-then-rank (rejection sampling)?
+
+## Methodology
+One loop, three instantiations. Generate an initial answer by few-shot prompting; verify it by generating a critique that interleaves tool calls (the elicitation is literally `What's the problem with the above answer?` plus per-task aspects such as plausibility and truthfulness); correct by regenerating conditioned on the critique; iterate with task-specific stopping rules. Tools are pre-specified per task (automatic tool selection is sketched but not used). Verification evidence is mechanical or retrieved, but the verdict — whether the critique "indicates the output is correct" — is the model's own reading.
+
+<Pass title="Method details">
+<Stepper steps={[
+  { title: "Loop (Alg.1, p.4)", body: "Initial output from a few-shot prompt. Verify: sample a critique interleaved with tool calls; API results are appended after each model-generated query. Stop if the critique indicates the output is correct (an LLM judgment). Correct: regenerate conditioned on input, previous output, and critique. Repeat up to n rounds." },
+  { title: "Free-form QA (§4.1)", body: "AmbigNQ / TriviaQA / HotpotQA, 500 validation samples each, EM/F1. CoT initial answer; critique checks plausibility then truthfulness via a Google-based web tool (scrape the top-1 page, extract up to 400 chars fuzzy-matched to the snippet); max 7 tool interactions, up to n=3 corrections, early stop when the answer is unchanged for two consecutive rounds; greedy decoding; search results cached (about 9GB, Jan-Apr 2023) for reproducibility." },
+  { title: "Math program synthesis (§4.2)", body: "GSM8k / SVAMP / TabMWP official test splits; exact match on the rounded value of the `answer` variable. PoT initial program; interpreter feedback = the error message plus the executed value; up to n=4 corrections, stop when the executed result is unchanged for two consecutive revisions; greedy init, p=0.5 sampling for corrections to avoid loops." },
+  { title: "Toxicity reduction (§4.3)", body: "1k non-toxic RealToxicityPrompts; Perspective API returns overall toxicity plus 6 attribute scores; the critique is a templated string naming the worst attribute and its score; up to n=4 iterations, terminating when overall toxicity falls below 10 percent — the one mechanical stop rule in the paper; nucleus sampling p=0.9; metrics over 25 generations (expected max toxicity; probability any generation exceeds 50 percent toxicity), perplexity by Davinci-003, dist-2/3." },
+  { title: "Self-verification probe (App.D.1)", body: "Hallucination detection on the QA sets with ChatGPT: after the critique, the model rates its answer on a 4-option scale (absolutely/probably correct/wrong); confidence = probability-weighted sum over option tokens; answers with F1 above 0.6 count as correct; discrimination measured by AUROC against intrinsic baselines (LM probs, entropies, self-consistency) and expressed Self-Eval." },
+]} />
+
+<MathBlock>{`\\hat{y}_0 \\sim P_M(\\cdot\\mid \\wp \\oplus x),\\qquad c_i \\sim P_M(\\cdot\\mid \\wp \\oplus x \\oplus \\hat{y}_i,\\ \\mathcal{T}),\\qquad \\hat{y}_{i+1} \\sim P_M(\\cdot\\mid \\wp \\oplus x \\oplus \\hat{y}_i \\oplus c_i)`}</MathBlock>
+
+Models: `text-davinci-003`, `gpt-3.5-turbo` (API calls Jan-Apr 2023), LLaMA-2 7B/13B/70B — same prompts for all. Two settings: CRITIC corrects every sample; the oracle setting (starred) corrects only samples known to be wrong, isolating correction quality from verification quality. All three tools are free of charge (App.D.3). The critique example for toxicity: `The text has 39% toxicity of insult`.
+</Pass>
+
+## Main result
+Tool-grounded verify-then-correct improves all three task families on both OpenAI models: <Finding src="Tab.1, p.6">QA +7.7 F1 over CoT on ChatGPT (AmbigNQ 64.3 to 74.9) and +5.6 on Davinci-003, usually above self-consistency and clearly above ReAct (avg +8.2 / +5.1 F1 on the two models)</Finding>; <Finding src="Tab.2, p.7">math +7.0 points over PoT on ChatGPT (GSM8k 72.5 to 78.2; TabMWP 75.0 to 89.0)</Finding>; <Finding src="Tab.3, p.8">toxicity probability 0.192 to 0.040 (-79.2%) on ChatGPT — on par with trained detoxifiers (Quark 0.035, Self-Correct 0.026 on GPT-2) with no training</Finding>. The load-bearing contrast is the ablation with identical prompts minus tool results:
+
+<SortableTable columns={["Setting (metric)", "Baseline", "CRITIC", "w/o Tool"]} rows={[
+  ["AmbigNQ F1 (ChatGPT)", 64.3, 74.9, 67.3],
+  ["TriviaQA F1 (ChatGPT)", 79.2, 81.7, 79.9],
+  ["HotpotQA F1 (ChatGPT)", 42.8, 52.9, 46.1],
+  ["GSM8k (ChatGPT)", 72.5, 78.2, 77.0],
+  ["GSM8k (Davinci-003)", 70.1, 72.2, 68.3],
+  ["SVAMP (Davinci-003)", 84.0, 80.7, 80.7],
+  ["TabMWP (Davinci-003)", 64.6, 87.6, 84.9],
+  ["Toxicity prob. (ChatGPT, lower = better)", 0.192, 0.04, 0.223],
+]} />
+
+Baselines: CoT for QA, PoT for math, the vanilla LLM for toxicity (Tab.1-3).
+
+## Key findings
+- <Finding src="Tab.1-3; Tab.10, p.28">Self-critique without tools is marginal or harmful</Finding>: -0.03 avg F1 on Davinci-003 QA (+2.33 on ChatGPT); toxicity probability 0.223 vs the vanilla model's 0.192 (worse than doing nothing); GSM8k 68.3 vs PoT's 70.1 on Davinci-003; and, imported from Madaan et al., Self-Refine on Codex GSM8k collapses from 71.3 to 26.7 (-44.6) once its oracle is removed.
+- <Finding src="Tab.5, p.24">LLMs cannot tell whether their own answers are right</Finding>: Self-Eval verification accuracy is 54.0% on HotpotQA (near chance) and below the no-discrimination Only-True baseline on TriviaQA (0.838 vs 0.864); tool-grounded verification lifts AUROC to 0.810/0.818/0.831 — though sampling-based Self-Con ties it on HotpotQA (0.831).
+- <Finding src="Tab.7, p.26">Correction succeeds where a mechanical signal exists and stalls where judgment is required</Finding>: on the full GSM8k test set (ChatGPT, 1319 samples) CRITIC fixes 57.4% of unreasonable-output errors, 35.3% of syntax errors, and 25.0% of runtime errors, but only 26.7% of intrinsic reasoning errors — which are 77.4% of all initial errors; it also breaks 4.3% of initially-correct answers (41 wrong corrections = 14.3% of final errors).
+- <Finding src="Tab.6, p.25">Errors are redistributed, not only removed</Finding>: on HotpotQA hallucinations drop 36% to 7%, but reasoning errors rise 5% to 10%, refusals 2% to 12%, and 10% are incorrect corrections of initially right answers; 49% of CRITIC's residual "errors" are label ambiguities, wrong labels, or outdated labels — an indictment of EM/F1 metrology that later motivated LLM-based QA evaluation.
+- <Finding src="Fig.3-5; Tab.1-2">Two to three rounds capture most of the benefit, and the oracle gap stays large</Finding>: iteration has diminishing returns, while oracle correction (only truly-wrong samples) reaches +12.4 F1 (ChatGPT QA) and +11.4 (GSM8k) vs +7.7/+5.7 for CRITIC — knowing when to correct is worth about as much as the correction machinery itself.
+- <Finding src="Tab.1; §4.4, p.9; Tab.8-9">Critiques beat resampling and retrieval-first pipelines, and gains grow with scale</Finding>: oracle CRITIC outperforms metric-selected best-of-n rejection sampling by 4.5/3.3 EM (Davinci/ChatGPT; both settings use oracle signal, so the comparison is fair); CoT-initialized CRITIC beats ReAct-then-CRITIC in most settings; TabMWP gains rise +4.7/+9.4/+16.0 across LLaMA-2 7B/13B/70B — but on the smaller LLaMA-2 models rejection sampling often beats even oracle CRITIC (e.g. 13B TriviaQA 80.3 vs 67.2 F1).
+
+## Implications
+This paper is the hinge between the intrinsic self-refinement line and external verification. It undercuts <Related>Self-Refine, Reflexion, RCI, CAI — the LLM-only-feedback line, several of which relied on oracle verification</Related>, and its unreliability finding was corroborated on GPT-4 by <Related>Huang et al. 2023 ("cannot self-correct reasoning yet"), Stechly et al. 2023, and Valmeekam et al. 2023</Related> (App.C.1). In its own taxonomy (Tab.4, p.22) it sits between LLM feedback and fully mechanical scalar checkers like <Related>CodeT and LEVER, which use program executors as reranking signals</Related>: CRITIC keeps natural-language feedback and iteration but sources reliability from tools. Two threads point directly at TDE: <FollowUp>App.A names feedback from simulated virtual environments — environment-evaluated signals on model decisions — as future work, exactly the step from tool-informed critique to environment-computed verdicts</FollowUp>; and <FollowUp>the 49% false-negative finding pushes toward grading against world state (AppWorld-style state diffs) rather than string-match metrics</FollowUp>.
+
+## Limitations
+- Author-stated (App.A): <Caveat>latency grows linearly with iterations (about 2x the PoT baseline for two corrections)</Caveat>; <Caveat>hand-crafted ReAct-style demonstrations — results may shift with prompt construction</Caveat>; <Caveat>generality beyond the three text tasks and tested LLMs is untested; textual modality only</Caveat>.
+- <Caveat>QA is evaluated on 500-sample subsets with cached Jan-Apr 2023 Google results; no variance, seeds, or significance testing anywhere</Caveat>.
+- <Caveat>For toxicity, Perspective API is both the feedback tool and the evaluation metric</Caveat> — the loop optimizes its own grader (shared with the PPO/Quark baselines, but it caps what "detoxified" demonstrates).
+- <Caveat>Tool feedback is itself unverified</Caveat>: top-1-snippet search can be wrong or misread — 7% hallucinations persist after CRITIC (Tab.6) — and even with tools, Davinci-003 SVAMP lands below PoT (-3.3, Tab.2).
+- <Caveat>Supervised task-specific SoTA stays far ahead where training data exists (HotpotQA 67.5 EM vs CRITIC's 40.3)</Caveat>; CRITIC surpasses supervised SoTA only on AmbigNQ F1.
+
+## Critiques and Questions
+1. The verdict is still the model's. Tools compute evidence, but the stopping rule is "the critique indicates the output is correct" — an LLM reading of tool output. Listing 8 (p.39) shows a wrong verification blessing an incorrect program, and the oracle gap (+7.7 vs +12.4 QA F1; +5.7 vs +11.4 GSM8k) prices this residual self-judgment at roughly half the attainable gain. CRITIC de-circularizes the evidence, not the adjudication.
+2. There is no specification of success. For math, the interpreter reports behavior (ran; printed a value), never correctness — no pre-committed tests exist to fail — which is why intrinsic reasoning errors are corrected at only 26.7% while unreasonable outputs, checkable by a plausibility heuristic, reach 57.4%. "Plausibility" and "truthfulness" are prompt conventions, not compiled, executable predicates.
+3. Single-turn outputs, not trajectories: CRITIC revises complete answers/programs/continuations post-hoc; nothing gates individual state-changing actions, and no world state exists. The toxicity stop-threshold (Perspective score below 10%) is the closest thing to a mechanical gate — and it thresholds a learned text classifier, not environment state.
+4. Minor internal inconsistency: Davinci-003 GSM8k CRITIC is 72.2 (+2.1) in Tab.2 but 71.2 (+1.1) in Tab.10; which is correct is Unclear. The "first to demonstrate" priority claim over self-correction unreliability also rests on breadth (tasks x LLMs) rather than the observation itself, which Saunders et al. 2022 partially anticipated.
+
+<SelfCheck q="Even with tools in the loop, which part of CRITIC remains an LLM judgment, and what two results price the cost of that residual judgment?" a="The pass/fail verdict: tool outputs are concatenated into an LLM-authored critique, and iteration stops when that critique says the answer is correct. The cost shows in (1) the oracle gap — correcting only truly-wrong samples yields +12.4 QA F1 / +11.4 GSM8k vs +7.7 / +5.7 for CRITIC — and (2) wrong corrections: CRITIC breaks 4.3% of initially-correct GSM8k answers, which become 14.3% of its final errors." />
+
+## Glossary
+- <Term def="chain-of-thought few-shot prompting: step-by-step rationale before the answer; CRITIC's initializer for QA">CoT</Term> / <Term def="program-of-thought: writes a Python program whose executed value is the answer; CRITIC's initializer for math">PoT</Term>
+- <Term def="prompting that interleaves reasoning steps with search actions; CRITIC borrows its prompt style and compares against it as a retrieval-augmented baseline">ReAct</Term>
+- <Term def="Google's hosted classifier scoring text toxicity overall and on 6 attributes; CRITIC's tool and simultaneously the benchmark metric for detoxification">Perspective API</Term>
+- <Term def="oracle variant that applies correction only to samples known (via ground truth) to be wrong; isolates correction quality from verification quality">CRITIC-star</Term>
+- <Term def="sample n candidates and keep the one scoring highest on the task metric; the best-of-n baseline the oracle setting is compared against">rejection sampling</Term>
+- <Term def="area under the ROC curve for discriminating correct from incorrect answers by a confidence score">AUROC</Term>
+- <Term def="prompting the LLM to rate its own answer true/false and taking the option-token probability as confidence (Kadavath et al. 2022)">Self-Eval</Term>
+
+{/* NOTES_START */}
+### Personal notes
+For the TDE novelty defense, the precise characterization: CRITIC externalizes the *evidence* (search snippets, execution output, toxicity scores enter the context) but not the *adjudication* — the critique text and the correct/incorrect verdict are sampled from the model, the stop rule is the model's own claim of correctness, there is no instruction-compiled acceptance suite, and nothing gates actions (single-turn outputs, no world state). Its best gift to TDE is evidentiary: Tab.5 (self-verification near chance), the w/o-Tool ablations, the Self-Refine -44.6 collapse, and the oracle gap, which measures what mechanical adjudication is worth. Note the authors themselves point at simulated-environment feedback as future work (App.A) — quotable as the field acknowledging the missing piece TDE builds.
+
+Follow-ups: Huang et al. 2310.01798 (GPT-4 cannot self-correct reasoning), Welleck et al. Self-Correct (trained corrector, external metrics), CodeT/LEVER (execution as mechanical reranker — closer to TDE's suite in spirit but not pre-committed nor gating). Code: github.com/microsoft/ProphetNet/tree/master/CRITIC.
+{/* NOTES_END */}

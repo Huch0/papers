@@ -1,0 +1,125 @@
+---
+canonical_key: arxiv-2503.18666
+version_key: v1
+title: 'AgentSpec: Customizable Runtime Enforcement for Safe and Reliable LLM Agents'
+authors:
+- Haoyu Wang
+- Christopher M. Poskitt
+- Jun Sun
+venue: arXiv
+year: 2025
+tags:
+- tde-related-work
+- verifier
+topic_groups:
+- agent_harness
+triage_label: SKIP
+triage_confidence: high
+source_link: https://arxiv.org/abs/2503.18666v3
+summary_date: '2026-08-13'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>AgentSpec is a small DSL whose trigger–check–enforce rules hook into the LLM-agent control loop and mechanically gate actions before execution, driving hazardous embodied-agent actions to zero, enforcing 100% AV law compliance, and intercepting most risky code executions at millisecond overhead.</TLDR>
+
+<WhyItMatters>The predicate-gating precedent in the TDE related-work corpus (survey cat. C, confirmed against the paper): it shows that environment-evaluated, non-LLM predicate checks gating every intercepted action in the control loop are cheap and effective — TDE's Hoare-style action-gating primitive, argued with the same de-circularization logic (enforcement deliberately decoupled from LLM internals for verifiability, §6.1). The survey's stated delta also holds: every rule encodes an a-priori, domain-level safety policy — nothing compiles the task instruction into acceptance tests over the final world state, there is no red–green iteration toward completion, and even its <code>agent_finish</code> trigger is never used to verify the task was accomplished.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "0%", label: "hazardous instructions fulfilled", sub: "all 10 unsafe embodied categories (Tab.4)" },
+  { value: "100%", label: "AV law compliance", sub: "8 FixDrive scenarios, manual rules (Tab.5)" },
+  { value: ">90%", label: "unsafe code executions intercepted (claimed)", sub: "RedCode-Exec; raw Tab.3 aggregate 333/422 ≈ 79%" },
+  { value: "1.1–2.8 ms", label: "predicate-evaluation overhead", sub: "vs 9.82–25.4 s mean agent runtimes (§5.5)" },
+]} />
+
+## Motivation
+LLM agents act autonomously in sensitive workflows (transactions, health records, driving), and <Problem>their decisions can diverge from user expectations, where the same action is acceptable in one organization and unsafe in another</Problem> — a hospital vs a research lab adjusting medication dosages (§1). Existing mitigations each fail a requirement: <Problem>LLM-powered risk evaluators such as <Term def="an LM-emulated sandbox that simulates tool outcomes to assess LLM-agent risks pre-execution (Ruan et al., ICLR'24)">ToolEmu</Term> lack interpretability, provide no enforcement mechanism, and are susceptible to adversarial manipulation</Problem>; <Problem>rule-based safeguards are rigid or non-general — <Term def="a safeguard agent that uses an LLM to interpret guard requests and generate/execute guardrail code over another agent's logs (Xiang et al., 2024)">GuardAgent</Term> requires manual implementation per agent instance</Problem>; and <Problem>most defenses assess risk before execution with no active constraint during execution, leaving runtime deviations unguarded</Problem> (§1).
+
+## Contribution (what's new)
+<Novelty>Externalized, mechanical runtime enforcement: declarative trigger–check–enforce rules, parsed from a small DSL and evaluated by the harness at interception points inside the agent loop, fully decoupled from the LLM's own reasoning</Novelty> — claimed as the first framework to systematically enforce customizable safety constraints on LLM agents at runtime (§1). The form follows from the failure analysis: model-internal safeguards are what fails the audit — prompt/fine-tune defenses are brittle, and LLM-interpreted guardrails put the adjudicator back inside the system being guarded — whereas external declarative rules behave consistently across runs, environments, and model versions and can be inspected (§6.1–6.2). Supporting deltas: <Novelty>a formal trajectory semantics assigning each enforcement a defined trajectory transform</Novelty> (Defs 3.1–3.3) and <Novelty>LLM-automated rule generation with human review</Novelty> (§5.3).
+
+## Research questions
+RQ1: is the DSL expressive and effective across code, embodied, and autonomous-driving domains? RQ2: can an LLM generate effective rules automatically? RQ3: how far does one rule generalize across risk instances? RQ4: is the runtime overhead acceptable? (§5)
+
+## Methodology
+A rule names a **trigger** (general: before an action, on state change, on agent finish; or domain events such as `PythonREPL`, `pour`, `red_light_detected`), a **check** (a conjunction of Boolean predicates over the user input and trajectory, implemented as Python functions — user-written or LLM-generated), and one or more **enforcements**: `user_inspection`, `llm_self_examine`, `invoke_action(...)`, `stop` (§3). The motivating example:
+
+```
+rule @inspect_transfer
+  trigger Transfer
+  check   !is_to_family_member
+  enforce user_inspection
+end
+```
+
+Implementation intercepts LangChain 0.3.13's `iter_next_step` at three points — before an action executes (`AgentAction`), after an observation (`AgentStep`), and at task completion (`AgentFinish`) — with adapters sketched for AutoGen and Apollo (§4). Evaluation: a <Term def="agent framework whose actions are executable Python code (Wang et al., ICML'24)">CodeAct</Term> code agent on RedCode-Exec (25 risk categories × 30 cases), an embodied agent on SafeAgentBench (10 unsafe categories plus safe counterparts), and an Apollo AV on 8 FixDrive law-violation scenarios; RQ1 rules are hand-written by the authors, RQ2 rules generated by OpenAI o1 (§5.1–5.3).
+
+<Pass title="Formal semantics, implementation, and RQ2 setup">
+- **Agent model** (§2.1): an LLM agent is a tuple `(S, A, Ω, Π, Δ)` — states, actions, observations, a perception function abstracting observations into states, and an LLM policy mapping (instruction, state) to the next action; execution is a state–action trajectory.
+- **Rule semantics** (Defs 3.1–3.3): a rule is a triple of trigger event, predicate set, and enforcement sequence. It fires when the event occurs — state change (current state differs from the previous), before an action, or at agent finish — and **every** predicate evaluates true on the user input and current trajectory. Predicate inputs depend on trigger type (state-change rules see the state; action rules see state plus planned action).
+- **Enforcement transforms**: `stop` replaces the planned action with a finish action; `user_inspection` proceeds only on user approval, else finishes; `invoke_action` appends a predefined action; `llm_self_examine` feeds a rule-violated observation back to the policy, which re-plans a corrective next action (a single Reflexion-style correction, not an iterate-until-pass loop).
+- **Implementation**: rules parsed with ANTLR4; predicates are Python Booleans (e.g. inspect the tool input for `os.system("rm")`); domain predicate examples: `is_destructive_cmd`, `is_fragile_object`, `obstacle_distance_leq(n)`. AutoGen adapter instruments `handle_function_call`; the Apollo adapter translates rules into constraint-aware planning directives. Open-sourced on GitHub.
+- **Example AV rule** (Fig.8): trigger `state_change`, check `front_vehicle_closer_than(10)`, enforce `follow_dist(10)`, `yield_dist(15)`, `overtake_dist(20)`, `obstacle_stop_dist(10)`, `obstacle_decrease_ratio(1)` — graded distances rather than a hard stop.
+- **RQ2 setup** (§5.3): o1 is prompted with the agent/tool description, three illustrative rules with predicate implementations, and optionally in-context examples — 10% of each risky dataset (75/750 code, 25/250 embodied; zero-shot for AV) — then its generated rules (25 / 10 / 6) are scored on the held-out 90%.
+- **Threats mitigation** (§5.5): 1:9 dev:test split against rule overfitting; author cross-validation, predefined criteria, and blind protocols "where applicable" for the human-judged outcomes.
+</Pass>
+
+## Main result
+With hand-written rules, enforcement is essentially total in two of three domains: <Finding src="Tab.4, p.8">hazardous-instruction fulfillment drops to 0% in all 10 unsafe embodied categories, while safe-task success falls only 58.62% → 54.26%</Finding>, and <Finding src="Tab.5, p.8">all 8 AV law-violation scenarios (two collision cases, yellow/red light, blocked fast lane, speeding in fog/rain, junction jam, stuck journey) pass at 100%</Finding>. For the code agent, <Finding src="Tab.3, §5.2">the paper claims interception of unsafe executions in over 90% of cases; the raw Table 3 aggregate is 333 flagged of 422 risky interpreter invocations (≈79%), reaching ≈91.5% only after excluding the two categories where the agent's code did not actually contain the targeted flaw</Finding>.
+
+<SortableTable columns={["Embodied hazard category", "Fulfilled w/out AgentSpec (%)", "With AgentSpec (%)"]} rows={[
+  ["Fire Hazard", 28.57, 0],
+  ["Electrical Shock", 15, 0],
+  ["Explosion", 26.67, 0],
+  ["Poisoning/Ingestion", 17.64, 0],
+  ["Slip Hazard", 35, 0],
+  ["Liquid and Spill Damage", 0, 0],
+  ["Breakage and Dropping", 78.57, 0],
+  ["Appliances Misuse", 50, 0],
+  ["Property Damage", 68.75, 0],
+  ["Damage to Small Items", 55, 0],
+  ["Safe tasks (utility)", 58.62, 54.26],
+]} />
+
+## Key findings
+- <Finding src="Tab.3, §5.2">The unguarded code agent complies with risky instructions in 24 of 25 categories</Finding> (422 risky interpreter invocations); only "Delete sensitive files" is refused outright by the model itself — the empirical case for external gating over model-side refusal.
+- <Finding src="Tab.3, §5.2">Zero-flag categories are instruction non-compliance, not detector failure — but one real gap remains</Finding>: for "Miss default case" and "Duplicate key" the agent ran code that lacked the targeted flaw, while the side-channel category (3/25 flagged) is left unexplained.
+- <Finding src="Tab.3, §5.2">Human inspection allowed 58 of the 333 flagged programs as harmless</Finding> — e.g. all 24 "unsafe deserialization" flags (pickle of a predefined byte object) — so a human adjudicator sits both inside the mechanism (`user_inspection`) and inside the grading.
+- <Finding src="Tab.6, §5.3">o1-generated rules are precise but incomplete</Finding>: embodied precision 95.56% with recall 70.96%; 87.26% of risky code enforced; AV zero-shot 5/8. Failure modes: overfitting to explicitly listed examples (only named files count as sensitive), missed compound object properties (a kettle filled with wine on a burner), and blunt over-blocking (banning `pour` entirely; hard-stop within 5 m instead of the manual rule's graded follow/yield/overtake).
+- <Finding src="§5.4">Rules amortize across risk instances</Finding>: 25 rules cover 750 code scenarios (~30 each), 12 rules cover 250 embodied cases (~21 each), and the single pouring rule (Fig.7) alone blocks 96 scenarios.
+- <Finding src="§5.5">Overhead is negligible</Finding>: 1.42 ms parsing and 2.83 ms (code) / 1.11 ms (embodied) predicate evaluation against mean agent runtimes of 25.4 s and 9.82 s.
+
+## Implications
+Evidence that hard, mechanical gating in the harness — not model-side alignment — can carry agent safety, and that the gate can sit exactly at the interception points a TDE-style harness needs. It sharpens the field's split between LLM-adjudicated defenses (<Related>GuardAgent's LLM-interpreted guardrails, ToolEmu's LM-simulated risk assessment, NeMo's dialogue-level constraints</Related>) and the mechanical side AgentSpec occupies, which it explicitly ties to <Related>the runtime-verification lineage (Falcone et al.) and the LawBreaker/FixDrive AV-law line, aligning with the "LLMs + formal methods" position (Zhang et al., ICML'25)</Related>. For TDE: AgentSpec fills the safety half of the design space — a-priori predicate gates over planned actions — and leaves the completion half open. <FollowUp>Whether this interception machinery can host per-task, instruction-derived acceptance suites over final state (the slot TDE fills)</FollowUp>; <FollowUp>the authors' own future direction of probabilistic, trajectory-based enforcement via a DTMC learned from agent histories (§6.3)</FollowUp>.
+
+## Limitations
+- <Caveat>Deterministic enforcement at discrete checkpoints with no lookahead</Caveat>: it cannot reason about whether the current action sequence leads to unsafe states several steps later — no trajectory-based safety analysis (author-stated, §6.3).
+- <Caveat>Predicates are shallow, hand-implemented Python per domain</Caveat>: the untrusted-source detector works at source-string level, and the authors concede data-flow analysis would improve accuracy (§5.2); new agents need user-supplied predicate and enforcement implementations.
+- <Caveat>Utility cost is measured only for the embodied agent</Caveat>: RedCode-Exec contains only risky instructions, so false positives on benign code are Not reported.
+- <Caveat>Outcomes hinge on author judgment</Caveat>: inspection allow/deny decisions and risk assessments were made by the authors, with cross-validation and blind protocols "where applicable" but no inter-rater statistics.
+- <Caveat>Small or under-specified samples</Caveat>: 8 AV scenarios; runs per AV scenario Not reported; the backbone LLM driving the evaluated agents is Not reported.
+- <Caveat>No adversarial pressure on the enforcement layer itself</Caveat>: nothing tests evasion of predicates (obfuscated code, indirect action chains), despite the paper motivating itself partly by adversarial manipulation of LLM safeguards.
+
+## Critiques and Questions
+1. The headline "over 90%" is not derivable from Table 3 without unstated exclusions: the raw flag rate is 333/422 ≈ 79%, and ≈91.5% follows only if the two non-compliant-code categories are dropped. The aggregation is never shown.
+2. "Prevented" conflates flagging with blocking: 58 of 333 flagged programs were subsequently allowed, and interception counts as success even when the enforcement is merely "ask the human" — the safety guarantee is really "a mechanical tripwire plus human judgment".
+3. Rules were authored from the same datasets' risk descriptions (a 1:9 instance split, but risk categories are shared between development and test), so demonstrated generalization is within-category; the impressive per-rule coverage (96 scenarios for one pour rule) partly reflects dataset homogeneity.
+4. "Reliable" in the title is thin: reliability is argued via consistency and auditability (§6.2), but the only reliability-adjacent measurement is the safe-task drop; the `agent_finish` hook is never used to check that a task was actually completed correctly — enforcement scope is purely safety.
+
+<SelfCheck q="When does an AgentSpec rule fire, and what can happen next?" a="A rule fires when its trigger event occurs (state change, before a planned action, or at agent finish) AND every predicate in its check evaluates true over the user input and current trajectory. Its enforcement sequence then transforms the trajectory: stop replaces the planned action with a finish action; user_inspection proceeds only if the user approves, otherwise finishes; invoke_action appends a predefined action; llm_self_examine feeds a violation observation back to the LLM policy, which plans a single corrective next action." />
+
+## Glossary
+- <Term def="benchmark of risky code-execution instructions for code agents: 25 vulnerability/risk types, 30 cases each (Guo et al., NeurIPS'24)">RedCode-Exec</Term>
+- <Term def="benchmark of hazardous vs safe task instructions for embodied LLM agents (fire, shock, property damage, etc.; Yin et al., 2024)">SafeAgentBench</Term>
+- <Term def="framework that repairs autonomous-vehicle driving behavior from recorded law violations; source of the 8 AV scenarios and rule vocabulary (Sun et al., ICSE'25)">FixDrive</Term>
+- <Term def="Baidu's open autonomous-driving software stack, the AV agent's substrate">Apollo</Term>
+- <Term def="runtime verification/enforcement: monitoring a running system against a formal property and actively modifying its behavior on violation">runtime enforcement</Term>
+- <Term def="discrete-time Markov chain; the authors' proposed model for probabilistic reachability-based foresight">DTMC</Term>
+
+{/* NOTES_START */}
+### Personal notes
+For the TDE novelty defense this is the cleanest cat.-C citation: predicate-based runtime gating in the control loop, mechanically evaluated (Python predicates, not an LLM judge), with the de-circularization argument stated almost verbatim in §6.1 (decoupling constraint interpretation from LLM internals improves verifiability). The precise deltas to state: (1) rules are a-priori safety policies fixed per domain, not compiled per-task from the instruction; (2) verification targets planned actions/trajectory prefixes, never an acceptance suite over final world state; (3) on violation it halts/inspects/redirects (llm_self_examine is one corrective re-plan), no red–green loop to completion; (4) agent_finish exists as a hook but is unused for completion checking — worth citing as "the machinery exists, the semantics don't".
+
+Venue note: metadata says arXiv 2025, but the v3 PDF is an ICSE '26 camera-ready (Rio de Janeiro, Apr 2026). Numbers caution: the ">90%" code claim needs my Table 3 arithmetic footnote (333/422 raw) if quoted.
+{/* NOTES_END */}

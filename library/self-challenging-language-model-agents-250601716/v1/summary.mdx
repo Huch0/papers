@@ -1,0 +1,120 @@
+---
+canonical_key: arxiv-2506.01716
+version_key: v1
+title: Self-Challenging Language Model Agents
+authors:
+- Yifei Zhou
+- Sergey Levine
+- Jason Weston
+- Xian Li
+- Sainbayar Sukhbaatar
+venue: arXiv
+year: 2025
+tags:
+- rl-for-agents
+- tde-related-work
+- training-environment
+topic_groups:
+- agent_harness
+- general_agent_methods
+triage_label: TRACK_ONLY
+triage_confidence: high
+source_link: https://arxiv.org/abs/2506.01716v1
+summary_date: '2026-08-13'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>Self-Challenging Agents (SCA) has one LLM play two roles: a "challenger" that first explores a tool environment as an agent and then emits <Term def="Code-as-Task: a synthetic task = instruction + executable verification function + example solution + at least 3 failure cases; kept only if the code runs, the solution passes the verifier, and every failure case fails">Code-as-Task</Term> problems, and an "executor" trained with RL using the verification function's 0/1 output as reward — lifting Llama-3.1-8B from 12.0% to 23.5% average Pass@1 across four multi-turn tool-use environments from purely self-generated data.</TLDR>
+
+<WhyItMatters>CLOSEST-WORK #7 for TDE. Shares TDE's mechanical-verification core: the agent writes an executable, environment-executed verification function *before* the task is solved, and the checker itself is mechanically validated — a known-good solution must pass, known-bad failure cases must fail — with Fig.4 quantifying why de-circularized adjudication matters (the LLM-judge baseline PAE injects heavy reward noise; full CaT drives false positives to zero). It differs exactly where TDE's novelty lives: the verifier labels *training* data for RL and is never used at inference as a red–green completion gate; the instruction is invented alongside the verifier rather than a suite being compiled from a *given* user instruction (their residual false-negative mode — under-specified instructions — is the instruction↔suite alignment problem TDE faces in reverse); and verification is terminal-state/answer only, with no per-action Hoare-style pre/postconditions.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "1.96x", label: "self-improvement, avg Pass@1", sub: "Llama-3.1-8B: 12.0 → 23.5 over 4 envs (Tab.1)" },
+  { value: "+20.2", label: "abs. points via distillation", sub: "SFT on 70B trajectories, synthetic tasks only (Tab.1)" },
+  { value: "5.2%", label: "tasks survive full CaT filtering", sub: "Llama-3.1-8B challenger, Retail (Fig.4)" },
+  { value: "0 FP", label: "false positives after failure-case filter", sub: "human annotation of 50 Retail rollouts (Fig.4)" },
+]} />
+
+## Motivation
+<Problem>RL post-training of multi-turn tool-use agents needs a large pool of high-quality tasks with reliable reward, but human creation of tasks, tools, and evaluation criteria does not scale</Problem>, and existing synthesis pipelines are environment-specific (collaborative design, web navigation, GitHub issues) (§1). The general-purpose alternative — <Problem>prompting an LLM to propose instructions and prompting an LLM to judge success (PAE) has no explicit mechanism for task feasibility or verifiability</Problem>: in partially observable environments its proposals are ambiguous or impossible and its judged rewards are noisy enough that PAE *self-improvement* degrades the base model (Airline: 10.0 → 0.0 Pass@4) (§5.2, Tab.1). Flawed synthetic tasks cut the signal-to-noise ratio and contaminate executor training (§4.2).
+
+## Contribution (what's new)
+Two load-bearing choices. (1) <Novelty>The task proposer is itself an agent: the challenger interacts with the environment (queries the database, navigates pages) before writing a task, grounding instructions in states it actually observed</Novelty> — unlike PAE, which proposes from the initial observation alone and therefore cannot see past it in partially observable environments (§5.2). (2) <Novelty>Code-as-Task makes task quality mechanically checkable: each task ships an executable verification function plus an example solution that must pass it and at least three failure cases that must all fail, enforced by an automatic checker that resets hidden environment state and returns error tracebacks for revision</Novelty> (§4.2, App.A). The form is forced by the two ways a hallucinated task corrupts reward: the solution filter removes infeasible tasks (false negatives), the failure-case filter removes too-lenient verifiers (false positives).
+
+## Research questions
+1. Can an LLM agent self-generate tasks and reward functions of sufficient quality to improve itself with RL — and, with a stronger teacher, to distill environment competence — with zero human tasks? 2. Which CaT components actually buy reward fidelity, measured against human judgment? 3. Along which axis does synthetic data scale: more tasks, or more rollouts per task?
+
+## Methodology
+Standard multi-turn tool-use setting: the executor emits a thought plus a block of Python tool calls (or a message to a simulated user); after at most 15 steps a verification function computes a sparse reward `R̂(s_T, a_T)` in `{0,1}` over the final environment state and final answer (§3, §5.1). SCA assumes no access to ground-truth tasks or verifiers. A fixed Llama-3.1-8B challenger generates 800 CaT tasks per environment and 12k offline rollout trajectories are collected (Tab.1 caption). Training is <Term def="fine-tune only on trajectories whose reward is 1; with 0/1 outcome rewards this equals one-step REINFORCE">Rejection Fine-Tuning</Term> for self-improvement, or SFT on Llama-3.1-70B teacher trajectories for distillation — deliberately keeping the teacher's *failed* trajectories, which outperforms success-only distillation (App.B Tab.3). Evaluation is always on the benchmarks' real, out-of-distribution test tasks with their ground-truth verifiers.
+
+<Pass title="Pipeline, environments, and cost">
+<Stepper steps={[
+  { title: "Challenger explores (§4.1)", body: "π_task acts like any agent — e.g. get_user_details, get_order_details, get_product_details in Retail (Fig.20) — to discover reachable states before proposing anything. Hidden environment state (databases) is reset before each synthesis attempt (App.A)." },
+  { title: "Emit a Code-as-Task (§4.2)", body: "Output = instruction (natural language, handed to the executor or to an LLM-simulated user) + verification function (Python) + example solution + at least 3 failure cases. In Tau-Bench envs the verifier queries the final database state (e.g. order status == 'exchange requested', exact item and payment ids); in M3ToolEval it string-matches a reference answer. In Retail, order numbers are redacted from instructions post-hoc so the executor must log in to find them (Fig.9)." },
+  { title: "Mechanical filtering (App.A)", body: "An automatic checker verifies: (1) all code runs, (2) the example solution passes the verification function, (3) no failure case passes. On failure it returns the error traceback to the challenger for revision — an iterate-until-valid loop over the task artifact itself. Survival rates: 47.7% (verifier-only), 9.5% (+solution), 5.2% (full CaT) for Llama-3.1-8B in Retail (§5.3)." },
+  { title: "Executor training (§4.3)", body: "Self-improvement: collect rollouts, score with the generated verifiers, Rejection Fine-Tune on reward-1 trajectories (Table 1); DPO/PPO/GRPO also tested (Fig.3). Distillation: SFT on all 12k Llama-3.1-70B trajectories, successful or not (Eq.3)." },
+  { title: "Evaluate OOD (§5.1)", body: "Four environments: M3ToolEval Calculation (~6 tools/domain, fully observable) and Web Browsing (synthetic pages, partially observable); Tau-Bench Retail and Airline (~15 tools, DB-state ground truth, GPT-4o-simulated user at test time; the cheaper Llama-3.1-8B simulates the user during training). 40% of Airline test tasks passed with no actions taken and were removed." },
+]} />
+
+<MathBlock>{`\\mathcal{L} = -\\sum_{\\hat{c}\\in\\hat{\\mathcal{C}}} \\mathbb{E}_{a_{1:T}\\sim\\pi_{\\mathrm{exec}}}\\Big[\\hat{R}_{\\hat{c}}(s_T,a_T)\\sum_{t=0}^{T}\\log\\pi_{\\mathrm{exec}}(a_t\\mid o_{0:t},a_{0:t-1})\\Big]`}</MathBlock>
+
+Cost (Tab.4, 8xA100-80G hours): challenge generation 8 (Calculation, Web) or 32 (Retail, Airline), rollout generation 24, Rejection Fine-Tuning 3, evaluation 0.5–2. Hyperparameters in Tab.5 (RFT lr 1e-5; PPO/GRPO lr 1e-6, 32 tasks x 8 rollouts per iteration, KL 0.001).
+</Pass>
+
+## Main result
+Self-improvement: <Finding src="Tab.1, p.6">SCA lifts Llama-3.1-8B from 12.0% to 23.5% average Pass@1 (95.8% relative) across the four environments — +10.6 points over PAE — using only self-generated tasks and self-generated rewards</Finding>. Distillation: <Finding src="Tab.1, p.6">SFT on 70B trajectories over SCA tasks reaches 32.2% average Pass@1 (+20.2 over the base 8B), beating PAE in all three partially observable environments (largest gap +5.2 in Retail)</Finding> — while still 9.1 points below the 70B teacher's own zero-shot 41.3%. Per-environment columns below are Pass@1:
+
+<SortableTable columns={["Setting", "Model", "Calc", "Web", "Retail", "Airline", "Avg P@1", "Avg P@4"]} rows={[
+  ["Zero-shot", "GPT-4o", 72.4, 52.9, 18.7, 15.8, 40.0, 57.5],
+  ["Zero-shot", "Llama-3.1-70B", 57.3, 64.0, 34.6, 9.2, 41.3, 58.8],
+  ["Zero-shot", "Llama-3.1-8B", 20.3, 16.2, 8.9, 2.5, 12.0, 27.9],
+  ["Distillation", "8B + PAE", 44.3, 45.6, 23.7, 6.7, 30.1, 52.0],
+  ["Distillation", "8B + SCA", 43.2, 50.0, 28.9, 6.7, 32.2, 56.8],
+  ["Self-improve", "8B + PAE", 27.6, 14.0, 9.8, 0.0, 12.9, 27.7],
+  ["Self-improve", "8B + SCA", 31.8, 44.9, 13.0, 4.2, 23.5, 41.3],
+]} />
+
+## Key findings
+- <Finding src="Fig.4, p.8">Each CaT component removes a specific reward error, and the last filter eliminates false positives outright</Finding>: filter survival goes PAE 100% → verifier-only 47.7% → +solution 9.5% → full CaT 5.2%. The solution filter kills false negatives (infeasible tasks) but *amplifies* false positives — too-lenient verifiers, some passable by doing nothing, preferentially survive it; adding failure cases removes FP entirely (0 of 50 annotated Retail rollouts). This is the paper's sharpest evidence that verifier quality must itself be mechanically tested.
+- <Finding src="Fig.4/App.H">The residual failure mode of full CaT is instruction–verifier misalignment</Finding>: false negatives persist where the instruction omits information the verifier demands (e.g. "return one of my latest orders" while the verifier pins a specific order) — the authors leave this "semantic nuance" open.
+- <Finding src="Fig.3, p.7">SCA tasks work under any RL algorithm, and online RL extracts much more</Finding>: offline RFT/DPO reach 31.8 Pass@1 in Calculation (from 20.3); PPO reaches 43.2; but GRPO collapsed to 0% at the end of training without careful tuning.
+- <Finding src="Fig.6, p.9">Scale the number of tasks, not rollouts per task</Finding>: with 200 tasks, extra rollouts *degrade* OOD test Pass@1 (train success still climbs — overfitting); 400 is marginal; only 800 tasks yield steady OOD gains.
+- <Finding src="Fig.5, p.9">Filtering homogenizes task difficulty for a weak challenger but preserves it for a strong one</Finding>: post-filter difficulty distribution narrows for Llama-3.1-8B (5.3% survival per Fig.5; 5.2% per Fig.4 — a minor internal inconsistency) yet matches the pre-filter distribution for Llama-3.1-70B (34.4% survival).
+- <Finding src="App.B Tab.2">Gains do not transfer across environments</Finding>: joint training on all four environments is marginally *worse* (23.0 vs 23.5 avg Pass@1); inspection attributes improvements to environment-specific skills (tool signatures, account-lookup conventions), not general agentic capability.
+- <Finding src="App.B Fig.7">A task-quality gap to oracle tasks remains</Finding>: PPO on 800 SCA tasks improves substantially but stays below PPO on 800 manually curated oracle tasks in Calculation.
+
+## Implications
+For the training-side literature: agent-explored task generation plus mechanically self-validated verifiers make autonomous improvement viable in partially observable tool environments where LLM-judge pipelines actively hurt — extending <Related>asymmetric self-play (Sukhbaatar et al. 2018; OpenAI 2021)</Related> to open-ended tool use, paralleling the concurrent <Related>Absolute Zero (Zhao et al. 2025), which uses execution-verified self-play for coding/reasoning</Related>, and superseding <Related>PAE (Zhou et al. 2024)</Related> within the verified-training-environment line (<Related>SWE-Gym, WebRL, AgentGen</Related>). For TDE: this paper supplies the strongest training-time precedent that agent-written executable verifiers, validated red–green style at *creation* time (solution must pass, failures must fail), produce trustworthy mechanical reward — and it stops precisely where TDE begins. <FollowUp>Whether challenger-written verifiers can serve at inference as completion gates (iterate-until-green over a given user instruction) rather than as training rewards.</FollowUp> <FollowUp>Mechanically checking that an instruction contains the information its verifier demands — the unsolved FN mode here, and TDE's compile-fidelity problem in reverse.</FollowUp> <FollowUp>Porting CaT-style solution/failure-case validation of a suite to state-diff-graded testbeds like AppWorld.</FollowUp>
+
+## Limitations
+- <Caveat>False negatives persist even under full CaT</Caveat> (under-specified instructions), producing a suboptimality gap vs oracle tasks (author-stated, §6, App.B Fig.7).
+- <Caveat>Improvements are environment-specific, not general agentic capability</Caveat> (author-stated, App.B Tab.2).
+- <Caveat>Verification depth is uneven across environments</Caveat>: Tau-Bench verifiers query final database state, but M3ToolEval verifiers only string-match a reference answer — "mechanical" does not mean uniformly state-grounded.
+- <Caveat>Challenger yield is low and costly at 8B scale</Caveat>: ~5% task survival, 8–32 h of challenge generation per environment on 8xA100 (Tab.4).
+- <Caveat>Evaluation fragility</Caveat>: Pass@1 averaged over only 4 trials with no variance reported; 40% of Airline test tasks were removed (passable with no actions), so numbers are not comparable to official Tau-Bench; the training-time user simulator (Llama-3.1-8B) differs from the test-time one (GPT-4o).
+- <Caveat>The FP/FN evidence is thin</Caveat>: 50 rollouts per variant, one environment (Retail), annotated by one author (200 trajectories, 8 human-hours, App.C).
+- <Caveat>Absolute performance stays low</Caveat>: 4.2 Pass@1 on Airline after self-improvement; the authors note the trained models still "struggle with relatively simple tasks" (App.D).
+
+## Critiques and Questions
+1. Instruction↔verifier misalignment is structural, not incidental: instruction and verifier come from one generation, and the checker validates solution-vs-verifier but never instruction-vs-verifier. The Retail pipeline even *redacts* order numbers from instructions after generation (Fig.9) — plausibly manufacturing part of the "incomplete instruction" FN mode it laments; the paper does not connect these (Unclear).
+2. Selection confound: keeping 5.2% of generations selects for tasks the challenger can itself solve and verify, bounding curriculum difficulty by challenger competence — Fig.5's homogenized 8B distribution is consistent with this. Can a model self-challenge *beyond* its frontier?
+3. "Over a two-fold improvement" (abstract) is 23.5/12.0 = 1.96x — accurate only with rounding; the honest headline is +11.5 points / 95.8% relative.
+4. The executor never sees the verification function — only the instruction. Whether exposing the tests to the executor (TDD-style) would help or invite reward gaming is not discussed (Not reported).
+5. The distilled student (32.2) remains 9.1 points below its teacher's zero-shot (41.3), and distillation-SCA loses to PAE on Calculation (43.2 vs 44.3): agent-explored tasks pay off only where partial observability makes exploration informative.
+
+<SelfCheck q="Why does CaT need both an example solution and failure cases, rather than just filtering on a runnable verification function plus a passing solution?" a="The solution filter removes infeasible tasks (false negatives) but selectively amplifies false positives: too-lenient verification functions — some satisfiable by doing nothing — pass the solution check disproportionately often. Requiring at least three failure cases that must all fail the verifier tests the verifier's strictness itself, and in the human annotation this removed false positives entirely (0/50 Retail rollouts, Fig.4)." />
+
+## Glossary
+- <Term def="τ-bench (Yao et al. 2024): multi-turn customer-service benchmark (Retail, Airline) where the agent converses with an LLM-simulated user and modifies a database via ~15 tools; ground truth checks the final database state">Tau-Bench</Term>
+- <Term def="multi-turn function-calling benchmark from the CodeAct paper (Wang et al. 2024); success = pattern-matching the final answer against a reference">M3ToolEval</Term>
+- <Term def="Proposer-Agent-Evaluator (Zhou et al. 2024): prior SOTA autonomous task synthesis — an LLM proposes instructions from the initial observation and an LLM judge grades trajectories; the paper's main baseline">PAE</Term>
+- <Term def="asymmetric self-play (Sukhbaatar et al. 2018; OpenAI 2021): one agent acts to set a goal, a second must reproduce it; the adversarial reward yields an automatic curriculum — SCA's conceptual ancestor">ASP</Term>
+- <Term def="an environment where the initial observation does not reveal the information needed to specify tasks (e.g. database contents), so the challenger must act to discover it">partially observable</Term>
+- <Term def="fraction of test tasks solved in 1 attempt (Pass@1) or in at least one of 4 attempts (Pass@4); here computed from four independent trials">Pass@k</Term>
+
+{/* NOTES_START */}
+### Personal notes
+For the TDE novelty defense, the precise characterization: SCA is *training-time* TDE-adjacent machinery. It (a) has the agent author an executable verifier before solving, (b) validates the verifier mechanically with a must-pass solution and must-fail failure cases — a one-shot red–green check of the *suite*, at task-creation time, with a traceback-revision loop for the challenger, and (c) proves empirically (Fig.4) that LLM-judge reward is noisy and executable verification + suite-tests fix it. It does NOT: compile a suite from a given NL instruction (the instruction is invented, and misalignment is its residual failure), gate task completion at inference (the executor never sees the verifier; reward is post-hoc for RL), or check anything per-action (terminal state/answer only — no preconditions). The FN-from-underspecified-instructions finding is reusable evidence that instruction↔suite fidelity is the hard problem TDE takes on directly.
+{/* NOTES_END */}

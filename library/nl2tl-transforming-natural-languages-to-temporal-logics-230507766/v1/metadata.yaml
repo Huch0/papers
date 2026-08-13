@@ -1,0 +1,77 @@
+canonical_key: arxiv-2305.07766
+version_key: v1
+title: 'NL2TL: Transforming Natural Languages to Temporal Logics using Large Language Models'
+authors:
+- Yongchao Chen
+- Rujul Gandhi
+- Yang Zhang
+- Chuchu Fan
+abstract: 'Temporal Logic (TL) can be used to rigorously specify complex high-level specification for
+  systems in many engineering applications. The translation between natural language (NL) and TL has been
+  under-explored due to the lack of dataset and generalizable model across different application domains.
+  In this paper, we propose an accurate and generalizable transformation framework of English instructions
+  from NL to TL, exploring the use of Large Language Models (LLMs) at multiple stages. Our contributions
+  are twofold. First, we develop a framework to create a dataset of NL-TL pairs combining LLMs and human
+  annotation. We publish a dataset with 28K NL-TL pairs. Then, we finetune T5 models on the lifted versions
+  (i.e., the specific Atomic Propositions (AP) are hidden) of the NL and TL. The enhanced generalizability
+  originates from two aspects: 1) Usage of lifted NL-TL characterizes common logical structures, without
+  constraints of specific domains. 2) Application of LLMs in dataset creation largely enhances corpus
+  richness. We test the generalization of trained models on five varied domains. To achieve full NL-TL
+  transformation, we either combine the lifted model with AP recognition task or do the further finetuning
+  on each specific domain. During the further finetuning, our model achieves higher accuracy (>95%) using
+  only <10% training data, compared with the baseline sequence to sequence (Seq2Seq) model.'
+venue: Proceedings of the 2023 Conference on Empirical Methods in Natural Language Processing
+year: 2023
+source: arxiv
+source_url: https://arxiv.org/abs/2305.07766v2
+pdf_url: https://arxiv.org/pdf/2305.07766v2
+pdf_sha256: 233168da4900401b8366c0116d54e195348139f941256af8d2c4bea79a0bdf6d
+fetched_at: '2026-08-13T07:15:42Z'
+source_updated_at: '2024-03-22T00:28:51Z'
+ids:
+  doi: null
+  arxiv_id: 2305.07766v2
+  arxiv_base_id: '2305.07766'
+  arxiv_version: v2
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- dataset
+- tde-related-work
+topic_groups:
+- general_agent_methods
+scoring:
+  score: 1.6
+  label: SKIP
+  confidence: medium
+  rationale: 'score=2 -> SKIP | strong: novelty(0.55), interest_fit(0.40), venue_quality(0.30) | interests:
+    general_agent_methods:group:general_agent_methods | negatives: old_in_fast_area'
+  matched_interests:
+  - general_agent_methods:group:general_agent_methods
+  negative_signals:
+  - old_in_fast_area
+  subscores:
+    interest_fit: 0.402
+    recency: 0.0
+    venue_quality: 0.3
+    harness_relevance: 0.0
+    novelty: 0.55
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/nl2tl-transforming-natural-languages-to-temporal-logics-230507766/v1/paper.pdf
+  extraction: library/nl2tl-transforming-natural-languages-to-temporal-logics-230507766/v1/extraction.txt
+  summary: library/nl2tl-transforming-natural-languages-to-temporal-logics-230507766/v1/summary.mdx
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread
+  summary_format: mdx

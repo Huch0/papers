@@ -1,0 +1,74 @@
+canonical_key: arxiv-2505.07087
+version_key: v1
+title: Applying Cognitive Design Patterns to General LLM Agents
+authors:
+- Robert E. Wray
+- James R. Kirk
+- John E. Laird
+abstract: One goal of AI (and AGI) is to identify and understand specific mechanisms and representations
+  sufficient for general intelligence. Often, this work manifests in research focused on architectures
+  and many cognitive architectures have been explored in AI/AGI. However, different research groups and
+  even different research traditions have somewhat independently identified similar/common patterns of
+  processes and representations or "cognitive design patterns" that are manifest in existing architectures.
+  Today, AI systems exploiting large language models (LLMs) offer a relatively new combination of mechanisms
+  and representations available for exploring the possibilities of general intelligence. This paper outlines
+  a few recurring cognitive design patterns that have appeared in various pre-transformer AI architectures.
+  We then explore how these patterns are evident in systems using LLMs, especially for reasoning and interactive
+  ("agentic") use cases. Examining and applying these recurring patterns enables predictions of gaps or
+  deficiencies in today's Agentic LLM Systems and identification of subjects of future research towards
+  general intelligence using generative foundation models.
+venue: arXiv
+year: 2025
+source: arxiv
+source_url: https://arxiv.org/abs/2505.07087v2
+pdf_url: https://arxiv.org/pdf/2505.07087v2
+pdf_sha256: cb59cfa90c6fb124542834d2e1c1fba742c0b1b94f6e6dda8c1556b987d1a465
+fetched_at: '2026-08-13T07:18:57Z'
+source_updated_at: '2025-06-13T21:53:31Z'
+ids:
+  doi: null
+  arxiv_id: 2505.07087v2
+  arxiv_base_id: '2505.07087'
+  arxiv_version: v2
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- position-paper
+- survey
+- tde-related-work
+topic_groups:
+- general_agent_methods
+scoring:
+  score: 18.6
+  label: SKIP
+  confidence: medium
+  rationale: 'score=19 -> SKIP | strong: interest_fit(0.40), venue_quality(0.40), recency(0.35) | interests:
+    general_agent_methods:group:general_agent_methods'
+  matched_interests:
+  - general_agent_methods:group:general_agent_methods
+  negative_signals: []
+  subscores:
+    interest_fit: 0.402
+    recency: 0.35
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 0.0
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/applying-cognitive-design-patterns-to-general-llm-250507087/v1/paper.pdf
+  extraction: library/applying-cognitive-design-patterns-to-general-llm-250507087/v1/extraction.txt
+  summary: library/applying-cognitive-design-patterns-to-general-llm-250507087/v1/summary.mdx
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread
+  summary_format: mdx

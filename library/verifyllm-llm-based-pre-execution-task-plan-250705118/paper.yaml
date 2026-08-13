@@ -1,0 +1,56 @@
+canonical_key: arxiv-2507.05118
+slug: verifyllm-llm-based-pre-execution-task-plan-250705118
+title: 'VerifyLLM: LLM-Based Pre-Execution Task Plan Verification for Robots'
+authors:
+- Danil S. Grigorev
+- Alexey K. Kovalev
+- Aleksandr I. Panov
+year: 2025
+primary_ids:
+  doi: null
+  arxiv_base_id: '2507.05118'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2507.05118v1
+- https://arxiv.org/pdf/2507.05118v1
+topic_groups:
+- general_agent_methods
+tags:
+- tde-related-work
+- verifier
+venue:
+  name: IROS
+  tier: A_star
+  status: accepted
+  year: 2025
+user:
+  read_status: unread
+  triage_label: SKIP
+  triage_confidence: medium
+  notes: null
+milestone: null
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v1
+  source: arxiv
+  source_url: https://arxiv.org/abs/2507.05118v1
+  pdf_path: library/verifyllm-llm-based-pre-execution-task-plan-250705118/v1/paper.pdf
+  summary_path: library/verifyllm-llm-based-pre-execution-task-plan-250705118/v1/summary.mdx
+  metadata_path: library/verifyllm-llm-based-pre-execution-task-plan-250705118/v1/metadata.yaml
+  fetched_at: '2026-08-13T07:16:46Z'
+  source_updated_at: '2025-07-07T15:31:36Z'
+  arxiv_version: v1
+  pdf_sha256: efd4c79f96bac0557b4a020ee215b0891a0438643bb89c487d4e04a634d8d7d2
+  pdf_bytes: 1140012
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-08-13T07:16:46Z'
+  updated_at: '2026-08-13T10:31:47Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

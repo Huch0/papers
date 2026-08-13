@@ -1,0 +1,140 @@
+---
+canonical_key: arxiv-2209.11302
+version_key: v1
+title: 'ProgPrompt: Generating Situated Robot Task Plans using Large Language Models'
+authors:
+- Ishika Singh
+- Valts Blukis
+- Arsalan Mousavian
+- Ankit Goyal
+- Danfei Xu
+- Jonathan Tremblay
+- Dieter Fox
+- Jesse Thomason
+- Animesh Garg
+venue: arXiv
+year: 2022
+tags:
+- foundational
+- planner-executor-verifier
+- tde-related-work
+topic_groups:
+- general_agent_methods
+triage_label: READ_SOON
+triage_confidence: medium
+source_link: https://arxiv.org/abs/2209.11302v1
+summary_date: '2026-08-13'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>ProgPrompt casts LLM robot task planning as code completion: the prompt is a Pythonic program — imported action primitives, the scene's object list, and a few example plan functions — so the LLM directly emits an executable situated plan whose natural-language comments guide reasoning and whose `assert`-based precondition checks trigger recovery actions, lifting VirtualHome task success from 0.00 (text-prompt baseline) to 0.34 (GPT3) / 0.40 (Codex).</TLDR>
+
+<WhyItMatters>CLOSEST-WORK #6 for TDE, on the assertion axis: this is the canonical "Pythonic plan with per-action precondition `assert` + `else` recovery" paper, so programmatic gating of state-changing actions with environment state feedback already exists here (2022). The deltas TDE can still claim, verified against the paper: assertions are LLM-generated <em>preconditions only</em> (no postconditions, no action-success checks); they are adjudicated by <em>prompting an LLM</em> with state-graph text rather than evaluated mechanically (and are disabled entirely on the real robot); the instruction is never compiled into a final-world-state acceptance suite — symbolic goal conditions exist but are hidden from the agent and used only as the grading metric (AppWorld-style state-diff lives in the harness, not the loop); and completion is program termination, never a green suite. Also a root node of the code-as-plan lineage behind today's tool-calling agent harnesses.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "0.34 SR", label: "VirtualHome success, GPT3", sub: "text-prompt baseline: 0.00 (Tab. I, p.4)" },
+  { value: "0.40 SR", label: "best backbone: Codex", sub: "Exec 0.90, GCR 0.72 (Tab. I)" },
+  { value: "0.84", label: "plan executability (Exec)", sub: "GPT3; Huang et al. baseline 0.45" },
+  { value: "7/9", label: "robot runs fully succeed", sub: "Franka Panda tabletop; Exec always 1 (Tab. IV)" },
+]} />
+
+## Motivation
+Circa-2022 LLM task planners ran in two modes, both broken for situated robots. <Problem>Scoring mode must enumerate every admissible action-argument pair for the LLM to rank</Problem> — <Term def="LLM scores natural-language descriptions of admissible actions, re-weighted by a learned value function (Ahn et al. 2022)">SayCan</Term>-style — which is intractable in combinatorial action spaces (§II). <Problem>Generation mode emits free-form text that must be string-matched onto the robot's actions and routinely names actions the robot lacks or objects absent from the scene</Problem>: Huang et al. generate the whole plan open-loop with no environment interaction, and even Inner Monologue, with feedback, saw planners propose objects not present (§II). Beneath both is the same gap: <Problem>no situated state feedback</Problem> — "Make dinner" does not tell the planner whether the fridge holds chicken or the freezer fish (§I).
+
+## Contribution (what's new)
+<Novelty>Represent both prompt and plan as a Pythonic program, so the constraints a situated plan must respect are carried natively by code syntax the LLM already knows</Novelty>: `import` statements declare the agent's exact action API (constraining verbs), an `objects = [...]` list declares the scene inventory (constraining nouns), and example plan functions demonstrate the task-name-to-plan mapping — the generated function is directly executable, with no post-hoc text-to-action matching step. Two program features do further work: <Novelty>comments as in-code chain-of-thought that decompose the task into sub-goals</Novelty>, and <Novelty>`assert` precondition checks with `else:` recovery actions, run closed-loop against environment state during execution</Novelty>. The form follows from the baseline's failure: admissibility errors (impossible actions, absent objects) are exactly what the import list and object list rule out.
+
+## Research questions
+1. Can program-structured prompts make LLM-generated plans directly executable and situated (right actions, right objects, current state)? 2. Which programming-language features earn their keep — comments, assertion feedback, code-pretrained backbones? 3. Does the scheme transfer across scenes, agents (simulated household to physical arm), and tasks without per-domain engineering?
+
+## Methodology
+The prompting function `f_prompt` concatenates an import line of action primitives, the current scene's object list, three fixed fully-executable example task programs, and the target task as a bare function header (`def microwave_salmon():`) the LLM must complete; answer search is whole-program generation. An interpreter executes the plan action-by-action; at each `assert`, the harness obtains state feedback and runs the `else:` recovery chain if the check fails. The detail that matters for verification claims: in <Term def="deterministic household simulator whose state is a graph of objects, properties (heated, washed, ...) and relations; 11 primitive actions">VirtualHome</Term>, <Finding src="§IV-A, p.4">assertion checking works by extracting the relevant object's entries from the simulator's ground-truth state graph and prompting the LLM to answer whether the assertion holds</Finding> — an LLM judge over oracle state text, not a symbolic evaluator. Evaluation uses 70 collected household tasks with demonstrated action sequences whose recorded final states define symbolic goal conditions; metrics are <Term def="fraction of executions achieving all task-relevant goal conditions; equals 1 only when GCR is 1">SR</Term>, <Term def="fraction of a plan's actions that are executable in the environment, task-relevant or not">Exec</Term>, and <Term def="goal-conditions recall: achieved fraction of the goal conditions that changed between the initial and demonstrated final state">GCR</Term>.
+
+<Pass title="Method details">
+The generated plans are pseudo-Python — `assert ... else:` is not valid Python; a custom interpreter executes it (Fig. 3, p.3):
+
+```python
+def put_salmon_in_microwave():
+    # 1: grab salmon
+    assert('close' to 'salmon')
+        else: find('salmon')
+    grab('salmon')
+    # 2: put salmon in microwave
+    assert('salmon' in 'hands')
+        else: find('salmon')
+        else: grab('salmon')
+    assert('close' to 'microwave')
+        else: find('microwave')
+    assert('microwave' is 'opened')
+        else: open('microwave')
+    putin('salmon', 'microwave')
+```
+
+<Stepper steps={[
+  { title: "Prompt anatomy (Fig. 2)", body: "Imports declare primitives with arity (e.g. walk, grab, open, putin); the object list is a global variable in VH and a per-function local on the robot; the 3 fixed examples are 'put the wine glass in the kitchen cabinet', 'throw away the lime', 'wash mug' (only 2 fit Davinci's prompt limit; a 1-7 example sweep found 2 or more roughly equal for GPT3). Comments ('# 1: grab salmon') act as chain-of-thought sub-goal labels; the paper cites Wei et al. [36]." },
+  { title: "Assertion checking in VH", body: "The prompt-for-state-feedback contains example assertion checks; at runtime the harness extracts the relevant object's state-graph entries ('You see: microwave is OPEN and OFF...', 'You have: salmon') and the LLM returns True/False for the assert. On False, the else recovery actions (find, grab, open, ...) execute before the gated action. Preconditions only — there is no post-action success check." },
+  { title: "VirtualHome setup", body: "3 scenes, 115 object instances each with affordance properties and semantic states (heated, washed, used); action space of 11 primitives: grab, putin, putback, walk, find, open, close, switchon, switchoff, sit, standup. Formally, planning is a tuple of objects, properties, actions, transitions, initial and goal states — and the agent is given only the high-level description t, never the goal state g (§II). Test: 10 tasks x 5 runs in seen ENV-0; 10 tasks x 5 runs in each of two unseen scenes; run-to-run variance comes from LLM sampling. Backbones: GPT3, Codex, Davinci (the paper calls the latter two GPT3 variants and does not pin exact API model identities)." },
+  { title: "Metrics", body: "Task-relevant goal conditions = those that changed between the initial and final demonstration state. SR = all achieved; Exec = executable fraction of plan actions (relevant or not); GCR = set-difference recall against the demonstrated final state; SR = 1 only if GCR = 1." },
+  { title: "Real robot", body: "Franka-Emika Panda with an assumed pick-and-place policy (MPPI motion generation, SceneCollisionNet collision avoidance, Contact-GraspNet grasps); ViLD open-vocabulary detection builds the object list and maps generated argument strings to pointclouds. The import line exposes pick-and-place only (grab_and_putin; Figs. 1 and 4 also show grab_and_puton). Asserts are disabled: the setup cannot reliably track state." },
+  { title: "LangPrompt baseline", body: "Same content as ProgPrompt but in natural language; since outputs are free text, a GPT2 policy — finetuned on the 35 training tasks annotated into 400 step-to-action datapoints — maps generated steps to executable actions. Isolates the value of program structure per se." },
+]} />
+</Pass>
+
+## Main result
+On the 10-task VirtualHome test set, <Finding src="Tab. I, p.4">ProgPrompt with GPT3 reaches SR 0.34±0.08, Exec 0.84±0.01, GCR 0.65±0.05, versus SR 0.00±0.00, Exec 0.45±0.03, GCR 0.21±0.03 for the Huang et al. baseline on the same backbone</Finding> — the baseline never fully completes a task. <Finding src="Tab. I, p.4">Codex is best overall at SR 0.40±0.11 / Exec 0.90±0.05 / GCR 0.72±0.09</Finding>, but rate limits pushed the ablations onto GPT3.
+
+<SortableTable columns={["#", "Format", "Comments", "Feedback", "Backbone", "SR", "Exec", "GCR"]} rows={[
+  [1, "ProgPrompt", "yes", "yes", "Codex", "0.40±0.11", "0.90±0.05", "0.72±0.09"],
+  [2, "ProgPrompt", "yes", "yes", "Davinci", "0.22±0.04", "0.60±0.04", "0.46±0.04"],
+  [3, "ProgPrompt", "yes", "yes", "GPT3", "0.34±0.08", "0.84±0.01", "0.65±0.05"],
+  [4, "ProgPrompt", "yes", "no", "GPT3", "0.28±0.04", "0.82±0.01", "0.56±0.02"],
+  [5, "ProgPrompt", "no", "yes", "GPT3", "0.30±0.00", "0.65±0.01", "0.58±0.02"],
+  [6, "ProgPrompt", "no", "no", "GPT3", "0.18±0.04", "0.68±0.01", "0.42±0.02"],
+  [7, "LangPrompt", "—", "—", "GPT3", "0.00±0.00", "0.36±0.00", "0.42±0.02"],
+  [8, "Huang et al. [2]", "—", "—", "GPT3", "0.00±0.00", "0.45±0.03", "0.21±0.03"],
+]} />
+
+On the physical tabletop, <Finding src="Tab. IV, p.6">7 of 9 runs across 4 pick-and-place tasks (0–4 distractors) achieve SR 1, with Exec = 1 on every generated plan</Finding>; the two failures were a random gripper slip (Plan SR 1) and ViLD mistaking a soup can for a bottle (Plan SR 0). The authors frame this as a qualitative demonstration, not a quantitative comparison.
+
+## Key findings
+- <Finding src="Tab. I, rows 3v4/5v6">Assertion feedback improves every metric</Finding>: SR 0.28→0.34 with comments and 0.18→0.30 without; sole exception is Exec ticking up when feedback is removed alongside comments (0.65→0.68).
+- <Finding src="Tab. I, rows 3v5/4v6">Comments are the biggest prompt lever</Finding>: removing them drops SR 0.34→0.30 and Exec 0.84→0.65 (with feedback), and SR 0.28→0.18 (without) — natural-language guidance inside the code is load-bearing.
+- <Finding src="Tab. I, row 1 vs 3">Code pretraining helps</Finding>: Codex exceeds GPT3 on every metric, while Davinci underperforms (SR 0.22) — though Davinci's 2-example prompt limit confounds that comparison.
+- <Finding src="Tab. II, p.5">Success collapses on long tasks despite executable plans</Finding>: SR 0.60 for tasks of 6–10 ground-truth actions but 0.00 for 11–18 (wash the plate, microwave salmon) with Exec still 0.87 — executable-but-wrong, partly a metric artifact of a single "true" goal state.
+- <Finding src="Tab. III, p.5">Unseen scenes do not degrade performance</Finding>: SR 0.56 in both new scenes (0.48 three-scene average) with only the object list swapped, and the model maps "cutlery" to spoons/forks in new scenes although the examples always used knives.
+- <Finding src="Tab. I, row 7">Program structure, not just LLM knowledge, drives executability</Finding>: LangPrompt (same information, natural-language format plus a learned action matcher) reaches GCR 0.42 but Exec 0.36 and zero full task successes.
+
+## Implications
+Lineage: this sharpens <Related>Huang et al. 2022 (open-loop generation + 1:1 action matching)</Related>, <Related>SayCan (scoring enumerated admissible actions)</Related>, and <Related>Inner Monologue (NL environment feedback)</Related>, concurrent with <Related>Socratic Models' code-completion plans</Related>, into the prompt-as-API-surface pattern that later code-as-plan agents (<Related>Code as Policies, Voyager-style skill programs, modern tool-calling harnesses</Related>) made standard.
+
+For the TDE novelty defense, the precise characterization. What ProgPrompt already does: LLM-emitted per-action precondition assertions in the plan itself, checked closed-loop against environment state, with local `else:` recovery — programmatic gating of state-changing actions. What it does not do, each a TDE claim: (1) no postconditions or action-success verification — asserts fire only before actions, and post-action failures cascade (author-listed failure mode, §V-B); (2) adjudication is an LLM judge — VH's symbolic state graph is textualized and the LLM answers True/False, so verification is not mechanical even though a symbolic oracle was in hand, and on the robot asserts are dropped; (3) no acceptance suite compiled from the instruction over the final world state — goal conditions `g` are recorded from a human demonstration, explicitly withheld from the agent (§II), and used only for grading (GCR is a mechanical state-diff, but it lives in the evaluation harness, outside the agent loop); (4) completion is program termination (`# Done`), never a green suite, and there is no red–green iteration — a failed assert triggers a one-shot local recovery chain, not plan revision (re-querying on truncated plans is future work). <FollowUp>Would a symbolic evaluator over VH's state graph beat the LLM assert-judge? The paper never measures judge accuracy.</FollowUp> <FollowUp>Acceptance-suite designs that admit multiple valid final states — ProgPrompt documents exactly the under-crediting a single-goal state-diff suffers, the failure mode TDE's compiled suites must avoid.</FollowUp>
+
+## Limitations
+- <Caveat>Assert adjudication is an LLM prompted with state-graph text, with accuracy never measured</Caveat> — the feedback loop itself can hallucinate; on the physical robot assertions are disabled entirely.
+- <Caveat>Preconditions only; no action-success feedback</Caveat> (author-stated): failures after an action propagate, and generated recovery chains do not cover all cases (e.g. an object found inside a closed cabinet may never trigger opening it).
+- <Caveat>Strict single-goal final-state checking under-credits valid behavior</Caveat> (author-stated): over-completion ("completes the task and some") and ambiguous tasks like "make dinner" are scored as failures; the authors say automated evaluation would require enumerating valid goal states or human verification.
+- <Caveat>Small, partly confounded evaluation</Caveat>: 10 test tasks × 5 runs per scene; variance reflects LLM sampling only; the 3 fixed hand-picked examples leak stopping-point hints (tasks similar to examples score higher GCR); Exec counts task-irrelevant actions.
+- <Caveat>Deterministic simulator with 11 high-level actions</Caveat>: `find`/`walk` abstract away perception and navigation; VH artifacts (no interaction while sitting, no openable tvstand) distort scores; some plans are cut short by LLM API caps.
+- <Caveat>Physical evaluation is qualitative</Caveat>: 9 runs, no assertions, and Plan SR is a judgment call; the text says one-to-three distractors while Tab. IV lists runs with 4.
+
+## Critiques and Questions
+1. The symbolic oracle was available — VH exposes a ground-truth state graph, and GCR is computed mechanically from it — yet runtime asserts are adjudicated by prompting an LLM. No judge-accuracy number or symbolic-checker ablation is given, so an unknown share of SR/GCR error is judge error rather than planner error.
+2. Is the long-horizon collapse (SR 0.00 at 11+ actions) a planning failure or a metric failure? The authors' own analysis (multiple valid goal states) implies the metric under-measures, but no human evaluation disentangles the two.
+3. Unseen scenes score higher than the seen scene (0.56 vs 0.34) with different task sets per scene, so scene generalization and task difficulty are conflated; "generalizes widely" partly rests on non-comparable numbers.
+4. Prompt examples are swept only by count (1–7), never by composition, despite the admitted example-similarity effect — the 3 fixed examples are an untested confound under all ablations.
+
+<SelfCheck q="How is assert('microwave' is 'opened') actually evaluated during VirtualHome execution, and why does that matter for claims about mechanical verification?" a="The harness extracts the relevant object's entries from VH's ground-truth state graph, renders them as text ('You see: microwave is OPEN and OFF...'), and prompts the LLM — with example assertion checks — to answer True/False; on False the else: recovery chain runs before the gated action. So verification is LLM-adjudicated even though a symbolic oracle state was available, and on the physical robot assertions were disabled altogether — it is precondition gating with an LLM judge, not mechanical checking of pre/postconditions or of final task success." />
+
+## Glossary
+- <Term def="deterministic household simulator (Puig et al. 2018); a state is a set of objects and properties encoding relations (in, close-to) and semantic flags (heated, washed, used)">VirtualHome (VH)</Term>
+- <Term def="success rate: fraction of executions achieving all task-relevant goal conditions">SR</Term> / <Term def="executability: fraction of plan actions executable in the environment, relevant or not">Exec</Term> / <Term def="goal-conditions recall against the demonstrated final state; SR = 1 only if GCR = 1">GCR</Term>
+- <Term def="robot-runs-only metric: whether the plan would likely have succeeded absent gripper failures">Plan SR</Term>
+- <Term def="open-vocabulary object detector (Gu et al. 2022) that names and segments scene objects into the prompt's object list">ViLD</Term>
+- <Term def="GPT-3 variant finetuned on code (Chen et al. 2021); the best-performing ProgPrompt backbone">Codex</Term>
+
+{/* NOTES_START */}
+### Personal notes
+The load-bearing sentence for TDE is in §IV-A: assertion truth is decided by prompting the LLM with state-graph text — even though the same state graph is what computes GCR mechanically at eval time. So 2022 already had programmatic precondition gating + recovery; what it lacked is exactly TDE's package: mechanical (environment-evaluated) adjudication, postconditions, an instruction-compiled final-world-state acceptance suite inside the agent loop, and red–green completion. Steal the §V-B failure taxonomy for TDE's motivation; the "multiple valid final states" problem (salmon on table vs countertop) is the hardest open design issue for compiled acceptance suites. Note the survey line "preconditions often oracle-provided" is imprecise for this paper: the assert statements are LLM-generated in the plan (seeded by hand-written examples); what is oracle is the state they are checked against and the eval goals.
+{/* NOTES_END */}

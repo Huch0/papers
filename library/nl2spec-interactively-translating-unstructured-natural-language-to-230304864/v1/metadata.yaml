@@ -1,0 +1,77 @@
+canonical_key: arxiv-2303.04864
+version_key: v1
+title: 'nl2spec: Interactively Translating Unstructured Natural Language to Temporal Logics with Large
+  Language Models'
+authors:
+- Matthias Cosler
+- Christopher Hahn
+- Daniel Mendoza
+- Frederik Schmitt
+- Caroline Trippel
+abstract: 'A rigorous formalization of desired system requirements is indispensable when performing any
+  verification task. This often limits the application of verification techniques, as writing formal specifications
+  is an error-prone and time-consuming manual task. To facilitate this, we present nl2spec, a framework
+  for applying Large Language Models (LLMs) to derive formal specifications (in temporal logics) from
+  unstructured natural language. In particular, we introduce a new methodology to detect and resolve the
+  inherent ambiguity of system requirements in natural language: we utilize LLMs to map subformulas of
+  the formalization back to the corresponding natural language fragments of the input. Users iteratively
+  add, delete, and edit these sub-translations to amend erroneous formalizations, which is easier than
+  manually redrafting the entire formalization. The framework is agnostic to specific application domains
+  and can be extended to similar specification languages and new neural models. We perform a user study
+  to obtain a challenging dataset, which we use to run experiments on the quality of translations. We
+  provide an open-source implementation, including a web-based frontend.'
+venue: arXiv
+year: 2023
+source: arxiv
+source_url: https://arxiv.org/abs/2303.04864v1
+pdf_url: https://arxiv.org/pdf/2303.04864v1
+pdf_sha256: dcaac50892633aee0f310844836b73bc8aade6e5e2662174e006b0621bd615f2
+fetched_at: '2026-08-13T07:15:36Z'
+source_updated_at: '2023-03-08T20:08:53Z'
+ids:
+  doi: null
+  arxiv_id: 2303.04864v1
+  arxiv_base_id: '2303.04864'
+  arxiv_version: v1
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- tde-related-work
+- verifier
+topic_groups:
+- general_agent_methods
+scoring:
+  score: 6.4
+  label: SKIP
+  confidence: medium
+  rationale: 'score=6 -> SKIP | strong: novelty(0.55), artifact_availability(0.55), interest_fit(0.40)
+    | interests: general_agent_methods:group:general_agent_methods | negatives: old_in_fast_area'
+  matched_interests:
+  - general_agent_methods:group:general_agent_methods
+  negative_signals:
+  - old_in_fast_area
+  subscores:
+    interest_fit: 0.402
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 0.55
+    artifact_availability: 0.55
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/nl2spec-interactively-translating-unstructured-natural-language-to-230304864/v1/paper.pdf
+  extraction: library/nl2spec-interactively-translating-unstructured-natural-language-to-230304864/v1/extraction.txt
+  summary: library/nl2spec-interactively-translating-unstructured-natural-language-to-230304864/v1/summary.mdx
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread
+  summary_format: mdx

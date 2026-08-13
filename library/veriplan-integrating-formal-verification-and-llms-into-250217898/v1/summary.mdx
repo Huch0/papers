@@ -1,0 +1,115 @@
+---
+canonical_key: arxiv-2502.17898
+version_key: v1
+title: 'VeriPlan: Integrating Formal Verification and LLMs into End-User Planning'
+authors:
+- Christine Lee
+- David Porfirio
+- Xinyu Jessica Wang
+- Kevin Zhao
+- Bilge Mutlu
+venue: arXiv
+year: 2025
+tags:
+- human-eval
+- tde-related-work
+- verifier
+topic_groups:
+- general_agent_methods
+triage_label: SKIP
+triage_confidence: medium
+source_link: https://arxiv.org/abs/2502.17898v1
+summary_date: '2026-08-13'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>VeriPlan (published at CHI '25) wraps an LLM planner for everyday users in an external verification loop — an LLM chain compiles the user's natural-language constraints into LTL/PRISM properties that the user confirms and can soften with sliders, a probabilistic model checker validates each generated plan, and violations drive regeneration — improving *perceived* LLM performance, usefulness, and satisfaction in a 12-participant ablation.</TLDR>
+
+<WhyItMatters>Category-D entry in the TDE related-work corpus, and the survey's characterization checks out against the paper: VeriPlan shares TDE's skeleton — NL compiled into machine-checkable rules, mechanical (non-LLM) adjudication by a model checker, iterate-until-valid refinement — but it verifies a static *plan text* for a human-in-the-loop end user: no environment, no action gating, no final-world-state evaluation, and validity is deliberately softenable per user preference. Sharpest wedge for the novelty defense: VeriPlan's mechanical checker adjudicates an LLM-produced formal model of the plan (the plan-to-PRISM translation is never human- or mechanically verified; only the rule translations are user-confirmed), whereas TDE's verdicts are computed by the environment over actual state — VeriPlan de-circularizes the judge but not the ground truth.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "n = 12", label: "within-subjects ablation", sub: "4 conditions × 2 of 3 scenarios, CHI '25" },
+  { value: "p = .0011", label: "perceived-performance drop without rule translator", sub: "Dunnett, C1 Full vs C3; vs C4 None p = .0013" },
+  { value: "3", label: "max verify-regenerate iterations", sub: "PRISM/Storm checker, GPT-4 planner" },
+  { value: "0", label: "objective correctness metrics", sub: "all outcomes are 7-point self-report scales" },
+]} />
+
+## Motivation
+LLMs make automated planning reachable for novices who cannot use expert tools (PDDL, detailed domain models, rigid formal workflows), but <Problem>LLMs are insufficient as standalone planners and cannot reliably self-verify</Problem> — the paper cites Valmeekam et al.'s finding of a 12% average GPT-4 success rate on planning tasks (§2.3, p.4). <Problem>LLM-as-judge verification inherits the same flaws</Problem>: poor error detection, hallucination, and order/length/appearance biases, motivating verification "without relying on LLMs" (§2.3, p.4). Meanwhile <Problem>existing constraint-based verification work uses predefined datasets and lacks mechanisms for dynamically incorporating an individual user's preferences and evolving context</Problem> (§2.3, p.4), and <Problem>there is a research gap on engaging novice users in the verification-replanning loop</Problem> (§2.1, p.3).
+
+## Contribution (what's new)
+<Novelty>An end-to-end NL-to-LTL-to-PRISM compilation chain with a human-confirmation checkpoint</Novelty>: an LLM maps the user's prompt onto a template of six temporal-constraint categories, emits LTL, re-encodes it in PRISM's language, and back-translates to natural language so the user can check or regenerate each rule — only checked rules survive (§3.4). <Novelty>User-adjustable constraint hardness via flexibility sliders</Novelty>: per-rule strictness marks constraints hard (violation invalidates) or soft (violation reported, plan still valid), implemented by hardness-weighted sampling of which constraints the checker enforces (§3.5). <Novelty>Mechanical adjudication of LLM plans by an off-the-shelf probabilistic model checker (PRISM/Storm), with violations fed back to both user and LLM</Novelty> (§3.6). The form is forced by the failure modes: LLM self-checking is unreliable, so the verdict must be external; end users cannot write LTL, so LLMs translate while the human verifies meaning rather than syntax.
+
+## Research questions
+(1) How can model checking be effectively applied to LLM outputs? (2) How can humans be engaged in model checking to improve output quality and user experience? (3) At what stage of the model-checking process should users be engaged? (§1, p.2)
+
+## Methodology
+A five-stage pipeline (all LLM agents are GPT-4): LLM planner → rule translator → flexibility sliders → model checker → refined planner, evaluated by ablating features in a within-subjects study rather than by any benchmark of plan correctness.
+
+<Pass title="Pipeline and study details">
+<Stepper steps={[
+  { title: "LLM planner (§3.3)", body: "The user submits one NL prompt containing request, context, and constraints; a GPT-4 agent drafts an initial plan while the same prompt is forked to the rule translator." },
+  { title: "Rule translator (§3.4, Tab.1, p.6-7)", body: "A mapping agent classifies prompt content into the temporal-constraint template (fixed time blocks, sequential order, concurrent events, conditional, exclusive, global); an LTL translator emits formulas over the operators G (always), F (eventually), U (until); a PRISM translator re-encodes them as labels for the checker. Both are back-translated to NL; the user confirms each rule via checkbox or asks for regeneration, and only confirmed rules enter the final set." },
+  { title: "Flexibility sliders (§3.5)", body: "Per-rule strictness (0-100%) sets hard vs soft enforcement: hard violations reject the plan; soft violations only notify the user. Constraints are weighted by hardness and VeriPlan samples which constraints the checker enforces, softer ones less often." },
+  { title: "Model checker (§3.6, Fig.5)", body: "The LLM's plan is itself LLM-translated into a PRISM-language model (a DTMC in the shown example); Stormpy, the Python API for the Storm checker, examines every state against the rules; validity plus the list of violated rules goes to both the user and the LLM." },
+  { title: "Refined planner (§3.7)", body: "Regenerate-and-recheck runs for at most three total iterations; if no valid plan emerges, the user adjusts rules or strictness and reruns. An input panel answers questions about constraints, checker logic, and system status." },
+]} />
+
+Example LTL outputs from the template: `G (bakingCheesecake → F servingCheesecake)` (conditional), `G (¬ brownMeatballs U mixingMeatballIngredients)` (sequential order) (Tab.1, p.7).
+
+**Study (§4, p.9):** within-subjects ablation with four conditions — C1 Full, C2 without sliders, C3 without rule translator, C4 None (plain GPT-4; translator and sliders cannot function without the checker). Each of 12 participants (ages 19-48, M = 25; 5 LLM-unfamiliar) did two of three scenarios (hospital patient navigation, cooking optimization, weekly scheduling), running all four conditions per scenario in randomized order; 1.5-hour sessions. Measures: USE scale (usefulness, ease of use, satisfaction) plus the FATE perceived-performance questionnaire, all 7-point Likert (Cronbach's α = .83-.95); Dunnett tests compare each ablation to C1 at α = 0.05; interviews get thematic analysis.
+</Pass>
+
+## Main result
+<Finding src="§5, Fig.6, p.10">The full system beat plain GPT-4 (C4) on perceived LLM performance (p = .0013), usefulness (p = .0257), and satisfaction (p = .0101), and removing only the rule translator (C3) hurt as much or more (p = .0011 / .009 / .007); ease of use showed no significant differences anywhere</Finding>. All outcomes are perceptions on self-report scales — the study reports no objective plan-correctness or success-rate numbers for any condition.
+
+<SortableTable columns={["Measure (7-pt Likert)", "C2 ¬Slider vs C1", "C3 ¬Translator vs C1", "C4 None vs C1"]} rows={[
+  ["Perceived LLM performance", "n.s.", "p = .0011", "p = .0013"],
+  ["Usefulness", "p = .047", "p = .009", "p = .0257"],
+  ["Satisfaction", "n.s.", "p = .007", "p = .0101"],
+  ["Ease of use", "n.s.", "n.s.", "n.s."],
+]} />
+
+## Key findings
+- <Finding src="§5.1, p.10">Rule translation is the load-bearing feature</Finding>: C3 losses match or exceed C4's, and 5 of 12 participants abandoned C3 after at most two attempts because mistranslated constraints made every output untrustworthy ("I can't verify that the constraints are 100% correct, so I can't trust the material it produces").
+- <Finding src="§5.3.1, p.11-12">Without the checker, participants said the LLM produced 'a' answer rather than 'the' answer</Finding>: 7 of 12 reported rule-enforcement failures in C4 and 8 of 12 reported the burden of manually verifying outputs — "all it really did was produce the wrong answer faster" — plus a voiced over-reliance risk of accepting wrong plans unchecked.
+- <Finding src="§5.3.2, p.12">Mechanical verification acted as a safety net that enabled exploration</Finding>: 8 participants said verified boundaries let them (and the LLM) experiment creatively, and 5 said violation feedback surfaced solutions they had not considered (e.g., routing people back through the waiting room).
+- <Finding src="§5.2, p.11">Sliders mattered only for usefulness (p = .047) and their semantics were opaque</Finding>: valued in preference-laden scheduling, seen as secondary for hard-rule tasks; 6 participants raised strictness to steer the LLM toward under-adhered rules, while 4 could not tell what a percentage change actually did (trial-and-error).
+- <Finding src="§5.3.3, p.12">Verdicts alone are not enough: 10 of 12 wanted actionable repair suggestions</Finding> — which constraint to loosen, which is safety-critical to keep — which the authors defer to program-repair future work (§7, p.16).
+- <Finding src="§5.1.3, p.11">The translator has no contextual memory</Finding>: each interaction resets the rule set, forcing users to re-enter full instructions; 3 participants asked for iterative rule building.
+
+## Implications
+A rare *user-facing* instance of the external-verifier thesis: it extends the <Related>LLM-Modulo framing (Kambhampati et al.) of LLM generators checked by non-LLM critics</Related> by making the novice user a component of the critic loop, and sits beside <Related>CRITIC-style tool-based verification (Gou et al.) and LTL "safety chip" constraint enforcement for robot agents (Yang et al., ICRA 2024)</Related>, while evaluating UX instead of benchmark success like <Related>TravelPlanner</Related>. For TDE it is evidence that mechanical adjudication plus iterate-until-valid measurably improves how users experience LLM planning — and a foil: verification stops at the plan artifact. <FollowUp>Whether the NL-to-LTL-to-PRISM chain's translation fidelity can itself be verified (the unchecked plan-to-model step is the soundness hole TDE closes by letting the environment compute state)</FollowUp>; <FollowUp>program repair / counterexample-guided suggestions as the actionable-feedback layer users asked for</FollowUp>.
+
+## Limitations
+- <Caveat>Every reported gain is perceived: no objective measure of plan correctness, task success, iteration counts, or translation accuracy appears in the paper</Caveat> — whether checked plans were actually more correct is Not reported.
+- <Caveat>The mechanical checker's inputs are LLM-generated on both sides — rules (NL→LTL→PRISM) and the plan's PRISM model — and only the rule translations receive human confirmation (of NL back-translations, themselves LLM-produced)</Caveat>; a mistranslated plan model could pass or fail checks spuriously.
+- <Caveat>Author-stated (§7, p.16): the template covers a limited subset of temporal constraints with no user-defined types; PRISM/Stormpy restricts expressible LTL; only three NL-describable scenarios; n = 12</Caveat>.
+- <Caveat>Soft constraints are enforced by sampling hardness-weighted constraints, making the validity verdict stochastic — a design the paper neither analyzes nor measures</Caveat> (§3.5.1, p.8).
+- <Caveat>Single model (GPT-4), fixed three-iteration cap, and no comparison against classical planners or non-LLM baselines</Caveat>.
+
+## Critiques and Questions
+1. The abstract honestly says "perceived quality," but the discussion drifts toward reliability claims ("deterministic boundaries," "external guardrails") that the study design cannot support — with n = 12 and no ground-truth correctness per condition, we cannot know how often the checker caught real violations versus translation artifacts.
+2. Verification grounding: model checking is exhaustive only over the model it is given, and here that model is an unverified LLM translation of LLM-generated text. Calling the pipeline formally verified conflates checker soundness with end-to-end soundness — precisely the gap between plan-text verification and TDE-style environment-state verification.
+3. Internal inconsistency: §3.4.1 says the mapping agent selects among "the seven categories" while the template defines six temporal categories (Tab.1 lists six); which is correct is Unclear.
+4. The stochastic soft-constraint mechanism (weighted sampling of which rules get checked) means two identical runs can disagree on validity; the paper never reconciles this with the "marked valid but notified" description of soft violations.
+5. Scalability is untested: all scenarios have tiny state spaces; state explosion for realistic schedules, and checker latency in the loop, go unmentioned.
+
+<SelfCheck q="VeriPlan's model checker is mechanical (PRISM/Storm) — where does trust in LLMs re-enter its verification loop?" a="In the translations: LLM agents map the prompt to constraint categories, translate to LTL, re-encode into PRISM, and separately translate the LLM's plan into a PRISM model. Users confirm only NL back-translations of the rules; the plan-to-PRISM model is never human- or mechanically verified, so the checker's verdict is only as sound as those unverified translations." />
+
+## Glossary
+- <Term def="formal verification technique that exhaustively explores all states of a system model to decide whether properties hold">model checking</Term>
+- <Term def="Linear Temporal Logic; expresses temporal properties via operators G (always), F (eventually), U (until)">LTL</Term>
+- <Term def="probabilistic model checker (Kwiatkowska et al. 2011) whose modeling language VeriPlan uses to encode rules and plans">PRISM</Term>
+- <Term def="Python API for the Storm probabilistic model checker; performs the actual verification inside VeriPlan">Stormpy</Term>
+- <Term def="discrete-time Markov chain; the model type shown for the plan encoding in Fig.5">DTMC</Term>
+- <Term def="compares several experimental conditions against one control condition (here C1 Full) with multiplicity correction">Dunnett test</Term>
+- <Term def="Usefulness, Satisfaction, and Ease of use questionnaire (Lund 2001); FATE adds Shin's perceived-performance scale">USE / FATE scales</Term>
+- <Term def="constraint the plan must satisfy to be valid; soft constraints merely notify on violation">hard constraint</Term>
+
+{/* NOTES_START */}
+### Personal notes
+For the TDE related-work section: cite as the human-in-the-loop, plan-artifact end of category D. Shares: NL compiled to checkable rules; mechanical model-checker verdicts (their §2.3 argues verbatim for verification "without relying on LLMs" — quotable support for de-circularization); iterate-until-valid loop (3 iterations). Differs: verifies plan text, not executed world state; no action-level pre/postcondition gating; human confirms rules and softens constraints (TDE hard-gates autonomously); outcomes are UX perceptions, not task success. The wedge to press: their mechanical checker adjudicates an LLM-authored model of the plan — the plan-to-PRISM translation is never verified — so mechanical adjudication does not yet mean grounded adjudication; TDE's environment-computed final state closes exactly that hole. The C4 quotes ("produce the wrong answer faster," 'a' answer vs 'the' answer) are usable motivation color.
+{/* NOTES_END */}

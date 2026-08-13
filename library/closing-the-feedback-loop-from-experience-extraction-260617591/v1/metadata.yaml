@@ -1,0 +1,84 @@
+canonical_key: arxiv-2606.17591
+version_key: v1
+title: 'Closing the Feedback Loop: From Experience Extraction to Insight Governance in Verbal Reinforcement
+  Learning'
+authors:
+- Yanwei Cui
+- Xing Zhang
+- Yulong Zhang
+- Li Shao
+- Xiaofeng Shi
+- Guanghui Wang
+- Peiyang He
+abstract: 'Training-free verbal reinforcement learning enables LLM agents to learn from world feedback
+  -- objective signals such as dynamic task outcomes, market returns, or demand forecasts -- by extracting
+  verbal rules from experience and injecting them as context, updating the agent''s behavior without parameter
+  changes. However, in non-stationary environments these agents face a retention-forgetting dilemma: retaining
+  stale insights causes negative transfer, while discarding them causes catastrophic forgetting when conditions
+  recur. We identify four requirements for navigating this dilemma -- outcome-driven evaluation, persistent
+  structured evidence, non-monotonic knowledge lifecycle, and compositional governance -- and show that
+  existing methods invest heavily in experience extraction while underinvesting in insight governance.
+  We propose a three-layer architecture -- rules, evidence, and skills -- connected by a feedback-driven
+  curation loop that closes the governance gap. Rules capture distilled experience from world outcomes;
+  evidence logs track each rule''s reliability across episodes; skills govern which rules to apply, how
+  to resolve conflicts, and when to abstain. On financial forecasting as a case study, where world feedback
+  is naturally abundant, noisy, and non-stationary, we show that the same accumulated experience either
+  degrades performance below the zero-shot baseline or dramatically improves accuracy and risk-adjusted
+  returns, depending on whether the curation loop is present.'
+venue: arXiv
+year: 2026
+source: arxiv
+source_url: https://arxiv.org/abs/2606.17591v1
+pdf_url: https://arxiv.org/pdf/2606.17591v1
+pdf_sha256: 07cfe2a23bbde5555ddeddbf5127270e6317efa2422426ff41bd00d4700f9845
+fetched_at: '2026-08-13T07:18:50Z'
+source_updated_at: '2026-06-16T06:55:55Z'
+ids:
+  doi: null
+  arxiv_id: 2606.17591v1
+  arxiv_base_id: '2606.17591'
+  arxiv_version: v1
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- agent-memory
+- reflection
+- tde-related-work
+topic_groups:
+- agent_harness
+- general_agent_methods
+scoring:
+  score: 39.1
+  label: TRACK_ONLY
+  confidence: high
+  rationale: 'score=39 -> TRACK_ONLY | strong: recency(0.92), interest_fit(0.73), venue_quality(0.40)
+    | interests: agent_harness:group:agent_harness, general_agent_methods:group:general_agent_methods'
+  matched_interests:
+  - agent_harness:group:agent_harness
+  - general_agent_methods:group:general_agent_methods
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 0.916
+    venue_quality: 0.4
+    harness_relevance: 0.36
+    novelty: 0.0
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/closing-the-feedback-loop-from-experience-extraction-260617591/v1/paper.pdf
+  extraction: library/closing-the-feedback-loop-from-experience-extraction-260617591/v1/extraction.txt
+  summary: library/closing-the-feedback-loop-from-experience-extraction-260617591/v1/summary.mdx
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread
+  summary_format: mdx

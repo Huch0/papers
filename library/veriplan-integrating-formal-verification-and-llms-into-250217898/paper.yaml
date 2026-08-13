@@ -1,0 +1,59 @@
+canonical_key: arxiv-2502.17898
+slug: veriplan-integrating-formal-verification-and-llms-into-250217898
+title: 'VeriPlan: Integrating Formal Verification and LLMs into End-User Planning'
+authors:
+- Christine Lee
+- David Porfirio
+- Xinyu Jessica Wang
+- Kevin Zhao
+- Bilge Mutlu
+year: 2025
+primary_ids:
+  doi: 10.1145/3706598.3714113
+  arxiv_base_id: '2502.17898'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2502.17898v1
+- https://arxiv.org/pdf/2502.17898v1
+topic_groups:
+- general_agent_methods
+tags:
+- human-eval
+- tde-related-work
+- verifier
+venue:
+  name: CHI
+  tier: A_star
+  status: accepted
+  year: 2025
+user:
+  read_status: unread
+  triage_label: SKIP
+  triage_confidence: medium
+  notes: null
+milestone: null
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v1
+  source: arxiv
+  source_url: https://arxiv.org/abs/2502.17898v1
+  pdf_path: library/veriplan-integrating-formal-verification-and-llms-into-250217898/v1/paper.pdf
+  summary_path: library/veriplan-integrating-formal-verification-and-llms-into-250217898/v1/summary.mdx
+  metadata_path: library/veriplan-integrating-formal-verification-and-llms-into-250217898/v1/metadata.yaml
+  fetched_at: '2026-08-13T07:16:13Z'
+  source_updated_at: '2025-02-25T06:53:00Z'
+  arxiv_version: v1
+  pdf_sha256: d31561d70dbf14bcee647679d88986d901e430d6e1fe761f242759eac7008f8e
+  pdf_bytes: 3810814
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-08-13T07:16:13Z'
+  updated_at: '2026-08-13T10:25:14Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

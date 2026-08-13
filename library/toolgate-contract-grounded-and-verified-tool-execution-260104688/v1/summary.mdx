@@ -1,0 +1,127 @@
+---
+canonical_key: arxiv-2601.04688
+version_key: v1
+title: 'ToolGate: Contract-Grounded and Verified Tool Execution for LLMs'
+authors:
+- Yanming Liu
+- Xinyue Peng
+- Jiannan Cao
+- Xinyi Wang
+- Songhang Deng
+- Jintao Chen
+- Jianwei Yin
+- Xuhong Zhang
+venue: arXiv
+year: 2026
+tags:
+- tde-related-work
+- tool-use
+- verifier
+topic_groups:
+- agent_harness
+- general_agent_methods
+triage_label: TRACK_ONLY
+triage_confidence: high
+source_link: https://arxiv.org/abs/2601.04688v1
+summary_date: '2026-08-13'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>ToolGate wraps every LLM tool call in a per-tool Hoare-style contract `{P} t {Q}` over an explicit typed key-value state: a mechanical precondition filter zeroes inadmissible tools out of the reranked candidate distribution before sampling, and a runtime postcondition check must pass before the result may commit to the trusted state — generally beating search-based tool-use baselines on ToolBench and MCP-Universe while cutting tool-calling steps by 37.9%.</TLDR>
+
+<WhyItMatters>CLOSEST-WORK #1 for TDE on the contract element. Shares with TDE: action-level `{P} a {Q}` contracts, verification as predicate evaluation (typed/structural checks, no LLM judge inside the gate), invocation gating on failed preconditions, and commit-on-verify state updates. Differs — the room TDE occupies: contracts are per-tool and task-independent; the NL instruction is never compiled into a final-world-state acceptance suite; task completion is the LLM's `Answer` action, returned with no verification at all; there is no red-green loop (only same-step next-candidate fallback, then hard `Fail`); postconditions inspect the tool's returned payload against an internal symbolic mirror of the world, never the environment's actual end state; testbeds are ToolBench/MCP-Universe, not AppWorld. Bonus for TDE's thesis: their ablation shows result-side `{Q}` checks drive success far more than input-side `{P}` gating.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "29.4%", label: "tool calls intercepted by contracts", sub: "MCP-Universe trace (Tab.3)" },
+  { value: "-10.8 vs -4.5", label: "MCP-Avg drop: remove post- vs pre-check", sub: "GPT-5.2 ablation (Tab.2)" },
+  { value: "4.21", label: "avg tool calls, down from 6.78", sub: "GPT-5.2 ToolBench, -37.9% (Fig.2)" },
+  { value: "93.0 / 90.5", label: "ToolBench G2 Pass/Win", sub: "GPT-5.2; ToolChain* 90.5 / 88.3 (Tab.1)" },
+]} />
+
+## Motivation
+Existing tool-calling frameworks let the LLM decide, in free-form natural language, when a tool may be invoked and whether its output should be trusted. <Problem>There is no explicit mechanism checking that invocation preconditions hold or that outputs meet expected postconditions</Problem>, so tools get called with insufficient or hallucinated parameters and invalid results are committed into the agent's working representation, where <Problem>errors propagate through multi-step chains and become hard to localize or debug</Problem> (§1). Two aggravators: <Problem>APIs that fail silently — HTTP 200 with an empty `results: []` payload — which unverified agents read as progress</Problem> (App.D), and <Problem>tool retrieval at 16k+-API scale, where keyword matching no longer suffices</Problem>.
+
+## Contribution (what's new)
+<Novelty>Move the admit/commit decisions out of the LLM and into predicate checks over an explicit typed symbolic state `Σ = {(k, v, σ)}` that only verified tool outputs may enter.</Novelty> The design must take this form because the targeted failure is the LLM's self-adjudication itself: any gate the model reasons about in language can be hallucinated past, so the gate is made external and deterministic. Concretely, <Novelty>the precondition is embedded into the sampling policy — an indicator `1[S ⊨ P]` zeroes out inadmissible tools and renormalizes the reranker distribution (Eq.9)</Novelty>, making gating a hard constraint on the action distribution rather than a prompt suggestion; and <Novelty>the postcondition is a commit gate — the state updates only on acceptance, otherwise the result is discarded wholesale and the tool marked failed</Novelty> (Eqs.11-12, Alg.1). A trajectory-level constraint assigns probability zero to any run violating any contract (Eq.14).
+
+## Research questions
+1. Does mechanically gating tool invocation and result commitment improve success and stability of tool-augmented LLMs, across backbones? 2. Which side of the contract matters — input-side precondition or result-side postcondition? 3. What do contracts actually intercept in real multi-tool traces?
+
+## Methodology
+A forward execution loop, not a tree search. The LLM reasons over the query, dialogue history, and a summary of the trusted state; when it emits a `<start_call_tool>` token, the system builds a tool-requirement representation, retrieves Top-K candidate tools by embedding similarity, reranks them, filters and renormalizes by precondition, samples one tool, synthesizes arguments, executes, and runs the postcondition + well-formedness check. Pass: commit to state and inject the result (tagged) into the reasoning trajectory. Fail: discard, mark the tool failed, try the next candidate; if no candidate passes, return `Fail`. Completion is the LLM emitting an answer — the answer itself is not verified.
+
+<Pass title="Method details">
+<Stepper steps={[
+  { title: "Typed symbolic state + contracts (§3.2)", body: "State S is a set of (key, value, type) tuples holding verified entities, intermediate results, and validated tool outputs. Each tool t gets a contract with precondition P_t : Σ → bool (minimal state requirements for legal invocation) and postcondition Q_t : Σ × R_t → bool (structural validity, typing correctness, semantic consistency of runtime output r_t, plus how a verified result updates S). Logical predicates over Σ express existence, type-consistency, and semantic invariants." },
+  { title: "Trigger + retrieval + rerank (§3.3)", body: "Tool use is an endogenous stochastic decision: the model estimates p(start_call_tool | q, H, S_k, R_k). On trigger, a requirement representation u_k = f(q, H, S_k, R_k) is embedded (Qwen3-embedding-0.6B) and Top-K (K=10, cosine) candidates are retrieved from the toolset, then reranked by Qwen3-Reranker-0.6B conditioned on reasoning context, symbolic state, and tool semantics (App.C)." },
+  { title: "Precondition-filtered sampling (§3.4)", body: "The rank distribution is multiplied by the indicator that S_k satisfies P_t and renormalized over admissible candidates only (Eq.9); the tool is sampled from this contract-governed policy. Algorithm 1 iterates candidates in order, skipping tools whose precondition fails and tools already marked failed." },
+  { title: "Postcondition commit gate (§3.4)", body: "After execution, acceptance A_t = 1 iff (S_k, r_t) satisfies Q_t and r_t is well-formed (Eq.11). Only then does S_{k+1} = Update_t(S_k, r_t) (Eq.12) and the tagged result enter R_{k+1}; otherwise the state is unchanged, the result discarded, the tool added to T_failed. If no candidate passes both checks, the run returns Fail (Alg.1 line 25)." },
+  { title: "Formal dressing (App.G)", body: "Single-step soundness obligation (Eq.15), a TOOL-STEP inference rule with invariants, admissibility as weakest precondition S ⊨ wp(t, true) (Eq.16), trajectory safety as a conjunction of per-step safety (Eqs.19-20), and a soundness theorem sketch by induction (Eq.21) — all conditional on contracts being sound, which is assumed, not established for the deployed contract sets. One toy instantiation (ListFiles over a symbolic file system, Eqs.22-24)." },
+  { title: "Environments (App.C)", body: "ToolBench APIs as callable nodes; MCP-Universe tools in the official sandbox with real latency, failure signals, and state-dependent outputs. All models via official APIs, temperature 0.2; identical instructions, tool descriptions, execution limits, and termination conditions across systems." },
+]} />
+
+<MathBlock>{`p^{*}(t \\mid q, H, S_k, R_k) \\;=\\; \\frac{p_{\\mathrm{rank}}(t \\mid u_k)\\,\\mathbb{1}[S_k \\models P_t]}{\\sum_{t' \\in C_k} p_{\\mathrm{rank}}(t' \\mid u_k)\\,\\mathbb{1}[S_k \\models P_{t'}]}`}</MathBlock>
+
+<MathBlock>{`A_t = \\mathbb{1}\\big[(S_k, r_t) \\models Q_t \\,\\wedge\\, \\mathrm{wf}(r_t)\\big], \\qquad S_{k+1} = \\begin{cases} \\mathrm{Update}_t(S_k, r_t) & A_t = 1 \\\\ S_k & A_t = 0 \\end{cases}`}</MathBlock>
+
+Example contracts are simple mechanical predicates: precondition `exists(location)`; postcondition `has_field("temperature") && has_field("humidity")` plus type checks (App.F). In the worked weather example, the first API's result is rejected solely for lacking a `humidity` field, and the loop falls through to a second weather API that passes.
+</Pass>
+
+## Main result
+Across four backbones (Qwen3-235B, DeepSeek V3.2, GPT-5.2, Gemini 3 Pro) and five baselines, <Finding src="Tab.1, p.6">ToolGate is best or near-best on ToolBench G1/G2/G3 Pass and Win Rate and on three MCP-Universe domains; under GPT-5.2 it reaches 85.5/83.5 (G1), 93.0/90.5 (G2), 91.8/95.3 (G3) Pass/Win</Finding>. The paper claims roughly 4-6% Win-Rate gains over the strongest baseline ToolChain* — but its own GPT-5.2 deltas are +3.5/+2.2/+2.8 (see Critiques). GPT-5.2 numbers:
+
+<SortableTable columns={["Method", "G1 Pass", "G2 Pass", "G3 Pass", "MCP Loc.", "MCP Repo.", "MCP Fin."]} rows={[
+  ["ReACT", 63.5, 65.0, 58.3, 18.87, 24.24, 65.0],
+  ["DFSDT", 70.0, 75.3, 63.8, 19.98, 27.27, 67.5],
+  ["LATS", 80.3, 88.5, 85.0, 28.86, 36.36, 82.5],
+  ["ToolChain*", 82.8, 90.5, 88.5, 29.97, 39.39, 85.0],
+  ["Tool-Planner", 75.5, 82.0, 78.3, 25.53, 30.30, 75.0],
+  ["ToolGate", 85.5, 93.0, 91.8, 35.52, 45.45, 90.0],
+]} />
+
+## Key findings
+- <Finding src="Tab.2, p.7">Without the Hoare layer, ToolGate falls to or below DFSDT</Finding>: GPT-5.2 MCP-Avg 37.6 vs DFSDT's 38.3 (same trend on DeepSeek V3.2) — the entire edge over strong search baselines comes from the contract layer, not the retrieval/rerank scaffold.
+- <Finding src="Tab.2, §5.2">Removing the postcondition hurts far more than removing the precondition</Finding>: GPT-5.2 MCP-Avg drops 10.8 points without `{Q}` checks vs 4.5 without `{P}` checks; the authors' reading is that `{P}` buys search efficiency (static pruning) while `{Q}` buys task success (dynamic rectification). Result-side verification is the load-bearing half.
+- <Finding src="Tab.3, §5.4">Contracts intercept 29.4% of all tool-invocation attempts on MCP-Universe</Finding>: `{P}` rejects 17.6% (value/entity hallucination 8.4%, schema/format violations 5.1%, missing state dependencies 4.1%); `{Q}` rejects 11.8% (empty/null "silent failures" 6.3%, semantic constraint mismatch 3.7%, state-update inconsistency 1.8%).
+- <Finding src="Fig.2, §5.3">A verified forward loop out-navigates tree search while calling fewer tools</Finding>: average tool-calling steps 6.78 to 4.21 on GPT-5.2 (-37.9%), attributed to pruning branches that are logically destined to fail before execution.
+- <Finding src="Tab.1">The "model-agnostic" claim has real exceptions on G3 Win Rate</Finding>: under DeepSeek V3.2 ToolGate scores 81.3 vs ToolChain* 88.8 and LATS 85.5; under Qwen3-235B, 82.3 vs ToolChain* 83.5 — precisely on the hardest multi-tool group.
+- <Finding src="Tab.1, §5.1">Gains are largest where long-horizon tool dependencies dominate</Finding>: MCP Repository Management 45.45 vs 39.39 (ToolChain*, GPT-5.2) and Financial Analysis 90.0 vs 85.0.
+
+## Implications
+This is the strongest published instance of the "contracts around every tool call" design: it shows mechanical, per-action gating is worth several points over the best <Related>search-based planners (DFSDT, LATS, ToolChain*)</Related> and their own <Related>Tool-Planner (same first author)</Related>, and it sits in the lineage bringing <Related>formal verification to LLM planning (VeriPlan, VerifyLLM, FVEL)</Related>. For TDE, its ablation is friendly ammunition: outcome-side checks (`{Q}`) matter far more than input-side gating — TDE pushes that logic one level up, from per-tool payload postconditions to a task-level acceptance suite over the final world state, which ToolGate simply does not have (its runs end on an unverified LLM `Answer`, or on `Fail` when no tool passes). <FollowUp>Where contracts come from at 16k-API scale — automating extraction from docs, and what error rate extracted contracts themselves have</FollowUp>. <FollowUp>Head-to-head: per-step contracts vs final-state acceptance tests vs both — does step-gating still pay once a task-level suite exists?</FollowUp> <FollowUp>Whether MCP-Universe's own execution-level evaluators (84 evaluators, static + dynamic ground truth) could be turned into runtime acceptance suites in the TDE sense rather than post-hoc grading.</FollowUp>
+
+## Limitations
+- <Caveat>The Conclusion and Limitations sections describe a different paper</Caveat>: they present "ToolGate" as an evaluation benchmark measuring when models should refuse tools and diagnosing "over-reliance" — none of which appears in the body. This looks like text imported from another manuscript; treat the author-stated limitations below with corresponding caution.
+- Author-stated: <Caveat>text-based/structured interactions only (no multi-modal tools)</Caveat>; <Caveat>largely static evaluation environment (no rate limits, latency spikes, fluctuating data)</Caveat>; <Caveat>quantitative metrics only; possible prompt-strategy bias across models</Caveat> (p.9).
+- <Caveat>Contract provenance is not reported</Caveat>: §4.1 says structured functional representations are "extracted" from official tool documentation, but never says by whom or what — manual, scripted, or LLM-generated. If LLM-generated, the mechanical-verification story partially re-circularizes.
+- <Caveat>The predicate evaluator's implementation is never described</Caveat>: structural/type checks are clearly programmatic in the examples, but how "semantic consistency" predicates (3.7% of rejections) are computed is Not reported.
+- <Caveat>Evaluation coverage and rigor</Caveat>: 3 of MCP-Universe's 6 domains (118 of 231 tasks) with no exclusion rationale; single runs, no variance or seeds; ToolBench Pass/Win adjudicated by LLM judges (ToolEval), with Win Rate measured against a Qwen3-235B-ReACT reference.
+- <Caveat>The safety guarantee protects only the internal state store</Caveat>: hallucinations can still live in the reasoning trajectory and the final answer, which is returned unchecked.
+
+## Critiques and Questions
+1. Who writes `{P}` and `{Q}` for 16,464 APIs? The single biggest omission. Contract quality is the load-bearing assumption of the soundness sketch (Eq.15 assumes sound contracts), and nothing in the paper measures contract error — e.g., how many of the 29.4% interceptions were *correct* rejections. The worked weather example actually shows an over-strict contract rejecting a serviceable result because `humidity` was missing — a field the user never asked for. Rejection precision: Not reported.
+2. Per-tool schema validity is conflated with task progress. `{Q}` certifies the payload looks right, not that the call advanced the user's goal; a well-formed but irrelevant result commits happily. This is exactly the gap between tool contracts and a task-goal acceptance suite.
+3. The claimed "approximately 4-6%" Win-Rate edge over ToolChain* does not match Table 1: GPT-5.2 deltas are +3.5/+2.2/+2.8, and on G3 Win the method *loses* by 7.5 (DeepSeek) and 1.2 (Qwen). The headline is overstated relative to the paper's own numbers.
+4. The formal apparatus overreaches what is computed. Admissibility is defined via weakest precondition `S ⊨ wp(t, true)` (Eq.16), which quantifies over the not-yet-observed execution result — uncheckable before calling the tool; the deployed check is plainly `S ⊨ P_t`. Likewise Alg.1 checks the precondition *before* arguments are synthesized, yet §5.4 credits `{P}` with intercepting hallucinated parameters (invalid IDs/paths) — where parameter validation actually hooks in is unclear.
+5. Where does the initial trusted state come from? The examples show `S_0` pre-populated with slots (topic, platform, content_type) parsed from the query by an unspecified process — if that parsing is LLM-based, "trusted" state bootstraps from unverified extraction.
+6. The editorial mismatch in the Conclusion (see Limitations) plus a mid-count example inconsistency (2 listed results, `result_count: 19`) suggest a rushed assembly; numbers should be treated as provisional until an updated version or code release. Code: Not reported.
+
+<SelfCheck q="What exactly does ToolGate verify before a tool result can change the agent's state, and what does it never verify?" a="It verifies the postcondition Q_t(S_k, r_t) plus well-formedness of r_t: structural validity (required fields), typing, and semantic-consistency predicates of the returned payload against the typed symbolic state; only on acceptance does the state commit. It never verifies the environment's actual end state after side effects, and it never verifies the final natural-language answer — Algorithm 1 returns the LLM's Answer action unchecked." />
+
+## Glossary
+- <Term def="a program-logic assertion: if precondition P holds before executing C and C terminates, postcondition Q holds after (Hoare 1969)">Hoare triple</Term> — here per tool: `{P} t {Q}`, with P over the symbolic state and Q over state x runtime result.
+- <Term def="the agent's trusted memory: a set of (key, value, type) tuples containing only query-derived slots and postcondition-verified tool outputs">symbolic state</Term> — a mirror of the world inside the harness, not the environment's own state.
+- <Term def="the weakest state formula guaranteeing a command can execute and achieve a given postcondition; ToolGate uses wp(t, true) to define admissibility on paper">weakest precondition</Term>
+- <Term def="16,464 real RapidAPI RESTful APIs, 49 categories; instruction-solution pairs built with DFSDT; G1/G2/G3 splits test unseen instructions, tools, and categories">ToolBench</Term> / <Term def="ToolBench's LLM-judge evaluation: Pass Rate (task completion) and Win Rate (pairwise preference vs a reference system)">ToolEval</Term>
+- <Term def="231 tasks against 11 real Model-Context-Protocol servers across 6 domains, graded by 84 format/static/dynamic execution-level evaluators (Luo et al. 2025)">MCP-Universe</Term>
+- <Term def="depth-first search decision tree (Qin et al. 2023): on error, expose the failure history and re-plan; ToolBench's native strong baseline">DFSDT</Term>, <Term def="lookahead tree search over candidate tool sequences (Zhou et al. 2024)">LATS</Term>, <Term def="A*-style search over the tool-action space (Zhuang et al. 2024); the strongest baseline here">ToolChain*</Term>
+- <Term def="an API returning a success status (HTTP 200) with an empty or vacuous payload; the failure mode postconditions catch 6.3% of the time">silent failure</Term>
+
+{/* NOTES_START */}
+### Personal notes
+For the TDE novelty defense, the precise characterization: ToolGate = per-tool, task-independent contracts gating invocation + payload commitment into an *internal* typed state; completion is LLM-declared and unverified; no instruction-to-test compilation, no red-green iteration (candidate fallback then Fail is not a repair loop), no final-world-state checking, no AppWorld. Its own ablation (`{Q}` worth 10.8 pts vs `{P}` 4.5) argues outcome-side mechanical verification is where the value is — cite this as convergent evidence, then differentiate on *what* is verified (task goal over environment end-state vs per-call payload shape) and *when* (until the suite passes vs once per call).
+
+Integrity flags to remember when citing: conclusion/limitations describe a different (benchmark) paper; "4-6%" Win-Rate claim not supported by Table 1; contract provenance and checker implementation unreported; no code. Venue: PDF is ACL-template with Limitations/Ethics sections but contains no acceptance statement — S2's "ACL 2026" not confirmable from the paper; keep venue=arXiv until checkable.
+{/* NOTES_END */}

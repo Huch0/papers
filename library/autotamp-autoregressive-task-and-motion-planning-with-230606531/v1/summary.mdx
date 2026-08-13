@@ -1,0 +1,117 @@
+---
+canonical_key: arxiv-2306.06531
+version_key: v1
+title: 'AutoTAMP: Autoregressive Task and Motion Planning with LLMs as Translators and Checkers'
+authors:
+- Yongchao Chen
+- Jacob Arkin
+- Charles Dawson
+- Yang Zhang
+- Nicholas Roy
+- Chuchu Fan
+venue: The 2024 International Conference on Robotics and Automation
+year: 2023
+tags:
+- planner-executor-verifier
+- tde-related-work
+topic_groups:
+- general_agent_methods
+triage_label: SKIP
+triage_confidence: medium
+source_link: https://arxiv.org/abs/2306.06531v3
+summary_date: '2026-08-13'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>Instead of letting an LLM plan, AutoTAMP has it few-shot translate a natural-language task (with temporal and geometric constraints) into <Term def="Signal Temporal Logic: temporal logic over continuous-time trajectories with real-time interval operators (eventually/always/until)">STL</Term> that a formal joint task-and-motion planner solves — wrapped in two corrective re-prompting loops: a mechanical syntax check, and a novel "autoregressive" semantic check in which the LLM itself judges whether the planner's output plan matches the instruction.</TLDR>
+
+<WhyItMatters>Category-D relative for TDE: it shares the compile-NL-to-a-formal-spec move, an external solver, and a red–green re-prompting loop — but its acceptance object is pre-execution plan validity, not a post-execution acceptance suite over the final world state, and only the *syntax* gate is mechanical: the semantic gate ("does the plan match the instruction?") is adjudicated by the LLM itself — exactly the circular adjudication TDE removes. Mechanical task-success checkers exist in this paper only as offline evaluation harness, and there is no per-action pre/postcondition gating during execution — a clean foil for the novelty defense.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "87.7%", label: "Chip's Challenge success (hard geometric)", sub: "GPT-4 AutoTAMP vs 0.0% for every LLM-as-planner baseline (Tab.I)" },
+  { value: "43.5→82.5%", label: "correction-loop ablation, HouseWorld1", sub: "GPT-4: raw translation → +syntax → +semantic re-prompting (Tab.I)" },
+  { value: "1400", label: "published test cases", sub: "6 scenarios (3 single-, 3 multi-agent), GPT-3 & GPT-4, ~1500 USD API" },
+]} />
+
+## Motivation
+<Problem>When instructions carry hard temporal and geometric constraints, the task plan and motion plan must be optimized jointly — for "reach all locations via the shortest path", the visit order depends on environment geometry — so factoring the problem into LLM-planned sub-goals handed to a motion planner is untenable</Problem> (§I). Prior LLM approaches either <Problem>use LLMs as direct task planners, which struggle with temporally-dependent multi-step actions, action-sequence optimization, and constraints on task execution</Problem>, or emit trajectories end-to-end, which fails outright from poor spatial/numerical reasoning (Fig.2). NL-to-formal-spec translation existed, but <Problem>prior targets (LTL, PDDL goals/problems) miss continuous real-time constraints, and open-loop translation yields both syntax errors and semantic misalignment — and while a syntax verifier can drive corrective re-prompting, no external verifier exists for semantic misalignment</Problem> (§I).
+
+## Contribution (what's new)
+<Novelty>Reposition the LLM at the specification boundary — translator and checker, not planner: few-shot translate NL to STL and let a formal multi-agent STL planner jointly solve task sequencing and motion</Novelty>, getting STL's expressivity for real-time constraints plus solver guarantees the LLM lacks. The second delta is <Novelty>an autoregressive semantic re-prompting loop: the planner's output state sequence is fed back to the LLM alongside the original instruction, and the LLM decides whether the plan aligns with the instruction's semantics, rewriting the STL if not</Novelty> — the first automated correction signal for the error class that has no external verifier (syntax reuses the verifier-in-the-loop technique of Skreta et al.). The design must take this form because feasibility must live in the solver (LLM planners score 0% under hard geometric constraints), while translation error dominates the residual — so each error class gets its own closed loop.
+
+## Research questions
+1. Does LLM-as-translator + formal planner beat LLMs-as-planners on TAMP with hard geometric/temporal constraints? 2. How much do syntactic and semantic correction loops each contribute? 3. Is few-shot translation with a pre-trained LLM competitive with a fine-tuned NL-to-temporal-logic model (NL2TL)?
+
+## Methodology
+Input is a text description of the environment (named polygonal regions), five in-context examples, and the NL instruction; output is a trajectory as timed waypoints `(x_i, y_i, t_i)` (linear interpolation, max-velocity and time-limit constraints). The LLM translates the instruction to STL over `enter(room)` / `not_enter(room)` primitives; a rules-based checker repairs syntax via re-prompting; the STL planner of Sun et al. 2022 (MILP-based, multi-agent) optimizes a trajectory maximizing formula validity; then the semantic loop re-prompts the LLM with instruction + STL + the planner's state sequence to catch misalignment. Baselines share the same STL planner for motion, isolating where the LLM sits in the stack.
+
+<Pass title="Method and experiment details">
+<Stepper steps={[
+  { title: "Translate NL → STL", body: "Few-shot (5 examples). STL chosen over LTL/PDDL for continuous real-time constraints and joint task-motion planning. Best of six candidate prompt sets used; prompt variance reported as insignificant relative to method gaps (§IV)." },
+  { title: "Syntax loop (mechanical)", body: "A simple rules-based STL syntax checker feeds specific errors back for corrected STL; repeat until clean, up to 5 iterations (adopted from Skreta et al. [20])." },
+  { title: "Plan (formal solver)", body: "Sun et al. 2022 multi-agent STL planner: piece-wise linear timed-waypoint paths, recursively encodes the STL constraints, optimizes trajectory validity and time efficiency under max-velocity dynamics. Assumes all object/room locations and shapes are known." },
+  { title: "Semantic loop (LLM-judged)", body: "The planner's state sequence, e.g. [[in(road), 0], [in(red_kitchen), 0.5], ...], is given to the LLM with the original instruction; the LLM judges alignment and, if misaligned, edits the STL, re-entering both loops. Terminates on no detected error or unchanged STL, up to 3 iterations." },
+]} />
+
+<MathBlock>{`\\varphi ::= \\pi^{\\mu} \\;|\\; \\lnot\\varphi \\;|\\; \\varphi\\land\\phi \\;|\\; \\varphi\\lor\\phi \\;|\\; F_{[a,b]}\\varphi \\;|\\; G_{[a,b]}\\varphi \\;|\\; \\varphi\\, U_{[a,b]}\\phi`}</MathBlock>
+
+Scenarios (§IV): HouseWorld1 (single-agent, no hard time limit), HouseWorld2 (same, hard time limit set from the correct trajectory at 0.8 max velocity), Chip's Challenge (single-agent, key–door geometric/logical dependencies), and multi-agent Overcooked, Rover, Wall (all hard time + geometric constraints). Instructions: 10 hand-written HouseWorld instructions each GPT-4-paraphrased into 9 variants (100 instructions × 2 start/end pairs = 200 cases); each rule-based scenario paraphrased into 20 human-checked variants × 3 environment instances × 5 start/end pairs (300 cases each) — 1400 total, all released with generated STL and trajectories. Baselines: LLM end-to-end motion planning (≤5 violation-feedback re-prompts), Naive Task Planning (Huang et al.), SayCan (K=5), Task Planning + Feedback (Text2Motion-like); sub-tasks are converted to STL and executed by the same planner. Success is judged by hard-coded trajectory checkers; runs over 90 minutes count as failure. Full grid: ~2 weeks on four 16-core CPUs, ~1500 USD of API calls. SayCan and Task Planning + Feedback are omitted in multi-agent scenarios (per-agent completion times make the feedback timing ill-defined).
+</Pass>
+
+## Main result
+Wherever hard geometric or temporal constraints exist, AutoTAMP dominates LLMs-as-planners: <Finding src="Tab.I, p.5">on Chip's Challenge every LLM-as-planner baseline scores 0.0% while AutoTAMP reaches 87.7% (GPT-4; 74.3% with GPT-3)</Finding>, and <Finding src="Tab.II, p.5">on multi-agent Overcooked/Wall AutoTAMP (GPT-4) hits 100.0% vs 17.0%/47.0% for naive task planning</Finding>. The honest flip side: <Finding src="Tab.I, p.5">on unconstrained HouseWorld1, LLM task planners win (92.0% vs AutoTAMP's 82.5%)</Finding> — with direct paths always feasible, AutoTAMP's only failure source is translation error.
+
+<SortableTable columns={["Method (GPT-4)", "HouseWorld1", "HouseWorld2 (T)", "Chip's (G)", "Overcooked (G+T)", "Rover (G+T)", "Wall (G+T)"]} rows={[
+  ["End-to-end motion planning", 9.5, 9.5, 0, 5.0, 0, 6.0],
+  ["Task planning (naive)", 90.0, 45.0, 0, 17.0, 0, 47.0],
+  ["SayCan", 90.0, 47.5, 0, "—", "—", "—"],
+  ["Task planning (feedback)", 92.0, 49.0, 0, "—", "—", "—"],
+  ["Translate only, no corrections", 43.5, 42.0, 42.7, 85.0, 46.0, 95.0],
+  ["+ syntax loop", 59.5, 59.0, 70.0, 94.0, 67.0, 95.0],
+  ["AutoTAMP (+ syntax + semantic)", 82.5, 82.0, 87.7, 100.0, 79.0, 100.0],
+  ["NL2TL translator + both loops", "—", 83.5, 86.0, 100.0, 79.7, 100.0],
+]} />
+
+## Key findings
+- <Finding src="Tab.I, p.5">Constraint type flips the ranking</Finding>: adding only a hard time limit (HouseWorld1 → HouseWorld2) collapses GPT-4 task planners from 90–92% to 45–49%, while AutoTAMP barely moves (82.5% → 82.0%).
+- <Finding src="Tab.I–II, p.5">Both correction loops matter, everywhere</Finding>: syntax correction then semantic correction improve every scenario, e.g. GPT-4 HouseWorld1 43.5% → 59.5% → 82.5%; GPT-3 Overcooked 25.0% → 70.0% → 89.0%.
+- <Finding src="Tab.I–II, §V">Few-shot translation ≈ fine-tuned translation</Finding>: swapping GPT-4 translation for NL2TL (T5-large fine-tuned on 30K instruction–logic pairs; GPT-4 still does correction) changes results marginally (82.0→83.5 HouseWorld2, 79.0→79.7 Rover, ties at 100.0) — in-context learning suffices without training data.
+- <Finding src="Fig.2, Tab.I–II">LLMs cannot emit trajectories</Finding>: end-to-end motion planning stays at 0–9.5% (GPT-4) even with five violation-feedback re-prompts.
+- <Finding src="§V">Failure-mode split</Finding>: task-planner failures come from execution-time violations, long-horizon sequencing (collecting keys for future doors), and multi-agent collisions; translator-pipeline failures are residual mistranslations that survive both loops.
+- <Finding src="§V">Transfer demos</Finding>: 3D drone and tabletop-manipulation simulations (semantic check disabled; a simple discrete planner added for mode transitions) and physical Robotarium runs with a control-barrier-function tracking controller and obstacle padding.
+
+## Implications
+The load-bearing lesson for agent design: put the LLM at the spec boundary and keep solving mechanical — and close a loop on each error class you can detect. It extends the <Related>verifier-driven re-prompting of Skreta et al. [20]</Related> from syntax to semantics (at the price of an LLM judge), and positions itself against <Related>LLM-planner lines (Huang et al., SayCan, Inner Monologue, Text2Motion)</Related> and <Related>NL-to-spec translation lines (LLM+P, Lang2LTL, NL2TL, DeepSTL)</Related>. <FollowUp>Whether the semantic gate can be de-circularized — e.g. replaced by an executable acceptance check over the final state, as TDE proposes, rather than an LLM reading a state sequence</FollowUp>; <FollowUp>whether the "no change in STL" stopping rule locks in confident mistranslations</FollowUp>; <FollowUp>runtime cost reduction for the re-prompt × MILP-planner loop</FollowUp>.
+
+## Limitations
+- <Caveat>The semantic checker is the LLM itself, and its judging accuracy is never measured</Caveat> — no precision/recall against the hard-coded ground-truth checkers, though the 1400 released cases would support exactly that analysis. Residual failures are still mistranslations.
+- <Caveat>High planning cost (author-stated)</Caveat>: multiple LLM + MILP iterations; a 90-minute-per-case timeout counted as failure; the full evaluation took ~2 weeks on four 16-core CPUs and ~1500 USD in API calls. Per-case runtime distribution: Not reported.
+- <Caveat>All verification is pre-execution</Caveat>: the loops close over the planned trajectory in a fully known, static 2D world (`enter`/`not_enter` primitives only); nothing re-checks the plan against execution observations — physical demos rely on trajectory tracking plus obstacle padding.
+- <Caveat>Best-of-six prompt selection (author-stated)</Caveat>; authors argue method-level trends persist across prompts.
+- <Caveat>The STL planner does not handle manipulation (author-stated)</Caveat>; multi-agent comparisons omit SayCan/feedback baselines; single evaluation pass, no variance or significance reported.
+
+## Critiques and Questions
+1. The semantic loop re-introduces the circularity the syntax loop escapes: the same model that mistranslated adjudicates alignment, reading a symbolic state sequence it may misinterpret the same way. How often does it green-light a wrong plan? The data to answer existed; the paper doesn't report it.
+2. Translation is the persistent bottleneck (17.5–18% residual failure on HouseWorld even for GPT-4 with both loops) — is STL itself an LLM-hostile target language, and would a constrained decoder or grammar-guided generation beat re-prompting?
+3. Test instructions were largely GPT-4 paraphrases of a few seed instructions, and GPT-4 is also the evaluated translator — a possible favorable-distribution bias the paper does not discuss.
+4. The 90-minute timeout conflates planner blow-ups with wrong plans; the split between timeout failures and semantic failures is Not reported.
+
+<SelfCheck q="What exactly does AutoTAMP's semantic check compare, and who adjudicates it?" a="It compares the original NL instruction against the STL planner's output state sequence (timed region-entry events), with the generated STL as context — and the adjudicator is the LLM itself, re-prompted to judge alignment and rewrite the STL if misaligned. Only the syntax check is mechanical (rules-based verifier); ground-truth task success is checked by hard-coded evaluators used only offline for the experiments." />
+
+## Glossary
+- <Term def="task and motion planning: jointly finding a discrete action sequence and continuous motions that realize it">TAMP</Term>
+- <Term def="linear temporal logic: discrete-time temporal operators; less expressive than STL for continuous real-time constraints">LTL</Term>
+- <Term def="Sun et al. 2022: multi-agent MILP-based planner that encodes an STL formula's validity over piece-wise linear timed-waypoint trajectories and optimizes it">STL planner [23]</Term>
+- <Term def="modular NL-to-temporal-logic pipeline using a T5-large fine-tuned on 30K instruction-logic pairs (Chen et al. 2023)">NL2TL</Term>
+- <Term def="pick the next sub-task from top-K candidates by combining LM likelihood with an affordance/feasibility likelihood (Ahn et al. 2022)">SayCan</Term>
+- <Term def="remotely accessible multi-robot testbed used for the physical demos (Wilson et al. 2020)">Robotarium</Term>
+- <Term def="controller-level safety filter guaranteeing collision avoidance while tracking a reference trajectory">control barrier function</Term>
+
+{/* NOTES_START */}
+### Personal notes
+For the TDE novelty defense, the precise characterization: AutoTAMP mechanizes *syntax* (rules-based verifier) and *feasibility* (MILP planner), but delegates *semantic acceptance* to an LLM self-check over the planned state sequence — pre-execution, no runtime observation ever feeds verification, and the genuinely mechanical task-success checkers are quarantined in the evaluation harness. TDE's delta in one line: make the semantic gate itself executable (acceptance suite over the final world state, environment-evaluated) and move gating into execution (per-action pre/postconditions), rather than asking the translator to grade its own translation. The ablation (43.5→59.5→82.5) is useful ammunition that closing loops on formal artifacts is where the gains are.
+
+Follow-ups: Sun et al. 2022 [23] (the STL planner), Skreta et al. 2023 [20] (syntax re-prompting origin), NL2TL [21], LLM+P [16] as the PDDL-flavored sibling.
+{/* NOTES_END */}

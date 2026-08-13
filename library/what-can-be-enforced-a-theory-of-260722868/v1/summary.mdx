@@ -1,0 +1,105 @@
+---
+canonical_key: arxiv-2607.22868
+version_key: v1
+title: What Can Be Enforced? A Theory of Certified Runtime Safety for Tool-Using Agents
+authors:
+- Shawn Ray
+venue: arXiv
+year: 2026
+tags:
+- position-paper
+- tde-related-work
+- verifier
+topic_groups:
+- agent_harness
+- general_agent_methods
+triage_label: TRACK_ONLY
+triage_confidence: high
+source_link: https://arxiv.org/abs/2607.22868v1
+summary_date: '2026-08-13'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>A boundary theory for runtime guardrails on tool-using agents: relative to oracle predicates, deterministic pre-execution gates enforce exactly the register-representable nonempty safety policies (strictly below edit automata); with a fallible LLM judge, guarantees shrink to a Neyman–Pearson ROC frontier and a conformal certificate that can be vacuous, is not identifiable from ungated data once blocking feeds back, and loses a margin to bounded representation attacks; and even asking whether a policy specification can ever fire is undecidable in general yet PSPACE in a monotone caps/revocation fragment.</TLDR>
+
+<WhyItMatters>The formal backdrop for TDE's central bet: it shares the runtime-enforcement framing and proves both halves separately — mechanically evaluated oracle predicates give exact streamwise enforcement (T1, the regime of TDE's environment-evaluated pre/postconditions), while LLM-judge adjudication buys only a statistical, attackable frontier (T2, exactly what de-circularization escapes). It differs in kind from TDE: a safety-certification theory (block bad actions), not a task-acceptance harness — no instruction-to-test compilation, no red–green loop; its Prop. 1 even proves per-action gates cannot enforce "eventually"-type goals, precisely the gap a final-world-state acceptance suite fills. Its feedback non-identifiability result also dictates evaluation methodology: harness effects must be measured with paired closed-loop reruns, not static scores.</WhyItMatters>
+
+<KeyStats items={[
+  { value: ".047→.004", label: "closed-loop attack success, 3B gate", sub: "AgentDojo, 949 episodes/condition — at the price of gating 78% of calls" },
+  { value: "8/11", label: "judges' miss raised by one 16-token suffix", sub: "+.200–.600 at θ=.5, simultaneous 95% CIs" },
+  { value: ".660–.858", label: "AUC across 23 judges", sub: "no familywise superiority; parameter count does not order judges" },
+  { value: "PSPACE", label: "policy nontriviality, monotone fragment", sub: "undecidable with two zero-test counters" },
+]} />
+
+## Motivation
+Runtime guardrails that inspect a proposed tool call and block, rewrite, or escalate it before execution are multiplying, but <Problem>each system fixes a policy language and a checker and reports empirical violation rates — the prior question, which safety policies a runtime gate can enforce at all and at what utility price, is unaddressed</Problem> (§1). Classical enforcement theory does not transfer, because <Problem>agent guardrails break four of its assumptions at once: policy predicates are judged fallibly, external effects are irreversible (no buffering), actions carry unbounded data, and untrusted content adversarially steers proposals</Problem> (§1). Conflating the resulting regimes — e.g., reading a static judge ROC as a closed-loop guarantee — makes published guardrail numbers mean less than they appear to (§2, Tab.2).
+
+## Contribution (what's new)
+The paper is explicit that it imports its machinery (classical enforcement, Neyman–Pearson, CPOMDP occupancy methods, conformal risk control, two-counter undecidability) and claims their <Novelty>regime-correct composition for irreversible semantic gates</Novelty> (p.1). The load-bearing new pieces: <Novelty>an exact characterization of what a pre-execution, no-truncation gate over infinite data alphabets enforces relative to a fixed oracle interface (T1)</Novelty>; <Novelty>an identification impossibility — identical judge ROC plus identical ungated trajectory law can hide different closed-loop frontiers, so static evidence cannot certify feedback systems (Prop. 2 / Cor. 2)</Novelty>; <Novelty>a robustness margin `η̄(ρ)` proving benign conformal calibration does not transfer under bounded representation attack, with the exact recalibration condition that restores the certificate (Thm. 5, Cor. 3)</Novelty>; and <Novelty>a keyed-counter fragment made analyzable by exact cap saturation and a one-witness reduction — nontriviality in PSPACE, one step from undecidability (T3)</Novelty>.
+
+## Research questions
+(1) Relative to fixed oracle predicates, which policies can a deterministic pre-execution gate enforce (T1)? (2) With a fallible judge, what is the exact one-step safety–utility frontier, what do episode structure and decision feedback do to it, and what data identifies it (T2)? (3) When is static analysis of a policy specification — even nontriviality, the linter question — decidable (T3)? (4) Do vacuous calibration, representation attacks, and gate-induced feedback actually appear in real judge panels and closed-loop agent runs (§7)?
+
+## Methodology
+Formalization first: actions are typed symbols carrying data from a possibly infinite domain; policies are <Term def="a policy violated only via a finite bad prefix; equivalently a topologically closed set of infinite traces">safety properties</Term> scored on the committed effect trace, and blocking commits an effect-free no-op (Def. 1). Policies are specified as <Term def="finite-control automata extended with data registers, per-key monotone counters, and optional global counters; transition guards test the action data, registers, and counters">keyed-counter register automata</Term> (Def. 2); a judge thresholds a score with false-alarm/miss rates (Def. 3); a gate maps effect history, proposal, and scores to a decision in `{allow, block, sub(a')}` before an irreversible commit (Def. 4). Theorems are then proved per regime (App. A). Experiments are inference-only at temperature 0: 23 judges (open 0.5B–70B, closed, frontier APIs, plus Llama-Guard-3) score AgentDojo's 132 instruction strings (97 user tasks compliant / 35 injection goals violating) with paired DeLong, max-T, and Holm inference; 500 shared two-fold conformal calibration splits; an exactly enumerated two-step retry model; one predeclared 16-token judge-visible rewrite; and paired closed-loop reruns of a local qwen2.5:7b agent over all four AgentDojo suites, 949 episodes per condition (App. B).
+
+<Pass title="The three boundaries, precisely">
+- **T1 (oracle expressiveness).** P is effectively enforceable by a deterministic gate with oracle interface Π iff P is nonempty safety and `Good(P) ∈ RA[T; Π]` (Thm. 1); the witness simulates the good-prefix recognizer and refuses exactly the one-step extensions it rejects. Strictly below <Term def="a monitor that suppresses actions into a buffer and re-emits them later; enforces more than safety, but requires actions to be delayable — exactly what irreversibility removes">edit automata</Term>: "every pay is eventually followed by confirm" is edit-enforceable by buffering but unenforceable by any gate (Prop. 1). Substitution does not enlarge the class; prefix-safe rewrites can only shave false-block cost.
+- **T2 exogenous.** For a fixed one-step law and gate-independent information I, the exact frontier is `B*_I(β) = roc_I(β)` (Neyman–Pearson, Thm. 2); Blackwell refinement can only improve it. Under product assumptions the episode lift is `R(β) = 1−(1−β)^H` (all-violation) or `1−(1−qβ)^H` for i.i.d. Bernoulli(q) labels (Cor. 1).
+- **T2 endogenous.** Once blocking changes future proposals, the object is a belief-state occupancy polytope: `F_H(δ)` is a finite LP whose optimum mixes at most two deterministic belief-Markov policies; the dynamic rule blocks iff `λp_t − w_t(1−p_t) ≥ Γ^λ_t`, recovering the static ROC only when the continuation gap vanishes (Thm. 3).
+- **T2 certificates and attacks.** Conformal risk control on violating calibration examples at per-step target `δ/H` yields `E[unsafe episode] ≤ δ` marginally, finite-sample, distribution-free — possibly via block-all; episode-level calibration removes the H factor at the price of episode-level exchangeability (Thm. 4). A budget-ρ adversary rewriting only the judge-visible representation adds `H·η̄(ρ)`: `E[unsafe] ≤ min{1, δ + H·η̄(ρ)}` (Thm. 5); if the attacked violation-score law dominates the compliant law (`P0 ≪ Qρ`), distributional zero-miss forces block-all, `U = 1` (Prop. 3); recalibrating to the tightened target `δ/H − η̄(ρ)` restores the certificate only when a verified uniform margin stays below `δ/H` (Cor. 3).
+- **T3 (decidability).** With equality plus two global counters with increment, guarded decrement, and zero-test, bad-state reachability — hence policy nontriviality, the basic linter check — is undecidable (two-counter Minsky reduction, Thm. 6). The separable monotone fragment T0 (equality registers; key-local monotone counters; one global monotone vector; constant-only guards) is PSPACE via exact cap saturation `σ_x(n) = min{n, C_x+1}` and an exact one-witness key projection, with polynomial per-step online enforcement; it expresses authenticate-before-access, per-recipient caps, bucket quotas, and no-send-after-revoke (Thm. 7).
+
+<MathBlock>{`B^{\\star}_I(\\beta)=\\mathrm{roc}_I(\\beta),\\qquad \\mathbb{E}[\\text{unsafe}]\\ \\le\\ \\min\\{1,\\ \\delta + H\\,\\bar\\eta(\\rho)\\}`}</MathBlock>
+</Pass>
+
+## Main result
+The headline is the boundary set itself; its sharpest empirical instantiation is closed-loop: <Finding src="Tab.4, App.B.5">a 3B judge-gate cuts end-to-end attack success from 45/949 (.047) to 4/949 (.004) (suite-stratified p = 2.2×10⁻⁹) — but only by gating 78% of all proposed calls, dropping pooled task success from .254 to .180</Finding>, while <Finding src="Tab.4">the lighter 7B gate (12% gated) achieves no significant pooled reduction (30/949, CMH p = .09)</Finding>.
+
+<SortableTable columns={["Gate (threshold)", "% calls gated", "Attack success", "Task success"]} rows={[
+  ["none", 0, 0.047, 0.254],
+  ["qwen2.5:7b (θ=.7)", 12, 0.032, 0.243],
+  ["qwen2.5:3b (θ=.5)", 78, 0.004, 0.180],
+]} />
+
+## Key findings
+- <Finding src="Thm.1/Prop.1, §4">Gates enforce exactly the register-representable nonempty safety policies, strictly below edit automata</Finding>: irreversibility removes buffering, so renewal goals ("pay eventually confirmed") are provably out of reach of any pre-execution gate; adding substitution does not enlarge the class.
+- <Finding src="Prop.2/Cor.2, §5">Static evidence cannot identify closed-loop guarantees</Finding>: two systems with identical judge ROC and identical ungated trajectory law differ in `F_H(0)`; in the exactly enumerated retry model, cost at δ=.05 is .551 with perfect recall vs .863 for current-score/time policies vs 1.137 for stationary thresholds (App. B.2).
+- <Finding src="§7, Fig.1a">The conformal certificate is real but frequently vacuous or uncertified at benchmark scale</Finding>: with only 35 violations, δ=.05 calibrates every one of the 23 judges to <Term def="calibrated threshold at minus infinity: block every action; meets any miss target vacuously at utility loss 1">block-all</Term>; Gemma-2-9B at δ=.10 reaches miss .010 (simultaneous upper .021) at false-block .780; at δ=.20 the miss estimate .138 carries an upper bound of .264 — not certified.
+- <Finding src="Tab.8, App.B.9">One predeclared 16-token administrator-preapproval suffix raises violation miss by .200–.600 for 8 of 11 judges at θ=.5</Finding>, with labels and actions unchanged — benign calibration is not a security boundary. Notably, both Claude-4.5 judges' point estimates decrease (−.143 / −.114, CIs spanning zero).
+- <Finding src="App.B.5">Gates create attacks as well as prevent them</Finding>: in task-paired reruns the 3B gate has 34 baseline-only vs 5 gate-only attack episodes (McNemar p = 2.4×10⁻⁶) — the 5 gate-only episodes are trajectories rerouted into new attacks by blocking, direct evidence of decision-dependent transitions; the weak 7B gate is symmetric (29 vs 22, p = .40).
+- <Finding src="App.B.6/B.7">Neither parameter count nor the guardrail label orders judge quality</Finding>: AUC spans .660–.858 across 23 judges with no familywise-adjusted superiority over Gemma-2-9B (median detectable difference .104), and deployed Llama-Guard-3 misses .46 of AgentDojo injections at false-block .10 — a content-harm taxonomy transfers only partly to agent-policy violations. A matched source-role counterfactual (byte-identical text, trusted-user vs untrusted-tool provenance swapped) shows provenance use varies sharply: paired concordance .967 (7B) vs .561 (3B) vs .500 (0.5B control) (App. B.4).
+
+## Implications
+The paper functions as an evaluation contract for the guardrail literature: name the policy language and oracle interface; report an operating point, not AUC alone; state whether blocking is visible to the agent and run paired reruns; and disclose the calibration population, exchangeability claim, and adversarial margin behind any certificate (§8). Its regime map slots existing systems: <Related>AgentSpec and Progent as T1 oracle-DSL gates, ShieldAgent as exogenous T2, shields (Alshiekh et al. 2018) as the oracle-state ancestor, and AI Control (Greenblatt et al. 2024) as judge-plus-gate under an adversarial source</Related> (Tab.2); <Related>CaMeL and Constitutional Classifiers are architectural / in-judge ways to shrink the margin `η̄(ρ)`</Related>. For TDE specifically: T1 formalizes why mechanical, environment-evaluated checks are categorically stronger than LLM judging — in the worked example the oracle policies P2/P3 stay exact while the judge is <Term def="attack that rewrites only the judge-visible text (e.g. appending an approval claim) so a violating action scores like a compliant one; action, effect, and ground-truth label unchanged">safe-washed</Term> (App. B.10) — and Prop. 1 delimits per-action gating in a way that motivates final-state acceptance testing as a separate mechanism outside the gate class. <FollowUp>Whether an AppWorld-style final-state acceptance suite can be cast as T0-checkable predicates over a logged effect trace, making a TDE harness's verification stack T1-exact end to end</FollowUp>; <FollowUp>paired closed-loop reruns as the default TDE evaluation design, since feedback breaks static identification</FollowUp>; <FollowUp>open problem O3: finite-sample verification of a uniform representation margin `η̄(ρ)`, rather than estimates from selected templates</FollowUp>.
+
+## Limitations
+- <Caveat>Closed-loop safety is bought by over-blocking</Caveat>: the effective 3B gate blocks 78% of calls and cuts workspace task success .264→.163 although zero attacks ever land there (0/560) — pure cost on the least injectable suite.
+- <Caveat>C4 evaluates three selected policies, not the controlled optimum</Caveat>: Theorem 3 requires a specified finite kernel; AgentDojo's is unknown, and the exact frontier is computed only for a constructed two-step retry model.
+- <Caveat>The static diagnostic scores bare instruction strings, not context-rich tool calls</Caveat> (no execution history or tool outputs), so it estimates discrimination for that declared information variable only; trace-derived action-level labels were rejected as invalid rather than obtained (App. B.5).
+- <Caveat>Attacks only lower-bound the adversarial margin</Caveat>: C3 estimates `η(ρ; θ=.5)` for one template; robust recalibration needs a verified uniform upper bound `η̄(ρ)`, which no current method supplies (open problem O3).
+- <Caveat>Certificates are marginal and assumption-laden</Caveat>: label-conditional exchangeability is required, small calibration sets degenerate to block-all whenever δ falls below `1/(n+1)`, and no claim is made about proximity to the population ROC optimum.
+- <Caveat>T1/T3 are not empirically validated</Caveat>: they are instantiated on P2/P3 with a bounded differential audit script, not a mechanized proof; the experiments target T2 only.
+
+## Critiques and Questions
+1. Cor. 2's impossibility conditions on inputs limited to ungated trajectories plus static scores — but real deployments log *gated* trajectories, including blocks and what followed them. How much of the controlled frontier becomes identifiable from gate logs under weak assumptions? Unaddressed.
+2. T0's practical coverage is argued by example (caps, quotas, revocation). What fraction of rules in deployed DSLs (AgentSpec, Progent policy sets) actually compiles into T0 — i.e., how large is the exactly-enforceable, PSPACE-lintable slice in the wild?
+3. The unexplained robustness outlier: both Claude-4.5 judges resist the preapproval suffix that defeats 8 of 11 judges. Diagnosing why (injection-resistance training? provenance handling?) seems at least as actionable as the impossibility framing.
+4. All closed-loop evidence comes from one small local agent with baseline attack success .047; whether the over-blocking price and gate-created attacks persist for frontier agents with richer judge information is untested (the paper concedes absolute rates are modest).
+5. Escalation to a human — the most common real remediation — is explicitly out of scope (modeled only as prefix-safe oracle substitution), so the theory is silent on the guardrail pattern practitioners rely on most.
+
+<SelfCheck q="Why can a pre-execution gate never enforce the policy that every pay is eventually followed by confirm, and which TDE mechanism does that gap motivate?" a="The policy is not a safety property: no finite prefix is bad, because pay followed by any number of no-ops still extends to a compliant trace ending in confirm. Theorem 1 shows gates enforce exactly the nonempty register-representable safety properties, and the irreversibility of pay removes the buffering an edit automaton would use. Eventually-type goals therefore need end-of-episode acceptance checking over the final state — TDE's acceptance suite — rather than streamwise per-action gating." />
+
+## Glossary
+- <Term def="minimum false-block rate achievable at a given miss rate by any randomized decision measurable in the judge score; nonincreasing and convex">ROC frontier</Term> / <Term def="the classical lemma that a randomized likelihood-ratio test attains that frontier">Neyman–Pearson</Term>
+- <Term def="information I-prime refines I when I is a garbling of I-prime; the optimal rule under the richer variable can never have a worse ROC">Blackwell refinement</Term>
+- <Term def="distribution-free calibration choosing the threshold as an order statistic of violating calibration scores so a monotone risk stays at a target level in expectation over the calibration draw">conformal risk control</Term>
+- <Term def="constrained partially observable MDP; here the specified finite model in which blocking changes future proposals, solved by a belief-state occupancy LP">CPOMDP</Term>
+- <Term def="benchmark of tool-using agent tasks with prompt-injection attacks across banking, slack, travel, and workspace suites; used both as 132 static instruction strings and as a live agent loop">AgentDojo</Term>
+
+{/* NOTES_START */}
+### Personal notes
+For the TDE novelty defense this is the strongest formal citation that mechanical (environment-evaluated) adjudication is categorically different from LLM-judge adjudication: T1 gives exactness for oracle predicates while T2 shows judge-based gating is capped by an ROC, can be vacuous under calibration, is non-identifiable under feedback, and loses a margin to 16-token rewrites. Cite Prop. 1 when arguing per-action guardrails cannot certify task completion — "eventually" goals are not safety properties — so TDE's final-state acceptance suite is a complementary mechanism this paper never studies (it certifies only the blocking side and treats task success as an uncertified separate endpoint). Import the methodology too: paired closed-loop reruns with baseline-only vs gate-only discordances are the right design for AppWorld experiments, since a TDE harness also changes trajectories. Question worth stealing: can AppWorld state-diff acceptance checks be phrased in (or near) the T0 fragment, so the whole TDE verification stack inherits T1/T3 exactness and PSPACE lintability?
+{/* NOTES_END */}

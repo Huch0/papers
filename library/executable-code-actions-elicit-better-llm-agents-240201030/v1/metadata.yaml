@@ -1,0 +1,85 @@
+canonical_key: arxiv-2402.01030
+version_key: v1
+title: Executable Code Actions Elicit Better LLM Agents
+authors:
+- Xingyao Wang
+- Yangyi Chen
+- Lifan Yuan
+- Yizhe Zhang
+- Yunzhu Li
+- Hao Peng
+- Heng Ji
+abstract: Large Language Model (LLM) agents, capable of performing a broad range of actions, such as invoking
+  tools and controlling robots, show great potential in tackling real-world challenges. LLM agents are
+  typically prompted to produce actions by generating JSON or text in a pre-defined format, which is usually
+  limited by constrained action space (e.g., the scope of pre-defined tools) and restricted flexibility
+  (e.g., inability to compose multiple tools). This work proposes to use executable Python code to consolidate
+  LLM agents' actions into a unified action space (CodeAct). Integrated with a Python interpreter, CodeAct
+  can execute code actions and dynamically revise prior actions or emit new actions upon new observations
+  through multi-turn interactions. Our extensive analysis of 17 LLMs on API-Bank and a newly curated benchmark
+  shows that CodeAct outperforms widely used alternatives (up to 20% higher success rate). The encouraging
+  performance of CodeAct motivates us to build an open-source LLM agent that interacts with environments
+  by executing interpretable code and collaborates with users using natural language. To this end, we
+  collect an instruction-tuning dataset CodeActInstruct that consists of 7k multi-turn interactions using
+  CodeAct. We show that it can be used with existing data to improve models in agent-oriented tasks without
+  compromising their general capability. CodeActAgent, finetuned from Llama2 and Mistral, is integrated
+  with Python interpreter and uniquely tailored to perform sophisticated tasks (e.g., model training)
+  using existing libraries and autonomously self-debug.
+venue: arXiv
+year: 2024
+source: arxiv
+source_url: https://arxiv.org/abs/2402.01030v4
+pdf_url: https://arxiv.org/pdf/2402.01030v4
+pdf_sha256: 749a45e36cf89fc7e1b701a2a72f6609ce8d3697577ceb0fff5ce9339ce8539e
+fetched_at: '2026-08-13T07:14:41Z'
+source_updated_at: '2024-06-07T01:53:07Z'
+ids:
+  doi: null
+  arxiv_id: 2402.01030v4
+  arxiv_base_id: '2402.01030'
+  arxiv_version: v4
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+- tde-related-work
+- tool-use
+topic_groups:
+- general_agent_methods
+- agent_harness
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: interest_fit(0.73), novelty(0.55), artifact_availability(0.55)
+    | interests: agent_harness:group:agent_harness, general_agent_methods:group:general_agent_methods
+    | milestone/foundational floor applied'
+  matched_interests:
+  - agent_harness:group:agent_harness
+  - general_agent_methods:group:general_agent_methods
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.52
+    novelty: 0.55
+    artifact_availability: 0.55
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/executable-code-actions-elicit-better-llm-agents-240201030/v1/paper.pdf
+  extraction: library/executable-code-actions-elicit-better-llm-agents-240201030/v1/extraction.txt
+  summary: library/executable-code-actions-elicit-better-llm-agents-240201030/v1/summary.mdx
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread
+  summary_format: mdx

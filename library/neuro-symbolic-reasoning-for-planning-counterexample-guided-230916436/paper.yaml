@@ -1,0 +1,61 @@
+canonical_key: arxiv-2309.16436
+slug: neuro-symbolic-reasoning-for-planning-counterexample-guided-230916436
+title: 'Neuro Symbolic Reasoning for Planning: Counterexample Guided Inductive Synthesis using Large Language
+  Models and Satisfiability Solving'
+authors:
+- Sumit Kumar Jha
+- Susmit Jha
+- Patrick Lincoln
+- Nathaniel D. Bastian
+- Alvaro Velasquez
+- Rickard Ewetz
+- Sandeep Neema
+year: 2023
+primary_ids:
+  doi: null
+  arxiv_base_id: '2309.16436'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2309.16436v1
+- https://arxiv.org/pdf/2309.16436v1
+topic_groups:
+- general_agent_methods
+tags:
+- tde-related-work
+- verifier
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2023
+user:
+  read_status: unread
+  triage_label: SKIP
+  triage_confidence: medium
+  notes: null
+milestone: null
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v1
+  source: arxiv
+  source_url: https://arxiv.org/abs/2309.16436v1
+  pdf_path: library/neuro-symbolic-reasoning-for-planning-counterexample-guided-230916436/v1/paper.pdf
+  summary_path: library/neuro-symbolic-reasoning-for-planning-counterexample-guided-230916436/v1/summary.mdx
+  metadata_path: library/neuro-symbolic-reasoning-for-planning-counterexample-guided-230916436/v1/metadata.yaml
+  fetched_at: '2026-08-13T07:18:20Z'
+  source_updated_at: '2023-09-28T13:40:50Z'
+  arxiv_version: v1
+  pdf_sha256: feb184170c98af7ec12e3a2e0d1ac814849c9e4b5c9cd2da4a26547d2837c82c
+  pdf_bytes: 1367040
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-08-13T07:18:20Z'
+  updated_at: '2026-08-13T13:01:30Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

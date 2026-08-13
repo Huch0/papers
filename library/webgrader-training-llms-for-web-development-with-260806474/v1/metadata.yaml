@@ -1,0 +1,82 @@
+canonical_key: arxiv-2608.06474
+version_key: v1
+title: 'WebGrader: Training LLMs for Web Development with Self-Evolving Programmatic Grader'
+authors:
+- Boshui Chen
+- Huiping Liu
+- Shaolei Zhang
+abstract: Large language models increasingly generate complete websites from natural-language descriptions,
+  and reinforcement learning has become a central approach to closing their remaining functional gap.
+  This training regime is bottlenecked by reward design. Hand-authored browser scripts are executable
+  yet costly to write for open-ended requirements, while VLM and GUI-agent graders scale but may issue
+  verdicts before observing the decisive state. We propose WebGrader, a self-evolving programmatic grader
+  that autonomously derives the required interaction flows from each website request, represents each
+  flow as an executable Flow Contract, and uses its execution outcome as an RL reward. WebGrader materializes
+  the generated project in a live browser, grounds target actions against the source code and live DOM,
+  and collects visual, DOM, response, and persistent-state evidence along the same browser trajectory.
+  A residual-driven offline loop then discovers reusable verifier skills, screens them on disjoint validation
+  pages, and freezes the promoted skill graph before policy training. By separating test planning, action
+  grounding, evidence collection, and semantic judgment, WebGrader issues a Pass verdict only after observing
+  the requested transition. On WebGen-Bench, WebGrader trains an 8B policy to a 52.01% functional success
+  rate, outperforming a matched appearance-plus-script reward by 7.88 points and surpassing o4-mini and
+  DeepSeek-v4-flash. On WG-core-250, the policy reaches a Full Score of 44.953 and surpasses Qwen3-Coder-480B.
+venue: arXiv
+year: 2026
+source: arxiv
+source_url: https://arxiv.org/abs/2608.06474v1
+pdf_url: https://arxiv.org/pdf/2608.06474v1
+pdf_sha256: ce090a4bd065c9a5f9ed7f1852937df489848ed9835e6a0d7c4e25cdf8ea26ab
+fetched_at: '2026-08-13T07:17:16Z'
+source_updated_at: '2026-08-06T18:06:12Z'
+ids:
+  doi: null
+  arxiv_id: 2608.06474v1
+  arxiv_base_id: '2608.06474'
+  arxiv_version: v1
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- evaluation-harness
+- execution-based-eval
+- tde-related-work
+topic_groups:
+- computer_use_agents
+- agent_harness
+scoring:
+  score: 42.6
+  label: TRACK_ONLY
+  confidence: high
+  rationale: 'score=43 -> TRACK_ONLY | strong: recency(1.00), interest_fit(0.73), harness_relevance(0.52)
+    | interests: agent_harness:group:agent_harness, computer_use_agents:group:computer_use_agents, software_engineering_agents:verifier,
+    general_agent_methods:verifier'
+  matched_interests:
+  - agent_harness:group:agent_harness
+  - computer_use_agents:group:computer_use_agents
+  - software_engineering_agents:verifier
+  - general_agent_methods:verifier
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 1.0
+    venue_quality: 0.4
+    harness_relevance: 0.52
+    novelty: 0.0
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/webgrader-training-llms-for-web-development-with-260806474/v1/paper.pdf
+  extraction: library/webgrader-training-llms-for-web-development-with-260806474/v1/extraction.txt
+  summary: library/webgrader-training-llms-for-web-development-with-260806474/v1/summary.mdx
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread
+  summary_format: mdx

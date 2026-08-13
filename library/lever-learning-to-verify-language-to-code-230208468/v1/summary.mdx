@@ -1,0 +1,121 @@
+---
+canonical_key: arxiv-2302.08468
+version_key: v1
+title: 'LEVER: Learning to Verify Language-to-Code Generation with Execution'
+authors:
+- Ansong Ni
+- Srini Iyer
+- Dragomir Radev
+- Ves Stoyanov
+- Wen-tau Yih
+- Sida I. Wang
+- Xi Victoria Lin
+venue: arXiv
+year: 2023
+tags:
+- execution-based-eval
+- tde-related-work
+- verifier
+topic_groups:
+- software_engineering_agents
+- general_agent_methods
+triage_label: SKIP
+triage_confidence: high
+source_link: https://arxiv.org/abs/2302.08468v3
+summary_date: '2026-08-13'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>Rerank programs sampled from a frozen code LLM with a small learned verifier (about 0.5% of the generator's size) that reads the NL input, the candidate program, and its actual execution result — multiplying verification probability with generation probability and marginalizing over samples that execute to the same result — for then-new SOTA execution accuracy on Spider, WikiTQ, GSM8k, and MBPP (ICML 2023).</TLDR>
+
+<WhyItMatters>The canonical execution-grounded-but-learned contrast for TDE (survey cat. B, confirmed by the paper): LEVER shares TDE's premise that the executed outcome — values, types, errors — carries the correctness signal, but its adjudicator is a trained soft classifier reranking one-shot samples: no acceptance suite compiled from the instruction, no red–green iteration, no gating, and the top-ranked program ships even if every candidate scores low. Its own failure analysis (wrong programs whose results share type and range with the correct one blind the verifier) is precisely the ambiguity a decidable, environment-computed suite would remove.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "+4.6–11.9", label: "points over EP+ML baseline", sub: "code-davinci-002, primary splits (Tab.2–5); abstract quotes 4.6–10.9" },
+  { value: "84.5%", label: "GSM8k test (then-SOTA)", sub: "vs 83.2 DiVeRSe; SOTA on all 4 benchmarks" },
+  { value: "≈0.5%", label: "verifier size vs generator", sub: "T5-base/large or RoBERTa-large (§6)" },
+  { value: "≤1.1", label: "point drop w/o gold programs", sub: "weakly-supervised verifier training (§4.2)" },
+]} />
+
+## Motivation
+Few-shot code LLMs lack precision, yet when enough samples are drawn the correct program is usually somewhere in the set — so selection, not generation, becomes the bottleneck, and finetuning generator-scale models is costly enough that improving a *frozen* LLM is the attractive path (§1). Existing selectors are blunt: <Problem>filtering by test cases assumes test cases exist, which many real language-to-code applications lack</Problem>, and <Problem>execution-consistency heuristics — error pruning, majority voting — cannot read the semantic features of an execution result (data type, value range, content) that often indicate whether a program is correct</Problem> (§1). Meanwhile, <Problem>trained verifiers had only been shown for natural-language math/commonsense solutions (Cobbe et al. 2021; Shen et al. 2021; Li et al. 2022b), leaving open whether verification works for programs, where an executable artifact and an observable result are available</Problem>.
+
+## Contribution (what's new)
+<Novelty>Cast sample selection as learned verification conditioned on execution: a small binary classifier scores `P(v=1 | NL, program, execution result)`</Novelty>, and the reranking score <Novelty>multiplies verification probability with the LLM's generation probability, then marginalizes over programs that execute to the same result</Novelty> (§2.2). The form is forced by how the baselines fail: error pruning only discards crashes, likelihood ranks fluency rather than correctness, and voting counts results without judging them — the untapped signal lives in the executed output, which only a trained reader can exploit. Labels are mechanical — `v = 1(ẑ = z*)`, positive iff the sample's execution result equals the gold one (all test cases for MBPP) — so training needs no human judgment and works weakly supervised. The authors position this as the first comprehensive execution-based learned verification across language-to-code tasks (§6).
+
+## Research questions
+1. Does a learned, execution-conditioned verifier beat execution heuristics — greedy, likelihood, <Term def="error pruning + maximum likelihood: drop samples that crash, then pick the highest LLM (log-)probability; the strongest heuristic baseline here">EP+ML</Term>, voting — across domains (SQL, math, Python) and LLMs?
+2. Which ingredients carry the gain: the execution result, gold programs, result aggregation, verifier size?
+3. How much training data and sampling budget does verification need, and does a verifier transfer across LLMs?
+
+## Methodology
+Three inference steps (Fig.1): sample `k` programs (20–100 per input, Tab.1) from the code LLM by few-shot prompting with temperature sampling and deduplicate; execute every candidate; score each with the verifier and rerank by generation × verification probability, summing over candidates with identical execution results and emitting a program from the top-scoring result (ties broken randomly). Training data comes from running the same sampling on the training set and labeling each sample by executing it against the gold result. Benchmarks: Spider (text-to-SQL), WikiTQ (table QA via SQL), GSM8k (math via Python; inherently weakly supervised — no gold programs exist), MBPP (basic Python with 3 test cases); generators: code-davinci-002, InCoder-6B, CodeGen-16B-multi; metric: <Term def="fraction of examples whose output program yields the gold execution result or passes all provided test cases">execution accuracy</Term>.
+
+<Pass title="Method details">
+<Stepper steps={[
+  { title: "Sample and deduplicate (§2.2, App.A)", body: "Few-shot prompt the frozen LLM (8 fixed exemplars; 3 for MBPP; only 2 fit InCoder/CodeGen on Spider) and draw k samples at temperature 0.6 (Codex) or 0.8 (InCoder/CodeGen); deduplicate to n unique candidates. Sampling replaces beam search, which degenerates on code and is unavailable for Codex." },
+  { title: "Execute and represent (§3.4)", body: "Run every candidate. Verifier input = concatenation of the NL input, the program, and a textual rendering of the result: linearized result tables (Spider/WikiTQ), the final value of the variable named 'answer' (GSM8k), the returned type and value per test input (MBPP); failures become 'ERROR: [reason]', e.g. 'ERROR: Time out'." },
+  { title: "Verify (§2.3, §3.4)", body: "A small LM scores P(v=1 | x, program, result): T5 emits a yes/no token whose 'yes' probability is the verification score; RoBERTa-large uses a classification head. Per-dataset choice: T5-base (Spider), T5-large (WikiTQ, MBPP), RoBERTa-large (GSM8k). Trained with NLL normalized by candidate count (Eq.4, so many-candidate examples don't dominate), with per-epoch down-sampling for GPU memory; the gold program is appended as an extra positive where the dataset has one." },
+  { title: "Rerank with aggregation (§2.2)", body: "Multiply generation and verification probabilities (Eq.3), sum over candidates with identical execution results, output a program from the argmax result; ties broken randomly." },
+]} />
+
+<MathBlock>{`P_R(\\hat{y}, v=1 \\mid x) = P_{LM}(\\hat{y} \\mid x)\\cdot P_{\\theta}(v=1 \\mid x, \\hat{y}, E(\\hat{y})), \\qquad R(x, \\hat{y}) = \\sum_{y \\in S,\\ E(y)=E(\\hat{y})} P_R(y, v=1 \\mid x)`}</MathBlock>
+
+Training-data statistics (Tab.7): the positive-label rate — also the accuracy of picking a sample at random — is 47.6–68.0% for Codex but only 2.2–9.2% for InCoder/CodeGen, which is why selection has more headroom for weak LLMs; deduplication keeps only ~30% of Codex's SQL samples versus 90%+ elsewhere. Verifier-size ablation (Tab.9): spread across T5-base/large/3B and RoBERTa-large is at most 2.0 points per dataset. Prompting the code LLM itself as a few-shot verifier was tried and underperformed EP+ML (fn.6).
+</Pass>
+
+## Main result
+With code-davinci-002, LEVER beats the strongest execution heuristic on every benchmark — <Finding src="Tab.2–5">+4.6 (Spider dev) to +11.9 (GSM8k test) execution accuracy over EP+ML on the primary splits; the abstract quotes 4.6–10.9%</Finding> — and <Finding src="Tab.2–5">sets then-new SOTA on all four datasets, over finetuned task-specific models (RASAT on Spider) and prompting methods (Binder on WikiTQ, PoT-SC/DiVeRSe on GSM8k, Coder-Reviewer on MBPP)</Finding>, holding under the stricter official WikiTQ evaluator (62.9 test vs Binder's 61.9, Tab.10). Gains are larger for weaker generators: <Finding src="Tab.6">on Spider dev, LEVER lifts InCoder-6B from 41.2 (EP+ML) to 54.1 and CodeGen-16B from 37.7 to 51.0 — up to +30.0 over greedy on Spider and +15.0 on GSM8k</Finding>.
+
+<SortableTable columns={["Method (Codex)", "Spider (dev)", "WikiTQ (test)", "GSM8k (test)", "MBPP (test)"]} rows={[
+  ["Greedy", 75.3, 53.0, 67.2, 62.0],
+  ["EP + ML", 77.3, 54.9, 72.6, 60.2],
+  ["LEVER", 81.9, 65.8, 84.5, 68.9],
+  ["Prev. SOTA", 80.5, 64.6, 83.2, 66.9],
+]} />
+
+Prev. SOTA rows: RASAT (finetuned) / Codex-Binder / DiVeRSe (finetuned verifier + Codex over NL solutions) / Coder-Reviewer. LEVER standard deviation over three seeds is ±0.1–0.4; Spider has no reported test split here (Tab.1).
+
+## Key findings
+- <Finding src="§4.2, Fig.2">The execution result is the load-bearing verifier input</Finding>: removing it costs 6.6 (WikiTQ), 5.6 (MBPP), 3.0 (Spider), 1.2 (GSM8k) points with Codex and up to 8.7 with weaker LLMs (CodeGen GSM8k 22.1→13.4, Tab.6); datasets whose samples contain more execution errors benefit most.
+- <Finding src="§4.2, Tab.6">Result aggregation helps Python but can hurt SQL</Finding>: removing it *raises* Spider dev for InCoder (54.1→54.7) and CodeGen (51.0→51.6) while lowering GSM8k (11.9→10.6, 22.1→18.3) — incorrect SQL often executes to trivial results (empty table, 0) that accumulate probability mass once merged.
+- <Finding src="Fig.2, Fig.3, Tab.8, §5.1">Verification is cheap to train</Finding>: dropping gold programs costs at most 1.1 points (<Term def="training labels derived only from gold execution results/answers, with no gold program annotations">weakly-supervised</Term> setting); 250 training examples still improve base LLMs by 1.7–10.0 points; at 500 examples a T5-base verifier on InCoder/CodeGen beats a *finetuned* T5-3B generator by ~7 points; and verifiers partially transfer across LLMs — best when source/target positive-label rates are close, though transferring into Codex on GSM8k goes negative (−2.1 from InCoder).
+- <Finding src="Fig.4">Sampling budget matters at test time, not train time</Finding>: cutting inference samples from 50 to 10 costs 1.8 (Spider) to 5.2 (WikiTQ) points, while varying verifier-training samples changes results by under 1 point.
+- <Finding src="Fig.5">Verifier and generator are complementary in calibration</Finding>: the verifier is well calibrated in the low percentiles (spotting obviously wrong programs) but poorly calibrated among top-ranked candidates on 3 of 4 datasets, where the generator is better; their product is the best-calibrated score on all four — the empirical justification for mixing probabilities (Eq.3) rather than rejecting on the verifier alone.
+- <Finding src="Fig.6, Tab.6">Failure is dominated by the sampler, then by uninformative executions</Finding>: the most common failure is that no correct program exists among the samples — the <Term def="upper bound obtained by always selecting a correct program whenever one appears in the sample set">oracle</Term> ceiling (InCoder GSM8k oracle 48.0 vs LEVER 11.9) — and the second is a wrong program whose result has the same type and range as the correct one, where execution gives the verifier nothing to grip.
+
+## Implications
+LEVER carried learned verification from NL math solutions (<Related>Cobbe et al. 2021; Shen et al. 2021; DiVeRSe</Related>) into executable programs, and marks the "learned adjudication over executions" pole against training-free execution consistency (<Related>MBR-Exec, Coder-Reviewer</Related>) and test-generation approaches (<Related>CodeT, AlphaCode</Related>); it is an ancestor of the outcome-verifier/reranker stage in today's code and agent pipelines. The TDE-relevant reading: LEVER's training labels *are* mechanical (match gold execution, pass all tests), but that mechanical grader exists only at training time — LEVER distills it into a soft judge that must generalize at inference. TDE inverts this: synthesize the decidable check at runtime, so verification stays mechanical and can act as a completion gate driving red–green iteration, rather than a one-shot argmax over samples. <FollowUp>Whether modern LLM judges beat small finetuned verifiers — in 2023, few-shot self-verification by the code LLM lost to EP+ML (fn.6)</FollowUp>; <FollowUp>verifier-gated abstention or repair loops instead of always emitting the argmax</FollowUp>.
+
+## Limitations
+- <Caveat>Execution requires at least one input set and an execution context (databases, function arguments), which many applications don't provide, and model-generated code is not always safe to execute</Caveat> — author-stated (§7), with no sandboxing discussion.
+- <Caveat>Evaluated with PASS@1 only</Caveat>; pass@k / n@k views for general programming are left open (§7).
+- <Caveat>Per-task, per-LLM verifier training on thousands of executed samples</Caveat>; cross-LLM transfer is only partial and can hurt (Tab.8).
+- <Caveat>Reranking is bounded by the sample set</Caveat>: oracle gaps are huge for weak LLMs (GSM8k oracle 48.0/61.4 vs LEVER 11.9/22.1, Tab.6).
+- <Caveat>Spider is reported dev-only, and MBPP model selection used a 90-example dev set with a 6.5-point dev→test drop (75.4→68.9)</Caveat>.
+
+## Critiques and Questions
+1. Number bookkeeping is loose: the abstract's "4.6% to 10.9%" understates the GSM8k-test delta over EP+ML (+11.9, Tab.4), and §4.1 attributes a "17.3%" greedy-gap to WikiTQ when 17.3 matches the GSM8k test gap (WikiTQ's is 12.8 test / 15.0 dev). Likewise §B.2 says the best verifier base LM was selected, yet Tab.9 shows T5-3B ahead on Spider (83.1 vs the chosen T5-base's 82.0). Cosmetic, but text and tables don't fully reconcile.
+2. The motivating claim is that "test cases are hard to obtain", yet every training label requires gold execution results or full test suites — the oracle is not removed, it is front-loaded into training; on genuinely new tasks at inference, the verifier only guesses.
+3. No abstention: LEVER always emits its top-ranked program even when the verifier scores every candidate near zero — the verification probability is never used as a gate on declaring the task done.
+4. What the verifier actually learned is probed only categorically (error/type/range buckets in Fig.6); whether it reads program semantics beyond surface-plus-result correlations is untested, and the "others" success category is explained only by hypothesis (§5.4).
+
+<SelfCheck q="Why does LEVER multiply the verifier's probability with the LLM's generation probability instead of ranking by the verifier alone?" a="Calibration analysis (Fig.5) shows the verifier is well calibrated in the low percentiles — it reliably spots obviously wrong programs, especially ones with execution errors — but poorly calibrated among top-ranked candidates on 3 of 4 datasets, where the generator is the better-calibrated scorer. Their product is the best-calibrated score on all four benchmarks; on GSM8k the joint probability is well calibrated even though both factors individually are poor." />
+
+## Glossary
+- <Term def="text-to-SQL benchmark over multi-table databases (Yu et al. 2018); 7,000 train, evaluated here on the 1,032-example dev set">Spider</Term>
+- <Term def="WikiTableQuestions (Pasupat & Liang 2015): QA over Wikipedia tables, approached here by generating SQL; 11,321 train / 4,336 test; originally weakly supervised, ~80% later annotated with SQL">WikiTQ</Term>
+- <Term def="grade-school math word problems (Cobbe et al. 2021), solved here by generating Python whose 'answer' variable is checked; no gold programs exist">GSM8k</Term>
+- <Term def="crowd-sourced basic Python functions, each with 3 test cases (Austin et al. 2021); 378 train / 500 test; the first test case is shown in the prompt, all three grade correctness">MBPP</Term>
+- <Term def="OpenAI Codex API model; the strongest of the three generators tested (vs InCoder-6B, CodeGen-16B-multi)">code-davinci-002</Term>
+- <Term def="training-free selection of the sample whose execution result agrees most with the other samples (Shi et al. 2022)">MBR-Exec</Term>
+- <Term def="reranking samples by combining code-given-instruction and instruction-given-code likelihoods (Zhang et al. 2022)">Coder-Reviewer</Term>
+- <Term def="prompting method binding LM calls into symbolic (SQL/Python) programs (Cheng et al. 2022); previous WikiTQ best">Binder</Term>
+- <Term def="verifier-based reranking of diverse natural-language reasoning chains (Li et al. 2022b); previous GSM8k best and LEVER's closest verifier precursor">DiVeRSe</Term>
+
+{/* NOTES_START */}
+### Personal notes
+For the TDE novelty defense, the crisp one-liners: (a) LEVER's verification probability is a reranking *feature*, never a *gate* — the argmax ships regardless of how low every candidate scores; (b) the mechanical grader (gold results / test suites) exists only at training time and is distilled into a soft judge, whereas TDE keeps the mechanical check at runtime; (c) selection-time, single-shot — no repair or iteration conditioned on failed checks. Fig.6b's failure mode (wrong result with same type/range as the right one) is the exact ambiguity a decidable acceptance suite dissolves. Venue note: published at ICML 2023 (PMLR 202) although harness metadata records the arXiv source.
+{/* NOTES_END */}

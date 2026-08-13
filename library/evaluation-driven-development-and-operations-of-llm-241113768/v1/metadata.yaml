@@ -1,0 +1,78 @@
+canonical_key: arxiv-2411.13768
+version_key: v1
+title: 'Evaluation-Driven Development and Operations of LLM Agents: A Process Model and Reference Architecture'
+authors:
+- Boming Xia
+- Qinghua Lu
+- Liming Zhu
+- Zhenchang Xing
+- Dehai Zhao
+- Hao Zhang
+abstract: 'Large Language Models (LLMs) have enabled the emergence of LLM agents, systems capable of pursuing
+  under-specified goals and adapting after deployment. Evaluating such agents is challenging because their
+  behavior is open ended, probabilistic, and shaped by system-level interactions over time. Traditional
+  evaluation methods, built around fixed benchmarks and static test suites, fail to capture emergent behaviors
+  or support continuous adaptation across the lifecycle. To ground a more systematic approach, we conduct
+  a multivocal literature review (MLR) synthesizing academic and industrial evaluation practices. The
+  findings directly inform two empirically derived artifacts: a process model and a reference architecture
+  that embed evaluation as a continuous, governing function rather than a terminal checkpoint. Together
+  they constitute the evaluation-driven development and operations (EDDOps) approach, which unifies offline
+  (development-time) and online (runtime) evaluation within a closed feedback loop. By making evaluation
+  evidence drive both runtime adaptation and governed redevelopment, EDDOps supports safer, more traceable
+  evolution of LLM agents aligned with changing objectives, user needs, and governance constraints.'
+venue: arXiv
+year: 2024
+source: arxiv
+source_url: https://arxiv.org/abs/2411.13768v3
+pdf_url: https://arxiv.org/pdf/2411.13768v3
+pdf_sha256: 39b3075e8f74dac87f5e4e8a924e5b55546b0d80781c95a81ba48e01ea5c8adf
+fetched_at: '2026-08-13T07:14:12Z'
+source_updated_at: '2025-11-17T06:10:41Z'
+ids:
+  doi: null
+  arxiv_id: 2411.13768v3
+  arxiv_base_id: '2411.13768'
+  arxiv_version: v3
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- evaluation-harness
+- tde-related-work
+topic_groups:
+- agent_harness
+- general_agent_methods
+scoring:
+  score: 28.5
+  label: SKIP
+  confidence: high
+  rationale: 'score=29 -> SKIP | strong: interest_fit(0.73), recency(0.52), venue_quality(0.40) | interests:
+    agent_harness:group:agent_harness, general_agent_methods:group:general_agent_methods'
+  matched_interests:
+  - agent_harness:group:agent_harness
+  - general_agent_methods:group:general_agent_methods
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 0.515
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 0.0
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/evaluation-driven-development-and-operations-of-llm-241113768/v1/paper.pdf
+  extraction: library/evaluation-driven-development-and-operations-of-llm-241113768/v1/extraction.txt
+  summary: library/evaluation-driven-development-and-operations-of-llm-241113768/v1/summary.mdx
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread
+  summary_format: mdx

@@ -1,0 +1,121 @@
+---
+canonical_key: arxiv-2402.01817
+version_key: v1
+title: LLMs Can't Plan, But Can Help Planning in LLM-Modulo Frameworks
+authors:
+- Subbarao Kambhampati
+- Karthik Valmeekam
+- Lin Guan
+- Mudit Verma
+- Kaya Stechly
+- Siddhant Bhambri
+- Lucas Saldyt
+- Anil Murthy
+venue: Proceedings of the 41 st International Conference on Machine Learning, Vienna, Austria. PMLR 235,
+  2024
+year: 2024
+tags:
+- position-paper
+- tde-related-work
+- verifier
+topic_groups:
+- general_agent_methods
+triage_label: SKIP
+triage_confidence: high
+source_link: https://arxiv.org/abs/2402.01817v3
+summary_date: '2026-08-13'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>ICML 2024 position paper arguing that autoregressive LLMs can neither plan nor self-verify, and proposing LLM-Modulo: a Generate-Test-Critique loop in which the LLM guesses candidate plans (and reformulates, refines specs, helps acquire domain models) while a bank of sound external critics holds sole authority to accept a plan.</TLDR>
+
+<WhyItMatters>This is the conceptual anchor for TDE's de-circularization stance: it assembles the evidence that LLM self-judgment is unsound, so adjudication must be external and mechanical — exactly the principle TDE operationalizes. The delta to keep sharp for the novelty defense: LLM-Modulo's hard critics validate plan candidates pre-execution against a once-per-domain acquired model, it still admits LLM-based soft critics, and it prescribes no test-first discipline — whereas TDE compiles each instruction into an executable acceptance suite over the final world state, iterates red-green in the live environment, and gates state-changing actions with environment-evaluated pre/postconditions.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "~12%", label: "GPT-4 plans executable + goal-reaching", sub: "autonomous mode, IPC-style domains (§2.1)" },
+  { value: "82%", label: "Blocks World with VAL back-prompting", sub: "within 15 rounds; Logistics 70% (§4)" },
+  { value: "6x", label: "TravelPlanner vs prompting baselines", sub: "GPT-3.5-Turbo, 10-cycle limit (§4, Fig.5)" },
+  { value: "≤4.3%", label: "Mystery BW across 6 frontier LLMs", sub: "one-shot; zero-shot ≤0.16% (Tab.1)" },
+]} />
+
+## Motivation
+The field oscillates between two failure modes the authors consider equally wrong. <Problem>Over-optimism: claims that the right prompting, chain-of-thought, or self-critique lets LLMs plan and verify — fueling a "head-long rush into agentic LLMs" that act without being able to plan</Problem>. <Problem>Over-pessimism: using LLMs as mere format translators that ship problems to external symbolic solvers, inheriting those solvers' expressiveness restrictions and search-complexity limits</Problem>. The self-critique literature additionally rests on the classical intuition that verification is easier than generation, which <Problem>has no reason to transfer to LLMs if what they do is approximate retrieval rather than reasoning</Problem> (§2.2).
+
+## Contribution (what's new)
+Two deltas. First, the consolidated position: <Novelty>treat LLMs as universal approximate knowledge sources — a giant non-veridical memory acting as a <Term def="fast associative retrieval, as opposed to slow deliberate System 2 reasoning (Kahneman)">pseudo System 1</Term> — rather than as planners or verifiers</Novelty>. Second, the architecture: <Novelty>LLM-Modulo, a Generate-Test-Critique loop where the LLM plays many roles (candidate generation, reformulation into critics' representations, spec refinement, domain-model drafting, critic enumeration) but acceptance authority rests exclusively with a bank of sound external hard critics</Novelty>, closed by a backprompt meta-controller. The form is forced by the evidence: since LLM self-critique is unsound (§2.2), guarantees can only enter through external verifiers; since symbolic solvers are expressivity-limited, the LLM must stay the generator rather than become a front-end translator to a solver (§3, Design Choices).
+
+## Research questions
+1. Can autoregressive LLMs generate executable plans, or verify plans, on their own? (§2: no, with evidence.)
+2. Why does the literature keep claiming otherwise? (§2.3: knowledge-vs-plan conflation, forgiving domains, hidden external verifiers.)
+3. What architecture lets LLMs contribute to planning while keeping formal guarantees and flexible natural-language specifications? (§3.)
+
+## Methodology
+A position paper in three moves: (1) evidence synthesis of the authors' own experimental line — PlanBench plan generation, plan-verification and graph-coloring self-critique studies — refreshed with a new six-model PlanBench run (Tab.1); (2) a diagnosis of why contrary claims arise in the literature; (3) the LLM-Modulo architecture (Fig.3), specified by its critics, controller, and human touchpoints, illustrated with two case studies reported from companion papers.
+
+<Pass title="The LLM-Modulo loop (Fig.3)">
+<Stepper steps={[
+  { title: "Generate", body: "The LLM receives the problem specification (refined once per problem by the end user with LLM help) and guesses a candidate plan; replanning can start from an externally supplied candidate (fn.8)." },
+  { title: "Reformulate", body: "The LLM translates the candidate into each critic's specialized representation (timeline view, causal-link view, structured plan formats) — format conversion being what LLMs demonstrably do well. Syntax correctness of the conversion can itself be checked by a nested LLM-Modulo loop with syntax critics." },
+  { title: "Test / Critique", body: "A bank of critics evaluates: hard model-based critics for correctness (causal, timeline, resource constraints, unit tests; VAL against an acquired PDDL model; simulators also qualify) and soft critics for style, explicability, preference conformance — the latter may be LLM- or VLM-based. A candidate is accepted only when all hard critics sign off; soundness is inherited from the hard critics alone." },
+  { title: "Backprompt", body: "The Meta (Backprompt) Controller pools critiques into the next prompt: round-robin selection, LLM-summarized feedback, or prompt diversification to elicit candidates from a different part of the implicit search space. Feedback granularity ranges from 'No, try again' to enumerating all faults; constructive critics based on partial planners can suggest alternative subplans." },
+  { title: "Acquire models and critics (offline)", body: "Human domain experts tease out the domain model with LLM help once per domain (Guan et al. 2023); that model drives hard critics like VAL. The LLM can also help implement procedural critics and enumerate which critics a domain needs. Humans are deliberately excluded from the inner loop — iterative human prompting is an infeasible time burden and notorious for the Clever Hans effect." },
+]} />
+</Pass>
+
+## Main result
+The evidence forms a pincer: unguarded generation is dismal, self-verification is worse than useless, and sound external critics recover most of the loss. <Finding src="§2.1, p.2">On average only about 12% of plans from the best LLM tested (GPT-4) are executable without errors and goal-reaching in autonomous mode</Finding>. The refreshed PlanBench run shows no frontier model escapes: <Finding src="Tab.1, p.3">the best result is Claude-3-Opus at 59.3% on zero-shot Blocksworld, while obfuscated Mystery BW collapses every model to at most 4.3% one-shot and 0.16% zero-shot</Finding> — a renaming that leaves classical planners untouched, indicating approximate retrieval rather than planning. Conversely, <Finding src="§4, p.8">with VAL as sound external critic back-prompting the LLM, Blocks World reaches 82% within 15 rounds and Logistics 70%, while Mystery BW stays near 10% because the LLM cannot guess plausible candidates there</Finding>.
+
+Percent of instances correct (each cell out of 600; Gemini Pro Mystery cells out of 500), natural-language prompts:
+
+<SortableTable columns={["Model", "BW one-shot", "BW zero-shot", "Mystery BW one-shot", "Mystery BW zero-shot"]} rows={[
+  ["GPT-4o", 28.33, 35.5, 0.83, 0],
+  ["GPT-4-Turbo", 23, 40.1, 0.83, 0.16],
+  ["Claude-3-Opus", 48.17, 59.3, 1.3, 0],
+  ["LLaMA-3 70B", 12.6, 34.16, 2.5, 0],
+  ["Gemini Pro", 11.3, 0.5, 0.4, 0],
+  ["GPT-4", 34.3, 34.6, 4.3, 0.16],
+]} />
+
+## Key findings
+- <Finding src="§2.1, p.3">Fine-tuning, chain-of-thought, and ReAct-style step-by-step prompting are all reported as largely ineffective for planning</Finding>: the authors read them as changing the prompt/training distribution, not adding reasoning (fn.1).
+- <Finding src="§2.2, p.3">On graph coloring, GPT-4 is no better at verifying candidate solutions than at generating them, and self-critique performs worse than direct generation</Finding>: the model raises false-negative objections to fortuitously correct colorings and iterates past them.
+- <Finding src="§2.2, p.4">Corollary: LLMs cannot self-improve on self-generated synthetic plan data</Finding> — claimed self-improvement pipelines quietly depend on external seed examples and filtering critics (fn.3).
+- <Finding src="§2.3, p.4">Claimed LLM planning and self-verification successes are diagnosed as artifacts</Finding>: domains where subgoal interactions can be ignored (single subgoals or forgiving, ergodic worlds — how ReAct and Reflexion use AlfWorld), humans resolving interactions via repeated prompting, or guarantees actually supplied by an easily implemented external verifier (Tree of Thoughts' 24-puzzle arithmetic checker).
+- <Finding src="§4, p.8">In the TravelPlanner case study, LLMs successfully implement hard-critic and common-sense-critic functions, reliably reformat free-form plans for the critics, and enumerate which critics are needed with light human supervision</Finding> — lifting a 0.7% best-prompting baseline by 6x within 10 back-prompting cycles on GPT-3.5-Turbo.
+- <Finding src="§3, p.6">Plans that pass the sound critics double as vetted synthetic data for fine-tuning</Finding> — the mechanism the authors credit in FunSearch and AlphaGeometry (§5).
+
+## Implications
+The paper names and legitimizes a division of labor that working systems had converged on implicitly: <Related>FunSearch and AlphaGeometry (fine-tuned generator + symbolic evaluator)</Related>, <Related>SayCan's simulator-filtered action selection</Related>, and — per fn.10 — automated programming, which "stuck to LLM-Modulo style approaches" for lack of a ready-made solver. Its sharpest reframing for agent evaluation: much agent work already relies on external verification without acknowledging it, because <Related>simulators are verifiers (AlfWorld in ReAct/Reflexion, Minecraft in Voyager)</Related> — which is also, editorially, the argument that state-diff-graded harnesses like AppWorld (TDE's planned testbed) make the practice explicit and honest. For agentic LLMs it draws the "acting is not planning" line: the ability to invoke actions guarantees nothing about reaching a desired state of affairs (§5). <FollowUp>Gundawar et al. 2024 for the full travel-planning instantiation and absolute pass rates</FollowUp>; <FollowUp>Stechly et al. 2024a on self-verification limits across reasoning tasks</FollowUp>; <FollowUp>whether backprompt diversification can be made systematic rather than heuristic</FollowUp>.
+
+## Limitations
+- <Caveat>The framework is specified, not evaluated end-to-end here</Caveat>: both case studies are reported from companion papers (Valmeekam et al. 2023c; Gundawar et al. 2024), and the travel results are explicitly preliminary.
+- <Caveat>The evidence base is concentrated on IPC-style symbolic domains and the authors' own studies</Caveat> (Blocksworld, Logistics, graph coloring, 24 puzzle, TravelPlanner); the universal "cannot plan" claim extrapolates beyond this distribution, and the constant-time-per-token argument (fn.1) is a complexity intuition, not a proof.
+- <Caveat>Soundness is relative to an acquired model</Caveat>: VAL guarantees correctness with respect to a PDDL model drafted by an LLM and signed off by a human — model errors silently become errors in "guaranteed" plans; acquisition cost and model fidelity are not quantified.
+- <Caveat>De-circularization is partial by design</Caveat>: soft critics may be LLM- or VLM-based; only hard-critic sign-off is sound, yet both streams feed the same backprompt.
+- <Caveat>Completeness hangs entirely on the generator</Caveat>: where the LLM cannot guess plausible candidates (Mystery BW, ~10% even with VAL), the loop stalls, and no fallback search is specified; the compute/latency cost of up to 15 critic rounds is not accounted.
+- <Caveat>Verification is pre-execution plan validation, not post-execution outcome checking</Caveat>: execution-time robustness in partially observable or drifting environments is out of scope (replanning is only an accommodation, fn.8).
+
+## Critiques and Questions
+1. The soft/hard boundary is the weak joint of the de-circularization argument: LLM-based style critiques flow through the same Meta Controller into the next prompt, so unsound judgment still steers the search even though it cannot accept. No ablation is reported on how much gain survives without soft critics, or whether a soft critique can dilute a hard failure in the compiled backprompt.
+2. "Guaranteed correct by its model" does heavy lifting: trust moves from the LLM to a human-signed, LLM-drafted PDDL model. For open-ended domains where writing that model is as hard as writing the plan — precisely the domains agentic LLMs target — applicability is asserted, not demonstrated.
+3. The 6x TravelPlanner improvement is against a 0.7% baseline; 6x of nearly nothing may remain far from usable, and absolute pass rates are deferred to the companion paper (Fig.5 values are not readable from the text).
+4. The paper faults agentic LLMs for acting without planning, yet LLM-Modulo itself terminates at a validated plan; closing the loop from validated plan to achieved world state (execution monitoring, replanning) is left unspecified.
+
+<SelfCheck q="Why does iterative self-critique make GPT-4 worse than direct one-shot generation on graph coloring?" a="Because the LLM cannot recognize a correct solution: it raises false-negative objections to fortuitously correct colorings it has already produced and iterates past them, ending on a wrong answer. An unsound verifier destroys value the generator created — the core reason LLM-Modulo reserves acceptance authority for sound external critics (§2.2)." />
+
+## Glossary
+- <Term def="Generate-Test-Critique architecture: an LLM guesses candidate plans, a bank of external critics evaluates them, and a meta-controller compiles critiques into the next prompt; name inspired by SAT Modulo Theories">LLM-Modulo</Term>
+- <Term def="automatic plan validation tool (Howey et al. 2004) that checks a plan against a PDDL domain model — the paper's canonical sound hard critic">VAL</Term>
+- <Term def="Planning Domain Definition Language: the standard formal specification of planning domains via actions with preconditions and effects">PDDL</Term>
+- <Term def="benchmark of IPC-style plan generation and reasoning tasks (Valmeekam et al. 2023b), including Blocksworld and its obfuscated variant">PlanBench</Term>
+- <Term def="Blocksworld with action and object names replaced by meaningless tokens; semantically identical for classical planners, catastrophic for LLMs">Mystery BW</Term>
+- <Term def="feeding the critics' pooled feedback back to the LLM as the next prompt to elicit a revised candidate">backprompting</Term>
+- <Term def="an environment where mistakes are recoverable, so plans that ignore subgoal interactions can still succeed by retrying">ergodic domain</Term>
+- <Term def="natural-language travel-itinerary benchmark (Xie et al. 2024) mixing hard budget constraints with common-sense constraints">TravelPlanner</Term>
+
+{/* NOTES_START */}
+### Personal notes
+For the TDE related-work section: cite this as the position backbone for de-circularization (LLMs must not self-adjudicate; guarantees enter only through sound external verification), then differentiate TDE on four axes — (1) object of verification: plan candidate vs final world state; (2) timing: pre-execution validation vs post-execution red-green iteration; (3) verifier provenance: once-per-domain acquired model with human sign-off vs per-instruction runtime-compiled acceptance suite; (4) purity: LLM soft critics admitted vs all verification mechanical. Fn.10 ("automated programming ... stuck to LLM-Modulo style approaches") is a quotable bridge from LLM-Modulo to test-driven agent harnesses.
+{/* NOTES_END */}

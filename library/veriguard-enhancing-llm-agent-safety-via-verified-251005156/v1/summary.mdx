@@ -1,0 +1,137 @@
+---
+canonical_key: arxiv-2510.05156
+version_key: v1
+title: 'VeriGuard: Enhancing LLM Agent Safety via Verified Code Generation'
+authors:
+- Lesly Miculicich
+- Mihir Parmar
+- Hamid Palangi
+- Krishnamurthy Dj Dvijotham
+- Mirko Montanari
+- Tomas Pfister
+- Long T. Le
+venue: arXiv
+year: 2025
+tags:
+- tde-related-work
+- tool-use
+- verifier
+topic_groups:
+- agent_harness
+triage_label: SKIP
+triage_confidence: high
+source_link: https://arxiv.org/abs/2510.05156v1
+summary_date: '2026-08-13'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>VeriGuard compiles a natural-language safety request into a deterministic Python policy function plus formal pre/postconditions, iterates offline (intent clarification → LLM-written PyTest suites → Nagini proof of the Hoare contract) until the checker is proven, then gates every intercepted agent action against the proven checker at runtime — 0.0% attack success on ASB across four backbones while retaining more task success than an LLM-judge guardrail.</TLDR>
+
+<WhyItMatters>CLOSEST-WORK #3 for TDE. VeriGuard already assembles most of TDE's skeleton — NL-intent clarification (scope binding), compilation to executable checkable code, red–green-style mechanical refinement (tests + prover), per-action gating before execution, explicit "correct-by-construction" framing — but aims it at a safety/access-control policy: its acceptance criterion is "no policy violation", never "goal achieved over the final world state". Two further structural differences sharpen TDE's delta: the Hoare triple `{C_pre} p {C_post}` ranges over the policy-checker program `p` and is discharged statically offline by Nagini, not evaluated by the environment against agent actions at runtime; and the online gate consumes arguments an unverified LLM extracts from agent text (`read_parameters_with_LLM`), not environment-queried world state. TDE's defensible novelty sits exactly on that axis: environment-evaluated pre/postconditions over actual state, iterated red–green toward task completion.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "0.0%", label: "ASR on ASB (avg)", sub: "all 4 backbones; no-defense 49.9–63.7% (Tab.1)" },
+  { value: "100/100/100", label: "EICU-AC Acc/P/R", sub: "GPT-4o, GPT-4.1, Gemini-2.5-Pro (Tab.2)" },
+  { value: "63.3 vs 40.2", label: "avg TSR, VeriGuard vs LLM-judge", sub: "Gemini-2.5-Flash on ASB (Tab.1)" },
+  { value: "11.9%", label: "ASR with re-planning alone (CRP)", sub: "0.0% once tool-halt is added (Tab.3)" },
+]} />
+
+## Motivation
+LLM agents wired to tools, APIs, and file systems can <Problem>exfiltrate sensitive data, run destructive commands, or trigger irreversible transactions</Problem>, and adversarial pressure (prompt injection, memory poisoning, backdoors) makes such failures systematic rather than accidental (§1). Existing defenses are <Problem>reactive pattern-matchers — sandboxing, I/O filtering, static rule guardrails (LlamaGuard, NeMo Guardrails) — that lack semantic understanding of an action's consequences and are bypassed by novel inputs</Problem>; LLM-reasoning guards (<Related>GuardAgent, ShieldAgent</Related>) are <Problem>empirical: they patch vulnerabilities as discovered and offer no provable guarantee of compliance</Problem> (§2.2). Without a formal specification of "safe" plus a method to verify compliance, safety remains an arms race.
+
+## Contribution (what's new)
+<Novelty>Generate the checker, don't judge the action: compile the NL safety request + agent specification into a deterministic Python policy function paired with machine-checkable pre/postconditions, prove the pair consistent offline (LLM-generated PyTest suites + the Nagini static verifier), and at runtime execute only the proven function on each intercepted action</Novelty>. The two-stage split is the practicality claim: everything expensive and uncertain (disambiguation, test loops, proof search) happens once offline, leaving a lightweight mechanical gate online. Versus GuardAgent-style guards, <Novelty>policy construction is generic — no in-context exemplars and no task-tailored policy structure</Novelty>; and <Novelty>the violation *response* is treated as a design variable (terminate / block action / halt tool call / re-plan), showing precision of intervention, not detection, is where task utility is won</Novelty> (§3.3.2, §5.2).
+
+## Research questions
+1. Can LLM-synthesized, formally verified policy code gate agent actions with provable compliance while preserving task utility (§1, §3.1)?
+2. Which runtime response to a detected violation best trades security against utility (§3.3.2)?
+3. Does the framework generalize across backbones and domains — injection attacks, medical access control, web safety rules — without task-specific engineering (§4)?
+
+## Methodology
+Two stages. **Offline**, VeriGuard takes the NL security request and an agent specification (task description, I/O structures, context) and synthesizes a policy function `p` — pure Python, no external libraries, signature `policy(arguments: dict) -> tuple[bool, str]` returning allow/deny plus a reason — together with a constraint set `C` of "verifiable logical statements". A refinement loop then makes `p |= C` provable: a Validator turns ambiguities into explicit assumptions; a testing loop repairs `p` until LLM-generated PyTest suites pass; a verification loop translates `C` into Nagini `Requires`/`Ensures` contracts and re-generates until the prover discharges the Hoare triple `{C_pre} p {C_post}`. **Online**, the proven `p` sits at enforcement points that intercept actions (tool executions, database access); an LLM extractor maps the agent's unstructured inputs/outputs to `p`'s argument dict; a deny triggers one of four enforcement strategies.
+
+<Pass title="Method details">
+<Stepper steps={[
+  { title: "Initial generation (§3.2.1, A.1)", body: "Two LLM sub-generators take the request and agent spec: one emits the policy function p0 plus the argument schema it needs (name/description/type per argument); the other emits constraints C0 as IF–THEN logical statements in JSON, covering both allowed and denied cases. Multiple interdependent rules become one cohesive codebase." },
+  { title: "Validation (§3.2.2, A.3)", body: "An analysis LLM scrutinizes (p0, C0) for semantic ambiguities, logical inconsistencies, and implicit presuppositions, producing queries; a disambiguation step resolves them into explicit assumptions plus refined requirements — interactively from user feedback, or autonomously via a module that picks the most contextually plausible interpretation (default assumptions)." },
+  { title: "Code testing (§3.2.2, A.4)", body: "An LLM writes a PyTest suite (happy path, edge cases, error handling) from the request/requirements/assumptions; failures and error messages feed a correction prompt; loop until all tests pass or a max iteration count (value not reported)." },
+  { title: "Formal verification (§3.2.2, A.5)", body: "An LLM embeds the logical statements as Nagini Requires/Ensures contracts in the code; the Nagini static verifier (built on the Viper infrastructure, chosen as the most capable Python verifier) proves the contract or returns a counterexample/error trace that feeds refinement; loop until proven or max iterations." },
+  { title: "Runtime enforcement (§3.3, A.2)", body: "The proven policy installs at enforcement points. read_parameters_with_LLM extracts the policy's arguments from the agent's text (inputs, outputs, context) — the paper deliberately keeps this mapping LLM-based for flexibility since agent data is unstructured. On deny: Task Termination (TT) kills the whole task; Action Blocking (AB) blocks the violating action but lets the plan continue; Tool Execution Halt (TEH) blocks only the offending tool call and returns a no-tool-response error; Collaborative Re-planning (CRP) tells the agent which policy it violated and requests a compliant new plan." },
+]} />
+</Pass>
+
+## Main result
+Across all four backbones (Gemini-2.5-Flash/Pro, GPT-4.1, Claude-Sonnet-4) and all four ASB attack families, <Finding src="Tab.1, p.8">VeriGuard drives ASR to 0.0% while posting the best *average* defended TSR — e.g. 63.3% vs 40.2% for the GuardRail LLM-judge baseline on Gemini-2.5-Flash, exceeding even the 61.7% no-attack upper bound</Finding>. On access control, <Finding src="Tab.2, p.9">VeriGuard scores a perfect 100.0/100.0/100.0 Acc/P/R on EICU-AC with every backbone tried, and the best recall (99.0–100.0) on Mind2Web-SC</Finding>.
+
+<SortableTable columns={["Backbone", "Defense", "AVG ASR (%)", "AVG TSR (%)"]} rows={[
+  ["Gemini-2.5-Flash", "No attack", "–", 61.7],
+  ["Gemini-2.5-Flash", "No defense", 51.9, 42.1],
+  ["Gemini-2.5-Flash", "GuardRail (LLM judge)", 0.0, 40.2],
+  ["Gemini-2.5-Flash", "VeriGuard", 0.0, 63.3],
+  ["Gemini-2.5-Pro", "No attack", "–", 76.5],
+  ["Gemini-2.5-Pro", "No defense", 52.1, 56.7],
+  ["Gemini-2.5-Pro", "GuardRail (LLM judge)", 0.0, 51.5],
+  ["Gemini-2.5-Pro", "VeriGuard", 0.0, 67.3],
+  ["GPT-4.1", "No attack", "–", 70.1],
+  ["GPT-4.1", "No defense", 63.7, 43.1],
+  ["GPT-4.1", "GuardRail (LLM judge)", 0.0, 44.6],
+  ["GPT-4.1", "VeriGuard", 0.0, 57.1],
+  ["Claude-Sonnet-4", "No attack", "–", 99.8],
+  ["Claude-Sonnet-4", "No defense", 49.9, 89.0],
+  ["Claude-Sonnet-4", "GuardRail (LLM judge)", 0.0, 68.3],
+  ["Claude-Sonnet-4", "VeriGuard", 0.0, 85.1],
+]} />
+
+On the two access-control benchmarks (allow/deny classification):
+
+<ResultsTable columns={["Method", "EICU-AC Acc/P/R", "Mind2Web-SC Acc/P/R"]} rows={[
+  ["Hardcoded Safety Rules", "81.0 / 76.6 / 90.7", "77.5 / 95.1 / 58.0"],
+  ["LLaMA-Guard3", "48.7 / – / –", "56.0 / 93.0 / 13.0"],
+  ["AgentMonitor (GPT-4o)", "82.3 / 98.2 / 66.7", "72.5 / 79.2 / 61.0"],
+  ["GuardAgent (GPT-4)", "98.7 / 100.0 / 97.5", "90.0 / 100.0 / 80.0"],
+  ["AGrail (GPT-4o)", "97.8 / 97.5 / 98.1", "98.4 / 99.0 / 98.0"],
+  ["VeriGuard (GPT-4o)", "100.0 / 100.0 / 100.0", "95.1 / 91.3 / 99.0"],
+  ["VeriGuard (GPT-4.1)", "100.0 / 100.0 / 100.0", "96.2 / 91.2 / 100.0"],
+  ["VeriGuard (Gemini-2.5-Pro)", "100.0 / 100.0 / 100.0", "97.2 / 95.0 / 99.0"],
+]} />
+
+## Key findings
+- <Finding src="§4.4, Tab.1">Detection is not the bottleneck: the GuardRail LLM-judge baseline also achieves 0.0% ASR in every ASB cell</Finding> — the paper concedes "simple violation detection is a largely solved task for strong LLMs". VeriGuard's measured advantage is entirely intervention precision: +12.5 to +23.1 points of average TSR over GuardRail across backbones (printed AVG cells), from blocking only the malicious tool call instead of derailing the task.
+- <Finding src="Tab.2, p.9">Perfect EICU-AC (100/100/100) comes from a *generic* policy constructor — no in-context learning, no task-tailored policy structure</Finding>, where GuardAgent (98.7 Acc) needs both. On Mind2Web-SC, AGrail keeps better accuracy/precision (98.4/99.0 vs 97.2/95.0); the authors attribute this to its memory of policies and argue recall — where VeriGuard leads at 99.0–100.0 — is the security-critical metric ("prevent all illicit actions, even at the cost of a decrease in precision").
+- <Finding src="Fig.2, §5.1">Cumulative ablation (Gemini-2.5-Flash): policy generation alone cuts average ASR 53.5% → 9.97%; the validation stage matters most against memory poisoning (31.75% → 15%); the full stack reaches 0% with TSR rising rather than falling (51.87% → 63.25% claimed)</Finding> — though these prose figures do not reconcile with Table 1 (see Critiques).
+- <Finding src="Tab.3, p.11">The enforcement strategy decides the security–utility trade-off: Task Termination is 0.0 ASR / 0.0 TSR (perfectly safe, perfectly useless); Collaborative Re-planning alone leaves 11.9% average ASR (14.3% on DPI, 33.3% on IPI); the CRP+TEH hybrid is optimal at 0.0% ASR / 63.3% TSR</Finding> — advising the agent is not enforcement; a mechanical block must back the advice.
+- <Finding src="Tab.1, p.8">Defended TSR sometimes exceeds the no-attack upper bound</Finding> (Flash: MP 69.0 vs 57.5, PoT 77.7 vs 74.3; GPT-4.1: PoT 94.5 vs 87.0) — unexplained in the paper; it suggests run-to-run noise or that the gate also suppresses task-harmful behavior unrelated to the attack.
+
+## Implications
+For the guardrail lineage (<Related>GuardAgent, ShieldAgent, AGrail, LlamaGuard-3, AgentMonitor</Related>), VeriGuard relocates adjudication from LLM judgment to proven code — de-circularizing the policy *check* itself, while leaving LLM links at both ends of the chain (constraint synthesis offline, argument extraction online). It also joins agent safety to the <Related>LLM-driven verifiable code generation line (Li et al. 2024; Nagini/Viper from the formal-methods community)</Related>. For TDE, it is the closest structural template — offline compile-and-verify, online mechanical gate — applied to the orthogonal objective (policy compliance, not task completion); a TDE novelty defense should cite it as category-D closest work and differentiate on verification object, locus (environment-evaluated at runtime vs statically proven offline), and acceptance criterion. <FollowUp>Whether any ASB-style evaluation can isolate the marginal security value of formal verification over plain generated code (here GuardRail already hits 0% ASR)</FollowUp>; <FollowUp>the authors' own next steps: memory of past judgments (AGrail-style), autonomous generation of safety specifications, and verification scalability</FollowUp>.
+
+## Limitations
+- <Caveat>The end-to-end guarantee is conditional on LLM-generated constraints matching user intent: the authors state soundness "is contingent upon manual validation by the user"</Caveat> (§5.3). What is proven is `p |= C`, not "the agent is safe".
+- <Caveat>Runtime argument extraction is an unverified LLM component inside the enforcement path</Caveat>: the proven checker consumes whatever `read_parameters_with_LLM` extracts from agent text; extraction errors — or attacks aimed at the extractor — fall outside the proof, and no experiment stresses this link.
+- <Caveat>Capabilities are bounded by Nagini's grammar; porting to other languages is called non-trivial; the hybrid LLM-extraction + deterministic-rules design "may be insufficient" for attacks requiring deeper reasoning or dynamic policy updates</Caveat> (§5.3, all author-stated).
+- <Caveat>No latency/compute overhead numbers, no verification-loop statistics (iterations to convergence, Nagini failure rate), no seeds or variance, and no code release mentioned</Caveat> — the "lightweight online monitoring" practicality claim is asserted, not measured. Not reported.
+
+## Critiques and Questions
+1. **The proof is a narrow bridge between two unverified LLM links.** Offline, NL → constraints is LLM-generated (authors: needs manual validation); online, text → arguments is LLM-extracted. "Formal safety guarantees" hold only for the segment in between. An injection that manipulates the *extractor* — precisely the adversary class the paper targets — would feed a correctly-proven policy wrong arguments; this attack surface is never evaluated.
+2. **ASB cannot show the security value of the verification machinery.** GuardRail already achieves 0.0% ASR everywhere, so testing + formal verification add no measurable ASR benefit over generated-code-plus-LLM-judgment on this benchmark; the ablation that should isolate it is internally inconsistent — §5.1 quotes a 53.5% baseline average ASR and MP 31.75% → 15% where Table 1's no-defense row reads 51.9% and MP 15%; it names "Validation" twice while Fig.2's x-axis order is +Policy Gen → +Testing → +Validation → +Verification; and its claimed TSR start (51.87%) equals the no-defense *ASR* (51.9%), not the no-defense TSR (42.1%).
+3. **Arithmetic and claim hygiene.** Several Table 1 AVG cells are not the mean of their row while others are: GuardRail/Flash avg TSR prints 40.2 (row mean 46.15), GPT-4.1 GuardRail 44.6 (49.1), GPT-4.1 no-defense 43.1 (48.9) — recomputing shrinks the headline TSR margin over GuardRail (to roughly +8 to +17 points) though VeriGuard still leads every backbone. §5.2 quotes CRP+TEH at 0.1% ASR / 63.6% TSR where Table 3 prints 0.0 / 63.3. §4.4 says "three backbone LLMs" over a four-backbone table. And "outperforming all other defenses in TSR" holds for averages, not cell-wise (GuardRail's PoT TSR beats VeriGuard's on Gemini-Pro, 72.0 vs 71.3, and Claude, 83.5 vs 80.2).
+4. **Practicality untested at policy scale.** Experiments use benchmark-level policies known offline; how multiple policies per agent compose, how long generation + proof takes per policy, and what fraction of policies Nagini can verify at all are Not reported — yet these determine whether "exhaustive offline validation" amortizes in deployment.
+
+<SelfCheck q="In VeriGuard's Hoare triple over pre/postconditions, what is the program being verified — the agent's action? — and where is the triple actually checked?" a="The program is the generated Python policy-checker function itself, not the agent's action. The triple is discharged statically, offline, by the Nagini verifier during the refinement loop. At runtime the proven checker merely executes on arguments an LLM extracts from the agent's text; no pre/postcondition is evaluated by the environment against actual world state — the key structural difference from TDE's environment-evaluated action gating." />
+
+## Glossary
+- <Term def="Agent Security Bench (Zhang et al., ICLR 2025): 10 ReAct agents, 10 scenarios, 10 tasks, 13 attack variations, 400 attack tools across four attack families">ASB</Term>
+- <Term def="direct / indirect prompt injection: malicious instructions in the user query vs in retrieved tool/environment content">DPI / IPI</Term>
+- <Term def="memory poisoning (corrupting the agent's stored context) and plan-of-thought backdoor (triggered malicious planning) — ASB's other two attack families">MP / PoT</Term>
+- <Term def="Attack Success Rate (fraction of attacks that succeed, lower better) and Task Success Rate (fraction of original tasks completed, higher better)">ASR / TSR</Term>
+- <Term def="access-control benchmark from the GuardAgent paper: an ICU QA agent over 10 patient databases must deny questions whose answers need data forbidden to the user's role">EICU-AC</Term>
+- <Term def="Mind2Web web-agent benchmark augmented with safety-control rules prohibiting specific users from specific web activities">Mind2Web-SC</Term>
+- <Term def="static formal verifier for Python (Eilers & Müller 2018) built on the Viper verification infrastructure; proves Requires/Ensures contracts">Nagini</Term>
+- <Term def="notation for program correctness: if precondition holds before the program runs and the program terminates, the postcondition is guaranteed after">Hoare triple</Term>
+
+{/* NOTES_START */}
+### Personal notes
+TDE novelty-defense deltas, precisely (verified against the paper): (1) **verification object** — VeriGuard proves the policy-checker program against LLM-authored safety constraints; TDE's suite checks *task completion* over the final world state. (2) **locus** — VeriGuard's Hoare triple is discharged statically offline by Nagini over checker code; TDE's pre/postconditions are evaluated *by the environment at runtime* per action. (3) **acceptance criterion** — "no policy violation" vs "goal achieved"; VeriGuard measures TSR but never gates on it. (4) **runtime inputs** — VeriGuard's gate reads LLM-extracted arguments from agent *text*; TDE reads actual environment state. (5) **loop object** — VeriGuard's red–green loop is offline over the policy code; CRP is the only runtime loop and it iterates toward compliance (and alone leaves 11.9% ASR), not toward task success. So: "compile NL → verified executable checks + per-action mechanical gating" is now established *for safety policies* — TDE's claim must be anchored on environment-evaluated, final-state, task-completion verification, not on the compile-and-gate pattern itself. Also reusable ammunition: VeriGuard's own data shows an LLM judge already blocks 100% of ASB attacks, i.e. the value of executable checkers there is utility precision, and the paper's guarantee chain is bracketed by two unverified LLM links — TDE's environment-computed adjudication genuinely removes one of them.
+{/* NOTES_END */}

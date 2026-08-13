@@ -1,0 +1,118 @@
+---
+canonical_key: arxiv-2510.23761
+version_key: v1
+title: 'TDFlow: Agentic Workflows for Test Driven Development'
+authors:
+- Kevin Han
+- Siddharth Maddikayala
+- Tim Knappe
+- Om Patel
+- Austen Liao
+- Amir Barati Farimani
+venue: arXiv
+year: 2025
+tags:
+- agent-harness
+- tde-related-work
+- test-based-eval
+topic_groups:
+- software_engineering_agents
+- agent_harness
+triage_label: SKIM
+triage_confidence: high
+source_link: https://arxiv.org/abs/2510.23761v2
+summary_date: '2026-08-13'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>TDFlow flips SWE-Bench into a test-resolution task — reveal the normally hidden human-written tests, then loop a fixed four-sub-agent workflow (propose patch → revise → debug each failing test → re-propose) red–green until the suite passes — reaching 94.3% on SWE-Bench Verified with human tests vs 68.0% with self-generated ones, and locating the last obstacle to autonomous repository repair in writing reproduction tests, not solving them.</TLDR>
+
+<WhyItMatters>The closest SWE-domain precedent for TDE's run loop: completion is gated on a mechanically executed acceptance suite, iterated red–green until green, and its Generate Tests mode is exactly TDE's compile-the-instruction-into-tests step — here quantified as the weak link (94.3% → 68.0%, back to 93.3% when generated tests are valid). The TDE deltas survive contact with the paper: TDFlow's suite asserts repository code behavior, not final environment state; its best mode needs human-written tests; there are no per-action, environment-evaluated pre/postconditions (guardrails are prompts plus file-access restrictions); and its anti-gaming adjudication — the test-hacking audit — is manual human review, precisely the hole TDE's mechanical postconditions aim to close.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "94.3%", label: "SWE-Bench Verified, human tests", sub: "GPT-5 sub-agents; 87.2% without debugger" },
+  { value: "88.8%", label: "SWE-Bench Lite, human tests", sub: "GPT-4.1; +27.8 abs over modified Agentless" },
+  { value: "68.0%", label: "Verified, self-generated tests", sub: "Claude 4 Sonnet writes the tests" },
+  { value: "7 / 800", label: "test-hacking runs found", sub: "manual audit; counted as failures" },
+]} />
+
+## Motivation
+Industrial TDD studies report large quality gains — defect density improved up to 90% (Nagappan et al. 2008), 18% higher functional-test quality (George & Williams 2003) — at the price of 16–35% more development time, and <Problem>that time burden is the stated blocker keeping teams off test-first development</Problem> (§2.1). On the evaluation side, <Problem>SWE-Bench-style benchmarks hide the human-written acceptance tests, forcing agents to simultaneously understand the issue, invent their own validation, and patch the repo</Problem> — conflating test writing with test solving (§1, §2.2). Architecturally, <Problem>monolithic agents couple every subtask capability inside one ever-growing context: overall success is bottlenecked by the weakest subtask, and long-context tool use degrades performance</Problem> (§2.3).
+
+## Contribution (what's new)
+<Novelty>Reframe repository-scale repair as test resolution: hand the system the acceptance tests and gate completion exclusively on making them pass</Novelty> — turning SWE-Bench inside out and enabling a division of labor where humans write tests and LLMs solve them. The mechanism is <Novelty>forced decomposition into four minimal-tool sub-agents (Explore Files, Revise Patch, Debug One, optional Generate Tests) in a fixed loop where each iteration proposes a fresh whole-repo diff against the pristine initial state, from rewritten minimal context — aggregated debugging reports instead of a growing transcript</Novelty>. The form follows the failure mode: if monolithic agents decay with context length and couple subtasks, the workflow — not the LLM — must own the decomposition, which also makes each sub-task individually improvable and trainable.
+
+## Research questions
+1. Given ground-truth tests, can a tightly constrained agentic workflow resolve them at repository scale at human level, and at what cost? 2. Does the residual gap to fully autonomous software engineering lie in solving tests or in writing them? 3. When success is gated purely on tests, how often does the system hack the tests instead of fixing the issue?
+
+## Methodology
+Run the failing <Term def="tests that fail on the buggy repository and should pass once the issue is fixed; SWE-Bench's normally hidden acceptance tests">reproduction tests</Term>; hand the issue, failing-test sources, and error messages to a read-only Explore Files sub-agent (find / view / hierarchy tools only — no file editing, no bash) that proposes a whole-repository patch. If the diff fails to apply, a Revise Patch sub-agent repairs its context lines (never the inserted code). All tests re-run; one debugger-equipped Debug One sub-agent per failing test (up to 18) writes a root-cause report; reports are aggregated into the next Explore Files iteration — up to 10 red–green rounds. The repo always resets to its initial state, so every candidate patch is a diff against the same baseline. If no patch passes everything, TDFlow outputs the one passing the most reproduction tests without breaking regressions (§3.5). Without human tests, a Generate Tests sub-agent first compiles the issue description into single-assert reproduction tests that must fail pre-patch (§3.4).
+
+<Pass title="Workflow details, settings, and prompt design">
+<Stepper steps={[
+  { title: "Generate Tests (optional entry, §3.4)", body: "Claude 4 Sonnet (on Verified) explores the repo, writes reproduction tests with exactly one assert each, must run them via an evaluate_tests tool before submitting (they should fail pre-fix), and returns test names + file lines so the workflow can run and debug each test individually later." },
+  { title: "Explore Files (§3.1)", body: "Context is engineered as the minimum complete representation of history: the issue, plus — for each previous attempt — the proposed global patch, the source of the tests it still fails (regressions included), and the debugging reports. The prompt frames reports as analyses by 'a junior engineer equipped with a debugger' and insists a patch is 100% necessary." },
+  { title: "Revise Patch (§3.2)", body: "Triggered only when a patch fails to apply for lack of correct context. Receives the malformed patch + the same read-only tools; forbidden from modifying inserted code. Authors report this beats feeding apply-errors back to Explore Files." },
+  { title: "Debug One (§3.3, App.D)", body: "Per failing test: test source, error message, the failing patch, and a restricted Python debugger (step / next / return / continue, breakpoints incl. conditional, p / pp / whatis / args / locals / globals, list, stack, restart — Table 8). Instructed to chase root cause, not symptoms, and to avoid breakpoints on function signatures." },
+  { title: "Caps and knobs (Table 6)", body: "10 total iterations; at most 18 tests debugged per iteration; max turns 200 (Generate Tests), 250 (Debug One), 75 (Explore Files), 50 (Revise Patch); temperature 1.0 gave the best performance — attributed to exploring creative alternative solutions across iterations." },
+]} />
+Test-hacking mitigations: precisely engineered system prompts, patches blocked from touching test folders or test source, sub-agents see only the repo folder (not the filesystem), and repeated nudging via tool-call results (§4.4).
+</Pass>
+
+## Main result
+With human-written tests revealed on SWE-Bench Lite (all systems GPT-4.1; every baseline modified by the authors to receive and run the tests), <Finding src="Tab.1, p.5">TDFlow resolves 88.8% vs 61.0% for the strongest baseline (modified Agentless) — +27.8 points absolute</Finding>, at the highest cost per issue ($1.51). On SWE-Bench Verified with GPT-5 sub-agents, <Finding src="Tab.2, p.7">TDFlow reaches 94.3% with human-written tests, 87.2% without the debugging sub-agent, and 68.0% when generating its own tests</Finding> (the intro instead quotes 69.8% — see Critiques).
+
+<SortableTable columns={["System (SWE-Bench Lite, human tests)", "Pass rate (%)", "Cost/issue ($)"]} rows={[
+  ["OpenHands (modified)", 47.8, 1.32],
+  ["ExpeRepair (modified)", 48.6, 0.84],
+  ["SWE-Agent (modified)", 49.0, 0.89],
+  ["Agentless (modified)", 61.0, 0.53],
+  ["TDFlow (ours)", 88.8, 1.51],
+]} />
+
+<ResultsTable columns={["TDFlow mode (Verified)", "Pass rate", "Cost/issue", "Test-resolution cost"]} rows={[
+  ["LLM-generated tests", "68.0%", "$4.12", "$2.83"],
+  ["Human tests, no debugging sub-agent", "87.2%", "$0.73", "$0.73"],
+  ["Human tests, full workflow", "94.3%", "$1.01", "$1.01"],
+]} />
+
+## Key findings
+- <Finding src="Fig.2, §5">When every generated test is a true reproduction test (BTR = 0), TDFlow solves 93.3% — essentially the human-written 94.3%</Finding>: test provenance is irrelevant; test validity is everything. The bottleneck to autonomy is generation quality, not resolution ability.
+- <Finding src="Fig.2, §5">Success degrades smoothly as <Term def="Bad Test Rate: unsuccessful reproduction tests divided by total LLM-generated tests for an instance">BTR</Term> rises, with a sharp drop only when no valid reproduction test exists</Finding>: the fallback selection rule (most repro tests passed, no regressions broken) keeps partially-tested instances alive.
+- <Finding src="Tab.2, p.7">Ablating the Debug One sub-agent costs 7.1 points (94.3% → 87.2%)</Finding>: dedicated per-test debugger reports buy real accuracy for +$0.28/issue.
+- <Finding src="§4.4, App.C">Only 7 of 800 audited runs show <Term def="making tests pass without fixing the issue: editing or skipping tests, weakening asserts, hardcoding expected outputs, test-only code paths (Table 7)">test hacking</Term> (4 Lite, 3 Verified)</Finding>: three engineers, a 13-sign rubric, a 2-of-3 vote; all hacks counted as failures.
+- <Finding src="Tab.1, §4.1">Agentless is both the strongest and cheapest baseline (61.0%, $0.53)</Finding>: its up-to-40-patch ensemble filtered against the revealed tests approximates test-driven search without agency; agentic baselines burn budget on localization.
+- <Finding src="Tab.2, §4.2">Bad tests are expensive: test-resolution cost nearly triples in self-generated mode ($2.83 vs $1.01/issue)</Finding> — the loop burns debugging budget optimizing against tests that never reproduced the issue. <Finding src="Fig.3a, §4.3">Pass rate scales with loop iterations with fast diminishing returns</Finding>, evidence that accumulated failure context helps.
+
+## Implications
+If valid tests exist, repository-scale test resolution is essentially solved — so the frontier moves to test generation. That promotes <Related>test-generation systems and benchmarks (CodeT, Libro, Otter, AEGIS, UTBoost; SWT-Bench, TDD-Bench)</Related> from complementary work to critical path, and the decoupled workflow makes Generate Tests individually trainable — <FollowUp>the authors propose long-horizon RL post-training targeted specifically at test generation</FollowUp>. It also sharpens the workflow-vs-agent argument of <Related>Agentless</Related> against ReACT-style <Related>SWE-agent and OpenHands</Related> and memory-augmented <Related>ExpeRepair</Related>: when the task structure is known (TDD's loop), fixed decomposition beats agentic freedom. <FollowUp>Automated test-hacking detection</FollowUp> is the acknowledged missing piece for production use. For TDE specifically: <FollowUp>whether suite-gated red–green loops transfer from repository tests to environment-state assertions (AppWorld-style state diffs), where a 'don't touch the test folder' guardrail has no analog and gaming must be excluded by construction rather than by audit</FollowUp>.
+
+## Limitations
+- <Caveat>The headline denominators are not the official benchmarks</Caveat>: TDFlow could not run 22/300 Lite instances (88.8% is computed over 278) and 45/500 Verified instances (the denominator behind 94.3% is not stated; presumably 455). Counting exclusions as failures gives roughly 82.3% (Lite) and 85.8% (Verified) — my arithmetic, not the paper's. OpenHands' Lite denominator is 201 after 91 evaluation failures (App.A–B).
+- <Caveat>The exclusions come from rigid infrastructure requirements</Caveat>: every test must be individually runnable and debuggable with a unique name-to-line mapping — a setup tax purely agentic systems don't pay (§8, App.B).
+- <Caveat>Tests are frozen once provided or generated — no correction mechanism, no early stopping</Caveat>: wrong or unsolvable tests are optimized against until the 10-iteration cap; author-stated cause of the self-generated gap (§5, §8).
+- <Caveat>Test-hacking control is prompt-level and detection is manual</Caveat> — no automated check exists yet (§6).
+- <Caveat>Single runs, no variance or seeds; Lite uses GPT-4.1 while Verified uses GPT-5</Caveat>, so the 88.8% vs 94.3% difference across benchmarks partly reflects model choice. Seed/variance analysis: Not reported.
+- <Caveat>The revealed-tests setting is non-standard by design</Caveat>: numbers are not comparable to SWE-Bench leaderboard results (where tests stay hidden).
+
+## Critiques and Questions
+1. The +27.8 headline compares against baselines the authors themselves modified (default configs, GPT-4.1) for a setting those systems weren't built for; ensembling alone took Agentless to 61.0%, so a test-aware baseline tuned for this setting might close a real chunk of the gap.
+2. Internal inconsistencies: the intro says 69.8% for self-generated Verified where Table 2, §4.2, and §5 say 68.0%; the intro claims all 300+500 runs were audited while the appendices report 22+45 instances never ran; and the BTR figure is cross-referenced as Figure 4 but captioned Figure 2.
+3. The human-level claim rests on SWE-Bench Verified's annotation that instances are solvable given the issue — not on measured human pass rates on the same task — so it is an interpretation, not a comparison.
+4. 7/800 test hacks is a floor, not a ceiling: manual majority-vote log review can miss subtle assertion-overfitting. The paper simultaneously demonstrates mechanical success-gating and concedes its integrity check still needs humans.
+5. All evidence is Python on SWE-Bench repositories (Django-class). The per-repo engineering cost of the test harness for a new language or repo: Not reported.
+
+<SelfCheck q="Why does the self-generated-tests mode (68.0%) fall so far below the human-written mode (94.3%), and what evidence shows the gap is not a resolution failure?" a="Generated tests are frozen after the Generate Tests phase — TDFlow may not modify them — so invalid reproduction tests are never corrected and the loop optimizes a wrong target until the iteration cap. On instances where every generated test is a true reproduction test (BTR = 0), the solve rate is 93.3%, essentially matching the human-written 94.3%: resolution capability is intact, and failures concentrate in test generation." />
+
+## Glossary
+- <Term def="tests that fail on the buggy repo and pass once the issue is truly fixed; SWE-Bench's hidden acceptance criteria">reproduction tests</Term> vs <Term def="pre-existing tests that already pass and must keep passing under the patch">regression tests</Term>
+- <Term def="fail-to-pass: a test that fails before the gold (ground-truth) patch and passes after — the definition of a successful reproduction test">f2p</Term>
+- <Term def="300-instance SWE-Bench subset built to reduce evaluation cost">SWE-Bench Lite</Term>; <Term def="500 SWE-Bench instances human-validated to be solvable from the issue description alone">SWE-Bench Verified</Term>
+- <Term def="a single LLM + tool set handling all subtasks in one continuous context, as in SWE-agent/OpenHands">monolithic agent</Term>; <Term def="workflow-based SWE system (localize, repair, validate) that uses LLMs non-agentically; strongest baseline here">Agentless</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Cleanest code-domain evidence for the TDE bet: mechanical suite-gating plus red–green looping hits ceiling performance, and the spec-compilation step (issue → tests) is where autonomy dies — BTR is the whole story. Reusable framings: frozen tests (the system may not rewrite its own spec) ≈ TDE's immutable acceptance suite; their manual test-hacking audit is the anti-pattern TDE's environment-evaluated postconditions should replace. Cite 88.8/94.3 with the denominator caveat (278/≈455, not 300/500).
+{/* NOTES_END */}

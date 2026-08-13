@@ -1,0 +1,58 @@
+canonical_key: arxiv-2404.11891
+slug: large-language-models-can-solve-real-world-240411891
+title: Large Language Models Can Solve Real-World Planning Rigorously with Formal Verification Tools
+authors:
+- Yilun Hao
+- Yongchao Chen
+- Yang Zhang
+- Chuchu Fan
+year: 2024
+primary_ids:
+  doi: null
+  arxiv_base_id: '2404.11891'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2404.11891v3
+- https://arxiv.org/pdf/2404.11891v3
+topic_groups:
+- general_agent_methods
+tags:
+- planner-executor-verifier
+- tde-related-work
+- verifier
+venue:
+  name: NAACL
+  tier: A_star
+  status: accepted
+  year: 2025
+user:
+  read_status: unread
+  triage_label: SKIP
+  triage_confidence: medium
+  notes: null
+milestone: null
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v3
+  source: arxiv
+  source_url: https://arxiv.org/abs/2404.11891v3
+  pdf_path: library/large-language-models-can-solve-real-world-240411891/v1/paper.pdf
+  summary_path: library/large-language-models-can-solve-real-world-240411891/v1/summary.mdx
+  metadata_path: library/large-language-models-can-solve-real-world-240411891/v1/metadata.yaml
+  fetched_at: '2026-08-13T07:16:52Z'
+  source_updated_at: '2025-01-29T17:24:03Z'
+  arxiv_version: v3
+  pdf_sha256: ba9261d6d8fbf2b43817e57c29aa6ffacc0b14ef038e6c86a33f8780490bd365
+  pdf_bytes: 1036213
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-08-13T07:16:52Z'
+  updated_at: '2026-08-13T10:32:29Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

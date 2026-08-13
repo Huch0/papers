@@ -1,0 +1,78 @@
+canonical_key: arxiv-2404.11891
+version_key: v1
+title: Large Language Models Can Solve Real-World Planning Rigorously with Formal Verification Tools
+authors:
+- Yilun Hao
+- Yongchao Chen
+- Yang Zhang
+- Chuchu Fan
+abstract: 'Large Language Models (LLMs) struggle to directly generate correct plans for complex multi-constraint
+  planning problems, even with self-verification and self-critique. For example, a U.S. domestic travel
+  planning benchmark TravelPlanner was proposed in Xie et al. (2024), where the best LLM OpenAI o1-preview
+  can only find viable travel plans with a 10% success rate given all needed information. In this work,
+  we tackle this by proposing an LLM-based planning framework that formalizes and solves complex multi-constraint
+  planning problems as constrained satisfiability problems, which are further consumed by sound and complete
+  satisfiability solvers. We start with TravelPlanner as the primary use case and show that our framework
+  achieves a success rate of 93.9% and is effective with diverse paraphrased prompts. More importantly,
+  our framework has strong zero-shot generalizability, successfully handling unseen constraints in our
+  newly created unseen international travel dataset and generalizing well to new fundamentally different
+  domains. Moreover, when user input queries are infeasible, our framework can identify the unsatisfiable
+  core, provide failure reasons, and offers personalized modification suggestions. We show that our framework
+  can modify and solve for an average of 81.6% and 91.7% unsatisfiable queries from two datasets and prove
+  with ablations that all key components of our framework are effective and necessary. Project page: https://sites.google.com/view/llm-rwplanning.'
+venue: arXiv
+year: 2024
+source: arxiv
+source_url: https://arxiv.org/abs/2404.11891v3
+pdf_url: https://arxiv.org/pdf/2404.11891v3
+pdf_sha256: ba9261d6d8fbf2b43817e57c29aa6ffacc0b14ef038e6c86a33f8780490bd365
+fetched_at: '2026-08-13T07:16:52Z'
+source_updated_at: '2025-01-29T17:24:03Z'
+ids:
+  doi: null
+  arxiv_id: 2404.11891v3
+  arxiv_base_id: '2404.11891'
+  arxiv_version: v3
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- planner-executor-verifier
+- tde-related-work
+- verifier
+topic_groups:
+- general_agent_methods
+scoring:
+  score: 13.5
+  label: SKIP
+  confidence: medium
+  rationale: 'score=13 -> SKIP | strong: author_or_lab_signal(1.00), evaluation_quality(0.55), interest_fit(0.40)
+    | interests: general_agent_methods:group:general_agent_methods | negatives: old_in_fast_area'
+  matched_interests:
+  - general_agent_methods:group:general_agent_methods
+  negative_signals:
+  - old_in_fast_area
+  subscores:
+    interest_fit: 0.402
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.36
+    novelty: 0.0
+    artifact_availability: 0.0
+    evaluation_quality: 0.55
+    trend_signal: 0.0
+    author_or_lab_signal: 1.0
+artifacts:
+  pdf: library/large-language-models-can-solve-real-world-240411891/v1/paper.pdf
+  extraction: library/large-language-models-can-solve-real-world-240411891/v1/extraction.txt
+  summary: library/large-language-models-can-solve-real-world-240411891/v1/summary.mdx
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread
+  summary_format: mdx

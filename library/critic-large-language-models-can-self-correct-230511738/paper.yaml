@@ -1,0 +1,61 @@
+canonical_key: arxiv-2305.11738
+slug: critic-large-language-models-can-self-correct-230511738
+title: 'CRITIC: Large Language Models Can Self-Correct with Tool-Interactive Critiquing'
+authors:
+- Zhibin Gou
+- Zhihong Shao
+- Yeyun Gong
+- Yelong Shen
+- Yujiu Yang
+- Nan Duan
+- Weizhu Chen
+year: 2023
+primary_ids:
+  doi: null
+  arxiv_base_id: '2305.11738'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2305.11738v4
+- https://arxiv.org/pdf/2305.11738v4
+topic_groups:
+- general_agent_methods
+tags:
+- tde-related-work
+- tool-use
+- verifier
+venue:
+  name: ICLR
+  tier: A_star
+  status: accepted
+  year: 2024
+user:
+  read_status: unread
+  triage_label: SKIP
+  triage_confidence: medium
+  notes: null
+milestone: null
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v4
+  source: arxiv
+  source_url: https://arxiv.org/abs/2305.11738v4
+  pdf_path: library/critic-large-language-models-can-self-correct-230511738/v1/paper.pdf
+  summary_path: library/critic-large-language-models-can-self-correct-230511738/v1/summary.mdx
+  metadata_path: library/critic-large-language-models-can-self-correct-230511738/v1/metadata.yaml
+  fetched_at: '2026-08-13T07:14:24Z'
+  source_updated_at: '2024-02-21T12:59:21Z'
+  arxiv_version: v4
+  pdf_sha256: ed5cbff53c8ff550b72d6abba0d7e4d83c5d214d61d0fafde10cbe4bbfc31a5b
+  pdf_bytes: 1581312
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-08-13T07:14:24Z'
+  updated_at: '2026-08-13T10:10:28Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

@@ -1,0 +1,76 @@
+canonical_key: arxiv-2603.10505
+version_key: v1
+title: Safe and Scalable Web Agent Learning via Recreated Websites
+authors:
+- Hyungjoo Chae
+- Jungsoo Park
+- Alan Ritter
+abstract: 'Training autonomous web agents is fundamentally limited by the environments they learn from:
+  real-world websites are unsafe to explore, hard to reset, and rarely provide verifiable feedback. We
+  propose VeriEnv, a framework that treats language models as environment creators, automatically cloning
+  real-world websites into fully executable, verifiable synthetic environments. By exposing controlled
+  internal access via a Python SDK, VeriEnv enables agents to self-generate tasks with deterministic,
+  programmatically verifiable rewards, eliminating reliance on heuristic or LLM-based judges. This design
+  decouples agent learning from unsafe real-world interaction while enabling scalable self-evolution through
+  environment expansion. Through experiments on web agent benchmarks, we show that agents trained with
+  VeriEnv generalize to unseen websites, achieve site-specific mastery through self-evolving training,
+  and benefit from scaling the number of training environments. Code and resources will be released at
+  https://github.com/kyle8581/VeriEnv upon acceptance.'
+venue: arXiv
+year: 2026
+source: arxiv
+source_url: https://arxiv.org/abs/2603.10505v1
+pdf_url: https://arxiv.org/pdf/2603.10505v1
+pdf_sha256: 34bc089a17725c7a15b55c83be272240d06f8098714064599c0c5490a0e086ee
+fetched_at: '2026-08-13T07:17:23Z'
+source_updated_at: '2026-03-11T07:58:53Z'
+ids:
+  doi: null
+  arxiv_id: 2603.10505v1
+  arxiv_base_id: '2603.10505'
+  arxiv_version: v1
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- execution-based-eval
+- tde-related-work
+- training-environment
+topic_groups:
+- computer_use_agents
+- agent_harness
+scoring:
+  score: 44.7
+  label: TRACK_ONLY
+  confidence: high
+  rationale: 'score=45 -> TRACK_ONLY | strong: interest_fit(0.91), recency(0.73), artifact_availability(0.55)
+    | interests: agent_harness:group:agent_harness, computer_use_agents:web agent, computer_use_agents:group:computer_use_agents'
+  matched_interests:
+  - agent_harness:group:agent_harness
+  - computer_use_agents:web agent
+  - computer_use_agents:group:computer_use_agents
+  negative_signals: []
+  subscores:
+    interest_fit: 0.91
+    recency: 0.732
+    venue_quality: 0.4
+    harness_relevance: 0.36
+    novelty: 0.0
+    artifact_availability: 0.55
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/safe-and-scalable-web-agent-learning-via-260310505/v1/paper.pdf
+  extraction: library/safe-and-scalable-web-agent-learning-via-260310505/v1/extraction.txt
+  summary: library/safe-and-scalable-web-agent-learning-via-260310505/v1/summary.mdx
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread
+  summary_format: mdx

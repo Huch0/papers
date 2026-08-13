@@ -1,0 +1,151 @@
+---
+canonical_key: arxiv-2204.01691
+version_key: v1
+title: 'Do As I Can, Not As I Say: Grounding Language in Robotic Affordances'
+authors:
+- Michael Ahn
+- Anthony Brohan
+- Noah Brown
+- Yevgen Chebotar
+- Omar Cortes
+- Byron David
+- Chelsea Finn
+- Chuyuan Fu
+- Keerthana Gopalakrishnan
+- Karol Hausman
+- Alex Herzog
+- Daniel Ho
+- Jasmine Hsu
+- Julian Ibarz
+- Brian Ichter
+- Alex Irpan
+- Eric Jang
+- Rosario Jauregui Ruano
+- Kyle Jeffrey
+- Sally Jesmonth
+- Nikhil J Joshi
+- Ryan Julian
+- Dmitry Kalashnikov
+- Yuheng Kuang
+- Kuang-Huei Lee
+- Sergey Levine
+- Yao Lu
+- Linda Luu
+- Carolina Parada
+- Peter Pastor
+- Jornell Quiambao
+- Kanishka Rao
+- Jarek Rettinghouse
+- Diego Reyes
+- Pierre Sermanet
+- Nicolas Sievers
+- Clayton Tan
+- Alexander Toshev
+- Vincent Vanhoucke
+- Fei Xia
+- Ted Xiao
+- Peng Xu
+- Sichun Xu
+- Mengyuan Yan
+- Andy Zeng
+venue: arXiv
+year: 2022
+tags:
+- foundational
+- tde-related-work
+topic_groups:
+- general_agent_methods
+triage_label: READ_SOON
+triage_confidence: medium
+source_link: https://arxiv.org/abs/2204.01691v2
+summary_date: '2026-08-13'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>SayCan turns a frozen LLM into a robot task planner by scoring each pretrained skill's text label for usefulness to the instruction and multiplying it by that skill's value-function affordance (its success probability from the current state), executing the argmax skill and re-scoring until "done" — reaching 84% plan / 74% execution success over 101 real-kitchen instructions with 540B PaLM.</TLDR>
+
+<WhyItMatters>For TDE this is the canonical "gate LLM action choice with environment-evaluated feasibility" prior (survey cat. E): it shares the feasibility-precondition-before-acting idea and the refusal to let the LLM self-adjudicate grounding. The survey's Differs analysis checks out against the paper and can be sharpened: the gate is a learned probabilistic value function *plus hand-calibrated heuristics* (place affordance fixed at 1.0, terminate at 0.1), applied only a priori at selection time; there is no postcondition and no acceptance suite over final state — completion is the LLM's "done" winning an argmax, success is adjudicated by 2-of-3 human raters, and the authors concede the system cannot react when a skill fails despite reporting a high value (§8). TDE's decidable, environment-evaluated pre/postconditions and mechanical final-state suite target exactly this open loop.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "84% / 74%", label: "plan / execution success", sub: "PaLM-SayCan, 101 instructions, mock kitchen (Tab.2)" },
+  { value: "81% / 60%", label: "in the real kitchen", sub: "-3 plan / -14 execution vs training env (§5.1)" },
+  { value: "67%", label: "plan rate without value functions", sub: "No-VF ablation, vs 84% grounded (Tab.2)" },
+  { value: "65% / 35%", label: "LLM vs affordance errors", sub: "share of planning failures (Fig.16)" },
+]} />
+
+## Motivation
+<Problem>LLMs are not grounded: they never observe the consequences of their outputs, so their plans can be infeasible or nonsensical for a particular embodiment and scene</Problem> — asked to help with a spilled drink, an ungrounded LM suggests "you could try using a vacuum cleaner" whether or not a vacuum (or a robot able to use one) exists (§1, Fig.1). Prompt engineering can force stepwise structure, but <Problem>it cannot constrain completions to the robot's admissible primitives, and text alone carries no knowledge of the current state</Problem> (§3) — the right skill sequence for "bring me an apple" changes if no apple is in view or one is already in hand. From the other side, <Problem>instruction-conditioned low-level policies (standard language-conditioned BC/RL) cannot parse high-level, temporally extended instructions</Problem>; fed the raw instruction, the BC policy later scores 0% on every task family (Tab.2).
+
+## Contribution (what's new)
+<Novelty>Factorize "will this skill make progress on instruction i from state s" as `p(c_i | i, s, ℓ_π) ∝ p(ℓ_π | i) · p(c_π | s, ℓ_π)`: an LLM in scoring mode ranks the fixed skill descriptions (task-grounding, "Say"), while each skill's value function supplies its success probability from the live state (world-grounding, "Can")</Novelty>. Scoring instead of generating makes admissibility structural — the LLM can only choose among skills the robot actually has. The second insight: <Novelty>the value function of an undiscounted sparse-reward skill *is* an affordance function — value equals probability of success from the state — so an RL training byproduct doubles as the feasibility oracle with no extra grounding model to train</Novelty> (§2). Planning is an interpretable append-and-re-score loop over natural-language steps, and the interface accepts any policy/affordance pair that exposes a probability (§4, App D.2).
+
+## Research questions
+1. Can the semantic knowledge in a frozen LLM be extracted, zero-shot, to sequence a robot's low-level skills for long-horizon, abstract natural-language instructions? 2. Does world-grounding via affordances measurably improve over LLM-only plan selection? 3. Does end-robot performance improve simply by swapping in a better LLM?
+
+## Methodology
+At each step, every skill's text label is scored by the LLM given the instruction and the steps chosen so far; in parallel each skill's affordance is computed from the current observation; the product's argmax is executed and appended to the LLM query, looping until the "done" option wins (Alg.1, Fig.3). Implementation: an Everyday Robots mobile manipulator (7-DoF arm, two-finger gripper) in a real office kitchen plus a mock training kitchen, with 15 objects and 5 locations; 551 candidate skills across 7 families and 17 objects were trained, with the performant, composition-friendly subset used (pick, find / go-to, place; drawer skills added in a case study). Executed policies are behavior-cloned (BC-Z-style); pick affordances come from MT-Opt RL value functions trained in simulation with RetinaGAN sim-to-real transfer. The LLM is 540B PaLM behind a 17-example dialog prompt. Evaluation: 101 instructions in 7 families (Tab.1); both metrics — plan success and execution success — are adjudicated by 3 human raters with 2-of-3 agreement (§5).
+
+<Pass title="Method details">
+<Stepper steps={[
+  { title: "Skills and training (App C)", body: "Multi-task policies and value functions conditioned on frozen Universal Sentence Encoder embeddings of skill text. Sparse reward 1.0/0.0, labeled by 2-of-3 human raters watching episode video. BC: 68,000 teleoperated demos (10 robots, 11 months) plus 12,000 success-filtered autonomous episodes (from 276,000); 16 TPUv3 for about 27 h. RL: MT-Opt in the Everyday Robots simulator with RetinaGAN; 16 TPUv3 for about 100 h, with 3,000 episode-collection and 3,000 target-Q CPU workers." },
+  { title: "Affordance construction (App D.2)", body: "Pick: learned Q-value normalized as clamp((v − 0.2)/(0.5 − 0.2), 0, 1), calibration set empirically. Go-to: distance heuristic clamp((100 − d)/100, 0, 1) over a classical nav stack with object locations assumed known. Place: constant 1.0 (scripted Cartesian-planning policy). Terminate ('done'): constant 0.1. Drawer: possible-if-next-to-drawer heuristic. Already-completed skills are capped so they are not repeated." },
+  { title: "LLM interface (App D.3)", body: "Dialog-form prompt ('How would you… / I would: 1.…') with explicitly numbered steps, one per line; naming is fragile (a/an mismatches, misspellings of skill names hurt scoring, though user-side typos are tolerated). In a language-based simulator over 50 instructions, plan rate rises from 10% with 0 prompt examples (52% if termination is not required) to 82% with 4 and 88% with the full 17." },
+  { title: "Extensions (§5.2, §6)", body: "New skills are added by listing them as scoring options plus one prompt example (drawer manipulation). A chain-of-thought variant first generates an Explanation, then scores — fixing negation failures (Tab.4). Multilingual queries work out of the box (Tab.8). The open-source tabletop Colab swaps in a CLIPort policy, ViLD-detector affordances, and GPT-3 — the probability interface, not value functions per se, is the contract." },
+]} />
+
+<MathBlock>{`\\pi_n = \\arg\\max_{\\pi \\in \\Pi} \\; \\underbrace{p(c_\\pi \\mid s_n, \\ell_\\pi)}_{\\text{Can: affordance}} \\; \\underbrace{p(\\ell_\\pi \\mid i, \\ell_{\\pi_{n-1}}, \\ldots, \\ell_{\\pi_0})}_{\\text{Say: LLM score}}`}</MathBlock>
+</Pass>
+
+## Main result
+<Finding src="Tab.2, p.9">PaLM-SayCan plans correctly on 84% and executes 74% of 101 instructions in the mock kitchen; moving to the real kitchen costs 3 points of planning and 14 of execution (81% / 60%)</Finding>. Grounding and the LLM are both load-bearing:
+
+<SortableTable columns={["Method (Tab.2-3, total over 101)", "Plan %", "Execute %"]} rows={[
+  ["PaLM-SayCan — mock kitchen", 84, 74],
+  ["PaLM-SayCan — real kitchen", 81, 60],
+  ["Generative LLM + USE projection (comparable to Huang et al. 2022)", 74, "n/r"],
+  ["FLAN-SayCan (137B)", 70, 61],
+  ["No VF (LLM score only, no affordances)", 67, "n/r"],
+  ["BC USE (project instruction to nearest skill)", "n/r", 9],
+  ["BC NL (raw instruction into policy)", "n/r", 0],
+]} />
+
+## Key findings
+- <Finding src="Tab.2, p.9">Affordance grounding is worth +17 plan points over No-VF (84% vs 67%) and +10 over the Generative baseline (74%)</Finding>; the gap concentrates in the Embodiment family (64% vs 18% No-VF / 36% Generative), where the current world state determines the right plan.
+- <Finding src="Tab.3, p.9">Swapping FLAN-137B for PaLM-540B with everything else fixed roughly halves errors (plan 70% → 84%, execution 61% → 74%)</Finding> — presented as the first demonstration that LLM improvements translate directly into robotic-performance improvements.
+- <Finding src="Fig.16, p.33">65% of planning errors are LLM failures, 35% affordance failures</Finding>: the worst family is Long-Horizon (73% plan / 47% execution), dominated by premature "done"; negation ("bring me a snack that isn't an apple") and ambiguous references are inherited LM weaknesses (§5.1), and chain-of-thought prompting repairs negation (Tab.4).
+- <Finding src="Tab.2, p.9">Instruction-conditioned control without a planner collapses: BC NL executes 0% in every family, BC USE manages 60% on single primitives and 0% otherwise</Finding> — at 500+ skills, planning must be factored out of the policy.
+- <Finding src="Tab.7, p.29">Newly added drawer skills plan at 100% but execute at only 33% over 21 queries</Finding>, supporting the authors' diagnosis that skill robustness, not planning, is the system bottleneck.
+- <Finding src="Tab.6, p.29">Generative planning quality scales with LM size: PaLM 8B 38%, 62B 72%, 540B 74%, FLAN-137B 43%</Finding> — most of the jump lands between 8B and 62B on these tasks.
+
+## Implications
+The multiply-two-probabilities interface became the template for feasibility-grounding LLM agents: any policy plus any affordance signal exposing a probability plugs in — learned value function, distance heuristic, or the Colab's object detector. <Related>Huang et al. 2022 ("Language Models as Zero-Shot Planners", concurrent) corresponds roughly to the ungrounded Generative baseline here</Related>; <Related>Inner Monologue (Huang et al. 2022) builds directly on SayCan to close the loop with success detectors and scene-description feedback</Related> — an in-lineage admission that selection-time affordance gating alone is not enough; <Related>Value Function Spaces (Shah et al., ICLR 2022) supplies the skill-centric state abstraction the affordance space instantiates</Related>. <FollowUp>How successors replace human-rater adjudication and the scored "done" token with programmatic, state-based completion checks — the step from probabilistic pre-gating toward mechanical postconditions that TDE takes</FollowUp>; <FollowUp>the constrain-the-LLM-to-executable-vocabulary idea continued by code-as-action-interface and grounded-decoding lines</FollowUp>.
+
+## Limitations
+- <Caveat>Open-loop beyond selection: environmental feedback enters only through value functions at the current decision step, and the system "is not easily able to react to situations where individual skills fail despite reporting a high value" (§8)</Caveat> — no execution monitoring, no replanning trigger, no completion verification.
+- <Caveat>Affordances are only partly learned</Caveat>: place is fixed at 1.0, terminate at 0.1, navigation uses a distance heuristic with object locations assumed known, drawers a proximity heuristic; even the learned pick value functions need empirical calibration (v_min 0.2, v_max 0.5) to behave as probabilities (App D.2).
+- <Caveat>All adjudication is human</Caveat>: plan validity, execution success, and the RL reward labels are 2-of-3 human-rater votes; there is no mechanical task-success criterion, no variance or significance reporting, and families contain only 11-15 instructions each.
+- <Caveat>Author-stated: the range and robustness of the skill repertoire is the primary bottleneck, and the system inherits LLM biases and training-data dependence (§8)</Caveat>.
+- <Caveat>Single robot platform and a single kitchen pair, with instructions curated around that kitchen</Caveat> — crowd-sourced queries were collected from people given knowledge of the robot's abilities (App E.1).
+
+## Critiques and Questions
+1. The abstract's "grounding … nearly doubles the performance over the non-grounded baselines" is best read as error-halving: plan success is 84% vs 67% (No VF) and 74% (Generative) — a 10-17 point gain, i.e. planning errors drop from 33%/26% to 16%, not a doubling of success.
+2. Task completion is never checked against the world: an episode ends when "done" — carrying a hard-coded 0.1 affordance — wins the argmax, and premature termination is the top long-horizon failure mode. A final-state acceptance check would target exactly the failure the paper itself identifies as dominant.
+3. The learned-affordance contribution is not isolated: since go-to/place/terminate affordances are heuristics, learned value functions gate only pick-family skills; the Embodiment family (11 tasks, 64% plan rate, failures attributed to affordance misclassification) is the main direct evidence that the learned VFs read state correctly.
+4. Both headline metrics carry rater subjectivity (raters accept any plan they judge valid; execution is judged from video); inter-rater agreement is not reported.
+
+<SelfCheck q="At each step, how does SayCan pick the next skill, and how does an episode end?" a="Every skill's text label is scored by the LLM for usefulness given the instruction and the steps so far, and multiplied by that skill's affordance — its value function, i.e. the probability of completing the skill from the current state. The argmax of the product is executed and appended to the prompt. The episode ends when the 'done' option (fixed affordance 0.1) wins this argmax — not when any environment check confirms the instruction was actually satisfied." />
+
+## Glossary
+- <Term def="the probability that the skill described by label ℓπ completes successfully from state s; identical to the skill's value function under undiscounted sparse 0/1 reward">affordance function</Term>
+- <Term def="using the LLM to assign probabilities to fixed candidate strings instead of free generation; constrains outputs to the robot's skill vocabulary">scoring mode</Term>
+- <Term def="Universal Sentence Encoder; frozen sentence-embedding model that conditions policies and value functions on skill text, and projects generative output to the nearest skill in baselines">USE</Term>
+- <Term def="image-conditioned behavioral-cloning recipe (Jang et al. 2021) used to train the executed manipulation policies">BC-Z</Term>
+- <Term def="multi-task robotic RL at scale (Kalashnikov et al. 2021); source of the value functions used as pick affordances">MT-Opt</Term>
+- <Term def="Google's 540B-parameter LLM (Chowdhery et al. 2022), used in scoring mode; SayCan with it is called PaLM-SayCan">PaLM</Term>
+
+{/* NOTES_START */}
+### Personal notes
+For the TDE novelty defense: SayCan is the cleanest prior for "environment-evaluated feasibility gates LLM action choice", but the gate is probabilistic, learned/heuristic, and selection-time only. Nothing checks outcomes: no postcondition, no acceptance suite, completion = the LLM scoring "done" (affordance hard-coded 0.1), success = 2-of-3 human raters. Reusable quote: the system "is not easily able to react to situations where individual skills fail despite reporting a high value" (§8). The undiscounted sparse-reward identity (value = success probability) is the probabilistic shadow of a Hoare precondition — TDE's decidable assertions are its boolean limit, evaluated after actions as well as before.
+{/* NOTES_END */}

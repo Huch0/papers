@@ -1,0 +1,57 @@
+canonical_key: arxiv-2603.08806
+slug: test-driven-ai-agent-definition-tdad-compiling-260308806
+title: 'Test-Driven AI Agent Definition (TDAD): Compiling Tool-Using Agents from Behavioral Specifications'
+authors:
+- Tzafrir Rehan
+year: 2026
+primary_ids:
+  doi: null
+  arxiv_base_id: '2603.08806'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2603.08806v1
+- https://arxiv.org/pdf/2603.08806v1
+topic_groups:
+- agent_harness
+- software_engineering_agents
+tags:
+- evaluation-harness
+- prompt-optimization
+- tde-related-work
+- test-based-eval
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2026
+user:
+  read_status: unread
+  triage_label: TRACK_ONLY
+  triage_confidence: high
+  notes: null
+milestone: null
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v1
+  source: arxiv
+  source_url: https://arxiv.org/abs/2603.08806v1
+  pdf_path: library/test-driven-ai-agent-definition-tdad-compiling-260308806/v1/paper.pdf
+  summary_path: library/test-driven-ai-agent-definition-tdad-compiling-260308806/v1/summary.mdx
+  metadata_path: library/test-driven-ai-agent-definition-tdad-compiling-260308806/v1/metadata.yaml
+  fetched_at: '2026-08-13T07:13:55Z'
+  source_updated_at: '2026-03-09T18:04:54Z'
+  arxiv_version: v1
+  pdf_sha256: dab7b6d3da5b028d6535ab8c10c966e9c60abf2b9fb695c61416fc999d85fbda
+  pdf_bytes: 552628
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-08-13T07:13:55Z'
+  updated_at: '2026-08-13T07:34:45Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

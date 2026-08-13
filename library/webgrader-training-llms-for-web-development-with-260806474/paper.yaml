@@ -1,0 +1,58 @@
+canonical_key: arxiv-2608.06474
+slug: webgrader-training-llms-for-web-development-with-260806474
+title: 'WebGrader: Training LLMs for Web Development with Self-Evolving Programmatic Grader'
+authors:
+- Boshui Chen
+- Huiping Liu
+- Shaolei Zhang
+year: 2026
+primary_ids:
+  doi: null
+  arxiv_base_id: '2608.06474'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2608.06474v1
+- https://arxiv.org/pdf/2608.06474v1
+topic_groups:
+- agent_harness
+- computer_use_agents
+tags:
+- evaluation-harness
+- execution-based-eval
+- tde-related-work
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2026
+user:
+  read_status: unread
+  triage_label: TRACK_ONLY
+  triage_confidence: high
+  notes: null
+milestone: null
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v1
+  source: arxiv
+  source_url: https://arxiv.org/abs/2608.06474v1
+  pdf_path: library/webgrader-training-llms-for-web-development-with-260806474/v1/paper.pdf
+  summary_path: library/webgrader-training-llms-for-web-development-with-260806474/v1/summary.mdx
+  metadata_path: library/webgrader-training-llms-for-web-development-with-260806474/v1/metadata.yaml
+  fetched_at: '2026-08-13T07:17:17Z'
+  source_updated_at: '2026-08-06T18:06:12Z'
+  arxiv_version: v1
+  pdf_sha256: ce090a4bd065c9a5f9ed7f1852937df489848ed9835e6a0d7c4e25cdf8ea26ab
+  pdf_bytes: 7524330
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-08-13T07:17:17Z'
+  updated_at: '2026-08-13T10:34:05Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

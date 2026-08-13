@@ -1,0 +1,80 @@
+canonical_key: arxiv-2304.11477
+version_key: v1
+title: 'LLM+P: Empowering Large Language Models with Optimal Planning Proficiency'
+authors:
+- Bo Liu
+- Yuqian Jiang
+- Xiaohan Zhang
+- Qiang Liu
+- Shiqi Zhang
+- Joydeep Biswas
+- Peter Stone
+abstract: 'Large language models (LLMs) have demonstrated remarkable zero-shot generalization abilities:
+  state-of-the-art chatbots can provide plausible answers to many common questions that arise in daily
+  life. However, so far, LLMs cannot reliably solve long-horizon planning problems. By contrast, classical
+  planners, once a problem is given in a formatted way, can use efficient search algorithms to quickly
+  identify correct, or even optimal, plans. In an effort to get the best of both worlds, this paper introduces
+  LLM+P, the first framework that incorporates the strengths of classical planners into LLMs. LLM+P takes
+  in a natural language description of a planning problem, then returns a correct (or optimal) plan for
+  solving that problem in natural language. LLM+P does so by first converting the language description
+  into a file written in the planning domain definition language (PDDL), then leveraging classical planners
+  to quickly find a solution, and then translating the found solution back into natural language. Along
+  with LLM+P, we define a diverse set of different benchmark problems taken from common planning scenarios.
+  Via a comprehensive set of experiments on these benchmark problems, we find that LLM+P is able to provide
+  optimal solutions for most problems, while LLMs fail to provide even feasible plans for most problems.\footnote{The
+  code and results are publicly available at https://github.com/Cranial-XIX/llm-pddl.git.'
+venue: arXiv
+year: 2023
+source: arxiv
+source_url: https://arxiv.org/abs/2304.11477v3
+pdf_url: https://arxiv.org/pdf/2304.11477v3
+pdf_sha256: 3b5c352222be84f8330459ccaf1025d4298389301f429732f3018fd310a3bb77
+fetched_at: '2026-08-13T07:15:48Z'
+source_updated_at: '2023-09-27T07:29:44Z'
+ids:
+  doi: null
+  arxiv_id: 2304.11477v3
+  arxiv_base_id: '2304.11477'
+  arxiv_version: v3
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- planner-executor-verifier
+- tde-related-work
+topic_groups:
+- general_agent_methods
+scoring:
+  score: 8.4
+  label: SKIP
+  confidence: medium
+  rationale: 'score=8 -> SKIP | strong: novelty(0.80), artifact_availability(0.55), interest_fit(0.40)
+    | interests: general_agent_methods:group:general_agent_methods | negatives: old_in_fast_area'
+  matched_interests:
+  - general_agent_methods:group:general_agent_methods
+  negative_signals:
+  - old_in_fast_area
+  subscores:
+    interest_fit: 0.402
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 0.8
+    artifact_availability: 0.55
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/llm-p-empowering-large-language-models-with-230411477/v1/paper.pdf
+  extraction: library/llm-p-empowering-large-language-models-with-230411477/v1/extraction.txt
+  summary: library/llm-p-empowering-large-language-models-with-230411477/v1/summary.mdx
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread
+  summary_format: mdx

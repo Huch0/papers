@@ -1,0 +1,56 @@
+canonical_key: arxiv-2607.22868
+slug: what-can-be-enforced-a-theory-of-260722868
+title: What Can Be Enforced? A Theory of Certified Runtime Safety for Tool-Using Agents
+authors:
+- Shawn Ray
+year: 2026
+primary_ids:
+  doi: null
+  arxiv_base_id: '2607.22868'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2607.22868v1
+- https://arxiv.org/pdf/2607.22868v1
+topic_groups:
+- agent_harness
+- general_agent_methods
+tags:
+- position-paper
+- tde-related-work
+- verifier
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2026
+user:
+  read_status: unread
+  triage_label: TRACK_ONLY
+  triage_confidence: high
+  notes: null
+milestone: null
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v1
+  source: arxiv
+  source_url: https://arxiv.org/abs/2607.22868v1
+  pdf_path: library/what-can-be-enforced-a-theory-of-260722868/v1/paper.pdf
+  summary_path: library/what-can-be-enforced-a-theory-of-260722868/v1/summary.mdx
+  metadata_path: library/what-can-be-enforced-a-theory-of-260722868/v1/metadata.yaml
+  fetched_at: '2026-08-13T07:15:24Z'
+  source_updated_at: '2026-07-24T19:14:26Z'
+  arxiv_version: v1
+  pdf_sha256: 07f5e2261de40d9a44c79fa6246fc1e0e6af4170a70787fda5059093ef64ae1a
+  pdf_bytes: 788320
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-08-13T07:15:24Z'
+  updated_at: '2026-08-13T10:20:02Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

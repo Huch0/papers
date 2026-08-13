@@ -1,0 +1,57 @@
+canonical_key: arxiv-2603.17973
+slug: tdad-test-driven-agentic-development-reducing-code-260317973
+title: 'TDAD: Test-Driven Agentic Development - Reducing Code Regressions in AI Coding Agents via Graph-Based
+  Impact Analysis'
+authors:
+- Pepe Alonso
+- Sergio Yovine
+- Victor A. Braberman
+year: 2026
+primary_ids:
+  doi: null
+  arxiv_base_id: '2603.17973'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2603.17973v2
+- https://arxiv.org/pdf/2603.17973v2
+topic_groups:
+- software_engineering_agents
+tags:
+- tde-related-work
+- test-based-eval
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2026
+user:
+  read_status: unread
+  triage_label: SKIM
+  triage_confidence: high
+  notes: null
+milestone: null
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v2
+  source: arxiv
+  source_url: https://arxiv.org/abs/2603.17973v2
+  pdf_path: library/tdad-test-driven-agentic-development-reducing-code-260317973/v1/paper.pdf
+  summary_path: library/tdad-test-driven-agentic-development-reducing-code-260317973/v1/summary.mdx
+  metadata_path: library/tdad-test-driven-agentic-development-reducing-code-260317973/v1/metadata.yaml
+  fetched_at: '2026-08-13T07:14:01Z'
+  source_updated_at: '2026-03-19T17:12:15Z'
+  arxiv_version: v2
+  pdf_sha256: 73655110d9b4e91f671af2b9d7a431cb73c11189bcaee5469437f13719515264
+  pdf_bytes: 536101
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-08-13T07:14:01Z'
+  updated_at: '2026-08-13T10:16:54Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

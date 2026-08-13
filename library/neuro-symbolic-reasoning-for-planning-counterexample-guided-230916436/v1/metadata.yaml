@@ -1,0 +1,86 @@
+canonical_key: arxiv-2309.16436
+version_key: v1
+title: 'Neuro Symbolic Reasoning for Planning: Counterexample Guided Inductive Synthesis using Large Language
+  Models and Satisfiability Solving'
+authors:
+- Sumit Kumar Jha
+- Susmit Jha
+- Patrick Lincoln
+- Nathaniel D. Bastian
+- Alvaro Velasquez
+- Rickard Ewetz
+- Sandeep Neema
+abstract: Generative large language models (LLMs) with instruct training such as GPT-4 can follow human-provided
+  instruction prompts and generate human-like responses to these prompts. Apart from natural language
+  responses, they have also been found to be effective at generating formal artifacts such as code, plans,
+  and logical specifications from natural language prompts. Despite their remarkably improved accuracy,
+  these models are still known to produce factually incorrect or contextually inappropriate results despite
+  their syntactic coherence - a phenomenon often referred to as hallucination. This limitation makes it
+  difficult to use these models to synthesize formal artifacts that are used in safety-critical applications.
+  Unlike tasks such as text summarization and question-answering, bugs in code, plan, and other formal
+  artifacts produced by LLMs can be catastrophic. We posit that we can use the satisfiability modulo theory
+  (SMT) solvers as deductive reasoning engines to analyze the generated solutions from the LLMs, produce
+  counterexamples when the solutions are incorrect, and provide that feedback to the LLMs exploiting the
+  dialog capability of instruct-trained LLMs. This interaction between inductive LLMs and deductive SMT
+  solvers can iteratively steer the LLM to generate the correct response. In our experiments, we use planning
+  over the domain of blocks as our synthesis task for evaluating our approach. We use GPT-4, GPT3.5 Turbo,
+  Davinci, Curie, Babbage, and Ada as the LLMs and Z3 as the SMT solver. Our method allows the user to
+  communicate the planning problem in natural language; even the formulation of queries to SMT solvers
+  is automatically generated from natural language. Thus, the proposed technique can enable non-expert
+  users to describe their problems in natural language, and the combination of LLMs and SMT solvers can
+  produce provably correct solutions.
+venue: arXiv
+year: 2023
+source: arxiv
+source_url: https://arxiv.org/abs/2309.16436v1
+pdf_url: https://arxiv.org/pdf/2309.16436v1
+pdf_sha256: feb184170c98af7ec12e3a2e0d1ac814849c9e4b5c9cd2da4a26547d2837c82c
+fetched_at: '2026-08-13T07:18:19Z'
+source_updated_at: '2023-09-28T13:40:50Z'
+ids:
+  doi: null
+  arxiv_id: 2309.16436v1
+  arxiv_base_id: '2309.16436'
+  arxiv_version: v1
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- tde-related-work
+- verifier
+topic_groups:
+- general_agent_methods
+scoring:
+  score: 0.0
+  label: SKIP
+  confidence: medium
+  rationale: 'score=0 -> SKIP | strong: interest_fit(0.40), venue_quality(0.40) | interests: general_agent_methods:group:general_agent_methods
+    | negatives: old_in_fast_area'
+  matched_interests:
+  - general_agent_methods:group:general_agent_methods
+  negative_signals:
+  - old_in_fast_area
+  subscores:
+    interest_fit: 0.402
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 0.0
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/neuro-symbolic-reasoning-for-planning-counterexample-guided-230916436/v1/paper.pdf
+  extraction: library/neuro-symbolic-reasoning-for-planning-counterexample-guided-230916436/v1/extraction.txt
+  summary: library/neuro-symbolic-reasoning-for-planning-counterexample-guided-230916436/v1/summary.mdx
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread
+  summary_format: mdx

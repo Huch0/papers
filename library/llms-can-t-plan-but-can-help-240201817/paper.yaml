@@ -1,0 +1,62 @@
+canonical_key: arxiv-2402.01817
+slug: llms-can-t-plan-but-can-help-240201817
+title: LLMs Can't Plan, But Can Help Planning in LLM-Modulo Frameworks
+authors:
+- Subbarao Kambhampati
+- Karthik Valmeekam
+- Lin Guan
+- Mudit Verma
+- Kaya Stechly
+- Siddhant Bhambri
+- Lucas Saldyt
+- Anil Murthy
+year: 2024
+primary_ids:
+  doi: null
+  arxiv_base_id: '2402.01817'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2402.01817v3
+- https://arxiv.org/pdf/2402.01817v3
+topic_groups:
+- general_agent_methods
+tags:
+- position-paper
+- tde-related-work
+- verifier
+venue:
+  name: ICML
+  tier: A_star
+  status: accepted
+  year: 2024
+user:
+  read_status: unread
+  triage_label: SKIP
+  triage_confidence: high
+  notes: null
+milestone: null
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v3
+  source: arxiv
+  source_url: https://arxiv.org/abs/2402.01817v3
+  pdf_path: library/llms-can-t-plan-but-can-help-240201817/v1/paper.pdf
+  summary_path: library/llms-can-t-plan-but-can-help-240201817/v1/summary.mdx
+  metadata_path: library/llms-can-t-plan-but-can-help-240201817/v1/metadata.yaml
+  fetched_at: '2026-08-13T07:18:26Z'
+  source_updated_at: '2024-06-12T01:13:11Z'
+  arxiv_version: v3
+  pdf_sha256: 8f79507f1fb1f1d6b4e086be2c2401df6775f091ae158efdc291116cfe6b720c
+  pdf_bytes: 1926112
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-08-13T07:18:26Z'
+  updated_at: '2026-08-13T13:01:30Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

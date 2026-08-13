@@ -1,0 +1,61 @@
+canonical_key: arxiv-2510.05156
+slug: veriguard-enhancing-llm-agent-safety-via-verified-251005156
+title: 'VeriGuard: Enhancing LLM Agent Safety via Verified Code Generation'
+authors:
+- Lesly Miculicich
+- Mihir Parmar
+- Hamid Palangi
+- Krishnamurthy Dj Dvijotham
+- Mirko Montanari
+- Tomas Pfister
+- Long T. Le
+year: 2025
+primary_ids:
+  doi: null
+  arxiv_base_id: '2510.05156'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2510.05156v1
+- https://arxiv.org/pdf/2510.05156v1
+topic_groups:
+- agent_harness
+tags:
+- tde-related-work
+- tool-use
+- verifier
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2025
+user:
+  read_status: unread
+  triage_label: SKIP
+  triage_confidence: high
+  notes: null
+milestone: null
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v1
+  source: arxiv
+  source_url: https://arxiv.org/abs/2510.05156v1
+  pdf_path: library/veriguard-enhancing-llm-agent-safety-via-verified-251005156/v1/paper.pdf
+  summary_path: library/veriguard-enhancing-llm-agent-safety-via-verified-251005156/v1/summary.mdx
+  metadata_path: library/veriguard-enhancing-llm-agent-safety-via-verified-251005156/v1/metadata.yaml
+  fetched_at: '2026-08-13T07:16:07Z'
+  source_updated_at: '2025-10-03T04:11:43Z'
+  arxiv_version: v1
+  pdf_sha256: 247c4ff2664366950478a05cc1e78d6768e84764c408af7ba37479ad160cc088
+  pdf_bytes: 2471291
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-08-13T07:16:07Z'
+  updated_at: '2026-08-13T07:37:44Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

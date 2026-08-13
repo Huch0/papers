@@ -1,0 +1,55 @@
+canonical_key: arxiv-2505.09027
+slug: tests-as-prompt-a-test-driven-development-250509027
+title: 'Tests as Prompt: A Test-Driven-Development Benchmark for LLM Code Generation'
+authors:
+- Yi Cui
+year: 2025
+primary_ids:
+  doi: null
+  arxiv_base_id: '2505.09027'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2505.09027v1
+- https://arxiv.org/pdf/2505.09027v1
+topic_groups:
+- software_engineering_agents
+tags:
+- benchmark
+- tde-related-work
+- test-based-eval
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2025
+user:
+  read_status: unread
+  triage_label: SKIP
+  triage_confidence: high
+  notes: null
+milestone: null
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v1
+  source: arxiv
+  source_url: https://arxiv.org/abs/2505.09027v1
+  pdf_path: library/tests-as-prompt-a-test-driven-development-250509027/v1/paper.pdf
+  summary_path: library/tests-as-prompt-a-test-driven-development-250509027/v1/summary.mdx
+  metadata_path: library/tests-as-prompt-a-test-driven-development-250509027/v1/metadata.yaml
+  fetched_at: '2026-08-13T07:13:43Z'
+  source_updated_at: '2025-05-13T23:47:12Z'
+  arxiv_version: v1
+  pdf_sha256: 4e182c5cf989f772416633a0f6059e9673183cfa5e1e88e19c943dfaa02a839e
+  pdf_bytes: 1841088
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-08-13T07:13:43Z'
+  updated_at: '2026-08-13T10:10:29Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

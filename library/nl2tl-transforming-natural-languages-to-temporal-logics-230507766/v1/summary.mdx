@@ -1,0 +1,116 @@
+---
+canonical_key: arxiv-2305.07766
+version_key: v1
+title: 'NL2TL: Transforming Natural Languages to Temporal Logics using Large Language Models'
+authors:
+- Yongchao Chen
+- Rujul Gandhi
+- Yang Zhang
+- Chuchu Fan
+venue: Proceedings of the 2023 Conference on Empirical Methods in Natural Language Processing
+year: 2023
+tags:
+- dataset
+- tde-related-work
+topic_groups:
+- general_agent_methods
+triage_label: SKIP
+triage_confidence: medium
+source_link: https://arxiv.org/abs/2305.07766v2
+summary_date: '2026-08-13'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>NL2TL builds a 28K-pair cross-domain corpus of <Term def="NL/TL with every atomic proposition replaced by a placeholder like prop_i, so only the logical skeleton remains">lifted</Term> natural-language-to-Signal-Temporal-Logic pairs via GPT-3 generation plus human annotation, then finetunes T5 on the lifted translation so that, with a separate grounding step, full English instructions become full STL at over 95% accuracy across domains — far above few-shot GPT-3/GPT-4 end-to-end translation.</TLDR>
+
+<WhyItMatters>For TDE this is the front half of the pipeline and only that: it compiles an NL instruction into a formal, mechanically checkable spec (temporal logic), and its lifted-skeleton-vs-AP-grounding decomposition is a candidate recipe for TDE's instruction-to-acceptance-suite compiler. But the generated spec is never executed, monitored, or used to gate actions — correctness is exact-match against a gold formula, so there is no red–green loop and no environment-evaluated verification (the survey's "spec generation only; no execution/gating" reading is confirmed by the paper). One harness-relevant datapoint: a finetuned 770M T5 beats few-shot GPT-4 by roughly 18 points on this structured translation, suggesting a spec compiler may need specialization, not just prompting.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "28K", label: "lifted NL–STL pairs", sub: "15,108 GPT-3-assisted new + 13K adapted; ~150 person-hours" },
+  { value: "97.52%", label: "lifted NL→STL accuracy", sub: "T5-large, in-order + word operators (Tab.1)" },
+  { value: ">95%", label: "full NL→STL, all 3 domains", sub: "lifted T5 + GPT-3 AP detection (Tab.2)" },
+  { value: "77.7%", label: "GPT-4 end-to-end (ad-hoc)", sub: "300 samples; GPT-3 few-shot: 38–59% (Tab.2)" },
+]} />
+
+## Motivation
+Temporal logic is a precise intermediate for robotics, circuit design, and driving: unlike end-to-end NL-to-behavior models, a TL spec supports direct planning and lets a system identify specific sources of failure and give feedback to non-expert users (§1). But <Problem>existing NL-to-TL datasets are single-domain with each work's bespoke Atomic Proposition format, so trained models fail to generalize across domains</Problem> even though TL structure itself is domain-generic; <Problem>prior corpora synthesize NL algorithmically, so sentence variability is artificially low and models break on new sentence structures</Problem>; and <Problem>collecting real data is expensive because annotation demands TL expertise</Problem> (§1, §3).
+
+## Contribution (what's new)
+<Novelty>Train the translator on lifted NL/TL — every AP hidden as `prop_i` — so the model learns domain-independent logical skeletons, with grounding split off as a separate task</Novelty>. The design must take this form because prior full-translation models entangle each dataset's idiosyncratic AP conventions (e.g. "create_Slack") with logical parsing, which is precisely what blocks cross-domain transfer (§1). Second, <Novelty>invert corpus construction: randomly synthesize STL parse trees and have GPT-3 render them into NL — Framework2 adds an STL→NL→STL round-trip through GPT-3 that self-filters semantically unreasonable formulas — then human-correct</Novelty>, yielding richness rule-based NL generation cannot reach (14,438 unique STLs, 2,121-word vocabulary vs 149–3,653 unique STLs in prior single-domain sets, Tab.10). A third, empirical delta: <Novelty>in-order STL with word operators is the right target format for finetuning LLMs</Novelty> — the opposite of the Seq2Seq-era preference for pre-order (§2.3, §5).
+
+## Research questions
+(1) Can lifted training plus an LLM-generated corpus yield an NL-to-TL translator that works across domains? (2) How much domain-specific data does full (grounded) translation then need? (3) Is few-shot prompting of frontier LLMs (GPT-3/GPT-4) already sufficient end to end?
+
+## Methodology
+Three stages. Generate the lifted corpus: sample random pre-order STL binary trees (Alg.1), convert to in-order/word form, ask GPT-3 (Davinci-003, 20-pair prompts) to write matching NL, and have expert annotators correct it; combine with adapted, lifted data from the Navigation and Circuit datasets. Finetune T5-base (220M) and T5-large (770M) to map lifted NL to lifted STL. Ground to full STL by either (a) GPT-3 AP-span recognition — detect APs, hide as `prop_i`, translate, swap back — or (b) transfer-finetuning the lifted model on a small number of full pairs in the target domain. The metric everywhere is binary accuracy (formula 100% right or not), over five domains: Circuit, Navigation, Office email, GLTL, CW.
+
+<Pass title="Method details">
+<Stepper steps={[
+  { title: "STL synthesis (Alg.1/2, App.B)", body: "Random prop list split into sub-lists; one-subtree (negation, F, G, timed variants) and two-subtree (and, or, imply, equal, until) operators inserted until each sub-list is a valid subtree; sub-trees assembled with two-subtree operators into a pre-order STL. Hard rules exclude some unreasonable patterns (e.g. double negation)." },
+  { title: "Framework1 (Fig.3)", body: "Synthesized STL → in-order/word form → GPT-3 writes raw NL → human annotators fix meaning mismatches. Prompt pool: 100 of 200 volunteer-written NL instructions (the other 100 are the held-out Manual test set); 20 pairs sampled per prompt (accuracy plateaus above 20 pairs, Fig.11). Throughput ~80 annotated pairs/person-hour." },
+  { title: "Framework2 (Fig.4)", body: "Adds an extra GPT-3 loop STL-1 → NL-1 → STL-2: formulas GPT-3 cannot faithfully verbalize get implicitly regularized, so pairs are closer to natural human language and cheaper to fix (~120 pairs/person-hour). 15,108 created pairs total from both frameworks, ~150 person-hours." },
+  { title: "Collected data", body: "5K pairs from Navigation (Wang et al. 2021, LTL corrected into STL format) and 8K from Circuit/DeepSTL (He et al. 2022; 8K of its 120K covers its corpus richness). APs detected and hidden via hard-coded rules + SpaCy. Corpus stats: 28,466 sentences, avg 2.906 APs and 3.206 operators per formula (Tab.8–9)." },
+  { title: "Finetuning", body: "T5-base/large, lr 2e-5, batch 16, weight decay 0.01, 20 epochs, 90/10 train/test split; ~3h (base) / ~10h (large) on one RTX 8000; means ± std over 3 seeds (10 for CW)." },
+]} />
+
+Target-format ablation (Tab.1, lifted GPT-3-assisted test):
+
+<ResultsTable columns={["Target format", "T5-base", "T5-large"]} rows={[
+  ["In-order / words", "96.43 ± 0.72%", "97.52 ± 0.65%"],
+  ["In-order / symbols", "89.94 ± 0.89%", "88.17 ± 1.02%"],
+  ["Pre-order / words", "70.00 ± 1.42%", "73.10 ± 1.05%"],
+  ["Pre-order / symbols", "72.35 ± 1.54%", "71.95 ± 1.23%"],
+]} />
+</Pass>
+
+## Main result
+On full NL-to-STL translation, <Finding src="Tab.2, p.7">the lifted T5 + GPT-3 AP-recognition pipeline reaches 95.03–96.73% (T5-large) across Circuit, Navigation, and Office email, vs 38.25–58.73% for few-shot GPT-3 end-to-end and 77.7% average for an ad-hoc GPT-4 end-to-end test</Finding>:
+
+<SortableTable columns={["Method", "Circuit", "Navigation", "Office email"]} rows={[
+  ["T5-large + GPT-3 AP detect", "95.13 ± 1.42%", "95.03 ± 1.20%", "96.73 ± 1.03%"],
+  ["T5-base + GPT-3 AP detect", "94.61 ± 0.74%", "94.73 ± 1.02%", "96.08 ± 0.97%"],
+  ["GPT-4 end-to-end (ad-hoc, 100/domain)", "62%", "87%", "84%"],
+  ["GPT-3 end-to-end (few-shot)", "38.25 ± 6.51%", "50.51 ± 5.08%", "58.73 ± 4.86%"],
+]} />
+
+## Key findings
+- <Finding src="Fig.5, p.6">The GPT-3-created data is indispensable: accuracy climbs steeply with the number of created pairs, peaking at 97.52% (GPT-3-assisted test) and 90.12% (held-out volunteer instructions); training only on the collected Navigation+Circuit data fails to work across domains</Finding>.
+- <Finding src="Tab.1, p.6">Target representation matters enormously: in-order + word operators beats pre-order + words by ~24 points on T5-large (97.52% vs 73.10%)</Finding> — inverting the Seq2Seq-era conclusion that pre-order is better (it avoids parenthesis matching); word-form in-order simply looks more like natural text to a pretrained LLM.
+- <Finding src="Tab.3, p.7">AP recognition is easy for GPT-3 (98.84–100% across the three domains) even though its end-to-end translation is poor</Finding>: decomposing into AP detection + lifted semantic parsing is what makes the pipeline work.
+- <Finding src="Fig.6, p.8">With lifted pre-training, transfer learning reaches ~95% with only 200–500 full NL-STL pairs per domain — one order of magnitude less data than the Seq2Seq baselines of each dataset</Finding>; on CW, the finetuned LLM also generalizes to LTL formula types never seen in training better than the original method (Fig.7).
+- <Finding src="Fig.14, App.K">GPT-3 end-to-end accuracy degrades rapidly as the number of APs per formula grows, while the finetuned T5-large stays high</Finding> — few-shot prompting breaks precisely on complex logical structure.
+- <Finding src="App.H, Tab.7">Ablations: human annotation adds ~10 points (raw-GPT-3-only training still reaches 87.3%/79.4%); Framework2 data adds ~2 points (88.32% vs 86.51% at 4.5K pairs); T5 vs a Seq2Seq model on the same lifted data adds ~14.5 points (97.5% vs 83%)</Finding> — corpus quality, corpus source, and model capacity all contribute measurably.
+
+## Implications
+A clean, reusable recipe for NL-to-formal-spec compilation: separate domain-generic logical structure from domain-specific grounding, and use an LLM to manufacture corpus richness that rule-based synthesis cannot. It builds on <Related>lifted LTL translation (Hsiung et al. 2021)</Related> and subsumes the single-domain lines it harvests data from — <Related>DeepSTL (He et al. 2022, circuits)</Related>, <Related>Wang et al. 2021 (navigation, planner-feedback parsing)</Related>, <Related>Gopalan et al. 2018 (GLTL)</Related> — while empirically undercutting the pure few-shot approach of <Related>NL2LTL (Fuggitti and Chakraborti 2023)</Related>. For TDE, the missing back half is the interesting part: <FollowUp>pair NL-to-TL compilation with runtime monitoring/evaluation of the produced formula against actual execution traces, and use it to gate task completion</FollowUp> — this paper produces the spec and stops. Also worth chasing: <FollowUp>semantic-equivalence-aware metrics for comparing TL formulas (the authors name this as unsolved)</FollowUp>, and whether the lifted-skeleton trick transfers to compiling acceptance tests over final world state rather than temporal traces.
+
+## Limitations
+- <Caveat>Author-stated: no coreference handling ("pick up the apple and bring it to me"); works only because the five test domains rarely use pronouns</Caveat> (§8).
+- <Caveat>Author-stated: the evaluation metric is pure binary exact-match accuracy; the authors concede that judging similarity/equivalence of two TL formulas is unsolved — token matching and truth-value computation both have drawbacks</Caveat> (§8), so semantically correct but syntactically different outputs count as failures (and near-miss formulas count the same as nonsense).
+- <Caveat>Author-stated: STL synthesis uses hard rules only; the operator distribution is not fitted to human language</Caveat>, and rule-based post-hoc checks (e.g. parenthesis matching) patch syntactically invalid LLM output (§8).
+- <Caveat>The GPT-4 comparison is explicitly ad-hoc: 100 samples/domain through ChatGPT Plus (no API access), single run, model version not reported</Caveat> (§1, §7.1).
+- <Caveat>Test independence is partial: lifted pairs from Circuit and Navigation were seen during lifted training (full pairs were not), and Office email is tiny (0.15K pairs, 23 unique STLs)</Caveat> (§7, Tab.10).
+- Inferred: <Caveat>translation accuracy is measured against gold formulas, never against execution — whether the formalized spec captures the user's actual intent is untested</Caveat>; downstream planning/monitoring is motivation, not experiment.
+
+## Critiques and Questions
+1. The binary-accuracy metric cuts both ways: it undercounts semantically equivalent paraphrase formulas (for discrete-time LTL, equivalence checking is decidable — why not use it at least there?) and overcounts nothing — yet the headline ">95%" inherits whatever slack the gold references themselves have, since the gold TLs were produced by the same GPT-3+annotator pipeline for the created data.
+2. The most distribution-shifted evaluation — 100 held-out volunteer instructions — lands at 90.12%, well below the in-distribution 97.52%. "Cross-domain generalization" is demonstrated on five domains, two of which contributed training data; the strongest truly-unseen-domain evidence (Office email) rests on 23 unique formulas.
+3. GPT-3 sits inside both corpus generation and evaluation grounding (AP detection), so the corpus's "richness" is bounded by what GPT-3 likes to say; the 150 person-hours of formal-methods-researcher annotation reduce but do not remove the expert bottleneck the paper set out to eliminate.
+4. From the TDE side: a >95%-accurate compiler still mis-formalizes ~1 in 20 instructions with no runtime signal to catch it, because nothing ever executes the spec. This is exactly the gap between spec generation and spec-driven gating — a wrong-but-well-formed formula would be silently "verified" by any downstream checker.
+
+<SelfCheck q="Why does hiding atomic propositions (lifting) improve cross-domain generalization, and how is full STL recovered afterward?" a="Each prior dataset formats APs its own way (e.g. 'create_Slack'), so full-translation models entangle domain-specific AP conventions with logical parsing, which blocks transfer. Training on prop_i placeholders teaches only the domain-generic logical skeleton. Full STL is then recovered either by GPT-3 AP-span recognition (98.84–100% accurate) that hides and re-substitutes APs, or by transfer-finetuning on a few hundred full pairs from the target domain." />
+
+## Glossary
+- <Term def="Signal Temporal Logic: temporal logic over continuous real-time signals, with timed operators like F[a,b] (eventually), G[a,b] (always), U[a,b] (until)">STL</Term> / <Term def="Linear Temporal Logic; contained by STL when time is discrete">LTL</Term>
+- <Term def="Atomic Proposition: the smallest predicate in a formula, e.g. 'a response is created in Slack'">AP</Term>
+- <Term def="Geometric LTL: simple room-navigation LTL fragment from Gopalan et al. 2018">GLTL</Term>
+- <Term def="command-grounding dataset (Squire et al. 2015) with only 36 unique LTLs (~50 NLs each); acronym expansion not reported">CW</Term>
+- <Term def="formula counted correct only if 100% right; the paper's sole metric">binary accuracy</Term>
+- <Term def="writing a formula tree as left-subtree, root, right-subtree (vs pre-order: root first); the format that works best for LLM finetuning">in-order</Term>
+
+{/* NOTES_START */}
+### Personal notes
+The transferable idea for TDE is the decomposition: domain-generic logical skeleton (learned once, from LLM-manufactured data) + per-domain grounding of predicates (easy — 98.8–100% AP detection). A TDE instruction compiler could mirror this: a lifted "acceptance-suite skeleton" language plus environment-specific predicate bindings. Equally useful as a negative result: few-shot GPT-4 at 77.7% vs finetuned T5 above 95% says structured spec translation is a specialization problem. Keep in mind the paper never evaluates a formula against a trace — the entire verification story TDE cares about starts after this paper ends.
+{/* NOTES_END */}

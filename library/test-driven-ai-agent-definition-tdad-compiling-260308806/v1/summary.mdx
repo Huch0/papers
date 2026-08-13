@@ -1,0 +1,116 @@
+---
+canonical_key: arxiv-2603.08806
+version_key: v1
+title: 'Test-Driven AI Agent Definition (TDAD): Compiling Tool-Using Agents from Behavioral Specifications'
+authors:
+- Tzafrir Rehan
+venue: arXiv
+year: 2026
+tags:
+- evaluation-harness
+- prompt-optimization
+- tde-related-work
+- test-based-eval
+topic_groups:
+- agent_harness
+- software_engineering_agents
+triage_label: TRACK_ONLY
+triage_confidence: high
+source_link: https://arxiv.org/abs/2603.08806v1
+summary_date: '2026-08-13'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>TDAD treats an agent's prompt as a compiled artifact: one coding agent (TestSmith) compiles a YAML behavioral spec into visible + hidden pytest suites, a second (PromptSmith) iterates the prompt red–green until visible tests pass, and mechanical trace-level assertions plus hidden splits, semantic mutation testing, and spec-evolution scenarios defend the loop against <Term def="satisfying the tests (the proxy) without exhibiting the intended general behavior — the test-optimization analogue of reward hacking">specification gaming</Term>.</TLDR>
+
+<WhyItMatters>CLOSEST-WORK #2 for TDE and the highest threat on framing and name: it already owns "test-driven + agents + compile-spec-to-executable-tests + red–green-until-green + mechanical non-LLM verification (pytest over tool-call traces and canary values) + anti-Goodhart design". The boundary TDE must draw — confirmed against the paper text, the survey's analysis is accurate: TDAD operates at <strong>build time, once per agent</strong> (the compiled artifact is a prompt plus tool descriptions), against an entirely <strong>mocked world</strong> (deterministic fixtures — there is no final environment state to assert over), and its per-action "preconditions" are <strong>advisory prose compiled into tool descriptions</strong> (§3.3), not environment-evaluated gates. TDE's runtime per-task acceptance suite over final world state, per-action Hoare-style gating, and completion gating in a real (AppWorld) environment are all absent here; once compiled, a TDAD agent ships with zero runtime verification.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "92% / 58%", label: "compile success, v1 / evolved v2", sub: "11/12 and 7/12 runs on SpecSuite-Core (Tab.4)" },
+  { value: "97.3%", label: "mean hidden pass rate, v1", sub: "drops to 77.7% (±13.9) for v2 specs (Tab.4)" },
+  { value: "86–100%", label: "mutation scores", sub: "2 surviving v1 mutants exposed real test gaps (Tab.6)" },
+  { value: "$2–3", label: "cost per spec version", sub: "2–4 iterations, 30–60 min; Sonnet 4.5 in all roles (Tab.5)" },
+]} />
+
+## Motivation
+Production tool-using agents lack <Problem>measurable behavioral compliance</Problem>: prompt edits cause silent regressions, tool misuse goes undetected, and policy violations surface only after deployment (§1). Development is <Problem>manual trial-and-error — prompt tweaking, spot-checking, bespoke "eval scripts" disconnected from CI/CD and code review</Problem>. And the obvious fix — optimize the prompt against tests — creates its own hazard: <Problem>tests become the optimization target, so a capable optimizer may pass assertions without the intended behavior</Problem> (§4), the prompt-optimization analogue of reward hacking.
+
+## Contribution (what's new)
+<Novelty>A four-role decomposition of agent development into a compilation pipeline with enforced isolation</Novelty> — TestSmith (spec → tests), PromptSmith (prompt refinement against visible tests only), Built Agent (runtime under test), MutationSmith (post-hoc, evaluation-only) — where the interfaces are the anti-gaming mechanism: because tests are the optimization target, the design *must* withhold artifacts per role. Concretely: <Novelty>hidden test splits (30–60%) that only measure, never train</Novelty>; <Novelty>semantic mutation testing — an LLM generates intent-based faulty prompt variants (validated by activation probes) and the harness checks whether the visible suite kills them</Novelty>, adapting classical mutation testing to artifacts that are synthesized, not diffed; and <Novelty>spec-evolution scenarios scoring regression against held-out v1 invariant tests (SURS)</Novelty>. Verification is deliberately mechanical: scripted conversations, deterministic fixtures with canary values, assertions over the tool-call trace — no LLM judges (§3.5).
+
+## Research questions
+Can a coding-agent pipeline reliably compile natural-language/YAML behavioral specs into compliant prompts (VPR/compile rate)? Does passing the optimized-against suite generalize to held-out tests (HPR)? Can mutation testing detect weak test suites (MS)? Is behavior preserved when specs evolve v1 → v2 (SURS)?
+
+## Methodology
+A spec (tools + prioritized policies + decision tree + response contract + test guidance + mutation intents) is the single source of truth; "compile" means iterative test-driven refinement of the prompt until it satisfies the executable contract (§3). TestSmith derives one MFT per decision-tree leaf plus INV/DIR variants (CheckList's taxonomy), with deterministic fixtures embedding <Term def="unique strings (e.g. SSN: 999-00-1234) planted in mock tool outputs; their appearance in a response mechanically proves PII leakage">canary values</Term>. PromptSmith runs the visible suite, clusters failures by root cause, applies the minimal prompt edit, and repeats (budget 6 outer iterations; a focused inner loop reruns only failing tests when fewer than 10 fail). The Built Agent must call a `respond` tool exactly once per turn with schema-validated fields (`decision`, `node_id`, `evidence`, `user_message`), so assertions check structured tool-call arguments instead of parsing prose (§3.2). Evaluated on SpecSuite-Core: 4 author-built specs (SupportOps, DataInsights, IncidentRunbook, ExpenseGuard; 10–14 decision nodes, ~34–53 visible + ~42–45 hidden tests each), 3 trials per spec version, 24 runs total, Claude Sonnet 4.5 in every role (§6.1).
+
+<Pass title="Pipeline details and anti-gaming mechanics">
+<Stepper steps={[
+  { title: "Spec format (§3.1)", body: "YAML: tool schemas/failure modes/sequencing constraints; policies with priorities (e.g. PII protection over helpfulness); decision tree with required actions per node; response contract; optional test_guidance disambiguating subjective terms (with ambiguous vs unambiguous example inputs) — without it TestSmith generates contradictory tests and compilation becomes impossible; mutation intents the suite must detect." },
+  { title: "TestSmith (§3.2, §4.1)", body: "Rule: every expectation must cite the spec clause that mandates it. Traverse the tree → one MFT per leaf; INV paraphrase variants; DIR input pairs differing only in the tested condition. Split: primary MFT per branch is visible (40–70%); INV/DIR variants, paraphrases, boundary cases, and metamorphic tests are hidden (30–60%). Benchmark mode freezes hidden tests within a trial; production mode promotes failing hidden tests to visible and recompiles." },
+  { title: "PromptSmith loop (Alg.1, §3.6)", body: "Run visible suite → cluster failures by root cause (missing auth check vs wrong tool order) → minimal edit for the largest cluster → rerun. Max 6 outer iterations; focused inner loop (8 attempts, only failing tests) when fewer than 10 fail, cutting last-mile time from minutes to seconds. Typical convergence: 2–5 iterations. Tool descriptions are a first-class compile target (§3.3): the spec's minimal contract may be overridden with actionable guidance — when to call (preconditions), prerequisites, return-value semantics." },
+  { title: "MutationSmith (§4.2, Fig.2)", body: "Post-compilation, evaluation-only. Receives ONLY the compiled prompt + mutation-intent catalog (never any tests). Per intent (e.g. SKIP_AUTH_GATE, LEAK_PII_ON_DIRECT_REQUEST), generates a plausible mutated prompt; an activation probe (trace/text/JSON predicates — behavioral, not structural) confirms behavior actually changed; mutants failing 5 probe attempts are excluded as non-activating (87% of intents activated). MS = killed valid mutants / valid mutants, killed = at least one visible test fails on the mutant." },
+  { title: "Spec evolution (§4.3)", body: "v2 = 2–3 coordinated changes (new tool + branch, stricter policy, schema change). v2 compilation starts FROM the v1 artifact and sees only v2 tests; v1 invariant tests are fully held out, then run against the v2-compiled agent: SURS = fraction still passing — true backward compatibility, not optimization against known invariants." },
+  { title: "Isolation (§7)", body: "Compilation container mounts only tests_visible/ (made read-only via chmod -R a-w); hidden tests live in a Docker volume never mounted in the compiler and execute in a separate evaluation container; writes restricted to agent_artifacts/. Same model may serve all roles, but separate invocations with restricted artifact access are required — never one continuous session when hidden tests score the result." },
+  { title: "Reliability (§4.4)", body: "RPR = pass fraction over N reruns per test (N=10, threshold 0.9 standard; N=50, zero-failures for PII/auth) is recommended for production but NOT computed in this study — every reported test result is a single sample; 3 trials give coarse variance only." },
+]} />
+
+Spec depth (Table 3, median counts over 3 trials, ±10–30% stochastic variation): SupportOps 12 nodes / 47 vis / 45 hid / 7 intents; DataInsights 10 / 34 / 42 / 6; IncidentRunbook 14 / 39 / 42 / 7; ExpenseGuard 11 / 47 / 45 / 7. Domains: auth-before-action + PII refusal; SQL grounding (must call `run_sql` before answering); evidence-first incident runbooks; spending caps + FX + receipts (Tab.2).
+</Pass>
+
+## Main result
+Across 24 trials, <Finding src="Tab.4, p.6">v1 specs compile 11/12 (92%) with 97.3±2.6% mean hidden pass rate; evolved v2 specs compile only 7/12 (58%) with 77.7±13.9% HPR</Finding> — and all reported metrics are computed **over successful runs only**. <Finding src="Tab.4, §6.4">Mutation scores are 85.7–100% on v1 (aggregate 95.9±7.1) and 100% on all successful v2 runs; SURS averages 97.2±3.5%</Finding>.
+
+<SortableTable columns={["Spec", "v1 compile", "v2 compile", "v1 HPR %", "v2 HPR %", "v1 MS %", "v2 MS %", "SURS %"]} rows={[
+  ["SupportOps", "3/3", "2/3", "97.6 ± 2.3", "62.5 ± 16.1", "100", "100", "94.2 ± 5.1"],
+  ["DataInsights", "3/3", "2/3", "96.6 ± 4.1", "88.3 ± 3.7", "94.4 ± 9.6", "100", "98.7 ± 1.9"],
+  ["IncidentRunbook", "2/3", "2/3", "95.2 ± 0.3", "80.3 ± 13.1", "85.7", "100", "97.3 ± 3.7"],
+  ["ExpenseGuard", "3/3", "1/3", "99.2 ± 1.3", "81.8 (1 run)", "100", "100 (1 run)", "100 (1 run)"],
+  ["Aggregate", "11/12", "7/12", "97.3 ± 2.6", "77.7 ± 13.9", "95.9 ± 7.1", "100", "97.2 ± 3.5"],
+]} />
+
+## Key findings
+- <Finding src="§6.3, p.7">Every failed compilation with recoverable logs was a near-miss, above 94% VPR at budget exhaustion</Finding>: SupportOps/v2 52/53 (98.1%), IncidentRunbook/v2 48/49 (98.0%), ExpenseGuard/v2 44/46 (95.7%), IncidentRunbook/v1 36/38 (94.7%). Causes: TestSmith generating conflicting tests (2 runs) or budget exhaustion (3 runs), with a fix-A-breaks-B oscillation traced to ambiguous spec language — compilation failure doubles as a spec-bug detector.
+- <Finding src="Tab.6, §6.4">Mutation testing surfaced genuine blind spots, not noise</Finding>: `HALLUCINATE_NUMBERS` survived 1/3 DataInsights v1 runs and `SKIP_RUNBOOK_LOOKUP` survived 2/2 successful IncidentRunbook v1 runs; both systematic gaps were closed by improved v2 coverage.
+- <Finding src="§6.6, p.7">Compilation adds value even over well-crafted seed prompts</Finding>: seeds score 0–90% VPR pre-compilation and compilation "closes the gap in all cases", also improving HPR — claimed in the discussion with no supporting table.
+- <Finding src="Tab.4">Generalization degrades sharply under evolution</Finding>: HPR falls 97.3 → 77.7 with much higher variance (SupportOps v2: 62.5±16.1; worst single observed HPR: 51.1%, §6.6) — the v2 half of the pipeline is markedly less reliable than the headline v1 numbers suggest.
+- <Finding src="Tab.4, §6.2">SURS 97.2±3.5%</Finding>: starting v2 compilation from the v1 artifact rarely breaks held-out v1 invariants — the paper's evidence that test-driven evolution is regression-safe.
+- <Finding src="Tab.5, §6.5">The pipeline is cheap: $2.32±0.96 (v1) / $2.81±1.71 (v2) per spec version, 2–4 iterations, $45.15 total across all 18 successful runs</Finding>; 30–60 min wall-clock per version (§4.4), which the author flags as prohibitive for rapid prototyping.
+
+## Implications
+The strongest existing claim on "software-engineering discipline for agent construction": it converts prompt engineering into a falsifiable, CI-compatible workflow and — most transferable — shows <Novelty>mutation testing as a meta-evaluation of test-suite strength for LLM systems</Novelty>. Lineage: <Related>DSPy is the self-declared closest comparator</Related> — TDAD differs by optimizing against behavioral decision trees (not task accuracy), from natural-language specs (not code signatures), with anti-gaming machinery; a head-to-head is admitted to be infeasible without re-encoding specs. It adopts <Related>CheckList's MFT/INV/DIR taxonomy</Related> verbatim, borrows the hidden-test pattern popularized by <Related>SWE-bench</Related>, inverts <Related>SPADE</Related> (proactive spec-derived tests vs mined assertions), and grounds its design in the <Related>specification-gaming / reward-overoptimization literature (Krakovna et al.; Gao et al.; Goodhart-in-RL)</Related>.
+
+For TDE positioning: TDAD verifies the **artifact before deployment**; TDE verifies the **task at runtime**. The two are orthogonal layers, and the sharpest lifted sentence for the novelty defense is TDAD's own scoping: "we use compile as shorthand for iterative test-driven refinement of a prompt" (§3) — nothing in it touches execution-time task adjudication, world-state assertions, or action gating. <FollowUp>Import semantic mutation testing to audit TDE's runtime-compiled acceptance suites (do generated suites kill planted faulty final states?)</FollowUp>. <FollowUp>The proposed conflict-escalation path — a separate TestSmith invocation receiving only the spec + a failure summary (§6.3) — as a de-circularized repair loop TDE could mirror when its compiled suite is self-contradictory</FollowUp>. <FollowUp>Cross-model role assignment (different models for test generation vs compilation), untested here, as a monoculture fix</FollowUp>.
+
+## Limitations
+- <Caveat>Properties like "be empathetic" resist encoding as behavioral tests; hidden tests + mutation testing reduce but do not eliminate gaming</Caveat> (§8, author-stated).
+- <Caveat>Excluding non-activating mutants (13%) from MS may overstate suite quality</Caveat> if some exclusions reflect genuine blind spots rather than equivalent mutants (§8, author-stated).
+- <Caveat>No ablations of the three anti-gaming mechanisms and no empirical baseline (DSPy, TextGrad, APE)</Caveat> — the value of each component is unmeasured (§8).
+- <Caveat>Claude Sonnet 4.5 plays every role (test author, compiler, mutant generator, agent under test)</Caveat>; cross-model generalization untested (§8) — and (inferred) correlated misreadings of the spec can pass visible *and* hidden tests, so HPR likely overstates true spec compliance.
+- <Caveat>Hidden tests come from the same TestSmith invocation/distribution as visible ones</Caveat> (inferred): HPR measures within-generator generalization, not robustness to real user distributions.
+- <Caveat>The world is entirely mocked</Caveat>: deterministic fixtures, scripted turns — no live APIs, no environment state, no distribution shift; TestSmith also self-censors genuinely hostile inputs (safety training), so abuse-detection coverage needs human corpora (§8).
+- <Caveat>Scale: 4 author-built specs (10–14 nodes), 3 trials/version, single-sample test outcomes (RPR not computed)</Caveat>; scaling to 50+ node specs and the spec-authoring learning curve unquantified (§8). Single-author industrial preprint (Fiverr Labs); not peer reviewed.
+
+## Critiques and Questions
+1. **Monoculture circularity.** The same model writes the tests, optimizes the prompt against them, and is the system under test. A shared systematic misreading of the spec would be invisible to both visible and hidden suites — "97% HPR" is generalization across one model's sampling noise, not across evaluators. The isolation story (containers, hidden volumes) guards against *artifact leakage*, not *epistemic correlation*.
+2. **The headline v2 numbers are survivorship-conditioned.** 100% v2 mutation score and 78% v2 HPR are computed over the 7/12 runs that compiled; the 5 failures are excluded from every table. With 5–7 mutation intents per spec (and ~13% excluded as non-activating), MS=100% is a coarse, small-n signal — and MS is only ever computed against the *visible* suite, so hidden-suite strength is never measured.
+3. **All guarantees end at deployment.** The compiled agent ships with no runtime enforcement; compliance is a pre-deployment statistical claim over mocked fixtures. Fixture-vs-production divergence (tool schema drift, adversarial users TestSmith refused to simulate) is out of scope — precisely the gap runtime verification would fill.
+4. **Preprint polish gaps.** Hidden-split share is 30–60% in §4.1 but 40–60% in §5.1; the "lowest observed HPR 51.1%" (§6.6) traces to no table; the "0–90% seed VPR" claim has no data. Minor, but the load-bearing "compilation adds value" finding rests on untabulated evidence.
+
+<SelfCheck q="Why must MutationSmith never see any tests, and what problem do activation probes solve?" a="MutationSmith's mutants measure the visible suite's strength (MS). If it saw the tests, it could tune mutants to evade or trivially trip specific assertions, making MS meaningless. Since TDAD prompts are synthesized per run (no fixed artifact to diff), mutations are intent-based — so an activation probe (a targeted behavioral check using trace/text/JSON predicates, separate from the test suite and never counted as a kill) confirms each mutated prompt actually changed behavior; mutants failing 5 attempts are excluded as non-activating, analogous to filtering equivalent mutants in PIT/mutmut." />
+
+## Glossary
+- <Term def="minimum functionality test: one concrete input that must trigger a specific decision-tree path/action">MFT</Term> / <Term def="invariance test: paraphrased input, behavior must not change">INV</Term> / <Term def="directional expectation test: input pair differing only in one condition, behavior must change accordingly">DIR</Term> — CheckList's behavioral-test taxonomy, adopted directly.
+- <Term def="hidden pass rate: fraction of held-out tests passed by the compiled agent; the generalization metric">HPR</Term>, <Term def="visible pass rate: fraction of compilation-time tests passing">VPR</Term>, <Term def="mutation score: fraction of validated faulty prompt variants killed by the visible suite">MS</Term>, <Term def="spec-update regression score: fraction of held-out v1 invariant tests still passing after v2 compilation">SURS</Term>, <Term def="reliability pass rate: pass fraction over N reruns per test; recommended (N=10–50) but not computed in this paper">RPR</Term>.
+- <Term def="a targeted behavioral test verifying a mutated prompt actually changed behavior; failing 5 attempts excludes the mutant from MS">activation probe</Term>
+- <Term def="held-out test asserting that a specific input change must produce a corresponding output change">metamorphic test</Term>
+- <Term def="the benchmark: 4 deeply-specified agents (SupportOps, DataInsights, IncidentRunbook, ExpenseGuard) with tests, mutation catalogs, and v1-to-v2 evolution scenarios; evaluates the compilation workflow, not agents">SpecSuite-Core</Term>
+
+{/* NOTES_START */}
+### Personal notes
+For the TDE novelty defense, the precise characterization: TDAD is *compile-time TDD for the agent artifact* — spec → tests → prompt, once per agent version, verified against mocked fixtures via trace assertions; TDE is *runtime TDD for the task* — instruction → acceptance suite over final world state, per task instance, with per-action environment-evaluated Hoare gating and completion gated on green. TDAD's closest brush with per-action conditions is compiling "when to call (preconditions)" into tool descriptions (§3.3) — advisory text the model may ignore, never enforced by the environment. Its verification never touches world state because there is no world: fixtures simulate all tools. Cite its own scoping sentence ("compile as shorthand for iterative test-driven refinement of a prompt", §3) to fence the name collision.
+
+Steal candidates for TDE: (1) mutation testing over runtime-generated acceptance suites (plant faulty final states, measure kill rate) as the answer to "who tests the compiled tests?"; (2) the visible/hidden split as an anti-gaming pattern if TDE's executor ever sees its own suite; (3) SURS-style held-out invariants for task families; (4) the respond-tool structured-output contract as a cheap de-circularization trick. Repo: github.com/f-labs-io/tdad-paper-code (SupportOps fully worked).
+{/* NOTES_END */}

@@ -1,0 +1,106 @@
+---
+canonical_key: arxiv-2604.26615
+version_key: v1
+title: TDD Governance for Multi-Agent Code Generation via Prompt Engineering
+authors:
+- Tarlan Hasanli
+- Shahbaz Siddeeq
+- Bishwash Khanal
+- Pyry Kotilainen
+- Tommi Mikkonen
+- Pekka Abrahamsson
+venue: arXiv
+year: 2026
+tags:
+- multi-agent
+- tde-related-work
+- test-based-eval
+topic_groups:
+- software_engineering_agents
+triage_label: TRACK_ONLY
+triage_confidence: high
+source_link: https://arxiv.org/abs/2604.26615v1
+summary_date: '2026-08-13'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>A 5-page architecture/position paper (EASE 2026 format) that distills Beck/Martin TDD norms into a machine-readable JSON <Term def="a structured catalog of TDD principles, each encoded as a governance object with id, title, human-era intent, AI-native interpretation, operational constraints, and anti-patterns">manifesto</Term> and proposes a governed multi-agent code-generation pipeline — LLMs only propose tests and patches, while a deterministic orchestration engine enforces failing-tests-before-code ordering, four validation gates, a 3-attempt repair budget, and engine-only atomic workspace mutation — with no quantitative evaluation.</TLDR>
+
+<WhyItMatters>Category-A neighbor for TDE: it shares the methodological transposition of red-green TDD into an agent harness, and even de-circularizes *mutation* authority (the model proposes, a deterministic engine disposes). It differs on TDE's load-bearing axes: its oracle is an LLM-authored unit-test suite over code — not an instruction-compiled acceptance suite over final world state — its gates are per-patch schema/policy/phase checks rather than environment-evaluated Hoare-style pre/postconditions on state-changing actions, and §4 concedes manifesto constraints are "primarily enforced at the prompt level", with zero reported numbers. Useful in the novelty defense as the governance pole of TDD-for-agents work that still stops short of a mechanical world-state acceptance harness.</WhyItMatters>
+
+*(No KeyStats strip: the paper reports no quantitative results of its own — see Main result.)*
+
+## Motivation
+<Problem>LLM code generation is unstable and non-deterministic — identical prompts produce different outputs, and temperature zero does not ensure consistency</Problem>; the paper cites Ouyang et al.'s finding of zero equal test outputs in up to 75.76% of cases on complex benchmarks, similar variability in code review, and code that fails in clean environments due to dependency/configuration gaps (§2). In multi-agent settings, small logic errors propagate across the workflow (§1). Meanwhile, <Problem>existing test-guided LLM approaches (TiCoder, Mathews &amp; Nagappan, WebApp1K, LLM4TDD) use tests as auxiliary inputs or prompts — they improve correctness but do not enforce phase ordering, minimal implementation, or bounded repair as a governed protocol</Problem> (§2, observations 1–3). Classical TDD is precisely such a discipline, but <Problem>humans historically drop it under delivery pressure because its costs are immediate and its benefits deferred</Problem> (Table 1's "economically fragile" norms).
+
+## Contribution (what's new)
+Two deltas. (1) <Novelty>TDD as process encoding: discipline moves out of instructions and into the control structure of the generative loop — the LLM layer is non-authoritative (structured proposals only), and a deterministic engine holds sole authority over workspace mutation, phase transitions, and repair budgets</Novelty> (§3.2, Fig.2). (2) <Novelty>A machine-readable TDD manifesto whose entries are consumed twice: interpretation fields drive role-specific prompt construction, while constraint/anti-pattern fields map to runtime enforcement points (phase gating, scope restriction, proposal validation, bounded repair)</Novelty> (§3.1). The form follows from the failure analysis: since instability originates in the model, process invariants cannot be delegated to the model — they must sit where the model cannot bypass them.
+
+## Research questions
+The stated open problem (§2): how to translate classical TDD principles into enforceable, governance-aware prompt structures that ensure bounded autonomy and phase discipline across multi-agent workflows. Subsidiary (§3.1): *which* norms are worth encoding — specifically those framed as the right way to develop yet economically fragile for humans.
+
+## Methodology
+Two parts. First, a manual concept-level extraction over a deliberately bounded canon — Beck's *Test Driven Development: By Example* plus Martin's *Clean Code* and *The Clean Coder* — keeping statements that are (i) prescriptive and (ii) historically violated under deadline pressure, normalized into four categories: order, granularity, feedback quality, design hygiene (Table 1). Second, a governed execution cycle (Fig.2): a planner decomposes the specification into ordered steps with expected test outcomes (FAIL then PASS); RED-phase tests must be observed to fail before GREEN-phase implementation is permitted; every proposal passes validation gates before the engine applies anything atomically; failures enter a bounded repair loop; refactoring is a gated post-green phase. Discipline is distributed across six role prompts (system, planner, test generation, implementation, failure repair, review) rather than one instruction.
+
+<Pass title="Method details">
+<Stepper steps={[
+  { title: "Extract principles (§3.1)", body: "Corpus bounded to Beck and Martin. Candidate statements must be prescriptive AND historically violated as a coping strategy under pressure (batching changes, weakening tests, skipping refactoring). Statements are merged or split to preserve machine-actionable semantics, then normalized into records: label, canonical quote, human-era intent, bibliographic pointer. Categories: order (test-first, Red-Green-Refactor), granularity (minimal failing test, minimal passing code, one failing test at a time), feedback quality (FIRST tests with meaningful assertions), design hygiene (remove duplication, refactor while green)." },
+  { title: "Encode the manifesto", body: "Each principle becomes a JSON governance object: identifier, title, original human intent, AI-native interpretation, operational constraints, anti-patterns. Published at github.com/shahbazsiddeeq/TDD-manifesto. Figure 1 illustrates entries for pre-change failing tests (RED), refactoring as a gated phase with full-suite regression and duplication controls, and FIRST quality operationalized via quantitative checks for speed, determinism, self-validation, and timeliness." },
+  { title: "Phase-ordered workflow (Fig.2)", body: "The planner emits ordered steps encoding expected test outcomes (FAIL then PASS). RED: the LLM proposes tests restricted to test files; the engine verifies they fail. GREEN: the LLM proposes a minimal code patch. Code generation is not permitted until a failing-test state is established." },
+  { title: "Gate, test, apply", body: "Every proposal passes four gates before any mutation: (1) structural/schema validation, (2) policy enforcement (disallowed paths, directory restrictions), (3) phase-consistency checks, (4) optional human or rule-based approval in planner mode. Only the orchestration engine writes to the file system, atomically. A deterministic test run decides: fail -> bounded repair; pass -> completion or gated refactoring. (Note: §3.2 prose and the Fig.2 walkthrough disagree on whether tests run before or after apply — see Critiques.)" },
+  { title: "Bounded repair", body: "At most N = 3 repair attempts per GREEN step, a fixed retry budget. Per iteration the engine computes a failure signature S = (exception type, failing tests, normalized message) and terminates early if S repeats in consecutive iterations, a repair produces no effective code change (patch comparison), or proposals are semantically equivalent to prior attempts; execution otherwise ends on pass or at the cap." },
+  { title: "Principle -> mechanism map", body: "Test-first: planner-ordered steps + engine-level FAIL gating. Minimal implementation: prompt scope limits + engine rejection of no-op or unrelated changes. Behavior preservation: post-apply test gates + automatic rollback during refactoring if tests fail. Controlled refactoring: permitted only from green; forbidden to modify features or tests." },
+]} />
+</Pass>
+
+## Main result
+**Not reported.** There is no benchmark, no metric, no results table, and no named model anywhere in the paper. The only outcome statement is qualitative: <Finding src="§4">"initial experimentation suggests" that explicit phase separation and validation gating reduce unstable retry cycles compared to baseline prompting, and that test-first ordering plus minimality limit speculative code generation</Finding> — with no setup, tasks, models, or counts.
+
+<ClaimEvidence rows={[
+  { claim: "Phase separation and validation gating reduce unstable retry cycles vs baseline prompting", evidence: "'Initial experimentation suggests' (§4); no setup, tasks, models, or numbers reported", verdict: "Unverified" },
+  { claim: "The framework improves stability and reproducibility of LLM code generation", evidence: "Architectural argument only; authors state empirical validation 'remains preliminary' (§4)", verdict: "Unverified" },
+  { claim: "TDD properties are enforced at both prompt and engine levels", evidence: "FAIL gating, validation gates, engine-only atomic apply, and the repair cap are engine-side; but §4 concedes manifesto constraints are 'primarily enforced at the prompt level, with only partial runtime verification'", verdict: "Partially supported" },
+]} />
+
+## Key findings
+No empirical findings exist; the concrete design commitments are the substance:
+- <Finding src="§3.2, Fig.2">Mutation authority is fully separated from generation</Finding>: models never write to the file system; structured patch proposals pass four gates (schema/content, path policy, phase consistency, optional human approval) and only the engine applies them, atomically.
+- <Finding src="§3.2, Fig.2">Test-first is a hard gate, not an instruction</Finding>: engine-level FAIL gating blocks implementation until a failing-test (RED) state is established — the ordering is enforced by the workflow, not requested of the model.
+- <Finding src="§3.2">Repair is bounded and signature-monitored</Finding>: cap `N = 3` per GREEN step; the failure signature `S = {exception type, failing tests, normalized message}` triggers early termination on consecutive repeats, no-op patches, or semantically equivalent proposals.
+- <Finding src="§3.2">Discipline is distributed across six role prompts</Finding>: e.g. the test-generation prompt restricts output to test files and requires meaningful assertions; the implementation prompt forbids unrelated feature additions; the review prompt prohibits production edits during test review.
+- <Finding src="§3.1, Tab.1">The manifesto deliberately over-represents "economically fragile" norms</Finding> — run tests constantly, one failing test at a time, FIRST feedback quality, refactor-while-green — on the argument that automation removes the human cost that caused their historical abandonment.
+- <Finding src="§4">Governance has a token price</Finding>: manifesto injection must be balanced against context limits — governance strength trades off against prompt compactness.
+
+## Implications
+For harness designers, the reusable patterns are the proposer/authority split and phase-gated red-green looping with explicit termination policies — process invariants placed outside the model. The authors position this against <Related>TDFlow (repo-scale TDD sub-agents for patching/debugging/revising, high pass rates with ground-truth tests) — explicitly contrasted: TDFlow-style autonomous execution vs engine-held mutation authority here</Related>, and build on <Related>TiCoder (interactive test refinement), Mathews &amp; Nagappan (ASE'24), WebApp1K's tests-as-prompt-and-verifier, and LLM4TDD best practices</Related>. <FollowUp>The public manifesto JSON (github.com/shahbazsiddeeq/TDD-manifesto) as a concrete artifact for instruction-to-constraint compilation</FollowUp>; <FollowUp>whether Fig.1's quantitative FIRST checks (speed, determinism, self-validation, timeliness of tests) ever get runtime implementations — mechanical oracle-quality verification is exactly the missing piece a world-state harness also needs</FollowUp>; <FollowUp>the promised repository-scale / CI-CD evaluation with stability, defect-rate, and reproducibility measures</FollowUp>.
+
+## Limitations
+- <Caveat>No quantitative evaluation</Caveat>: author-stated "empirical validation remains preliminary" — in fact no numbers, benchmarks, tasks, or models are reported at all.
+- <Caveat>Enforcement is primarily prompt-level</Caveat> (author-stated, §4): manifesto-derived constraints receive "only partial runtime verification"; full semantic compliance is future work — which undercuts the abstract's "deterministic engine authority" framing.
+- <Caveat>The oracle is model-authored and only prompt-guarded</Caveat> (inferred): RED tests come from the LLM, "meaningful assertions" is a prompt requirement, and review is another LLM prompt — so mechanically enforced red-green can converge on a weak or wrong specification.
+- <Caveat>Bounded autonomy may limit exploration in complex refactoring scenarios</Caveat> (author-stated).
+- <Caveat>Single-workspace scope, no released framework code</Caveat>: scaling to large multi-module repositories is deferred (author-stated); only the manifesto JSON is public. The PDF is formatted as an EASE 2026 5-page paper with placeholder ISBN/DOI; acceptance status from the PDF alone: Unclear (metadata records venue as arXiv).
+
+## Critiques and Questions
+1. **Oracle circularity is unaddressed.** The engine can verify that tests fail then pass; it cannot verify that the tests encode the user's intent. The only spec-alignment checks (meaningful assertions, no over-specification) live in LLM prompts — the exact adjudication circularity a mechanical harness is supposed to remove.
+2. **The prompt/engine ledger is missing.** Which constraints are engine-enforced vs prompt-advisory is never itemized; given the §4 admission, the honest accounting may be "gates and caps in the engine, everything semantic in prompts."
+3. **The single outcome claim is unreproducible.** "Initial experimentation" names no baseline, task set, model, or count; likewise the repair loop's "semantically equivalent to prior attempts" termination check has no stated detection mechanism.
+4. **Apply/test ordering is internally inconsistent.** §3.2 prose says validated changes are applied and then tests executed (with rollback during refactoring), while the Fig.2 walkthrough runs the deterministic test before atomic commit; where tests execute (staged copy vs applied workspace) is unclear.
+5. **"Multi-agent" means role prompts under one orchestrator** — not interacting autonomous agents — so the title claims more agency than the architecture contains.
+
+<SelfCheck q="What can the orchestration engine mechanically verify in this framework, and what must it take on faith from the model?" a="Mechanically verified: proposals parse against a schema, touch only allowed paths, match the current phase; proposed RED tests actually fail before implementation is permitted; tests pass after application; repair stays within N = 3 attempts with failure-signature-based early termination; only the engine mutates the workspace, atomically. Taken on faith: the content of the oracle — the tests are LLM-generated, and their meaningfulness and alignment with the specification are enforced only by the test-generation and review prompts, with the authors conceding runtime verification of manifesto constraints is partial." />
+
+## Glossary
+- <Term def="Beck's micro-cycle: write a failing test (red), write minimal code to pass it (green), then refactor while staying green">Red-Green-Refactor</Term>
+- <Term def="Clean-Code test-quality criteria: Fast, Independent, Repeatable, Self-validating, Timely">FIRST</Term>
+- <Term def="the requirement that each phase produces only its designated output type — e.g. no production code during RED, no test edits during refactoring">phase purity</Term>
+- <Term def="per-iteration triple of exception type, failing tests, and normalized message used to detect stalled repair loops">failure signature</Term>
+- <Term def="Han et al. 2026 (arXiv:2510.23761): repository-scale agentic TDD workflow with sub-agents for patching, debugging, revising, evaluated with ground-truth tests">TDFlow</Term>
+- <Term def="Evaluation and Assessment in Software Engineering — the ACM SE conference this 5-page paper is formatted for (2026 edition, Glasgow)">EASE</Term>
+
+{/* NOTES_START */}
+### Personal notes
+For the TDE related-work section, this is the governance pole of category A, and its most quotable line is its own concession: constraints are "primarily enforced at the prompt level, with only partial runtime verification" (§4). The three-way contrast writes itself: (1) what it gates mechanically — patch schema/paths/phase, RED-fails-first, post-apply test runs, repair cap `N = 3` — is process shape over a code workspace; (2) what it never gates — the semantics of the oracle (LLM-written unit tests, prompt-guarded) and any world-state predicate; (3) what it never shows — numbers. TDE's deltas stay intact: instruction-compiled acceptance over final world state, environment-evaluated; Hoare-style pre/postconditions on every state-changing action (this paper's gates are per-proposal, not per-action-on-state); AppWorld state-diff grading vs zero evaluation here. Shared DNA worth citing positively: engine-only mutation authority ("the model proposes, the engine disposes") and red-green-until-pass as a termination discipline. The manifesto JSON (github.com/shahbazsiddeeq/TDD-manifesto) is worth skimming as prior art for compiling norms into enforcement points.
+{/* NOTES_END */}

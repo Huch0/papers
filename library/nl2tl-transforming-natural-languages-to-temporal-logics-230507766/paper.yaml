@@ -1,0 +1,57 @@
+canonical_key: arxiv-2305.07766
+slug: nl2tl-transforming-natural-languages-to-temporal-logics-230507766
+title: 'NL2TL: Transforming Natural Languages to Temporal Logics using Large Language Models'
+authors:
+- Yongchao Chen
+- Rujul Gandhi
+- Yang Zhang
+- Chuchu Fan
+year: 2023
+primary_ids:
+  doi: null
+  arxiv_base_id: '2305.07766'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2305.07766v2
+- https://arxiv.org/pdf/2305.07766v2
+topic_groups:
+- general_agent_methods
+tags:
+- dataset
+- tde-related-work
+venue:
+  name: EMNLP
+  tier: A_star
+  status: accepted
+  year: 2023
+user:
+  read_status: unread
+  triage_label: SKIP
+  triage_confidence: medium
+  notes: null
+milestone: null
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v2
+  source: arxiv
+  source_url: https://arxiv.org/abs/2305.07766v2
+  pdf_path: library/nl2tl-transforming-natural-languages-to-temporal-logics-230507766/v1/paper.pdf
+  summary_path: library/nl2tl-transforming-natural-languages-to-temporal-logics-230507766/v1/summary.mdx
+  metadata_path: library/nl2tl-transforming-natural-languages-to-temporal-logics-230507766/v1/metadata.yaml
+  fetched_at: '2026-08-13T07:15:42Z'
+  source_updated_at: '2024-03-22T00:28:51Z'
+  arxiv_version: v2
+  pdf_sha256: 233168da4900401b8366c0116d54e195348139f941256af8d2c4bea79a0bdf6d
+  pdf_bytes: 5993533
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-08-13T07:15:42Z'
+  updated_at: '2026-08-13T10:23:53Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

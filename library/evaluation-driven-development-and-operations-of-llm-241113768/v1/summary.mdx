@@ -1,0 +1,115 @@
+---
+canonical_key: arxiv-2411.13768
+version_key: v1
+title: 'Evaluation-Driven Development and Operations of LLM Agents: A Process Model and Reference Architecture'
+authors:
+- Boming Xia
+- Qinghua Lu
+- Liming Zhu
+- Zhenchang Xing
+- Dehai Zhao
+- Hao Zhang
+venue: arXiv
+year: 2024
+tags:
+- evaluation-harness
+- tde-related-work
+topic_groups:
+- agent_harness
+- general_agent_methods
+triage_label: SKIP
+triage_confidence: high
+source_link: https://arxiv.org/abs/2411.13768v3
+summary_date: '2026-08-13'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>A 161-source multivocal literature review distills six recurring gaps in LLM-agent evaluation into EDDOps — a four-step lifecycle process model plus a three-layer reference architecture whose Evaluation Backbone routes offline and online evaluation evidence into bounded runtime adaptation and governed redevelopment, making evaluation a continuous governing function rather than a terminal checkpoint.</TLDR>
+
+<WhyItMatters>Category-A related work for TDE, and the survey's characterization checks out against the text: it makes the same methodological move — transposing TDD/BDD discipline onto LLM agents — but at the software-process/organizational level, and it explicitly argues canonical TDD is the *lowest-fit* method for agents because outcomes are graded and adjudication needs pluggable judges or humans (Table 1, §2.3, p.5) — the exact circularity TDE removes. It is not a per-task runtime harness: nothing compiles an instruction into an executable acceptance suite over final world state, and nothing red–green-gates task completion. Precision point for the novelty defense: EDDOps *names* TDE-adjacent ingredients — postcondition/invariant/metamorphic checks over observed future states (§5.3, p.18) and precondition checks before destructive tool calls (§5.4, p.19) — but only as illustrative validators and monitors inside a governance process, never as a mechanical completion criterion.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "161", label: "sources in the MLR", sub: "134 academic + 27 grey (final set, §3.2)" },
+  { value: "93.28%", label: "academic sources evaluating pre-deployment only", sub: "125/134 — Fig.2, p.8" },
+  { value: "2.24%", label: "academic sources with adaptive evaluation", sub: "3/134 vs 18.52% grey — Fig.5, p.11" },
+  { value: "88.06%", label: "academic sources judged by AI only", sub: "118/134 — Fig.7, p.12" },
+]} />
+
+## Motivation
+LLM agents pursue under-specified goals, behave non-deterministically, are compound systems (model + context engine + planner + memory + tools + guardrails), and keep adapting after deployment. <Problem>Prevailing evaluation practice is model-level, static-benchmark, aggregate-score, and pre-deployment</Problem>, with little visibility into intermediate artifacts, task slices, or drift, and few connections to runtime observability or policy enforcement (§1–2, pp.1–3). <Problem>Canonical TDD/BDD mismatch agents on four counts</Problem>: static requirements with executable oracles, binary pass/fail assertions, a pre-deployment focus that misses runtime drift, and weak support for emergent or qualitative behavior (§2.3, p.5). And <Problem>evaluation evidence rarely drives change</Problem>: most academic work treats evaluation as a milestone checkpoint with no linked fixes, so the same failures recur (Fig.6, p.11).
+
+## Contribution (what's new)
+<Novelty>Evaluation recast as a lifecycle-spanning control function — the disciplined use of offline and online evaluation evidence to prioritize and govern targeted changes during agent runtime and subsequent redevelopment</Novelty> (the paper's definition of EDDOps, p.2). The structural delta over prior reference architectures, which include evaluation only as a peripheral validator, is <Novelty>an Evaluation Backbone and Control Loop that causally links versioned evidence stores (results, test cases, safety cases) to both an offline improvement path and a bounded online adaptation path</Novelty> (Fig.9, p.20; Table 3, p.24). Methodologically, both artifacts are derived traceably from the coded MLR data through six cross-cutting drivers (D1–D6) rather than proposed a priori (§3.3; Table 2, p.15).
+
+## Research questions
+RQ1: what are the key challenges in evaluating LLM agents across their lifecycle (answered by the MLR)? RQ2: how can evaluation be procedurally integrated into the lifecycle (the process model)? RQ3: how can it be architecturally integrated (the reference architecture)? (§1, p.3)
+
+## Methodology
+A <Term def="multivocal literature review: a systematic review that includes both peer-reviewed literature and grey practitioner sources such as blogs, tool docs, and white papers">MLR</Term> searched five academic databases plus Google for <Term def="non-peer-reviewed practitioner material: blogs, evaluation frameworks, open-source tools, white papers">grey literature</Term> (June 5, 2024; post-2022 focus), with double screening, backward/forward snowballing, author-added newer sources, and quality filtering down to 134 academic sources and 27 tools/frameworks/platforms. Sources were coded along four dimensions (lifecycle practices, metric types, use of results, architectural considerations), thematically synthesized with frequency counts, then translated into design: recurring challenges become drivers D1–D6, which are grouped into lifecycle activities (process model, Fig.8, p.14) and persistent structures (reference architecture, Fig.9, p.20). Validation (§7) is analytical and instantiation-based, not experimental: MLR threats-to-validity, one pre-deployment caselet plus practitioner triangulation, and comparative plus ISO/IEC 25010 quality-attribute checks.
+
+<Pass title="Drivers, process model, and architecture in detail">
+The six drivers (§4.2, p.13): D1 lifecycle coverage (offline and online); D2 metric mix beyond aggregates (step-level, slice-aware); D3 system-level anchor (model probes only explain system outcomes); D4 adaptive evaluation (stable baselines plus signal-driven probes); D5 closed feedback loops (findings linked to recorded changes); D6 meaningful human oversight (hybrid judging with escalation). Each process step ships exit-criteria indicators tied to these drivers.
+
+<Stepper steps={[
+  { title: "Step 1 — Define evaluation plan (D1–D3; hooks for D4, D6)", body: "Inputs: user goals, governance requirements, initial agent architecture. Risk-based prioritization sets SLO/SLA gates via forward and backward risk analysis. Output: a versioned plan with a lifecycle coverage map, metric-mix policy with per-slice sampling minima, slice taxonomy and run-metadata schema, adaptive probe triggers, hybrid evaluator and escalation policy, privacy-safe tracing rules; plus preliminary safety cases." },
+  { title: "Step 2 — Generate evaluation test cases (D2–D4)", body: "Pinned benchmark baselines (e.g., AgentBench) and a framework with step-level logging and evaluator plugins; domain knowledge bases; expert-curated edge cases; LLM-synthetic data for rare or high-risk conditions. Every case gets a step-level oracle (pass, fail, or graded), a run mode (offline baseline, online periodic, or signal-triggered probe), provenance, slice tags, and contamination/leakage screening." },
+  { title: "Step 3 — Conduct offline and online evaluations (D1–D4, D6)", body: "Offline: ground-truth batch metrics for regression plus post-mortem trajectory scoring. Online: operational proxies (completion/abandonment, escalation rate, latency, unit cost) under shadow evaluation, canary rollout, staged expansion, feature flags, and a kill-switch. Intermediate-artifact checks are derived checks on future states — postconditions, invariants, metamorphic relations, schema validators — run in replay offline and as lightweight online validators. AI judges are used for scale, with assessor-health indicators (uncertainty, dispersion, consistency) recorded per slice before decisions are acted on." },
+  { title: "Step 4 — Analyze and improve (D5)", body: "Slice-targeted and smallest-effective-change-first. Online (bounded, logged, rollbackable): prompt/profile selection, conditional in-context examples, routing and policy changes, guardrail thresholds, evaluation-gated operational memories, tool configuration. Offline (governed): architecture/spec refinement such as precondition checks before destructive tools, or model fine-tune/retrain/selection paired with system-level mitigations. Re-run the same slices after each change; update safety cases with the new evidence." },
+]} />
+
+The architecture (Fig.9, p.20) has three layers. Supply Chain: plan/design, data collection, model and system build-and-evaluate, feeding a versioned Design/Dev Artifacts store. Agent: context engine, reasoning and planning, workflow execution, multi-layered guardrails, memory — instrumented so every component emits plan and execution traces with slice and run-metadata tags. Operation: the Evaluation module (AI/human/hybrid evaluators, results store, test-case and safety-case generators) plus <Term def="DevOps analogue for agents: monitoring, logging, and analytics infrastructure for operating deployed LLM agents">AgentOps</Term> infrastructure (observability, release controls, proactive error analysis, feedback integration). The backbone routes evidence along an offline improvement path (evidence into design artifacts, governed redevelopment, re-evaluation before redeploy) and an online adaptation path (observability-triggered probes, bounded configuration changes without redeployment; higher-impact changes deferred to the offline path).
+</Pass>
+
+## Main result
+This is a design-science paper: its quantitative results are the MLR distributions, and the two artifacts are the deliverable. The headline empirical finding is a stark academic–industry divergence: <Finding src="Figs.2–7, pp.8–12">academic evaluation practice concentrates on pre-deployment, static, aggregate, model-level, AI-judged, checkpoint-style evaluation, while grey/practitioner sources are far more continuous, mixed-metric, system-integrated, hybrid-judged, and adaptation-linked</Finding>. Share of the dominant academic pattern in each sample:
+
+<SortableTable columns={["Dimension", "Dominant academic pattern", "Academic share", "Grey share"]} rows={[
+  ["Lifecycle stage", "Pre-deployment only", "93.28% (125/134)", "44.44% (12/27)"],
+  ["Metric type", "End-to-end aggregate only", "92.54% (124/134)", "11.11% (3/27)"],
+  ["Evaluation focus", "Model-level only", "66.42% (89/134)", "14.81% (4/27)"],
+  ["Evaluation mode", "Static suites", "97.76% (131/134)", "81.48% (22/27)"],
+  ["Use of results", "Checkpoint only, no linked change", "70.90% (95/134)", "18.52% (5/27)"],
+  ["Evaluator type", "AI-only judging", "88.06% (118/134)", "44.44% (12/27)"],
+]} />
+
+## Key findings
+- <Finding src="Fig.2, p.8">Lifecycle coverage is fragmented</Finding>: 93.28% of academic sources evaluate pre-deployment only (post-deployment 2.24%, continuous 4.48%), versus 40.74% of grey sources doing continuous evaluation — the consequences the paper names are operational blind spots, broken feedback, and eroding assurance.
+- <Finding src="Fig.3, p.9">Mixed metrics dominate practice (81.48% of grey) while aggregate-only dominates academia (92.54%)</Finding>; none of the 27 tools exposes intermediate-only metrics without at least one overall score, which the paper reads as a pragmatic balance of diagnosis and comparability.
+- <Finding src="Fig.6, p.11">Evaluation rarely drives change in academic work</Finding>: 70.90% is checkpoint-only, versus 81.48% of grey sources reporting changes explicitly linked to findings — the closed-loop gap that driver D5 and Step 4 target.
+- <Finding src="Fig.7, p.12">AI-only judging is the academic default (88.06%)</Finding>, and the paper compiles evidence that LLM judges miss context, inherit bias, and show confidence without accuracy — motivating hybrid escalation plus periodic judge calibration (D6).
+- <Finding src="§5.3, p.18">Where possible, intermediate checks are environment-derived</Finding>: postconditions, invariants, metamorphic relations, and schema validators applied to the next observed state after an action, run in replay offline and as inline online validators — and these validators can gate test-time distillation of procedural/strategic/tool memories.
+- <Finding src="§7.2, pp.22–23">Fitness-for-purpose validation only</Finding>: a pre-deployment caselet (an LLM tax assistant over Australian Taxation Office materials, evaluated with DeepEval) instantiated all six drivers, but the online controls (shadow/canary) were never exercised in production.
+
+## Implications
+For agent-harness builders this is the most explicit bridge so far from software-process discipline (TDD/BDD, DevOps) to agent evaluation; D1–D6 plus the per-step exit criteria read as an audit checklist for existing harnesses. It extends the same group's <Related>FM-agent reference architecture (Lu et al. 2024) and Responsible-AI design guidance</Related>, formalizes their <Related>AgentOps observability taxonomy</Related> line, and folds in <Related>safety cases for frontier AI</Related> and the <Related>LLM-as-a-judge bias/miscalibration literature</Related>. It positions itself as complementary to learning-from-experience strands (<Related>experience replay such as ExGRPO/RLEP, early experience, Reflexion/Self-Refine/MUSE-style runtime reflection, and system-level failure-analysis pipelines</Related>), which optimize the agent, whereas EDDOps governs the surrounding lifecycle. <FollowUp>Whether any team instantiates the full backbone end-to-end — especially the online adaptation path — and reports operational outcomes.</FollowUp> <FollowUp>Evaluation-gated memory writes as a defense against agent misevolution (their ref [82]) — the nearest thing here to TDE-style mechanical gating, worth citing when arguing gating should be environment-computed.</FollowUp>
+
+## Limitations
+- <Caveat>EDDOps itself is never implemented or quantitatively evaluated</Caveat>: validation is explicitly analytical and instantiation-based (following Galster's empirically-grounded-RA criteria), so applicability and adequacy are argued, not measured.
+- <Caveat>The single caselet is the authors' own tax-assistant system, pre-deployment only</Caveat>; the online adaptation path — the architecture's most novel element — is never exercised under real traffic.
+- <Caveat>The MLR search date is June 5, 2024</Caveat> in a fast-moving field; later sources were added "based on author discussions", a subjective supplement (many 2025 references enter this way).
+- <Caveat>Small grey sample (n = 27) with descriptive contrasts only</Caveat>, and each source is coded to one mutually exclusive primary mode, compressing mixed practice into single labels.
+- <Caveat>Guidance stays at the facilitation level</Caveat>: no tooling, schemas, or measurable adoption criteria ship with the paper, and the bounds on "bounded" runtime adjustments are never formalized.
+
+## Critiques and Questions
+1. Self-referential validation loop: the artifacts are checked against drivers the same authors distilled from their own coding, and the caselet instantiates the model on a system from their own group — internal coherence is demonstrated, external utility is not.
+2. The academic-vs-grey contrast likely carries a genre confound: papers exist to report benchmark results while vendor docs describe operations tooling, so classifying each source's primary mode may measure publication genre rather than what teams actually do.
+3. The oracle stance is the mirror image of TDE's: outcomes may be graded, adjudication is pluggable-judge or human, and assurance partly rests on judge-health metrics — even though the paper itself compiles the evidence for judge miscalibration. Mechanical world-state checks (postconditions, invariants) remain optional validators, never the completion criterion.
+4. No cost model: continuous, slice-aware, hybrid-judged evaluation across a lifecycle is expensive; per-slice sampling minima and probe-latency targets are named as policy knobs but never quantified.
+
+<SelfCheck q="Through which two paths does the EDDOps Evaluation Backbone turn evaluation evidence into change, and what bounds each path?" a="An online adaptation path — observability-triggered runtime evaluations apply bounded, policy-approved, logged, rollbackable adjustments (prompts, routing, guardrail thresholds, evaluation-gated memories) without redeployment — and an offline improvement path, where evidence flows into the Design/Dev Artifacts store to drive governed redevelopment (architecture, tests, safety cases, model changes) that is re-evaluated on the affected slices before redeploy. Higher-impact changes are always deferred to the offline path, and every change is versioned and traceably linked to its originating evidence." />
+
+## Glossary
+- <Term def="a coherent subgroup of cases — task type, user cohort, operating conditions, difficulty or uncertainty band — used for targeted analysis, reporting, and fixes">slice</Term>
+- <Term def="a structured, evidence-based argument that a system is acceptably safe in its deployment context; updated as evaluation evidence accumulates">safety case</Term>
+- <Term def="running a new configuration on mirrored production traffic with zero user visibility, before any real exposure">shadow evaluation</Term>
+- <Term def="releasing a change to a small share of live traffic, expanding in stages only while probe and SLO checks pass">canary rollout</Term>
+- <Term def="a check that a known transformation of the input must produce a predictably related output — usable as an oracle when no ground-truth label exists">metamorphic relation</Term>
+- <Term def="using an LLM to grade another model's outputs; scalable but documented to inherit bias and miscalibration">LLM-as-a-judge</Term>
+- <Term def="a reference architecture meant to guide design across many organizations rather than prescribe one implementation">facilitation reference architecture</Term>
+
+{/* NOTES_START */}
+### Personal notes
+For the TDE related-work section, this is the canonical process-level transposition of TDD/EDD to agents (survey category A — confirmed accurate). Sharpest contrast points to use: (1) Table 1 rates canonical TDD as the lowest-fit method for LLM agents *because* its oracles are executable and its assertions binary; TDE's bet is the inverse — keep the red–green loop and make the oracle stay executable and binary by compiling it at runtime over final world state, no judge needed. (2) EDDOps names postcondition/invariant/metamorphic checks on observed future states (§5.3) and precondition checks before destructive tools (§5.4), but as illustrative validators inside a governance process; TDE makes exactly these the load-bearing completion gate. (3) EDDOps' adjudication is explicitly pluggable-judge plus human oversight with judge-health telemetry; TDE de-circularizes adjudication entirely. Bonus ammunition: its own MLR shows 88.06% of academic agent evaluation is AI-judged — empirical support for TDE's de-circularization motivation.
+{/* NOTES_END */}

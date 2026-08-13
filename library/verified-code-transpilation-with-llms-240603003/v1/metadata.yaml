@@ -1,0 +1,80 @@
+canonical_key: arxiv-2406.03003
+version_key: v1
+title: Verified Code Transpilation with LLMs
+authors:
+- Sahil Bhatia
+- Jie Qiu
+- Niranjan Hasabnis
+- Sanjit A. Seshia
+- Alvin Cheung
+abstract: Domain-specific languages (DSLs) are integral to various software workflows. Such languages
+  offer domain-specific optimizations and abstractions that improve code readability and maintainability.
+  However, leveraging these languages requires developers to rewrite existing code using the specific
+  DSL's API. While large language models (LLMs) have shown some success in automatic code transpilation,
+  none of them provide any functional correctness guarantees on the transpiled code. Another approach
+  for automating this task is verified lifting, which relies on program synthesis to find programs in
+  the target language that are functionally equivalent to the source language program. While several verified
+  lifting tools have been developed for various application domains, they are specialized for specific
+  source-target languages or require significant expertise in domain knowledge to make the search efficient.
+  In this paper, leveraging recent advances in LLMs, we propose an LLM-based approach (LLMLift) to building
+  verified lifting tools. We use the LLM's capabilities to reason about programs to translate a given
+  program into its corresponding equivalent in the target language. Additionally, we use LLMs to generate
+  proofs for functional equivalence. We develop lifting-based compilers for {\em four different} DSLs
+  targeting different application domains. Our approach not only outperforms previous symbolic-based tools
+  in both the number of benchmarks transpiled and transpilation time, but also requires significantly
+  less effort to build.
+venue: arXiv
+year: 2024
+source: arxiv
+source_url: https://arxiv.org/abs/2406.03003v1
+pdf_url: https://arxiv.org/pdf/2406.03003v1
+pdf_sha256: 54f8526fe5f9b06c7dc663b59b8ba93927bea9434f14f6165e2596591636e697
+fetched_at: '2026-08-13T07:18:07Z'
+source_updated_at: '2024-06-05T07:10:30Z'
+ids:
+  doi: null
+  arxiv_id: 2406.03003v1
+  arxiv_base_id: '2406.03003'
+  arxiv_version: v1
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- tde-related-work
+- verifier
+topic_groups:
+- software_engineering_agents
+scoring:
+  score: 16.5
+  label: SKIP
+  confidence: high
+  rationale: 'score=16 -> SKIP | strong: interest_fit(0.73), novelty(0.55), venue_quality(0.40) | interests:
+    software_engineering_agents:group:software_engineering_agents | negatives: old_in_fast_area'
+  matched_interests:
+  - software_engineering_agents:group:software_engineering_agents
+  negative_signals:
+  - old_in_fast_area
+  subscores:
+    interest_fit: 0.73
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.36
+    novelty: 0.55
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/verified-code-transpilation-with-llms-240603003/v1/paper.pdf
+  extraction: library/verified-code-transpilation-with-llms-240603003/v1/extraction.txt
+  summary: library/verified-code-transpilation-with-llms-240603003/v1/summary.mdx
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread
+  summary_format: mdx

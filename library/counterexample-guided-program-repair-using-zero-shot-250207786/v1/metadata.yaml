@@ -1,0 +1,83 @@
+canonical_key: arxiv-2502.07786
+version_key: v1
+title: Counterexample Guided Program Repair Using Zero-Shot Learning and MaxSAT-based Fault Localization
+authors:
+- Pedro Orvalho
+- Mikoláš Janota
+- Vasco Manquinho
+abstract: Automated Program Repair (APR) for introductory programming assignments (IPAs) is motivated
+  by the large number of student enrollments in programming courses each year. Since providing feedback
+  on IPAs requires substantial time and effort from faculty, personalized feedback often involves suggesting
+  fixes to students' programs. Formal Methods (FM)-based semantic repair approaches, check a program's
+  execution against a test suite or reference solution, are effective but limited. These tools excel at
+  identifying buggy parts but can only fix programs if the correct implementation and the faulty one share
+  the same control flow graph. Conversely, Large Language Models (LLMs) are used for APR but often make
+  extensive instead of minimal rewrites. This leads to more invasive fixes, making it harder for students
+  to learn from their mistakes. In summary, LLMs excel at completing strings, while FM-based fault localization
+  excel at identifying buggy parts of a program. In this paper, we propose a novel approach that combines
+  the strengths of both FM-based fault localization and LLMs, via zero-shot learning, to enhance APR for
+  IPAs. Our method uses MaxSAT-based fault localization to identify buggy parts of a program, then presents
+  the LLM with a program sketch devoid of these buggy statements. This hybrid approach follows a CEGIS
+  loop to iteratively refine the program. We ask the LLM to synthesize the missing parts, which are then
+  checked against a test suite. If the suggested program is incorrect, a counterexample from the test
+  suite is fed back to the LLM. Our experiments show that our counterexample guided approach, using MaxSAT-based
+  bug-free program sketches, significantly improves the repair capabilities of all six evaluated LLMs.
+  This method allows LLMs to repair more programs with smaller fixes, outperforming other configurations
+  and state-of-the-art symbolic program repair tools.
+venue: arXiv
+year: 2024
+source: arxiv
+source_url: https://arxiv.org/abs/2502.07786v1
+pdf_url: https://arxiv.org/pdf/2502.07786v1
+pdf_sha256: a5d9d645edeabd8644493efeb598f552cf43e006232302a863d02bf520144353
+fetched_at: '2026-08-13T07:18:01Z'
+source_updated_at: '2024-12-19T12:08:44Z'
+ids:
+  doi: null
+  arxiv_id: 2502.07786v1
+  arxiv_base_id: '2502.07786'
+  arxiv_version: v1
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- tde-related-work
+- verifier
+topic_groups:
+- software_engineering_agents
+scoring:
+  score: 22.8
+  label: SKIP
+  confidence: high
+  rationale: 'score=23 -> SKIP | strong: interest_fit(0.91), novelty(0.80), venue_quality(0.40) | interests:
+    software_engineering_agents:program repair, software_engineering_agents:group:software_engineering_agents
+    | negatives: old_in_fast_area'
+  matched_interests:
+  - software_engineering_agents:program repair
+  - software_engineering_agents:group:software_engineering_agents
+  negative_signals:
+  - old_in_fast_area
+  subscores:
+    interest_fit: 0.91
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.36
+    novelty: 0.8
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/counterexample-guided-program-repair-using-zero-shot-250207786/v1/paper.pdf
+  extraction: library/counterexample-guided-program-repair-using-zero-shot-250207786/v1/extraction.txt
+  summary: library/counterexample-guided-program-repair-using-zero-shot-250207786/v1/summary.mdx
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread
+  summary_format: mdx

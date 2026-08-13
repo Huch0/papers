@@ -1,0 +1,116 @@
+---
+canonical_key: arxiv-2304.11477
+version_key: v1
+title: 'LLM+P: Empowering Large Language Models with Optimal Planning Proficiency'
+authors:
+- Bo Liu
+- Yuqian Jiang
+- Xiaohan Zhang
+- Qiang Liu
+- Shiqi Zhang
+- Joydeep Biswas
+- Peter Stone
+venue: arXiv
+year: 2023
+tags:
+- planner-executor-verifier
+- tde-related-work
+topic_groups:
+- general_agent_methods
+triage_label: SKIP
+triage_confidence: medium
+source_link: https://arxiv.org/abs/2304.11477v3
+summary_date: '2026-08-13'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>LLM+P makes the LLM a natural-language-to-<Term def="Planning Domain Definition Language: the standard formal encoding of classical planning, split into a domain file (predicates + actions with preconditions/effects) and a problem file (objects, initial state, goal conditions)">PDDL</Term> translator and delegates the actual planning to a <Term def="sound: every returned plan is valid in the model; complete: a plan is found whenever one exists">sound-and-complete</Term> classical planner (Fast Downward), recovering correct — often provably optimal — plans on long-horizon robot-planning problems where GPT-4 alone emits mostly infeasible ones.</TLDR>
+
+<WhyItMatters>The canonical category-D relative for TDE: it compiles NL into a formal artifact whose goal is a condition over final states, and de-circularizes solving — the LLM is removed from adjudicating plan feasibility, and its own ToT baseline shows LLMs "often fail to recognize whether the plan reaches the goal" (direct ammunition for mechanical adjudication). The split from TDE is where the mechanics live: all guarantees are plan-time, inside an LLM-authored symbolic model — a single-pass pipeline with no acceptance suite over the actual final world state, no red–green iteration or repair, and no environment-evaluated action gating (preconditions are checked by the planner in-model; execution is open-loop), so its dominant failure mode is silent mis-translation. One refinement to the survey line: the mechanical component is a solver in a one-shot pipeline, not a checker in a loop — nothing verifies the translation itself. That unguarded step, verified at runtime against the real world, is exactly TDE's layer; the paper is also a clean data point for harness-design and evaluation-methodology arguments.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "90%", label: "optimal plans, BLOCKSWORLD", sub: "LLM+P vs 15% GPT-4-as-planner (Tab.I)" },
+  { value: "0%", label: "LLM+P without the one-shot example", sub: "every domain — the in-context pair is load-bearing" },
+  { value: "140", label: "benchmark problems", sub: "7 IPC-derived domains × 20 generated tasks; GPT-4, temp 0" },
+  { value: "22 vs 31", label: "plan cost, real-robot tidy-up", sub: "LLM+P (optimal) vs LLM-as-planner" },
+]} />
+
+## Motivation
+<Problem>LLMs cannot reliably solve long-horizon planning problems</Problem> — they have linguistic competence without functional competence: on a 5-block Blocksworld prompt, GPT-4 confidently emits a 6-step plan that violates the stacking rules (§I, p.1). Enumerating every planning problem into training corpora is a fool's errand, and <Problem>prior LLM-planning work largely keeps the LLM as the solver</Problem> — prompting or finetuning it to emit plans or solve PDDL problems directly, inheriting its inability to track preconditions (§IV.B) — while sound-and-complete symbolic planners with correctness guarantees already exist but accept only formal input.
+
+## Contribution (what's new)
+<Novelty>Recast "LLM planning" as machine translation: the LLM only rewrites the NL problem description into a PDDL problem file, and a classical planner supplies all long-horizon reasoning</Novelty> — importing the planner's soundness and optimality instead of imitating them. The division is forced by an asymmetry the paper demonstrates: GPT-4 writes near-correct PDDL zero-shot but cannot write feasible plans. The second, empirical delta: <Novelty>a single in-context (NL problem, problem-PDDL) example pair per domain is the make-or-break ingredient for the translation</Novelty> — without it LLM+P scores 0% in every domain. It also ships a reusable benchmark: 7 robot-planning domains × 20 auto-generated problems, each with an NL description and a ground-truth problem PDDL.
+
+## Research questions
+The paper's own agenda (§V): (1) Can state-of-the-art LLMs and LLM reasoning methods (Tree of Thoughts) plan directly? ("Not at all.") (2) How does LLM+P compare to LLM-as-planner? ("Much better.") (3) What role does the in-context example play? ("It's crucial.") (4) Does it transfer to a realistic service-robot task? ("Yes.")
+
+## Methodology
+Three stages (Fig.1): GPT-4, given the problem's NL description plus one worked example pair, writes the problem PDDL; Fast Downward solves it together with the domain's fixed, human-written domain PDDL; the LLM translates the resulting PDDL plan back to natural language (or hands it to the robot's action executors). Standing assumptions (§III.C): the robot knows when to trigger LLM+P, a task-agnostic domain PDDL is provided per domain, and one simple example (NL description + problem PDDL) is provided per domain.
+
+<Pass title="Pipeline, benchmark, and setup details">
+<Stepper steps={[
+  { title: "Translate (LLM)", body: "Prompt = NL problem description + in-context example (a simple NL problem and its problem PDDL) + an instruction to output the problem PDDL directly. Zero-shot, GPT-4's PDDL looks syntactically right but is semantically off — for the running Blocksworld example it invents a predicate named empty and drops the initial condition that b1 is on the table (§III.A); with the one-shot example the generated file is directly solvable (§III.B)." },
+  { title: "Plan (Fast Downward)", body: "The generated problem PDDL plus the provided domain PDDL go to Fast Downward release 22.12.0, trying the SEQ-OPT-FDSS-1 alias (guaranteed optimal) and the LAMA alias (satisficing) under a 200-second search cap (§V.B)." },
+  { title: "Translate back (LLM)", body: "The raw PDDL plan is converted to natural language, or connected to the robot's action executors (§I, §III.C)." },
+]} />
+
+- Benchmark (§V.A): BLOCKSWORLD, BARMAN, FLOORTILE, GRIPPERS, STORAGE, TERMES, TYREWORLD — 20 problems each, auto-generated with IPC PDDL generators; each domain also carries an example problem, its PDDL, and a plan description used as context.
+- LLM (§V.B): GPT-4 (most recent as of September 2023), temperature 0 — a single deterministic response per problem.
+- Baselines (§V.B): LLM-AS-P without and with the example-plan context, plus Tree of Thoughts adapted to planning (BFS; the LLM proposes available actions per node and scores partial plans), same 200 s limit.
+- Scoring (§V.B): main numbers are the share of optimal plans; parentheses are the share of merely-correct plans (baselines, manually counted) or the share solved by the satisficing alias where the optimal alias times out (LLM+P).
+</Pass>
+
+## Main result
+<Finding src="Tab.I, p.5">LLM+P produces provably optimal plans for 85–95% of problems in BLOCKSWORLD (90), GRIPPERS (95; 100 with the satisficing alias), and STORAGE (85), while no LLM-as-planner variant exceeds 35% optimal (or 60% correct) in any domain, and LLM+P without the in-context example scores 0% everywhere</Finding>. Averaged over the 7 domains (computed from Tab.I — the paper reports no averages): LLM+P reaches roughly 45.7% strictly-optimal within the 200 s budget and roughly 69.3% correct counting the satisficing fallback, vs roughly 9.3% optimal / 17.1% correct for GPT-4-as-planner with context.
+
+<SortableTable columns={["Domain", "LLM-as-P (no ctx)", "LLM-as-P", "ToT", "LLM+P (no ctx)", "LLM+P"]} rows={[
+  ["BARMAN", "0", "0", "0", "0", "20 (100)"],
+  ["BLOCKSWORLD", "20", "15 (30)", "0 (5)", "0", "90"],
+  ["FLOORTILE", "0", "0", "0", "0", "0"],
+  ["GRIPPERS", "25 (60)", "35 (50)", "10 (20)", "0", "95 (100)"],
+  ["STORAGE", "0", "0 (25)", "0", "0", "85"],
+  ["TERMES", "0", "0", "0", "0", "20"],
+  ["TYREWORLD", "5", "15", "0", "0", "10 (90)"],
+]} />
+
+Read with the metric in mind: main value = % optimal plans; parenthesized value = % correct but not guaranteed optimal.
+
+## Key findings
+- <Finding src="§V.C, p.5–6">LLM-AS-P emits a fluent plan for every problem, but most are infeasible because it cannot reason about preconditions</Finding>: in BLOCKSWORLD it loses track of on/clear properties; in BARMAN it reuses shot glasses without cleaning them.
+- <Finding src="§V.C, p.6">The example plan barely changes how the LLM plans — it "fails in the same way with or without" context — yet the analogous context is decisive for translation</Finding> (0% without the example pair vs 85–95% optimal in three domains): in-context examples fix format, not reasoning.
+- <Finding src="§V.C, p.6">Domains with complex spatial relationships are the hardest</Finding>: all LLM-as-planner variants score 0 on FLOORTILE, TERMES, and STORAGE — e.g. painting a non-neighboring tile, or unloading a crate onto the position the robot itself occupies — and FLOORTILE stays at 0 even for LLM+P.
+- <Finding src="§V.C, p.6">ToT ranks partial plans reasonably but "often fails to recognize whether the plan reaches the goal", and times out in most cases from sheer LLM-call volume</Finding> — LLM self-adjudication of goal attainment is unreliable even inside a deliberate tree-search scaffold.
+- <Finding src="§V.C, p.6">LLM+P's residual failures are translation failures</Finding>: mis-specified problem files — e.g. a missing initial condition that leaves FLOORTILE's tiles disconnected — make the encoded problem unsolvable.
+- <Finding src="§V.D, p.6, Fig.2">On a real home robot, LLM+P finds the optimal tidy-up plan (cost 22: drop the bottle en route, re-grasp it after binning the soup can) where LLM-AS-P's plan costs 31</Finding>.
+
+## Implications
+An early, clean template for the <Related>"LLM as formalizer + sound external solver" line — concurrent with Faithful CoT (Lyu et al.), which integrates PDDL on the narrower SayCan dataset, and downstream of the tool-augmentation lineage (Toolformer, PAL / Program-of-Thoughts calculators)</Related>; it converts the <Related>Valmeekam et al. "LLMs still can't plan" critique</Related> into an architecture rather than a rebuttal. The authors assert the recipe generalizes to any problem class with a sound-and-complete solver (not tested beyond planning). <FollowUp>Verifying or repairing the NL-to-PDDL translation — the pipeline's single unguarded step</FollowUp>; <FollowUp>auto-detecting when a prompt should be routed through LLM+P</FollowUp>; <FollowUp>closing the loop with execution/state feedback — the void a runtime acceptance suite (TDE) occupies</FollowUp>.
+
+## Limitations
+- <Caveat>An expert-authored domain PDDL and a worked example pair are assumed given per domain</Caveat>; auto-generating the domain description is explicitly deferred (§III.C, §VI).
+- <Caveat>No trigger detection</Caveat>: the LLM is never asked to recognize that a prompt is suitable for the LLM+P pipeline (author-stated, §I).
+- <Caveat>Single-pass, with no verification or repair</Caveat>: nothing checks the generated problem PDDL, there is no re-prompt on planner failure, and no execution-time checking — end-to-end correctness is conditional on an unverified translation.
+- <Caveat>Narrow evaluation</Caveat>: GPT-4 only, temperature 0 (one sample per problem), 20 generated problems per domain, no variance; baseline correctness is manually counted, and how LLM+P's plans were adjudicated correct/optimal (against the ground-truth PDDL? by hand?) is not stated — Unclear.
+- <Caveat>Fully observable, deterministic, symbolic domains, plus a single robot demo task</Caveat> — no partial observability, noise, or execution failures.
+
+## Critiques and Questions
+1. Claimed vs supported: the abstract's "optimal solutions for most problems" reads generously against Tab.I — strictly-optimal-within-budget covers roughly 46% of all 140 problems (my computation); "most" holds only when counting the non-guaranteed LAMA fallback (roughly 69%), and FLOORTILE is 0%.
+2. Guarantee laundering: soundness is relative to the LLM-written model. A solvable-but-wrong encoding yields a plan that is optimal for the wrong problem, silently; no validator or execution check guards the NL-to-PDDL step, and the paper does not report how often this silent mode occurred versus detectable unsolvability.
+3. Information asymmetry: LLM+P consumes a formal domain model (explicit preconditions/effects) that the baselines see only as natural language; the planner's contribution is never isolated from the value of that extra formal knowledge.
+4. "The first framework that incorporates the strengths of classical planners into LLMs" is contestable: §IV itself cites prompting/finetuning-LLMs-on-PDDL work and a concurrent PDDL integration (Lyu et al.). The durable claim is the division of labor — LLM translates, planner solves — not priority.
+
+<SelfCheck q="LLM+P's planner is provably sound and complete — why can the end-to-end system still fail, and which of its failures are silent?" a="Every guarantee is relative to the problem PDDL the LLM writes. If the translation drops an initial condition, the encoded problem can become unsolvable — a detectable failure, as in FLOORTILE. If it encodes a subtly different but still-solvable problem, the planner returns a plan optimal for the wrong problem, and the single-pass pipeline — no translation validator, no execution feedback — cannot notice." />
+
+## Glossary
+- <Term def="baseline that asks the LLM to output a plan directly from the NL description, optionally with an example problem and its solution as context">LLM-AS-P</Term>
+- <Term def="Tree of Thoughts (Yao et al. 2023): LLM-driven tree search — propose candidate actions per node, score partial paths; adapted here as breadth-first search for planning">ToT</Term>
+- <Term def="widely used classical planning system (Helmert 2006); release 22.12.0 in this paper">Fast Downward</Term>
+- <Term def="Fast Downward alias with guaranteed-optimal search">SEQ-OPT-FDSS-1</Term> / <Term def="satisficing Fast Downward alias — returns correct but not necessarily optimal plans">LAMA</Term>
+- <Term def="International Planning Competition — source of the seven benchmark domains and their problem generators">IPC</Term>
+
+{/* NOTES_START */}
+### Personal notes
+For the TDE novelty defense: LLM+P fixes the solving side (plan synthesis is mechanical) but leaves the checking side open — the formal artifact's `(:goal ...)` is literally a final-state condition, yet it is used generatively to search a model, never evaluatively against the world after acting. Quotable de-circularization evidence: ToT "often fails to recognize whether the plan reaches the goal". The 0%-without-context result is a warning for TDE's instruction-to-suite compiler: NL-to-formal translation needs at least one worked in-domain example, and silent mis-translation is precisely the failure mode a runtime acceptance suite would catch.
+{/* NOTES_END */}

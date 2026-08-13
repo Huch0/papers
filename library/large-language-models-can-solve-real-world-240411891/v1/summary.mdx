@@ -1,0 +1,110 @@
+---
+canonical_key: arxiv-2404.11891
+version_key: v1
+title: Large Language Models Can Solve Real-World Planning Rigorously with Formal Verification Tools
+authors:
+- Yilun Hao
+- Yongchao Chen
+- Yang Zhang
+- Chuchu Fan
+venue: arXiv
+year: 2024
+tags:
+- planner-executor-verifier
+- tde-related-work
+- verifier
+topic_groups:
+- general_agent_methods
+triage_label: SKIP
+triage_confidence: medium
+source_link: https://arxiv.org/abs/2404.11891v3
+summary_date: '2026-08-13'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>Instead of asking an LLM to produce a plan, this framework has the LLM compile a natural-language multi-constraint query into a Z3 <Term def="satisfiability modulo theories: SAT generalized with theories such as arithmetic; a solver decides whether a set of constraints has a satisfying assignment">SMT</Term> program (query → natural-language steps → Python code) and lets the <Term def="sound: any returned plan satisfies the encoded constraints; complete: if a satisfying plan exists, the solver finds it">sound-and-complete</Term> solver do all the deciding — lifting TravelPlanner's final pass rate from at most 10% (o1-preview) to 93.9%, with solver unsat cores driving an interactive repair loop for infeasible queries.</TLDR>
+
+<WhyItMatters>Category-E related work for TDE: it shares the core move of compiling natural language into a formal artifact whose verdict is computed mechanically — Z3 decides satisfiability, never an LLM judge — and its unsat-core → revise → re-solve loop is a planning-domain analogue of red–green iteration. It differs on the object and timing of verification: it certifies a plan against a static database before anything executes — no environment, no state-changing actions, hence no acceptance suite over final world state and no Hoare-style pre/postcondition gating of actions — and its loop repairs the user's constraints (spec relaxation, with the user in the loop) rather than the agent's behavior against a fixed suite. Its sharpest lesson for TDE: the NL→SMT compilation itself is unverified LLM output, and the gap between delivered and passing plans shows mechanical adjudication is only as sound as the compiled spec.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "93.9%", label: "TravelPlanner test final pass", sub: "Ours (Claude-3); best LLM baseline 10.0% (Tab.1)" },
+  { value: "89.0%", label: "avg optimal rate, 4 unseen domains", sub: "zero-shot, GPT-4o (Tab.2)" },
+  { value: "81.6% / 91.7%", label: "unsat queries repaired in 20 iters", sub: "UnsatChristmas / modified TravelPlanner (Tab.3-4)" },
+  { value: "$0.74", label: "cost per query (GPT-4)", sub: "245.66 s avg; solver itself only 38.39 s (App.B)" },
+]} />
+
+## Motivation
+<Problem>LLMs cannot solve multi-constraint combinatorial planning by direct generation — token-probability decoding does not perform rigorous joint constraint satisfaction</Problem>: on <Term def="Xie et al. 2024 benchmark: multi-day US travel planning over a sandbox database (312 cities, 3.8M flights), graded by programmatic commonsense and hard-constraint checkers">TravelPlanner</Term>, GPT-4 passes 0.6% and even o1-preview only 10.0% with all information pre-collected; self-verification and self-critique do not fix it, and the best prior tool-use framework, LLM-Modulo, reaches 20% (GPT-4-Turbo) and 65% (o1-preview) (§1). Conversely, <Problem>algorithm-based solvers are sound and complete but unusable at the interface: they cannot parse free-form natural language, have steep learning curves, and when a query is infeasible the user must hand-modify inputs and re-query repeatedly</Problem> (§1-2).
+
+## Contribution (what's new)
+<Novelty>A division of labor in which the LLM never plans: it compiles the query into an SMT constraint program — natural-language encoding steps, then Python/Z3 code that also calls database APIs — and the solver does all constraint satisfaction</Novelty>. The form is forced by the complementary failure modes: rigor must move out of the LLM into the solver, and NL parsing must move out of the solver into the LLM. Two further deltas: <Novelty>named assertions (`assert_and_track`) let Z3's `get_unsat_core` localize exactly which constraints are infeasible, turning UNSAT from a dead end into a diagnosable state</Novelty> that seeds a ReAct-style, optionally human-in-the-loop repair dialogue; and the pipeline is taught with only three in-context example queries plus per-constraint code snippets, which is what makes zero-shot transfer to unseen constraints and domains plausible.
+
+## Research questions
+1. Can an LLM+SMT compile-and-solve pipeline reach near-solver reliability on realistic multi-constraint natural-language planning, across different LLMs? 2. Does the learned formalization pattern generalize zero-shot to unseen constraint types and fundamentally different domains, and survive prompt paraphrase? 3. When queries are unsatisfiable, can solver unsat cores plus LLM analysis repair them interactively under diverse user preferences?
+
+## Methodology
+Four stages (Fig.1), LLM at temperature 0. Query-Step generation translates the query into natural-language encoding steps organized in nine constraint sections (destination cities, departure dates, transportation, flight, driving, restaurant, attraction, accommodation, budget). Step-Code generation converts each step into Python that calls information APIs (`CitySearch`, `FlightSearch`, `AccommodationSearch`, ...) and asserts Z3 constraints. Executing the code runs the solver (30-minute cap); the found model is formatted into the day-by-day plan. If Z3 proves UNSAT, the framework extracts the <Term def="a small subset of asserted constraints that is jointly unsatisfiable; Z3 reports it via get_unsat_core over named assertions">unsat core</Term> and enters interactive repair: the LLM alternates info-collection actions, analysis, and one concrete suggestion (raise the budget, change a destination city, drop the non-stop rule, ...); the user may agree, refuse, or state preferences; a code-modification prompt patches the constraint program and the solver re-runs — up to 10 iterations (20 in Ours-20).
+
+<Pass title="Method details">
+<Stepper steps={[
+  { title: "Query-Step generation (§3.3.1)", body: "Three human-crafted examples map NL queries to step sequences; steps are sectioned per constraint subject so the LLM learns generic per-section patterns rather than memorizing whole programs. An optional NL-to-JSON pre-step first summarizes the query into fixed fields (origin, dest, days, budget, local constraints); it is excluded when comparing against NL-input baselines for fairness." },
+  { title: "Step-Code generation (§3.3.2)", body: "Per-constraint example pairs (step comment, human-written code) teach API and solver usage without separate documentation, following Code as Policies. Generated code enumerates destination-city combinations in outer Python loops and instantiates a fresh Optimize() solver per combination — part of the search is enumeration outside the SMT encoding. Optimize() also supplies objectives (maximize score, minimize time or distance) used in the new domains." },
+  { title: "Solve (§3.3.3)", body: "Z3 decides satisfiability of the encoded constraints; SAT yields a formally checked plan, UNSAT yields named cores. A simple heuristic prioritizes cities with available transportation from the origin to cut runtime." },
+  { title: "Interactive plan repair (§3.4)", body: "ReAct-style loop with dataset-specific action menus (FlightCheck, FlightSearch, AirlineSearch, AttractionSearch, CategorySearch, TypeSearch, ...). The LLM must ground each suggestion in collected information, keep changes minimal, and may only modify permitted fields. User feedback can be yes, no, or free-form preference; accepted modifications go to a code-update prompt and the solver re-verifies." },
+]} />
+</Pass>
+
+## Main result
+On TravelPlanner, <Finding src="Tab.1, p.7">Ours (Claude-3) passes 93.3% of 180 validation queries and 93.9% of 1000 test queries — versus 0.6% (TwoStage GPT-4), 4.4% (Direct GPT-4), 10.0% (Direct o1-preview), and 0% (Greedy Search)</Finding>. Adding the JSON pre-step lifts GPT-4 to <Finding src="Tab.8, p.19">98.9% validation and 97.0% test (average +9.4 points across the three LLMs on validation)</Finding>.
+
+<SortableTable columns={["Method", "Val final pass %", "Test final pass %"]} rows={[
+  ["Greedy Search", 0, 0],
+  ["TwoStage (GPT-4)", 0.6, 0.6],
+  ["Direct (GPT-4)", 4.4, 4.4],
+  ["Direct (o1-preview)", 10.0, "Not reported"],
+  ["Ours (Mistral-Large)", 66.7, 67.8],
+  ["Ours (GPT-4)", 93.3, 90.2],
+  ["Ours (Claude-3)", 93.3, 93.9],
+  ["Ours+JSON (GPT-4)", 98.9, 97.0],
+]} />
+
+## Key findings
+- <Finding src="Tab.1; App.G.1.3-G.1.4">The framework is portable across LLMs, but not model-free</Finding>: Claude-3 and GPT-4 tie at 93.3% validation, while Mistral-Large drops 26.6/26.1 points (66.7/67.8) — largely code-generation and step-generalization errors (its failure to generalize the unseen "no shared room" room type alone accounts for 7.8 of its 15.0% failed deliveries). Still, 92.3%/97.0% of the plans Mistral does deliver are correct.
+- <Finding src="Tab.2, p.7; Fig.3">Zero-shot transfer to four new combinatorial domains needs only a few description lines in the prompt</Finding>: optimal rates of 92 (Block Picking), 92 (Task Allocation), 100 (TSP), 72 (Warehouse), average 89.0%, while TwoStage (GPT-4o) never exceeds 4% optimal; residual failures are silent encoding slips — a missing all-distinct assertion, misusing the provided Max() helper, station-ID vs index confusion (App.F.3).
+- <Finding src="Tab.3-4, p.7">Ablations show the solver is the load-bearing component of repair</Finding>: removing it collapses average repair success from 78.6/85.0 to 25.2/25.0 (−53.4/−60.0 points); passing unsat reasons to the LLM is worth +14.9/+5.0; free-form user feedback vs binary agree/disagree is worth +7.8/+14.1.
+- <Finding src="App.E, Fig.5">Repairs concentrate early</Finding>: 63.7%/65.0% of repairable queries are fixed within 3 iterations, 78.6%/85.0% within 10, 81.6%/91.7% within 20.
+- <Finding src="§5.2.1">Performance is not a prompt-engineering artifact</Finding>: with the entire prompt set (examples included) paraphrased by GPT-4o per query, validation final pass drops only to 86.7%.
+- <Finding src="App.B, Tab.6">Latency is dominated by the LLM, not the solver</Finding>: 245.66 s per query total, of which Step-Code generation takes 166.66 s and Z3 only 38.39 s; just 1.3% of 1180 queries hit the 30-minute solver cap.
+
+## Implications
+The strongest TravelPlanner evidence for the neuro-symbolic split "LLM formalizes, solver decides": a mechanical adjudicator outperforms LLM self-critique (<Related>Reflexion, Self-Refine</Related>) and LLM-critic scaffolds (<Related>LLM-Modulo (Kambhampati et al. 2024; Gundawar et al. 2024)</Related>) by 29-93 points on the same benchmark, extending the <Related>LLM-to-formal-planner line (LLM+P; the same group's AutoTAMP; Code as Policies for the code-prompting style)</Related>. <FollowUp>Verifying the compiled spec itself — the one remaining unverified LLM step — e.g. property-testing or round-tripping the generated constraint program.</FollowUp> <FollowUp>Whether unsat-core-guided repair transfers from relaxing user constraints to repairing agent behavior in stateful environments (the TDE setting).</FollowUp> <FollowUp>The sketched MILP back-end swap for runtime on linear problems.</FollowUp>
+
+## Limitations
+- <Caveat>Task-specific offline prompt engineering</Caveat>: the nine-section step examples and per-constraint code demonstrations are hand-crafted (author-stated, §7); generalization amortizes this cost but does not remove it.
+- <Caveat>Static, closed-world database; nothing executes</Caveat>: feasibility is checked against sandbox tables, there are no environment dynamics, and the framework cannot detect unsafe or incorrect database information (author-stated "risky data").
+- <Caveat>The completeness guarantee is conditional</Caveat>: "guaranteed to generate a plan if it exists" holds only for the constraints as the LLM encoded them, within the 30-minute cap; delivery below 100% and delivered-but-failing plans (delivery 96.1% vs final 93.3%, Claude-3 validation) show the compilation link is fallible and itself unverified.
+- <Caveat>Solver runtime scales poorly with problem size</Caveat> (author-stated): bigger databases or nearly-infeasible queries may require heuristics or different solvers.
+- <Caveat>Evaluation breadth</Caveat>: single-run point estimates with no variance; repair is tested only against scripted mimic users; the unsatisfiable sets are small (39 + 12 queries) and UnsatChristmas was authored by the same team.
+
+## Critiques and Questions
+1. The "formally verified plan" framing overstates end-to-end soundness: Z3 verifies satisfiability of the *encoded* constraints, and nothing verifies the encoding against user intent. On TravelPlanner the benchmark's external evaluator catches mis-encodings; deployed, there is no such checker, so silent mis-compilations would ship as "verified" plans.
+2. Repair success partly measures persuasion: the loop relaxes the user's constraints until SAT, and the metric counts solving the *modified* problem. Scripted mimic users cannot establish that real users would accept those relaxations — and the budget-hard user, arguably the most realistic refusal pattern, is the worst column (59.0-61.5% on UnsatChristmas).
+3. The generalization instances are small (25 scenarios per domain; a 10-city TSP), so "100% optimal" there does not establish scaling — and App.F.3's failure analysis shows the silent-encoding-slip class grows exactly as encoding complexity grows (Warehouse: 4/25 undelivered, 3/21 non-optimal).
+4. No hand-engineered skyline (fixed parser + solver) is compared, so the LLM front-end's contribution is not isolated from the solver back-end's; the LLM-Modulo figures are cited from other papers, not reproduced under identical conditions.
+
+<SelfCheck q="The paper says the framework is 'guaranteed to generate a plan if it exists.' What conditions this guarantee, and where is that visible in the results?" a="The guarantee is inherited from the SMT solver's soundness and completeness, so it holds only with respect to the constraint program the LLM generated, and only within the 30-minute solver cap. If the LLM mis-encodes a constraint or emits broken code, the guarantee says nothing. This is visible as delivery rates below 100% (e.g. 96.1% for Claude-3 validation), a final pass rate below delivery (93.3%), Mistral-Large's 15.0% failed deliveries, and the 1.3% of queries that time out." />
+
+## Glossary
+- <Term def="De Moura and Bjorner 2008; the SMT solver used throughout, called from generated Python; its Optimize() variant adds objective functions">Z3</Term>
+- <Term def="TravelPlanner's strictest metric: fraction of queries whose delivered plan passes ALL commonsense and hard constraints (macro)">final pass rate</Term> / <Term def="fraction of queries for which any complete plan is returned within limits, regardless of constraint satisfaction">delivery rate</Term>
+- <Term def="the authors' 39-query international-travel dataset, deliberately unsatisfiable, adding constraint types absent from TravelPlanner: non-stop flights, airline lists, attraction categories">UnsatChristmas</Term>
+- <Term def="Yao et al. 2022 pattern of interleaving reasoning and tool actions; the template for the repair loop's collect-analyze-suggest cycle">ReAct</Term>
+- <Term def="Kambhampati et al. 2024 scaffold pairing an LLM generator with external critics/verifiers/humans; prior best on TravelPlanner at 20% (GPT-4-Turbo) / 65% (o1-preview)">LLM-Modulo</Term>
+- <Term def="TravelPlanner baselines: TwoStage collects information with ReAct then plans; Direct plans from pre-collected information without tool calls">TwoStage / Direct</Term>
+
+{/* NOTES_START */}
+### Personal notes
+The reusable move for TDE positioning: this is the cleanest existing demonstration that pushing adjudication out of the LLM into a mechanical decider produces step-function gains (0.6-10% → 93.9%) — quote it as evidence that de-circularizing verification pays. But the verification object is a plan against a static database, pre-execution; TDE's object is post-execution world state with per-action gating. The residual weakness to cite in the novelty defense: their compile step is unverified (delivery-vs-final gap), exactly the seam TDE also has to defend for compiled acceptance suites. Also note the repair loop mutates the spec (user constraints), not the behavior — the inverse of red–green, where the suite is fixed and the work iterates.
+{/* NOTES_END */}

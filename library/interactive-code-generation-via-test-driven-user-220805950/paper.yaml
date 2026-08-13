@@ -1,0 +1,65 @@
+canonical_key: arxiv-2208.05950
+slug: interactive-code-generation-via-test-driven-user-220805950
+title: Interactive Code Generation via Test-Driven User-Intent Formalization
+authors:
+- Shuvendu K. Lahiri
+- Sarah Fakhoury
+- Aaditya Naik
+- Georgios Sakkas
+- Saikat Chakraborty
+- Madanlal Musuvathi
+- Piali Choudhury
+- Curtis von Veh
+- Jeevana Priya Inala
+- Chenglong Wang
+- Jianfeng Gao
+year: 2022
+primary_ids:
+  doi: null
+  arxiv_base_id: '2208.05950'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2208.05950v2
+- https://arxiv.org/pdf/2208.05950v2
+topic_groups:
+- agent_harness
+- software_engineering_agents
+tags:
+- tde-related-work
+- test-based-eval
+venue:
+  name: IEEE TSE
+  tier: A_star
+  status: accepted
+  year: 2024
+user:
+  read_status: unread
+  triage_label: SKIP
+  triage_confidence: high
+  notes: null
+milestone: null
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v2
+  source: arxiv
+  source_url: https://arxiv.org/abs/2208.05950v2
+  pdf_path: library/interactive-code-generation-via-test-driven-user-220805950/v1/paper.pdf
+  summary_path: library/interactive-code-generation-via-test-driven-user-220805950/v1/summary.mdx
+  metadata_path: library/interactive-code-generation-via-test-driven-user-220805950/v1/metadata.yaml
+  fetched_at: '2026-08-13T07:13:31Z'
+  source_updated_at: '2023-10-04T01:53:15Z'
+  arxiv_version: v2
+  pdf_sha256: c034918e88336aefca0447f59877695084f99c5efc59a54ad82ac29939da0df7
+  pdf_bytes: 1699598
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-08-13T07:13:31Z'
+  updated_at: '2026-08-13T10:10:29Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

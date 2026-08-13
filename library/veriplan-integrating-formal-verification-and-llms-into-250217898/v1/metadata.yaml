@@ -1,0 +1,75 @@
+canonical_key: arxiv-2502.17898
+version_key: v1
+title: 'VeriPlan: Integrating Formal Verification and LLMs into End-User Planning'
+authors:
+- Christine Lee
+- David Porfirio
+- Xinyu Jessica Wang
+- Kevin Zhao
+- Bilge Mutlu
+abstract: Automated planning is traditionally the domain of experts, utilized in fields like manufacturing
+  and healthcare with the aid of expert planning tools. Recent advancements in LLMs have made planning
+  more accessible to everyday users due to their potential to assist users with complex planning tasks.
+  However, LLMs face several application challenges within end-user planning, including consistency, accuracy,
+  and user trust issues. This paper introduces VeriPlan, a system that applies formal verification techniques,
+  specifically model checking, to enhance the reliability and flexibility of LLMs for end-user planning.
+  In addition to the LLM planner, VeriPlan includes three additional core features -- a rule translator,
+  flexibility sliders, and a model checker -- that engage users in the verification process. Through a
+  user study (n=12), we evaluate VeriPlan, demonstrating improvements in the perceived quality, usability,
+  and user satisfaction of LLMs. Our work shows the effective integration of formal verification and user-control
+  features with LLMs for end-user planning tasks.
+venue: arXiv
+year: 2025
+source: arxiv
+source_url: https://arxiv.org/abs/2502.17898v1
+pdf_url: https://arxiv.org/pdf/2502.17898v1
+pdf_sha256: d31561d70dbf14bcee647679d88986d901e430d6e1fe761f242759eac7008f8e
+fetched_at: '2026-08-13T07:16:13Z'
+source_updated_at: '2025-02-25T06:53:00Z'
+ids:
+  doi: 10.1145/3706598.3714113
+  arxiv_id: 2502.17898v1
+  arxiv_base_id: '2502.17898'
+  arxiv_version: v1
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- human-eval
+- tde-related-work
+- verifier
+topic_groups:
+- general_agent_methods
+scoring:
+  score: 24.4
+  label: SKIP
+  confidence: medium
+  rationale: 'score=24 -> SKIP | strong: interest_fit(0.40), venue_quality(0.40), harness_relevance(0.36)
+    | interests: general_agent_methods:group:general_agent_methods'
+  matched_interests:
+  - general_agent_methods:group:general_agent_methods
+  negative_signals: []
+  subscores:
+    interest_fit: 0.402
+    recency: 0.35
+    venue_quality: 0.4
+    harness_relevance: 0.36
+    novelty: 0.0
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/veriplan-integrating-formal-verification-and-llms-into-250217898/v1/paper.pdf
+  extraction: library/veriplan-integrating-formal-verification-and-llms-into-250217898/v1/extraction.txt
+  summary: library/veriplan-integrating-formal-verification-and-llms-into-250217898/v1/summary.mdx
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread
+  summary_format: mdx

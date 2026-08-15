@@ -91,6 +91,7 @@ c100.7 8.3 195.3 44 280 108 55.3 42 101.7 93 139 153l9 14c2.7-4 5.7-8.7 9-14
 <li><span class="term" data-def="World Action Model: a policy that predicts future world state (here, video) and actions in one aligned model; 'world' rather than 'video' because the predictive modality could later be tactile or force" tabindex="0" aria-label="World Action Model: a policy that predicts future world state (here, video) and actions in one aligned model; 'world' rather than 'video' because the predictive modality could later be tactile or force">WAM</span> — the paper’s own coinage for this class, covering Cosmos Policy, Genie Envisioner, mimic-video and this work.</li>
 <li><span class="term" data-def="forward dynamics predicts the next state from a state and an action; inverse dynamics does the reverse, inferring the action that carries the robot between two states — here, between the current observation and the model's own predicted future" tabindex="0" aria-label="forward dynamics predicts the next state from a state and an action; inverse dynamics does the reverse, inferring the action that carries the robot between two states — here, between the current observation and the model's own predicted future">inverse dynamics</span> — what robot action labels still have to teach once video prediction is inherited from pretraining; in DreamZero the IDM is <em>implicit</em> (no separate network), and the paper concedes its accuracy cannot be measured (p.19).</li>
 <li><span class="term" data-def="the conventional recipe: many demonstrations of the same task with similar object placements, collected in controlled settings, so that action labels alone pin down a consistent behaviour" tabindex="0" aria-label="the conventional recipe: many demonstrations of the same task with similar object placements, collected in controlled settings, so that action labels alone pin down a consistent behaviour">repeated (repetitive) demonstrations</span> — what this 500 h corpus is deliberately <em>not</em>: each task is deprecated after 50 episodes, forcing operators to propose new ones (App.E.1, p.24). Aimed at prior WAMs as well as VLAs — “most works still focus on repeated demonstrations” (§1, p.3).</li>
+<li><span class="term" data-def="in this paper zero-shot always ranges over tasks and environments — no task-specific action data, no fine-tuning for the site — and never over embodiments" tabindex="0" aria-label="in this paper zero-shot always ranges over tasks and environments — no task-specific action data, no fine-tuning for the site — and never over embodiments">zero-shot</span> vs <span class="term" data-def="the embodiment axis: post-training the pretrained checkpoint on about 30 minutes of a new robot's data before it can control that robot" tabindex="0" aria-label="the embodiment axis: post-training the pretrained checkpoint on about 30 minutes of a new robot's data before it can control that robot">few-shot embodiment adaptation</span> — two different axes. “Retaining zero-shot generalization” after the YAM post-training (§1, p.3) means the <em>task-level</em> generalization survives the <em>embodiment-level</em> adaptation; the title’s claim is about tasks, never about bodies.</li>
 <li><span class="term" data-def="average partial completion per rollout, scored 0 to 1; e.g. folding stages out of 5, fruits packed out of 10" tabindex="0" aria-label="average partial completion per rollout, scored 0 to 1; e.g. folding stages out of 5, fruits packed out of 10">task progress</span> — the primary metric; distinct from binary success rate, which is reported only for DROID.</li>
 <li><span class="term" data-def="mobile bimanual manipulator with parallel grippers; the paper's main embodiment, ~500 h of in-house teleoperation data" tabindex="0" aria-label="mobile bimanual manipulator with parallel grippers; the paper's main embodiment, ~500 h of in-house teleoperation data">AgiBot G1</span>, <span class="term" data-def="a second bimanual parallel-gripper robot used for cross-embodiment transfer and few-shot adaptation" tabindex="0" aria-label="a second bimanual parallel-gripper robot used for cross-embodiment transfer and few-shot adaptation">YAM</span>, <span class="term" data-def="large open in-the-wild Franka single-arm dataset (Khazatsky et al. 2024) used as the reproducible setting" tabindex="0" aria-label="large open in-the-wild Franka single-arm dataset (Khazatsky et al. 2024) used as the reproducible setting">DROID</span>.</li>
 <li><span class="term" data-def="generative training objective that regresses the velocity field of a linear interpolation between noise and data; used here jointly over video and action latents" tabindex="0" aria-label="generative training objective that regresses the velocity field of a linear interpolation between noise and data; used here jointly over video and action latents">flow matching</span>, <span class="term" data-def="training the model to denoise the current chunk conditioned on clean ground-truth previous chunks" tabindex="0" aria-label="training the model to denoise the current chunk conditioned on clean ground-truth previous chunks">teacher forcing</span>, <span class="term" data-def="diffusion transformer — the denoising backbone" tabindex="0" aria-label="diffusion transformer — the denoising backbone">DiT</span>, <span class="term" data-def="classifier-free guidance: conditional and unconditional forward passes combined at inference; parallelized here across 2 GPUs" tabindex="0" aria-label="classifier-free guidance: conditional and unconditional forward passes combined at inference; parallelized here across 2 GPUs">CFG</span>.</li>
@@ -230,6 +231,57 @@ inverse dynamics: “Higher-DOF robots will require more play data to learn an a
 from visual futures to motor commands grows combinatorially with kinematic complexity” (Sec. 6, p.19). Video
 transfers across bodies; the visual-future-to-motor-command mapping does not, and must be re-learned per robot.</p><p><strong>A caution worth keeping.</strong> Both transfer settings pair robots that are already close — AgiBot G1 and YAM are
 both bimanual parallel-gripper systems, which the authors themselves credit for the efficiency. Nothing here
-demonstrates transfer across a genuinely different morphology.</p></div>  </div> </section><aside class="discuss" data-pagefind-ignore>
+demonstrates transfer across a genuinely different morphology.</p></div>  </div>
+<div class="qa"> <div class="q"> <span>Q: Does that mean the IDM can only transfer to embodiments sharing AgiBot&#39;s joint space? And what does &#39;zero-shot&#39; actually range over in this paper?</span> <span class="author" title="Huch0"><span class="author-label">asked by</span><a class="who" href="https://github.com/Huch0" target="_blank" rel="noopener"><img class="ava" src="https://github.com/Huch0.png?size=64" width="18" height="18" alt="Chiyeong Heo" loading="lazy"><span class="who-name">Chiyeong Heo</span></a></span> </div> <div class="qa-answer"><p><strong>Two different axes, and the paper is careful to keep them apart — so we should be too.</strong></p><p><strong>“Zero-shot” here means zero-shot <em>task</em> transfer, never zero-shot <em>embodiment</em> transfer.</strong> Every use of the
+term attaches to tasks and environments: “zero-shot generalization to new tasks in new environments” (Sec. 1,
+p.3), “zero-shot generalization to unseen verbs and motions” (Sec. 1, p.4), “zero-shot generalization to novel
+tasks” (Sec. 2.2, p.5). The embodiment axis is always labelled <strong>few-shot</strong>: “few-shot adaptation to new robots”
+(Sec. 1, p.2), and Q5/Fig. 12 are titled “Few-shot Embodiment Adaptation” (Sec. 5.2, p.16). The sentence that
+joins them — “adapts to an entirely new robot (YAM) with only 30 minutes of play data, <strong>retaining</strong> zero-shot
+generalization” (Sec. 1, p.3) — means the <em>task-level</em> generalization survives the <em>embodiment-level</em> adaptation.
+The title’s “Zero-shot Policies” is a claim about tasks, never about bodies.</p><p><strong>So: is the IDM locked to AgiBot’s joint space?</strong> Partly, and only in the zero-shot sense.</p><ul>
+<li><strong>Yes, zero-shot.</strong> The action decoder emits relative joint positions in one robot’s joint space. Drop
+DreamZero-AgiBot onto a different robot untouched and the commands are meaningless. Nothing in the paper claims
+otherwise.</li>
+<li><strong>No, not permanently.</strong> They <strong>post-trained the DreamZero-AgiBot checkpoint onto YAM</strong> — 55 trajectories over
+11 tasks, about 30 minutes — after which the model controls YAM (Sec. 5.2, p.16-17). The IDM is therefore
+<em>re-fittable</em>, not joint-space-locked. The claim is portability-with-cheap-adaptation, not zero-shot portability.</li>
+</ul><p><strong>Why the transfer direction matters.</strong> The two cross-embodiment results move in opposite directions and only one
+of them touches the IDM at all:</p><ul>
+<li><em>Video-only transfer (YAM or human video, then act on AgiBot)</em>: no action labels cross the boundary, so no
+action space is ever mapped. The executed commands stay in AgiBot’s decoder. The IDM is untouched.</li>
+<li><em>Few-shot embodiment adaptation (act on YAM)</em>: this is the only place the action side must change, and it is
+re-fit from ~30 min of target-robot data.</li>
+</ul><p><strong>What is not reported, and matters for exactly this question.</strong> The paper never states either robot’s joint
+dimensionality, nor whether the action encoder/decoder is re-initialized, resized or reused for YAM, nor how
+normalization statistics are set. So we cannot tell whether the adaptation fine-tuned an existing head because the
+dimensions happen to coincide, or fitted a fresh one. The result is also qualitative only — no success rate,
+baseline or trial count.</p><p><strong>Scope of the evidence.</strong> Both robots are bimanual parallel-gripper systems, which the authors themselves credit
+for the efficiency (Sec. 5.2, p.17), so this is the easiest possible pair. The DROID/Franka <strong>single-arm</strong> model
+is a separate training run, not a transfer, so it shows the architecture is embodiment-general without showing an
+IDM moving between bodies. Their own limitations section predicts the cost grows with kinematic complexity:
+“Higher-DOF robots will require more play data to learn an accurate implicit IDM” (Sec. 6, p.19).</p><p><strong>The three layers, ranked by portability.</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Layer</th><th>Crosses embodiments?</th></tr></thead><tbody><tr><td>Web-scale video priors (pretraining)</td><td>Fully shared; no robot data involved</td></tr><tr><td>Task and motion semantics — what should happen</td><td><strong>Yes, through video alone</strong>, with no action labels — the paper’s central novelty</td></tr><tr><td>Visual-future-to-command readout (the IDM)</td><td><strong>Not as-is.</strong> Embodiment-specific; claimed cheap to re-fit (~30 min), shown once, qualitatively, between near-identical bodies</td></tr></tbody></table><p>One line for a talk: <em>video is the interlingua, the action head is the local dialect — you re-learn the dialect,
+but not the language.</em></p></div>  </div> </section><aside class="discuss" data-pagefind-ignore>
 💬 <strong>Discuss this paper in Claude Code</strong> — ask the tutor and it updates the
     knowledge base: <code>/paper-tutor arxiv-2602.15922</code> </aside> </main> </body></html>

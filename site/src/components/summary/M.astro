@@ -1,0 +1,21 @@
+---
+// Inline math, rendered with KaTeX at build time. Use inside prose:
+//   <M tex="o_{t:t+H}" /> — JSX attribute strings are literal, so single backslashes work.
+//   <M>{`\\pi(a \\mid o)`}</M> — template-literal form, for heavier LaTeX.
+import katex from "katex";
+import { texFromSlot } from "./tex";
+
+interface Props { tex?: string }
+const { tex } = Astro.props;
+const src = tex ?? texFromSlot(await Astro.slots.render("default"));
+let html = "";
+let failed = "";
+try {
+  html = katex.renderToString(src, { displayMode: false, throwOnError: true, strict: false });
+} catch (e) {
+  failed = src;
+}
+---
+{failed
+  ? <code class="math-raw" title="KaTeX could not parse this expression">{failed}</code>
+  : <span class="math-inline" set:html={html} />}

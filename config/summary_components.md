@@ -42,9 +42,25 @@ Legacy aliases still work: `<Claim>`→finding, `<Evidence src>`→finding, `<Li
 | `<Stepper steps={[{title, body}]} />` | objects | walk an algorithm/method |
 | `<Chart kind="bar\|line" data={[{label, value}]} />` | objects | re-plot an extracted result |
 | `<Figure src="…" caption="…" zoom />` | strings | a diagram/figure (image hosted in the version dir or remote) |
-| `<MathBlock>…</MathBlock>` | KaTeX | a key equation |
+| `<MathBlock>…</MathBlock>` | KaTeX | a key **display** equation |
+| `<M tex="…" />` | KaTeX | **inline** math inside prose (`<M tex="q_t" />`, `<M tex="\pi(a \mid o)" />`) |
 | `<Compare a={…} b={…} />` | nodes | A/B contrast |
 | `<SelfCheck q="…" a="…" />` | strings | a quick comprehension check |
+
+## Math
+Both math components render with KaTeX **at build time** (no client JS, no CDN). Two
+authoring forms, chosen to survive MDX escaping:
+- `tex="…"` prop — preferred for inline. JSX attribute strings are literal, so single
+  backslashes are safe: `<M tex="\pi(o_{t:t+H} \mid o_{0:t},\, c,\, q_t)" />`. The only
+  character you cannot use inside is a double quote.
+- Template-literal child — preferred for long display equations, and what existing
+  summaries use: <code>&lt;MathBlock&gt;&#123;`\\pi(x) = \\sum_i w_i`&#125;&lt;/MathBlock&gt;</code>
+  (backslashes doubled inside the JS string).
+
+Never write math as a plain backtick code span — it renders as monospace text, not math.
+If KaTeX cannot parse an expression the component falls back to the raw source (styled
+`.mathblock-raw` / `.math-raw`) instead of breaking the page, so a bad equation is visible
+but harmless.
 
 ## Rules
 - **Concise + core-first:** the visible body is TL;DR → Motivation → Contribution →

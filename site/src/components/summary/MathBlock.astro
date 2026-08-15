@@ -1,4 +1,23 @@
 ---
-// KaTeX rendering deferred (R-13 open item); renders as monospace for now.
+// Display math, rendered to HTML with KaTeX at build time (no client JS, no CDN).
+// Authoring: <MathBlock>{`\\pi(x) = ...`}</MathBlock> (template literal keeps LaTeX
+// backslashes intact through MDX) or <MathBlock tex="\pi(x) = ..." /> (JSX attribute
+// strings are literal, so single backslashes are safe there).
+import katex from "katex";
+import { texFromSlot } from "./tex";
+
+interface Props { tex?: string }
+const { tex } = Astro.props;
+const src = tex ?? texFromSlot(await Astro.slots.render("default"));
+let html = "";
+let failed = "";
+try {
+  html = katex.renderToString(src, { displayMode: true, throwOnError: true, strict: false });
+} catch (e) {
+  // Never break the page on a malformed equation — fall back to the raw source.
+  failed = src;
+}
 ---
-<div class="mathblock"><slot /></div>
+{failed
+  ? <div class="mathblock mathblock-raw" title="KaTeX could not parse this equation">{failed}</div>
+  : <div class="mathblock" set:html={html} />}

@@ -117,7 +117,14 @@ details.pass > summary { font-weight: 600; cursor: pointer; }
 .chart .col { display: flex; flex-direction: column; align-items: center; gap: .2rem; font-size: .75rem; }
 figure.fig { margin: .6rem 0; } figure.fig img { max-width: 100%; border: 1px solid var(--line); border-radius: 6px; }
 figure.fig figcaption { color: var(--mut); font-size: .85rem; }
-.mathblock { background: var(--soft); border-left: 3px solid var(--accent); padding: .4rem .8rem; overflow-x: auto; font-family: ui-monospace, monospace; }
+/* Display math (KaTeX-rendered at build time). Wide equations scroll inside the block
+   rather than widening the page; .mathblock-raw is the fallback when KaTeX can't parse. */
+.mathblock { background: var(--soft); border-left: 3px solid var(--accent); padding: .5rem .8rem; overflow-x: auto; }
+.mathblock .katex-display { margin: .25rem 0; }
+.mathblock-raw, .math-raw { font-family: ui-monospace, monospace; font-size: .92em; }
+.mathblock-raw { white-space: pre-wrap; }
+.math-inline { white-space: nowrap; }
+.math-inline .katex { font-size: 1.02em; }
 .compare { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; }
 .compare > div { border: 1px solid var(--line); border-radius: 6px; padding: .5rem; }
 .selfcheck { border: 1px dashed var(--accent); border-radius: 6px; padding: .4rem .8rem; margin: .5rem 0; background: var(--soft); }

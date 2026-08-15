@@ -1,0 +1,90 @@
+---
+canonical_key: arxiv-2602.15922
+version_key: v1
+---
+
+<QA question="What exactly is inverse dynamics, and what does 'shifting action learning from dense state-action imitation to inverse dynamics' mean?" asked_by="Huch0" concepts="">
+**Forward vs inverse.** Forward dynamics asks: given the current state and an action, what state comes next?
+Inverse dynamics asks the reverse: given where you are and where you want to be next, which action produces
+that transition? Classically this is the torque computation for a desired trajectory; in learned policies an
+**inverse dynamics model (IDM)** maps a pair of observations `(o_t, o_t+1)` to the action `a_t` that connects them.
+
+**Where it appears here.** Eq. 1 (p.6) factorizes DreamZero's joint prediction into exactly two terms —
+`pi(o_t:t+H | o_0:t, c, q_t)` (video prediction) times `pi(a_t:t+H | o_0:t+H, q_t)` (the IDM). Read the second
+term closely: it conditions on observations *through the future horizon* and on proprioception `q_t`, but the
+language instruction `c` has dropped out. That is the whole idea in one line — once the model has imagined the
+next 1.6 s of video, the instruction is no longer needed to choose actions, because the imagined future already
+encodes what to do.
+
+**Why that is a "shift".** A VLA learns `p(a | o, c)` in a single step, so its action labels must simultaneously
+teach *what should happen* (semantics, goal grounding) and *how to move* (embodiment-specific dynamics). Every
+bit of that has to be paid for with teleoperated action labels, which is why the conventional recipe needs many
+tightly repeated demonstrations per task. Under the WAM factorization the "what" is carried by video prediction —
+inherited from web-scale video pretraining and learnable with no action labels at all — leaving robot action
+labels responsible only for the narrower question "given this visual future, which motor commands realize it?".
+The paper argues this narrower target is what makes heterogeneous data usable (Sec. 4.1) and what makes
+cross-embodiment transfer cheap: video from another robot or a human can teach the "what", while a small amount
+of target-robot data teaches the "how".
+
+**Two precisions worth keeping.** (1) DreamZero does **not** train a separate IDM. The factorization is
+conceptual; one 14B model is trained end-to-end, so the IDM is *implicit* — the authors argue this gives tighter
+video-action alignment than the two-model designs of prior work (p.7). (2) The paper concedes it cannot measure
+how good that implicit IDM is: "Quantifying the accuracy of implicit IDMs remains a challenge" (p.19), and it
+expects the visual-future-to-command mapping to grow combinatorially with kinematic complexity. Observed failures
+are mostly video-prediction errors rather than action extraction (p.17) — consistent with the split, but not
+proof of it.
+</QA>
+
+<QA question="What are 'repeated demonstrations', and why does the paper make a point of not relying on them?" asked_by="Huch0" concepts="">
+**The conventional recipe.** Standard robot-learning data collection fixes a task list and records many
+demonstrations *per task* in a controlled setting, with similar object positions and configurations each time.
+The paper's own comparison set is "70 tasks with many repeated demonstrations per task using similar object
+positions and configurations" (Sec. 5.3), versus "hundreds of demonstrations per task in controlled lab settings"
+(App. E). Repetition is deliberate: it averages out teleoperation noise and pins down one consistent behaviour
+per task.
+
+**What DreamZero did instead.** ~500 h across 22 real environments (homes, restaurants, supermarkets, coffee
+shops, offices, warehouses, laboratories, hotels). Teleoperators pick **three coarse tasks per episode** from a
+printed sheet — "tidy up" rather than "place the red block on the blue block" — and execute them consecutively,
+giving ~4.4-minute episodes containing roughly 42 subtasks each. The mechanism that produces the long tail is a
+repetition **ceiling**: once a task has been collected in 50 episodes it is *deprecated* and removed from the
+sheet, and operators are incentivized to propose new ones, so the task distribution keeps expanding (App. E.1).
+
+**Why this matters for a WAM specifically.** Because video prediction is inherited from pretraining, the only
+thing left to learn from robot data is the inverse dynamics — and "a robust IDM requires diverse state-action
+correspondences across varied contexts, which repetitive data inherently lacks" (Sec. 5.3). The ablation holds
+the budget fixed at 500 h and varies only *composition*: diverse data reaches **50%** task progress against
+**33%** for repetitive data (Tab. 4).
+
+**Your reading of the related work is right.** This is not aimed only at VLAs. The paper states that although
+other WAMs already show video priors improve sample efficiency for action learning, "most works still focus on
+repeated demonstrations" (Sec. 1, citing Liao et al. 2025 and Pai et al. 2025). The claimed novelty is therefore
+the **data regime**, not the video prior itself.
+
+**Caveat for the talk.** "Non-repetitive" is a ceiling, not zero — up to 50 episodes per task is still meaningful
+repetition — and the 50%-vs-33% result is a single ablation.
+</QA>
+
+<QA question="What is YAM?" asked_by="Huch0" concepts="">
+YAM is the name of the **second robot platform**, used as the cross-embodiment counterpart to the main AgiBot G1.
+The paper never expands the acronym; it introduces it only as "the bimanual YAM robot" and "a new bimanual
+manipulator (YAM robot)". The property that carries the argument is that YAM and AgiBot G1 are **both bimanual
+parallel-gripper systems**, i.e. a narrow embodiment gap.
+
+It plays **two different roles**, which are easy to conflate:
+
+1. **Source of transfer data** (robot-to-robot, Sec. 5.2): 72 multi-view trajectories over 9 unseen tasks
+   (8 per task, ~20 min of YAM data), co-trained 1:1 with pretraining data for 10K steps. This lifts *AgiBot*
+   task progress from **38.3% to 55.4%**. The demonstrations are video-only — no YAM action labels are used.
+2. **Target of adaptation** (few-shot embodiment adaptation, Sec. 5.2): the AgiBot-pretrained checkpoint is
+   post-trained on 55 YAM trajectories over 11 tasks (~30 min) and then controls *YAM itself*. This result is
+   **qualitative only** — Fig. 12 shows retained language following and generalization to unseen objects
+   (pumpkins, teddy bears, pens, cup noodles, paper bags), but no success rate, baseline, or trial count is
+   reported for it.
+
+Their hypothesis for why so little data suffices: the visual and morphological similarity of the two platforms,
+plus the sample-efficiency of learning an implicit IDM rather than a full policy (p.17).
+
+**If asked on stage:** the expansion of "YAM" is not stated anywhere in the paper. Describe it as "a bimanual
+parallel-gripper manipulator used as the second embodiment" rather than guessing the acronym.
+</QA>

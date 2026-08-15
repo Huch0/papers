@@ -120,3 +120,10 @@ Each entry: date, trigger, change, files touched, migration status.
   IEEE TSE so the robotics/formal-methods/SE anchors in this corpus are credited
   correctly (previously they would have landed in workshop_or_minor).
 - Requested by user: "Add this papers to the library and write the summaries."
+
+## 2026-08-15 — embodied-agent + world-model tags
+
+- Added `embodied-agent` (domain) and `world-model` (method) to
+  config/tag_taxonomy.yaml. First robotics/VLA paper in the library
+  ("World Action Models are Zero-shot Policies", arXiv 2602.15922) had no
+  applicable tag; both are reusable for future embodied/world-model work.

@@ -154,3 +154,4 @@
 {"ts": "2026-08-13T07:18:45Z", "source": "download_pdf", "url": "https://arxiv.org/pdf/2605.01160v1", "dest": "library/the-productivity-reliability-paradox-specification-driven-governance-260501160/v1/paper.pdf", "bytes": 598212, "ok": true}
 {"ts": "2026-08-13T07:18:51Z", "source": "download_pdf", "url": "https://arxiv.org/pdf/2606.17591v1", "dest": "library/closing-the-feedback-loop-from-experience-extraction-260617591/v1/paper.pdf", "bytes": 246950, "ok": true}
 {"ts": "2026-08-13T07:18:57Z", "source": "download_pdf", "url": "https://arxiv.org/pdf/2505.07087v2", "dest": "library/applying-cognitive-design-patterns-to-general-llm-250507087/v1/paper.pdf", "bytes": 587810, "ok": true}
+{"ts": "2026-08-15T07:36:34Z", "source": "download_pdf", "url": "https://arxiv.org/pdf/2602.15922v1", "dest": "library/world-action-models-are-zero-shot-policies-260215922/v1/paper.pdf", "bytes": 9094847, "ok": true}

@@ -7,16 +7,16 @@ version_key: v1
 **Forward vs inverse.** Forward dynamics asks: given the current state and an action, what state comes next?
 Inverse dynamics asks the reverse: given where you are and where you want to be next, which action produces
 that transition? Classically this is the torque computation for a desired trajectory; in learned policies an
-**inverse dynamics model (IDM)** maps a pair of observations `(o_t, o_t+1)` to the action `a_t` that connects them.
+**inverse dynamics model (IDM)** maps a pair of observations <M tex="(o_t,\, o_{t+1})" /> to the action <M tex="a_t" /> that connects them.
 
 **Where it appears here.** Eq. 1 (p.6) factorizes DreamZero's joint prediction into exactly two terms —
-`pi(o_t:t+H | o_0:t, c, q_t)` (video prediction) times `pi(a_t:t+H | o_0:t+H, q_t)` (the IDM). Read the second
-term closely: it conditions on observations *through the future horizon* and on proprioception `q_t`, but the
-language instruction `c` has dropped out. That is the whole idea in one line — once the model has imagined the
+<M tex="\pi(o_{t:t+H} \mid o_{0:t},\, c,\, q_t)" /> (video prediction) times <M tex="\pi(a_{t:t+H} \mid o_{0:t+H},\, q_t)" /> (the IDM). Read the second
+term closely: it conditions on observations *through the future horizon* and on proprioception <M tex="q_t" />, but the
+language instruction <M tex="c" /> has dropped out. That is the whole idea in one line — once the model has imagined the
 next 1.6 s of video, the instruction is no longer needed to choose actions, because the imagined future already
 encodes what to do.
 
-**Why that is a "shift".** A VLA learns `p(a | o, c)` in a single step, so its action labels must simultaneously
+**Why that is a "shift".** A VLA learns <M tex="p(a \mid o,\, c)" /> in a single step, so its action labels must simultaneously
 teach *what should happen* (semantics, goal grounding) and *how to move* (embodiment-specific dynamics). Every
 bit of that has to be paid for with teleoperated action labels, which is why the conventional recipe needs many
 tightly repeated demonstrations per task. Under the WAM factorization the "what" is carried by video prediction —

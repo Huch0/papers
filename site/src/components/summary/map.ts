@@ -13,6 +13,7 @@ import Stepper from "./Stepper.astro";
 import Chart from "./Chart.astro";
 import Figure from "./Figure.astro";
 import MathBlock from "./MathBlock.astro";
+import M from "./M.astro";
 import Compare from "./Compare.astro";
 import SelfCheck from "./SelfCheck.astro";
 import KeyStats from "./KeyStats.astro";
@@ -27,6 +28,6 @@ import QA from "./QA.astro";
 
 export const summaryComponents = {
   TLDR, WhyItMatters, Pass, Claim, Evidence, Weak, Limit, Term,
-  ResultsTable, ClaimEvidence, Stepper, Chart, Figure, MathBlock, Compare, SelfCheck,
+  ResultsTable, ClaimEvidence, Stepper, Chart, Figure, MathBlock, M, Compare, SelfCheck,
   KeyStats, SortableTable, Problem, Novelty, Finding, FollowUp, Related, Caveat, QA,
 };

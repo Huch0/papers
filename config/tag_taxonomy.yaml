@@ -17,6 +17,7 @@ tags:
     - filesystem-agent
     - persistent-workspace
   domain:
+    - embodied-agent
     - swe-agent
     - computer-use
     - document-agent
@@ -25,6 +26,7 @@ tags:
     - slides-agent
     - web-agent
   method:
+    - world-model
     - agent-harness
     - meta-harness
     - tool-use

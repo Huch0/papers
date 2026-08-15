@@ -1,0 +1,89 @@
+canonical_key: arxiv-2602.15922
+slug: world-action-models-are-zero-shot-policies-260215922
+title: World Action Models are Zero-shot Policies
+authors:
+- Seonghyeon Ye
+- Yunhao Ge
+- Kaiyuan Zheng
+- Shenyuan Gao
+- Sihyun Yu
+- George Kurian
+- Suneel Indupuru
+- You Liang Tan
+- Chuning Zhu
+- Jiannan Xiang
+- Ayaan Malik
+- Kyungmin Lee
+- William Liang
+- Nadun Ranawaka
+- Jiasheng Gu
+- Yinzhen Xu
+- Guanzhi Wang
+- Fengyuan Hu
+- Avnish Narayan
+- Johan Bjorck
+- Jing Wang
+- Gwanghyun Kim
+- Dantong Niu
+- Ruijie Zheng
+- Yuqi Xie
+- Jimmy Wu
+- Qi Wang
+- Ryan Julian
+- Danfei Xu
+- Yilun Du
+- Yevgen Chebotar
+- Scott Reed
+- Jan Kautz
+- Yuke Zhu
+- Linxi "Jim" Fan
+- Joel Jang
+year: 2026
+primary_ids:
+  doi: null
+  arxiv_base_id: '2602.15922'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2602.15922v1
+- https://arxiv.org/pdf/2602.15922v1
+topic_groups:
+- general_agent_methods
+tags:
+- embodied-agent
+- world-model
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2026
+user:
+  read_status: unread
+  triage_label: TRACK_ONLY
+  triage_confidence: medium
+  notes: null
+milestone: null
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v1
+  source: arxiv
+  source_url: https://arxiv.org/abs/2602.15922v1
+  pdf_path: library/world-action-models-are-zero-shot-policies-260215922/v1/paper.pdf
+  summary_path: library/world-action-models-are-zero-shot-policies-260215922/v1/summary.mdx
+  metadata_path: library/world-action-models-are-zero-shot-policies-260215922/v1/metadata.yaml
+  fetched_at: '2026-08-15T07:36:35Z'
+  source_updated_at: '2026-02-17T15:04:02Z'
+  arxiv_version: v1
+  pdf_sha256: cb91d24a04717a6c77fd39594af7f3f85a05317b7078b0d9c8d8b4ddd932f483
+  pdf_bytes: 9094847
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-08-15T07:36:35Z'
+  updated_at: '2026-08-15T07:49:25Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

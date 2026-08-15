@@ -166,3 +166,56 @@ transfers across bodies; the visual-future-to-motor-command mapping does not, an
 both bimanual parallel-gripper systems, which the authors themselves credit for the efficiency. Nothing here
 demonstrates transfer across a genuinely different morphology.
 </QA>
+
+<QA question="Does that mean the IDM can only transfer to embodiments sharing AgiBot's joint space? And what does 'zero-shot' actually range over in this paper?" asked_by="Huch0" concepts="">
+**Two different axes, and the paper is careful to keep them apart — so we should be too.**
+
+**"Zero-shot" here means zero-shot *task* transfer, never zero-shot *embodiment* transfer.** Every use of the
+term attaches to tasks and environments: "zero-shot generalization to new tasks in new environments" (Sec. 1,
+p.3), "zero-shot generalization to unseen verbs and motions" (Sec. 1, p.4), "zero-shot generalization to novel
+tasks" (Sec. 2.2, p.5). The embodiment axis is always labelled **few-shot**: "few-shot adaptation to new robots"
+(Sec. 1, p.2), and Q5/Fig. 12 are titled "Few-shot Embodiment Adaptation" (Sec. 5.2, p.16). The sentence that
+joins them — "adapts to an entirely new robot (YAM) with only 30 minutes of play data, **retaining** zero-shot
+generalization" (Sec. 1, p.3) — means the *task-level* generalization survives the *embodiment-level* adaptation.
+The title's "Zero-shot Policies" is a claim about tasks, never about bodies.
+
+**So: is the IDM locked to AgiBot's joint space?** Partly, and only in the zero-shot sense.
+
+- **Yes, zero-shot.** The action decoder emits relative joint positions in one robot's joint space. Drop
+  DreamZero-AgiBot onto a different robot untouched and the commands are meaningless. Nothing in the paper claims
+  otherwise.
+- **No, not permanently.** They **post-trained the DreamZero-AgiBot checkpoint onto YAM** — 55 trajectories over
+  11 tasks, about 30 minutes — after which the model controls YAM (Sec. 5.2, p.16-17). The IDM is therefore
+  *re-fittable*, not joint-space-locked. The claim is portability-with-cheap-adaptation, not zero-shot portability.
+
+**Why the transfer direction matters.** The two cross-embodiment results move in opposite directions and only one
+of them touches the IDM at all:
+
+- *Video-only transfer (YAM or human video, then act on AgiBot)*: no action labels cross the boundary, so no
+  action space is ever mapped. The executed commands stay in AgiBot's decoder. The IDM is untouched.
+- *Few-shot embodiment adaptation (act on YAM)*: this is the only place the action side must change, and it is
+  re-fit from ~30 min of target-robot data.
+
+**What is not reported, and matters for exactly this question.** The paper never states either robot's joint
+dimensionality, nor whether the action encoder/decoder is re-initialized, resized or reused for YAM, nor how
+normalization statistics are set. So we cannot tell whether the adaptation fine-tuned an existing head because the
+dimensions happen to coincide, or fitted a fresh one. The result is also qualitative only — no success rate,
+baseline or trial count.
+
+**Scope of the evidence.** Both robots are bimanual parallel-gripper systems, which the authors themselves credit
+for the efficiency (Sec. 5.2, p.17), so this is the easiest possible pair. The DROID/Franka **single-arm** model
+is a separate training run, not a transfer, so it shows the architecture is embodiment-general without showing an
+IDM moving between bodies. Their own limitations section predicts the cost grows with kinematic complexity:
+"Higher-DOF robots will require more play data to learn an accurate implicit IDM" (Sec. 6, p.19).
+
+**The three layers, ranked by portability.**
+
+| Layer | Crosses embodiments? |
+|---|---|
+| Web-scale video priors (pretraining) | Fully shared; no robot data involved |
+| Task and motion semantics — what should happen | **Yes, through video alone**, with no action labels — the paper's central novelty |
+| Visual-future-to-command readout (the IDM) | **Not as-is.** Embodiment-specific; claimed cheap to re-fit (~30 min), shown once, qualitatively, between near-identical bodies |
+
+One line for a talk: *video is the interlingua, the action head is the local dialect — you re-learn the dialect,
+but not the language.*
+</QA>

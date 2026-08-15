@@ -88,3 +88,81 @@ plus the sample-efficiency of learning an implicit IDM rather than a full policy
 **If asked on stage:** the expansion of "YAM" is not stated anywhere in the paper. Describe it as "a bimanual
 parallel-gripper manipulator used as the second embodiment" rather than guessing the acronym.
 </QA>
+
+<QA question="Is 'diversity' really the axis the data ablation varies? Repetition and diversity seem orthogonal - a dataset can cover many contexts and still contain many near-duplicate samples per context." asked_by="Huch0" concepts="">
+**The objection is correct, and the paper does not resolve it.** Diversity (how many distinct
+task-context-placement combinations the corpus covers) and redundancy (how many near-duplicate samples sit
+inside each combination) are logically independent. A corpus can be high-coverage *and* highly repetitive —
+70 tasks across 22 environments with 300 demonstrations each. The paper never builds that third condition.
+
+**What the ablation actually varies.** Table 4 (p.17) compares two corpora at 500 h each: the diverse corpus
+(22 environments, three coarse tasks per episode, ~42 subtasks per episode, every task deprecated after 50
+episodes so operators must invent new ones) against a repetitive corpus described in a single clause — "70 tasks
+with many repeated demonstrations per task using similar object positions and configurations" (Sec. 5.3, p.17).
+At least four things differ at once:
+
+1. number of distinct tasks (a forced long tail vs 70);
+2. repeats per task (capped at 50 vs "many");
+3. within-task state variation (real-site placements vs *similar object positions and configurations*);
+4. episode structure (multi-task episodes vs, presumably, single-task) — never stated for the repetitive set.
+
+**Why the two axes cannot be separated here.** Holding the budget fixed at 500 h mechanically couples (1) and
+(2): more repeats per task buys fewer distinct tasks. So the experiment compares two points on a
+coverage-versus-redundancy trade-off curve; it does not isolate either axis. A controlled test would need a
+2x2 — high/low coverage crossed with high/low redundancy at matched hours — or a design that fixes the number
+of distinct (task, context) pairs and varies only repeats per pair.
+
+**Which factor the mechanism story actually implicates.** Their argument is about the IDM needing "diverse
+state-action correspondences across varied contexts". Note that factor 3 does most of that work: repeating a task
+with the *same* object placement yields nearly the same visual-future-to-action pairs, so the extra samples cost
+budget without adding distinct correspondences. Read that way, redundancy matters precisely *because* it
+displaces coverage — the axes are orthogonal in principle but coupled by the budget constraint, which is exactly
+your point.
+
+**One precision that sharpens the comparison.** Both ablation runs are trained for 50K steps at batch size 32
+(Sec. 5.2, p.16), so they draw the *same number of training samples*. The difference is therefore distributional —
+the entropy of what gets sampled — not dataset size. That makes "effective distinct correspondences per sample
+drawn" a better name for the axis than "diversity".
+
+**Status: Unclear.** The paper reports no decomposition, no intermediate points, and no description of the
+repetitive corpus beyond that one clause — including whether its 70 tasks overlap the PnP-Easy evaluation set.
+The claim rests on one pair of numbers (33% vs 50%) on one task category at reduced training scale.
+</QA>
+
+<QA question="How exactly does the action output work, and how is it mapped across embodiments for cross-embodiment transfer?" asked_by="Huch0" concepts="">
+**The action pathway.** Actions are **relative joint positions** (deltas, not absolute targets or end-effector
+poses), normalized, with idle actions filtered from training (Sec. 4.1, p.11). The model emits an action chunk of
+horizon <M tex="H = 48" /> alongside <M tex="K = 2" /> latent video frames; at a 30 Hz control frequency that is
+**1.6 s of video and 1.6 s of actions per chunk** (App. B, p.21). Architecturally the backbone stays a video
+model: the only added parameters are a state encoder (proprioception <M tex="q_t" />), an action encoder, and an
+action decoder — text encoder, image encoder and VAE are frozen, and video latents and action latents are
+denoised together under one flow-matching loss with modality-aware attention masking (App. C, Fig. 14). At
+run time the chunk goes to an asynchronous controller executing at 30 Hz, while the model re-plans the next chunk
+at roughly 7 Hz on two GB200s.
+
+**Your premise is what the design avoids.** For transfer, DreamZero never maps one robot's actions onto another's.
+The transfer data is **video only** — the paper is explicit: "our method relies solely on visual information
+**without action labels**" (Sec. 5.2, p.16). The 20 minutes of YAM footage and 12 minutes of egocentric human
+footage update only the *video-prediction* half of the factorization: what the task looks like, how the motion
+unfolds, which object goes where. The actions that actually execute are still produced by the **AgiBot** action
+decoder trained on AgiBot data, in AgiBot's own joint space. The shared cross-embodiment representation is
+**pixels, not commands** — which is the practical payoff of putting video prediction, rather than action
+prediction, at the centre of the model. Mechanically it is a co-train from the AgiBot checkpoint on a 1:1 mix
+with pretraining data for 10K steps (Sec. 5.2, p.16).
+
+**What is genuinely not reported.** (1) How the joint video+action loss is handled for action-free samples —
+presumably the action term is masked, but the paper never says. (2) The other direction, few-shot adaptation
+*to* YAM, does require YAM actions, since the policy then controls YAM — yet the paper does not describe how the
+action encoder/decoder is adapted to a different action space: whether the heads are re-initialized, how joint
+layouts and normalization statistics are handled, or what YAM's action dimensionality is. It reports only that
+55 trajectories (~30 min) suffice, qualitatively.
+
+**Consistent with their own limitations section.** The embodiment-specific part of the model is exactly the
+inverse dynamics: "Higher-DOF robots will require more play data to learn an accurate implicit IDM, as the mapping
+from visual futures to motor commands grows combinatorially with kinematic complexity" (Sec. 6, p.19). Video
+transfers across bodies; the visual-future-to-motor-command mapping does not, and must be re-learned per robot.
+
+**A caution worth keeping.** Both transfer settings pair robots that are already close — AgiBot G1 and YAM are
+both bimanual parallel-gripper systems, which the authors themselves credit for the efficiency. Nothing here
+demonstrates transfer across a genuinely different morphology.
+</QA>

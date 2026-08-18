@@ -50,7 +50,11 @@ Three words do the heavy lifting in every flow-matching paper, and none of them 
 A <Term def="a function that assigns a value to every point of a space; a number per point is a scalar field, an arrow per point is a vector field">field</Term>
 assigns a value to *every point of space*. A temperature map is a scalar field — one number per
 location. A wind map is a **vector field** — one arrow per location. That is all "field" means here:
-not a trajectory, not a path, but a *function* you can query anywhere. A
+not a trajectory, not a path, but a *function* you can query anywhere. (And not the algebra
+sense: the "field" of group–ring–field is a number system closed under the four operations —
+German distinguishes *Feld*, this one, from *Körper*, that one; English collapsed both. The only
+contact point: velocity vectors live in a vector space, which is defined *over* the algebraic field
+ℝ of scalars.) A
 <Term def="a vector field that may also change over time: for every location x and time t it returns one arrow (direction and speed), u(x, t)">velocity field</Term>
 <M tex="u(x, t)" /> is a wind map that may change over time: feed it any location <M tex="x" /> and
 any time <M tex="t" />, it returns the one arrow at that place and moment.
@@ -248,7 +252,7 @@ chunked, causal machinery around the objective ([Causal DiT](../causal-dit/)).
 
 ## Glossary
 
-- <Term def="a function assigning a value to every point of a space — a number per point (scalar field, e.g. a temperature map) or an arrow per point (vector field, e.g. a wind map); queryable anywhere, not a trajectory">field</Term>
+- <Term def="a function assigning a value to every point of a space — a number per point (scalar field, e.g. a temperature map) or an arrow per point (vector field, e.g. a wind map); queryable anywhere, not a trajectory. Unrelated to the algebraic field of group/ring/field: that is a number system closed under + − × ÷ (ℝ, ℚ, ℂ). German keeps them distinct — Feld (this sense) vs Körper (the algebraic one) — English merged both into one word">field</Term>
 - <Term def="a time-dependent vector field u(x, t): one arrow (direction + speed) for every location and moment">velocity field</Term>
 - <Term def="a continuously indexed family of distributions p_t morphing noise p_0 into data p_1 — a movie whose frames are distributions">probability path</Term>
 - <Term def="a velocity field generates a path when moving points by dx/dt = u(x,t) makes the crowd match p_t at every t">generates</Term>

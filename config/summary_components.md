@@ -44,6 +44,8 @@ Legacy aliases still work: `<Claim>`→finding, `<Evidence src>`→finding, `<Li
 | `<Figure src="…" caption="…" zoom />` | strings | a diagram/figure (image hosted in the version dir or remote) |
 | `<MathBlock>…</MathBlock>` | KaTeX | a key **display** equation |
 | `<M tex="…" />` | KaTeX | **inline** math inside prose (`<M tex="q_t" />`, `<M tex="\pi(a \mid o)" />`) |
+| `<FlowMatch />` | none | **interactive** flow-matching explainer: toy 2-D noise→data transport with a t-slider, straight-line paths, velocity arrows, generate/train views (convention t=0 noise → t=1 data) |
+| `<AttnMask />` | none | **interactive** attention-mask explorer for chunked/causal DiTs: training window, block-causal-over-chunks, and KV-cache views with an observation-overwrite toggle; hover a query row to read its receptive field |
 | `<Compare a={…} b={…} />` | nodes | A/B contrast |
 | `<SelfCheck q="…" a="…" />` | strings | a quick comprehension check |
 
@@ -61,6 +63,13 @@ Never write math as a plain backtick code span — it renders as monospace text,
 If KaTeX cannot parse an expression the component falls back to the raw source (styled
 `.mathblock-raw` / `.math-raw`) instead of breaking the page, so a bad equation is visible
 but harmless.
+
+## Diagrams
+Inline `<svg>` mechanism diagrams are allowed directly in the MDX body (they are markup,
+not bespoke components). Follow the house style: size via `viewBox` + `style="width:100%;height:auto"`,
+strokes/text in `currentColor` so both themes work, reserve `var(--accent)` for the one
+element that carries meaning, label the arrows, wrap in `<figure>` + `<figcaption>`, give the
+svg `role="img"` + an `aria-label`, and keep marker/gradient ids unique per page.
 
 ## Rules
 - **Concise + core-first:** the visible body is TL;DR → Motivation → Contribution →

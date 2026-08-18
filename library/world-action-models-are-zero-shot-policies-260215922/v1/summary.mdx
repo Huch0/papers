@@ -75,6 +75,340 @@ contributors:
 ## Research questions
 Do WAMs (1) learn better than VLAs from *diverse, non-repetitive* robot data, (2) generalize zero-shot to motions absent from the robot training data, (3) retain that generalization after task-specific post-training, (4) absorb useful skill knowledge from *action-free* video of other embodiments, and (5) adapt to a new robot from minutes of data — and (6) can a 14B video-diffusion policy run fast enough to close the loop at all?
 
+## Background: what Figure 4 assumes you already know
+
+Figure 4 compresses five ideas the paper never teaches: latent spaces, flow matching, diffusion
+transformers, causal/chunked generation, and the small adapters that connect a robot to all of it.
+This section builds them bottom-up for a reader with no diffusion background; each block ends with
+the exact role the idea plays in DreamZero, and the last block re-draws Figure 4 and walks it end to
+end. Depth sits in the collapsible passes.
+
+### B1 · Latents: generation runs in a compressed space
+
+A 480P video frame is about 400k pixels; predicting pixels directly is slow and wasteful, because
+most pixel detail (texture, noise) carries no information about the scene. So video models first run
+every frame through a <Term def="variational autoencoder: an encoder that compresses an image/clip into a small grid of numbers (the latent) plus a decoder that reconstructs pixels from it; trained once, then reused">VAE</Term>:
+the encoder turns frames into a much smaller grid of numbers — the **latents** — and the decoder
+turns latents back into pixels. Everything interesting (denoising, attention, prediction) happens on
+latents; pixels only appear at the very ends. The compression is spatial *and* temporal: in
+DreamZero, <Finding src="App.B, p.21">8 latent frames stand in for 33 raw frames — 6.6 s of video at
+the 5 FPS sampling rate</Finding>.
+
+**Role in DreamZero:** the Wan2.1 VAE is *frozen* — cameras are encoded into latents on the way in,
+predicted latents are decoded on the way out, and the model itself never touches a pixel. So when
+Figure 4 says "video", read "a small grid of latent vectors per 2-frame step".
+
+### B2 · Flow matching: straight lines from noise to data
+
+A generative model here answers one question: *given pure noise, produce a sample that looks like it
+came from the data.* Flow matching is the simplest honest way to do that. Pair each data sample
+<M tex="x_1" /> with a random Gaussian sample <M tex="x_0" /> and connect them with a straight line:
+
+<MathBlock>{`z_t = t\\,z_1 + (1-t)\\,z_0, \\qquad a_t = t\\,a_1 + (1-t)\\,a_0, \\qquad z_0,\\ a_0 \\sim \\mathcal{N}(0, I)`}</MathBlock>
+
+One convention warning before anything else: <Novelty>in this paper `t = 0` is pure noise and
+`t = 1` is clean data (Eq. 2)</Novelty> — the reverse of many diffusion papers, so read the axis
+labels carefully. Because the path is a straight line, its velocity is the *same at every point of
+the path*:
+
+<MathBlock>{`v \\;=\\; [\\,z_1,\\ a_1\\,] - [\\,z_0,\\ a_0\\,]`}</MathBlock>
+
+The network <M tex="u_\theta" /> is trained on exactly one skill: *look at a partially noisy point
+and the time <M tex="t" />, and predict that velocity* — a plain mean-squared-error regression, no
+adversary, no likelihood gymnastics. Generation is then just integration: start at noise
+(<M tex="t=0" />), repeatedly step along the predicted velocity, arrive at a sample
+(<M tex="t=1" />). Play with it:
+
+<FlowMatch />
+
+**Role in DreamZero:** one flow-matching loss denoises **video latents and action latents
+together** — the model input is the concatenation <M tex="[\,z_t, a_t\,]" /> and the regression
+target is the joint velocity. Sharing one noise level <M tex="t_k" /> per chunk across both
+modalities is a deliberate choice <Finding src="§3.1, p.7">for faster convergence early in
+training</Finding>; the actions are pulled toward *the same imagined future* the video is being
+pulled toward, which is the "aligned" in "predict actions and visual future states in an aligned
+manner".
+
+<Pass title="Background · flow matching vs DDPM, the weight w(t), and where CFG fits">
+Classic diffusion (DDPM) corrupts data through hundreds of tiny noising steps and trains the network
+to predict the *noise* at each step; sampling retraces those steps, so quality historically wanted
+tens-to-hundreds of network calls. Flow matching replaces the curved stochastic path with a straight
+deterministic one, which tends to tolerate far fewer, larger integration steps. DreamZero uses 16
+denoising steps for smooth actions (§3.2.1), then exploits straight-line-ness further:
+<Finding src="Tab.1, p.10">successive velocity predictions are so directionally consistent that
+caching them cuts effective DiT calls from 16 to 4</Finding>, and DreamZero-Flash goes to 1 video
+step by training with a decoupled schedule — video timesteps drawn from `Beta(7,1)` (concentrated
+near clean, Alg.1) while action timesteps stay uniform — at a measured quality cost
+(<Finding src="Tab.3, p.17">83% → 74% on table bussing</Finding>). The loss also carries a
+predefined per-timestep weight <M tex="w(t_k)" /> (Eq. 3) whose exact form is Not reported.
+<Term def="classifier-free guidance: run the network once with the conditioning (text/state) and once without, then extrapolate between the two outputs to sharpen instruction-following; costs a second forward pass">CFG</Term>
+is why inference wants two forward passes per step; DreamZero runs the two passes on two GPUs in
+parallel for a 47% per-step latency cut (§3.2.3). The full objective, with chunk index
+<M tex="k" /> and clean-context set <M tex="\mathcal{C}_k" /> restored:
+
+<MathBlock>{`\\mathcal{L}(\\theta) = \\mathbb{E}\\left[ \\frac{1}{M} \\sum_{k=1}^{M} w(t_k)\\, \\bigl\\| u_\\theta\\bigl([\\,z^{k}_{t_k}, a^{k}_{t_k}\\,];\\ \\mathcal{C}_k,\\ c,\\ q_k,\\ t_k\\bigr) - v^{k} \\bigr\\|^{2} \\right]`}</MathBlock>
+
+where <M tex="\mathcal{C}_k = \{(z^{i}_{1}, a^{i}_{1})\}_{i=1}^{k-1}" /> is the *clean* content of
+all previous chunks, <M tex="c" /> the instruction, and <M tex="q_k" /> proprioception.
+</Pass>
+
+### B3 · DiT: the transformer that does the denoising
+
+Where does <M tex="u_\theta" /> come from? A <Term def="diffusion transformer (Peebles & Xie 2023): a standard transformer whose tokens are noisy latent patches and whose output is the denoising target (here, velocity); the timestep enters by modulating every block">DiT</Term>.
+Chop the latent grid into patches, project each patch to a fixed-width vector — a **token** — and
+run the standard transformer loop: every token *attends* to (reads a weighted mix of) every other
+token, passes through a small MLP, and repeats for <M tex="N" /> blocks. Two things make it a
+*diffusion* transformer rather than a language model: the tokens are noisy latents instead of words,
+and the timestep <M tex="t" /> is injected into **every block** by scaling and shifting the
+normalization layers (the adaLN recipe), so one network can act as the denoiser for *all* noise
+levels at once:
+
+<figure>
+<svg viewBox="0 0 640 200" style="max-width:100%;height:auto" role="img" aria-label="One DiT block: tokens pass through a timestep-modulated layer norm, self-attention, a residual add, a second modulated layer norm, an MLP, and a second residual add.">
+  <defs>
+    <marker id="arrDitA" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker>
+  </defs>
+  <g fill="none" stroke="currentColor" stroke-width="1.2">
+    <rect x="14" y="60" width="70" height="34" rx="6" style="fill:var(--soft)"/>
+    <rect x="118" y="60" width="64" height="34" rx="6" style="fill:var(--soft)"/>
+    <rect x="216" y="60" width="104" height="34" rx="6" style="fill:var(--soft)"/>
+    <circle cx="366" cy="77" r="12"/>
+    <rect x="404" y="60" width="64" height="34" rx="6" style="fill:var(--soft)"/>
+    <rect x="502" y="60" width="56" height="34" rx="6" style="fill:var(--soft)"/>
+    <circle cx="592" cy="77" r="12"/>
+  </g>
+  <g stroke="currentColor" stroke-width="1.2" marker-end="url(#arrDitA)">
+    <line x1="84" y1="77" x2="112" y2="77"/>
+    <line x1="182" y1="77" x2="210" y2="77"/>
+    <line x1="320" y1="77" x2="348" y2="77"/>
+    <line x1="378" y1="77" x2="398" y2="77"/>
+    <line x1="468" y1="77" x2="496" y2="77"/>
+    <line x1="558" y1="77" x2="574" y2="77"/>
+  </g>
+  <path d="M 99 77 C 99 30, 366 30, 366 63" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#arrDitA)"/>
+  <path d="M 486 77 C 486 30, 592 30, 592 63" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#arrDitA)"/>
+  <circle cx="330" cy="160" r="13" fill="none" style="stroke:var(--accent)" stroke-width="1.5"/>
+  <g stroke-dasharray="3 3" style="stroke:var(--accent)" stroke-width="1.2" fill="none">
+    <path d="M 322 150 C 240 130, 168 118, 152 98" marker-end="url(#arrDitA)"/>
+    <path d="M 340 151 C 400 132, 428 118, 436 98" marker-end="url(#arrDitA)"/>
+  </g>
+  <g fill="currentColor" font-size="11.5" text-anchor="middle">
+    <text x="49" y="81">tokens</text>
+    <text x="150" y="81">adaLN</text>
+    <text x="268" y="81">self-attention</text>
+    <text x="366" y="81">+</text>
+    <text x="436" y="81">adaLN</text>
+    <text x="530" y="81">MLP</text>
+    <text x="592" y="81">+</text>
+    <text x="330" y="164">t</text>
+    <text x="330" y="188" opacity="0.6">timestep embedding — scale &amp; shift every norm</text>
+    <text x="232" y="45" opacity="0.6">residual</text>
+    <text x="536" y="45" opacity="0.6">residual</text>
+  </g>
+</svg>
+<figcaption>One DiT block (×N, stacked). The accent element is the timestep: it modulates every
+block, which is how a single network serves every noise level. DreamZero inherits its N blocks from
+Wan2.1-I2V-14B; per-block internals beyond the standard recipe are Not reported.</figcaption>
+</figure>
+
+Attention is also the mechanism that makes *joint* video–action modeling more than a slogan: video
+tokens, action tokens, text tokens and the state token sit in **one sequence**, so action tokens can
+read the imagined future directly, at every block. Nothing about the trunk is robot-specific — which
+is exactly why a video-pretrained trunk can be reused.
+
+**Role in DreamZero:** the "Causal DiT" box in Figure 4 is this stack — 14B parameters, initialized
+from Wan2.1's video-pretrained weights, denoising video and action tokens in the same forward pass.
+
+### B4 · Making it causal: chunks, KV cache, and the observation overwrite
+
+A stock video DiT is **bidirectional**: it generates a whole fixed-length clip in one shot, every
+frame attending to every other. That is wrong for control twice over — you need actions *now*, not
+after the full clip; and fixed-length windows force video subsampling that
+<Finding src="§3.1, p.7">distorts the native frame rate and so the video–action correspondence</Finding>.
+DreamZero instead generates **chunk by chunk**: each chunk is <M tex="K=2" /> latent frames paired
+with <M tex="H=48" /> actions — 1.6 s of world per chunk — and the attention mask is
+**block-causal**: a chunk being denoised reads all *finished* chunks and itself, never the future
+(the "causal" in Causal DiT; an LLM over sentences is the exact analogy). Finished chunks are stored
+as a <Term def="the cached key/value tensors of already-processed tokens; lets an autoregressive model re-read its whole past for the price of a lookup instead of recomputation">KV cache</Term>,
+so context grows (up to <M tex="M=4" /> chunks = 6.6 s) at almost no extra cost. Explore the masks —
+including the one move that is unique to a *robot* video model:
+
+<AttnMask />
+
+Two training-vs-inference facts complete the picture. At training time the previous chunks in
+context are the **ground-truth clean** ones
+(<Term def="training a sequence model with the true past as input rather than its own predictions; fast and stable, but creates a mismatch at inference when the model must consume its own outputs">teacher forcing</Term>).
+At inference a pure video generator would have to feed on its own imperfect predictions — the
+mismatch compounds and quality drifts. DreamZero's closed loop deletes the problem:
+<Novelty>after each 1.6 s chunk executes, the real camera frames overwrite the model's predicted
+frames in the KV cache</Novelty> — the environment hands back ground truth every chunk, something no
+offline video generator gets. And the autoregressive chaining is applied <Finding src="§3.1, p.7">to
+the video modality only, "to avoid error propagation coming from closed-loop action
+prediction"</Finding> — past *predicted actions* are not what future chunks condition on.
+
+<Pass title="Background · the real-time loop: 5.7 s → 150 ms, and who waits for whom">
+Naively, 16 denoising steps × a 14B DiT ≈ 5.7 s per chunk — the robot would freeze between
+thoughts. The paper's fix is architectural, not model-side: run inference and execution
+**asynchronously**. The controller streams the current 48-action chunk at 30 Hz (1.6 s of motion)
+while the GPU denoises the *next* chunk from the latest observation; the deadline stops being
+"finish before moving" and becomes "finish before the current chunk runs out" (~200 ms budget).
+
+<figure>
+<svg viewBox="0 0 640 150" style="max-width:100%;height:auto" role="img" aria-label="Two timelines: the robot lane executes 1.6-second action chunks back to back at 30 Hz while the GPU lane denoises the next chunk in about 150 milliseconds and hands it over before the current chunk expires.">
+  <defs>
+    <marker id="arrTimB" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker>
+  </defs>
+  <g fill="currentColor" font-size="11.5">
+    <text x="10" y="48">robot · 30 Hz</text>
+    <text x="10" y="108">GPU · 2×GB200</text>
+  </g>
+  <g fill="none" stroke="currentColor" stroke-width="1.1">
+    <rect x="120" y="32" width="150" height="24" rx="4" style="fill:var(--soft)"/>
+    <rect x="272" y="32" width="150" height="24" rx="4" style="fill:var(--soft)"/>
+    <rect x="424" y="32" width="150" height="24" rx="4" style="fill:var(--soft)"/>
+  </g>
+  <g fill="none" style="stroke:var(--accent)" stroke-width="1.4">
+    <rect x="238" y="92" width="20" height="24" rx="4"/>
+    <rect x="390" y="92" width="20" height="24" rx="4"/>
+    <rect x="542" y="92" width="20" height="24" rx="4"/>
+  </g>
+  <g style="stroke:var(--accent)" stroke-width="1.1" stroke-dasharray="3 3" fill="none">
+    <line x1="258" y1="92" x2="272" y2="58" marker-end="url(#arrTimB)"/>
+    <line x1="410" y1="92" x2="424" y2="58" marker-end="url(#arrTimB)"/>
+  </g>
+  <g fill="currentColor" font-size="10.5" text-anchor="middle">
+    <text x="195" y="47">execute chunk k · 1.6 s</text>
+    <text x="347" y="47">execute chunk k+1</text>
+    <text x="499" y="47">execute chunk k+2</text>
+    <text x="248" y="132">≈150 ms</text>
+    <text x="400" y="132">denoise next</text>
+    <text x="316" y="80" style="fill:var(--accent)">hand over before expiry</text>
+  </g>
+</svg>
+<figcaption>Asynchronous closed-loop execution (§3.2.2). The ~7 Hz headline is the re-planning rate
+of the accent lane; motion itself is continuous at 30 Hz.</figcaption>
+</figure>
+
+The 38× stack that gets one denoise pass to ~150 ms: CFG parallelism across 2 GPUs (−47%/step),
+velocity caching (16 → 4 effective DiT steps), torch.compile + CUDA Graphs, NVFP4 quantization on
+Blackwell, and — for the Flash variant — the decoupled `Beta(7,1)` video-noise schedule that makes
+1-step video prediction workable (§3.2.3–3.2.6, Tab.1). Two GB200s are doing real work here; this is
+not consumer-GPU territory.
+</Pass>
+
+### B5 · The robot adapters: state encoder, action encoder, action decoder
+
+Everything robot-specific in Figure 4 lives in three deliberately small trained modules that
+translate between robot signals and the trunk's token space — the paper introduces them only as
+"minimal additional parameters" (§3.1); their exact shapes are Not reported.
+
+- **State encoder** — proprioception <M tex="q_k" /> (joint readings) → token(s) the trunk can
+  attend to. This is conditioning: "where my body is now".
+- **Action encoder** — the *noisy* chunk of 48 normalized
+  <Term def="the action is expressed as a change in each joint angle relative to the current position, rather than an absolute target pose; normalized per-dimension; idle (no-motion) steps are filtered from training">relative joint deltas</Term>
+  → action tokens, so the DiT can denoise them exactly like video tokens.
+- **Action decoder** — denoised action tokens → the executable 48-step chunk for the 30 Hz
+  controller.
+
+Multi-view cameras are handled with the same minimalism: views are tiled into one frame rather than
+changing the architecture. The full trained-vs-frozen inventory of Figure 4:
+<Finding src="§4.1, p.11">trained — all DiT blocks + the three adapters; frozen — text encoder,
+image encoder, VAE (LoRA was tried and was worse)</Finding>. This inventory is also the
+cross-embodiment story in miniature: the trunk and its video prior are body-agnostic; the adapters
+(and the implicit inverse dynamics they feed) are the embodiment-specific part that few-shot
+adaptation re-fits.
+
+### B6 · Figure 4, walked end to end
+
+<figure>
+<svg viewBox="0 0 880 470" style="max-width:100%;height:auto" role="img" aria-label="DreamZero architecture redrawn: camera frames, instruction, joint state and noise are encoded into tokens, denoised jointly by a causal DiT initialized from Wan2.1, then decoded into predicted video and a 48-step action chunk; after execution, real camera frames overwrite the predicted frames in the KV cache.">
+  <defs>
+    <marker id="arrFigC" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker>
+    <marker id="arrFigD" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" style="fill:var(--accent)"/></marker>
+  </defs>
+  <g fill="none" stroke="currentColor" stroke-width="1.2">
+    <rect x="16" y="34" width="168" height="40" rx="7" style="fill:var(--soft)"/>
+    <rect x="238" y="34" width="130" height="40" rx="7" stroke-dasharray="5 3" style="fill:var(--soft)"/>
+    <rect x="16" y="104" width="168" height="40" rx="7" style="fill:var(--soft)"/>
+    <rect x="238" y="104" width="130" height="40" rx="7" stroke-dasharray="5 3" style="fill:var(--soft)"/>
+    <rect x="16" y="174" width="168" height="40" rx="7" style="fill:var(--soft)"/>
+    <rect x="238" y="174" width="130" height="40" rx="7" style="fill:var(--soft);stroke:var(--accent)"/>
+    <rect x="16" y="244" width="168" height="40" rx="7" style="fill:var(--soft)"/>
+    <rect x="16" y="314" width="168" height="40" rx="7" style="fill:var(--soft)"/>
+    <rect x="238" y="314" width="130" height="40" rx="7" style="fill:var(--soft);stroke:var(--accent)"/>
+    <rect x="418" y="60" width="200" height="300" rx="10" style="fill:var(--soft)"/>
+    <rect x="672" y="88" width="126" height="40" rx="7" stroke-dasharray="5 3" style="fill:var(--soft)"/>
+    <rect x="672" y="288" width="126" height="40" rx="7" style="fill:var(--soft);stroke:var(--accent)"/>
+    <rect x="672" y="392" width="126" height="44" rx="7" style="fill:var(--soft)"/>
+  </g>
+  <g stroke="currentColor" stroke-width="1.2" marker-end="url(#arrFigC)" fill="none">
+    <line x1="184" y1="54" x2="232" y2="54"/>
+    <line x1="368" y1="54" x2="440" y2="76"/>
+    <line x1="184" y1="124" x2="232" y2="124"/>
+    <line x1="368" y1="124" x2="424" y2="140"/>
+    <line x1="184" y1="194" x2="232" y2="194"/>
+    <line x1="368" y1="194" x2="412" y2="200"/>
+    <line x1="184" y1="264" x2="412" y2="256"/>
+    <line x1="184" y1="334" x2="232" y2="334"/>
+    <line x1="368" y1="334" x2="412" y2="316"/>
+    <line x1="618" y1="108" x2="666" y2="108"/>
+    <line x1="618" y1="308" x2="666" y2="308"/>
+    <line x1="735" y1="328" x2="735" y2="386"/>
+  </g>
+  <path d="M 735 436 L 735 448 C 735 458, 726 462, 714 462 L 34 462 C 20 462, 8 454, 8 440 L 8 70 C 8 60, 11 54, 16 54" fill="none" style="stroke:var(--accent)" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#arrFigD)"/>
+  <g fill="currentColor" font-size="11.5" text-anchor="middle">
+    <text x="100" y="51">① camera frames (3 views, tiled)</text>
+    <text x="100" y="66" opacity="0.6">history, up to 6.6 s</text>
+    <text x="303" y="58">VAE encode · frozen</text>
+    <text x="100" y="128">② instruction c</text>
+    <text x="303" y="128">text encoder · frozen</text>
+    <text x="100" y="198">③ joint state q</text>
+    <text x="303" y="198">state encoder · trained</text>
+    <text x="100" y="261">④ noise + timestep t</text>
+    <text x="100" y="276" opacity="0.6">noisy video latents z(t)</text>
+    <text x="100" y="331">④ noise + timestep t</text>
+    <text x="100" y="346" opacity="0.6">noisy action chunk a(t)</text>
+    <text x="303" y="338">action encoder · trained</text>
+    <text x="518" y="88">⑤ Causal DiT × N · trained</text>
+    <text x="518" y="104" opacity="0.6">init: Wan2.1-I2V 14B</text>
+    <text x="518" y="132" opacity="0.6">one token sequence:</text>
+    <text x="518" y="147" opacity="0.6">[ text · state · past chunks (KV) ·</text>
+    <text x="518" y="162" opacity="0.6">noisy video · noisy action ]</text>
+    <text x="518" y="192" opacity="0.6">masked joint self-attention</text>
+    <text x="518" y="207" opacity="0.6">t modulates every block (adaLN)</text>
+    <text x="518" y="237" opacity="0.6">output: joint velocity for</text>
+    <text x="518" y="252" opacity="0.6">video + action tokens</text>
+    <text x="518" y="282" opacity="0.6">integrate velocity → clean tokens</text>
+    <text x="642" y="98" opacity="0.7">clean video latents</text>
+    <text x="735" y="106">⑥ VAE decode · frozen</text>
+    <text x="735" y="121" opacity="0.6">imagined next 1.6 s</text>
+    <text x="642" y="298" opacity="0.7">clean action tokens</text>
+    <text x="735" y="306">⑦ action decoder · trained</text>
+    <text x="735" y="321" opacity="0.6">48 joint deltas → 30 Hz</text>
+    <text x="735" y="410">robot + environment</text>
+    <text x="735" y="425" opacity="0.6">executes 1.6 s chunk</text>
+    <text x="360" y="455" style="fill:var(--accent)">⑧ after execution: real camera frames overwrite the predicted frames in the KV cache</text>
+  </g>
+</svg>
+<figcaption>Figure 4, redrawn as a data-flow. Dashed boxes are frozen; accent-bordered boxes are the
+new robot adapters; the accent loop is the closed-loop observation overwrite that no offline video
+generator has. Badge numbers key into the walkthrough below.</figcaption>
+</figure>
+
+<Stepper steps={[
+  { title: "① Encode what the robot sees", body: "The three camera views are tiled into one frame and pushed through the frozen Wan2.1 VAE. Up to 4 past chunks (8 latent frames ≈ 6.6 s) sit in the KV cache as clean context — at inference these are real observations, not predictions." },
+  { title: "② + ③ Encode instruction and body", body: "The frozen text encoder turns the instruction c into tokens; the trained state encoder turns current joint readings q into a token. Both are conditioning — the model reads them, never predicts them." },
+  { title: "④ Corrupt the chunk being learned/generated", body: "Take the current chunk's 2 latent frames and 48 normalized joint-delta actions, and blend both with Gaussian noise at the SAME level t (Eq. 2). At inference this starts at pure noise, t = 0." },
+  { title: "⑤ One denoising trunk for everything", body: "All tokens enter one Causal DiT: masked self-attention lets noisy video and action tokens read each other, the clean past, and the conditioning; t modulates every block. The output is the joint straight-line velocity of Eq. 3 — training regresses it, inference integrates it (16 steps, cached to ~4)." },
+  { title: "⑥ The imagined future (video branch)", body: "Integrated video tokens are decoded by the frozen VAE into the predicted next 1.6 s — the plan you can watch. In training this branch is also where web-scale video priors keep doing the semantic heavy lifting." },
+  { title: "⑦ The motor plan (action branch)", body: "Integrated action tokens pass through the trained action decoder into 48 relative joint deltas, streamed by the 30 Hz controller. This readout — visual future in, motor commands out — is the implicit inverse dynamics, and the embodiment-specific part." },
+  { title: "⑧ Close the loop", body: "While the arm executes the 1.6 s chunk, the GPU already denoises the next one (~150 ms). When the chunk finishes, the REAL camera frames replace the model's predicted frames in the KV cache — teacher-forcing conditions are restored at inference, and autoregressive drift is erased every chunk." },
+]} />
+
+<SelfCheck q="Why do video and action share one noise level t within a chunk, when Flash later breaks that?" a="Sharing t couples the two regressions so the action tokens are always denoising toward the same imagined future as the video tokens — the paper credits it with faster early-training convergence (§3.1) and it is the mechanical meaning of 'aligned' prediction. Flash decouples them only at the schedule level (video t from Beta(7,1), action t uniform) to buy 1-step video inference, and pays a measured quality cost (Tab.3)." />
+<SelfCheck q="What exactly breaks if you delete the KV-cache observation overwrite?" a="The model becomes a standard autoregressive video generator at inference: each chunk conditions on its own predicted frames, the train-time teacher-forcing assumption (clean context) is violated, and small prediction errors compound across chunks — drift. The overwrite restores ground-truth context after every 1.6 s chunk, which is only possible because a robot, unlike an offline generator, gets to observe the world it just acted in." />
+<SelfCheck q="Which parts of Figure 4 would you re-train for a new robot, and which come for free?" a="For free: the frozen VAE/text encoder and — crucially — the video-pretrained DiT trunk with its physics/semantics prior. Embodiment-specific: the state encoder, action encoder, action decoder, and the visual-future→joint-command mapping they implement (the implicit IDM). That is exactly the split behind the paper's cross-embodiment results: video-only data teaches the trunk new tasks with no action labels, while adapting to a new body (YAM) means re-fitting the adapters on ~30 min of data." />
+
 ## Methodology
 One 14B autoregressive diffusion transformer, initialized from Wan2.1-I2V-14B-480P, takes visual context (VAE latents), a language instruction (frozen text encoder), and proprioception (new state encoder), and emits future video frames and a future action chunk through separate decoders. Video and action latents are corrupted with shared noise levels and denoised together under one flow-matching objective, with teacher forcing over chunks. At inference the model denoises a chunk, ships the action chunk to an asynchronous controller, then replaces its own predicted frames with the real camera observation in the KV cache before the next chunk. Only the DiT blocks and the small state/action encoders and action decoder are trained; text encoder, image encoder and VAE stay frozen (LoRA was tried and reported worse, §4.1, p.11).
 

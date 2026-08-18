@@ -15,6 +15,7 @@ behavior lives in the site; here is the authoring contract.
 | `<TLDR>` | one-sentence takeaway (top of every summary) | `<TLDR>SWE-bench evaluates LLMs on real GitHub issues via hidden tests.</TLDR>` |
 | `<WhyItMatters>` | 1–2 lines of relevance | `<WhyItMatters>Foundational for my SWE-agent track.</WhyItMatters>` |
 | `<Pass title="…">` | collapsible depth (collapsed by default) | wrap method internals / full results |
+| `<Definition term="…">` | formal, mathematical definition (textbook register) | `<Definition term="Marginal velocity field"><MathBlock>…</MathBlock></Definition>` |
 
 ## Semantic highlights — one colour per meaning (consistent across all summaries)
 Use these for their MEANING, not decoration. Colours work in light + dark mode.
@@ -72,6 +73,9 @@ element that carries meaning, label the arrows, wrap in `<figure>` + `<figcaptio
 svg `role="img"` + an `aria-label`, and keep marker/gradient ids unique per page.
 
 ## Rules
+- **Formal definitions are explicit.** Every formal, mathematical definition goes inside a
+  `<Definition term="…">` block — never plain prose. Intuition and analogy stay outside the
+  block; the block holds the precise statement (equations welcome).
 - **Knowledge concepts are self-contained.** A concept page assumes no prior exposure:
   define every academic/technical term at first use with `<Term def="…">` and end the
   page with a `## Glossary` section collecting those definitions (same convention as

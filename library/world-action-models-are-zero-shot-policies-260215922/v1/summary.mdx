@@ -97,16 +97,20 @@ DreamZero instantiates flow matching jointly over video latents and action laten
 <M tex="t=0" />, data at <M tex="t=1" /> (Eq. 2) — so the actions always denoise toward the same
 imagined future as the video, which is the mechanical meaning of "aligned" prediction:
 
+<Definition term="Joint corruption and velocity target (Eq. 2)">
 <MathBlock>{`z_t = t\\,z_1 + (1-t)\\,z_0, \\qquad a_t = t\\,a_1 + (1-t)\\,a_0, \\qquad z_0,\\ a_0 \\sim \\mathcal{N}(0, I)`}</MathBlock>
 
 <MathBlock>{`v \\;=\\; [\\,z_1,\\ a_1\\,] - [\\,z_0,\\ a_0\\,]`}</MathBlock>
+</Definition>
 
 <Pass title="The full loss (Eq. 3), CFG parallelism, and the Flash schedule">
 One trunk <M tex="u_\theta" /> regresses the joint velocity, conditioned on the clean previous
 chunks <M tex="\mathcal{C}_k = \{(z^{i}_{1}, a^{i}_{1})\}_{i=1}^{k-1}" />, the instruction
 <M tex="c" /> and proprioception <M tex="q_k" />:
 
+<Definition term="DreamZero training objective (Eq. 3)">
 <MathBlock>{`\\mathcal{L}(\\theta) = \\mathbb{E}\\left[ \\frac{1}{M} \\sum_{k=1}^{M} w(t_k)\\, \\bigl\\| u_\\theta\\bigl([\\,z^{k}_{t_k}, a^{k}_{t_k}\\,];\\ \\mathcal{C}_k,\\ c,\\ q_k,\\ t_k\\bigr) - v^{k} \\bigr\\|^{2} \\right]`}</MathBlock>
+</Definition>
 
 The per-timestep weight <M tex="w(t_k)" /> is predefined; its form is Not reported. Inference uses
 16 denoising steps for smooth actions, cut to ~4 effective DiT calls by caching directionally

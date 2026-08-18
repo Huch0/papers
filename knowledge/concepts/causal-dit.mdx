@@ -110,7 +110,15 @@ frames paired with <M tex="H=48" /> actions, 1.6 s of world — under a **block-
 chunk being denoised attends to all *finished* chunks and to itself, never the future. Finished
 chunks persist as a
 <Term def="cached key/value tensors of already-processed tokens; an autoregressive model re-reads its whole past for the price of a lookup instead of recomputation">KV cache</Term>,
-so context grows almost for free. **Fig. DIT-2 (interactive)** — explore the three masks, and the
+so context grows almost for free.
+
+<Definition term="Block-causal attention mask">
+Group the sequence into chunks <M tex="1, \dots, M" />. A query token in chunk <M tex="i" /> may
+attend to a key token in chunk <M tex="j" /> iff <M tex="j < i" /> (finished, clean context) or
+<M tex="j = i" /> (its own window, bidirectional). Conditioning tokens (text, proprioception) are
+attendable from every chunk.
+</Definition>
+ **Fig. DIT-2 (interactive)** — explore the three masks, and the
 one move unique to robot world models:
 
 <AttnMask />

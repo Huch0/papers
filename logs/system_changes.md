@@ -210,3 +210,21 @@ Each entry: date, trigger, change, files touched, migration status.
   velocities, the loop generates; 16 -> 4 -> 1 steps) cross-linked to the
   flow-matching page. Glossary +4 (causal video VAE, patchify, adaLN-Zero,
   action chunk); +1 SelfCheck (why 33 not 32).
+
+## 2026-08-18 — causal-dit deep detail: causal 3-D conv mechanics, real dimensions, adaLN intent, Fourier features
+
+- Follow-up to five "you are skipping details" questions: Fig. DIT-3 fully redrawn
+  as two panels — (a) WaveNet-style time-unrolled causal convolution (left-padding,
+  backward-leaning edges, stride-2 stages giving the ÷4, accent anchor path,
+  centered-kernel contrast inset) and (b) the dimension pipeline with Wan2.1's
+  public config (3×33×480×832 raw → 16×(1+8)×60×104 latents → 60×104 grid of
+  16-dim vectors → 1×2×2 patch = 64 numbers → d=5120 tokens, 1,560/latent frame,
+  ~48× compression). Formal <Definition> for causal temporal convolution.
+- Reconciled the 8↔33 arithmetic precisely: anchor rides alongside the 8 chunked
+  latent frames (1 + 8×4 = 33); SelfCheck answer updated.
+- New "Why scaling-and-shifting?" section: token-vs-concat-vs-FiLM comparison,
+  LN as the natural injection site, adaLN-Zero identity-init stability, DiT
+  ablation result. New "Why sinusoidal features?" section with a formal
+  <Definition> + equation and new Fig. DIT-6 (sample-the-wave-bank picture);
+  spectral-bias rationale. Glossary +4 (receptive field, strided convolution,
+  FiLM, sinusoidal features); +1 SelfCheck (why inject t at all 40 blocks).

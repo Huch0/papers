@@ -66,5 +66,53 @@ frames can overwrite the predicted frames in the KV cache, restoring teacher-for
 every chunk (DreamZero, §3.1 — toggle it in Fig. DIT-2’s inference tab). Cousin fixes in the
 offline world — noise injection on context, diffusion forcing — only soften the mismatch;
 observation overwrite deletes it, at the price of needing an environment that answers back.</p>
+<h2 id="glossary">Glossary</h2>
+<ul>
+<li>
+<span class="term" data-def="a fixed-width vector in the transformer's working space; every input (latent patch, word piece, action slice, state reading) becomes one before entering the blocks" tabindex="0" aria-label="a fixed-width vector in the transformer's working space; every input (latent patch, word piece, action slice, state reading) becomes one before entering the blocks">token</span>
+</li>
+<li>
+<span class="term" data-def="the compressed representation a VAE encoder produces from pixels; all generation happens on these small grids, pixels only appear at the ends" tabindex="0" aria-label="the compressed representation a VAE encoder produces from pixels; all generation happens on these small grids, pixels only appear at the ends">latent</span>
+</li>
+<li>
+<span class="term" data-def="variational autoencoder: encoder compressing frames into latents + decoder reconstructing pixels; trained once, then frozen and reused" tabindex="0" aria-label="variational autoencoder: encoder compressing frames into latents + decoder reconstructing pixels; trained once, then frozen and reused">VAE</span>
+</li>
+<li>
+<span class="term" data-def="a small tile of the latent grid; one patch becomes one token" tabindex="0" aria-label="a small tile of the latent grid; one patch becomes one token">patch</span>
+</li>
+<li>
+<span class="term" data-def="each token reads a weighted mix of all (unmasked) tokens; the weights are computed from the tokens themselves" tabindex="0" aria-label="each token reads a weighted mix of all (unmasked) tokens; the weights are computed from the tokens themselves">self-attention</span>
+</li>
+<li>
+<span class="term" data-def="adaptive layer norm: the timestep (and other conditioning) is turned into per-block scale and shift applied at the normalization layers — how one network denoises at every noise level (Peebles &#38; Xie 2023)" tabindex="0" aria-label="adaptive layer norm: the timestep (and other conditioning) is turned into per-block scale and shift applied at the normalization layers — how one network denoises at every noise level (Peebles &#38; Xie 2023)">adaLN</span>
+</li>
+<li>
+<span class="term" data-def="a learned vector encoding the scalar denoising time t, fed to every block via adaLN" tabindex="0" aria-label="a learned vector encoding the scalar denoising time t, fed to every block via adaLN">timestep embedding</span>
+</li>
+<li>
+<span class="term" data-def="the block's input added back to its output; keeps deep stacks trainable" tabindex="0" aria-label="the block's input added back to its output; keeps deep stacks trainable">residual</span>
+</li>
+<li>
+<span class="term" data-def="cached key/value tensors of already-processed tokens; the model re-reads its whole past for the price of a lookup instead of recomputation" tabindex="0" aria-label="cached key/value tensors of already-processed tokens; the model re-reads its whole past for the price of a lookup instead of recomputation">KV cache</span>
+</li>
+<li>
+<span class="term" data-def="attention rule at chunk granularity: full attention within a chunk, causal (past-only) across chunks" tabindex="0" aria-label="attention rule at chunk granularity: full attention within a chunk, causal (past-only) across chunks">block-causal mask</span>
+</li>
+<li>
+<span class="term" data-def="the generation unit: a short span of latent frames and their aligned actions denoised together (DreamZero: 2 latent frames + 48 actions = 1.6 s)" tabindex="0" aria-label="the generation unit: a short span of latent frames and their aligned actions denoised together (DreamZero: 2 latent frames + 48 actions = 1.6 s)">chunk</span>
+</li>
+<li>
+<span class="term" data-def="training on ground-truth past context rather than the model's own predictions; stable, but mismatched with inference" tabindex="0" aria-label="training on ground-truth past context rather than the model's own predictions; stable, but mismatched with inference">teacher forcing</span>
+</li>
+<li>
+<span class="term" data-def="compounding error when an autoregressive model conditions on its own imperfect outputs; small mistakes feed back and grow" tabindex="0" aria-label="compounding error when an autoregressive model conditions on its own imperfect outputs; small mistakes feed back and grow">drift</span>
+</li>
+<li>
+<span class="term" data-def="after a chunk executes, real camera frames replace the model's predicted frames in the KV cache — restoring teacher-forcing conditions at inference; available only to closed-loop (robot) models" tabindex="0" aria-label="after a chunk executes, real camera frames replace the model's predicted frames in the KV cache — restoring teacher-forcing conditions at inference; available only to closed-loop (robot) models">observation overwrite</span>
+</li>
+<li>
+<span class="term" data-def="a model generating one fixed-length clip with every frame attending to every other; no notion of 'now', so unusable for control" tabindex="0" aria-label="a model generating one fixed-length clip with every frame attending to every other; no notion of 'now', so unusable for control">bidirectional video model</span>
+</li>
+</ul>
 <details class="selfcheck"> <summary>Why does chunk-causal generation matter for a robot, beyond latency?</summary> <div>Alignment and statefulness. Bidirectional models need fixed-length windows, which forces video subsampling that distorts the correspondence between frame time and action time; causal chunks preserve native rates. And the KV cache is a visual memory: each new chunk conditions on up to 6.6 s of actual history — at inference, real observed history, thanks to the overwrite.</div> </details>
 <details class="selfcheck"> <summary>Where exactly does the LLM analogy break?</summary> <div>Two places. Tokens within a chunk are denoised jointly with bidirectional attention among themselves (an LLM is causal token-by-token), and the model predicts continuous velocities for latent patches rather than a softmax over a vocabulary. The causal structure lives at chunk granularity, not token granularity.</div> </details> </article> <section class="backlinks"> <h2>Referenced by</h2> <h3>Papers</h3><ul><li><a href="/papers/papers/arxiv-2602.15922/">World Action Models are Zero-shot Policies</a></li></ul> <h3>Concepts</h3><ul><li><a href="/papers/knowledge/flow-matching/">Flow Matching</a></li></ul> </section></main> </body></html>

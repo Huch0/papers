@@ -117,6 +117,16 @@ details.pass > summary { font-weight: 600; cursor: pointer; }
 .chart .col { display: flex; flex-direction: column; align-items: center; gap: .2rem; font-size: .75rem; }
 figure.fig { margin: .6rem 0; } figure.fig img { max-width: 100%; border: 1px solid var(--line); border-radius: 6px; }
 figure.fig figcaption { color: var(--mut); font-size: .85rem; }
+/* Per-figure zoom wrapper */
+.figzoom { margin: .85rem 0; }
+.figzoom-bar { display: flex; gap: .4rem; align-items: center; justify-content: flex-end;
+  font-size: .75rem; color: var(--mut); margin-bottom: .2rem; }
+.figzoom-bar button { border: 1px solid var(--line); background: var(--soft); color: inherit;
+  border-radius: 5px; padding: 0 .55rem; line-height: 1.6; cursor: pointer; font-size: .85rem; }
+.figzoom-bar button:hover { border-color: var(--accent); color: var(--accent); }
+.figzoom figure { margin: .2rem 0; }
+.figzoom svg { display: block; }
+
 /* Formal definition block (math-textbook register) */
 .definition { border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 6px;
   background: var(--soft); padding: .55rem .85rem .6rem; margin: .85rem 0; }

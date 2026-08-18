@@ -44,13 +44,13 @@ export default function AttnMaskIsland() {
       style={{ width: "100%", maxWidth: 380, height: "auto", display: "block" }} role="img"
       aria-label="Attention mask grid: noisy video and action tokens attend to clean context frames and to each other.">
       {WINDOW.map((k, j) => (
-        <text key={"c" + j} x={pad + j * cell + cell / 2} y={pad - 10} textAnchor="middle" fontSize="11"
+        <text key={"c" + j} x={pad + j * cell + cell / 2} y={pad - 10} textAnchor="middle" fontSize="15.5"
           fill={k.kind === "ctx" ? (tab === 2 ? (overwrite ? REAL : PRED) : "currentColor") : "currentColor"}
           opacity={k.kind === "ctx" ? 0.95 : 0.65} fontWeight={k.kind === "ctx" ? 600 : 400}>{k.id}</text>
       ))}
       {WINDOW.map((q, i) => (
         <g key={"r" + i} onMouseEnter={() => setRow(i)} onClick={() => setRow(i)} style={{ cursor: "pointer" }}>
-          <text x={pad - 8} y={pad + i * cell + cell / 2 + 4} textAnchor="end" fontSize="11"
+          <text x={pad - 8} y={pad + i * cell + cell / 2 + 4} textAnchor="end" fontSize="15.5"
             fill="currentColor" opacity={q.kind === "ctx" ? 0.4 : 0.85}
             fontWeight={row === i ? 700 : 400}>{q.id}</text>
           {WINDOW.map((k, j) => {
@@ -67,9 +67,9 @@ export default function AttnMaskIsland() {
           })}
         </g>
       ))}
-      <text x={pad - 34} y={pad + (n * cell) / 2} fontSize="10" fill="currentColor" opacity="0.5"
+      <text x={pad - 34} y={pad + (n * cell) / 2} fontSize="14" fill="currentColor" opacity="0.5"
         transform={"rotate(-90 " + (pad - 34) + " " + (pad + (n * cell) / 2) + ")"} textAnchor="middle">query</text>
-      <text x={pad + (n * cell) / 2} y={16} fontSize="10" fill="currentColor" opacity="0.5" textAnchor="middle">key / value</text>
+      <text x={pad + (n * cell) / 2} y={16} fontSize="14" fill="currentColor" opacity="0.5" textAnchor="middle">key / value</text>
     </svg>
   );
 
@@ -77,11 +77,11 @@ export default function AttnMaskIsland() {
     <svg viewBox="0 0 360 220" style={{ width: "100%", maxWidth: 380, height: "auto", display: "block" }} role="img"
       aria-label="Block-causal mask over four chunks: each chunk attends to all earlier clean chunks and to itself.">
       {CHUNKS.map((c, j) => (
-        <text key={"h" + j} x={110 + j * 60 + 26} y={40} textAnchor="middle" fontSize="11" fill="currentColor" opacity="0.7">{c}</text>
+        <text key={"h" + j} x={110 + j * 60 + 26} y={40} textAnchor="middle" fontSize="15.5" fill="currentColor" opacity="0.7">{c}</text>
       ))}
       {CHUNKS.map((rq, i) => (
         <g key={i}>
-          <text x={100} y={58 + i * 42 + 20} textAnchor="end" fontSize="11" fill="currentColor" opacity="0.85">{rq} (noisy)</text>
+          <text x={100} y={58 + i * 42 + 20} textAnchor="end" fontSize="15.5" fill="currentColor" opacity="0.85">{rq} (noisy)</text>
           {CHUNKS.map((_, j) => (
             <rect key={j} x={110 + j * 60} y={58 + i * 42} width="52" height="32" rx="4"
               fill={j < i ? "var(--accent)" : j === i ? "none" : "var(--soft)"}
@@ -91,7 +91,7 @@ export default function AttnMaskIsland() {
           ))}
         </g>
       ))}
-      <text x={330} y={210} textAnchor="end" fontSize="10" fill="currentColor" opacity="0.55">solid = reads clean chunk · dashed = its own noisy tokens</text>
+      <text x={330} y={210} textAnchor="end" fontSize="14" fill="currentColor" opacity="0.55">solid = reads clean chunk · dashed = its own noisy tokens</text>
     </svg>
   );
 

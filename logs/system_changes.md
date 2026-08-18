@@ -259,3 +259,15 @@ Each entry: date, trigger, change, files touched, migration status.
   bus with four labeled taps. Every label owns its own row/gutter by
   construction; plain-words sublines on every op; shapes on the wires.
   Surrounding Part-3 prose updated to the same-wrapper-applied-twice framing.
+
+## 2026-08-18 — figure text size floor + per-figure zoom (FigZoom)
+
+- User: figure text too small; wants paragraph-comparable size and per-figure
+  resizing. Added <FigZoom> (ADR-0002 path): a wrapper island giving every
+  figure −/+/reset controls (60–300%), scrolling horizontally inside its own
+  viewport when enlarged. All 12 inline-SVG figures across causal-dit,
+  flow-matching and the DreamZero summary wrapped; all SVG label fonts bumped
+  mechanically (×1.4, floor 13px at 880-wide viewBox ≈ body-comparable once
+  scaled) — 141 attributes across the three docs plus both interactive islands.
+  Convention recorded in config/summary_components.md (wrap sizable SVG figures
+  in FigZoom; keep labels ≥13px).

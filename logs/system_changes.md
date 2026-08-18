@@ -228,3 +228,21 @@ Each entry: date, trigger, change, files touched, migration status.
   <Definition> + equation and new Fig. DIT-6 (sample-the-wave-bank picture);
   spectral-bias rationale. Glossary +4 (receptive field, strided convolution,
   FiLM, sinusoidal features); +1 SelfCheck (why inject t at all 40 blocks).
+
+## 2026-08-18 — causal-dit fully rewritten as a taught narrative
+
+- User verdict: figures stated shapes without showing transformations; page had
+  grown by accretion. Complete rewrite around one running example (1.6 s of one
+  832×480 view) traced pixels → cells → latent frames → tiles → 64-number rows →
+  5120-wide tokens, organized as Parts 1–5 with a map. New Fig. DIT-7 (an 8×8
+  pixel block of 192 numbers visibly becoming one 16-number cell; frame → 60×104
+  cell grid; 4-frames→1 merge; K=2 slabs), new Fig. DIT-8 (patchify exploded:
+  the 2×2 tile cut out, its 4×16=64 numbers flattened, ×W(5120×64) → one token;
+  the 3,120+48+text/state token list), the "becomes-what" ledger table with the
+  key insight (patchify regroups 199,680 numbers unchanged; the embedding then
+  EXPANDS into working width — compression was the VAE's job), Fig. DIT-1
+  regenerated with shapes on every wire (n×5120 lane, 40 heads × 128, n×n
+  weights, 5120→13824→5120 MLP, t→256→5120→6×5120 conditioning lane), Fig. DIT-3
+  reduced to the causality unroll alone, and an un-patchify paragraph closing
+  the loop in Part 5. All prior Definitions, DIT-2/4/5/6 figures, Glossary and
+  SelfChecks carried into the new structure.

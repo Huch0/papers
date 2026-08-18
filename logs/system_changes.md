@@ -180,3 +180,17 @@ Each entry: date, trigger, change, files touched, migration status.
   flow matching, Marginal velocity field, Rectified flow — 5 blocks), causal-dit
   (Block-causal attention mask), DreamZero summary (Eq. 2 corruption/velocity,
   Eq. 3 objective).
+
+## 2026-08-18 — visualizing u(x, t): field view + spacetime + filmstrip
+
+- User asked for the best way to visualize a time-dependent velocity field and
+  whether a 3-D time-axis plot is workable. Added to knowledge/flow-matching:
+  a "How do you picture u(x, t)?" section presenting the three honest views —
+  (1) FlowMatch island gained a third tab, "Field: the marginal wind", drawing
+  the toy's EXACT marginal field (closed form: softmax-weighted data mean minus
+  position over remaining time; formula + derivation Pass on the page) as an
+  arrow grid under the t-slider; (2) new static Fig. FM-3, a 1-D spacetime slope
+  field with exact integrated marginal trajectories (conditional lines cross,
+  marginal ODE curves cannot — computed, not sketched); (3) new static Fig. FM-4,
+  a probability-path filmstrip. Text explains why a literal 3-D rendering is
+  avoided (projection ambiguity) — a slider is the 3-D plot, sliced.

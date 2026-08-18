@@ -45,7 +45,7 @@ Legacy aliases still work: `<Claim>`→finding, `<Evidence src>`→finding, `<Li
 | `<Figure src="…" caption="…" zoom />` | strings | a diagram/figure (image hosted in the version dir or remote) |
 | `<MathBlock>…</MathBlock>` | KaTeX | a key **display** equation |
 | `<M tex="…" />` | KaTeX | **inline** math inside prose (`<M tex="q_t" />`, `<M tex="\pi(a \mid o)" />`) |
-| `<FlowMatch />` | none | **interactive** flow-matching explainer: toy 2-D noise→data transport with a t-slider, straight-line paths, velocity arrows, generate/train views (convention t=0 noise → t=1 data) |
+| `<FlowMatch />` | none | **interactive** flow-matching explainer: toy 2-D noise→data transport with a t-slider; generate/train views plus a **field view** rendering the toy's exact marginal field as an arrow grid (convention t=0 noise → t=1 data) |
 | `<AttnMask />` | none | **interactive** attention-mask explorer for chunked/causal DiTs: training window, block-causal-over-chunks, and KV-cache views with an observation-overwrite toggle; hover a query row to read its receptive field |
 | `<Compare a={…} b={…} />` | nodes | A/B contrast |
 | `<SelfCheck q="…" a="…" />` | strings | a quick comprehension check |

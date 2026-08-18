@@ -142,7 +142,7 @@ export default function FlowMatchIsland() {
         aria-label="Toy flow matching. Generate and train views: points travel straight lines from a Gaussian noise cloud to a smiley-shaped data distribution, with velocity arrows. Field view: an arrow grid showing the exact marginal velocity field at the chosen time, defined at every grid point without any particles.">
         {tab === "field" ? (
           <g>
-            <text x={W / 2} y={24} textAnchor="middle" fill="currentColor" opacity="0.65" fontSize="12">the marginal field u(x, t) — one arrow per point of space, particles optional</text>
+            <text x={W / 2} y={24} textAnchor="middle" fill="currentColor" opacity="0.65" fontSize="17">the marginal field u(x, t) — one arrow per point of space, particles optional</text>
             {data.map((d, i) => (
               <circle key={"d" + i} cx={d[0]} cy={d[1]} r="1.8" fill="currentColor" opacity="0.28" />
             ))}
@@ -160,10 +160,10 @@ export default function FlowMatchIsland() {
         ) : (
           <g>
             {sameSpace ? (
-              <text x={DATA_C[0]} y={26} textAnchor="middle" fill="currentColor" opacity="0.65" fontSize="12">noise and data share one space — arrows point every direction</text>
+              <text x={DATA_C[0]} y={26} textAnchor="middle" fill="currentColor" opacity="0.65" fontSize="17">noise and data share one space — arrows point every direction</text>
             ) : (<>
-              <text x={NOISE_C[0]} y={26} textAnchor="middle" fill="currentColor" opacity="0.65" fontSize="12">noise&nbsp; x₀ ~ N(0, I) &nbsp;(t = 0)</text>
-              <text x={DATA_C[0]} y={26} textAnchor="middle" fill="currentColor" opacity="0.65" fontSize="12">data&nbsp; x₁ &nbsp;(t = 1)</text>
+              <text x={NOISE_C[0]} y={26} textAnchor="middle" fill="currentColor" opacity="0.65" fontSize="17">noise&nbsp; x₀ ~ N(0, I) &nbsp;(t = 0)</text>
+              <text x={DATA_C[0]} y={26} textAnchor="middle" fill="currentColor" opacity="0.65" fontSize="17">data&nbsp; x₁ &nbsp;(t = 1)</text>
             </>)}
             {pos.map((p, i) => (
               <g key={i}>

@@ -131,12 +131,13 @@ thoughts. The paper's fix is architectural, not model-side: run inference and ex
 while the GPU denoises the *next* chunk from the latest observation; the deadline stops being
 "finish before moving" and becomes "finish before the current chunk runs out" (~200 ms budget).
 
+<FigZoom>
 <figure>
 <svg viewBox="0 0 640 150" style="max-width:100%;height:auto" role="img" aria-label="Two timelines: the robot lane executes 1.6-second action chunks back to back at 30 Hz while the GPU lane denoises the next chunk in about 150 milliseconds and hands it over before the current chunk expires.">
   <defs>
     <marker id="arrTimB" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker>
   </defs>
-  <g fill="currentColor" font-size="11.5">
+  <g fill="currentColor" font-size="16">
     <text x="10" y="48">robot · 30 Hz</text>
     <text x="10" y="108">GPU · 2×GB200</text>
   </g>
@@ -154,7 +155,7 @@ while the GPU denoises the *next* chunk from the latest observation; the deadlin
     <line x1="258" y1="92" x2="272" y2="58" marker-end="url(#arrTimB)"/>
     <line x1="410" y1="92" x2="424" y2="58" marker-end="url(#arrTimB)"/>
   </g>
-  <g fill="currentColor" font-size="10.5" text-anchor="middle">
+  <g fill="currentColor" font-size="14.5" text-anchor="middle">
     <text x="195" y="47">execute chunk k · 1.6 s</text>
     <text x="347" y="47">execute chunk k+1</text>
     <text x="499" y="47">execute chunk k+2</text>
@@ -166,6 +167,7 @@ while the GPU denoises the *next* chunk from the latest observation; the deadlin
 <figcaption><strong>Fig. DZ-1</strong> — asynchronous closed-loop execution (§3.2.2). The ~7 Hz headline is the re-planning rate
 of the accent lane; motion itself is continuous at 30 Hz.</figcaption>
 </figure>
+</FigZoom>
 
 The 38× stack that gets one denoise pass to ~150 ms: CFG parallelism across 2 GPUs (−47%/step),
 velocity caching (16 → 4 effective DiT steps), torch.compile + CUDA Graphs, NVFP4 quantization on
@@ -198,6 +200,7 @@ adaptation re-fits.
 
 ### Figure 4, walked end to end (Fig. DZ-2)
 
+<FigZoom>
 <figure>
 <svg viewBox="0 0 880 470" style="max-width:100%;height:auto" role="img" aria-label="DreamZero architecture redrawn: camera frames, instruction, joint state and noise are encoded into tokens, denoised jointly by a causal DiT initialized from Wan2.1, then decoded into predicted video and a 48-step action chunk; after execution, real camera frames overwrite the predicted frames in the KV cache.">
   <defs>
@@ -234,7 +237,7 @@ adaptation re-fits.
     <line x1="735" y1="328" x2="735" y2="386"/>
   </g>
   <path d="M 735 436 L 735 448 C 735 458, 726 462, 714 462 L 34 462 C 20 462, 8 454, 8 440 L 8 70 C 8 60, 11 54, 16 54" fill="none" style="stroke:var(--accent)" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#arrFigD)"/>
-  <g fill="currentColor" font-size="11.5" text-anchor="middle">
+  <g fill="currentColor" font-size="16" text-anchor="middle">
     <text x="100" y="51">① camera frames (3 views, tiled)</text>
     <text x="100" y="66" opacity="0.6">history, up to 6.6 s</text>
     <text x="303" y="58">VAE encode · frozen</text>
@@ -272,6 +275,7 @@ adaptation re-fits.
 new robot adapters; the accent loop is the closed-loop observation overwrite that no offline video
 generator has. Badge numbers key into the walkthrough below.</figcaption>
 </figure>
+</FigZoom>
 
 <Stepper steps={[
   { title: "① Encode what the robot sees", body: "The three camera views are tiled into one frame and pushed through the frozen Wan2.1 VAE. Up to 4 past chunks (8 latent frames ≈ 6.6 s) sit in the KV cache as clean context — at inference these are real observations, not predictions." },

@@ -46,6 +46,7 @@ Legacy aliases still work: `<Claim>`→finding, `<Evidence src>`→finding, `<Li
 | `<MathBlock>…</MathBlock>` | KaTeX | a key **display** equation |
 | `<M tex="…" />` | KaTeX | **inline** math inside prose (`<M tex="q_t" />`, `<M tex="\pi(a \mid o)" />`) |
 | `<FlowMatch />` | none | **interactive** flow-matching explainer: toy 2-D noise→data transport with a t-slider; generate/train views plus a **field view** rendering the toy's exact marginal field as an arrow grid (convention t=0 noise → t=1 data) |
+| `<FigZoom>…</FigZoom>` | wrap | per-figure zoom controls (−/+/reset, 60–300%; scrolls horizontally when enlarged) — wrap every sizable inline-SVG `<figure>` in one |
 | `<AttnMask />` | none | **interactive** attention-mask explorer for chunked/causal DiTs: training window, block-causal-over-chunks, and KV-cache views with an observation-overwrite toggle; hover a query row to read its receptive field |
 | `<Compare a={…} b={…} />` | nodes | A/B contrast |
 | `<SelfCheck q="…" a="…" />` | strings | a quick comprehension check |
@@ -66,6 +67,9 @@ If KaTeX cannot parse an expression the component falls back to the raw source (
 but harmless.
 
 ## Diagrams
+Wrap every sizable inline-SVG `<figure>` in `<FigZoom>…</FigZoom>` so readers can resize
+it, and keep SVG label text ≥ 13px at an 880-wide viewBox (roughly body-text size once the
+figure scales to the content column).
 Inline `<svg>` mechanism diagrams are allowed directly in the MDX body (they are markup,
 not bespoke components). Follow the house style: size via `viewBox` + `style="width:100%;height:auto"`,
 strokes/text in `currentColor` so both themes work, reserve `var(--accent)` for the one

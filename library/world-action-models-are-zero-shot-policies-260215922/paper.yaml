@@ -64,7 +64,9 @@ user:
   triage_confidence: medium
   notes: null
 milestone: null
-knowledge_concepts: []
+knowledge_concepts:
+- flow-matching
+- causal-dit
 versions:
 - version_key: v1
   version_label: arXiv v1

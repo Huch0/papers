@@ -72,6 +72,12 @@ element that carries meaning, label the arrows, wrap in `<figure>` + `<figcaptio
 svg `role="img"` + an `aria-label`, and keep marker/gradient ids unique per page.
 
 ## Rules
+- **General background belongs in the knowledge base.** Tutorial material reusable across
+  papers (e.g. flow matching, DiT architectures) lives in `knowledge/concepts/*.mdx`
+  (authored via `knowledge.py ensure-concept` + `link` for reciprocal paper links); the
+  summary links to those pages (relative `../../knowledge/<slug>/`) and keeps only
+  paper-specific background. Give every figure a stable id (`Fig. FM-1`, `Fig. DZ-2`, …)
+  in its caption and reference figures by id.
 - **Concise + core-first:** the visible body is TL;DR → Motivation → Contribution →
   Research questions → Methodology → Main result → Implications → Limitations →
   Critiques. Push detail into `<Pass>`.

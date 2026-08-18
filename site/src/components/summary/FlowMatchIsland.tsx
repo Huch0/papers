@@ -58,10 +58,14 @@ export default function FlowMatchIsland() {
   const [seed, setSeed] = useState(7);
   const [trainT, setTrainT] = useState(0.45);
   const [anim, setAnim] = useState(false);
+  const [sameSpace, setSameSpace] = useState(false);
   const raf = useRef(0);
 
   const data = useRef(makeData()).current;
-  const noise = makeNoise(seed, data.length);
+  const noiseRaw = makeNoise(seed, data.length);
+  const noise = sameSpace
+    ? noiseRaw.map(([x, y]) => [x - NOISE_C[0] + DATA_C[0], y - NOISE_C[1] + DATA_C[1]] as [number, number])
+    : noiseRaw;
   const tt = tab === "gen" ? t : trainT;
   const pos = data.map((d, i) => [
     tt * d[0] + (1 - tt) * noise[i][0],
@@ -95,12 +99,17 @@ export default function FlowMatchIsland() {
         )}
         {tab === "train" && <button style={btn} onClick={nextTrainT}>sample a new t</button>}
         <button style={btn} onClick={() => setSeed((s) => s + 1)}>re-draw the noise</button>
+        <button style={sameSpace ? btnOn : btn} onClick={() => setSameSpace(v => !v)}>{sameSpace ? "same-space view ✓" : "separated for legibility"}</button>
       </div>
 
       <svg viewBox={"0 0 " + W + " " + H} style={{ width: "100%", height: "auto", display: "block" }} role="img"
-        aria-label="Toy flow matching: points travel straight lines from a Gaussian noise cloud at t equals 0 to a smiley-shaped data distribution at t equals 1; arrows show the constant velocity the network must predict.">
-        <text x={NOISE_C[0]} y={26} textAnchor="middle" fill="currentColor" opacity="0.65" fontSize="12">noise&nbsp; x₀ ~ N(0, I) &nbsp;(t = 0)</text>
-        <text x={DATA_C[0]} y={26} textAnchor="middle" fill="currentColor" opacity="0.65" fontSize="12">data&nbsp; x₁ &nbsp;(t = 1)</text>
+        aria-label="Toy flow matching: points travel straight lines from a Gaussian noise cloud at t equals 0 to a smiley-shaped data distribution at t equals 1; arrows show the constant velocity the network must predict. A toggle overlays the two distributions in the same space, showing that transport directions point every way.">
+        {sameSpace ? (
+          <text x={DATA_C[0]} y={26} textAnchor="middle" fill="currentColor" opacity="0.65" fontSize="12">noise and data share one space — arrows point every direction</text>
+        ) : (<>
+          <text x={NOISE_C[0]} y={26} textAnchor="middle" fill="currentColor" opacity="0.65" fontSize="12">noise&nbsp; x₀ ~ N(0, I) &nbsp;(t = 0)</text>
+          <text x={DATA_C[0]} y={26} textAnchor="middle" fill="currentColor" opacity="0.65" fontSize="12">data&nbsp; x₁ &nbsp;(t = 1)</text>
+        </>)}
         {pos.map((p, i) => (
           <g key={i}>
             <line x1={noise[i][0]} y1={noise[i][1]} x2={data[i][0]} y2={data[i][1]}

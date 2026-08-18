@@ -75,178 +75,52 @@ contributors:
 ## Research questions
 Do WAMs (1) learn better than VLAs from *diverse, non-repetitive* robot data, (2) generalize zero-shot to motions absent from the robot training data, (3) retain that generalization after task-specific post-training, (4) absorb useful skill knowledge from *action-free* video of other embodiments, and (5) adapt to a new robot from minutes of data — and (6) can a 14B video-diffusion policy run fast enough to close the loop at all?
 
-## Background: what Figure 4 assumes you already know
+## Background: primers and the paper's own notation
 
-Figure 4 compresses five ideas the paper never teaches: latent spaces, flow matching, diffusion
-transformers, causal/chunked generation, and the small adapters that connect a robot to all of it.
-This section builds them bottom-up for a reader with no diffusion background; each block ends with
-the exact role the idea plays in DreamZero, and the last block re-draws Figure 4 and walks it end to
-end. Depth sits in the collapsible passes.
+Figure 4 leans on generative-modeling machinery the paper never teaches. The general background
+lives in the knowledge base as two primers — read them first if diffusion models are new to you,
+then return for the paper-specific parts below:
 
-### B1 · Latents: generation runs in a compressed space
+- **[Flow Matching](../../knowledge/flow-matching/)** — the exact definition; what "velocity" means
+  here (and what it does not); why it is constant along a straight line; why networks predict
+  velocity rather than the clean sample; history, benefits, and the honest drawbacks of straight
+  deterministic paths. With the interactive transport lab (**Fig. FM-1**), including a same-space
+  view showing transport directions point every way.
+- **[Causal DiT](../../knowledge/causal-dit/)** — latents and the frozen VAE, tokens, the DiT block
+  and adaLN (**Fig. DIT-1**), and the chunk-causal machinery: block-causal masks, KV cache, teacher
+  forcing, drift, and the observation overwrite (interactive masks, **Fig. DIT-2**).
 
-A 480P video frame is about 400k pixels; predicting pixels directly is slow and wasteful, because
-most pixel detail (texture, noise) carries no information about the scene. So video models first run
-every frame through a <Term def="variational autoencoder: an encoder that compresses an image/clip into a small grid of numbers (the latent) plus a decoder that reconstructs pixels from it; trained once, then reused">VAE</Term>:
-the encoder turns frames into a much smaller grid of numbers — the **latents** — and the decoder
-turns latents back into pixels. Everything interesting (denoising, attention, prediction) happens on
-latents; pixels only appear at the very ends. The compression is spatial *and* temporal: in
-DreamZero, <Finding src="App.B, p.21">8 latent frames stand in for 33 raw frames — 6.6 s of video at
-the 5 FPS sampling rate</Finding>.
+### The objective in the paper's notation
 
-**Role in DreamZero:** the Wan2.1 VAE is *frozen* — cameras are encoded into latents on the way in,
-predicted latents are decoded on the way out, and the model itself never touches a pixel. So when
-Figure 4 says "video", read "a small grid of latent vectors per 2-frame step".
-
-### B2 · Flow matching: straight lines from noise to data
-
-A generative model here answers one question: *given pure noise, produce a sample that looks like it
-came from the data.* Flow matching is the simplest honest way to do that. Pair each data sample
-<M tex="x_1" /> with a random Gaussian sample <M tex="x_0" /> and connect them with a straight line:
+DreamZero instantiates flow matching jointly over video latents and action latents. Within chunk
+<M tex="k" />, both modalities are corrupted at the *same* level <M tex="t_k" /> — noise at
+<M tex="t=0" />, data at <M tex="t=1" /> (Eq. 2) — so the actions always denoise toward the same
+imagined future as the video, which is the mechanical meaning of "aligned" prediction:
 
 <MathBlock>{`z_t = t\\,z_1 + (1-t)\\,z_0, \\qquad a_t = t\\,a_1 + (1-t)\\,a_0, \\qquad z_0,\\ a_0 \\sim \\mathcal{N}(0, I)`}</MathBlock>
 
-One convention warning before anything else: <Novelty>in this paper `t = 0` is pure noise and
-`t = 1` is clean data (Eq. 2)</Novelty> — the reverse of many diffusion papers, so read the axis
-labels carefully. Because the path is a straight line, its velocity is the *same at every point of
-the path*:
-
 <MathBlock>{`v \\;=\\; [\\,z_1,\\ a_1\\,] - [\\,z_0,\\ a_0\\,]`}</MathBlock>
 
-The network <M tex="u_\theta" /> is trained on exactly one skill: *look at a partially noisy point
-and the time <M tex="t" />, and predict that velocity* — a plain mean-squared-error regression, no
-adversary, no likelihood gymnastics. Generation is then just integration: start at noise
-(<M tex="t=0" />), repeatedly step along the predicted velocity, arrive at a sample
-(<M tex="t=1" />). Play with it:
-
-<FlowMatch />
-
-**Role in DreamZero:** one flow-matching loss denoises **video latents and action latents
-together** — the model input is the concatenation <M tex="[\,z_t, a_t\,]" /> and the regression
-target is the joint velocity. Sharing one noise level <M tex="t_k" /> per chunk across both
-modalities is a deliberate choice <Finding src="§3.1, p.7">for faster convergence early in
-training</Finding>; the actions are pulled toward *the same imagined future* the video is being
-pulled toward, which is the "aligned" in "predict actions and visual future states in an aligned
-manner".
-
-<Pass title="Background · flow matching vs DDPM, the weight w(t), and where CFG fits">
-Classic diffusion (DDPM) corrupts data through hundreds of tiny noising steps and trains the network
-to predict the *noise* at each step; sampling retraces those steps, so quality historically wanted
-tens-to-hundreds of network calls. Flow matching replaces the curved stochastic path with a straight
-deterministic one, which tends to tolerate far fewer, larger integration steps. DreamZero uses 16
-denoising steps for smooth actions (§3.2.1), then exploits straight-line-ness further:
-<Finding src="Tab.1, p.10">successive velocity predictions are so directionally consistent that
-caching them cuts effective DiT calls from 16 to 4</Finding>, and DreamZero-Flash goes to 1 video
-step by training with a decoupled schedule — video timesteps drawn from `Beta(7,1)` (concentrated
-near clean, Alg.1) while action timesteps stay uniform — at a measured quality cost
-(<Finding src="Tab.3, p.17">83% → 74% on table bussing</Finding>). The loss also carries a
-predefined per-timestep weight <M tex="w(t_k)" /> (Eq. 3) whose exact form is Not reported.
-<Term def="classifier-free guidance: run the network once with the conditioning (text/state) and once without, then extrapolate between the two outputs to sharpen instruction-following; costs a second forward pass">CFG</Term>
-is why inference wants two forward passes per step; DreamZero runs the two passes on two GPUs in
-parallel for a 47% per-step latency cut (§3.2.3). The full objective, with chunk index
-<M tex="k" /> and clean-context set <M tex="\mathcal{C}_k" /> restored:
+<Pass title="The full loss (Eq. 3), CFG parallelism, and the Flash schedule">
+One trunk <M tex="u_\theta" /> regresses the joint velocity, conditioned on the clean previous
+chunks <M tex="\mathcal{C}_k = \{(z^{i}_{1}, a^{i}_{1})\}_{i=1}^{k-1}" />, the instruction
+<M tex="c" /> and proprioception <M tex="q_k" />:
 
 <MathBlock>{`\\mathcal{L}(\\theta) = \\mathbb{E}\\left[ \\frac{1}{M} \\sum_{k=1}^{M} w(t_k)\\, \\bigl\\| u_\\theta\\bigl([\\,z^{k}_{t_k}, a^{k}_{t_k}\\,];\\ \\mathcal{C}_k,\\ c,\\ q_k,\\ t_k\\bigr) - v^{k} \\bigr\\|^{2} \\right]`}</MathBlock>
 
-where <M tex="\mathcal{C}_k = \{(z^{i}_{1}, a^{i}_{1})\}_{i=1}^{k-1}" /> is the *clean* content of
-all previous chunks, <M tex="c" /> the instruction, and <M tex="q_k" /> proprioception.
+The per-timestep weight <M tex="w(t_k)" /> is predefined; its form is Not reported. Inference uses
+16 denoising steps for smooth actions, cut to ~4 effective DiT calls by caching directionally
+consistent velocities (<Finding src="Tab.1, p.10">successive velocities are consistent enough that
+caching costs little</Finding>);
+<Term def="classifier-free guidance: one conditional and one unconditional forward pass per step, extrapolated to sharpen instruction-following">CFG</Term>
+wants two forward passes per step, which DreamZero runs on two GPUs in parallel (−47% per-step
+latency, §3.2.3). DreamZero-Flash decouples the shared schedule — video
+<M tex="t \sim \mathrm{Beta}(7,1)" /> (concentrated near clean), action <M tex="t" /> uniform
+(Alg.1) — to reach 1-step video prediction at a measured cost
+(<Finding src="Tab.3, p.17">83% → 74% on table bussing</Finding>).
 </Pass>
 
-### B3 · DiT: the transformer that does the denoising
-
-Where does <M tex="u_\theta" /> come from? A <Term def="diffusion transformer (Peebles & Xie 2023): a standard transformer whose tokens are noisy latent patches and whose output is the denoising target (here, velocity); the timestep enters by modulating every block">DiT</Term>.
-Chop the latent grid into patches, project each patch to a fixed-width vector — a **token** — and
-run the standard transformer loop: every token *attends* to (reads a weighted mix of) every other
-token, passes through a small MLP, and repeats for <M tex="N" /> blocks. Two things make it a
-*diffusion* transformer rather than a language model: the tokens are noisy latents instead of words,
-and the timestep <M tex="t" /> is injected into **every block** by scaling and shifting the
-normalization layers (the adaLN recipe), so one network can act as the denoiser for *all* noise
-levels at once:
-
-<figure>
-<svg viewBox="0 0 640 200" style="max-width:100%;height:auto" role="img" aria-label="One DiT block: tokens pass through a timestep-modulated layer norm, self-attention, a residual add, a second modulated layer norm, an MLP, and a second residual add.">
-  <defs>
-    <marker id="arrDitA" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker>
-  </defs>
-  <g fill="none" stroke="currentColor" stroke-width="1.2">
-    <rect x="14" y="60" width="70" height="34" rx="6" style="fill:var(--soft)"/>
-    <rect x="118" y="60" width="64" height="34" rx="6" style="fill:var(--soft)"/>
-    <rect x="216" y="60" width="104" height="34" rx="6" style="fill:var(--soft)"/>
-    <circle cx="366" cy="77" r="12"/>
-    <rect x="404" y="60" width="64" height="34" rx="6" style="fill:var(--soft)"/>
-    <rect x="502" y="60" width="56" height="34" rx="6" style="fill:var(--soft)"/>
-    <circle cx="592" cy="77" r="12"/>
-  </g>
-  <g stroke="currentColor" stroke-width="1.2" marker-end="url(#arrDitA)">
-    <line x1="84" y1="77" x2="112" y2="77"/>
-    <line x1="182" y1="77" x2="210" y2="77"/>
-    <line x1="320" y1="77" x2="348" y2="77"/>
-    <line x1="378" y1="77" x2="398" y2="77"/>
-    <line x1="468" y1="77" x2="496" y2="77"/>
-    <line x1="558" y1="77" x2="574" y2="77"/>
-  </g>
-  <path d="M 99 77 C 99 30, 366 30, 366 63" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#arrDitA)"/>
-  <path d="M 486 77 C 486 30, 592 30, 592 63" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#arrDitA)"/>
-  <circle cx="330" cy="160" r="13" fill="none" style="stroke:var(--accent)" stroke-width="1.5"/>
-  <g stroke-dasharray="3 3" style="stroke:var(--accent)" stroke-width="1.2" fill="none">
-    <path d="M 322 150 C 240 130, 168 118, 152 98" marker-end="url(#arrDitA)"/>
-    <path d="M 340 151 C 400 132, 428 118, 436 98" marker-end="url(#arrDitA)"/>
-  </g>
-  <g fill="currentColor" font-size="11.5" text-anchor="middle">
-    <text x="49" y="81">tokens</text>
-    <text x="150" y="81">adaLN</text>
-    <text x="268" y="81">self-attention</text>
-    <text x="366" y="81">+</text>
-    <text x="436" y="81">adaLN</text>
-    <text x="530" y="81">MLP</text>
-    <text x="592" y="81">+</text>
-    <text x="330" y="164">t</text>
-    <text x="330" y="188" opacity="0.6">timestep embedding — scale &amp; shift every norm</text>
-    <text x="232" y="45" opacity="0.6">residual</text>
-    <text x="536" y="45" opacity="0.6">residual</text>
-  </g>
-</svg>
-<figcaption>One DiT block (×N, stacked). The accent element is the timestep: it modulates every
-block, which is how a single network serves every noise level. DreamZero inherits its N blocks from
-Wan2.1-I2V-14B; per-block internals beyond the standard recipe are Not reported.</figcaption>
-</figure>
-
-Attention is also the mechanism that makes *joint* video–action modeling more than a slogan: video
-tokens, action tokens, text tokens and the state token sit in **one sequence**, so action tokens can
-read the imagined future directly, at every block. Nothing about the trunk is robot-specific — which
-is exactly why a video-pretrained trunk can be reused.
-
-**Role in DreamZero:** the "Causal DiT" box in Figure 4 is this stack — 14B parameters, initialized
-from Wan2.1's video-pretrained weights, denoising video and action tokens in the same forward pass.
-
-### B4 · Making it causal: chunks, KV cache, and the observation overwrite
-
-A stock video DiT is **bidirectional**: it generates a whole fixed-length clip in one shot, every
-frame attending to every other. That is wrong for control twice over — you need actions *now*, not
-after the full clip; and fixed-length windows force video subsampling that
-<Finding src="§3.1, p.7">distorts the native frame rate and so the video–action correspondence</Finding>.
-DreamZero instead generates **chunk by chunk**: each chunk is <M tex="K=2" /> latent frames paired
-with <M tex="H=48" /> actions — 1.6 s of world per chunk — and the attention mask is
-**block-causal**: a chunk being denoised reads all *finished* chunks and itself, never the future
-(the "causal" in Causal DiT; an LLM over sentences is the exact analogy). Finished chunks are stored
-as a <Term def="the cached key/value tensors of already-processed tokens; lets an autoregressive model re-read its whole past for the price of a lookup instead of recomputation">KV cache</Term>,
-so context grows (up to <M tex="M=4" /> chunks = 6.6 s) at almost no extra cost. Explore the masks —
-including the one move that is unique to a *robot* video model:
-
-<AttnMask />
-
-Two training-vs-inference facts complete the picture. At training time the previous chunks in
-context are the **ground-truth clean** ones
-(<Term def="training a sequence model with the true past as input rather than its own predictions; fast and stable, but creates a mismatch at inference when the model must consume its own outputs">teacher forcing</Term>).
-At inference a pure video generator would have to feed on its own imperfect predictions — the
-mismatch compounds and quality drifts. DreamZero's closed loop deletes the problem:
-<Novelty>after each 1.6 s chunk executes, the real camera frames overwrite the model's predicted
-frames in the KV cache</Novelty> — the environment hands back ground truth every chunk, something no
-offline video generator gets. And the autoregressive chaining is applied <Finding src="§3.1, p.7">to
-the video modality only, "to avoid error propagation coming from closed-loop action
-prediction"</Finding> — past *predicted actions* are not what future chunks condition on.
-
-<Pass title="Background · the real-time loop: 5.7 s → 150 ms, and who waits for whom">
+<Pass title="DreamZero’s real-time loop: 5.7 s → 150 ms, and who waits for whom">
 Naively, 16 denoising steps × a 14B DiT ≈ 5.7 s per chunk — the robot would freeze between
 thoughts. The paper's fix is architectural, not model-side: run inference and execution
 **asynchronously**. The controller streams the current 48-action chunk at 30 Hz (1.6 s of motion)
@@ -285,7 +159,7 @@ while the GPU denoises the *next* chunk from the latest observation; the deadlin
     <text x="316" y="80" style="fill:var(--accent)">hand over before expiry</text>
   </g>
 </svg>
-<figcaption>Asynchronous closed-loop execution (§3.2.2). The ~7 Hz headline is the re-planning rate
+<figcaption><strong>Fig. DZ-1</strong> — asynchronous closed-loop execution (§3.2.2). The ~7 Hz headline is the re-planning rate
 of the accent lane; motion itself is continuous at 30 Hz.</figcaption>
 </figure>
 
@@ -296,7 +170,7 @@ Blackwell, and — for the Flash variant — the decoupled `Beta(7,1)` video-noi
 not consumer-GPU territory.
 </Pass>
 
-### B5 · The robot adapters: state encoder, action encoder, action decoder
+### The robot adapters: state encoder, action encoder, action decoder
 
 Everything robot-specific in Figure 4 lives in three deliberately small trained modules that
 translate between robot signals and the trunk's token space — the paper introduces them only as
@@ -318,7 +192,7 @@ cross-embodiment story in miniature: the trunk and its video prior are body-agno
 (and the implicit inverse dynamics they feed) are the embodiment-specific part that few-shot
 adaptation re-fits.
 
-### B6 · Figure 4, walked end to end
+### Figure 4, walked end to end (Fig. DZ-2)
 
 <figure>
 <svg viewBox="0 0 880 470" style="max-width:100%;height:auto" role="img" aria-label="DreamZero architecture redrawn: camera frames, instruction, joint state and noise are encoded into tokens, denoised jointly by a causal DiT initialized from Wan2.1, then decoded into predicted video and a 48-step action chunk; after execution, real camera frames overwrite the predicted frames in the KV cache.">
@@ -390,7 +264,7 @@ adaptation re-fits.
     <text x="360" y="455" style="fill:var(--accent)">⑧ after execution: real camera frames overwrite the predicted frames in the KV cache</text>
   </g>
 </svg>
-<figcaption>Figure 4, redrawn as a data-flow. Dashed boxes are frozen; accent-bordered boxes are the
+<figcaption><strong>Fig. DZ-2</strong> — Figure 4, redrawn as a data-flow. Dashed boxes are frozen; accent-bordered boxes are the
 new robot adapters; the accent loop is the closed-loop observation overwrite that no offline video
 generator has. Badge numbers key into the walkthrough below.</figcaption>
 </figure>

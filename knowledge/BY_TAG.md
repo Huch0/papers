@@ -21,3 +21,7 @@
 ## web-agent (1)
 - [Web-Agent Generalization (cross-task / site / domain)](concepts/web-agent-generalization.md)
 
+## world-model (2)
+- [Causal DiT](concepts/causal-dit.md)
+- [Flow Matching](concepts/flow-matching.md)
+

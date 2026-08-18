@@ -70,6 +70,18 @@ crowd with that wind reproduces the movie — scatter points as frame 0, move ea
 <M tex="\mathrm{d}x/\mathrm{d}t = u(x, t)" />, and at every <M tex="t" /> the crowd is distributed
 exactly as frame <M tex="t" />. Flow matching's whole object of desire is one such field.
 
+<Definition term="Probability path">
+A family of distributions <M tex="\{p_t\}_{t \in [0,1]}" /> with <M tex="p_0 = \mathcal{N}(0, I)" />
+(noise), <M tex="p_1" /> the data distribution, and <M tex="p_t" /> varying continuously in
+<M tex="t" />.
+</Definition>
+
+<Definition term="Generating velocity field">
+A map <M tex="u : \mathbb{R}^d \times [0,1] \to \mathbb{R}^d" /> generates the path
+<M tex="\{p_t\}" /> if trajectories solving <M tex="\mathrm{d}x/\mathrm{d}t = u(x, t)" /> with
+<M tex="x(0) \sim p_0" /> satisfy <M tex="x(t) \sim p_t" /> for every <M tex="t \in [0,1]" />.
+</Definition>
+
 ## The exact definition
 
 Fix two distributions in the same space: noise <M tex="p_0 = \mathcal{N}(0, I)" /> and the data
@@ -84,9 +96,13 @@ regresses against the velocity of the path *conditioned on a sampled pair*: draw
 <M tex="x_1" />, a noise point <M tex="x_0" />, a time <M tex="t" />, form the interpolant, and
 regress on that pair's own velocity. The theorem making this legal (Lipman et al. 2022): the
 conditional objective has the **same gradients** as the intractable marginal one, so its minimizer
-is the true marginal field. With the straight-line (rectified-flow) path used in practice:
+is the true marginal field.
+
+<Definition term="Conditional flow matching (linear path)">
+With the straight-line (rectified-flow) path used in practice:
 
 <MathBlock>{`x_t = t\\,x_1 + (1-t)\\,x_0, \\qquad \\mathcal{L} = \\mathbb{E}_{x_0, x_1, t}\\, \\bigl\\| u_\\theta(x_t, t) - (x_1 - x_0) \\bigr\\|^2`}</MathBlock>
+</Definition>
 
 Convention warning: this page (and DreamZero's Eq. 2) puts noise at <M tex="t = 0" /> and data at
 <M tex="t = 1" />; many diffusion papers run the axis the other way. Always check before comparing
@@ -102,7 +118,9 @@ one constant vector, so is the network supposed to output that same vector at ev
 demanding a *different* velocity. A mean-squared-error regression fed conflicting targets converges
 to their average — precisely, the conditional expectation
 
+<Definition term="Marginal velocity field">
 <MathBlock>{`u^{\\star}(x, t) \\;=\\; \\mathbb{E}\\bigl[\\, x_1 - x_0 \\;\\big|\\; x_t = x \\,\\bigr]`}</MathBlock>
+</Definition>
 
 This average-over-all-pairings is the
 <Term def="the velocity field obtained by averaging every conditional (per-pair) velocity passing through (x, t), weighted by how likely each pairing is; the MSE-optimal network output">marginal velocity field</Term>.
@@ -160,6 +178,12 @@ and the arrow points at one specific sample. Constant along each *conditional* l
 is *learned* is a genuine function of position and time.
 
 ### "Rectified flow", named
+
+<Definition term="Rectified flow">
+Flow matching with the linear interpolant <M tex="x_t = t\,x_1 + (1-t)\,x_0" /> and per-pair
+target <M tex="x_1 - x_0" />; optionally iterated by reflow, which re-pairs generated samples with
+their own noise seeds and retrains.
+</Definition>
 
 <Term def="the linear-interpolant instance of flow matching (Liu et al. 2022): straight-line paths x_t = t x1 + (1−t) x0 with velocity target x1 − x0, plus the reflow iterate">Rectified flow</Term>
 is the name of exactly this linear-interpolant instance — straight conditional paths, constant

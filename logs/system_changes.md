@@ -169,3 +169,14 @@ Each entry: date, trigger, change, files touched, migration status.
   x_t = x] — with new Fig. FM-2 showing crossing conditional targets averaging;
   named "rectified flow" + reflow; 15-entry Glossary) and causal-dit (15-entry
   Glossary).
+
+## 2026-08-18 — Definition component for formal mathematical definitions
+
+- User rule: every formal, mathematical definition is written inside an explicit
+  <Definition term="..."> block (textbook register); intuition stays in prose.
+  Component added via the ADR-0002 path (site/src/components/summary/Definition.astro,
+  registered in map.ts, documented + rule recorded in config/summary_components.md).
+- Applied: flow-matching (Probability path, Generating velocity field, Conditional
+  flow matching, Marginal velocity field, Rectified flow — 5 blocks), causal-dit
+  (Block-causal attention mask), DreamZero summary (Eq. 2 corruption/velocity,
+  Eq. 3 objective).

@@ -1,0 +1,11 @@
+---
+// Formal definition block (math-textbook register). Use for every formal,
+// mathematical definition; intuition stays in prose. Props: term = the object
+// being defined. Body via slot (MathBlock / M welcome inside).
+interface Props { term?: string }
+const { term } = Astro.props;
+---
+<div class="definition">
+  <div class="def-head">Definition{term ? <span class="def-term"> — {term}</span> : null}</div>
+  <div class="def-body"><slot /></div>
+</div>

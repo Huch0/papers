@@ -194,3 +194,19 @@ Each entry: date, trigger, change, files touched, migration status.
   marginal ODE curves cannot — computed, not sketched); (3) new static Fig. FM-4,
   a probability-path filmstrip. Text explains why a literal 3-D rendering is
   avoided (projection ambiguity) — a slider is the 3-D plot, sliced.
+
+## 2026-08-18 — causal-dit page: VAE pipeline, detailed DiT block, chunk clocks, denoising loop
+
+- Six user questions while reading /knowledge/causal-dit/ drove four figures and
+  three text sections: Fig. DIT-3 (causal 3-D conv VAE: 33 raw -> 8 latent with
+  the anchor-frame arithmetic 1 + 4x8 = 33, then patchify -> tokens), a fully
+  detailed redraw of Fig. DIT-1 (QKV attention internals, both adaLN sites,
+  adaLN-Zero gates, residuals, and the complete timestep pathway t -> sinusoidal
+  -> MLP -> per-block heads -> six modulation signals), an adaLN <Definition>
+  with the modulation equation, Fig. DIT-4 (one 1.6 s chunk as three aligned
+  clocks: 8 raw frames at 5 FPS, K=2 latent frames, H=48 action ticks at 30 Hz —
+  all denoised in one pass, streamed sequentially), and a new "From velocity to
+  a finished chunk" section with Fig. DIT-5 (the integrator loop: DiT outputs
+  velocities, the loop generates; 16 -> 4 -> 1 steps) cross-linked to the
+  flow-matching page. Glossary +4 (causal video VAE, patchify, adaLN-Zero,
+  action chunk); +1 SelfCheck (why 33 not 32).

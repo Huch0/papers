@@ -151,7 +151,7 @@ integrating this *mean* field still transports <M tex="p_0" /> exactly to <M tex
     <line x1="280" y1="127" x2="337" y2="146"/>
     <line x1="280" y1="127" x2="337" y2="108"/>
   </g>
-  <line x1="280" y1="127" x2="352" y2="127" style="stroke:var(--accent)" stroke-width="2.2" marker-end="url(#arrFmTwoB)"/>
+  <line x1="280" y1="127" x2="337" y2="127" style="stroke:var(--accent)" stroke-width="2.2" marker-end="url(#arrFmTwoB)"/>
   <g fill="currentColor" font-size="11.5">
     <text x="52" y="40">x₀ (pair A)</text>
     <text x="52" y="222">x₀ (pair B)</text>
@@ -160,13 +160,19 @@ integrating this *mean* field still transports <M tex="p_0" /> exactly to <M tex
     <text x="344" y="158">target of pair A</text>
     <text x="344" y="100">target of pair B</text>
     <text x="286" y="112" opacity="0.7">same (x, t)</text>
-    <text x="360" y="131" style="fill:var(--accent)">the mean — what u learns</text>
+    <text x="346" y="131" style="fill:var(--accent)">the mean — what u learns</text>
   </g>
 </svg>
 <figcaption><strong>Fig. FM-2</strong> — two pairs, one point. Where conditional lines cross, the
 two straight-line targets conflict; the MSE optimum at that point is their mean. That mean over all
 pairings is the marginal field — and the reason actually-sampled trajectories curve even though
-every individual training target is straight.</figcaption>
+every individual training target is straight. Reading notes: arrows are rooted at the point where
+the field is evaluated (wind-map convention) and are drawn <em>direction-and-relative-length only</em> —
+the true magnitude of every conditional target is its pair's full ‖x₁ − x₀‖, constant along the whole
+segment (the journey takes unit time, so the speed is the whole distance per unit t); the mean is drawn
+with its correct relative length, shorter than either component. Strictly, the average at (x, t) runs
+over the infinitely many pairs whose time-t blend lands exactly on x — two lines crossing at one moment
+is the minimal cartoon of that continuum.</figcaption>
 </figure>
 
 So the honest description of <M tex="u_\theta(x_t, t)" />: **input** — a position in sample space
@@ -176,6 +182,14 @@ and says little about the destination, so the posterior is broad and the arrow p
 of plausible data. Near <M tex="t = 1" /> the point has nearly arrived, the posterior collapses,
 and the arrow points at one specific sample. Constant along each *conditional* line, yes — but what
 is *learned* is a genuine function of position and time.
+
+Two magnitudes worth keeping straight. The *target's* magnitude is the full
+<M tex="\lVert x_1 - x_0 \rVert" /> at every point of its segment — not the remaining distance —
+because <M tex="t" /> runs over <M tex="[0,1]" /> and the whole journey must finish in unit time;
+what shrinks as <M tex="t" /> grows is the remaining *displacement*
+<M tex="(1-t)(x_1 - x_0)" />, which lands exactly on <M tex="x_1" />. The *mean's* magnitude is
+generally smaller than its components' (vectors at an angle partially cancel) — one more reason the
+marginal field is not any single pair's field.
 
 ### "Rectified flow", named
 

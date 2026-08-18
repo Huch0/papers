@@ -150,7 +150,10 @@ export default function FlowMatchIsland() {
       )}
       <p style={{ margin: "0.45rem 0 0", fontSize: "0.78rem", color: "var(--mut)" }}>
         Every point moves on a straight line from its noise sample to its data sample; the velocity is the same at
-        every t, which is what makes the regression target simple. The network never sees the pairing — it must
+        every t, which is what makes the regression target simple. The side-by-side layout is only for
+        legibility — noise and data live in one space (toggle the same-space view), so true directions
+        point every way. Arrows are drawn direction-only at a fixed display length; every true target
+        has its pair's full magnitude ‖x₁ − x₀‖, constant along the whole line. The network never sees the pairing — it must
         infer the average direction "home" from (position, t) alone. Generation = start at t 0 and integrate the
         learned field to t 1. DreamZero uses exactly this objective, jointly over video latents and action latents.
       </p>

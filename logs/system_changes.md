@@ -246,3 +246,16 @@ Each entry: date, trigger, change, files touched, migration status.
   reduced to the causality unroll alone, and an un-patchify paragraph closing
   the loop in Part 5. All prior Definitions, DIT-2/4/5/6 figures, Glossary and
   SelfChecks carried into the new structure.
+
+## 2026-08-18 — Fig. DIT-1 redrawn vertically in the DIT-7 style
+
+- User liked Fig. DIT-7's structure but found DIT-1 overlapped and unintuitive
+  (twelve ops crammed into one horizontal ribbon). Regenerated vertically:
+  token list in at top → two dashed containers making the anatomy visible
+  ("sub-block 1 · mix the tokens (attention)" / "sub-block 2 · transform each
+  token alone (MLP)"), each = normalize → scale-shift → operate → gate → add;
+  a visible dashed residual bypass lane on the left; the timestep as its own
+  right-hand column (t → 256 → c:5120 → block head → 6×5120) feeding an accent
+  bus with four labeled taps. Every label owns its own row/gutter by
+  construction; plain-words sublines on every op; shapes on the wires.
+  Surrounding Part-3 prose updated to the same-wrapper-applied-twice framing.

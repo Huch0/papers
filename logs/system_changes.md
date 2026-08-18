@@ -127,3 +127,17 @@ Each entry: date, trigger, change, files touched, migration status.
   config/tag_taxonomy.yaml. First robotics/VLA paper in the library
   ("World Action Models are Zero-shot Policies", arXiv 2602.15922) had no
   applicable tag; both are reusable for future embodied/world-model work.
+
+## 2026-08-18 — FlowMatch + AttnMask interactive components; inline-SVG diagram convention
+
+- Added two reusable interactive summary components (ADR-0002 path: PR'd into
+  site/src/components/summary/ and documented in config/summary_components.md):
+  `<FlowMatch />` (toy 2-D flow-matching transport: t-slider, straight-line paths,
+  velocity arrows, generate/train views) and `<AttnMask />` (chunked/causal DiT
+  attention-mask explorer: training window, block-causal, KV-cache + observation-
+  overwrite toggle). Both are dependency-free React islands hydrated client:visible.
+- Documented the inline-SVG mechanism-diagram convention (currentColor + var(--accent),
+  figure/figcaption, aria-label, unique marker ids).
+- Trigger: user asked for background on Causal DiT / flow matching / robot action
+  encoders with intuitive interactive diagrams to understand DreamZero's Figure 4;
+  the components are generic so future diffusion/transformer papers reuse them.

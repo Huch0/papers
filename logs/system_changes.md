@@ -141,3 +141,19 @@ Each entry: date, trigger, change, files touched, migration status.
 - Trigger: user asked for background on Causal DiT / flow matching / robot action
   encoders with intuitive interactive diagrams to understand DreamZero's Figure 4;
   the components are generic so future diffusion/transformer papers reuse them.
+
+## 2026-08-18 — background material moves to the knowledge base; figure ids
+
+- User rule: general background/tutorial material belongs in knowledge/concepts/,
+  not inside a single paper's summary; summaries link to the concept pages and keep
+  only paper-specific background. Recorded in config/summary_components.md Rules.
+- Applied to DreamZero: created concepts `flow-matching` (definition, velocity
+  semantics, constant-velocity derivation, parameterization equivalence, history,
+  drawbacks; Fig. FM-1 interactive) and `causal-dit` (latents/VAE, DiT block+adaLN
+  Fig. DIT-1, chunk-causality/KV-cache/teacher-forcing, Fig. DIT-2 interactive),
+  reciprocally linked to arxiv-2602.15922; summary background slimmed to primers +
+  paper-notation objective + real-time loop (Fig. DZ-1) + Figure-4 walkthrough
+  (Fig. DZ-2). All figures now carry stable ids.
+- FlowMatch island gained a same-space view (noise overlaid on data) after the user
+  correctly objected that the side-by-side layout hides that transport directions
+  point every way.

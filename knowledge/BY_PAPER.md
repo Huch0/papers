@@ -20,3 +20,7 @@ Concepts grouped by the paper(s) they were learned from / linked to.
 - [Agent-Computer Interface (ACI)](concepts/agent-computer-interface-aci.md)
 - [Planner–Executor–Verifier](concepts/planner-executor-verifier.md)
 
+## World Action Models are Zero-shot Policies  (`arxiv-2602.15922`)
+- [Causal DiT](concepts/causal-dit.md)
+- [Flow Matching](concepts/flow-matching.md)
+

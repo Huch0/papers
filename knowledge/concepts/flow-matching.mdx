@@ -1,0 +1,148 @@
+---
+name: flow-matching
+title: Flow Matching
+aliases:
+- rectified flow
+- stochastic interpolants
+- conditional flow matching
+tags:
+- world-model
+related_papers:
+- arxiv-2602.15922
+related_concepts:
+- causal-dit
+created: '2026-08-18T07:38:21Z'
+updated: '2026-08-18T07:38:22Z'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>Flow matching trains a network to predict the velocity of a straight-line journey from noise to
+data; generating a sample is then just integrating that velocity field. It is the objective behind
+today's large video/image models (SD3, Flux, Wan) — and behind DreamZero's joint video+action
+denoising.</TLDR>
+
+## Intuition
+
+A generative model must answer: *given pure randomness, produce something that looks like the data.*
+Flow matching's answer is transport. Imagine every possible data sample connected to a random noise
+sample by a straight line. If a network could tell you, at any intermediate point, "which way is
+home and how fast", you could start anywhere in the noise and simply walk to a data sample. Training
+teaches exactly that one **job**: look at a partially noisy point and the time <M tex="t" />, output
+the direction-and-speed of the line passing through it. (The word is "job", not "skill" — in
+robotics papers *skill* means a motion primitive; here nothing robotic is meant.)
+
+**Fig. FM-1 (interactive).** Drag <M tex="t" />, animate the transport, switch to the train view to
+see the regression target, and — importantly — hit **same-space view**:
+
+<FlowMatch />
+
+The side-by-side layout of Fig. FM-1 is purely for legibility. Noise and data are points in the
+**same space** (for DreamZero, the same latent space), so the true transport directions
+<M tex="x_1 - x_0" /> point every way, not rightward. The same-space toggle overlays the noise cloud
+on the data and the arrows fan out radially — that picture is the honest one.
+
+## The exact definition
+
+Fix two distributions in the same space: noise <M tex="p_0 = \mathcal{N}(0, I)" /> and the data
+distribution <M tex="p_1" />. Choose a **probability path** <M tex="p_t" /> that morphs one into the
+other as <M tex="t" /> runs 0 → 1. A time-dependent **velocity field** <M tex="u(x, t)" />
+*generates* that path if moving every point by the ODE <M tex="\mathrm{d}x/\mathrm{d}t = u(x, t)" />
+carries <M tex="p_0" /> into exactly <M tex="p_t" /> at every time. Flow matching = fit a network
+<M tex="u_\theta" /> to such a field by plain regression.
+
+The marginal field is intractable, so **conditional flow matching** (the trick that makes it work)
+regresses against the velocity of the path *conditioned on a sampled pair*: draw a data point
+<M tex="x_1" />, a noise point <M tex="x_0" />, a time <M tex="t" />, form the interpolant, and
+regress on that pair's own velocity. The theorem making this legal (Lipman et al. 2022): the
+conditional objective has the **same gradients** as the intractable marginal one, so its minimizer
+is the true marginal field. With the straight-line (rectified-flow) path used in practice:
+
+<MathBlock>{`x_t = t\\,x_1 + (1-t)\\,x_0, \\qquad \\mathcal{L} = \\mathbb{E}_{x_0, x_1, t}\\, \\bigl\\| u_\\theta(x_t, t) - (x_1 - x_0) \\bigr\\|^2`}</MathBlock>
+
+Convention warning: this page (and DreamZero's Eq. 2) puts noise at <M tex="t = 0" /> and data at
+<M tex="t = 1" />; many diffusion papers run the axis the other way. Always check before comparing
+equations across papers.
+
+## What "velocity" means here — and what it does not
+
+The velocity is the time-derivative of a point's position along the chosen path,
+<M tex="\mathrm{d}x_t/\mathrm{d}t" /> — "which direction and how fast this point should move
+through the space at time <M tex="t" />". The space is the model's sample space (image latents,
+video latents, normalized action chunks). It is **not** a physical velocity: in DreamZero the
+flow-matching velocity for action tokens is a derivative in normalized-action space along the
+denoising path — it is not the robot's joint velocity, and the executed actions are joint-position
+deltas, not speeds.
+
+**Why is it constant along a straight line?** Differentiate the interpolant once:
+
+<MathBlock>{`\\frac{\\mathrm{d}x_t}{\\mathrm{d}t} = \\frac{\\mathrm{d}}{\\mathrm{d}t}\\bigl[\\, t\\,x_1 + (1-t)\\,x_0 \\,\\bigr] = x_1 - x_0`}</MathBlock>
+
+The result contains no <M tex="t" />: position depends on <M tex="t" /> linearly, so its derivative
+is the same everywhere on the segment. That constancy is the pedagogical gift of the straight path —
+the regression target for a given pair does not change as the point travels, which makes the
+learning problem as clean as regression gets.
+
+## Why predict the velocity (and not the clean sample, or the noise)?
+
+Given <M tex="x_t" /> and <M tex="t" />, the three classic targets are affinely interchangeable —
+predict any one and the others follow:
+
+<MathBlock>{`x_1 = x_t + (1-t)\\,v, \\qquad x_0 = x_t - t\\,v, \\qquad v = x_1 - x_0`}</MathBlock>
+
+So velocity-prediction is a *parameterization choice*, not extra power. It is the preferred one
+because (1) the sampler integrates a velocity field, so the network outputs exactly what the ODE
+solver consumes; (2) its scale is well-behaved across all <M tex="t" /> — noise-prediction targets
+become ill-conditioned near the data end and clean-sample-prediction becomes trivial there, while
+the constant <M tex="x_1 - x_0" /> keeps the loss informative everywhere; and (3) one network
+evaluated at any <M tex="(x, t)" /> defines the entire transport at once — a single amortized field
+rather than a chain of step-specific denoisers.
+
+## History in five steps
+
+1. **Continuous normalizing flows** (Chen et al. 2018, FFJORD 2019): generate by integrating a
+   learned ODE — elegant, but training required simulating the ODE. Too slow to scale.
+2. **Score-based diffusion / DDPM** (Song & Ermon 2019; Ho et al. 2020): corrupt data with a fixed
+   *stochastic* noising process and learn to reverse it step by step. Simulation-free training —
+   this is what scaled first — but sampling wanted many steps along a curved path.
+3. **Probability-flow ODE** (Song et al. 2021): every diffusion SDE has a deterministic ODE with the
+   same marginals — the bridge showing diffusion and flows are two views of one thing.
+4. **Flow matching / rectified flow / stochastic interpolants** (Lipman et al.; Liu et al.; Albergo
+   & Vanden-Eijnden — all 2022, independently): train the ODE directly, simulation-free, with freely
+   chosen paths — including straight ones.
+5. **Adoption** (2024–): Stable Diffusion 3, Flux, Movie Gen, and Wan2.1 — DreamZero's backbone —
+   all train with flow-matching objectives.
+
+## Benefits — and the honest drawbacks
+
+Benefits: a stable MSE loss (no adversary, no likelihood machinery); simulation-free training of a
+continuous flow; near-straight paths that tolerate few, large integration steps (DreamZero: 16
+denoising steps, cut to ~4 by caching directionally-consistent velocities, and to 1 video step in
+its Flash variant); and one field usable at every noise level.
+
+Drawbacks of replacing the curved stochastic path with a straight deterministic one:
+
+- **Individually straight, collectively curved.** Conditional paths cross (visible in Fig. FM-1 —
+  lines intersect), and the learned *marginal* field is an average over crossings, so actual sampled
+  trajectories still bend. True one-step generation needs extra work (reflow, distillation).
+- **No stochastic self-correction.** An SDE sampler re-injects noise each step, which can act as a
+  corrector that "forgets" small integration errors; a deterministic ODE accumulates them. Some
+  quality regimes still favor stochastic samplers.
+- **Determinism means diversity comes only from the seed.** Same noise in, same sample out — fine in
+  practice, but worth knowing.
+- **It is largely diffusion, reparameterized.** Under the hood, straight-path flow matching is
+  equivalent to a specific weighting/parameterization of denoising objectives (the Kingma & Gao
+  view), so the schedule and loss weight <M tex="w(t)" /> still matter — the gains are practical
+  (stability, step count), not a new capability class.
+
+## In this library
+
+DreamZero applies exactly this objective jointly to video latents and action latents, with one
+shared <M tex="t" /> per chunk so both modalities denoise toward the same imagined future — and its
+Flash variant deliberately *breaks* the shared schedule (video <M tex="t \sim \mathrm{Beta}(7,1)" />,
+action uniform) to buy 1-step video inference at a measured quality cost. See the paper page for the
+chunked, causal machinery around the objective ([Causal DiT](../causal-dit/)).
+
+<SelfCheck q="A friend says flow matching learns to move points along straight lines. What is the precise correction?" a="Each *conditional* pair defines a straight regression target, and that target's velocity is constant along its segment. But the learned field is the marginal average over many crossing pairs, so the trajectories a sampler actually follows are generally curved. Straightness is a property of the training target, not of the sampled path." />
+<SelfCheck q="Why does predicting velocity beat predicting the clean sample directly, if the two are affinely equivalent?" a="Equivalent in information, not in conditioning: near t = 1 the clean-sample target degenerates (the input almost equals the answer) and noise-prediction blows up in scale, while the velocity target x1 − x0 keeps constant scale for every t. And the sampler consumes a velocity anyway — predicting it removes a conversion." />

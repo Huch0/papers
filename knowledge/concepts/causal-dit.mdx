@@ -1,0 +1,129 @@
+---
+name: causal-dit
+title: Causal DiT
+aliases:
+- DiT
+- diffusion transformer
+- autoregressive video diffusion
+tags:
+- world-model
+related_papers:
+- arxiv-2602.15922
+related_concepts:
+- flow-matching
+created: '2026-08-18T07:38:21Z'
+updated: '2026-08-18T07:38:21Z'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>A DiT is a standard transformer whose tokens are noisy latent patches and whose output is a
+denoising target; making it causal — generating in chunks that attend only to finished chunks via a
+KV cache — is what turns a video generator into something that can run a control loop.</TLDR>
+
+## Intuition
+
+Three renames turn a language model into a video diffusion model. Words become **latent patches**
+(compressed image pieces); next-token prediction becomes **denoising** (predict the flow-matching
+velocity for every noisy token — see [Flow Matching](../flow-matching/)); and the decoder-only
+causal mask becomes **block-causal over chunks**: a chunk of frames being denoised may read every
+finished chunk, never the future. Everything else — attention, MLPs, residuals, KV caching — is the
+same machinery LLMs use.
+
+## Latents first: why nothing here touches pixels
+
+A 480P frame is ~400k pixels, mostly texture that carries no scene information. Video models
+therefore run every frame through a
+<Term def="variational autoencoder: an encoder compressing frames into a small latent grid plus a decoder reconstructing pixels; trained once, then frozen and reused">VAE</Term>
+and do all generation on the compressed **latents**; pixels appear only at the ends. The compression
+is spatial and temporal — in DreamZero's Wan2.1 backbone, 8 latent frames stand in for 33 raw frames
+(6.6 s at 5 FPS). When a WAM paper says "video", read "a small grid of latent vectors".
+
+## The DiT block
+
+Chop the latent grid into patches, project each to a fixed-width vector (a **token**), and stack the
+standard loop: attention (every token reads a weighted mix of the others), MLP, residuals. Two
+things make it a *diffusion* transformer: tokens are noisy latents, and the timestep <M tex="t" />
+enters **every block** by scaling and shifting the normalization layers (the adaLN recipe of Peebles
+& Xie 2023) — one network thereby serves every noise level:
+
+<figure>
+<svg viewBox="0 0 640 200" style="max-width:100%;height:auto" role="img" aria-label="One DiT block: tokens pass through a timestep-modulated layer norm, self-attention, a residual add, a second modulated layer norm, an MLP, and a second residual add.">
+  <defs>
+    <marker id="arrDitK" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker>
+  </defs>
+  <g fill="none" stroke="currentColor" stroke-width="1.2">
+    <rect x="14" y="60" width="70" height="34" rx="6" style="fill:var(--soft)"/>
+    <rect x="118" y="60" width="64" height="34" rx="6" style="fill:var(--soft)"/>
+    <rect x="216" y="60" width="104" height="34" rx="6" style="fill:var(--soft)"/>
+    <circle cx="366" cy="77" r="12"/>
+    <rect x="404" y="60" width="64" height="34" rx="6" style="fill:var(--soft)"/>
+    <rect x="502" y="60" width="56" height="34" rx="6" style="fill:var(--soft)"/>
+    <circle cx="592" cy="77" r="12"/>
+  </g>
+  <g stroke="currentColor" stroke-width="1.2" marker-end="url(#arrDitK)">
+    <line x1="84" y1="77" x2="112" y2="77"/>
+    <line x1="182" y1="77" x2="210" y2="77"/>
+    <line x1="320" y1="77" x2="348" y2="77"/>
+    <line x1="378" y1="77" x2="398" y2="77"/>
+    <line x1="468" y1="77" x2="496" y2="77"/>
+    <line x1="558" y1="77" x2="574" y2="77"/>
+  </g>
+  <path d="M 99 77 C 99 30, 366 30, 366 63" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#arrDitK)"/>
+  <path d="M 486 77 C 486 30, 592 30, 592 63" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#arrDitK)"/>
+  <circle cx="330" cy="160" r="13" fill="none" style="stroke:var(--accent)" stroke-width="1.5"/>
+  <g stroke-dasharray="3 3" style="stroke:var(--accent)" stroke-width="1.2" fill="none">
+    <path d="M 322 150 C 240 130, 168 118, 152 98" marker-end="url(#arrDitK)"/>
+    <path d="M 340 151 C 400 132, 428 118, 436 98" marker-end="url(#arrDitK)"/>
+  </g>
+  <g fill="currentColor" font-size="11.5" text-anchor="middle">
+    <text x="49" y="81">tokens</text>
+    <text x="150" y="81">adaLN</text>
+    <text x="268" y="81">self-attention</text>
+    <text x="366" y="81">+</text>
+    <text x="436" y="81">adaLN</text>
+    <text x="530" y="81">MLP</text>
+    <text x="592" y="81">+</text>
+    <text x="330" y="164">t</text>
+    <text x="330" y="188" opacity="0.6">timestep embedding — scale &amp; shift every norm</text>
+    <text x="232" y="45" opacity="0.6">residual</text>
+    <text x="536" y="45" opacity="0.6">residual</text>
+  </g>
+</svg>
+<figcaption><strong>Fig. DIT-1</strong> — one DiT block (stacked ×N). The accent element is the
+timestep: it modulates every block, which is how a single network denoises at all noise levels.</figcaption>
+</figure>
+
+Attention over **one shared sequence** is also what makes multimodal joint modeling real rather than
+a slogan: video tokens, action tokens, text tokens and state tokens can sit in the same sequence, so
+(in a WAM) action tokens read the imagined future directly at every block. Nothing in the trunk is
+modality- or robot-specific — which is precisely why a video-pretrained trunk transfers.
+
+## Making it causal: chunks, KV cache, teacher forcing
+
+A stock video DiT is **bidirectional**: it emits one fixed-length clip, every frame attending to
+every other. Two properties disqualify that for control: you need actions *now*, not after the clip;
+and fixed windows force frame subsampling that breaks alignment between video time and action time.
+The causal variant generates **chunk by chunk** — in DreamZero, a chunk is <M tex="K=2" /> latent
+frames paired with <M tex="H=48" /> actions, 1.6 s of world — under a **block-causal mask**: the
+chunk being denoised attends to all *finished* chunks and to itself, never the future. Finished
+chunks persist as a
+<Term def="cached key/value tensors of already-processed tokens; an autoregressive model re-reads its whole past for the price of a lookup instead of recomputation">KV cache</Term>,
+so context grows almost for free. **Fig. DIT-2 (interactive)** — explore the three masks, and the
+one move unique to robot world models:
+
+<AttnMask />
+
+Training uses
+<Term def="conditioning on the ground-truth past rather than the model's own predictions; fast and stable, but mismatched with inference, where the model must consume its own outputs">teacher forcing</Term>:
+previous chunks in context are clean ground truth. At inference a pure video generator must feed on
+its own imperfect outputs, and the mismatch compounds — autoregressive **drift**. A closed-loop
+robot model has an exit no offline generator has: after each chunk *executes*, the real camera
+frames can overwrite the predicted frames in the KV cache, restoring teacher-forcing conditions
+every chunk (DreamZero, §3.1 — toggle it in Fig. DIT-2's inference tab). Cousin fixes in the
+offline world — noise injection on context, diffusion forcing — only soften the mismatch;
+observation overwrite deletes it, at the price of needing an environment that answers back.
+
+<SelfCheck q="Why does chunk-causal generation matter for a robot, beyond latency?" a="Alignment and statefulness. Bidirectional models need fixed-length windows, which forces video subsampling that distorts the correspondence between frame time and action time; causal chunks preserve native rates. And the KV cache is a visual memory: each new chunk conditions on up to 6.6 s of actual history — at inference, real observed history, thanks to the overwrite." />
+<SelfCheck q="Where exactly does the LLM analogy break?" a="Two places. Tokens within a chunk are denoised jointly with bidirectional attention among themselves (an LLM is causal token-by-token), and the model predicts continuous velocities for latent patches rather than a softmax over a vocabulary. The causal structure lives at chunk granularity, not token granularity." />

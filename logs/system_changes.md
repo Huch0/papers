@@ -271,3 +271,11 @@ Each entry: date, trigger, change, files touched, migration status.
   scaled) — 141 attributes across the three docs plus both interactive islands.
   Convention recorded in config/summary_components.md (wrap sizable SVG figures
   in FigZoom; keep labels ≥13px).
+
+## 2026-08-18 — FigZoom gains drag-to-pan
+
+- Panning added to the per-figure zoom wrapper: while zoomed past 100% the
+  viewport locks to its 100% height, and the figure pans by pointer drag
+  (mouse and touch, via pointer capture; touch-action disabled so the page
+  does not scroll instead) or native scrollbars; reset also clears the pan.
+  "drag to pan" hint shown in the control bar when active.

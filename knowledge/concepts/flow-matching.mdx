@@ -43,6 +43,29 @@ The side-by-side layout of Fig. FM-1 is purely for legibility. Noise and data ar
 <M tex="x_1 - x_0" /> point every way, not rightward. The same-space toggle overlays the noise cloud
 on the data and the arrows fan out radially — that picture is the honest one.
 
+## First, the vocabulary: field, probability path, marginal
+
+Three words do the heavy lifting in every flow-matching paper, and none of them is exotic.
+
+A <Term def="a function that assigns a value to every point of a space; a number per point is a scalar field, an arrow per point is a vector field">field</Term>
+assigns a value to *every point of space*. A temperature map is a scalar field — one number per
+location. A wind map is a **vector field** — one arrow per location. That is all "field" means here:
+not a trajectory, not a path, but a *function* you can query anywhere. A
+<Term def="a vector field that may also change over time: for every location x and time t it returns one arrow (direction and speed), u(x, t)">velocity field</Term>
+<M tex="u(x, t)" /> is a wind map that may change over time: feed it any location <M tex="x" /> and
+any time <M tex="t" />, it returns the one arrow at that place and moment.
+
+A <Term def="a continuously indexed family of distributions p_t interpolating from the noise distribution p_0 to the data distribution p_1 — a movie whose frames are distributions">probability path</Term>
+<M tex="p_t" /> is a *movie of distributions*: frame 0 is the noise distribution, frame 1 is the
+data distribution, and the frames in between morph one into the other continuously. The
+straight-line interpolant picks one specific movie — at time <M tex="t" />, the crowd of points is
+exactly the pairwise blends <M tex="t\,x_1 + (1-t)\,x_0" />.
+
+The two notions meet in one verb: a velocity field **generates** a probability path when blowing the
+crowd with that wind reproduces the movie — scatter points as frame 0, move each one by
+<M tex="\mathrm{d}x/\mathrm{d}t = u(x, t)" />, and at every <M tex="t" /> the crowd is distributed
+exactly as frame <M tex="t" />. Flow matching's whole object of desire is one such field.
+
 ## The exact definition
 
 Fix two distributions in the same space: noise <M tex="p_0 = \mathcal{N}(0, I)" /> and the data
@@ -64,6 +87,85 @@ is the true marginal field. With the straight-line (rectified-flow) path used in
 Convention warning: this page (and DreamZero's Eq. 2) puts noise at <M tex="t = 0" /> and data at
 <M tex="t = 1" />; many diffusion papers run the axis the other way. Always check before comparing
 equations across papers.
+
+### What u_θ actually converges to: the marginal field
+
+Read the loss closely and a puzzle appears — *for a fixed pair the target <M tex="x_1 - x_0" /> is
+one constant vector, so is the network supposed to output that same vector at every
+<M tex="t" />?* No, and the reason is the heart of the method. The network is a function of
+<M tex="(x, t)" /> **only**; it is never told which pair produced its input. The same point
+<M tex="x" /> at time <M tex="t" /> can be reached by many different (noise, data) pairs, each
+demanding a *different* velocity. A mean-squared-error regression fed conflicting targets converges
+to their average — precisely, the conditional expectation
+
+<MathBlock>{`u^{\\star}(x, t) \\;=\\; \\mathbb{E}\\bigl[\\, x_1 - x_0 \\;\\big|\\; x_t = x \\,\\bigr]`}</MathBlock>
+
+This average-over-all-pairings is the
+<Term def="the velocity field obtained by averaging every conditional (per-pair) velocity passing through (x, t), weighted by how likely each pairing is; the MSE-optimal network output">marginal velocity field</Term>.
+It is *intractable to write down* — evaluating that expectation means integrating over every pairing
+consistent with landing at <M tex="x" /> at time <M tex="t" />, weighted by the very data
+distribution you are trying to learn. But you never need to write it down: SGD on the per-pair
+(**conditional**) loss converges to it automatically, and the flow-matching theorem guarantees that
+integrating this *mean* field still transports <M tex="p_0" /> exactly to <M tex="p_1" />.
+
+<figure>
+<svg viewBox="0 0 560 260" style="max-width:100%;height:auto" role="img" aria-label="Two noise-data pairs whose straight lines cross at one point: at the crossing the two conditional target arrows conflict, and the learned field outputs their mean, drawn in accent.">
+  <defs>
+    <marker id="arrFmTwoA" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker>
+    <marker id="arrFmTwoB" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" style="fill:var(--accent)"/></marker>
+  </defs>
+  <g stroke="currentColor" stroke-width="1" opacity="0.55">
+    <line x1="60" y1="52" x2="500" y2="202"/>
+    <line x1="60" y1="202" x2="500" y2="52" stroke-dasharray="5 4"/>
+  </g>
+  <g fill="currentColor">
+    <circle cx="60" cy="52" r="4" opacity="0.5"/>
+    <circle cx="60" cy="202" r="4" opacity="0.5"/>
+    <circle cx="500" cy="202" r="4"/>
+    <circle cx="500" cy="52" r="4"/>
+    <circle cx="280" cy="127" r="5" style="fill:var(--accent)"/>
+  </g>
+  <g stroke="currentColor" stroke-width="1.3" marker-end="url(#arrFmTwoA)">
+    <line x1="280" y1="127" x2="337" y2="146"/>
+    <line x1="280" y1="127" x2="337" y2="108"/>
+  </g>
+  <line x1="280" y1="127" x2="352" y2="127" style="stroke:var(--accent)" stroke-width="2.2" marker-end="url(#arrFmTwoB)"/>
+  <g fill="currentColor" font-size="11.5">
+    <text x="52" y="40">x₀ (pair A)</text>
+    <text x="52" y="222">x₀ (pair B)</text>
+    <text x="452" y="222">x₁ (pair A)</text>
+    <text x="452" y="40">x₁ (pair B)</text>
+    <text x="344" y="158">target of pair A</text>
+    <text x="344" y="100">target of pair B</text>
+    <text x="286" y="112" opacity="0.7">same (x, t)</text>
+    <text x="360" y="131" style="fill:var(--accent)">the mean — what u learns</text>
+  </g>
+</svg>
+<figcaption><strong>Fig. FM-2</strong> — two pairs, one point. Where conditional lines cross, the
+two straight-line targets conflict; the MSE optimum at that point is their mean. That mean over all
+pairings is the marginal field — and the reason actually-sampled trajectories curve even though
+every individual training target is straight.</figcaption>
+</figure>
+
+So the honest description of <M tex="u_\theta(x_t, t)" />: **input** — a position in sample space
+and a time; **output** — one velocity vector, the posterior-mean of <M tex="x_1 - x_0" /> over all
+pairings that could have put a point there. Near <M tex="t = 0" /> the input is almost pure noise
+and says little about the destination, so the posterior is broad and the arrow points toward a blur
+of plausible data. Near <M tex="t = 1" /> the point has nearly arrived, the posterior collapses,
+and the arrow points at one specific sample. Constant along each *conditional* line, yes — but what
+is *learned* is a genuine function of position and time.
+
+### "Rectified flow", named
+
+<Term def="the linear-interpolant instance of flow matching (Liu et al. 2022): straight-line paths x_t = t x1 + (1−t) x0 with velocity target x1 − x0, plus the reflow iterate">Rectified flow</Term>
+is the name of exactly this linear-interpolant instance — straight conditional paths, constant
+per-pair velocity — introduced by Liu et al. (2022) alongside an optional iterate called
+<Term def="re-pair each generated sample with the noise that produced it (a non-crossing coupling) and retrain; each round straightens the marginal trajectories, approaching one-step generation">reflow</Term>:
+sample with the trained field, re-pair each output with the noise seed that produced it, retrain on
+those non-crossing pairs. Each round straightens the *marginal* trajectories (Fig. FM-2's curving
+diminishes), which is the principled route to one-step generation. "Flow matching with the linear
+path", "rectified flow", and "stochastic interpolants with linear interpolant" name the same object
+from three simultaneous 2022 papers.
 
 ## What "velocity" means here — and what it does not
 
@@ -124,7 +226,7 @@ its Flash variant); and one field usable at every noise level.
 Drawbacks of replacing the curved stochastic path with a straight deterministic one:
 
 - **Individually straight, collectively curved.** Conditional paths cross (visible in Fig. FM-1 —
-  lines intersect), and the learned *marginal* field is an average over crossings, so actual sampled
+  lines intersect), and the learned *marginal* field is an average over crossings (Fig. FM-2), so actual sampled
   trajectories still bend. True one-step generation needs extra work (reflow, distillation).
 - **No stochastic self-correction.** An SDE sampler re-injects noise each step, which can act as a
   corrector that "forgets" small integration errors; a deterministic ODE accumulates them. Some
@@ -143,6 +245,25 @@ shared <M tex="t" /> per chunk so both modalities denoise toward the same imagin
 Flash variant deliberately *breaks* the shared schedule (video <M tex="t \sim \mathrm{Beta}(7,1)" />,
 action uniform) to buy 1-step video inference at a measured quality cost. See the paper page for the
 chunked, causal machinery around the objective ([Causal DiT](../causal-dit/)).
+
+## Glossary
+
+- <Term def="a function assigning a value to every point of a space — a number per point (scalar field, e.g. a temperature map) or an arrow per point (vector field, e.g. a wind map); queryable anywhere, not a trajectory">field</Term>
+- <Term def="a time-dependent vector field u(x, t): one arrow (direction + speed) for every location and moment">velocity field</Term>
+- <Term def="a continuously indexed family of distributions p_t morphing noise p_0 into data p_1 — a movie whose frames are distributions">probability path</Term>
+- <Term def="a velocity field generates a path when moving points by dx/dt = u(x,t) makes the crowd match p_t at every t">generates</Term>
+- <Term def="the per-pair straight-line target x_1 − x_0: the velocity of the path conditioned on one sampled (noise, data) pair">conditional velocity</Term>
+- <Term def="the average of all conditional velocities passing through (x, t), weighted by pairing likelihood: u*(x,t) = E[x_1 − x_0 | x_t = x]; the MSE-optimal network and the field the sampler integrates">marginal velocity field</Term>
+- <Term def="the average of a random quantity restricted to cases consistent with an observation — here, average target velocity given that the point sits at x at time t">conditional expectation</Term>
+- <Term def="ordinary differential equation dx/dt = u(x,t): deterministic motion prescribed by a velocity field; solving it numerically = integration (e.g. Euler steps)">ODE</Term>
+- <Term def="stochastic differential equation: an ODE plus injected randomness at every step — the mathematical home of classic diffusion sampling">SDE</Term>
+- <Term def="the deterministic ODE that shares every marginal distribution with a given diffusion SDE (Song et al. 2021); the bridge between diffusion and flows">probability-flow ODE</Term>
+- <Term def="training without ever solving the ODE/SDE during training — the property that let diffusion and flow matching scale where classic CNFs could not">simulation-free</Term>
+- <Term def="any x_t built by blending a data sample with a noise sample, e.g. the linear x_t = t·x_1 + (1−t)·x_0; 'stochastic interpolants' is the general framework">interpolant</Term>
+- <Term def="the linear-interpolant instance of flow matching (Liu et al. 2022), straight conditional paths + constant per-pair velocity">rectified flow</Term>
+- <Term def="re-pair generated samples with their own noise seeds and retrain; straightens marginal trajectories toward one-step generation">reflow</Term>
+- <Term def="conditional flow matching: the tractable objective regressing on per-pair velocities, whose gradients equal the intractable marginal objective's">CFM</Term>
+- <Term def="classifier-free guidance: a conditional and an unconditional forward pass extrapolated against each other to strengthen conditioning">CFG</Term>
 
 <SelfCheck q="A friend says flow matching learns to move points along straight lines. What is the precise correction?" a="Each *conditional* pair defines a straight regression target, and that target's velocity is constant along its segment. But the learned field is the marginal average over many crossing pairs, so the trajectories a sampler actually follows are generally curved. Straightness is a property of the training target, not of the sampled path." />
 <SelfCheck q="Why does predicting velocity beat predicting the clean sample directly, if the two are affinely equivalent?" a="Equivalent in information, not in conditioning: near t = 1 the clean-sample target degenerates (the input almost equals the answer) and noise-prediction blows up in scale, while the velocity target x1 − x0 keeps constant scale for every t. And the sampler consumes a velocity anyway — predicting it removes a conversion." />

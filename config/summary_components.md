@@ -72,6 +72,10 @@ element that carries meaning, label the arrows, wrap in `<figure>` + `<figcaptio
 svg `role="img"` + an `aria-label`, and keep marker/gradient ids unique per page.
 
 ## Rules
+- **Knowledge concepts are self-contained.** A concept page assumes no prior exposure:
+  define every academic/technical term at first use with `<Term def="…">` and end the
+  page with a `## Glossary` section collecting those definitions (same convention as
+  summaries). A reader should never need to leave the page to parse a sentence.
 - **General background belongs in the knowledge base.** Tutorial material reusable across
   papers (e.g. flow matching, DiT architectures) lives in `knowledge/concepts/*.mdx`
   (authored via `knowledge.py ensure-concept` + `link` for reciprocal paper links); the

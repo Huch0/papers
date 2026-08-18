@@ -157,3 +157,15 @@ Each entry: date, trigger, change, files touched, migration status.
 - FlowMatch island gained a same-space view (noise overlaid on data) after the user
   correctly objected that the side-by-side layout hides that transport directions
   point every way.
+
+## 2026-08-18 — KB self-containment rule + Glossary sections
+
+- User rule: the knowledge base must be self-contained — define every
+  academic/technical term (Term chips at first use) and end each concept page
+  with a ## Glossary. Recorded in config/summary_components.md Rules.
+- Applied to flow-matching (new vocabulary section defining field / velocity
+  field / probability path / generates; new "marginal field" section resolving
+  what u_theta(x_t, t) converges to — the conditional expectation E[x1 − x0 |
+  x_t = x] — with new Fig. FM-2 showing crossing conditional targets averaging;
+  named "rectified flow" + reflow; 15-entry Glossary) and causal-dit (15-entry
+  Glossary).

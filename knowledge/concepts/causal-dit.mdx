@@ -125,5 +125,23 @@ every chunk (DreamZero, §3.1 — toggle it in Fig. DIT-2's inference tab). Cous
 offline world — noise injection on context, diffusion forcing — only soften the mismatch;
 observation overwrite deletes it, at the price of needing an environment that answers back.
 
+## Glossary
+
+- <Term def="a fixed-width vector in the transformer's working space; every input (latent patch, word piece, action slice, state reading) becomes one before entering the blocks">token</Term>
+- <Term def="the compressed representation a VAE encoder produces from pixels; all generation happens on these small grids, pixels only appear at the ends">latent</Term>
+- <Term def="variational autoencoder: encoder compressing frames into latents + decoder reconstructing pixels; trained once, then frozen and reused">VAE</Term>
+- <Term def="a small tile of the latent grid; one patch becomes one token">patch</Term>
+- <Term def="each token reads a weighted mix of all (unmasked) tokens; the weights are computed from the tokens themselves">self-attention</Term>
+- <Term def="adaptive layer norm: the timestep (and other conditioning) is turned into per-block scale and shift applied at the normalization layers — how one network denoises at every noise level (Peebles & Xie 2023)">adaLN</Term>
+- <Term def="a learned vector encoding the scalar denoising time t, fed to every block via adaLN">timestep embedding</Term>
+- <Term def="the block's input added back to its output; keeps deep stacks trainable">residual</Term>
+- <Term def="cached key/value tensors of already-processed tokens; the model re-reads its whole past for the price of a lookup instead of recomputation">KV cache</Term>
+- <Term def="attention rule at chunk granularity: full attention within a chunk, causal (past-only) across chunks">block-causal mask</Term>
+- <Term def="the generation unit: a short span of latent frames and their aligned actions denoised together (DreamZero: 2 latent frames + 48 actions = 1.6 s)">chunk</Term>
+- <Term def="training on ground-truth past context rather than the model's own predictions; stable, but mismatched with inference">teacher forcing</Term>
+- <Term def="compounding error when an autoregressive model conditions on its own imperfect outputs; small mistakes feed back and grow">drift</Term>
+- <Term def="after a chunk executes, real camera frames replace the model's predicted frames in the KV cache — restoring teacher-forcing conditions at inference; available only to closed-loop (robot) models">observation overwrite</Term>
+- <Term def="a model generating one fixed-length clip with every frame attending to every other; no notion of 'now', so unusable for control">bidirectional video model</Term>
+
 <SelfCheck q="Why does chunk-causal generation matter for a robot, beyond latency?" a="Alignment and statefulness. Bidirectional models need fixed-length windows, which forces video subsampling that distorts the correspondence between frame time and action time; causal chunks preserve native rates. And the KV cache is a visual memory: each new chunk conditions on up to 6.6 s of actual history — at inference, real observed history, thanks to the overwrite." />
 <SelfCheck q="Where exactly does the LLM analogy break?" a="Two places. Tokens within a chunk are denoised jointly with bidirectional attention among themselves (an LLM is causal token-by-token), and the model predicts continuous velocities for latent patches rather than a softmax over a vocabulary. The causal structure lives at chunk granularity, not token granularity." />

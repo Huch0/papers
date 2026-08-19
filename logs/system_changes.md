@@ -299,3 +299,16 @@ Each entry: date, trigger, change, files touched, migration status.
 - knowledge/causal-dit.mdx: Parts 1-5 respun as derive-by-failure teaching
   (centered kernel fails -> causal; token/concat fail -> FiLM; "which part
   generates? None"); all preserved blocks byte-identical.
+
+## 2026-08-19 — Fig. DZ-3 rebuilt under a geometry-audit discipline
+
+- User correctly rejected the first Fig. DZ-3 (floating arrow start, a path
+  routed outside the viewBox, an accent curve crossing five boxes, text
+  overflowing its box). Root cause: freehand curve coordinates drawn blind
+  with no verification. Rebuilt on a strict vertical spine with two reserved
+  margin corridors (right = re-embed loop, left = observation-overwrite loop),
+  orthogonal connectors only — and the generator now runs an automated
+  geometry audit (anchored endpoints, no path-through-box, text-fit, free-label
+  clearance, viewBox bounds) that must print CLEAN before rendering. The audit
+  caught 14 defects in the first redo attempt before shipping. Discipline
+  recorded in config/summary_components.md Diagrams section.

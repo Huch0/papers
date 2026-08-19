@@ -69,7 +69,12 @@ but harmless.
 ## Diagrams
 Wrap every sizable inline-SVG `<figure>` in `<FigZoom>…</FigZoom>` so readers can resize
 it, and keep SVG label text ≥ 13px at an 880-wide viewBox (roughly body-text size once the
-figure scales to the content column).
+figure scales to the content column). Author diagrams with a row/corridor layout — straight
+orthogonal connectors only, return loops routed through reserved margin corridors — and run a
+geometry audit before shipping: every connector endpoint anchored on a box edge or joint, no
+segment crossing a box it does not connect, in-box text fitting its box (estimate
+chars × 0.62 × font-size), free labels clear of boxes and lines, all coordinates inside the
+viewBox. Freehand curves drawn blind are how figures rot.
 Inline `<svg>` mechanism diagrams are allowed directly in the MDX body (they are markup,
 not bespoke components). Follow the house style: size via `viewBox` + `style="width:100%;height:auto"`,
 strokes/text in `currentColor` so both themes work, reserve `var(--accent)` for the one

@@ -23,15 +23,22 @@ data; generating a sample is then just integrating that velocity field. It is th
 today's large video/image models (SD3, Flux, Wan) — and behind DreamZero's joint video+action
 denoising.</TLDR>
 
-## Intuition
+## Let's invent it: transport as regression
 
-A generative model must answer: *given pure randomness, produce something that looks like the data.*
-Flow matching's answer is transport. Imagine every possible data sample connected to a random noise
-sample by a straight line. If a network could tell you, at any intermediate point, "which way is
-home and how fast", you could start anywhere in the noise and simply walk to a data sample. Training
-teaches exactly that one **job**: look at a partially noisy point and the time <M tex="t" />, output
-the direction-and-speed of the line passing through it. (The word is "job", not "skill" — in
-robotics papers *skill* means a motion primitive; here nothing robotic is meant.)
+Start from the bare problem every generative model faces. You can manufacture unlimited
+randomness — Gaussian noise costs one line of code — and what you want is samples that look like
+data. Something has to turn the distribution you *have* into the distribution you *want*. Forget
+the standard machinery for a moment; let us invent the converter ourselves and see what we are
+forced into.
+
+Try the simplest physical idea available: *move the points*. Put the noise cloud and the data
+cloud in the same space, pair each noise point with a data point, and join each pair by a straight
+line. Now ask what you would need in order to actually travel. If, standing anywhere along the way
+at any moment, something whispered "home is that way, at this speed", you could start at pure
+noise, follow the whispers, and arrive at a data sample. That whisperer is the entire model. So
+training teaches a network exactly one **job**: look at a partially noisy point and the time
+<M tex="t" />, output the direction-and-speed of the line passing through it. (The word is "job",
+not "skill" — in robotics papers *skill* means a motion primitive; here nothing robotic is meant.)
 
 **Fig. FM-1 (interactive).** Drag <M tex="t" />, animate the transport, switch to the train view to
 see the regression target, open the **field view** to watch the exact marginal field as an arrow grid
@@ -39,38 +46,46 @@ see the regression target, open the **field view** to watch the exact marginal f
 
 <FlowMatch />
 
-The side-by-side layout of Fig. FM-1 is purely for legibility. Noise and data are points in the
-**same space** (for DreamZero, the same latent space), so the true transport directions
-<M tex="x_1 - x_0" /> point every way, not rightward. The same-space toggle overlays the noise cloud
-on the data and the arrows fan out radially — that picture is the honest one.
+One honest note before you trust the picture. The side-by-side layout of Fig. FM-1 is purely for
+legibility: noise and data are points in the **same space** (for DreamZero, the same latent
+space), so the true transport directions <M tex="x_1 - x_0" /> point every way, not rightward. Hit
+the same-space toggle — the noise cloud drops onto the data and the arrows fan out radially. That
+picture is the honest one.
 
-## First, the vocabulary: field, probability path, marginal
+## Three words, so we can talk: field, probability path, generates
 
-Three words do the heavy lifting in every flow-matching paper, and none of them is exotic.
+Before the plan can be stated precisely, its parts need names. Three ordinary words carry every
+flow-matching paper; pin each one down before it does any work.
 
-A <Term def="a function that assigns a value to every point of a space; a number per point is a scalar field, an arrow per point is a vector field">field</Term>
-assigns a value to *every point of space*. A temperature map is a scalar field — one number per
-location. A wind map is a **vector field** — one arrow per location. That is all "field" means here:
-not a trajectory, not a path, but a *function* you can query anywhere. (And not the algebra
+First: what kind of object is the whisperer? It must have an answer *everywhere* — any point you
+stand at, any moment on the clock. A function that assigns a value to every point of a space is a
+<Term def="a function that assigns a value to every point of a space; a number per point is a scalar field, an arrow per point is a vector field">field</Term>.
+A temperature map is a scalar field — one number per location. A wind map is a **vector field** —
+one arrow per location. That is the whole meaning of "field" here: not a trajectory, not a path,
+but a *function* you can query anywhere. (And not the algebra
 sense: the "field" of group–ring–field is a number system closed under the four operations —
 German distinguishes *Feld*, this one, from *Körper*, that one; English collapsed both. The only
 contact point: velocity vectors live in a vector space, which is defined *over* the algebraic field
-ℝ of scalars.) A
+ℝ of scalars.) Now let
+the wind shift with the clock. A
 <Term def="a vector field that may also change over time: for every location x and time t it returns one arrow (direction and speed), u(x, t)">velocity field</Term>
-<M tex="u(x, t)" /> is a wind map that may change over time: feed it any location <M tex="x" /> and
-any time <M tex="t" />, it returns the one arrow at that place and moment.
+<M tex="u(x, t)" /> is a wind map with time as an extra input: hand it any location <M tex="x" />
+and any moment <M tex="t" />, and it hands back the one arrow at that place and time.
 
-A <Term def="a continuously indexed family of distributions p_t interpolating from the noise distribution p_0 to the data distribution p_1 — a movie whose frames are distributions">probability path</Term>
-<M tex="p_t" /> is a *movie of distributions*: frame 0 is the noise distribution, frame 1 is the
-data distribution, and the frames in between morph one into the other continuously (Fig. FM-4
-shows one as a filmstrip). The
-straight-line interpolant picks one specific movie — at time <M tex="t" />, the crowd of points is
-exactly the pairwise blends <M tex="t\,x_1 + (1-t)\,x_0" />.
+Second: say what the *crowd* is doing while the wind blows. At every instant the traveling points
+have some distribution, so the whole journey is a
+<Term def="a continuously indexed family of distributions p_t interpolating from the noise distribution p_0 to the data distribution p_1 — a movie whose frames are distributions">probability path</Term>
+<M tex="p_t" /> — a *movie of distributions*: frame 0 is the noise distribution, frame 1 is the
+data distribution, and every frame between them morphs continuously from one toward the other
+(Fig. FM-4 shows such a movie as a filmstrip). Your straight-line construction picks one specific
+movie — at time <M tex="t" />, the crowd sits exactly at the pairwise blends
+<M tex="t\,x_1 + (1-t)\,x_0" />.
 
-The two notions meet in one verb: a velocity field **generates** a probability path when blowing the
-crowd with that wind reproduces the movie — scatter points as frame 0, move each one by
-<M tex="\mathrm{d}x/\mathrm{d}t = u(x, t)" />, and at every <M tex="t" /> the crowd is distributed
-exactly as frame <M tex="t" />. Flow matching's whole object of desire is one such field.
+The two notions meet in one verb, and the verb is the whole quarry: a velocity field **generates**
+a probability path when blowing the crowd with that wind reproduces the movie — start the points
+as frame 0, push each one along <M tex="\mathrm{d}x/\mathrm{d}t = u(x, t)" />, and check the crowd
+at every <M tex="t" />: it must be distributed exactly as frame <M tex="t" />. Everything below is
+the hunt for one such field.
 
 <Definition term="Probability path">
 A family of distributions <M tex="\{p_t\}_{t \in [0,1]}" /> with <M tex="p_0 = \mathcal{N}(0, I)" />
@@ -84,21 +99,30 @@ A map <M tex="u : \mathbb{R}^d \times [0,1] \to \mathbb{R}^d" /> generates the p
 <M tex="x(0) \sim p_0" /> satisfy <M tex="x(t) \sim p_t" /> for every <M tex="t \in [0,1]" />.
 </Definition>
 
-## The exact definition
+## Say it precisely — and hit the first wall
 
-Fix two distributions in the same space: noise <M tex="p_0 = \mathcal{N}(0, I)" /> and the data
-distribution <M tex="p_1" />. Choose a **probability path** <M tex="p_t" /> that morphs one into the
-other as <M tex="t" /> runs 0 → 1. A time-dependent **velocity field** <M tex="u(x, t)" />
-*generates* that path if moving every point by the ODE <M tex="\mathrm{d}x/\mathrm{d}t = u(x, t)" />
-carries <M tex="p_0" /> into exactly <M tex="p_t" /> at every time. Flow matching = fit a network
-<M tex="u_\theta" /> to such a field by plain regression.
+Now say the plan with full precision, because the real difficulty only appears once you do. Fix
+two distributions in the same space: noise <M tex="p_0 = \mathcal{N}(0, I)" /> and the data
+distribution <M tex="p_1" />. Choose a **probability path** <M tex="p_t" /> that morphs one into
+the other as <M tex="t" /> runs 0 → 1. Wanted: a time-dependent **velocity field**
+<M tex="u(x, t)" /> that *generates* the path — moving every point by the ODE
+<M tex="\mathrm{d}x/\mathrm{d}t = u(x, t)" /> must carry <M tex="p_0" /> into exactly
+<M tex="p_t" /> at every time. Now the plan: fit a network <M tex="u_\theta" /> to such a field
+with the cheapest tool in the shop, plain regression. That plan *is* flow matching.
 
-The marginal field is intractable, so **conditional flow matching** (the trick that makes it work)
-regresses against the velocity of the path *conditioned on a sampled pair*: draw a data point
-<M tex="x_1" />, a noise point <M tex="x_0" />, a time <M tex="t" />, form the interpolant, and
-regress on that pair's own velocity. The theorem making this legal (Lipman et al. 2022): the
-conditional objective has the **same gradients** as the intractable marginal one, so its minimizer
-is the true marginal field.
+Plain regression needs a target you can compute — and there is the wall. The field you want is a
+property of the entire data distribution at once (you will see shortly that it is literally an
+average over it), and the data distribution is the very thing you do not have. Call this
+unreachable object the *marginal* field. The obvious attempt fails before it starts: the marginal
+field is intractable.
+
+So you are forced to shrink the question until it becomes computable. Stop asking "what is the
+wind of the whole crowd at this point?" and ask "what is the wind of *one pair* passing through
+it?" — that one you can write down instantly. Draw a data point <M tex="x_1" />, a noise point
+<M tex="x_0" />, a time <M tex="t" />, form the interpolant, and regress on that pair's own
+velocity. This is **conditional flow matching**, the trick that makes the method trainable at all.
+The theorem that makes it legal (Lipman et al. 2022): the conditional objective has the **same
+gradients** as the intractable marginal one, so its minimizer is the true marginal field.
 
 <Definition term="Conditional flow matching (linear path)">
 With the straight-line (rectified-flow) path used in practice:
@@ -110,27 +134,29 @@ Convention warning: this page (and DreamZero's Eq. 2) puts noise at <M tex="t = 
 <M tex="t = 1" />; many diffusion papers run the axis the other way. Always check before comparing
 equations across papers.
 
-### What u_θ actually converges to: the marginal field
+### The objection you should raise: the targets contradict each other
 
-Read the loss closely and a puzzle appears — *for a fixed pair the target <M tex="x_1 - x_0" /> is
-one constant vector, so is the network supposed to output that same vector at every
-<M tex="t" />?* No, and the reason is the heart of the method. The network is a function of
-<M tex="(x, t)" /> **only**; it is never told which pair produced its input. The same point
-<M tex="x" /> at time <M tex="t" /> can be reached by many different (noise, data) pairs, each
-demanding a *different* velocity. A mean-squared-error regression fed conflicting targets converges
-to their average — precisely, the conditional expectation
+Read the loss the way a skeptic would and a puzzle appears — *for a fixed pair the target
+<M tex="x_1 - x_0" /> is one constant vector, so is the network supposed to output that same
+vector at every <M tex="t" />?* No, and working out why not is the heart of the method. The
+network is a function of <M tex="(x, t)" /> **only**; it is never told which pair produced its
+input. But the same point <M tex="x" /> at time <M tex="t" /> can be reached by many different
+(noise, data) pairs, each demanding a *different* velocity — so training feeds one input
+contradictory targets. What does a mean-squared-error regression do with contradictory targets?
+It converges to their average — precisely, the conditional expectation
 
 <Definition term="Marginal velocity field">
 <MathBlock>{`u^{\\star}(x, t) \\;=\\; \\mathbb{E}\\bigl[\\, x_1 - x_0 \\;\\big|\\; x_t = x \\,\\bigr]`}</MathBlock>
 </Definition>
 
-This average-over-all-pairings is the
+The average over all pairings has a name: the
 <Term def="the velocity field obtained by averaging every conditional (per-pair) velocity passing through (x, t), weighted by how likely each pairing is; the MSE-optimal network output">marginal velocity field</Term>.
-It is *intractable to write down* — evaluating that expectation means integrating over every pairing
-consistent with landing at <M tex="x" /> at time <M tex="t" />, weighted by the very data
-distribution you are trying to learn. But you never need to write it down: SGD on the per-pair
-(**conditional**) loss converges to it automatically, and the flow-matching theorem guarantees that
-integrating this *mean* field still transports <M tex="p_0" /> exactly to <M tex="p_1" />.
+Try to write it down and you fail again — evaluating that expectation means integrating over
+every pairing consistent with landing at <M tex="x" /> at time <M tex="t" />, weighted by the very
+data distribution you are trying to learn. Here is the escape, and it is the punchline of the
+whole construction: you never need to write it down. SGD on the per-pair (**conditional**) loss
+converges to it automatically, and the flow-matching theorem guarantees that integrating this
+*mean* field still transports <M tex="p_0" /> exactly to <M tex="p_1" />.
 
 <FigZoom>
 <figure>
@@ -179,27 +205,29 @@ is the minimal cartoon of that continuum.</figcaption>
 </figure>
 </FigZoom>
 
-So the honest description of <M tex="u_\theta(x_t, t)" />: **input** — a position in sample space
-and a time; **output** — one velocity vector, the posterior-mean of <M tex="x_1 - x_0" /> over all
-pairings that could have put a point there. Near <M tex="t = 0" /> the input is almost pure noise
-and says little about the destination, so the posterior is broad and the arrow points toward a blur
-of plausible data. Near <M tex="t = 1" /> the point has nearly arrived, the posterior collapses,
-and the arrow points at one specific sample. Constant along each *conditional* line, yes — but what
-is *learned* is a genuine function of position and time.
+So state honestly what <M tex="u_\theta(x_t, t)" /> is. **Input** — a position in sample space
+and a time. **Output** — one velocity vector, the posterior-mean of <M tex="x_1 - x_0" /> over
+all pairings that could have put a point there. Near <M tex="t = 0" /> the input is almost pure
+noise and says little about the destination, so the posterior is broad and the arrow points toward
+a blur of plausible data. Near <M tex="t = 1" /> the point has nearly arrived, the posterior
+collapses, and the arrow points at one specific sample. Constant along each *conditional* line,
+yes — but the thing that is *learned* is a genuine function of position and time.
 
-Two magnitudes worth keeping straight. The *target's* magnitude is the full
+Two magnitudes are easy to conflate, so keep them separate. The *target's* magnitude is the full
 <M tex="\lVert x_1 - x_0 \rVert" /> at every point of its segment — not the remaining distance —
 because <M tex="t" /> runs over <M tex="[0,1]" /> and the whole journey must finish in unit time;
 what shrinks as <M tex="t" /> grows is the remaining *displacement*
 <M tex="(1-t)(x_1 - x_0)" />, which lands exactly on <M tex="x_1" />. The *mean's* magnitude is
-generally smaller than its components' (vectors at an angle partially cancel) — one more reason the
-marginal field is not any single pair's field.
+generally smaller than its components' (vectors at an angle partially cancel) — one more reason
+the marginal field is not any single pair's field.
 
-### How do you picture u(x, t)?
+### Now try to draw it — and fail honestly
 
-You cannot plot the graph of <M tex="u" /> directly — with 2-D space its graph lives in five
-dimensions (two of position, one of time, two of output). Every honest visualization is therefore a
-*slice* or a *reduction*, and there are exactly three standard ones, all used on this page:
+Of course you want to *see* the field you just defined. Count dimensions and the problem is
+immediate: even with 2-D space, the graph of <M tex="u" /> lives in five of them (two of
+position, one of time, two of output). No screen shows five. So every honest visualization must
+throw something away — a *slice* or a *reduction* — and there are exactly three standard ways to
+do it, all used on this page:
 
 1. **Freeze time: the arrow grid (quiver).** Pick one <M tex="t" />, draw the arrow
    <M tex="u(x, t)" /> at every point of a spatial grid — a wind map — and put <M tex="t" /> on a
@@ -209,15 +237,15 @@ dimensions (two of position, one of time, two of output). Every honest visualiza
 <MathBlock>{`u^{\\star}(x, t) \\;=\\; \\frac{\\sum_i s_i(x, t)\\, d_i \\;-\\; x}{1 - t}, \\qquad s_i(x, t) = \\operatorname{softmax}_i\\!\\left( -\\,\\frac{\\lVert x - t\\, d_i \\rVert^2}{2\\sigma^2 (1 - t)^2} \\right)`}</MathBlock>
 
    — a softmax-weighted vote among data points over the remaining time. Scrub the slider and the
-   prose of the previous section becomes motion: at <M tex="t = 0" /> the vote is uniform and every
+   skeptic's argument above turns into motion: at <M tex="t = 0" /> the vote is uniform and every
    arrow points at the data centroid; as <M tex="t \to 1" /> the vote collapses onto the nearest
    data points and the arrows sharpen.
 
-2. **Drop space to 1-D: the spacetime slope field.** The intuitive "3-D plot with a time axis"
-   exists, but the readable version does not add an axis — it removes one. With 1-D space,
-   spacetime is a plane: time runs rightward, space runs up, the field becomes short slope ticks
-   (the direction fields of an ODE course), conditional pairs become straight lines, and marginal
-   trajectories become curves you can actually integrate and draw:
+2. **Drop space to 1-D: the spacetime slope field.** The "3-D plot with a time axis" you are
+   tempted to ask for exists, but the readable version does not add an axis — it removes one. With
+   1-D space, spacetime is a plane: time runs rightward, space runs up, the field becomes short
+   slope ticks (the direction fields of an ODE course), conditional pairs become straight lines,
+   and marginal trajectories become curves you can actually integrate and draw:
 
 <FigZoom>
 <figure>
@@ -239,9 +267,9 @@ the honest equivalents are Fig. FM-1's field view (slider = slicing time) or a f
 </figure>
 </FigZoom>
 
-3. **Picture the path instead: the filmstrip.** The field's job is to generate the probability path
-   <M tex="p_t" />; sometimes the clearest picture ignores arrows entirely and just shows the movie
-   of distributions, frame by frame:
+3. **Picture the path instead: the filmstrip.** The field's whole job is to generate the
+   probability path <M tex="p_t" />; sometimes the clearest picture ignores arrows entirely and
+   just shows the movie of distributions, frame by frame:
 
 <FigZoom>
 <figure>
@@ -255,10 +283,11 @@ third honest view: it pictures the path p_t itself rather than the field u.</fig
 </figure>
 </FigZoom>
 
-A literal 3-D rendering (two space axes plus time, arrows or worldlines in perspective) is the one
-tempting option this page avoids on purpose: projected arrows lose direction and length, worldlines
-occlude one another, and every reading of the picture depends on the camera angle. A slider *is* the
-3-D plot, sliced honestly; the 1-D spacetime view *is* the time axis, made flat.
+What about the literal 3-D rendering — two space axes plus time, arrows or worldlines in
+perspective? That is the one tempting option this page refuses on purpose: projected arrows lose
+direction and length, worldlines occlude one another, and every reading of the picture depends on
+the camera angle. A slider *is* the 3-D plot, sliced honestly; the 1-D spacetime view *is* the
+time axis, made flat.
 
 <Pass title="Why the toy's marginal field is exactly computable">
 Let the data be a finite set <M tex="\{d_i\}" /> (uniform prior) and the noise
@@ -274,8 +303,7 @@ are tanh-compressed). Real generative models have no such closed form — an inf
 distribution replaces the finite sum — which is exactly why <M tex="u_\theta" /> must be *learned*.
 </Pass>
 
-
-### "Rectified flow", named
+### Name what you built: "rectified flow"
 
 <Definition term="Rectified flow">
 Flow matching with the linear interpolant <M tex="x_t = t\,x_1 + (1-t)\,x_0" /> and per-pair
@@ -283,73 +311,82 @@ target <M tex="x_1 - x_0" />; optionally iterated by reflow, which re-pairs gene
 their own noise seeds and retrains.
 </Definition>
 
+Everything invented so far — straight conditional paths, constant per-pair velocity — already
+has a name.
 <Term def="the linear-interpolant instance of flow matching (Liu et al. 2022): straight-line paths x_t = t x1 + (1−t) x0 with velocity target x1 − x0, plus the reflow iterate">Rectified flow</Term>
-is the name of exactly this linear-interpolant instance — straight conditional paths, constant
-per-pair velocity — introduced by Liu et al. (2022) alongside an optional iterate called
+is exactly this linear-interpolant instance, introduced by Liu et al. (2022) together with an
+optional iterate called
 <Term def="re-pair each generated sample with the noise that produced it (a non-crossing coupling) and retrain; each round straightens the marginal trajectories, approaching one-step generation">reflow</Term>:
-sample with the trained field, re-pair each output with the noise seed that produced it, retrain on
-those non-crossing pairs. Each round straightens the *marginal* trajectories (Fig. FM-2's curving
-diminishes), which is the principled route to one-step generation. "Flow matching with the linear
-path", "rectified flow", and "stochastic interpolants with linear interpolant" name the same object
-from three simultaneous 2022 papers.
+sample with the trained field, re-pair each output with the noise seed that produced it, retrain
+on those non-crossing pairs. Each round straightens the *marginal* trajectories (Fig. FM-2's
+curving diminishes), which is the principled route to one-step generation. And a small confession
+about credit: "flow matching with the linear path", "rectified flow", and "stochastic
+interpolants with linear interpolant" name the same object from three simultaneous 2022 papers.
 
 ## What "velocity" means here — and what it does not
 
-The velocity is the time-derivative of a point's position along the chosen path,
-<M tex="\mathrm{d}x_t/\mathrm{d}t" /> — "which direction and how fast this point should move
-through the space at time <M tex="t" />". The space is the model's sample space (image latents,
-video latents, normalized action chunks). It is **not** a physical velocity: in DreamZero the
-flow-matching velocity for action tokens is a derivative in normalized-action space along the
-denoising path — it is not the robot's joint velocity, and the executed actions are joint-position
-deltas, not speeds.
+One last place to fool yourself, so close it off. The velocity is the time-derivative of a point's
+position along the chosen path, <M tex="\mathrm{d}x_t/\mathrm{d}t" /> — "which direction and how
+fast this point should move through the space at time <M tex="t" />". The space is the model's
+sample space (image latents, video latents, normalized action chunks). It is **not** a physical
+velocity: in DreamZero the flow-matching velocity for action tokens is a derivative in
+normalized-action space along the denoising path — it is not the robot's joint velocity, and the
+executed actions are joint-position deltas, not speeds.
 
-**Why is it constant along a straight line?** Differentiate the interpolant once:
+**Why is the target constant along a straight line?** Do not take it on authority — differentiate
+the interpolant once and watch the <M tex="t" /> disappear:
 
 <MathBlock>{`\\frac{\\mathrm{d}x_t}{\\mathrm{d}t} = \\frac{\\mathrm{d}}{\\mathrm{d}t}\\bigl[\\, t\\,x_1 + (1-t)\\,x_0 \\,\\bigr] = x_1 - x_0`}</MathBlock>
 
-The result contains no <M tex="t" />: position depends on <M tex="t" /> linearly, so its derivative
-is the same everywhere on the segment. That constancy is the pedagogical gift of the straight path —
-the regression target for a given pair does not change as the point travels, which makes the
-learning problem as clean as regression gets.
+The result contains no <M tex="t" />: position depends on <M tex="t" /> linearly, so its
+derivative is the same everywhere on the segment. That constancy is the pedagogical gift of the
+straight path — the regression target for a given pair does not change as the point travels,
+which makes the learning problem as clean as regression gets.
 
-## Why predict the velocity (and not the clean sample, or the noise)?
+## Why regress on the velocity — and not the clean sample, or the noise?
 
-Given <M tex="x_t" /> and <M tex="t" />, the three classic targets are affinely interchangeable —
-predict any one and the others follow:
+You could have aimed the regression at three different targets. Given <M tex="x_t" /> and
+<M tex="t" />, they are affinely interchangeable — predict any one and the other two follow:
 
 <MathBlock>{`x_1 = x_t + (1-t)\\,v, \\qquad x_0 = x_t - t\\,v, \\qquad v = x_1 - x_0`}</MathBlock>
 
-So velocity-prediction is a *parameterization choice*, not extra power. It is the preferred one
-because (1) the sampler integrates a velocity field, so the network outputs exactly what the ODE
-solver consumes; (2) its scale is well-behaved across all <M tex="t" /> — noise-prediction targets
-become ill-conditioned near the data end and clean-sample-prediction becomes trivial there, while
-the constant <M tex="x_1 - x_0" /> keeps the loss informative everywhere; and (3) one network
-evaluated at any <M tex="(x, t)" /> defines the entire transport at once — a single amortized field
-rather than a chain of step-specific denoisers.
+So velocity-prediction is a *parameterization choice*, not extra power — and it still wins,
+three ways. (1) The sampler integrates a velocity field, so the network outputs exactly what the
+ODE solver consumes. (2) Its scale is well-behaved across all <M tex="t" /> — noise-prediction
+targets become ill-conditioned near the data end and clean-sample-prediction becomes trivial
+there, while the constant <M tex="x_1 - x_0" /> keeps the loss informative everywhere. (3) One
+network evaluated at any <M tex="(x, t)" /> defines the entire transport at once — a single
+amortized field rather than a chain of step-specific denoisers.
 
-## History in five steps
+## The road actually taken: five steps
+
+You have now invented flow matching in one sitting. The field needed five steps, each one fixing
+the failure of the step before:
 
 1. **Continuous normalizing flows** (Chen et al. 2018, FFJORD 2019): generate by integrating a
-   learned ODE — elegant, but training required simulating the ODE. Too slow to scale.
-2. **Score-based diffusion / DDPM** (Song & Ermon 2019; Ho et al. 2020): corrupt data with a fixed
-   *stochastic* noising process and learn to reverse it step by step. Simulation-free training —
-   this is what scaled first — but sampling wanted many steps along a curved path.
-3. **Probability-flow ODE** (Song et al. 2021): every diffusion SDE has a deterministic ODE with the
-   same marginals — the bridge showing diffusion and flows are two views of one thing.
-4. **Flow matching / rectified flow / stochastic interpolants** (Lipman et al.; Liu et al.; Albergo
-   & Vanden-Eijnden — all 2022, independently): train the ODE directly, simulation-free, with freely
-   chosen paths — including straight ones.
+   learned ODE — the idea above, and elegant — but training required simulating the ODE. Too slow
+   to scale.
+2. **Score-based diffusion / DDPM** (Song & Ermon 2019; Ho et al. 2020): give up the ODE; corrupt
+   data with a fixed *stochastic* noising process and learn to reverse it step by step.
+   Simulation-free training — this is what scaled first — but sampling wanted many steps along a
+   curved path.
+3. **Probability-flow ODE** (Song et al. 2021): every diffusion SDE has a deterministic ODE with
+   the same marginals — the bridge showing diffusion and flows are two views of one thing.
+4. **Flow matching / rectified flow / stochastic interpolants** (Lipman et al.; Liu et al.;
+   Albergo & Vanden-Eijnden — all 2022, independently): train the ODE directly, simulation-free,
+   with freely chosen paths — including the straight ones of this page.
 5. **Adoption** (2024–): Stable Diffusion 3, Flux, Movie Gen, and Wan2.1 — DreamZero's backbone —
    all train with flow-matching objectives.
 
-## Benefits — and the honest drawbacks
+## What you bought — and the honest bill
 
-Benefits: a stable MSE loss (no adversary, no likelihood machinery); simulation-free training of a
-continuous flow; near-straight paths that tolerate few, large integration steps (DreamZero: 16
-denoising steps, cut to ~4 by caching directionally-consistent velocities, and to 1 video step in
-its Flash variant); and one field usable at every noise level.
+Count the winnings first: a stable MSE loss (no adversary, no likelihood machinery);
+simulation-free training of a continuous flow; near-straight paths that tolerate few, large
+integration steps (DreamZero: 16 denoising steps, cut to ~4 by caching directionally-consistent
+velocities, and to 1 video step in its Flash variant); and one field usable at every noise level.
 
-Drawbacks of replacing the curved stochastic path with a straight deterministic one:
+Now the bill. You traded the curved stochastic path for a straight deterministic one, and every
+drawback below is the price of exactly that trade:
 
 - **Individually straight, collectively curved.** Conditional paths cross (visible in Fig. FM-1 —
   lines intersect), and the learned *marginal* field is an average over crossings (Fig. FM-2), so actual sampled
@@ -367,11 +404,12 @@ Drawbacks of replacing the curved stochastic path with a straight deterministic 
 
 ## In this library
 
-DreamZero applies exactly this objective jointly to video latents and action latents, with one
-shared <M tex="t" /> per chunk so both modalities denoise toward the same imagined future — and its
-Flash variant deliberately *breaks* the shared schedule (video <M tex="t \sim \mathrm{Beta}(7,1)" />,
-action uniform) to buy 1-step video inference at a measured quality cost. See the paper page for the
-chunked, causal machinery around the objective ([Causal DiT](../causal-dit/)).
+This page exists because DreamZero applies exactly this objective jointly to video latents and
+action latents, with one shared <M tex="t" /> per chunk so both modalities denoise toward the same
+imagined future — and its Flash variant deliberately *breaks* the shared schedule (video
+<M tex="t \sim \mathrm{Beta}(7,1)" />, action uniform) to buy 1-step video inference at a measured
+quality cost. See the paper page for the chunked, causal machinery around the objective
+([Causal DiT](../causal-dit/)).
 
 ## Glossary
 

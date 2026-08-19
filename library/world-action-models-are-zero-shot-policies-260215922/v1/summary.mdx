@@ -55,7 +55,12 @@ contributors:
 - Huch0
 ---
 
-<TLDR>DreamZero turns a 14B pretrained video-diffusion model into a robot policy by denoising future video frames and action chunks in one shared objective, so the policy first imagines the visual future and then reads its own motor commands off that imagination — which NVIDIA reports roughly doubles real-robot generalization to unseen tasks and environments versus state-of-the-art VLAs, at about 7Hz closed-loop control.</TLDR>
+<TLDR>DreamZero turns a 14B pretrained video-diffusion model into a robot policy by denoising future video frames and action chunks under one shared objective — the policy first imagines the next 1.6 s of the world, then reads its motor commands off that imagination — and NVIDIA reports roughly doubled real-robot generalization to unseen tasks and environments versus state-of-the-art VLAs, at ~7 Hz closed-loop re-planning.</TLDR>
+
+{/* Style note: at the curator's request (2026-08-19) the expository sections below are written
+    in the authors' first-person voice, Feynman-style, with verbatim quotes from the paper.
+    Limitations and Critiques remain in the curator's voice — those are our analysis, not the
+    authors' admissions — and every number is anchored as before. */}
 
 <WhyItMatters>Outside my core areas (computer-use agents, SWE agents, harnesses, agent evaluation) — this is real-robot manipulation and I should not pretend otherwise. It is worth one read for two transferable reasons: it is the clearest current statement of *policy = world model*, where the action head is an inverse-dynamics read-out of a predicted future state rather than a direct state-to-action map; and its evaluation (partial-credit "task progress", 8 rollouts per task, unpublished rubric, unnamed judges) is a case study in exactly the measurement problems agent evaluation keeps hitting.</WhyItMatters>
 
@@ -66,14 +71,69 @@ contributors:
   { value: "~500 h", label: "pretraining data: 7,193 episodes, 22 environments", sub: "mean 4.4 min and 42.4 subtasks per episode (Fig.6, p.11)" },
 ]} />
 
-## Motivation
-<Problem>VLAs generalize semantically but not physically.</Problem> A <Term def="Vision-Language-Action model: a VLM fine-tuned to emit motor actions, e.g. GR00T N1.6, pi-0.5, RT-2, OpenVLA">VLA</Term> can execute "move coke can to Taylor Swift" by binding a web-knowledge referent to a *move* skill it already learned from robot data, but fails at "untie the shoelace" when that motion is absent from the action data (§1, p.2). The stated cause: <Problem>VLM pretraining is on static image-text pairs, so it encodes *what* to do semantically but carries no spatiotemporal prior for *how* a motion unfolds</Problem> — geometry, dynamics, contact (§1, p.2; §2.1, p.4). The consequence is a data treadmill: <Problem>environment generalization is currently bought by teleoperating the same task across hundreds of sites, and task generalization by enumerating a fixed library of language-conditioned motion primitives</Problem> — neither scales to the space of physical interactions (§2.1, p.5). A second, quieter problem: because action-only imitation must infer dynamics implicitly from noisy state-action pairs, <Problem>VLAs are believed to need repeated, task-focused demonstrations</Problem>, which is the opposite of how useful real-world robot data actually gets collected (§4.1, p.10).
+## Motivation — the failure that bugged us (authors' voice)
 
-## Contribution (what's new)
-<Novelty>Make future-video prediction the policy's internal plan, and make action prediction an inverse-dynamics read-out of that plan — inside one model, denoised jointly.</Novelty> Eq.1 (p.6) factorizes the joint distribution into video prediction times an <Term def="inverse dynamics model: infers the actions that would carry the robot between observed/predicted states">IDM</Term> — and the detail that carries the whole argument is that the language instruction <M tex="c" /> appears in the video-prediction factor but **not** in the IDM factor <M tex="\pi(a_{t:t+H} \mid o_{0:t+H},\, q_t)" />: once the next 1.6 s of video has been imagined, the instruction is no longer needed to choose actions, because the imagined future already encodes what to do. DreamZero refuses to instantiate that as two models and instead trains a single DiT to denoise video latents and action latents under one flow-matching loss. The design must take this form for three reasons the paper argues explicitly: two-model pipelines lose video-action alignment (§3, p.6); a <Novelty>bidirectional backbone would have to subsample video to align with an episode-level caption, distorting native FPS and thus the video-action correspondence, so the backbone is autoregressive</Novelty> (§3.1, p.7; App.B, p.20-21); and <Novelty>closed-loop control lets predicted frames be overwritten with ground-truth observations in the KV cache after every chunk, which removes the compounding-error problem that normally kills autoregressive video generation</Novelty> (§3.1, p.7). The secondary contribution is engineering that makes the claim testable at all: a 38× inference stack (§3.2, p.8-9). The term itself — World Action Model, not Video Action Model — is chosen to leave room for non-video predictive modalities like tactile or force (§2.2, p.5).
+Let me tell you what kept bothering us about the best robot policies we had. A modern
+<Term def="Vision-Language-Action model: a VLM fine-tuned to emit motor actions, e.g. GR00T N1.6, pi-0.5, RT-2, OpenVLA">VLA</Term>
+is genuinely smart in one direction and strangely helpless in another: it will "move the coke can
+to Taylor Swift" — web knowledge binds the referent, a practiced *move* skill executes — and then
+fail to untie a shoelace. In our words: VLAs "excel at semantic generalization but struggle to
+generalize to unseen physical motions in novel environments" (Abstract). <Problem>The cause is
+where the prior comes from: a VLM is pretrained on static image-text pairs, so it knows *what*
+things are, but carries no spatiotemporal prior for *how* a motion unfolds</Problem> — geometry,
+contact, dynamics (§1, p.2; §2.1, p.4). And the field's workaround is a treadmill:
+<Problem>environment generalization bought by teleoperating the same task across hundreds of
+sites, task generalization by enumerating a library of motion primitives</Problem> (§2.1, p.5) —
+neither scales to the space of physical interactions. Underneath sits a quieter assumption we
+wanted to attack directly: "learning to only predict actions without encoding the knowledge about
+future world states makes it challenging to leverage highly heterogeneous, non-repetitive data
+effectively, as the model must implicitly infer dynamics from noisy state-action pairs" (§4.1,
+p.10). <Problem>Action-only imitation seems to *need* repetitive demonstrations</Problem> — the
+opposite of how useful robot data actually gets collected.
 
-## Research questions
-Do WAMs (1) learn better than VLAs from *diverse, non-repetitive* robot data, (2) generalize zero-shot to motions absent from the robot training data, (3) retain that generalization after task-specific post-training, (4) absorb useful skill knowledge from *action-free* video of other embodiments, and (5) adapt to a new robot from minutes of data — and (6) can a 14B video-diffusion policy run fast enough to close the loop at all?
+## Contribution — imagine first, then act (authors' voice)
+
+But there already exists a model family with exactly the missing prior. Video models watched the
+internet; they "encode physical dynamics from internet-scale data" (§2.2, p.5). So we asked the
+Feynman question: *if you had a model that could predict the next two seconds of video, what would
+be left of the control problem?* Write the joint distribution down and it factorizes (Eq.1, p.6)
+into video prediction times an
+<Term def="inverse dynamics model: infers the actions that would carry the robot between observed/predicted states">IDM</Term>
+— and look closely at the second factor, <M tex="\pi(a_{t:t+H} \mid o_{0:t+H},\, q_t)" />: the
+instruction <M tex="c" /> has dropped out. <Novelty>Once the future has been imagined, the
+instruction is no longer needed to choose actions — the imagined future already encodes what to
+do.</Novelty> That is the whole shift, in our own words: "This shifts action learning from dense
+state–action imitation to inverse dynamics—aligning motor commands with predicted visual futures"
+(§1, p.3). Video prediction serves "as an implicit visual planner that guides action generation",
+and if the reduction holds, "improving robotic capabilities reduces to improving video generation"
+(§2.2, p.5).
+
+Three design decisions follow, and each was forced, not chosen. First, we refused to build two
+models: "we train a single model end-to-end with joint prediction objective. We believe that this
+end-to-end design enables better video-action alignment through a deep integration between the two
+modalities" (§3, p.7) — <Novelty>one DiT denoises video latents and action latents under one
+flow-matching loss</Novelty>. Second, the backbone had to be autoregressive: "bidirectional
+diffusion typically requires processing fixed-length sequences, which often necessitates video
+subsampling that distorts native FPS, potentially harming video-action alignment" (§3.1, p.7) —
+and chunk-causality is what gives a policy a *now*. We were careful about one asymmetry: "We
+introduce autoregressive modeling only for the video modality to avoid error propagation coming
+from closed-loop action prediction" (§3.1, p.7). Third — my favorite, because only a robot gets to
+do this — <Novelty>after every executed chunk, "ground-truth observations ... replace generated
+frames in the KV cache", which "eliminates the compounding error problem inherent to
+autoregressive video generation—a key advantage unique to WAMs"</Novelty> (§3.1, p.8): a
+daydreamer that opens its eyes every 1.6 seconds. The engineering that makes any of this testable
+is the 38× inference stack (§3.2). Even the name is a bet on the factorization rather than the
+medium: "video is just one possible world modeling objective—future WAMs may align actions with
+other predictive modalities such as tactile sensing, force feedback, or learned latent
+representations" (§2.2, p.5).
+
+## Research questions (as we posed them)
+
+Do WAMs (1) learn better than VLAs from *diverse, non-repetitive* robot data, (2) generalize
+zero-shot to motions absent from the robot training data, (3) retain that generalization after
+task-specific post-training, (4) absorb skill knowledge from *action-free* video of other
+embodiments, and (5) adapt to a new robot from minutes of data — and (6) can a 14B video-diffusion
+policy run fast enough to close a control loop at all?
 
 ## Background: primers and the paper's own notation
 
@@ -291,8 +351,28 @@ generator has. Badge numbers key into the walkthrough below.</figcaption>
 <SelfCheck q="What exactly breaks if you delete the KV-cache observation overwrite?" a="The model becomes a standard autoregressive video generator at inference: each chunk conditions on its own predicted frames, the train-time teacher-forcing assumption (clean context) is violated, and small prediction errors compound across chunks — drift. The overwrite restores ground-truth context after every 1.6 s chunk, which is only possible because a robot, unlike an offline generator, gets to observe the world it just acted in." />
 <SelfCheck q="Which parts of Figure 4 would you re-train for a new robot, and which come for free?" a="For free: the frozen VAE/text encoder and — crucially — the video-pretrained DiT trunk with its physics/semantics prior. Embodiment-specific: the state encoder, action encoder, action decoder, and the visual-future→joint-command mapping they implement (the implicit IDM). That is exactly the split behind the paper's cross-embodiment results: video-only data teaches the trunk new tasks with no action labels, while adapting to a new body (YAM) means re-fitting the adapters on ~30 min of data." />
 
-## Methodology
-One 14B autoregressive diffusion transformer, initialized from Wan2.1-I2V-14B-480P, takes visual context (VAE latents), a language instruction (frozen text encoder), and proprioception (new state encoder), and emits future video frames and a future action chunk through separate decoders. Video and action latents are corrupted with shared noise levels and denoised together under one flow-matching objective, with teacher forcing over chunks. At inference the model denoises a chunk, ships the action chunk to an asynchronous controller, then replaces its own predicted frames with the real camera observation in the KV cache before the next chunk. Only the DiT blocks and the small state/action encoders and action decoder are trained; text encoder, image encoder and VAE stay frozen (LoRA was tried and reported worse, §4.1, p.11).
+## Methodology — how we actually built it (authors' voice)
+
+One 14B autoregressive diffusion transformer, initialized from Wan2.1-I2V-14B-480P. Cameras enter
+through the frozen VAE, the instruction through the frozen text encoder, proprioception through a
+small trained state encoder; the model emits future video latents and a 48-action chunk through
+separate decoders. We corrupt video and action with a *shared* per-chunk noise level — "for faster
+convergence at the beginning of training" (§3.1, p.7) — and train with teacher forcing: "the model
+is trained to denoise the noisy current chunk conditioned on the clean previous chunks" (§3.1,
+p.7). At inference we denoise a chunk, hand it to an asynchronous controller, and overwrite our own
+prediction with the real camera frames before denoising the next. Making it real-time was a
+reframing, not just kernels: asynchronous execution transforms the constraint from "inference must
+complete before the robot moves" to "inference must complete before the current action chunk
+expires" (§3.2.2, p.8) — that is the honest meaning of our ~7 Hz.
+
+The data follows from the model. If the video prior is inherited, robot data exists to teach
+inverse dynamics — so we collected for breadth, not polish: "Our data collection philosophy
+prioritizes diversity over repetition" (App.E, p.24), operators run three coarse tasks per episode
+across 22 real environments, and "Once a task was collected in 50 episodes, it is deprecated and
+removed from the task sheet" (App.E, p.24) — a forced long tail. We also evaluated the hard way:
+the eval site is in a different geographic location from collection, so "every benchmark inherently
+tests out-of-distribution generalization rather than interpolation within the training
+distribution" (§4.1, p.11).
 
 <Pass title="Method details">
 <Stepper steps={[
@@ -309,8 +389,18 @@ One 14B autoregressive diffusion transformer, initialized from Wan2.1-I2V-14B-48
 **Data and protocol.** Pretraining is ~500 h of AgiBot G1 teleoperation: 7,193 episodes, mean 4.4 min, mean 42.4 subtasks per episode, 22 real environments (homes, restaurants, supermarkets, coffee shops, offices, warehouses, labs, hotels). Collection deliberately maximizes breadth: operators pick three coarse tasks per episode from a sheet, and any task reaching 50 episodes is *deprecated and removed*, forcing a long tail of new behaviors (App.E, p.24). A second model is trained on DROID for the Franka arm. Evaluation is always in environments and with objects unseen in training — the eval site is in a different geographic location from data collection (§4.1, p.11). "Seen task" = the motion and object type appear in training (folding a different shirt); "unseen task" = the required motion is absent (folding socks). AgiBot: 10 seen + 10 unseen tasks, 8 rollouts each across 4 robots, 80 rollouts per checkpoint per category. DROID: 20 seen + 20 unseen tasks, 2 rollouts each, 80 rollouts total; object positions fixed across checkpoints. Rollouts are scored 0–1 for partial completion (§4.1, p.12). Baselines: GR00T N1.6 and pi-0.5, each in a from-scratch variant (pretrained VLM weights, no prior robot data) and a from-pretrained variant (official checkpoints, thousands of hours of cross-embodiment robot data), both continued on identical data with matched total batch size and gradient steps.
 </Pass>
 
-## Main result
-On AgiBot G1, evaluated out of the box in unseen environments with unseen objects, <Finding src="Fig.8, p.13">DreamZero reaches 62.2% average task progress on tasks present in its pretraining data, against 27.4% for the best VLA baseline (pi-0.5 from-pretrained) and 0.0–0.6% for both VLAs trained from scratch on the same data</Finding>. On 10 tasks whose motions are absent from training, <Finding src="Fig.9, p.14">DreamZero reaches 39.5% versus 16.3% for pi-0.5 from-pretrained and under 1% for from-scratch VLAs</Finding> — 85.7% on "remove hat from mannequin", 59.2% on "shake hands", but 8.2% on "fold map" and 9.4% on "untie shoelaces". Those two AgiBot comparisons (2.3× and 2.4×) are the entire basis of the abstract's "over 2×" claim; <Caveat>on DROID-Franka the same comparison is 1.2× on seen tasks and 1.5× on unseen tasks by task progress</Caveat>.
+<MathBlock>{`\\pi_0(o_{l:l+H},\\, a_{l:l+H} \\mid o_{0:l},\\, c,\\, q_l) \\;=\\; \\underbrace{\\pi_0(o_{l:l+H} \\mid o_{0:l},\\, c,\\, q_l)}_{\\text{video prediction}} \\cdot \\underbrace{\\pi_0(a_{l:l+H} \\mid o_{0:l+H},\\, q_l)}_{\\text{inverse dynamics}}`}</MathBlock>
+
+## Main result (authors' voice; scope flagged by the curator)
+
+Out of the box, in unseen environments with unseen objects: <Finding src="Fig.8, p.13">62.2%
+average task progress on trained tasks versus 27.4% for the best pretrained VLA baseline
+(pi-0.5) — and 0.0–0.6% for VLAs trained from scratch on our own data</Finding>. On 10 tasks whose
+*motions* are absent from our robot data: <Finding src="Fig.9, p.14">39.5% versus 16.3%</Finding> —
+85.7% on "remove hat from mannequin", 59.2% on "shake hands", but 8.2% on "fold map" and 9.4% on
+"untie shoelaces"; we do not hide that spread. Those two AgiBot ratios (2.3× and 2.4×) are the
+entire basis of our abstract's "over 2×"; <Caveat>on DROID-Franka the same comparison is 1.2× on
+seen and 1.5× on unseen task progress — the abstract does not scope this (curator)</Caveat>.
 
 <SortableTable columns={["Method", "AgiBot seen (TP %)", "AgiBot unseen (TP %)", "DROID seen (TP %)", "DROID unseen (TP %)", "DROID unseen (SR %)"]} rows={[
   ["GR00T N1.6 (scratch)", 0.6, 0.7, "n/a", "n/a", "n/a"],
@@ -322,19 +412,60 @@ On AgiBot G1, evaluated out of the box in unseen environments with unseen object
 
 TP = average task progress (partial credit, 0–1 per rollout); SR = binary success rate. AgiBot success rates are never reported. From-scratch VLA baselines were not run on DROID. Sources: Fig.8 p.13, Fig.9 p.14.
 
-## Key findings
-- <Finding src="Fig.10, p.15">Generalization survives task-specific post-training</Finding>: after 50K steps of fine-tuning on shirt folding (33 h), fruit packing (12 h) and table bussing (40 h), DreamZero averages 90.5% task progress vs 79.8% for pi-0.5 from-pretrained — a 10.7-point gap, still measured in unseen environments. The margin is concentrated in fruit packing (96 vs 71); shirt folding ties at 92.5.
-- <Finding src="Tab.4, p.17">Data *diversity* beats data *repetition* at equal hours</Finding>: 500 h of diverse data gives 50% ± 6.3 on PnP-Easy vs 33% ± 4.2 for 500 h of repetitive data (70 tasks, many repeats, similar object placements). This is the paper's core data claim and it is supported by exactly one ablation pair on one task category.
-- <Finding src="Tab.4, p.17">WAM performance scales with backbone size while the VLA baseline stays at zero</Finding>: 14B 50% vs 5B 21%; VLAs built from 8B and 32B VLMs (truncated to the first half of blocks, DiT action head attached) both score 0% ± 0.0 on the same diverse data. The authors read this as "capacity alone does not fix the VLA data problem".
-- <Finding src="Tab.2, p.16">Action-free video from another embodiment transfers</Finding>: co-training the AgiBot checkpoint on 72 video-only trajectories of the 9 unseen tasks lifts task progress from 38.3% ± 7.6 to 55.4% ± 9.5 with 20 min of YAM-robot video, or 54.3% ± 10.4 with 12 min of egocentric human video. Relative gains are +44.6% and +41.8% — so the abstract's "over 42%" is true of the robot-to-robot case only.
-- <Finding src="Tab.3, p.17">Single-step denoising is affordable only with the decoupled schedule</Finding>: on table bussing, 4 steps gives 83% ± 6.1 at 350ms; naive 1-step collapses to 52% ± 10.2; DreamZero-Flash at 1 step holds 74% ± 10.1 at 150ms.
-- <Finding src="§5.1, p.14; Fig.16, p.29">Failures are localized to the video plan, not the action head</Finding>: the executed trajectory tracks the generated video even when the video is wrong (the robot hands the marker over instead of drawing; it grabs the bread instead of opening the oven). The authors conclude policy quality reduces to video-generation quality — an unusually falsifiable claim, though supported here by two illustrated examples rather than a measured attribution.
-- <Finding src="§5.1, p.14">Pretrained VLAs get partial credit by defaulting to pick-and-place</Finding>: qualitatively they reach and grasp regardless of the instruction, which inflates a partial-credit metric without completing the intended task. This is a caution about the metric as much as about the baselines.
+## Key findings (authors' voice, numbers as reported)
 
-## Implications
-This is the strongest current argument that <Related>video world models (DreamGen, Genie Envisioner, Cosmos Policy, mimic-video, Unified World Models) can be policies rather than data generators or planners</Related>, and it draws a sharp line against <Related>latent world models (V-JEPA 2, the Dreamer line) and 3D point-cloud world models (PointWorld)</Related>, which model forward dynamics and therefore need a separate IDM or test-time search — DreamZero's claim to 7Hz rests precisely on having no test-time optimization loop (App.A, p.20). If the "policy quality = video quality" reduction holds, robot-learning progress inherits video-generation progress, which is a very different scaling story from the VLA line (GR00T, pi-0.5, RT-2, OpenVLA). <FollowUp>Does the action-free transfer scale from 12 minutes of in-lab human video to Ego4D/EgoDex-scale corpora, or does the reported gain saturate?</FollowUp> <FollowUp>Nothing here ablates joint denoising against the two-model decomposition it says it improves on — that experiment would settle whether "end-to-end alignment" is real or rhetorical.</FollowUp>
+- <Finding src="Fig.10, p.15">Generalization survives post-training</Finding>: after task-specific
+  fine-tuning we average 90.5% vs 79.8% for pi-0.5 — still in unseen environments; the margin
+  concentrates in fruit packing (96 vs 71), shirt folding ties.
+- <Finding src="Tab.4, p.17">Diversity beats repetition at equal hours</Finding>: 500 h diverse
+  50% ± 6.3 vs 500 h repetitive 33% ± 4.2. Our reading: "since video prediction is largely
+  inherited from pretraining, the key challenge is learning inverse dynamics. A robust IDM
+  requires diverse state-action correspondences across varied contexts, which repetitive data
+  inherently lacks" (§5.3, p.17). (One ablation pair, one task category — curator.)
+- <Finding src="Tab.4, p.17">Scale helps the WAM and does not rescue the VLA</Finding>: 14B 50% vs
+  5B 21% — the small model is "prone to visual hallucinations that propagate to erroneous actions"
+  (§5.2, p.17) — while 8B/32B-derived VLAs sit at 0% on the same diverse data.
+- <Finding src="Tab.2, p.16">Action-free video from other bodies transfers</Finding>: 20 min of
+  YAM video lifts unseen-task progress 38.3% ± 7.6 → 55.4% ± 9.5; 12 min of egocentric human video
+  → 54.3% ± 10.4. "Our method relies solely on visual information without action labels" (§5.2,
+  p.16); the dream is explicit — "abundant human video data—orders of magnitude larger than robot
+  datasets—could enable WAMs to acquire diverse skills without action annotation" (§5.2, p.16).
+  (+44.6% and +41.8% relative — so the abstract's "over 42%" is the robot-to-robot case; both
+  gains are ~1.2–1.4 SE — curator.)
+- <Finding src="Tab.3, p.17">One-step denoising is affordable only with the decoupled
+  schedule</Finding>: 4 steps 83% ± 6.1 at 350 ms; naive 1-step 52% ± 10.2; Flash 1-step 74% ± 10.1
+  at 150 ms. Why not just cut action steps? "Because video and action are jointly trained for
+  strong cross-modal alignment, naively reducing action denoising steps degrades quality" (fn.3,
+  p.8).
+- <Finding src="§5.1, p.14; Fig.16, p.29">Failures live in the imagination, not the
+  readout</Finding>: the arm faithfully tracks the generated video even when the video is wrong —
+  it hands the marker over instead of drawing because the *plan* did. Policy quality reduces to
+  video quality; an unusually falsifiable claim (supported here by two illustrated examples, not a
+  measured attribution — curator).
+- <Finding src="§5.1, p.14">Pretrained VLAs collect partial credit by defaulting to
+  pick-and-place</Finding> — a caution about our own metric as much as about the baselines
+  (curator).
 
-For my own track the transfer is conceptual, not methodological. A WAM is a policy that must emit a *checkable artifact of its intended future* alongside the action it takes; when it fails, the artifact says why. That is the same shape as a harness asking an agent for a predicted post-condition before it runs a command, and then grading the prediction — a built-in dry run rather than a post-hoc verifier. <FollowUp>Whether next-state prediction as an auxiliary objective (not just a prompt-level "what will happen?") improves outcome verification for computer-use agents, where the "world" is a DOM or a filesystem and the future state is far cheaper to predict than video.</FollowUp> The paper also quietly demonstrates the failure mode of that idea: a policy that faithfully executes its own wrong prediction is *more* confidently wrong, not less.
+## Implications (authors' voice; curator notes marked)
+
+We read this as the strongest current argument that <Related>video world models (DreamGen, Genie
+Envisioner, Cosmos Policy, mimic-video, Unified World Models) can be policies, not just data
+generators or planners</Related>, against <Related>latent world models (V-JEPA 2, Dreamer) and 3D
+point-cloud world models</Related>, which model forward dynamics and need a separate IDM or
+test-time search — our 7 Hz exists precisely because there is no test-time optimization loop
+(App.A, p.20). If "improving robotic capabilities reduces to improving video generation" (§2.2,
+p.5) survives scrutiny, robot learning inherits the scaling story of video generation.
+<FollowUp>Does action-free transfer scale from 12 in-lab minutes to Ego4D-scale corpora, or
+saturate?</FollowUp> <FollowUp>Joint denoising is never ablated against the two-model
+decomposition it claims to beat — that experiment would settle "alignment" (curator).</FollowUp>
+
+*(Curator's note, unchanged from the analytical summary:)* for my own track the transfer is
+conceptual: a WAM is a policy that must emit a *checkable artifact of its intended future*
+alongside each action — the same shape as a harness demanding a predicted post-condition before a
+command runs. <FollowUp>Whether next-state prediction as an auxiliary objective improves outcome
+verification for computer-use agents, where the future state is a DOM or filesystem and far
+cheaper than video.</FollowUp> The paper also demonstrates the failure mode: a policy that
+faithfully executes its own wrong prediction is *more* confidently wrong, not less.
 
 ## Limitations
 - <Caveat>The headline "over 2×" holds on one embodiment and one metric.</Caveat> It is AgiBot G1 average task progress (62.2/27.4 and 39.5/16.3). On DROID-Franka the same baselines give 1.2×–1.5× on task progress. The abstract does not scope this.
@@ -345,7 +476,10 @@ For my own track the transfer is conceptual, not methodological. A WAM is a poli
 - <Caveat>Compute parity between DreamZero and the VLA baselines is asserted, not shown.</Caveat> "Comparable compute budget" means matched total batch size and gradient steps (§4, p.10) — but DreamZero is 14B against ~3B-class baselines, so FLOPs are not matched, and per-baseline hyperparameter tuning is not reported. The total collapse of from-scratch VLAs (0.0–0.6%) is a strong result that would be more convincing with a learning-curve or tuning-effort disclosure.
 - <Caveat>"Zero-shot" is scoped to action-labeled robot data only.</Caveat> The unseen tasks (ironing, handshakes, untying laces, painting) are absent from the robot data but are ordinary web-video content, and the 14B Wan2.1 backbone was trained on web-scale video. That is the paper's mechanism, not a flaw — but no audit of the video pretraining corpus against the eval tasks is reported, so "unseen" cannot be read as "novel to the model".
 - <Caveat>"38× without degrading performance" is contradicted by the paper's own table.</Caveat> §1 (p.3) says the optimizations give 38× "without degrading performance"; §3.2.6 (p.10) correctly excludes DiT caching and quantization from the mathematically-equivalent set, and Tab.3 shows the Flash step that completes the 38× costs 9 points on table bussing (83% → 74%). Tab.3's text also calls the metric "success rate" while the table header says task progress.
-- <Caveat>Author-stated limits.</Caveat> No scaling laws for WAMs; human-video experiments are in-lab and tiny (12 min); 7Hz needs two GB200s where VLAs exceed 20Hz on consumer GPUs; visual memory is ~6 seconds so this is a System-1 model with no long-horizon planner; sub-centimeter precision tasks are expected to be weak; single-embodiment pretraining only (no multi-embodiment training); memory-dependent tasks are not evaluated.
+- <Caveat>Author-stated limits.</Caveat> In their own words: "Higher-DOF robots will require more
+  play data to learn an accurate implicit IDM, as the mapping from visual futures to motor commands
+  grows combinatorially with kinematic complexity. Quantifying the accuracy of implicit IDMs remains
+  a challenge" (§6, p.19). Also: no scaling laws for WAMs; human-video experiments are in-lab and tiny (12 min); 7Hz needs two GB200s where VLAs exceed 20Hz on consumer GPUs; visual memory is ~6 seconds so this is a System-1 model with no long-horizon planner; sub-centimeter precision tasks are expected to be weak; single-embodiment pretraining only (no multi-embodiment training); memory-dependent tasks are not evaluated.
 - <Caveat>Claimed but unquantified side results.</Caveat> "100+ free-form tasks", non-trivial Genie Sim 3.0 performance (fn.1, p.4) and RoboArena integration are mentioned with no numbers; the AgiBot dataset is promised but not yet released.
 
 ## Critiques and Questions

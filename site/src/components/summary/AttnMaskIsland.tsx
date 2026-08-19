@@ -117,7 +117,7 @@ export default function AttnMaskIsland() {
             ? (overwrite
               ? "Hover a row. After each 1.6 s chunk executes, DreamZero throws away its predicted frames and writes the real camera frames into the KV cache - autoregressive drift is erased every chunk."
               : "Hover a row. A pure video generator must condition on its own imperfect predictions; small errors feed back and compound. Toggle the button to see DreamZero's fix.")
-            : "Hover a row to read its receptive field. Text and proprioception tokens also join the sequence; this grid shows the frame/action structure of Fig. 14."}
+            : "Hover a row to read its receptive field. Per the released code, the state token rides after the action tokens as the register tail, while text and the first-frame CLIP embedding enter each block via cross-attention — outside this grid. The grid shows Fig. 14 frame/action structure."}
       </p>
     </div>
   );

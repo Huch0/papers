@@ -259,13 +259,20 @@ the mismatch.
 </QA>
 
 <QA question="In chunked denoising, are the noisy chunk tokens appended after the clean past, with each output being that position's velocity? And if each conditional velocity is constant, why isn't one denoising step enough?" asked_by="Huch0" concepts="">
-**Your mechanical picture is exactly right.** The input sequence is
-`[text tokens | state token | clean past chunks (KV cache) | noisy video tokens of the current
-chunk | noisy action tokens of the current chunk]`, with the mask of Fig. 14 letting the noisy
-positions attend to everything and the loss applied only at the noisy positions. At each noisy
+**Your mechanical picture is right in structure — with two corrections I verified against the
+released inference code** (`wan_video_dit_action_casual_chunk.py`): the self-attention sequence is
+`[clean past video tokens (KV cache) | noisy video tokens of the current chunk | 48 noisy action
+tokens | 1 state token]` — the **instruction is not a sequence token at all** (umT5 text plus a CLIP
+embedding of the first frame enter every block via cross-attention), and the state token rides at
+the *tail* of the per-chunk "action register", after the actions. The mask of Fig. 14 lets the
+noisy positions attend to everything, and the loss applies only at the noisy positions. See
+Fig. DZ-3 in the summary for the full verified I/O diagram. At each noisy
 position the model outputs **the velocity for that same position** — one vector per video token,
-one per action token — and the integrator uses them jointly: the whole chunk's tokens are nudged
-together, in parallel, per step. "The model is trained to denoise the noisy current chunk
+one per action token — and the integrator uses them jointly — one precision from the code: the scheduler updates the raw
+*latents* and raw *actions* (video velocity is un-patchified back to latent space first; CFG is
+applied to the video velocity only), and those updated latents/actions are **re-embedded** by the
+patch-embedding and action encoder before the next network call. Positions are fixed; the persistent
+state lives in latent/action space. "The model is trained to denoise the noisy current chunk
 conditioned on the clean previous chunks" (§3.1) is precisely this layout.
 
 **Two inversions against the LLM mental model** worth keeping straight:
@@ -299,4 +306,42 @@ for 12 of them (16 → 4 effective calls, §3.2.3); a *naive* 1-step jump collap
 Tab. 3) only by *retraining the schedule* — concentrating video timesteps so the model explicitly
 practices the one-big-jump regime — i.e., by making the learned field straighter, not by exploiting
 a straightness that was already there.
+</QA>
+
+<QA question="Is the sequence layout [text | state | clean past | noisy video | noisy actions] actually right? Did you check the implementation?" asked_by="Huch0" concepts="">
+**Checked now, against the released inference code** (github.com/dreamzero0/dreamzero —
+`wan_video_dit_action_casual_chunk.py` and `wan_flow_matching_action_tf.py`), and the earlier
+answer's bracket was wrong in two ways. The verified picture, drawn in **Fig. DZ-3** (in the
+summary):
+
+**The self-attention sequence** is
+`[ clean past video tokens (KV cache) | noisy video tokens of the current chunk | 48 action tokens
+| 1 state token ]` — the code literally builds
+`action_register = cat([action_features, state_features])` and appends it:
+`x = cat([x, action_register])`, with clean context prepended (`x = cat([clean_x, x])`). The action
+and state tokens get their own 1-D rotary frequencies appended after the video RoPE.
+
+**Text is not in the sequence at all.** Each block is self-attention → **cross-attention** → FFN,
+and the cross-attention context is `cat([clip_embedding, text_context])` — a CLIP embedding of the
+conditioning frame plus the umT5 text tokens. The instruction reaches every block from the side,
+not as sequence positions.
+
+**Encoders/decoders are per-embodiment.** The action encoder (`MultiEmbodimentActionEncoder`)
+embeds each of the 48 noisy actions and **concatenates its flow-matching timestep encoding into the
+embedding itself**; the state encoder and action decoder are `CategorySpecificMLP`s selected by an
+embodiment id — the architecture carries per-robot heads, which is the mechanism behind few-shot
+embodiment adaptation.
+
+**Outputs and the loop, as implemented.** Video positions go through an adaLN-modulated head
+(`Linear(dim → prod(patch_size) · out_dim)`) and are un-patchified — a **velocity in latent
+space**; the register positions go through the action decoder — a **velocity in action space**;
+outputs at context positions are unused. Then two *decoupled schedulers* step the raw state:
+`latents ← step(latents, video_velocity)` with classifier-free guidance
+(`uncond + s·(cond − uncond)` — **CFG is applied to video only**; the action update uses the
+conditional prediction), and `actions ← step(actions, action_velocity)` on its own timestep ladder.
+The persistent state across steps is the raw latents/actions — they are **re-embedded**
+(Conv3d patchify, action encoder) before every network call; positions are fixed, values flow. The
+velocity cache is visible as `should_run_model`/`prev_predictions` (reuse when consecutive
+velocities agree), and at the end the clean latents go to the VAE decoder while the 48 clean
+actions are smoothed and streamed at 30 Hz.
 </QA>

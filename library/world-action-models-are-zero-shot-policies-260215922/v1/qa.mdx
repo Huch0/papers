@@ -219,3 +219,84 @@ IDM moving between bodies. Their own limitations section predicts the cost grows
 One line for a talk: *video is the interlingua, the action head is the local dialect — you re-learn the dialect,
 but not the language.*
 </QA>
+
+<QA question="Why does the paper call modality-alignment challenges 'inherent' to bidirectional models?" asked_by="Huch0" concepts="">
+**The paper's own argument, verbatim (§3.1, p.7):** autoregressive generation "avoids the modality
+alignment challenges (video, action, and language alignment) inherent to bidirectional models.
+Concretely, bidirectional diffusion typically requires processing fixed-length sequences, which
+often necessitates video subsampling that distorts native FPS, potentially harming video-action
+alignment."
+
+**Unpacked.** A bidirectional video-diffusion backbone generates one *fixed-length* window: the
+clip length, frame count and positional layout are baked in by pretraining, and every frame attends
+to every other, so the whole window is a single joint sample. A robot trajectory violates all of
+that at once:
+
+1. **Variable length.** Episodes run 1–5 minutes; a fixed window means either truncating or —
+   the usual move — *subsampling the video in time* to fit. But the whole design rests on an exact
+   rate lattice: 2 latent frames ↔ 8 raw frames at 5 FPS ↔ 48 actions at 30 Hz per 1.6 s. Stretch
+   or squeeze the video's effective FPS and a latent frame no longer covers exactly its 24 actions —
+   the frame↔action correspondence the IDM reads off is what breaks. That is the "video-action
+   alignment" being harmed.
+2. **Language granularity.** A bidirectional model conditions one whole window on one caption; for
+   variable-length multi-task episodes (~42 subtasks each), which caption describes which stretch of
+   frames becomes ill-posed. Chunking restores a clean unit for conditioning.
+3. **No "now".** In a joint bidirectional sample, action tokens for an early time attend to video
+   of later times — fine as a training objective, incoherent as a policy, which must commit to
+   actions before the future is observed.
+
+Chunk-causality dissolves all three within the inherited architecture: "autoregressive generation
+leverages KV caching to support arbitrarily long contexts within a single forward pass. This
+preserves the native frame rate, ensuring precise alignment between video frames and robot actions"
+(§3.1), and "Chunk-wise generation enables training on variable length of videos, similar to how
+LLMs are trained on variable length of language tokens" (§3.1).
+
+**One honest scoping note.** "Inherent" is a claim about the *pretrained bidirectional backbone
+class as it exists* — fixed windows, episode-level conditioning — not a theorem. One could imagine
+retraining a bidirectional model with per-frame rate handling; but then the web-scale pretrained
+backbone is exactly what you forfeit. The autoregressive conversion keeps the prior and sidesteps
+the mismatch.
+</QA>
+
+<QA question="In chunked denoising, are the noisy chunk tokens appended after the clean past, with each output being that position's velocity? And if each conditional velocity is constant, why isn't one denoising step enough?" asked_by="Huch0" concepts="">
+**Your mechanical picture is exactly right.** The input sequence is
+`[text tokens | state token | clean past chunks (KV cache) | noisy video tokens of the current
+chunk | noisy action tokens of the current chunk]`, with the mask of Fig. 14 letting the noisy
+positions attend to everything and the loss applied only at the noisy positions. At each noisy
+position the model outputs **the velocity for that same position** — one vector per video token,
+one per action token — and the integrator uses them jointly: the whole chunk's tokens are nudged
+together, in parallel, per step. "The model is trained to denoise the noisy current chunk
+conditioned on the clean previous chunks" (§3.1) is precisely this layout.
+
+**Two inversions against the LLM mental model** worth keeping straight:
+1. An LLM's output at position `i` is *the next token* — the sequence grows by one and the model's
+   own output becomes the next input. Here the noisy positions **never move**: the output is a
+   correction *for the same position*, the loop refines those positions in place while
+   <M tex="t" /> climbs, and the sequence grows only at **chunk** granularity.
+2. What gets appended as "past" at inference is not the model's output but the **real camera
+   frames** (the observation overwrite) — the autoregressive feedback loop that makes LLMs drift is
+   deliberately cut: "We introduce autoregressive modeling only for the video modality to avoid
+   error propagation coming from closed-loop action prediction" (§3.1).
+
+**Now your sharp objection: constant velocity ⇒ one step, no?** The premise is true of each
+*conditional* path — for one (noise, data) pair, <M tex="x_1 - x_0" /> is the same at every
+<M tex="t" />. But the network cannot have learned any pair's private velocity: it never sees the
+pairing. It converges to the **marginal field**
+<M tex="u^{\star}(x, t) = \mathbb{E}[\,x_1 - x_0 \mid x_t = x\,]" /> — the posterior *average*
+over all futures consistent with the current partial state — and that field is **not constant along
+the trajectory the sampler actually follows**. At <M tex="t = 0" /> the input is pure noise, the
+posterior over futures is broad, and the velocity points at a *blur of plausible videos*; take one
+full-length Euler step and you land on that blur — the posterior mean, not a sample. Integrating in
+smaller steps is what lets the trajectory *commit*: each step adds information to <M tex="x_t" />,
+the posterior narrows, the velocity re-aims, and the path curves into one specific, sharp outcome
+(the individually-straight-collectively-curved fact — see the flow-matching page, Figs. FM-2 and
+FM-3).
+
+The paper's numbers trace this exactly: 16 steps by default for smooth actions; the curvature is
+mild enough that "directional consistency of velocity predictions" lets cached velocities stand in
+for 12 of them (16 → 4 effective calls, §3.2.3); a *naive* 1-step jump collapses table bussing to
+52% ± 10.2; and DreamZero-Flash recovers 1-step viability (74% ± 10.1 vs 83% ± 6.1 at 4 steps,
+Tab. 3) only by *retraining the schedule* — concentrating video timesteps so the model explicitly
+practices the one-big-jump regime — i.e., by making the learned field straighter, not by exploiting
+a straightness that was already there.
+</QA>

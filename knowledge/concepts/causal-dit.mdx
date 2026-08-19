@@ -382,6 +382,13 @@ same integration pictured on the flow-matching page, applied to video-and-action
 </figure>
 </FigZoom>
 
+If you arrive from language models, two inversions are worth pinning down. An LLM's output at
+position <M tex="i" /> is the *next* token — the sequence grows by one and the model's own output
+becomes its next input. Here the noisy chunk's positions never move: the output at each noisy
+position is a velocity *for that same position*, and the loop refines those positions in place as
+<M tex="t" /> climbs. The sequence grows only at chunk granularity — and what gets appended as
+"past" is the real observation, not the model's output.
+
 And the way out you already know, because it is Part 1 run backwards: after the loop exits at
 <M tex="t = 1" />, a final linear layer maps each video token 5120 → 64, those 64 numbers fold back
 into the token's 2 × 2 tile (**un-patchify** — Fig. DIT-8 run right-to-left), reassembling the

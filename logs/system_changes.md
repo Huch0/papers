@@ -279,3 +279,23 @@ Each entry: date, trigger, change, files touched, migration status.
   (mouse and touch, via pointer capture; touch-action disabled so the page
   does not scroll instead) or native scrollbars; reset also clears the pan.
   "drag to pan" hint shown in the control bar when active.
+
+## 2026-08-19 — Feynman author-voice rewrite: DreamZero summary + both KB articles
+
+- User request: explain the paper via the Feynman technique as its author, with
+  direct quotes, and completely rewrite the summary and linked knowledge articles.
+- summary.mdx: expository sections rewritten in the authors' first-person voice
+  with 15 verbatim quotes (each anchored); a style note marks the voice split —
+  Limitations/Critiques stay in the curator's voice so no admission is fabricated.
+  All assets preserved: KeyStats, results SortableTable, Method-details Pass,
+  Eq.1 MathBlock, background/primers, DZ figures, Glossary, talk plan, SelfChecks,
+  and every previously verified caveat (2x scope, partial-credit rubric missing
+  from App G, 7 Hz = replan on 2 GB200s, Flash 83->74, +41.8% human transfer,
+  few-shot without numbers, diversity confound).
+- knowledge/flow-matching.mdx: prose respun as invent-it-yourself ("Let's invent
+  it: transport as regression" -> forced moves -> "The objection you should
+  raise: the targets contradict each other" -> visualization -> naming -> honest
+  bill); all Definitions/figures/MathBlocks/Glossary/SelfChecks byte-identical.
+- knowledge/causal-dit.mdx: Parts 1-5 respun as derive-by-failure teaching
+  (centered kernel fails -> causal; token/concat fail -> FiLM; "which part
+  generates? None"); all preserved blocks byte-identical.

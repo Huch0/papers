@@ -18,45 +18,53 @@ contributors:
 - Huch0
 ---
 
-<TLDR>A causal DiT is a transformer that denoises video: pixels are compressed into grids of
-16-number cells, the grids are cut into tiles and lined up as a list of 5120-wide tokens, a stack of
-shape-preserving blocks denoises that list at every noise level, and generation runs chunk by chunk —
-each chunk reading only finished ones — which is what lets a video model close a robot's control
-loop.</TLDR>
+<TLDR>Suppose you had to build a transformer that denoises video — you would be forced, step by
+step, into exactly this design: compress pixels into grids of 16-number cells, cut the grids into
+tiles lined up as a list of 5120-wide tokens, denoise that list with a stack of shape-preserving
+blocks at every noise level, and generate chunk by chunk — each chunk reading only finished ones —
+which is what lets a video model close a robot's control loop.</TLDR>
 
-## Intuition — and a map of this page
+## Invent it yourself — and a map of this page
 
-Three renames turn a language model into a video diffusion model. Words become **latent patches**
-(compressed pieces of video); next-token prediction becomes **denoising** (predict the flow-matching
-velocity for every noisy token — see [Flow Matching](../flow-matching/)); and the decoder-only
-causal mask becomes **block-causal over chunks**: a chunk being denoised may read every finished
-chunk, never the future. Everything else — attention, MLPs, residuals, KV caching — is the same
-machinery LLMs use.
+Start from what you already own: a language model. It reads a list of tokens and predicts the next
+one. Now I hand you a robot and a camera and say: make this thing watch the world and act. What
+breaks? Three things — and each fix turns out to be a rename, not an invention. Words become
+**latent patches** (compressed pieces of video); next-token prediction becomes **denoising**
+(predict the flow-matching velocity for every noisy token — see
+[Flow Matching](../flow-matching/)); and the decoder-only causal mask becomes **block-causal over
+chunks**: a chunk being denoised may read every finished chunk, never the future. Everything else —
+attention, MLPs, residuals, KV caching — you keep untouched; it is the same machinery LLMs use.
 
-The page follows that construction in order. **Part 1** builds the object the model actually reads,
-following 1.6 s of real video from pixels to tokens with every shape shown. **Part 2** makes the
-video encoder causal in time. **Part 3** opens one DiT block with dimensions on every wire.
-**Part 4** chains chunks together with masks and a cache. **Part 5** shows who actually does the
-denoising. Every term is defined at first use and collected in the Glossary.
+We will make those three moves in order, and I will try to convince you each one is forced.
+**Part 1** builds the object the model actually reads, following 1.6 s of real video from pixels
+to tokens with every shape shown. **Part 2** makes the video encoder causal in time. **Part 3**
+opens one DiT block with dimensions on every wire. **Part 4** chains chunks together with masks and
+a cache. **Part 5** shows who actually does the denoising. Every term is defined at first use and
+collected in the Glossary.
 
-## Part 1 · From pixels to tokens: follow 1.6 seconds of video
+## Part 1 · What can a transformer eat? Follow 1.6 seconds of video
 
-A transformer cannot eat an image, a video, or a "16 × 60 × 104" anything. It eats exactly one kind
-of object: **a list of same-length vectors** (the tokens). So the honest question — *this shape
-becomes what?* — has a one-line answer: it becomes a list of 5120-long vectors. This part shows
-each step of that becoming, following one concrete object all the way: **1.6 seconds of one
-832 × 480 camera view**.
+Here is your first problem, and it is not optional. A transformer cannot eat an image, a video, or
+a "16 × 60 × 104" anything. It eats exactly one kind of object — **a list of same-length vectors**
+(the tokens) — and nothing a camera hands you looks like that. So before any architecture, keep
+asking the only honest question: *this shape becomes what?* You know where the answer must end — a
+list of 5120-long vectors — so let us watch it happen, holding on to one concrete object the whole
+way: **1.6 seconds of one 832 × 480 camera view**.
 
-**Step 1 — space: pixel blocks become cells.** The VAE encoder slides over each frame and replaces
+**Step 1 — space: pixel blocks become cells.** Count what you are holding first: one frame is
+480 × 832 pixels × 3 colors — about 1.2 M numbers — and attention over that is hopeless. You are
+forced to compress before you tokenize. So the VAE encoder slides over each frame and replaces
 every 8 × 8 block of pixels (8 · 8 · 3 = 192 raw numbers) with **one cell: 16 learned numbers**
 that summarize the block's content — edges, color, texture — instead of storing every pixel. A
-480 × 832 frame therefore shrinks to a **60 × 104 grid of cells** (480 ÷ 8 and 832 ÷ 8). That is
-all the phrase "a small grid of vectors" means, and all the shape notation means:
+480 × 832 frame therefore shrinks to a **60 × 104 grid of cells** (480 ÷ 8 and 832 ÷ 8). And that
+is all the phrase "a small grid of vectors" means, and all the shape notation means:
 16 × 60 × 104 = (numbers per cell) × (grid rows) × (grid columns).
 
-**Step 2 — time: frames merge into latent frames.** The same encoder also compresses along time —
-each group of 4 consecutive frames merges into **one latent frame** (how it does this without
-peeking at the future is Part 2). Our 8 raw frames become **K = 2 latent frames**:
+**Step 2 — time: frames merge into latent frames.** Video is redundant in time too — frame 5
+mostly repeats frame 4 — so the same encoder compresses along time as well: each group of 4
+consecutive frames merges into **one latent frame**. (How it manages that without peeking at the
+future is a genuine problem; it gets the whole of Part 2.) Our 8 raw frames become
+**K = 2 latent frames**:
 
 <FigZoom>
 <figure>
@@ -73,12 +81,14 @@ numbers. (Shapes from Wan2.1's public 480P configuration, one camera view.)</fig
 </figure>
 </FigZoom>
 
-**Step 3 — format: the grid becomes a list.** Attention needs a list of same-length vectors, and a
-16 × 60 × 104 slab is not one. So: cut the 60 × 104 grid into **2 × 2 tiles** — the notation
-"patch 1 × 2 × 2" just names the tile's size as (time × height × width): 1 latent frame thick,
-2 cells tall, 2 cells wide. That yields 30 × 52 = **1,560 tiles per latent frame**. Each tile
-contains 4 cells × 16 numbers = **64 numbers**; flatten them into one row and multiply by a single
-learned **5120 × 64 matrix** (the *patch embedding*) to get **one token of 5120 numbers**:
+**Step 3 — format: the grid becomes a list.** You have compressed — but look at what you hold: a
+16 × 60 × 104 slab, and the transformer still refuses it, because a slab is not a list of
+same-length vectors. Only one move is left: cut. Cut the 60 × 104 grid into **2 × 2 tiles** — the
+notation "patch 1 × 2 × 2" just names the tile's size as (time × height × width): 1 latent frame
+thick, 2 cells tall, 2 cells wide. That yields 30 × 52 = **1,560 tiles per latent frame**. Each
+tile contains 4 cells × 16 numbers = **64 numbers**; flatten them into one row, multiply by a
+single learned **5120 × 64 matrix** (the *patch embedding*), and you have **one token of
+5120 numbers**:
 
 <FigZoom>
 <figure>
@@ -96,11 +106,12 @@ job is to make a list.</figcaption>
 </figure>
 </FigZoom>
 
-**Step 4 — the company the video keeps.** The chunk's 3,120 video tokens are joined in one list by
-**48 action tokens** — the action encoder maps each of the chunk's 48 motor actions (a vector of
-normalized joint deltas) to its own 5120-wide token, so actions are simply 48 more rows — plus the
-instruction's text tokens, a proprioception token from the state encoder, and the cached tokens of
-past chunks. The full ledger of *what became what*:
+**Step 4 — the company the video keeps.** Now notice what the list format bought you: anything you
+can turn into a 5120-wide row rides in the same list, no special cases. So the chunk's 3,120 video
+tokens are joined by **48 action tokens** — the action encoder maps each of the chunk's 48 motor
+actions (a vector of normalized joint deltas) to its own 5120-wide token, so actions are simply 48
+more rows — plus the instruction's text tokens, a proprioception token from the state encoder, and
+the cached tokens of past chunks. Here is the full ledger of *what became what* — check every row:
 
 <ResultsTable columns={["stage", "shape", "how many numbers"]} rows={[
   ["raw chunk (8 frames)", "3 × 8 × 480 × 832", "9.58 M"],
@@ -109,18 +120,22 @@ past chunks. The full ledger of *what became what*:
   ["video tokens (embedded)", "3,120 × 5120", "≈ 16 M  (expanded into working width)"],
 ]} />
 
-Read the last two rows carefully — they answer the "becomes what" confusion in one glance.
-**Patchify compresses nothing**: 3,120 × 64 is the same 199,680 numbers as the latent chunk, just
-regrouped into a list. And the embedding then *expands* each 64-vector into the model's 5120-wide
-working space: compression was the VAE's job; patchify changes the format; the embedding spends
-size to buy a shape attention can operate on.
+Read the last two rows again, slowly — they dissolve the "becomes what" confusion in one glance,
+and they surprise most people. **Patchify compresses nothing**: 3,120 × 64 is the same 199,680
+numbers as the latent chunk, just regrouped into a list — do the multiplication yourself. And the
+embedding then *expands* each 64-vector into the model's 5120-wide working space, which looks
+wasteful until you say each stage's job out loud: compression was the VAE's job; patchify changes
+the format; the embedding spends size to buy a shape attention can operate on.
 
-## Part 2 · The causal part: no peeking at the future, and an exact anchor
+## Part 2 · Now forbid the future — and win an exact anchor
 
-A 3-D convolution is an ordinary convolution whose kernel spans time as well as space,
-<M tex="(k_t, k_h, k_w)" />. The catch is *where* the temporal window sits: centered (the default),
-the output at time <M tex="\tau" /> reads <M tex="\tau - 1, \tau, \tau + 1" /> — it sees the
-future, useless for streaming. Making it causal is one shift, not new machinery:
+Part 1 left you a debt: the encoder merges every 4 frames into 1, and your robot has to encode
+video *as it streams in*. Reach for the obvious tool and see where it fails. A 3-D convolution is
+an ordinary convolution whose kernel spans time as well as space, <M tex="(k_t, k_h, k_w)" />. Now
+ask *where* the temporal window sits: centered (the default), the output at time <M tex="\tau" />
+reads <M tex="\tau - 1, \tau, \tau + 1" /> — it reads the future, and a robot at time
+<M tex="\tau" /> does not have the future. So you must break the symmetry, and the fix is one
+shift, not new machinery:
 
 <Definition term="Causal temporal convolution">
 A convolution over time whose output at step <M tex="\tau" /> depends only on inputs at steps
@@ -142,20 +157,23 @@ and streaming encoding possible.</figcaption>
 </figure>
 </FigZoom>
 
-Two consequences of Fig. DIT-3 matter downstream. Strided causal stages do the temporal
-downsampling (each stride-2 stage halves the frame count; two stages give the ÷4 used in Step 2
-above), and the **anchor** — frame 1's latent, computed from frame 1 alone — is what lets an
+Stare at Fig. DIT-3 until two things pop out, because both get used later. First, the ÷4 you took
+on faith in Step 2 was hiding in plain sight: strided causal stages do the temporal downsampling —
+each stride-2 stage halves the frame count, and two stages give the ÷4. Second, you got something
+*for free*: follow frame 1's pathway and see that it reaches its latent through padding only, so
+the **anchor** — frame 1's latent, computed from frame 1 alone — is exact. That is what lets an
 image-to-video model condition on a real frame exactly, and lets the encoder run on a *growing*
 stream without ever revisiting what it already encoded. The anchor also settles an arithmetic that
-otherwise looks off by one: the 8 chunked latent frames of DreamZero's context each summarize 4 raw
-frames, and the anchor rides alongside them as the conditioning frame — 1 + 8 × 4 = **33 raw
-frames ↔ 8 chunked latent frames** (the paper states the correspondence; the split is the
-Wan-family causal-VAE design).
+would otherwise nag you as off by one: the 8 chunked latent frames of DreamZero's context each
+summarize 4 raw frames, and the anchor rides alongside them as the conditioning frame —
+1 + 8 × 4 = **33 raw frames ↔ 8 chunked latent frames**. (Honesty about sources: the paper states
+only the 8 ↔ 33 correspondence; the split is the Wan-family causal-VAE design.)
 
-One chunk, then, is three clocks reading the same 1.6 s of wall time — and the 48 actions are
-denoised **together, in one pass**, then *streamed* one per 33 ms by the 30 Hz controller while the
-GPU already denoises the next chunk. Autoregression lives at chunk granularity only, never
-action-by-action:
+Now hold up one chunk and read it the way the robot does: three clocks reading the same 1.6 s of
+wall time. And catch the trap before you fall in — you might guess the model emits actions one at
+a time, LLM-style. It does not: the 48 actions are denoised **together, in one pass**, then
+*streamed* one per 33 ms by the 30 Hz controller while the GPU already denoises the next chunk.
+Autoregression lives at chunk granularity only, never action-by-action:
 
 <FigZoom>
 <figure>
@@ -171,16 +189,18 @@ never action-to-action.</figcaption>
 </figure>
 </FigZoom>
 
-## Part 3 · One DiT block, with every shape on the wire
+## Part 3 · Build one block — with every shape on the wire
 
-Chop, embed, list — now the trunk. A DiT is <M tex="N = 40" /> copies of one block, and one block
+Chop, embed, list — now you must build the machine that reads the list, and the temptation is to
+invent something exotic. Resist it. A DiT is <M tex="N = 40" /> copies of one block, and one block
 is easier than it looks: it is **the same wrapper applied twice** — normalize, re-tune for the noise
 level, operate, gate, add the untouched copy back — differing only in the operation wrapped.
 Sub-block 1 wraps *attention*, the single place where the <M tex="n" /> tokens exchange information
 (its weights are <M tex="n \times n" /> per head); sub-block 2 wraps the *MLP*, which transforms
-each token alone. The whole stack is **shape-preserving**: a list of <M tex="n" /> tokens of width
-5120 goes in, the same shape comes out, forty times over. Everything else in
-the drawing is plumbing for stability (norms, residuals) or for conditioning (the right-hand column):
+each token alone. As you read the drawing, check the invariant on every wire: the whole stack is
+**shape-preserving** — a list of <M tex="n" /> tokens of width 5120 goes in, the same shape comes
+out, forty times over. Everything else in the drawing is plumbing for stability (norms, residuals)
+or for conditioning (the right-hand column — which is where the real question hides):
 
 <FigZoom>
 <figure>
@@ -199,9 +219,10 @@ stacked make the trunk. Widths from Wan2.1's public configuration.</figcaption>
 </figure>
 </FigZoom>
 
-What makes it a *diffusion* transformer is the right-hand column. The network must act as a whole family
-of denoisers — coarse structure-guessing at high noise, fine sharpening at low noise — so the
-timestep must be able to re-tune what every block computes:
+So far you have built a plain transformer; here is what makes it a *diffusion* transformer. One
+network must act as a whole family of denoisers — coarse structure-guessing at high noise, fine
+sharpening at low noise — with the timestep selecting the family member. So one scalar needs the
+leverage to re-tune what every block computes. That is the right-hand column's entire job:
 
 <Definition term="Adaptive layer norm (adaLN / adaLN-Zero)">
 With conditioning vector <M tex="c" /> (here: the timestep embedding), an MLP produces per-channel
@@ -216,21 +237,23 @@ gradually.
 
 ### Why scaling-and-shifting, of all things?
 
-Compare the three standard ways to inject a conditioning signal. **As an extra token?**
-<M tex="t" /> is *global* — every token in the chunk shares the same value — so attention would
-spend capacity re-fetching one constant fact, block after block. **Concatenated once at the
-input?** Forty blocks later the signal has washed out, and the late blocks are precisely the ones
-whose behavior must differ most across noise levels. **Feature-wise modulation at every block**
+Do not take adaLN on authority — try to invent the injection yourself and watch the obvious
+candidates die. **As an extra token?** <M tex="t" /> is *global* — every token in the chunk shares
+the same value — so attention would spend capacity re-fetching one constant fact, block after
+block. **Concatenated once at the input?** Forty blocks later the signal has washed out, and the
+late blocks are precisely the ones whose behavior must differ most across noise levels. Which
+pushes you to **feature-wise modulation at every block**
 (the <Term def="Feature-wise Linear Modulation (Perez et al. 2018): conditioning enters a network as per-channel scales and shifts applied to intermediate activations">FiLM</Term>
 pattern, which adaLN instantiates): a per-channel scale can amplify, suppress, or flip a feature —
 it *reconfigures* each block's computation — for a few thousand numbers per block, applied
-uniformly to all tokens, exactly matching the global nature of the information. The normalization
-layer is the natural injection site because LN has just stripped each token's scale and shift;
-re-introducing them *as functions of the conditioning* costs nothing structurally. And the
-zero-initialized gates mean every residual branch starts closed: each block begins as the identity,
-and training opens the gates gradually — which is what makes a 40-block denoiser stable. The DiT
-paper ablated the alternatives (in-context token, cross-attention) and adaLN-Zero won on both
-quality and compute (Peebles &amp; Xie 2023).
+uniformly to all tokens, exactly matching the global nature of the information. Where to inject
+it? The normalization layer is the natural site, because LN has just stripped each token's scale
+and shift; re-introducing them *as functions of the conditioning* costs nothing structurally. One
+worry remains — forty freshly re-tunable blocks sound unstable — and the zero-initialized gates
+answer it: every residual branch starts closed, each block begins as the identity, and training
+opens the gates gradually — which is what makes a 40-block denoiser stable. And none of this is
+taste: the DiT paper ablated the alternatives (in-context token, cross-attention) and adaLN-Zero
+won on both quality and compute (Peebles &amp; Xie 2023).
 
 ### Why sinusoidal features, and not the raw scalar?
 
@@ -259,20 +282,24 @@ which a raw scalar does not.</figcaption>
 </figure>
 </FigZoom>
 
-Why bother, when <M tex="t" /> is a perfectly good number? Because a plain MLP fed one raw scalar
-is biased toward *overly smooth* functions of it (the spectral-bias result — Fourier features are
-the standard cure), while a denoiser's behavior genuinely must change quickly in places, most
-sharply near the ends of the schedule. The bank fixes this at every scale at once: slow waves
-encode early-versus-late, fast waves separate neighboring timesteps, nearby <M tex="t" /> always
-map to nearby vectors (no binning cliffs), and the code has constant norm with rich structure the
+You should object here: <M tex="t" /> is a perfectly good number — why dress it up? Because of a
+failure you would meet if you tried the lazy thing: a plain MLP fed one raw scalar is biased
+toward *overly smooth* functions of it (the spectral-bias result — Fourier features are the
+standard cure), while a denoiser's behavior genuinely must change quickly in places, most sharply
+near the ends of the schedule. The bank fixes this at every scale at once: slow waves encode
+early-versus-late, fast waves separate neighboring timesteps, nearby <M tex="t" /> always map to
+nearby vectors (no binning cliffs), and the code has constant norm with rich structure the
 per-block heads can slice by frequency. One scalar in, a whole spectrum of handles out.
 
-## Part 4 · From clip generator to controller: chunks, masks, cache
+## Part 4 · Now make it act: chunks, masks, cache
 
-A stock video DiT is **bidirectional**: it emits one fixed-length clip, every frame attending to
-every other — no notion of "now", so no way to act mid-clip, and fixed windows force frame
-subsampling that breaks the video-time ↔ action-time alignment. The causal variant generates
-**chunk by chunk** under a mask that is the video version of an LLM's causal mask:
+Take stock: you now own a machine that denoises one clip beautifully — and is useless to a robot.
+Find the flaw yourself. A stock video DiT is **bidirectional**: it emits one fixed-length clip,
+every frame attending to every other — no notion of "now", so no way to act mid-clip, and fixed
+windows force frame subsampling that breaks the video-time ↔ action-time alignment. You solved
+exactly this problem in Part 2 for convolutions; solve it once more for attention. The causal
+variant generates **chunk by chunk** under a mask that is the video version of an LLM's causal
+mask:
 
 <Definition term="Block-causal attention mask">
 Group the sequence into chunks <M tex="1, \dots, M" />. A query token in chunk <M tex="i" /> may
@@ -288,21 +315,24 @@ move unique to a *robot* video model:
 
 <AttnMask />
 
-Training uses
+One honest crack remains — find it before it finds you. Training uses
 <Term def="conditioning on the ground-truth past rather than the model's own predictions; fast and stable, but mismatched with inference, where the model must consume its own outputs">teacher forcing</Term>:
 previous chunks in context are clean ground truth. At inference a pure video generator must feed on
-its own imperfect outputs, and the mismatch compounds — autoregressive **drift**. A closed-loop
-robot model has an exit no offline generator has: after each chunk *executes*, the real camera
-frames overwrite the model's predicted frames in the KV cache, restoring teacher-forcing conditions
-every 1.6 s (toggle it in Fig. DIT-2's inference tab). Offline cousins — noise injection on
-context, diffusion forcing — only soften the mismatch; observation overwrite deletes it, at the
-price of needing an environment that answers back.
+its own imperfect outputs, and the mismatch compounds — autoregressive **drift**. Now ask what a
+*robot* has that an offline generator never will: a world that answers back. That is the exit.
+After each chunk *executes*, the real camera frames overwrite the model's predicted frames in the
+KV cache, restoring teacher-forcing conditions every 1.6 s (toggle it in Fig. DIT-2's inference
+tab). And mark the difference in kind: offline cousins — noise injection on context, diffusion
+forcing — only *soften* the mismatch; observation overwrite *deletes* it, at the price of needing
+an environment that answers back.
 
-## Part 5 · Who actually denoises: the loop
+## Part 5 · So who actually denoises? The loop
 
-No block "generates" anything. One forward pass through the stack reads the noisy chunk and outputs
-a **velocity per token** — the flow-matching arrow saying "move this way". Generation is the outer
-loop that alternates network calls with small updates:
+Last question, and it is a trick: which part of the stack generates the video? None of it — no
+block "generates" anything. Run the stack once and look at what actually comes out: one forward
+pass reads the noisy chunk and outputs a **velocity per token** — the flow-matching arrow saying
+"move this way". An arrow is not a video. So generation must live outside the network, in the
+outer loop that alternates network calls with small updates:
 
 <FigZoom>
 <figure>
@@ -352,11 +382,12 @@ same integration pictured on the flow-matching page, applied to video-and-action
 </figure>
 </FigZoom>
 
-And the tokens come back out the way they went in, reversed: after the loop exits at
+And the way out you already know, because it is Part 1 run backwards: after the loop exits at
 <M tex="t = 1" />, a final linear layer maps each video token 5120 → 64, those 64 numbers fold back
 into the token's 2 × 2 tile (**un-patchify** — Fig. DIT-8 run right-to-left), reassembling the
 16 × 60 × 104 latent frames for the VAE decoder, while the action tokens pass through the action
-decoder into the 48 executable joint deltas.
+decoder into the 48 executable joint deltas. Pixels went in, joint deltas come out — and every
+step in between is one you could now re-derive yourself.
 
 ## Glossary
 

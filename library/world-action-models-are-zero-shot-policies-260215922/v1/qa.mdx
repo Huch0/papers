@@ -345,3 +345,32 @@ velocity cache is visible as `should_run_model`/`prev_predictions` (reuse when c
 velocities agree), and at the end the clean latents go to the VAE decoder while the 48 clean
 actions are smoothed and streamed at 30 Hz.
 </QA>
+
+<QA question="In the result tables, what do '(scratch)' and '(pretrained)' mean?" asked_by="Huch0" concepts="">
+They label the two **initialization strategies for the VLA baselines** — what GR00T N1.6 and
+pi-0.5 had already seen *before* the final, shared training round. Paper's definition (§4, p.10):
+"(1) from-scratch, using pretrained VLM weights without prior robot data training for a fair
+apple-to-apple comparison with DreamZero, and (2) from-pretrained, using official checkpoints
+pretrained on thousands of hours of cross-embodiment robot data."
+
+- **(scratch)** ≠ random weights. The vision-language backbone is still its pretrained VLM; what
+  the model has *not* seen is **any robot demonstration data from anywhere else**. It then trains
+  on exactly the same robot data as DreamZero (~500 h AgiBot, or DROID for Franka).
+- **(pretrained)** = the official released checkpoint — already containing thousands of hours of
+  cross-embodiment robot experience — then *also* continued on that same shared data.
+
+Both variants get identical data and a "comparable compute budget" (matched total batch size and
+gradient steps).
+
+**Why DreamZero's row says (scratch):** by the same criterion it has no prior robot data either —
+its only head start is Wan2.1's web-video pretraining, the analogue of the VLAs' VLM weights.
+There is no "DreamZero (pretrained)" row, because no prior-robot-data version of it exists.
+
+**How to read the table with these labels.** The apples-to-apples pair is scratch-vs-scratch:
+62.2% vs 0.0–0.6% task progress — the paper's evidence that VLAs cannot learn from this diverse,
+non-repetitive data while the world-model objective can. The headline "over 2×" is the *harder*
+comparison: DreamZero-scratch vs the best VLA-**pretrained** (62.2 vs 27.4), i.e. DreamZero wins
+even after conceding the baselines thousands of hours of extra robot data. Two caveats to keep
+attached: from-scratch VLAs were never run on DROID (the n/a cells), and "comparable compute"
+means matched batch/steps, not matched FLOPs — DreamZero is 14B against ~3B-class baselines.
+</QA>

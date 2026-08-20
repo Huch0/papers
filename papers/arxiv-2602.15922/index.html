@@ -631,6 +631,25 @@ non-repetitive data while the world-model objective can. The headline “over 2�
 comparison: DreamZero-scratch vs the best VLA-<strong>pretrained</strong> (62.2 vs 27.4), i.e. DreamZero wins
 even after conceding the baselines thousands of hours of extra robot data. Two caveats to keep
 attached: from-scratch VLAs were never run on DROID (the n/a cells), and “comparable compute”
-means matched batch/steps, not matched FLOPs — DreamZero is 14B against ~3B-class baselines.</p></div>  </div> </section><aside class="discuss" data-pagefind-ignore>
+means matched batch/steps, not matched FLOPs — DreamZero is 14B against ~3B-class baselines.</p></div>  </div>
+<div class="qa"> <div class="q"> <span>Q: Where is the result table or plot for &#39;Q5. Do WAMs enable few-shot new embodiment adaptation?&#39;</span> <span class="author" title="Huch0"><span class="author-label">asked by</span><a class="who" href="https://github.com/Huch0" target="_blank" rel="noopener"><img class="ava" src="https://github.com/Huch0.png?size=64" width="18" height="18" alt="Chiyeong Heo" loading="lazy"><span class="who-name">Chiyeong Heo</span></a></span> </div> <div class="qa-answer"><p><strong>There isn’t one — you didn’t miss it.</strong> Q5 (p.16–17) is the only research question in the paper
+answered with no quantitative evaluation at all. Everything it offers:</p><ul>
+<li><strong>Figure 12</strong> — a qualitative photo strip: rollout frames of four pick-and-place variants
+(“Put the cup noodles in the paper bag”, “Pick up the teddy bear”, “Put the orange in the
+pumpkin”, “Put banana in wooden shelf”) under the banner “Retaining Strong Language Following”.</li>
+<li><strong>Prose claims</strong>: the post-trained policy “retains strong language following ability, even
+generalizing to novel objects unseen during training”, shows “tight video-action alignment”,
+and failures “primarily stem from video prediction errors rather than action extraction”.</li>
+<li><strong>Footnote 11</strong>: a link visualizing the entire 30 minutes of play data
+(dreamzero0.github.io/yam_gallery).</li>
+</ul><p>No success rate, no task-progress score, no trial counts, no baseline (e.g. training on YAM from
+scratch, or a VLA adapted with the same 55 trajectories), no scaling curve over data amount.</p><p>Two consequences worth keeping straight. First, “only needs 30 minutes” overstates what is shown:
+the paper <em>demonstrates</em> adaptation with 55 trajectories across 11 tasks (~30 min); it never
+measures how well it works or whether less (or more) would do — “needs” is not established.
+Second, don’t conflate Q5 with the <em>quantitative</em> cross-embodiment result next to it: <strong>Q4
+(Figure 11)</strong> reports a “relative improvement of over 42% on unseen task performance” — but that
+is the reverse direction (adding YAM or human egocentric data to help the <strong>AgiBot</strong> policy on
+unseen tasks), not the AgiBot→YAM adaptation. The headline abstract sentence about adapting to
+YAM with 30 minutes of play data rests entirely on Fig. 12’s qualitative panels.</p></div>  </div> </section><aside class="discuss" data-pagefind-ignore>
 💬 <strong>Discuss this paper in Claude Code</strong> — ask the tutor and it updates the
     knowledge base: <code>/paper-tutor arxiv-2602.15922</code> </aside> </main> </body></html>

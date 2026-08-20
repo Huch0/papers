@@ -611,6 +611,26 @@ The persistent state across steps is the raw latents/actions — they are <stron
 (Conv3d patchify, action encoder) before every network call; positions are fixed, values flow. The
 velocity cache is visible as <code>should_run_model</code>/<code>prev_predictions</code> (reuse when consecutive
 velocities agree), and at the end the clean latents go to the VAE decoder while the 48 clean
-actions are smoothed and streamed at 30 Hz.</p></div>  </div> </section><aside class="discuss" data-pagefind-ignore>
+actions are smoothed and streamed at 30 Hz.</p></div>  </div>
+<div class="qa"> <div class="q"> <span>Q: In the result tables, what do &#39;(scratch)&#39; and &#39;(pretrained)&#39; mean?</span> <span class="author" title="Huch0"><span class="author-label">asked by</span><a class="who" href="https://github.com/Huch0" target="_blank" rel="noopener"><img class="ava" src="https://github.com/Huch0.png?size=64" width="18" height="18" alt="Chiyeong Heo" loading="lazy"><span class="who-name">Chiyeong Heo</span></a></span> </div> <div class="qa-answer"><p>They label the two <strong>initialization strategies for the VLA baselines</strong> — what GR00T N1.6 and
+pi-0.5 had already seen <em>before</em> the final, shared training round. Paper’s definition (§4, p.10):
+“(1) from-scratch, using pretrained VLM weights without prior robot data training for a fair
+apple-to-apple comparison with DreamZero, and (2) from-pretrained, using official checkpoints
+pretrained on thousands of hours of cross-embodiment robot data.”</p><ul>
+<li><strong>(scratch)</strong> ≠ random weights. The vision-language backbone is still its pretrained VLM; what
+the model has <em>not</em> seen is <strong>any robot demonstration data from anywhere else</strong>. It then trains
+on exactly the same robot data as DreamZero (~500 h AgiBot, or DROID for Franka).</li>
+<li><strong>(pretrained)</strong> = the official released checkpoint — already containing thousands of hours of
+cross-embodiment robot experience — then <em>also</em> continued on that same shared data.</li>
+</ul><p>Both variants get identical data and a “comparable compute budget” (matched total batch size and
+gradient steps).</p><p><strong>Why DreamZero’s row says (scratch):</strong> by the same criterion it has no prior robot data either —
+its only head start is Wan2.1’s web-video pretraining, the analogue of the VLAs’ VLM weights.
+There is no “DreamZero (pretrained)” row, because no prior-robot-data version of it exists.</p><p><strong>How to read the table with these labels.</strong> The apples-to-apples pair is scratch-vs-scratch:
+62.2% vs 0.0–0.6% task progress — the paper’s evidence that VLAs cannot learn from this diverse,
+non-repetitive data while the world-model objective can. The headline “over 2×” is the <em>harder</em>
+comparison: DreamZero-scratch vs the best VLA-<strong>pretrained</strong> (62.2 vs 27.4), i.e. DreamZero wins
+even after conceding the baselines thousands of hours of extra robot data. Two caveats to keep
+attached: from-scratch VLAs were never run on DROID (the n/a cells), and “comparable compute”
+means matched batch/steps, not matched FLOPs — DreamZero is 14B against ~3B-class baselines.</p></div>  </div> </section><aside class="discuss" data-pagefind-ignore>
 💬 <strong>Discuss this paper in Claude Code</strong> — ask the tutor and it updates the
     knowledge base: <code>/paper-tutor arxiv-2602.15922</code> </aside> </main> </body></html>

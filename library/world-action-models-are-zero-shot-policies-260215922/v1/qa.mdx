@@ -374,3 +374,29 @@ even after conceding the baselines thousands of hours of extra robot data. Two c
 attached: from-scratch VLAs were never run on DROID (the n/a cells), and "comparable compute"
 means matched batch/steps, not matched FLOPs — DreamZero is 14B against ~3B-class baselines.
 </QA>
+
+<QA question="Where is the result table or plot for 'Q5. Do WAMs enable few-shot new embodiment adaptation?'" asked_by="Huch0" concepts="">
+**There isn't one — you didn't miss it.** Q5 (p.16–17) is the only research question in the paper
+answered with no quantitative evaluation at all. Everything it offers:
+
+- **Figure 12** — a qualitative photo strip: rollout frames of four pick-and-place variants
+  ("Put the cup noodles in the paper bag", "Pick up the teddy bear", "Put the orange in the
+  pumpkin", "Put banana in wooden shelf") under the banner "Retaining Strong Language Following".
+- **Prose claims**: the post-trained policy "retains strong language following ability, even
+  generalizing to novel objects unseen during training", shows "tight video-action alignment",
+  and failures "primarily stem from video prediction errors rather than action extraction".
+- **Footnote 11**: a link visualizing the entire 30 minutes of play data
+  (dreamzero0.github.io/yam_gallery).
+
+No success rate, no task-progress score, no trial counts, no baseline (e.g. training on YAM from
+scratch, or a VLA adapted with the same 55 trajectories), no scaling curve over data amount.
+
+Two consequences worth keeping straight. First, "only needs 30 minutes" overstates what is shown:
+the paper *demonstrates* adaptation with 55 trajectories across 11 tasks (~30 min); it never
+measures how well it works or whether less (or more) would do — "needs" is not established.
+Second, don't conflate Q5 with the *quantitative* cross-embodiment result next to it: **Q4
+(Figure 11)** reports a "relative improvement of over 42% on unseen task performance" — but that
+is the reverse direction (adding YAM or human egocentric data to help the **AgiBot** policy on
+unseen tasks), not the AgiBot→YAM adaptation. The headline abstract sentence about adapting to
+YAM with 30 minutes of play data rests entirely on Fig. 12's qualitative panels.
+</QA>

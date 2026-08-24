@@ -1,0 +1,60 @@
+canonical_key: arxiv-1509.06461
+slug: deep-reinforcement-learning-with-double-q-learning-150906461
+title: Deep Reinforcement Learning with Double Q-learning
+authors:
+- Hado van Hasselt
+- Arthur Guez
+- David Silver
+year: 2015
+primary_ids:
+  doi: null
+  arxiv_base_id: '1509.06461'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/1509.06461v3
+- https://arxiv.org/pdf/1509.06461v3
+topic_groups:
+- rl
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2015
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: medium
+  notes: null
+milestone:
+  field: rl
+  era: emergence
+  significance: Decoupled action selection from evaluation to fix DQN overestimation bias; made deep Q-learning
+    reliable.
+  subarea: value_based
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v3
+  source: arxiv
+  source_url: https://arxiv.org/abs/1509.06461v3
+  pdf_path: library/deep-reinforcement-learning-with-double-q-learning-150906461/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/deep-reinforcement-learning-with-double-q-learning-150906461/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:27:40Z'
+  source_updated_at: '2015-12-08T21:19:16Z'
+  arxiv_version: v3
+  pdf_sha256: a37336d7f35be5842740ef8e320bce03e725c03e56b7093afe98475c5c72e496
+  pdf_bytes: 789062
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:27:40Z'
+  updated_at: '2026-08-24T03:27:40Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

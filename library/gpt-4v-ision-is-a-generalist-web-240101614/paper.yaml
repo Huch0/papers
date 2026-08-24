@@ -36,6 +36,7 @@ milestone:
   era: expansion
   significance: Showed GPT-4V as strong generalist web agent once grounded; crystallized perception-then-grounding
     for VLM web agents.
+  subarea: web
 knowledge_concepts: []
 versions:
 - version_key: v1

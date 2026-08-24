@@ -74,6 +74,7 @@ scoring:
   - software_engineering_agents:group:software_engineering_agents
   - general_agent_methods:verifier
   - general_agent_methods:group:general_agent_methods
+  - vlm:visual grounding
   negative_signals: []
   subscores:
     interest_fit: 0.91

@@ -1,0 +1,77 @@
+canonical_key: arxiv-2304.08485
+version_key: v1
+title: Visual Instruction Tuning
+authors:
+- Haotian Liu
+- Chunyuan Li
+- Qingyang Wu
+- Yong Jae Lee
+abstract: 'Instruction tuning large language models (LLMs) using machine-generated instruction-following
+  data has improved zero-shot capabilities on new tasks, but the idea is less explored in the multimodal
+  field. In this paper, we present the first attempt to use language-only GPT-4 to generate multimodal
+  language-image instruction-following data. By instruction tuning on such generated data, we introduce
+  LLaVA: Large Language and Vision Assistant, an end-to-end trained large multimodal model that connects
+  a vision encoder and LLM for general-purpose visual and language understanding.Our early experiments
+  show that LLaVA demonstrates impressive multimodel chat abilities, sometimes exhibiting the behaviors
+  of multimodal GPT-4 on unseen images/instructions, and yields a 85.1% relative score compared with GPT-4
+  on a synthetic multimodal instruction-following dataset. When fine-tuned on Science QA, the synergy
+  of LLaVA and GPT-4 achieves a new state-of-the-art accuracy of 92.53%. We make GPT-4 generated visual
+  instruction tuning data, our model and code base publicly available.'
+venue: arXiv
+year: 2023
+source: arxiv
+source_url: https://arxiv.org/abs/2304.08485v2
+pdf_url: https://arxiv.org/pdf/2304.08485v2
+pdf_sha256: dc8bace378a282ea78caa9b5959306202fbfa3b8cedaf8a66541a9af18f4d3bf
+fetched_at: '2026-08-24T03:25:53Z'
+source_updated_at: '2023-12-11T17:46:14Z'
+ids:
+  doi: null
+  arxiv_id: 2304.08485v2
+  arxiv_base_id: '2304.08485'
+  arxiv_version: v2
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- llm
+- vlm
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: medium
+  rationale: 'score=65 -> READ_SOON | strong: novelty(1.00), interest_fit(0.55), venue_quality(0.40) |
+    interests: llm:large language model, llm:instruction tuning, llm:group:llm, vlm:visual instruction
+    tuning | milestone/foundational floor applied'
+  matched_interests:
+  - llm:large language model
+  - llm:instruction tuning
+  - llm:group:llm
+  - vlm:visual instruction tuning
+  - vlm:group:vlm
+  negative_signals: []
+  subscores:
+    interest_fit: 0.55
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 1.0
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/visual-instruction-tuning-230408485/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

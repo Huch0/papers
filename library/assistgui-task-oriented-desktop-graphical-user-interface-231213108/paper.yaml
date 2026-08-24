@@ -44,6 +44,7 @@ milestone:
   era: emergence
   significance: Early desktop GUI automation benchmark (100 tasks, 9 Windows apps) with Actor-Critic agent;
     first to stress real productivity software.
+  subarea: os_desktop
 knowledge_concepts: []
 versions:
 - version_key: v1

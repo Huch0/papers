@@ -52,6 +52,7 @@ milestone:
   era: expansion
   significance: Reframed Windows automation as a Desktop AgentOS (HostAgent/AppAgents, hybrid UIA+vision,
     native-API/GUI actions, isolated desktop).
+  subarea: os_desktop
 knowledge_concepts: []
 versions:
 - version_key: v1

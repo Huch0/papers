@@ -1,0 +1,86 @@
+canonical_key: arxiv-2308.00352
+version_key: v1
+title: 'MetaGPT: Meta Programming for A Multi-Agent Collaborative Framework'
+authors:
+- Sirui Hong
+- Mingchen Zhuge
+- Jiaqi Chen
+- Xiawu Zheng
+- Yuheng Cheng
+- Ceyao Zhang
+- Jinlin Wang
+- Zili Wang
+- Steven Ka Shing Yau
+- Zijuan Lin
+- Liyang Zhou
+- Chenyu Ran
+- Lingfeng Xiao
+- Chenglin Wu
+- Jürgen Schmidhuber
+abstract: Remarkable progress has been made on automated problem solving through societies of agents based
+  on large language models (LLMs). Existing LLM-based multi-agent systems can already solve simple dialogue
+  tasks. Solutions to more complex tasks, however, are complicated through logic inconsistencies due to
+  cascading hallucinations caused by naively chaining LLMs. Here we introduce MetaGPT, an innovative meta-programming
+  framework incorporating efficient human workflows into LLM-based multi-agent collaborations. MetaGPT
+  encodes Standardized Operating Procedures (SOPs) into prompt sequences for more streamlined workflows,
+  thus allowing agents with human-like domain expertise to verify intermediate results and reduce errors.
+  MetaGPT utilizes an assembly line paradigm to assign diverse roles to various agents, efficiently breaking
+  down complex tasks into subtasks involving many agents working together. On collaborative software engineering
+  benchmarks, MetaGPT generates more coherent solutions than previous chat-based multi-agent systems.
+  Our project can be found at https://github.com/geekan/MetaGPT
+venue: arXiv
+year: 2023
+source: arxiv
+source_url: https://arxiv.org/abs/2308.00352v7
+pdf_url: https://arxiv.org/pdf/2308.00352v7
+pdf_sha256: 17582e47647fac8eaa3681feade41c8408310c4133acc5c6823565fbe880e1ac
+fetched_at: '2026-08-24T03:31:32Z'
+source_updated_at: '2024-11-01T14:36:52Z'
+ids:
+  doi: null
+  arxiv_id: 2308.00352v7
+  arxiv_base_id: '2308.00352'
+  arxiv_version: v7
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- agent_harness
+- llm
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: interest_fit(0.73), novelty(0.55), artifact_availability(0.55)
+    | interests: agent_harness:group:agent_harness, llm:large language model, llm:group:llm | milestone/foundational
+    floor applied'
+  matched_interests:
+  - agent_harness:group:agent_harness
+  - llm:large language model
+  - llm:group:llm
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 0.55
+    artifact_availability: 0.55
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/metagpt-meta-programming-for-a-multi-agent-230800352/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

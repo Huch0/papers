@@ -40,6 +40,7 @@ milestone:
   era: expansion
   significance: Adds vision-based element parsing + RAG over a structured knowledge base for flexible
     robust real-app interaction.
+  subarea: mobile
 knowledge_concepts: []
 versions:
 - version_key: v1

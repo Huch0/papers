@@ -137,6 +137,7 @@ milestone:
   era: recent
   significance: Scales native GUI agents with stabilized multi-turn RL + unified sandbox; improves long-horizon
     grounding-and-acting over UI-TARS-1.x.
+  subarea: gui_grounding
 knowledge_concepts: []
 versions:
 - version_key: v1

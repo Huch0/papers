@@ -1,0 +1,70 @@
+canonical_key: arxiv-1502.05477
+version_key: v1
+title: Trust Region Policy Optimization
+authors:
+- John Schulman
+- Sergey Levine
+- Philipp Moritz
+- Michael I. Jordan
+- Pieter Abbeel
+abstract: 'We describe an iterative procedure for optimizing policies, with guaranteed monotonic improvement.
+  By making several approximations to the theoretically-justified procedure, we develop a practical algorithm,
+  called Trust Region Policy Optimization (TRPO). This algorithm is similar to natural policy gradient
+  methods and is effective for optimizing large nonlinear policies such as neural networks. Our experiments
+  demonstrate its robust performance on a wide variety of tasks: learning simulated robotic swimming,
+  hopping, and walking gaits; and playing Atari games using images of the screen as input. Despite its
+  approximations that deviate from the theory, TRPO tends to give monotonic improvement, with little tuning
+  of hyperparameters.'
+venue: arXiv
+year: 2015
+source: arxiv
+source_url: https://arxiv.org/abs/1502.05477v5
+pdf_url: https://arxiv.org/pdf/1502.05477v5
+pdf_sha256: c228ad36d9d46972b898c96d58b5929c51b54cc43fd42f01d751b36f434bfa4a
+fetched_at: '2026-08-24T03:27:34Z'
+source_updated_at: '2017-04-20T18:04:12Z'
+ids:
+  doi: null
+  arxiv_id: 1502.05477v5
+  arxiv_base_id: '1502.05477'
+  arxiv_version: v5
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- rl
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: medium
+  rationale: 'score=65 -> READ_SOON | strong: interest_fit(0.50), venue_quality(0.40) | interests: rl:policy
+    gradient, rl:group:rl | milestone/foundational floor applied'
+  matched_interests:
+  - rl:policy gradient
+  - rl:group:rl
+  negative_signals: []
+  subscores:
+    interest_fit: 0.501
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 0.0
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/trust-region-policy-optimization-150205477/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

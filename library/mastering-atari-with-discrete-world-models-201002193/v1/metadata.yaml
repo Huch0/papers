@@ -1,0 +1,74 @@
+canonical_key: arxiv-2010.02193
+version_key: v1
+title: Mastering Atari with Discrete World Models
+authors:
+- Danijar Hafner
+- Timothy Lillicrap
+- Mohammad Norouzi
+- Jimmy Ba
+abstract: Intelligent agents need to generalize from past experience to achieve goals in complex environments.
+  World models facilitate such generalization and allow learning behaviors from imagined outcomes to increase
+  sample-efficiency. While learning world models from image inputs has recently become feasible for some
+  tasks, modeling Atari games accurately enough to derive successful behaviors has remained an open challenge
+  for many years. We introduce DreamerV2, a reinforcement learning agent that learns behaviors purely
+  from predictions in the compact latent space of a powerful world model. The world model uses discrete
+  representations and is trained separately from the policy. DreamerV2 constitutes the first agent that
+  achieves human-level performance on the Atari benchmark of 55 tasks by learning behaviors inside a separately
+  trained world model. With the same computational budget and wall-clock time, Dreamer V2 reaches 200M
+  frames and surpasses the final performance of the top single-GPU agents IQN and Rainbow. DreamerV2 is
+  also applicable to tasks with continuous actions, where it learns an accurate world model of a complex
+  humanoid robot and solves stand-up and walking from only pixel inputs.
+venue: arXiv
+year: 2020
+source: arxiv
+source_url: https://arxiv.org/abs/2010.02193v4
+pdf_url: https://arxiv.org/pdf/2010.02193v4
+pdf_sha256: 037dce26de328dd86ce4ab71dfb54f44513fef49a02f2995a1c05848ccef158f
+fetched_at: '2026-08-24T03:28:33Z'
+source_updated_at: '2022-02-12T20:01:53Z'
+ids:
+  doi: null
+  arxiv_id: 2010.02193v4
+  arxiv_base_id: '2010.02193'
+  arxiv_version: v4
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- rl
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: medium
+  rationale: 'score=65 -> READ_SOON | strong: novelty(0.80), interest_fit(0.55), venue_quality(0.40) |
+    interests: rl:reinforcement learning, rl:world model, rl:group:rl | milestone/foundational floor applied'
+  matched_interests:
+  - rl:reinforcement learning
+  - rl:world model
+  - rl:group:rl
+  negative_signals: []
+  subscores:
+    interest_fit: 0.55
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.36
+    novelty: 0.8
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/mastering-atari-with-discrete-world-models-201002193/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

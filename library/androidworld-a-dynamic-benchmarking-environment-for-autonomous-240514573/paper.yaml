@@ -46,6 +46,7 @@ milestone:
   era: expansion
   significance: Live Android env with 116 reward-verified parameterized tasks across 20 apps; de facto
     online mobile-agent leaderboard.
+  subarea: mobile
 knowledge_concepts: []
 versions:
 - version_key: v1

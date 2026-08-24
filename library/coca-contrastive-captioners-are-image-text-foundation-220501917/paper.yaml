@@ -1,0 +1,63 @@
+canonical_key: arxiv-2205.01917
+slug: coca-contrastive-captioners-are-image-text-foundation-220501917
+title: 'CoCa: Contrastive Captioners are Image-Text Foundation Models'
+authors:
+- Jiahui Yu
+- Zirui Wang
+- Vijay K. Vasudevan
+- Legg Yeung
+- Mojtaba Seyedhosseini
+- Yonghui Wu
+year: 2022
+primary_ids:
+  doi: 10.48550/arxiv.2205.01917
+  arxiv_base_id: '2205.01917'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: https://openalex.org/W4229042118
+canonical_urls:
+- https://openalex.org/W4229042118
+- https://arxiv.org/pdf/2205.01917
+topic_groups:
+- vlm
+tags:
+- foundational
+venue:
+  name: arXiv (Cornell University)
+  tier: workshop_or_minor
+  status: unknown
+  year: 2022
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: medium
+  notes: null
+milestone:
+  field: vlm
+  era: foundational
+  significance: Combined contrastive and captioning losses in one foundation model; long-standing SOTA
+    on retrieval and captioning.
+  subarea: pretraining
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: openalex
+  source: openalex
+  source_url: https://openalex.org/W4229042118
+  pdf_path: library/coca-contrastive-captioners-are-image-text-foundation-220501917/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/coca-contrastive-captioners-are-image-text-foundation-220501917/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:25:45Z'
+  source_updated_at: '2022-05-04'
+  arxiv_version: null
+  pdf_sha256: ebb8ecad1667502a8e016241b499b2479e296d59c7df06abdedb5cb51d26457b
+  pdf_bytes: 4092626
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:25:45Z'
+  updated_at: '2026-08-24T03:25:45Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

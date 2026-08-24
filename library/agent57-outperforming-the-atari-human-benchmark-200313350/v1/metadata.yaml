@@ -1,0 +1,73 @@
+canonical_key: arxiv-2003.13350
+version_key: v1
+title: 'Agent57: Outperforming the Atari Human Benchmark'
+authors:
+- Adrià Puigdomènech Badia
+- Bilal Piot
+- Steven Kapturowski
+- Pablo Sprechmann
+- Alex Vitvitskyi
+- Daniel Guo
+- Charles Blundell
+abstract: Atari games have been a long-standing benchmark in the reinforcement learning (RL) community
+  for the past decade. This benchmark was proposed to test general competency of RL algorithms. Previous
+  work has achieved good average performance by doing outstandingly well on many games of the set, but
+  very poorly in several of the most challenging games. We propose Agent57, the first deep RL agent that
+  outperforms the standard human benchmark on all 57 Atari games. To achieve this result, we train a neural
+  network which parameterizes a family of policies ranging from very exploratory to purely exploitative.
+  We propose an adaptive mechanism to choose which policy to prioritize throughout the training process.
+  Additionally, we utilize a novel parameterization of the architecture that allows for more consistent
+  and stable learning.
+venue: arXiv
+year: 2020
+source: arxiv
+source_url: https://arxiv.org/abs/2003.13350v1
+pdf_url: https://arxiv.org/pdf/2003.13350v1
+pdf_sha256: 62de571fd053eb0238aa5aca076a8e85f5335dd4d58e1ea786e6b35726b43b2b
+fetched_at: '2026-08-24T03:28:28Z'
+source_updated_at: '2020-03-30T11:33:16Z'
+ids:
+  doi: null
+  arxiv_id: 2003.13350v1
+  arxiv_base_id: '2003.13350'
+  arxiv_version: v1
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- rl
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: medium
+  rationale: 'score=65 -> READ_SOON | strong: novelty(1.00), interest_fit(0.50), venue_quality(0.40) |
+    interests: rl:reinforcement learning, rl:group:rl | milestone/foundational floor applied'
+  matched_interests:
+  - rl:reinforcement learning
+  - rl:group:rl
+  negative_signals: []
+  subscores:
+    interest_fit: 0.501
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 1.0
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/agent57-outperforming-the-atari-human-benchmark-200313350/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

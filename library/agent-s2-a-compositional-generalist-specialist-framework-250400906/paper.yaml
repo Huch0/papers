@@ -36,6 +36,7 @@ milestone:
   field: computer_use_agents
   era: expansion
   significance: Mixture-of-Grounding + Proactive Hierarchical Planning; new SOTA on OSWorld/WindowsAgentArena/AndroidWorld.
+  subarea: os_desktop
 knowledge_concepts: []
 versions:
 - version_key: v1

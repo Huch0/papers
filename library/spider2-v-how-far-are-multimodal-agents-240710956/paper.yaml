@@ -54,6 +54,7 @@ milestone:
   era: expansion
   significance: Enterprise-grade benchmark across 20 professional apps; exposed the gap on knowledge-intensive
     GUI workflows.
+  subarea: enabler_benchmark_survey
 knowledge_concepts: []
 versions:
 - version_key: v1

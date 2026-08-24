@@ -1,0 +1,323 @@
+canonical_key: arxiv-2412.16720
+slug: openai-o1-system-card-241216720
+title: OpenAI o1 System Card
+authors:
+- OpenAI
+- ':'
+- Aaron Jaech
+- Adam Kalai
+- Adam Lerer
+- Adam Richardson
+- Ahmed El-Kishky
+- Aiden Low
+- Alec Helyar
+- Aleksander Madry
+- Alex Beutel
+- Alex Carney
+- Alex Iftimie
+- Alex Karpenko
+- Alex Tachard Passos
+- Alexander Neitz
+- Alexander Prokofiev
+- Alexander Wei
+- Allison Tam
+- Ally Bennett
+- Ananya Kumar
+- Andre Saraiva
+- Andrea Vallone
+- Andrew Duberstein
+- Andrew Kondrich
+- Andrey Mishchenko
+- Andy Applebaum
+- Angela Jiang
+- Ashvin Nair
+- Barret Zoph
+- Behrooz Ghorbani
+- Bohan Zhang
+- Ben Rossen
+- Benjamin Sokolowsky
+- Boaz Barak
+- Bob McGrew
+- Borys Minaiev
+- Botao Hao
+- Bowen Baker
+- Brandon Houghton
+- Brandon McKinzie
+- Brydon Eastman
+- Camillo Lugaresi
+- Cary Bassin
+- Cary Hudson
+- Chak Ming Li
+- Charles de Bourcy
+- Chelsea Voss
+- Chen Shen
+- Chong Zhang
+- Chris Koch
+- Chris Orsinger
+- Christopher Hesse
+- Claudia Fischer
+- Clive Chan
+- Dan Roberts
+- Daniel Kappler
+- Daniel Levy
+- Daniel Selsam
+- David Dohan
+- David Farhi
+- David Mely
+- David Robinson
+- Dimitris Tsipras
+- Doug Li
+- Dragos Oprica
+- Eben Freeman
+- Eddie Zhang
+- Edmund Wong
+- Elizabeth Proehl
+- Enoch Cheung
+- Eric Mitchell
+- Eric Wallace
+- Erik Ritter
+- Evan Mays
+- Fan Wang
+- Felipe Petroski Such
+- Filippo Raso
+- Florencia Leoni
+- Foivos Tsimpourlas
+- Francis Song
+- Fred von Lohmann
+- Freddie Sulit
+- Geoff Salmon
+- Giambattista Parascandolo
+- Gildas Chabot
+- Grace Zhao
+- Greg Brockman
+- Guillaume Leclerc
+- Hadi Salman
+- Haiming Bao
+- Hao Sheng
+- Hart Andrin
+- Hessam Bagherinezhad
+- Hongyu Ren
+- Hunter Lightman
+- Hyung Won Chung
+- Ian Kivlichan
+- Ian O'Connell
+- Ian Osband
+- Ignasi Clavera Gilaberte
+- Ilge Akkaya
+- Ilya Kostrikov
+- Ilya Sutskever
+- Irina Kofman
+- Jakub Pachocki
+- James Lennon
+- Jason Wei
+- Jean Harb
+- Jerry Twore
+- Jiacheng Feng
+- Jiahui Yu
+- Jiayi Weng
+- Jie Tang
+- Jieqi Yu
+- Joaquin Quiñonero Candela
+- Joe Palermo
+- Joel Parish
+- Johannes Heidecke
+- John Hallman
+- John Rizzo
+- Jonathan Gordon
+- Jonathan Uesato
+- Jonathan Ward
+- Joost Huizinga
+- Julie Wang
+- Kai Chen
+- Kai Xiao
+- Karan Singhal
+- Karina Nguyen
+- Karl Cobbe
+- Katy Shi
+- Kayla Wood
+- Kendra Rimbach
+- Keren Gu-Lemberg
+- Kevin Liu
+- Kevin Lu
+- Kevin Stone
+- Kevin Yu
+- Lama Ahmad
+- Lauren Yang
+- Leo Liu
+- Leon Maksin
+- Leyton Ho
+- Liam Fedus
+- Lilian Weng
+- Linden Li
+- Lindsay McCallum
+- Lindsey Held
+- Lorenz Kuhn
+- Lukas Kondraciuk
+- Lukasz Kaiser
+- Luke Metz
+- Madelaine Boyd
+- Maja Trebacz
+- Manas Joglekar
+- Mark Chen
+- Marko Tintor
+- Mason Meyer
+- Matt Jones
+- Matt Kaufer
+- Max Schwarzer
+- Meghan Shah
+- Mehmet Yatbaz
+- Melody Y. Guan
+- Mengyuan Xu
+- Mengyuan Yan
+- Mia Glaese
+- Mianna Chen
+- Michael Lampe
+- Michael Malek
+- Michele Wang
+- Michelle Fradin
+- Mike McClay
+- Mikhail Pavlov
+- Miles Wang
+- Mingxuan Wang
+- Mira Murati
+- Mo Bavarian
+- Mostafa Rohaninejad
+- Nat McAleese
+- Neil Chowdhury
+- Neil Chowdhury
+- Nick Ryder
+- Nikolas Tezak
+- Noam Brown
+- Ofir Nachum
+- Oleg Boiko
+- Oleg Murk
+- Olivia Watkins
+- Patrick Chao
+- Paul Ashbourne
+- Pavel Izmailov
+- Peter Zhokhov
+- Rachel Dias
+- Rahul Arora
+- Randall Lin
+- Rapha Gontijo Lopes
+- Raz Gaon
+- Reah Miyara
+- Reimar Leike
+- Renny Hwang
+- Rhythm Garg
+- Robin Brown
+- Roshan James
+- Rui Shu
+- Ryan Cheu
+- Ryan Greene
+- Saachi Jain
+- Sam Altman
+- Sam Toizer
+- Sam Toyer
+- Samuel Miserendino
+- Sandhini Agarwal
+- Santiago Hernandez
+- Sasha Baker
+- Scott McKinney
+- Scottie Yan
+- Shengjia Zhao
+- Shengli Hu
+- Shibani Santurkar
+- Shraman Ray Chaudhuri
+- Shuyuan Zhang
+- Siyuan Fu
+- Spencer Papay
+- Steph Lin
+- Suchir Balaji
+- Suvansh Sanjeev
+- Szymon Sidor
+- Tal Broda
+- Aidan Clark
+- Tao Wang
+- Taylor Gordon
+- Ted Sanders
+- Tejal Patwardhan
+- Thibault Sottiaux
+- Thomas Degry
+- Thomas Dimson
+- Tianhao Zheng
+- Timur Garipov
+- Tom Stasi
+- Trapit Bansal
+- Trevor Creech
+- Troy Peterson
+- Tyna Eloundou
+- Valerie Qi
+- Vineet Kosaraju
+- Vinnie Monaco
+- Vitchyr Pong
+- Vlad Fomenko
+- Weiyi Zheng
+- Wenda Zhou
+- Wenting Zhan
+- Wes McCabe
+- Wojciech Zaremba
+- Yann Dubois
+- Yinghai Lu
+- Yining Chen
+- Young Cha
+- Yu Bai
+- Yuchen He
+- Yuchen Zhang
+- Yunyun Wang
+- Zheng Shao
+- Zhuohan Li
+year: 2024
+primary_ids:
+  doi: null
+  arxiv_base_id: '2412.16720'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2412.16720v2
+- https://arxiv.org/pdf/2412.16720v2
+topic_groups:
+- llm
+- rl
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2024
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: medium
+  notes: null
+milestone:
+  field: llm
+  era: expansion
+  significance: First production reasoning model trained with RL to think in long chains before answering;
+    opened the test-time-compute era.
+  subarea: reasoning
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v2
+  source: arxiv
+  source_url: https://arxiv.org/abs/2412.16720v2
+  pdf_path: library/openai-o1-system-card-241216720/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/openai-o1-system-card-241216720/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:34:35Z'
+  source_updated_at: '2026-04-30T02:46:40Z'
+  arxiv_version: v2
+  pdf_sha256: 12718557d4b3bf08fcb180e78fce9df0f174ace5c1ad33b69bac1d6a870fe87a
+  pdf_bytes: 4477012
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:34:35Z'
+  updated_at: '2026-08-24T03:34:35Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

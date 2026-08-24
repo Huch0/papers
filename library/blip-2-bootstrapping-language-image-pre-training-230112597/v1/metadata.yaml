@@ -1,0 +1,75 @@
+canonical_key: arxiv-2301.12597
+version_key: v1
+title: 'BLIP-2: Bootstrapping Language-Image Pre-training with Frozen Image Encoders and Large Language
+  Models'
+authors:
+- Junnan Li
+- Dongxu Li
+- Silvio Savarese
+- Steven Hoi
+abstract: The cost of vision-and-language pre-training has become increasingly prohibitive due to end-to-end
+  training of large-scale models. This paper proposes BLIP-2, a generic and efficient pre-training strategy
+  that bootstraps vision-language pre-training from off-the-shelf frozen pre-trained image encoders and
+  frozen large language models. BLIP-2 bridges the modality gap with a lightweight Querying Transformer,
+  which is pre-trained in two stages. The first stage bootstraps vision-language representation learning
+  from a frozen image encoder. The second stage bootstraps vision-to-language generative learning from
+  a frozen language model. BLIP-2 achieves state-of-the-art performance on various vision-language tasks,
+  despite having significantly fewer trainable parameters than existing methods. For example, our model
+  outperforms Flamingo80B by 8.7% on zero-shot VQAv2 with 54x fewer trainable parameters. We also demonstrate
+  the model's emerging capabilities of zero-shot image-to-text generation that can follow natural language
+  instructions.
+venue: arXiv
+year: 2023
+source: arxiv
+source_url: https://arxiv.org/abs/2301.12597v3
+pdf_url: https://arxiv.org/pdf/2301.12597v3
+pdf_sha256: 6bc5d399d6127a64ace5167a2f0c00112a49725d2475d80322dbf0083f139e80
+fetched_at: '2026-08-24T03:25:48Z'
+source_updated_at: '2023-06-15T07:57:29Z'
+ids:
+  doi: null
+  arxiv_id: 2301.12597v3
+  arxiv_base_id: '2301.12597'
+  arxiv_version: v3
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- llm
+- vlm
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: medium
+  rationale: 'score=65 -> READ_SOON | strong: novelty(1.00), interest_fit(0.50), venue_quality(0.40) |
+    interests: llm:large language model, llm:group:llm, vlm:group:vlm | milestone/foundational floor applied'
+  matched_interests:
+  - llm:large language model
+  - llm:group:llm
+  - vlm:group:vlm
+  negative_signals: []
+  subscores:
+    interest_fit: 0.501
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 1.0
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/blip-2-bootstrapping-language-image-pre-training-230112597/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

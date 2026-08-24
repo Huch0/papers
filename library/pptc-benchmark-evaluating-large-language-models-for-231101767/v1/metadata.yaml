@@ -1,0 +1,79 @@
+canonical_key: arxiv-2311.01767
+version_key: v1
+title: 'PPTC Benchmark: Evaluating Large Language Models for PowerPoint Task Completion'
+authors:
+- Yiduo Guo
+- Zekai Zhang
+- Yaobo Liang
+- Dongyan Zhao
+- Nan Duan
+abstract: 'Recent evaluations of Large Language Models (LLMs) have centered around testing their zero-shot/few-shot
+  capabilities for basic natural language tasks and their ability to translate instructions into tool
+  APIs. However, the evaluation of LLMs utilizing complex tools to finish multi-turn, multi-modal instructions
+  in a complex multi-modal environment has not been investigated. To address this gap, we introduce the
+  PowerPoint Task Completion (PPTC) benchmark to assess LLMs'' ability to create and edit PPT files based
+  on user instructions. It contains 279 multi-turn sessions covering diverse topics and hundreds of instructions
+  involving multi-modal operations. We also propose the PPTX-Match Evaluation System that evaluates if
+  LLMs finish the instruction based on the prediction file rather than the label API sequence, thus it
+  supports various LLM-generated API sequences. We measure 3 closed LLMs and 6 open-source LLMs. The results
+  show that GPT-4 outperforms other LLMs with 75.1\% accuracy in single-turn dialogue testing but faces
+  challenges in completing entire sessions, achieving just 6\% session accuracy. We find three main error
+  causes in our benchmark: error accumulation in the multi-turn session, long PPT template processing,
+  and multi-modality perception. These pose great challenges for future LLM and agent systems. We release
+  the data, code, and evaluation system of PPTC at \url{https://github.com/gydpku/PPTC}.'
+venue: arXiv
+year: 2023
+source: arxiv
+source_url: https://arxiv.org/abs/2311.01767v2
+pdf_url: https://arxiv.org/pdf/2311.01767v2
+pdf_sha256: da91f9abb5d215f1231bc400d453f39feb4141a492fef2226accd8870ffc4d71
+fetched_at: '2026-08-24T03:57:03Z'
+source_updated_at: '2023-11-07T10:13:34Z'
+ids:
+  doi: null
+  arxiv_id: 2311.01767v2
+  arxiv_base_id: '2311.01767'
+  arxiv_version: v2
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- document_agents
+- llm
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: medium
+  rationale: 'score=65 -> READ_SOON | strong: artifact_availability(1.00), novelty(0.80), interest_fit(0.58)
+    | interests: document_agents:group:document_agents, llm:large language model, llm:group:llm | milestone/foundational
+    floor applied'
+  matched_interests:
+  - document_agents:group:document_agents
+  - llm:large language model
+  - llm:group:llm
+  negative_signals: []
+  subscores:
+    interest_fit: 0.584
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.52
+    novelty: 0.8
+    artifact_availability: 1.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/pptc-benchmark-evaluating-large-language-models-for-231101767/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

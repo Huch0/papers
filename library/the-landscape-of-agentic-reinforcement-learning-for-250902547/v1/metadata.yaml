@@ -1,0 +1,103 @@
+canonical_key: arxiv-2509.02547
+version_key: v1
+title: 'The Landscape of Agentic Reinforcement Learning for LLMs: A Survey'
+authors:
+- Guibin Zhang
+- Hejia Geng
+- Xiaohang Yu
+- Zhenfei Yin
+- Zaibin Zhang
+- Zelin Tan
+- Heng Zhou
+- Zhongzhi Li
+- Xiangyuan Xue
+- Yijiang Li
+- Yifan Zhou
+- Yang Chen
+- Chen Zhang
+- Yutao Fan
+- Zihu Wang
+- Songtao Huang
+- Francisco Piedrahita-Velez
+- Yue Liao
+- Hongru Wang
+- Mengyue Yang
+- Heng Ji
+- Jun Wang
+- Shuicheng Yan
+- Philip Torr
+- Lei Bai
+abstract: 'The emergence of agentic reinforcement learning (Agentic RL) marks a paradigm shift from conventional
+  reinforcement learning applied to large language models (LLM RL), reframing LLMs from passive sequence
+  generators into autonomous, decision-making agents embedded in complex, dynamic worlds. This survey
+  formalizes this conceptual shift by contrasting the degenerate single-step Markov Decision Processes
+  (MDPs) of LLM-RL with the temporally extended, partially observable Markov decision processes (POMDPs)
+  that define Agentic RL. Building on this foundation, we propose a comprehensive twofold taxonomy: one
+  organized around core agentic capabilities, including planning, tool use, memory, reasoning, self-improvement,
+  and perception, and the other around their applications across diverse task domains. Central to our
+  thesis is that reinforcement learning serves as the critical mechanism for transforming these capabilities
+  from static, heuristic modules into adaptive, robust agentic behavior. To support and accelerate future
+  research, we consolidate the landscape of open-source environments, benchmarks, and frameworks into
+  a practical compendium. By synthesizing over five hundred recent works, this survey charts the contours
+  of this rapidly evolving field and highlights the opportunities and challenges that will shape the development
+  of scalable, general-purpose AI agents.'
+venue: arXiv
+year: 2025
+source: arxiv
+source_url: https://arxiv.org/abs/2509.02547v5
+pdf_url: https://arxiv.org/pdf/2509.02547v5
+pdf_sha256: d95cfa7b0d708f5ddc35f87a62080277616dd5dfa529e5c002dc20867f45d849
+fetched_at: '2026-08-24T03:31:51Z'
+source_updated_at: '2026-04-17T18:09:08Z'
+ids:
+  doi: null
+  arxiv_id: 2509.02547v5
+  arxiv_base_id: '2509.02547'
+  arxiv_version: v5
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- agent_harness
+- llm
+- rl
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: interest_fit(0.91), recency(0.78), harness_relevance(0.68)
+    | interests: agent_harness:tool use, agent_harness:group:agent_harness, llm:large language model,
+    llm:group:llm | milestone/foundational floor applied'
+  matched_interests:
+  - agent_harness:tool use
+  - agent_harness:group:agent_harness
+  - llm:large language model
+  - llm:group:llm
+  - rl:reinforcement learning
+  - rl:group:rl
+  negative_signals: []
+  subscores:
+    interest_fit: 0.91
+    recency: 0.783
+    venue_quality: 0.4
+    harness_relevance: 0.68
+    novelty: 0.0
+    artifact_availability: 0.55
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/the-landscape-of-agentic-reinforcement-learning-for-250902547/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

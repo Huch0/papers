@@ -45,6 +45,7 @@ milestone:
   era: recent
   significance: Test-time scaling for planning + RL (GRPO)-trained grounding; 45.2% on OSWorld; topped
     OpenAI CUA among open agents.
+  subarea: gui_grounding
 knowledge_concepts: []
 versions:
 - version_key: v1

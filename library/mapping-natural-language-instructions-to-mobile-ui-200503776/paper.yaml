@@ -36,6 +36,7 @@ milestone:
   era: emergence
   significance: Seq2Act + PixelHelp; first to ground NL instructions to mobile UI action sequences, founding
     the task.
+  subarea: mobile
 knowledge_concepts: []
 versions:
 - version_key: v1

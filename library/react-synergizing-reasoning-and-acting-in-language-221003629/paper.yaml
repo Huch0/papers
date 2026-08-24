@@ -1,0 +1,65 @@
+canonical_key: arxiv-2210.03629
+slug: react-synergizing-reasoning-and-acting-in-language-221003629
+title: 'ReAct: Synergizing Reasoning and Acting in Language Models'
+authors:
+- Shunyu Yao
+- Jeffrey Zhao
+- Dian Yu
+- Nan Du
+- Izhak Shafran
+- Karthik Narasimhan
+- Yuan Cao
+year: 2022
+primary_ids:
+  doi: null
+  arxiv_base_id: '2210.03629'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2210.03629v3
+- https://arxiv.org/pdf/2210.03629v3
+topic_groups:
+- agent_harness
+- llm
+- rl
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2022
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: agent_harness
+  era: emergence
+  significance: Interleaved reasoning + acting; foundational agent loop.
+  subarea: prompting_reasoning
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v3
+  source: arxiv
+  source_url: https://arxiv.org/abs/2210.03629v3
+  pdf_path: library/react-synergizing-reasoning-and-acting-in-language-221003629/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/react-synergizing-reasoning-and-acting-in-language-221003629/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:31:09Z'
+  source_updated_at: '2023-03-10T01:00:17Z'
+  arxiv_version: v3
+  pdf_sha256: f285b0971ae4a790e402fb93966bed3adde2cf0a04977d08b2b40d6ab0cace69
+  pdf_bytes: 633805
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:31:09Z'
+  updated_at: '2026-08-24T03:31:09Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

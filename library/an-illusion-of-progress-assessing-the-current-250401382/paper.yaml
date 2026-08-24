@@ -39,6 +39,7 @@ milestone:
   era: recent
   significance: Introduced Online-Mind2Web (300 live tasks/136 sites); showed prior progress overstated;
     leading live leaderboard.
+  subarea: web
 knowledge_concepts: []
 versions:
 - version_key: v1

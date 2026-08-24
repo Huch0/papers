@@ -1,0 +1,63 @@
+canonical_key: arxiv-1706.03741
+slug: deep-reinforcement-learning-from-human-preferences-170603741
+title: Deep reinforcement learning from human preferences
+authors:
+- Paul Christiano
+- Jan Leike
+- Tom B. Brown
+- Miljan Martic
+- Shane Legg
+- Dario Amodei
+year: 2017
+primary_ids:
+  doi: null
+  arxiv_base_id: '1706.03741'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/1706.03741v4
+- https://arxiv.org/pdf/1706.03741v4
+topic_groups:
+- rl
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2017
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: medium
+  notes: null
+milestone:
+  field: rl
+  era: foundational
+  significance: Introduced RLHF - a reward model learned from human preference comparisons replaces hand-crafted
+    rewards.
+  subarea: rlhf
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v4
+  source: arxiv
+  source_url: https://arxiv.org/abs/1706.03741v4
+  pdf_path: library/deep-reinforcement-learning-from-human-preferences-170603741/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/deep-reinforcement-learning-from-human-preferences-170603741/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:27:49Z'
+  source_updated_at: '2023-02-17T17:00:34Z'
+  arxiv_version: v4
+  pdf_sha256: 4c2b5a0ff6f9cd6696d3e9c8263efbbe701123d4fa09f22bf28d6ef861b73a2a
+  pdf_bytes: 3218596
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:27:49Z'
+  updated_at: '2026-08-24T03:27:49Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

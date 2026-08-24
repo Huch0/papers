@@ -43,6 +43,7 @@ milestone:
   era: foundational
   significance: Adapted OSWorld to real Windows 11 VMs (150+ tasks), Azure-parallelizable in ~20 min;
     introduced the Navi baseline.
+  subarea: os_desktop
 knowledge_concepts: []
 versions:
 - version_key: v1

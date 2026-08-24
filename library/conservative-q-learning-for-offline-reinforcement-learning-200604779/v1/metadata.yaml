@@ -1,0 +1,78 @@
+canonical_key: arxiv-2006.04779
+version_key: v1
+title: Conservative Q-Learning for Offline Reinforcement Learning
+authors:
+- Aviral Kumar
+- Aurick Zhou
+- George Tucker
+- Sergey Levine
+abstract: Effectively leveraging large, previously collected datasets in reinforcement learning (RL) is
+  a key challenge for large-scale real-world applications. Offline RL algorithms promise to learn effective
+  policies from previously-collected, static datasets without further interaction. However, in practice,
+  offline RL presents a major challenge, and standard off-policy RL methods can fail due to overestimation
+  of values induced by the distributional shift between the dataset and the learned policy, especially
+  when training on complex and multi-modal data distributions. In this paper, we propose conservative
+  Q-learning (CQL), which aims to address these limitations by learning a conservative Q-function such
+  that the expected value of a policy under this Q-function lower-bounds its true value. We theoretically
+  show that CQL produces a lower bound on the value of the current policy and that it can be incorporated
+  into a policy learning procedure with theoretical improvement guarantees. In practice, CQL augments
+  the standard Bellman error objective with a simple Q-value regularizer which is straightforward to implement
+  on top of existing deep Q-learning and actor-critic implementations. On both discrete and continuous
+  control domains, we show that CQL substantially outperforms existing offline RL methods, often learning
+  policies that attain 2-5 times higher final return, especially when learning from complex and multi-modal
+  data distributions.
+venue: arXiv
+year: 2020
+source: arxiv
+source_url: https://arxiv.org/abs/2006.04779v3
+pdf_url: https://arxiv.org/pdf/2006.04779v3
+pdf_sha256: 2bae51a0b45635ab714df39446cd656a9f4f1c503f512d6d0ce1eec3198d1716
+fetched_at: '2026-08-24T03:28:31Z'
+source_updated_at: '2020-08-19T17:07:05Z'
+ids:
+  doi: null
+  arxiv_id: 2006.04779v3
+  arxiv_base_id: '2006.04779'
+  arxiv_version: v3
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- rl
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: medium
+  rationale: 'score=65 -> READ_SOON | strong: interest_fit(0.55), novelty(0.55), venue_quality(0.40) |
+    interests: rl:reinforcement learning, rl:Q-learning, rl:offline RL | milestone/foundational floor
+    applied'
+  matched_interests:
+  - rl:reinforcement learning
+  - rl:Q-learning
+  - rl:offline RL
+  negative_signals: []
+  subscores:
+    interest_fit: 0.55
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 0.55
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/conservative-q-learning-for-offline-reinforcement-learning-200604779/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

@@ -1,0 +1,75 @@
+canonical_key: doi-10-1038-nature24270
+version_key: v1
+title: Mastering the game of Go without human knowledge
+authors:
+- David Silver
+- Julian Schrittwieser
+- Karen Simonyan
+- Ioannis Antonoglou
+- Aja Huang
+- Arthur Guez
+- Thomas Hubert
+- Lucas Baker
+- Matthew Lai
+- Adrian Bolton
+- Yutian Chen
+- Timothy Lillicrap
+- Fan Hui
+- Laurent Sifre
+- George van den Driessche
+- Thore Graepel
+- Demis Hassabis
+abstract: Not reported
+venue: Nature
+year: 2017
+source: openalex
+source_url: https://openalex.org/W2766447205
+pdf_url: null
+pdf_sha256: null
+fetched_at: '2026-08-24T03:27:57Z'
+source_updated_at: '2017-10-01'
+ids:
+  doi: 10.1038/nature24270
+  arxiv_id: null
+  arxiv_base_id: null
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: https://openalex.org/W2766447205
+tags:
+- foundational
+topic_groups:
+- rl
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: medium
+  rationale: 'score=65 -> READ_SOON | strong: interest_fit(0.40), venue_quality(0.30) | interests: rl:group:rl
+    | negatives: abstract_only | milestone/foundational floor applied'
+  matched_interests:
+  - rl:group:rl
+  negative_signals:
+  - abstract_only
+  subscores:
+    interest_fit: 0.402
+    recency: 0.0
+    venue_quality: 0.3
+    harness_relevance: 0.0
+    novelty: 0.0
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: null
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: false
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

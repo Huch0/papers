@@ -1,0 +1,63 @@
+canonical_key: arxiv-2301.12597
+slug: blip-2-bootstrapping-language-image-pre-training-230112597
+title: 'BLIP-2: Bootstrapping Language-Image Pre-training with Frozen Image Encoders and Large Language
+  Models'
+authors:
+- Junnan Li
+- Dongxu Li
+- Silvio Savarese
+- Steven Hoi
+year: 2023
+primary_ids:
+  doi: null
+  arxiv_base_id: '2301.12597'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2301.12597v3
+- https://arxiv.org/pdf/2301.12597v3
+topic_groups:
+- llm
+- vlm
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2023
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: medium
+  notes: null
+milestone:
+  field: vlm
+  era: expansion
+  significance: Q-Former bridges frozen vision encoders to frozen LLMs; cheap modular recipe behind a
+    generation of open MLLMs.
+  subarea: fusion
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v3
+  source: arxiv
+  source_url: https://arxiv.org/abs/2301.12597v3
+  pdf_path: library/blip-2-bootstrapping-language-image-pre-training-230112597/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/blip-2-bootstrapping-language-image-pre-training-230112597/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:25:51Z'
+  source_updated_at: '2023-06-15T07:57:29Z'
+  arxiv_version: v3
+  pdf_sha256: 6bc5d399d6127a64ace5167a2f0c00112a49725d2475d80322dbf0083f139e80
+  pdf_bytes: 6737540
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:25:51Z'
+  updated_at: '2026-08-24T03:25:51Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

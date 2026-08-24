@@ -1,0 +1,258 @@
+canonical_key: arxiv-2412.19437
+slug: deepseek-v3-technical-report-241219437
+title: DeepSeek-V3 Technical Report
+authors:
+- DeepSeek-AI
+- Aixin Liu
+- Bei Feng
+- Bing Xue
+- Bingxuan Wang
+- Bochao Wu
+- Chengda Lu
+- Chenggang Zhao
+- Chengqi Deng
+- Chenyu Zhang
+- Chong Ruan
+- Damai Dai
+- Daya Guo
+- Dejian Yang
+- Deli Chen
+- Dongjie Ji
+- Erhang Li
+- Fangyun Lin
+- Fucong Dai
+- Fuli Luo
+- Guangbo Hao
+- Guanting Chen
+- Guowei Li
+- H. Zhang
+- Han Bao
+- Hanwei Xu
+- Haocheng Wang
+- Haowei Zhang
+- Honghui Ding
+- Huajian Xin
+- Huazuo Gao
+- Hui Li
+- Hui Qu
+- J. L. Cai
+- Jian Liang
+- Jianzhong Guo
+- Jiaqi Ni
+- Jiashi Li
+- Jiawei Wang
+- Jin Chen
+- Jingchang Chen
+- Jingyang Yuan
+- Junjie Qiu
+- Junlong Li
+- Junxiao Song
+- Kai Dong
+- Kai Hu
+- Kaige Gao
+- Kang Guan
+- Kexin Huang
+- Kuai Yu
+- Lean Wang
+- Lecong Zhang
+- Lei Xu
+- Leyi Xia
+- Liang Zhao
+- Litong Wang
+- Liyue Zhang
+- Meng Li
+- Miaojun Wang
+- Mingchuan Zhang
+- Minghua Zhang
+- Minghui Tang
+- Mingming Li
+- Ning Tian
+- Panpan Huang
+- Peiyi Wang
+- Peng Zhang
+- Qiancheng Wang
+- Qihao Zhu
+- Qinyu Chen
+- Qiushi Du
+- R. J. Chen
+- R. L. Jin
+- Ruiqi Ge
+- Ruisong Zhang
+- Ruizhe Pan
+- Runji Wang
+- Runxin Xu
+- Ruoyu Zhang
+- Ruyi Chen
+- S. S. Li
+- Shanghao Lu
+- Shangyan Zhou
+- Shanhuang Chen
+- Shaoqing Wu
+- Shengfeng Ye
+- Shengfeng Ye
+- Shirong Ma
+- Shiyu Wang
+- Shuang Zhou
+- Shuiping Yu
+- Shunfeng Zhou
+- Shuting Pan
+- T. Wang
+- Tao Yun
+- Tian Pei
+- Tianyu Sun
+- W. L. Xiao
+- Wangding Zeng
+- Wanjia Zhao
+- Wei An
+- Wen Liu
+- Wenfeng Liang
+- Wenjun Gao
+- Wenqin Yu
+- Wentao Zhang
+- X. Q. Li
+- Xiangyue Jin
+- Xianzu Wang
+- Xiao Bi
+- Xiaodong Liu
+- Xiaohan Wang
+- Xiaojin Shen
+- Xiaokang Chen
+- Xiaokang Zhang
+- Xiaosha Chen
+- Xiaotao Nie
+- Xiaowen Sun
+- Xiaoxiang Wang
+- Xin Cheng
+- Xin Liu
+- Xin Xie
+- Xingchao Liu
+- Xingkai Yu
+- Xinnan Song
+- Xinxia Shan
+- Xinyi Zhou
+- Xinyu Yang
+- Xinyuan Li
+- Xuecheng Su
+- Xuheng Lin
+- Y. K. Li
+- Y. Q. Wang
+- Y. X. Wei
+- Y. X. Zhu
+- Yang Zhang
+- Yanhong Xu
+- Yanhong Xu
+- Yanping Huang
+- Yao Li
+- Yao Zhao
+- Yaofeng Sun
+- Yaohui Li
+- Yaohui Wang
+- Yi Yu
+- Yi Zheng
+- Yichao Zhang
+- Yifan Shi
+- Yiliang Xiong
+- Ying He
+- Ying Tang
+- Yishi Piao
+- Yisong Wang
+- Yixuan Tan
+- Yiyang Ma
+- Yiyuan Liu
+- Yongqiang Guo
+- Yu Wu
+- Yuan Ou
+- Yuchen Zhu
+- Yuduan Wang
+- Yue Gong
+- Yuheng Zou
+- Yujia He
+- Yukun Zha
+- Yunfan Xiong
+- Yunxian Ma
+- Yuting Yan
+- Yuxiang Luo
+- Yuxiang You
+- Yuxuan Liu
+- Yuyang Zhou
+- Z. F. Wu
+- Z. Z. Ren
+- Zehui Ren
+- Zhangli Sha
+- Zhe Fu
+- Zhean Xu
+- Zhen Huang
+- Zhen Zhang
+- Zhenda Xie
+- Zhengyan Zhang
+- Zhewen Hao
+- Zhibin Gou
+- Zhicheng Ma
+- Zhigang Yan
+- Zhihong Shao
+- Zhipeng Xu
+- Zhiyu Wu
+- Zhongyu Zhang
+- Zhuoshu Li
+- Zihui Gu
+- Zijia Zhu
+- Zijun Liu
+- Zilin Li
+- Ziwei Xie
+- Ziyang Song
+- Ziyi Gao
+- Zizheng Pan
+year: 2024
+primary_ids:
+  doi: null
+  arxiv_base_id: '2412.19437'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2412.19437v2
+- https://arxiv.org/pdf/2412.19437v2
+topic_groups:
+- llm
+- rl
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2024
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: medium
+  notes: null
+milestone:
+  field: llm
+  era: expansion
+  significance: 671B MoE (37B active) trained for ~$5.5M with FP8 + MLA; open frontier-class quality at
+    a fraction of expected compute.
+  subarea: efficiency
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v2
+  source: arxiv
+  source_url: https://arxiv.org/abs/2412.19437v2
+  pdf_path: library/deepseek-v3-technical-report-241219437/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/deepseek-v3-technical-report-241219437/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:21:34Z'
+  source_updated_at: '2025-02-18T17:26:38Z'
+  arxiv_version: v2
+  pdf_sha256: 812a3fd645c80725354de9d831a6785503007a60681461407f64e97305fa9330
+  pdf_bytes: 1887366
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:21:34Z'
+  updated_at: '2026-08-24T03:21:34Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

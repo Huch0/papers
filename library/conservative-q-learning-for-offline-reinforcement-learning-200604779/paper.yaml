@@ -1,0 +1,61 @@
+canonical_key: arxiv-2006.04779
+slug: conservative-q-learning-for-offline-reinforcement-learning-200604779
+title: Conservative Q-Learning for Offline Reinforcement Learning
+authors:
+- Aviral Kumar
+- Aurick Zhou
+- George Tucker
+- Sergey Levine
+year: 2020
+primary_ids:
+  doi: null
+  arxiv_base_id: '2006.04779'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2006.04779v3
+- https://arxiv.org/pdf/2006.04779v3
+topic_groups:
+- rl
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2020
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: medium
+  notes: null
+milestone:
+  field: rl
+  era: expansion
+  significance: CQL regularizes Q-values to stay conservative on out-of-distribution actions; the anchor
+    algorithm of offline RL.
+  subarea: offline_rl
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v3
+  source: arxiv
+  source_url: https://arxiv.org/abs/2006.04779v3
+  pdf_path: library/conservative-q-learning-for-offline-reinforcement-learning-200604779/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/conservative-q-learning-for-offline-reinforcement-learning-200604779/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:28:32Z'
+  source_updated_at: '2020-08-19T17:07:05Z'
+  arxiv_version: v3
+  pdf_sha256: 2bae51a0b45635ab714df39446cd656a9f4f1c503f512d6d0ce1eec3198d1716
+  pdf_bytes: 1632504
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:28:32Z'
+  updated_at: '2026-08-24T03:28:32Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

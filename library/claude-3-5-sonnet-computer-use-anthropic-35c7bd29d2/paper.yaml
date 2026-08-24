@@ -29,6 +29,7 @@ milestone:
   era: expansion
   significance: First frontier model shipped with general computer use (screenshot + mouse/keyboard) via
     API; catalyzed the commercial CUA wave.
+  subarea: os_desktop
 knowledge_concepts: []
 versions:
 - version_key: v1

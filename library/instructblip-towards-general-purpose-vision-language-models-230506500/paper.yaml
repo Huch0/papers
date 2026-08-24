@@ -1,0 +1,67 @@
+canonical_key: arxiv-2305.06500
+slug: instructblip-towards-general-purpose-vision-language-models-230506500
+title: 'InstructBLIP: Towards General-purpose Vision-Language Models with Instruction Tuning'
+authors:
+- Wenliang Dai
+- Junnan Li
+- Dongxu Li
+- Anthony Meng Huat Tiong
+- Junqi Zhao
+- Weisheng Wang
+- Boyang Li
+- Pascale Fung
+- Steven Hoi
+year: 2023
+primary_ids:
+  doi: null
+  arxiv_base_id: '2305.06500'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2305.06500v2
+- https://arxiv.org/pdf/2305.06500v2
+topic_groups:
+- llm
+- vlm
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2023
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: medium
+  notes: null
+milestone:
+  field: vlm
+  era: expansion
+  significance: Systematized visual instruction tuning over BLIP-2 with instruction-aware query extraction
+    across 26 datasets.
+  subarea: instruction
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v2
+  source: arxiv
+  source_url: https://arxiv.org/abs/2305.06500v2
+  pdf_path: library/instructblip-towards-general-purpose-vision-language-models-230506500/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/instructblip-towards-general-purpose-vision-language-models-230506500/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:36:50Z'
+  source_updated_at: '2023-06-15T08:00:18Z'
+  arxiv_version: v2
+  pdf_sha256: 31c03f3ee54016e6da875593ed9d98419899d4164af638dc8cca76a4871beb35
+  pdf_bytes: 3774907
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:36:50Z'
+  updated_at: '2026-08-24T03:36:50Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

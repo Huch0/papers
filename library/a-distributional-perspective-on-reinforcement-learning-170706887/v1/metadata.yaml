@@ -1,0 +1,72 @@
+canonical_key: arxiv-1707.06887
+version_key: v1
+title: A Distributional Perspective on Reinforcement Learning
+authors:
+- Marc G. Bellemare
+- Will Dabney
+- Rémi Munos
+abstract: 'In this paper we argue for the fundamental importance of the value distribution: the distribution
+  of the random return received by a reinforcement learning agent. This is in contrast to the common approach
+  to reinforcement learning which models the expectation of this return, or value. Although there is an
+  established body of literature studying the value distribution, thus far it has always been used for
+  a specific purpose such as implementing risk-aware behaviour. We begin with theoretical results in both
+  the policy evaluation and control settings, exposing a significant distributional instability in the
+  latter. We then use the distributional perspective to design a new algorithm which applies Bellman''s
+  equation to the learning of approximate value distributions. We evaluate our algorithm using the suite
+  of games from the Arcade Learning Environment. We obtain both state-of-the-art results and anecdotal
+  evidence demonstrating the importance of the value distribution in approximate reinforcement learning.
+  Finally, we combine theoretical and empirical evidence to highlight the ways in which the value distribution
+  impacts learning in the approximate setting.'
+venue: arXiv
+year: 2017
+source: arxiv
+source_url: https://arxiv.org/abs/1707.06887v1
+pdf_url: https://arxiv.org/pdf/1707.06887v1
+pdf_sha256: a176a82385802ed7c7073eb9634fe01741da5789bd58063f8274033524e48524
+fetched_at: '2026-08-24T03:27:53Z'
+source_updated_at: '2017-07-21T13:21:54Z'
+ids:
+  doi: null
+  arxiv_id: 1707.06887v1
+  arxiv_base_id: '1707.06887'
+  arxiv_version: v1
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- rl
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: medium
+  rationale: 'score=65 -> READ_SOON | strong: novelty(0.55), interest_fit(0.50), venue_quality(0.40) |
+    interests: rl:reinforcement learning, rl:group:rl | milestone/foundational floor applied'
+  matched_interests:
+  - rl:reinforcement learning
+  - rl:group:rl
+  negative_signals: []
+  subscores:
+    interest_fit: 0.501
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.36
+    novelty: 0.55
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/a-distributional-perspective-on-reinforcement-learning-170706887/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

@@ -41,6 +41,7 @@ milestone:
   era: emergence
   significance: Pretrains image-to-text by parsing masked screenshots into HTML; pioneered pixel-only
     screen understanding reused by GUI VLMs.
+  subarea: gui_grounding
 knowledge_concepts: []
 versions:
 - version_key: v1

@@ -55,9 +55,10 @@ scoring:
   label: MUST_READ
   confidence: high
   rationale: 'score=86 -> MUST_READ | strong: interest_fit(1.00), venue_quality(1.00), trend_signal(1.00)
-    | interests: computer_use_agents:group:computer_use_agents'
+    | interests: computer_use_agents:group:computer_use_agents, llm:large language model'
   matched_interests:
   - computer_use_agents:group:computer_use_agents
+  - llm:large language model
   negative_signals: []
   subscores:
     interest_fit: 1.0

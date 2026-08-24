@@ -51,6 +51,7 @@ milestone:
   era: recent
   significance: Unified gym/experiment harness consolidating MiniWoB, WebArena, WorkArena, VisualWebArena;
     standard web-agent infra.
+  subarea: web
 knowledge_concepts: []
 versions:
 - version_key: v1

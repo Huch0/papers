@@ -39,6 +39,7 @@ milestone:
   era: foundational
   significance: Large (9.8K task) dataset/benchmark across macOS/Windows/Linux/web evaluating code-to-action
     on desktop+web.
+  subarea: os_desktop
 knowledge_concepts: []
 versions:
 - version_key: v1

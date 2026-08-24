@@ -1,0 +1,86 @@
+canonical_key: arxiv-2312.14238
+version_key: v1
+title: 'InternVL: Scaling up Vision Foundation Models and Aligning for Generic Visual-Linguistic Tasks'
+authors:
+- Zhe Chen
+- Jiannan Wu
+- Wenhai Wang
+- Weijie Su
+- Chen Guo
+- Sen Xing
+- Zhong Muyan
+- Qinglong Zhang
+- Xizhou Zhu
+- Lewei Lu
+- Bin Li
+- Ping Luo
+- Tong Lu
+- Yu Qiao
+- Jifeng Dai
+abstract: The exponential growth of large language models (LLMs) has opened up numerous possibilities
+  for multimodal AGI systems. However, the progress in vision and vision-language foundation models, which
+  are also critical elements of multi-modal AGI, has not kept pace with LLMs. In this work, we design
+  a large-scale vision-language foundation model (InternVL), which scales up the vision foundation model
+  to 6 billion parameters and progressively aligns it with the LLM, using web-scale image-text data from
+  various sources. This model can be broadly applied to and achieve state-of-the-art performance on 32
+  generic visual-linguistic benchmarks including visual perception tasks such as image-level or pixel-level
+  recognition, vision-language tasks such as zero-shot image/video classification, zero-shot image/video-text
+  retrieval, and link with LLMs to create multi-modal dialogue systems. It has powerful visual capabilities
+  and can be a good alternative to the ViT-22B. We hope that our research could contribute to the development
+  of multi-modal large models. Code and models are available at https://github.com/OpenGVLab/InternVL.
+venue: arXiv (Cornell University)
+year: 2023
+source: openalex
+source_url: https://openalex.org/W4390214291
+pdf_url: https://arxiv.org/pdf/2312.14238
+pdf_sha256: a948f7499c06b8a6cb0073149f1b8f41d3acd10c4bb29fe79f250806f32e5fab
+fetched_at: '2026-08-24T03:25:57Z'
+source_updated_at: '2023-12-21'
+ids:
+  doi: 10.48550/arxiv.2312.14238
+  arxiv_id: null
+  arxiv_base_id: '2312.14238'
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: https://openalex.org/W4390214291
+tags:
+- foundational
+topic_groups:
+- llm
+- vlm
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: medium
+  rationale: 'score=65 -> READ_SOON | strong: novelty(0.55), artifact_availability(0.55), interest_fit(0.50)
+    | interests: llm:large language model, llm:group:llm, vlm:group:vlm | milestone/foundational floor
+    applied'
+  matched_interests:
+  - llm:large language model
+  - llm:group:llm
+  - vlm:group:vlm
+  negative_signals: []
+  subscores:
+    interest_fit: 0.501
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 0.55
+    artifact_availability: 0.55
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/internvl-scaling-up-vision-foundation-models-and-231214238/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

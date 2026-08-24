@@ -40,6 +40,7 @@ milestone:
   era: recent
   significance: Hard expert-annotated benchmark over 23 pro high-res apps (5 industries, 3 OSes); exposed
     large grounding gap on dense expert UIs.
+  subarea: gui_grounding
 knowledge_concepts: []
 versions:
 - version_key: v1

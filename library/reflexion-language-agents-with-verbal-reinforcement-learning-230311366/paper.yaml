@@ -1,0 +1,64 @@
+canonical_key: arxiv-2303.11366
+slug: reflexion-language-agents-with-verbal-reinforcement-learning-230311366
+title: 'Reflexion: Language Agents with Verbal Reinforcement Learning'
+authors:
+- Noah Shinn
+- Federico Cassano
+- Edward Berman
+- Ashwin Gopinath
+- Karthik Narasimhan
+- Shunyu Yao
+year: 2023
+primary_ids:
+  doi: null
+  arxiv_base_id: '2303.11366'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2303.11366v4
+- https://arxiv.org/pdf/2303.11366v4
+topic_groups:
+- agent_harness
+- llm
+- rl
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2023
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: agent_harness
+  era: foundational
+  significance: Verbal self-reflection as an inference-time improvement loop.
+  subarea: prompting_reasoning
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v4
+  source: arxiv
+  source_url: https://arxiv.org/abs/2303.11366v4
+  pdf_path: library/reflexion-language-agents-with-verbal-reinforcement-learning-230311366/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/reflexion-language-agents-with-verbal-reinforcement-learning-230311366/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:31:12Z'
+  source_updated_at: '2023-10-10T05:21:45Z'
+  arxiv_version: v4
+  pdf_sha256: 6059b6f89fea9959bd3dab553fbb97756a3dfb1b15e3cbab2fbf3ab6664333bd
+  pdf_bytes: 591097
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:31:12Z'
+  updated_at: '2026-08-24T03:31:12Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

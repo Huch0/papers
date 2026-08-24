@@ -1,0 +1,105 @@
+canonical_key: arxiv-2005.14165
+version_key: v1
+title: Language Models are Few-Shot Learners
+authors:
+- Tom B. Brown
+- Benjamin Mann
+- Nick Ryder
+- Melanie Subbiah
+- Jared Kaplan
+- Prafulla Dhariwal
+- Arvind Neelakantan
+- Pranav Shyam
+- Girish Sastry
+- Amanda Askell
+- Sandhini Agarwal
+- Ariel Herbert-Voss
+- Gretchen Krueger
+- Tom Henighan
+- Rewon Child
+- Aditya Ramesh
+- Daniel M. Ziegler
+- Jeffrey Wu
+- Clemens Winter
+- Christopher Hesse
+- Mark Chen
+- Eric Sigler
+- Mateusz Litwin
+- Scott Gray
+- Benjamin Chess
+- Jack Clark
+- Christopher Berner
+- Sam McCandlish
+- Alec Radford
+- Ilya Sutskever
+- Dario Amodei
+abstract: Recent work has demonstrated substantial gains on many NLP tasks and benchmarks by pre-training
+  on a large corpus of text followed by fine-tuning on a specific task. While typically task-agnostic
+  in architecture, this method still requires task-specific fine-tuning datasets of thousands or tens
+  of thousands of examples. By contrast, humans can generally perform a new language task from only a
+  few examples or from simple instructions - something which current NLP systems still largely struggle
+  to do. Here we show that scaling up language models greatly improves task-agnostic, few-shot performance,
+  sometimes even reaching competitiveness with prior state-of-the-art fine-tuning approaches. Specifically,
+  we train GPT-3, an autoregressive language model with 175 billion parameters, 10x more than any previous
+  non-sparse language model, and test its performance in the few-shot setting. For all tasks, GPT-3 is
+  applied without any gradient updates or fine-tuning, with tasks and few-shot demonstrations specified
+  purely via text interaction with the model. GPT-3 achieves strong performance on many NLP datasets,
+  including translation, question-answering, and cloze tasks, as well as several tasks that require on-the-fly
+  reasoning or domain adaptation, such as unscrambling words, using a novel word in a sentence, or performing
+  3-digit arithmetic. At the same time, we also identify some datasets where GPT-3's few-shot learning
+  still struggles, as well as some datasets where GPT-3 faces methodological issues related to training
+  on large web corpora. Finally, we find that GPT-3 can generate samples of news articles which human
+  evaluators have difficulty distinguishing from articles written by humans. We discuss broader societal
+  impacts of this finding and of GPT-3 in general.
+venue: arXiv
+year: 2020
+source: arxiv
+source_url: https://arxiv.org/abs/2005.14165v4
+pdf_url: https://arxiv.org/pdf/2005.14165v4
+pdf_sha256: 97fd272f1fdfc18677462d0292f5fbf26ca86b4d1b485c2dba03269b643a0e83
+fetched_at: '2026-08-24T03:20:27Z'
+source_updated_at: '2020-07-22T19:47:17Z'
+ids:
+  doi: null
+  arxiv_id: 2005.14165v4
+  arxiv_base_id: '2005.14165'
+  arxiv_version: v4
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- llm
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: medium
+  rationale: 'score=65 -> READ_SOON | strong: novelty(0.80), interest_fit(0.40), venue_quality(0.40) |
+    interests: llm:group:llm | milestone/foundational floor applied'
+  matched_interests:
+  - llm:group:llm
+  negative_signals: []
+  subscores:
+    interest_fit: 0.402
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 0.8
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/language-models-are-few-shot-learners-200514165/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

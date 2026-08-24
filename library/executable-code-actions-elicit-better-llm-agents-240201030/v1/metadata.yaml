@@ -53,11 +53,12 @@ scoring:
   label: READ_SOON
   confidence: high
   rationale: 'score=65 -> READ_SOON | strong: interest_fit(0.73), novelty(0.55), artifact_availability(0.55)
-    | interests: agent_harness:group:agent_harness, general_agent_methods:group:general_agent_methods
-    | milestone/foundational floor applied'
+    | interests: agent_harness:group:agent_harness, general_agent_methods:group:general_agent_methods,
+    llm:large language model | milestone/foundational floor applied'
   matched_interests:
   - agent_harness:group:agent_harness
   - general_agent_methods:group:general_agent_methods
+  - llm:large language model
   negative_signals: []
   subscores:
     interest_fit: 0.73

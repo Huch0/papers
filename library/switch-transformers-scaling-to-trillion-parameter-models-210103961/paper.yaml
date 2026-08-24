@@ -1,0 +1,60 @@
+canonical_key: arxiv-2101.03961
+slug: switch-transformers-scaling-to-trillion-parameter-models-210103961
+title: 'Switch Transformers: Scaling to Trillion Parameter Models with Simple and Efficient Sparsity'
+authors:
+- William Fedus
+- Barret Zoph
+- Noam Shazeer
+year: 2021
+primary_ids:
+  doi: null
+  arxiv_base_id: '2101.03961'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2101.03961v3
+- https://arxiv.org/pdf/2101.03961v3
+topic_groups:
+- llm
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2021
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: medium
+  notes: null
+milestone:
+  field: llm
+  era: foundational
+  significance: Mixture-of-Experts sparsity; first model past 1 trillion params without proportional compute,
+    cementing MoE for scaling.
+  subarea: architecture
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v3
+  source: arxiv
+  source_url: https://arxiv.org/abs/2101.03961v3
+  pdf_path: library/switch-transformers-scaling-to-trillion-parameter-models-210103961/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/switch-transformers-scaling-to-trillion-parameter-models-210103961/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:20:33Z'
+  source_updated_at: '2022-06-16T20:36:07Z'
+  arxiv_version: v3
+  pdf_sha256: f340f6ace31abf7d0730ef461404279f40d3c890e9cc2daeb7068b3304afdbd6
+  pdf_bytes: 1304157
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:20:33Z'
+  updated_at: '2026-08-24T03:20:33Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

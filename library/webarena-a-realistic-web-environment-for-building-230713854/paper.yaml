@@ -41,7 +41,9 @@ user:
 milestone:
   field: computer_use_agents
   era: foundational
-  significance: Reproducible, self-hostable realistic web environment.
+  significance: Defining reproducible self-hosted live-website benchmark with functional-correctness eval;
+    central web-agent leaderboard.
+  subarea: web
 knowledge_concepts:
 - web-agent-generalization
 versions:

@@ -45,6 +45,7 @@ milestone:
   era: expansion
   significance: Dataset suite (GUIEnv/GUIAct/GUIChat, 10M pairs) to convert general VLMs into GUI agents
     (OCR, grounding, interaction).
+  subarea: gui_grounding
 knowledge_concepts: []
 versions:
 - version_key: v1

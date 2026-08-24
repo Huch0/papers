@@ -1,0 +1,60 @@
+canonical_key: arxiv-1802.09477
+slug: addressing-function-approximation-error-in-actor-critic-180209477
+title: Addressing Function Approximation Error in Actor-Critic Methods
+authors:
+- Scott Fujimoto
+- Herke van Hoof
+- David Meger
+year: 2018
+primary_ids:
+  doi: null
+  arxiv_base_id: '1802.09477'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/1802.09477v3
+- https://arxiv.org/pdf/1802.09477v3
+topic_groups:
+- rl
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2018
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: medium
+  notes: null
+milestone:
+  field: rl
+  era: foundational
+  significance: TD3 fixed DDPG overestimation via twin Q-networks, delayed policy updates, and target
+    smoothing.
+  subarea: policy_gradient
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v3
+  source: arxiv
+  source_url: https://arxiv.org/abs/1802.09477v3
+  pdf_path: library/addressing-function-approximation-error-in-actor-critic-180209477/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/addressing-function-approximation-error-in-actor-critic-180209477/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:28:11Z'
+  source_updated_at: '2018-10-22T17:37:07Z'
+  arxiv_version: v3
+  pdf_sha256: 429a584222ffc9c318fde085f6558fd0d3a94dcba8ffe368caab8cf5dc3b6ae5
+  pdf_bytes: 2744342
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:28:11Z'
+  updated_at: '2026-08-24T03:28:11Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

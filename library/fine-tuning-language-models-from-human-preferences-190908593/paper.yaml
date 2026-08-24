@@ -1,0 +1,66 @@
+canonical_key: arxiv-1909.08593
+slug: fine-tuning-language-models-from-human-preferences-190908593
+title: Fine-Tuning Language Models from Human Preferences
+authors:
+- Daniel M. Ziegler
+- Nisan Stiennon
+- Jeffrey Wu
+- Tom B. Brown
+- Alec Radford
+- Dario Amodei
+- Paul Christiano
+- Geoffrey Irving
+year: 2019
+primary_ids:
+  doi: null
+  arxiv_base_id: '1909.08593'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/1909.08593v2
+- https://arxiv.org/pdf/1909.08593v2
+topic_groups:
+- llm
+- rl
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2019
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: medium
+  notes: null
+milestone:
+  field: llm
+  era: emergence
+  significance: First applied RLHF to LMs - fine-tuned GPT-2 with learned rewards so outputs match human
+    preferences.
+  subarea: alignment
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v2
+  source: arxiv
+  source_url: https://arxiv.org/abs/1909.08593v2
+  pdf_path: library/fine-tuning-language-models-from-human-preferences-190908593/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/fine-tuning-language-models-from-human-preferences-190908593/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:20:25Z'
+  source_updated_at: '2020-01-08T23:02:36Z'
+  arxiv_version: v2
+  pdf_sha256: f3004c3128281cb373f71e0f22aef81cdc295cef9b07450d1fa07cdc79abe5b2
+  pdf_bytes: 967470
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:20:25Z'
+  updated_at: '2026-08-24T03:20:25Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

@@ -1,0 +1,69 @@
+canonical_key: arxiv-2103.00020
+slug: learning-transferable-visual-models-from-natural-language-210300020
+title: Learning Transferable Visual Models From Natural Language Supervision
+authors:
+- Alec Radford
+- Jong Wook Kim
+- Chris Hallacy
+- Aditya Ramesh
+- Gabriel Goh
+- Sandhini Agarwal
+- Girish Sastry
+- Amanda Askell
+- Pamela Mishkin
+- Jack Clark
+- Gretchen Krueger
+- Ilya Sutskever
+year: 2021
+primary_ids:
+  doi: null
+  arxiv_base_id: '2103.00020'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2103.00020v1
+- https://arxiv.org/pdf/2103.00020v1
+topic_groups:
+- vlm
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2021
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: medium
+  notes: null
+milestone:
+  field: vlm
+  era: emergence
+  significance: 'CLIP: contrastive image-text pretraining on 400M pairs gives zero-shot classification;
+    the field-defining V+L encoder.'
+  subarea: contrastive
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v1
+  source: arxiv
+  source_url: https://arxiv.org/abs/2103.00020v1
+  pdf_path: library/learning-transferable-visual-models-from-natural-language-210300020/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/learning-transferable-visual-models-from-natural-language-210300020/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:25:27Z'
+  source_updated_at: '2021-02-26T19:04:58Z'
+  arxiv_version: v1
+  pdf_sha256: 6478b6e571a7d6fcd846d8ef77bfd60c285f1986abb8f475eedc43de403074f5
+  pdf_bytes: 6813639
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:25:27Z'
+  updated_at: '2026-08-24T03:25:27Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

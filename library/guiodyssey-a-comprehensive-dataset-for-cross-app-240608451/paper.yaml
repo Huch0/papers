@@ -41,6 +41,7 @@ milestone:
   era: expansion
   significance: First large cross-app navigation dataset (7,735 episodes, 201 apps) + OdysseyAgent; established
     cross-application setting.
+  subarea: mobile
 knowledge_concepts: []
 versions:
 - version_key: v1

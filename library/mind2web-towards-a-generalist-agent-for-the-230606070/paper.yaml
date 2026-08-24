@@ -37,7 +37,9 @@ user:
 milestone:
   field: computer_use_agents
   era: foundational
-  significance: Generalist web-agent benchmark across many real sites.
+  significance: First large dataset of 2,000+ real trajectories across 137 sites; defined offline generalist-web-agent
+    evaluation.
+  subarea: web
 knowledge_concepts:
 - web-agent-generalization
 versions:

@@ -40,6 +40,7 @@ milestone:
   era: foundational
   significance: Real-screen VLM control environment + dataset/model with plan-act-reflect; pioneered pixel-level
     desktop control training.
+  subarea: os_desktop
 knowledge_concepts: []
 versions:
 - version_key: v1

@@ -72,7 +72,12 @@ user:
   triage_label: READ_SOON
   triage_confidence: medium
   notes: null
-milestone: null
+milestone:
+  field: agent_harness
+  era: emergence
+  significance: 'SayCan: LLM decomposes instructions while RL-learned affordance values ground feasible
+    robot actions; first big LLM+RL agent.'
+  subarea: embodied
 knowledge_concepts: []
 versions:
 - version_key: v1

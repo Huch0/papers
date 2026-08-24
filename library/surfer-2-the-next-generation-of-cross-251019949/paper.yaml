@@ -84,6 +84,7 @@ milestone:
   era: recent
   significance: Unified vision-only architecture with hierarchical context, decoupled planning/execution,
     self-verification; strong web/desktop/mobile.
+  subarea: os_desktop
 knowledge_concepts: []
 versions:
 - version_key: v1

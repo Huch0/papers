@@ -312,3 +312,25 @@ Each entry: date, trigger, change, files touched, migration status.
   clearance, viewBox bounds) that must print CLEAN before rendering. The audit
   caught 14 defects in the first redo attempt before shipping. Discipline
   recorded in config/summary_components.md Diagrams section.
+
+## 2026-08-24 — Milestone paths: llm/vlm/rl fields + /milestones/ site page
+
+- User requested milestone reading paths for LLM, VLM, RL, Computer-Use Agents,
+  and Harness, seeded from five survey PDFs in ~/Documents/Lab/paper-review.
+- config/milestones.yaml: new fields llm (38 seeds), vlm (17), rl (37) extracted
+  from the PDFs + curated recent-era gap-fill (DeepSeek-R1, Qwen3, Kimi K2,
+  DeepSeekMath/GRPO, Qwen2.5-VL, InternVL3, GEPA, DSPy...); agent_harness
+  enriched from the Agentic-AI PDF (+13, now 17). Seed sets are disjoint across
+  fields (one milestone block per paper); Codex stayed with
+  software_engineering_agents, CICERO went to rl, RLHF lineage split llm/rl.
+- Seeds may now carry doi: (resolver falls back to OpenAlex-by-DOI) — used for
+  Nature/Science-only classics (AlphaGo, Go-Explore, AlphaTensor, CICERO).
+- milestone blocks now carry optional subarea (lane within a field);
+  update_indexes.py emits derived registry/milestones.json (field display
+  metadata) for the site.
+- config/interests.yaml: llm / vlm / rl topic groups (medium priority,
+  foundation track) so daily fetches follow these fields' trends too.
+- site: new /milestones/ page — per-field era-grouped timelines (emergence ->
+  foundational -> expansion -> recent) with subarea lanes, significance lines,
+  per-field read progress from the local reading tracker; Milestones link in
+  the header nav.

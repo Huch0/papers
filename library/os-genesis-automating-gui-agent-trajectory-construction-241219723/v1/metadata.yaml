@@ -64,6 +64,9 @@ scoring:
   - agent_harness:group:agent_harness
   - computer_use_agents:GUI agent
   - computer_use_agents:group:computer_use_agents
+  - vlm:vision-language model
+  - rl:exploration
+  - rl:reward model
   negative_signals: []
   subscores:
     interest_fit: 0.91

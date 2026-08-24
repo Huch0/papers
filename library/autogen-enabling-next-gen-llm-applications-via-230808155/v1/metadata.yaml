@@ -1,0 +1,79 @@
+canonical_key: arxiv-2308.08155
+version_key: v1
+title: 'AutoGen: Enabling Next-Gen LLM Applications via Multi-Agent Conversation'
+authors:
+- Qingyun Wu
+- Gagan Bansal
+- Jieyu Zhang
+- Yiran Wu
+- Beibin Li
+- Erkang Zhu
+- Li Jiang
+- Xiaoyun Zhang
+- Shaokun Zhang
+- Jiale Liu
+- Ahmed Hassan Awadallah
+- Ryen W White
+- Doug Burger
+- Chi Wang
+abstract: AutoGen is an open-source framework that allows developers to build LLM applications via multiple
+  agents that can converse with each other to accomplish tasks. AutoGen agents are customizable, conversable,
+  and can operate in various modes that employ combinations of LLMs, human inputs, and tools. Using AutoGen,
+  developers can also flexibly define agent interaction behaviors. Both natural language and computer
+  code can be used to program flexible conversation patterns for different applications. AutoGen serves
+  as a generic infrastructure to build diverse applications of various complexities and LLM capacities.
+  Empirical studies demonstrate the effectiveness of the framework in many example applications, with
+  domains ranging from mathematics, coding, question answering, operations research, online decision-making,
+  entertainment, etc.
+venue: arXiv
+year: 2023
+source: arxiv
+source_url: https://arxiv.org/abs/2308.08155v2
+pdf_url: https://arxiv.org/pdf/2308.08155v2
+pdf_sha256: fcf8b1acae6b1bd6f14c92463caa9726828bf998234ba9f10c2411087897c96b
+fetched_at: '2026-08-24T03:31:40Z'
+source_updated_at: '2023-10-03T20:47:10Z'
+ids:
+  doi: null
+  arxiv_id: 2308.08155v2
+  arxiv_base_id: '2308.08155'
+  arxiv_version: v2
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- agent_harness
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: interest_fit(0.73), artifact_availability(0.55), venue_quality(0.40)
+    | interests: agent_harness:group:agent_harness | milestone/foundational floor applied'
+  matched_interests:
+  - agent_harness:group:agent_harness
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.36
+    novelty: 0.0
+    artifact_availability: 0.55
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/autogen-enabling-next-gen-llm-applications-via-230808155/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

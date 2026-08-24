@@ -1,0 +1,98 @@
+canonical_key: arxiv-2204.14198
+version_key: v1
+title: 'Flamingo: a Visual Language Model for Few-Shot Learning'
+authors:
+- Jean-Baptiste Alayrac
+- Jeff Donahue
+- Pauline Luc
+- Antoine Miech
+- Iain Barr
+- Yana Hasson
+- Karel Lenc
+- Arthur Mensch
+- Katie Millican
+- Malcolm Reynolds
+- Roman Ring
+- Eliza Rutherford
+- Serkan Cabi
+- Tengda Han
+- Zhitao Gong
+- Sina Samangooei
+- Marianne Monteiro
+- Jacob Menick
+- Sebastian Borgeaud
+- Andrew Brock
+- Aida Nematzadeh
+- Sahand Sharifzadeh
+- Mikolaj Binkowski
+- Ricardo Barreira
+- Oriol Vinyals
+- Andrew Zisserman
+- Karen Simonyan
+abstract: 'Building models that can be rapidly adapted to novel tasks using only a handful of annotated
+  examples is an open challenge for multimodal machine learning research. We introduce Flamingo, a family
+  of Visual Language Models (VLM) with this ability. We propose key architectural innovations to: (i)
+  bridge powerful pretrained vision-only and language-only models, (ii) handle sequences of arbitrarily
+  interleaved visual and textual data, and (iii) seamlessly ingest images or videos as inputs. Thanks
+  to their flexibility, Flamingo models can be trained on large-scale multimodal web corpora containing
+  arbitrarily interleaved text and images, which is key to endow them with in-context few-shot learning
+  capabilities. We perform a thorough evaluation of our models, exploring and measuring their ability
+  to rapidly adapt to a variety of image and video tasks. These include open-ended tasks such as visual
+  question-answering, where the model is prompted with a question which it has to answer; captioning tasks,
+  which evaluate the ability to describe a scene or an event; and close-ended tasks such as multiple-choice
+  visual question-answering. For tasks lying anywhere on this spectrum, a single Flamingo model can achieve
+  a new state of the art with few-shot learning, simply by prompting the model with task-specific examples.
+  On numerous benchmarks, Flamingo outperforms models fine-tuned on thousands of times more task-specific
+  data.'
+venue: arXiv
+year: 2022
+source: arxiv
+source_url: https://arxiv.org/abs/2204.14198v2
+pdf_url: https://arxiv.org/pdf/2204.14198v2
+pdf_sha256: 27af622bf50987fd98a03451a27a670adfaeefd5218a3e990b37abc326ba63f0
+fetched_at: '2026-08-24T03:25:28Z'
+source_updated_at: '2022-11-15T23:07:37Z'
+ids:
+  doi: null
+  arxiv_id: 2204.14198v2
+  arxiv_base_id: '2204.14198'
+  arxiv_version: v2
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- vlm
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: medium
+  rationale: 'score=65 -> READ_SOON | strong: novelty(1.00), interest_fit(0.40), venue_quality(0.40) |
+    interests: vlm:group:vlm | milestone/foundational floor applied'
+  matched_interests:
+  - vlm:group:vlm
+  negative_signals: []
+  subscores:
+    interest_fit: 0.402
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 1.0
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/flamingo-a-visual-language-model-for-few-220414198/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

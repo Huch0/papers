@@ -1,0 +1,117 @@
+canonical_key: arxiv-2505.09388
+slug: qwen3-technical-report-250509388
+title: Qwen3 Technical Report
+authors:
+- An Yang
+- Anfeng Li
+- Baosong Yang
+- Beichen Zhang
+- Binyuan Hui
+- Bo Zheng
+- B. X. Yu
+- Chang Gao
+- C. Huang
+- Chenxu Lv
+- Chujie Zheng
+- Dayiheng Liu
+- Fan Zhou
+- Fei Huang
+- H Feng
+- Hao Ge
+- Haoran Wei
+- Lin Huan
+- Jialong Tang
+- Jian Yang
+- Jianhong Tu
+- Jianwei Zhang
+- Jianxin Yang
+- Jiaxi Yang
+- Jing Zhou
+- Jingren Zhou
+- Junyang Lin
+- Kai Dang
+- Keqin Bao
+- Kexin Yang
+- Le Yu
+- Deng, Lianghao
+- Mei Li
+- Mingfeng Xue
+- Mingze Li
+- Pei Zhang
+- Peng Wang
+- Qin Zhu
+- Rui Men
+- Ruize Gao
+- Shixuan Liu
+- Shuang Luo
+- Tianhao Li
+- Tianyi Tang
+- Wenbiao Yin
+- Xingzhang Ren
+- Xinyu Wang
+- Xinyu Zhang
+- Xuancheng Ren
+- Fan Yang
+- Su Yang
+- Yichang Zhang
+- Yinger Zhang
+- Yu Wan
+- Yuqiong Liu
+- Zekun Wang
+- Zeyu Cui
+- Zhenru Zhang
+- Zhipeng Zhou
+- Zihan Qiu
+year: 2025
+primary_ids:
+  doi: 10.48550/arxiv.2505.09388
+  arxiv_base_id: '2505.09388'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: https://openalex.org/W4414939355
+canonical_urls:
+- https://openalex.org/W4414939355
+- https://arxiv.org/pdf/2505.09388
+topic_groups:
+- llm
+tags:
+- foundational
+venue:
+  name: arXiv (Cornell University)
+  tier: workshop_or_minor
+  status: unknown
+  year: 2025
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: medium
+  notes: null
+milestone:
+  field: llm
+  era: recent
+  significance: Unified thinking/non-thinking open MoE family with a thinking budget; the dominant open-weight
+    line of 2025.
+  subarea: open_models
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: openalex
+  source: openalex
+  source_url: https://openalex.org/W4414939355
+  pdf_path: library/qwen3-technical-report-250509388/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/qwen3-technical-report-250509388/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:21:38Z'
+  source_updated_at: '2025-05-14'
+  arxiv_version: null
+  pdf_sha256: 84a5e2b1fa04bb774bf12ae606d1e6d9dd2147ed2ebe78a4cfeb91ba380ffdd5
+  pdf_bytes: 779424
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:21:38Z'
+  updated_at: '2026-08-24T03:21:38Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

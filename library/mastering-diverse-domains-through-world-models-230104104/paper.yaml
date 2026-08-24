@@ -1,0 +1,61 @@
+canonical_key: arxiv-2301.04104
+slug: mastering-diverse-domains-through-world-models-230104104
+title: Mastering Diverse Domains through World Models
+authors:
+- Danijar Hafner
+- Jurgis Pasukonis
+- Jimmy Ba
+- Timothy Lillicrap
+year: 2023
+primary_ids:
+  doi: null
+  arxiv_base_id: '2301.04104'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2301.04104v2
+- https://arxiv.org/pdf/2301.04104v2
+topic_groups:
+- rl
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2023
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: medium
+  notes: null
+milestone:
+  field: rl
+  era: recent
+  significance: DreamerV3 mastered 150+ diverse tasks with one configuration; first agent to collect Minecraft
+    diamonds from scratch.
+  subarea: model_based
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v2
+  source: arxiv
+  source_url: https://arxiv.org/abs/2301.04104v2
+  pdf_path: library/mastering-diverse-domains-through-world-models-230104104/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/mastering-diverse-domains-through-world-models-230104104/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:29:57Z'
+  source_updated_at: '2024-04-17T17:41:20Z'
+  arxiv_version: v2
+  pdf_sha256: d0385798e8bada8e81b915c1743be81d9ce8776f12ed937e09351995e099ce37
+  pdf_bytes: 2874717
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:29:57Z'
+  updated_at: '2026-08-24T03:29:57Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

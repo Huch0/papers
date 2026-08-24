@@ -1,0 +1,87 @@
+canonical_key: arxiv-2304.03442
+version_key: v1
+title: 'Generative Agents: Interactive Simulacra of Human Behavior'
+authors:
+- Joon Sung Park
+- Joseph C. O'Brien
+- Carrie J. Cai
+- Meredith Ringel Morris
+- Percy Liang
+- Michael S. Bernstein
+abstract: 'Believable proxies of human behavior can empower interactive applications ranging from immersive
+  environments to rehearsal spaces for interpersonal communication to prototyping tools. In this paper,
+  we introduce generative agents--computational software agents that simulate believable human behavior.
+  Generative agents wake up, cook breakfast, and head to work; artists paint, while authors write; they
+  form opinions, notice each other, and initiate conversations; they remember and reflect on days past
+  as they plan the next day. To enable generative agents, we describe an architecture that extends a large
+  language model to store a complete record of the agent''s experiences using natural language, synthesize
+  those memories over time into higher-level reflections, and retrieve them dynamically to plan behavior.
+  We instantiate generative agents to populate an interactive sandbox environment inspired by The Sims,
+  where end users can interact with a small town of twenty five agents using natural language. In an evaluation,
+  these generative agents produce believable individual and emergent social behaviors: for example, starting
+  with only a single user-specified notion that one agent wants to throw a Valentine''s Day party, the
+  agents autonomously spread invitations to the party over the next two days, make new acquaintances,
+  ask each other out on dates to the party, and coordinate to show up for the party together at the right
+  time. We demonstrate through ablation that the components of our agent architecture--observation, planning,
+  and reflection--each contribute critically to the believability of agent behavior. By fusing large language
+  models with computational, interactive agents, this work introduces architectural and interaction patterns
+  for enabling believable simulations of human behavior.'
+venue: arXiv
+year: 2023
+source: arxiv
+source_url: https://arxiv.org/abs/2304.03442v2
+pdf_url: https://arxiv.org/pdf/2304.03442v2
+pdf_sha256: 1b31e77fb24d25d7598f2c49e955d12a28b95a6dabad34acdac40f44bfb7a139
+fetched_at: '2026-08-24T03:31:15Z'
+source_updated_at: '2023-08-06T00:21:19Z'
+ids:
+  doi: null
+  arxiv_id: 2304.03442v2
+  arxiv_base_id: '2304.03442'
+  arxiv_version: v2
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- agent_harness
+- general_agent_methods
+- llm
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: interest_fit(0.73), novelty(0.55), evaluation_quality(0.55)
+    | interests: agent_harness:group:agent_harness, general_agent_methods:reflection, general_agent_methods:group:general_agent_methods,
+    llm:large language model | milestone/foundational floor applied'
+  matched_interests:
+  - agent_harness:group:agent_harness
+  - general_agent_methods:reflection
+  - general_agent_methods:group:general_agent_methods
+  - llm:large language model
+  - llm:group:llm
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.52
+    novelty: 0.55
+    artifact_availability: 0.0
+    evaluation_quality: 0.55
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/generative-agents-interactive-simulacra-of-human-behavior-230403442/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

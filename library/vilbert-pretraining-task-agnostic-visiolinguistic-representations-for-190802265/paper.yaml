@@ -1,0 +1,62 @@
+canonical_key: arxiv-1908.02265
+slug: vilbert-pretraining-task-agnostic-visiolinguistic-representations-for-190802265
+title: 'ViLBERT: Pretraining Task-Agnostic Visiolinguistic Representations for Vision-and-Language Tasks'
+authors:
+- Jiasen Lu
+- Dhruv Batra
+- Devi Parikh
+- Stefan Lee
+year: 2019
+primary_ids:
+  doi: null
+  arxiv_base_id: '1908.02265'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/1908.02265v1
+- https://arxiv.org/pdf/1908.02265v1
+topic_groups:
+- llm
+- vlm
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2019
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: medium
+  notes: null
+milestone:
+  field: vlm
+  era: emergence
+  significance: Two-stream BERT-era vision-language pretraining with co-attention; opened the pretrain-then-transfer
+    era for V+L.
+  subarea: fusion
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v1
+  source: arxiv
+  source_url: https://arxiv.org/abs/1908.02265v1
+  pdf_path: library/vilbert-pretraining-task-agnostic-visiolinguistic-representations-for-190802265/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/vilbert-pretraining-task-agnostic-visiolinguistic-representations-for-190802265/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:25:21Z'
+  source_updated_at: '2019-08-06T17:33:52Z'
+  arxiv_version: v1
+  pdf_sha256: 7dc9e620eb3db596c61f639976657c3196f689faf1584cbbb1ba63f74324228c
+  pdf_bytes: 5606833
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:25:21Z'
+  updated_at: '2026-08-24T03:25:21Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

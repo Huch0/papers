@@ -37,6 +37,7 @@ milestone:
   era: emergence
   significance: General-assistant benchmark (browsing, files, tools); de facto target for OS/desktop-style
     autonomous assistants.
+  subarea: enabler_benchmark_survey
 knowledge_concepts: []
 versions:
 - version_key: v1

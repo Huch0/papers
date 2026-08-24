@@ -39,6 +39,7 @@ milestone:
   era: foundational
   significance: CoAT reasoning formulation + AitZ dataset; advanced semantic reasoning over screens for
     Android GUI agents.
+  subarea: mobile
 knowledge_concepts: []
 versions:
 - version_key: v1

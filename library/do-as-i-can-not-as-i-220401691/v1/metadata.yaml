@@ -90,9 +90,11 @@ scoring:
   label: READ_SOON
   confidence: medium
   rationale: 'score=65 -> READ_SOON | strong: interest_fit(0.40), venue_quality(0.40), harness_relevance(0.36)
-    | interests: general_agent_methods:group:general_agent_methods | milestone/foundational floor applied'
+    | interests: general_agent_methods:group:general_agent_methods, llm:large language model | milestone/foundational
+    floor applied'
   matched_interests:
   - general_agent_methods:group:general_agent_methods
+  - llm:large language model
   negative_signals: []
   subscores:
     interest_fit: 0.402

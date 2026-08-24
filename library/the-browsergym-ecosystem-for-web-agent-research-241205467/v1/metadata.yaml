@@ -64,11 +64,12 @@ scoring:
   label: READ_SOON
   confidence: high
   rationale: 'score=65 -> READ_SOON | strong: recency(1.00), novelty(1.00), author_or_lab_signal(1.00)
-    | interests: computer_use_agents:web agent, computer_use_agents:group:computer_use_agents | milestone/foundational
-    floor applied'
+    | interests: computer_use_agents:web agent, computer_use_agents:group:computer_use_agents, llm:large
+    language model | milestone/foundational floor applied'
   matched_interests:
   - computer_use_agents:web agent
   - computer_use_agents:group:computer_use_agents
+  - llm:large language model
   negative_signals: []
   subscores:
     interest_fit: 0.91

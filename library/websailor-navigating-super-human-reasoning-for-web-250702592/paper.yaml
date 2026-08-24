@@ -50,6 +50,7 @@ milestone:
   era: recent
   significance: Open SOTA on hard browsing (BrowseComp, GAIA) via high-uncertainty data synthesis + RL;
     closed gap to proprietary.
+  subarea: web
 knowledge_concepts: []
 versions:
 - version_key: v1

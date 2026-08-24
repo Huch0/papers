@@ -39,6 +39,7 @@ milestone:
   era: expansion
   significance: Human-like pixel-only perception; universal grounding model trained on 10M synthesized
     elements; advanced ScreenSpot + downstream SOTA.
+  subarea: gui_grounding
 knowledge_concepts: []
 versions:
 - version_key: v1

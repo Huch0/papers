@@ -1,0 +1,132 @@
+canonical_key: arxiv-2201.08239
+version_key: v1
+title: 'LaMDA: Language Models for Dialog Applications'
+authors:
+- Romal Thoppilan
+- Daniel De Freitas
+- Jamie Hall
+- Noam Shazeer
+- Apoorv Kulshreshtha
+- Heng-Tze Cheng
+- Alicia Jin
+- Taylor Bos
+- Leslie Baker
+- Yu Du
+- YaGuang Li
+- Hongrae Lee
+- Huaixiu Steven Zheng
+- Amin Ghafouri
+- Marcelo Menegali
+- Yanping Huang
+- Maxim Krikun
+- Dmitry Lepikhin
+- James Qin
+- Dehao Chen
+- Yuanzhong Xu
+- Zhifeng Chen
+- Adam Roberts
+- Maarten Bosma
+- Vincent Zhao
+- Yanqi Zhou
+- Chung-Ching Chang
+- Igor Krivokon
+- Will Rusch
+- Marc Pickett
+- Pranesh Srinivasan
+- Laichee Man
+- Kathleen Meier-Hellstern
+- Meredith Ringel Morris
+- Tulsee Doshi
+- Renelito Delos Santos
+- Toju Duke
+- Johnny Soraker
+- Ben Zevenbergen
+- Vinodkumar Prabhakaran
+- Mark Diaz
+- Ben Hutchinson
+- Kristen Olson
+- Alejandra Molina
+- Erin Hoffman-John
+- Josh Lee
+- Lora Aroyo
+- Ravi Rajakumar
+- Alena Butryna
+- Matthew Lamm
+- Viktoriya Kuzmina
+- Joe Fenton
+- Aaron Cohen
+- Rachel Bernstein
+- Ray Kurzweil
+- Blaise Aguera-Arcas
+- Claire Cui
+- Marian Croak
+- Ed Chi
+- Quoc Le
+abstract: 'We present LaMDA: Language Models for Dialog Applications. LaMDA is a family of Transformer-based
+  neural language models specialized for dialog, which have up to 137B parameters and are pre-trained
+  on 1.56T words of public dialog data and web text. While model scaling alone can improve quality, it
+  shows less improvements on safety and factual grounding. We demonstrate that fine-tuning with annotated
+  data and enabling the model to consult external knowledge sources can lead to significant improvements
+  towards the two key challenges of safety and factual grounding. The first challenge, safety, involves
+  ensuring that the model''s responses are consistent with a set of human values, such as preventing harmful
+  suggestions and unfair bias. We quantify safety using a metric based on an illustrative set of human
+  values, and we find that filtering candidate responses using a LaMDA classifier fine-tuned with a small
+  amount of crowdworker-annotated data offers a promising approach to improving model safety. The second
+  challenge, factual grounding, involves enabling the model to consult external knowledge sources, such
+  as an information retrieval system, a language translator, and a calculator. We quantify factuality
+  using a groundedness metric, and we find that our approach enables the model to generate responses grounded
+  in known sources, rather than responses that merely sound plausible. Finally, we explore the use of
+  LaMDA in the domains of education and content recommendations, and analyze their helpfulness and role
+  consistency.'
+venue: arXiv
+year: 2022
+source: arxiv
+source_url: https://arxiv.org/abs/2201.08239v3
+pdf_url: https://arxiv.org/pdf/2201.08239v3
+pdf_sha256: c2b9f7d10729fe742326a7b4ff41430899e2455700920ab464f8974e7ffcb718
+fetched_at: '2026-08-24T03:20:38Z'
+source_updated_at: '2022-02-10T16:30:11Z'
+ids:
+  doi: null
+  arxiv_id: 2201.08239v3
+  arxiv_base_id: '2201.08239'
+  arxiv_version: v3
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- llm
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: medium
+  rationale: 'score=65 -> READ_SOON | strong: novelty(0.55), interest_fit(0.40), venue_quality(0.40) |
+    interests: llm:group:llm | milestone/foundational floor applied'
+  matched_interests:
+  - llm:group:llm
+  negative_signals: []
+  subscores:
+    interest_fit: 0.402
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 0.55
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/lamda-language-models-for-dialog-applications-220108239/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

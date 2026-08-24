@@ -1,0 +1,80 @@
+canonical_key: arxiv-1909.08593
+version_key: v1
+title: Fine-Tuning Language Models from Human Preferences
+authors:
+- Daniel M. Ziegler
+- Nisan Stiennon
+- Jeffrey Wu
+- Tom B. Brown
+- Alec Radford
+- Dario Amodei
+- Paul Christiano
+- Geoffrey Irving
+abstract: 'Reward learning enables the application of reinforcement learning (RL) to tasks where reward
+  is defined by human judgment, building a model of reward by asking humans questions. Most work on reward
+  learning has used simulated environments, but complex information about values is often expressed in
+  natural language, and we believe reward learning for language is a key to making RL practical and safe
+  for real-world tasks. In this paper, we build on advances in generative pretraining of language models
+  to apply reward learning to four natural language tasks: continuing text with positive sentiment or
+  physically descriptive language, and summarization tasks on the TL;DR and CNN/Daily Mail datasets. For
+  stylistic continuation we achieve good results with only 5,000 comparisons evaluated by humans. For
+  summarization, models trained with 60,000 comparisons copy whole sentences from the input but skip irrelevant
+  preamble; this leads to reasonable ROUGE scores and very good performance according to our human labelers,
+  but may be exploiting the fact that labelers rely on simple heuristics.'
+venue: arXiv
+year: 2019
+source: arxiv
+source_url: https://arxiv.org/abs/1909.08593v2
+pdf_url: https://arxiv.org/pdf/1909.08593v2
+pdf_sha256: f3004c3128281cb373f71e0f22aef81cdc295cef9b07450d1fa07cdc79abe5b2
+fetched_at: '2026-08-24T03:20:24Z'
+source_updated_at: '2020-01-08T23:02:36Z'
+ids:
+  doi: null
+  arxiv_id: 1909.08593v2
+  arxiv_base_id: '1909.08593'
+  arxiv_version: v2
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- llm
+- rl
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: medium
+  rationale: 'score=65 -> READ_SOON | strong: interest_fit(0.50), venue_quality(0.40), harness_relevance(0.36)
+    | interests: llm:pretraining, llm:group:llm, rl:reinforcement learning, rl:group:rl | milestone/foundational
+    floor applied'
+  matched_interests:
+  - llm:pretraining
+  - llm:group:llm
+  - rl:reinforcement learning
+  - rl:group:rl
+  negative_signals: []
+  subscores:
+    interest_fit: 0.501
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.36
+    novelty: 0.0
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/fine-tuning-language-models-from-human-preferences-190908593/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

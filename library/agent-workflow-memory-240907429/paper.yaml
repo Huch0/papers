@@ -1,0 +1,61 @@
+canonical_key: arxiv-2409.07429
+slug: agent-workflow-memory-240907429
+title: Agent Workflow Memory
+authors:
+- Zora Zhiruo Wang
+- Jiayuan Mao
+- Daniel Fried
+- Graham Neubig
+year: 2024
+primary_ids:
+  doi: null
+  arxiv_base_id: '2409.07429'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2409.07429v1
+- https://arxiv.org/pdf/2409.07429v1
+topic_groups:
+- agent_harness
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2024
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: agent_harness
+  era: expansion
+  significance: Induces reusable workflows from past trajectories and retrieves them to guide new tasks;
+    procedural memory for agents.
+  subarea: memory
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v1
+  source: arxiv
+  source_url: https://arxiv.org/abs/2409.07429v1
+  pdf_path: library/agent-workflow-memory-240907429/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/agent-workflow-memory-240907429/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:31:47Z'
+  source_updated_at: '2024-09-11T17:21:00Z'
+  arxiv_version: v1
+  pdf_sha256: ddc6f6fedec48c88ae743b43a464f7eb4aecaab05acd18c29cfb657ab445ebe4
+  pdf_bytes: 941281
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:31:47Z'
+  updated_at: '2026-08-24T03:31:47Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

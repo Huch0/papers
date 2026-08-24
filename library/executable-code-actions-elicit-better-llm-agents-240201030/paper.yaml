@@ -36,7 +36,12 @@ user:
   triage_label: READ_SOON
   triage_confidence: high
   notes: null
-milestone: null
+milestone:
+  field: agent_harness
+  era: expansion
+  significance: 'CodeAct: use executable Python as the unified action space instead of JSON tool calls;
+    adopted by many coding agents.'
+  subarea: tool_use
 knowledge_concepts: []
 versions:
 - version_key: v1

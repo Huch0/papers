@@ -1,0 +1,75 @@
+canonical_key: arxiv-2001.08361
+version_key: v1
+title: Scaling Laws for Neural Language Models
+authors:
+- Jared Kaplan
+- Sam McCandlish
+- Tom Henighan
+- Tom B. Brown
+- Benjamin Chess
+- Rewon Child
+- Scott Gray
+- Alec Radford
+- Jeffrey Wu
+- Dario Amodei
+abstract: We study empirical scaling laws for language model performance on the cross-entropy loss. The
+  loss scales as a power-law with model size, dataset size, and the amount of compute used for training,
+  with some trends spanning more than seven orders of magnitude. Other architectural details such as network
+  width or depth have minimal effects within a wide range. Simple equations govern the dependence of overfitting
+  on model/dataset size and the dependence of training speed on model size. These relationships allow
+  us to determine the optimal allocation of a fixed compute budget. Larger models are significantly more
+  sample-efficient, such that optimally compute-efficient training involves training very large models
+  on a relatively modest amount of data and stopping significantly before convergence.
+venue: arXiv
+year: 2020
+source: arxiv
+source_url: https://arxiv.org/abs/2001.08361v1
+pdf_url: https://arxiv.org/pdf/2001.08361v1
+pdf_sha256: a41bd7877fd1a6bcbba096b2619618bd2f90e02488f2365644903eb2f7c6a494
+fetched_at: '2026-08-24T03:20:25Z'
+source_updated_at: '2020-01-23T03:59:20Z'
+ids:
+  doi: null
+  arxiv_id: 2001.08361v1
+  arxiv_base_id: '2001.08361'
+  arxiv_version: v1
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- llm
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: medium
+  rationale: 'score=65 -> READ_SOON | strong: interest_fit(0.50), venue_quality(0.40) | interests: llm:scaling
+    law, llm:group:llm | milestone/foundational floor applied'
+  matched_interests:
+  - llm:scaling law
+  - llm:group:llm
+  negative_signals: []
+  subscores:
+    interest_fit: 0.501
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 0.0
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/scaling-laws-for-neural-language-models-200108361/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

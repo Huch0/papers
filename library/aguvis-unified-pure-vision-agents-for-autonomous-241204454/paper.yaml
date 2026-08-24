@@ -40,6 +40,7 @@ milestone:
   era: expansion
   significance: First fully autonomous pure-vision GUI agent (no closed models); unified action space
     + two-stage grounding-then-reasoning + inner monologue.
+  subarea: gui_grounding
 knowledge_concepts: []
 versions:
 - version_key: v1

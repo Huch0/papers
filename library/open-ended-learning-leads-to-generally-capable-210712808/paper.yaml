@@ -1,0 +1,76 @@
+canonical_key: arxiv-2107.12808
+slug: open-ended-learning-leads-to-generally-capable-210712808
+title: Open-Ended Learning Leads to Generally Capable Agents
+authors:
+- Open Ended Learning Team
+- Adam Stooke
+- Anuj Mahajan
+- Catarina Barros
+- Charlie Deck
+- Jakob Bauer
+- Jakub Sygnowski
+- Maja Trebacz
+- Max Jaderberg
+- Michael Mathieu
+- Nat McAleese
+- Nathalie Bradley-Schmieg
+- Nathaniel Wong
+- Nicolas Porcel
+- Roberta Raileanu
+- Steph Hughes-Fitt
+- Valentin Dalibard
+- Wojciech Marian Czarnecki
+year: 2021
+primary_ids:
+  doi: null
+  arxiv_base_id: '2107.12808'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2107.12808v2
+- https://arxiv.org/pdf/2107.12808v2
+topic_groups:
+- agent_harness
+- rl
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2021
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: rl
+  era: expansion
+  significance: 'XLand: open-ended training across 700k+ tasks produced generally capable agents that
+    generalize to unseen games.'
+  subarea: games
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v2
+  source: arxiv
+  source_url: https://arxiv.org/abs/2107.12808v2
+  pdf_path: library/open-ended-learning-leads-to-generally-capable-210712808/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/open-ended-learning-leads-to-generally-capable-210712808/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:29:00Z'
+  source_updated_at: '2021-07-31T16:55:19Z'
+  arxiv_version: v2
+  pdf_sha256: 26ec9a3be81af360b268f1a9fb3552b8be6716bebbdb3a09dc83eee0d00e7188
+  pdf_bytes: 44918474
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:29:00Z'
+  updated_at: '2026-08-24T03:29:00Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

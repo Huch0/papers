@@ -1,0 +1,84 @@
+canonical_key: arxiv-2204.14198
+slug: flamingo-a-visual-language-model-for-few-220414198
+title: 'Flamingo: a Visual Language Model for Few-Shot Learning'
+authors:
+- Jean-Baptiste Alayrac
+- Jeff Donahue
+- Pauline Luc
+- Antoine Miech
+- Iain Barr
+- Yana Hasson
+- Karel Lenc
+- Arthur Mensch
+- Katie Millican
+- Malcolm Reynolds
+- Roman Ring
+- Eliza Rutherford
+- Serkan Cabi
+- Tengda Han
+- Zhitao Gong
+- Sina Samangooei
+- Marianne Monteiro
+- Jacob Menick
+- Sebastian Borgeaud
+- Andrew Brock
+- Aida Nematzadeh
+- Sahand Sharifzadeh
+- Mikolaj Binkowski
+- Ricardo Barreira
+- Oriol Vinyals
+- Andrew Zisserman
+- Karen Simonyan
+year: 2022
+primary_ids:
+  doi: null
+  arxiv_base_id: '2204.14198'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2204.14198v2
+- https://arxiv.org/pdf/2204.14198v2
+topic_groups:
+- vlm
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2022
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: medium
+  notes: null
+milestone:
+  field: vlm
+  era: foundational
+  significance: Bridged a frozen LM and vision encoder with gated cross-attention; few-shot multimodal
+    in-context learning.
+  subarea: fusion
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v2
+  source: arxiv
+  source_url: https://arxiv.org/abs/2204.14198v2
+  pdf_path: library/flamingo-a-visual-language-model-for-few-220414198/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/flamingo-a-visual-language-model-for-few-220414198/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:25:41Z'
+  source_updated_at: '2022-11-15T23:07:37Z'
+  arxiv_version: v2
+  pdf_sha256: 27af622bf50987fd98a03451a27a670adfaeefd5218a3e990b37abc326ba63f0
+  pdf_bytes: 31579390
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:25:41Z'
+  updated_at: '2026-08-24T03:25:41Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

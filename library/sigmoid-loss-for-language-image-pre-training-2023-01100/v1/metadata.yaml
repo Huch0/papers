@@ -1,0 +1,75 @@
+canonical_key: doi-10-1109-iccv51070-2023-01100
+version_key: v1
+title: Sigmoid Loss for Language Image Pre-Training
+authors:
+- Xiaohua Zhai
+- Basil Mustafa
+- А. И. Колесников
+- Lucas Beyer
+abstract: We propose a simple pairwise sigmoid loss for imagetext pre-training. Unlike standard contrastive
+  learning with softmax normalization, the sigmoid loss operates solely on image-text pairs and does not
+  require a global view of the pairwise similarities for normalization. The sigmoid loss simultaneously
+  allows further scaling up the batch size, while also performing better at smaller batch sizes. With
+  only four TPUv4 chips, we can train a Base CLIP model at 4k batch size and a Large LiT model at 20k
+  batch size, the latter achieves 84.5% ImageNet zero-shot accuracy in two days. This disentanglement
+  of the batch size from the loss further allows us to study the impact of examples vs pairs and negative
+  to positive ratio. Finally, we push the batch size to the extreme, up to one million, and find that
+  the benefits of growing batch size quickly diminish, with a more reasonable batch size of 32k being
+  sufficient. We hope our research motivates further explorations in improving the quality and efficiency
+  of language-image pre-training.
+venue: Not reported
+year: 2023
+source: openalex
+source_url: https://openalex.org/W4390873312
+pdf_url: null
+pdf_sha256: null
+fetched_at: '2026-08-24T03:25:52Z'
+source_updated_at: '2023-10-01'
+ids:
+  doi: 10.1109/iccv51070.2023.01100
+  arxiv_id: null
+  arxiv_base_id: null
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: https://openalex.org/W4390873312
+tags:
+- foundational
+topic_groups:
+- rl
+- vlm
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: medium
+  rationale: 'score=65 -> READ_SOON | strong: interest_fit(0.50), venue_quality(0.30) | interests: vlm:group:vlm,
+    rl:exploration, rl:group:rl | negatives: abstract_only | milestone/foundational floor applied'
+  matched_interests:
+  - vlm:group:vlm
+  - rl:exploration
+  - rl:group:rl
+  negative_signals:
+  - abstract_only
+  subscores:
+    interest_fit: 0.501
+    recency: 0.0
+    venue_quality: 0.3
+    harness_relevance: 0.0
+    novelty: 0.0
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: null
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: false
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

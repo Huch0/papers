@@ -1,0 +1,87 @@
+canonical_key: arxiv-2209.06794
+slug: pali-a-jointly-scaled-multilingual-language-image-220906794
+title: 'PaLI: A Jointly-Scaled Multilingual Language-Image Model'
+authors:
+- Xi Chen
+- Xiao Wang
+- Soravit Changpinyo
+- A. Piergiovanni
+- Piotr Padlewski
+- Daniel M. Salz
+- Sebastian Goodman
+- Adam Grycner
+- Basil Mustafa
+- Lucas Beyer
+- Alexander Kolesnikov
+- J. Puigcerver
+- Nan Ding
+- Keran Rong
+- Hassan Akbari
+- Gaurav Mishra
+- Linting Xue
+- Ashish V. Thapliyal
+- James Bradbury
+- Weicheng Kuo
+- Mojtaba Seyedhosseini
+- Chao Jia
+- Burcu Karagol Ayan
+- C. Riquelme
+- A. Steiner
+- A. Angelova
+- Xiaohua Zhai
+- N. Houlsby
+- Radu Soricut
+year: 2022
+primary_ids:
+  doi: 10.48550/arXiv.2209.06794
+  arxiv_base_id: '2209.06794'
+  openreview_id: null
+  semantic_scholar_id: 28630034bb29760df01ab033b743e30b37f336ae
+  openalex_id: null
+canonical_urls:
+- https://www.semanticscholar.org/paper/28630034bb29760df01ab033b743e30b37f336ae
+- http://arxiv.org/pdf/2209.06794
+topic_groups:
+- llm
+- vlm
+tags:
+- foundational
+venue:
+  name: International Conference on Learning Representations
+  tier: A_star
+  status: unknown
+  year: 2022
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: medium
+  notes: null
+milestone:
+  field: vlm
+  era: foundational
+  significance: Jointly scaled vision and language components (ViT-e + mT5) with multilingual data; evidence
+    for balanced V+L scaling.
+  subarea: pretraining
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: semantic_scholar
+  source: semantic_scholar
+  source_url: https://www.semanticscholar.org/paper/28630034bb29760df01ab033b743e30b37f336ae
+  pdf_path: library/pali-a-jointly-scaled-multilingual-language-image-220906794/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/pali-a-jointly-scaled-multilingual-language-image-220906794/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:25:47Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: 1dcbf47c44eb2f1852bdeb23a696c7d38ff1f7fdf283c4fae2f754abd20fa1db
+  pdf_bytes: 2242229
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:25:47Z'
+  updated_at: '2026-08-24T03:25:47Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

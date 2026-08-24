@@ -39,6 +39,7 @@ milestone:
   era: expansion
   significance: End-to-end multimodal agent on 15 live sites with GPT-4V auto-evaluator; widely used live
     benchmark and SoM recipe.
+  subarea: web
 knowledge_concepts: []
 versions:
 - version_key: v1

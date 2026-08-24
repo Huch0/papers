@@ -41,6 +41,7 @@ milestone:
   era: expansion
   significance: Unified XML/SoM environment + 10.5k-trace dataset enabling systematic training/benchmarking
     of open and closed Android agents.
+  subarea: mobile
 knowledge_concepts: []
 versions:
 - version_key: v1

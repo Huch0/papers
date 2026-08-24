@@ -3,4 +3,5 @@
 # Populated by humans or /evolve-paper-system after reviewing duplicate_candidates.jsonl.
 # Format:  <alias_key>: <canonical_key>
 version: 1
-aliases: {}
+aliases:
+  doi-10-18653-v1-2025-acl-long-369: arxiv-2508.04482

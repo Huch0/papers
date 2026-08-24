@@ -1,0 +1,75 @@
+canonical_key: arxiv-2305.19308
+version_key: v1
+title: 'SheetCopilot: Bringing Software Productivity to the Next Level through Large Language Models'
+authors:
+- Hongxin Li
+- Jingran Su
+- Yuntao Chen
+- Qing Li
+- Zhaoxiang Zhang
+abstract: Computer end users have spent billions of hours completing daily tasks like tabular data processing
+  and project timeline scheduling. Most of these tasks are repetitive and error-prone, yet most end users
+  lack the skill to automate these burdensome works. With the advent of large language models (LLMs),
+  directing software with natural language user requests become a reachable goal. In this work, we propose
+  a SheetCopilot agent that takes natural language task and control spreadsheet to fulfill the requirements.
+  We propose a set of atomic actions as an abstraction of spreadsheet software functionalities. We further
+  design a state machine-based task planning framework for LLMs to robustly interact with spreadsheets.
+  We curate a representative dataset containing 221 spreadsheet control tasks and establish a fully automated
+  evaluation pipeline for rigorously benchmarking the ability of LLMs in software control tasks. Our SheetCopilot
+  correctly completes 44.3\% of tasks for a single generation, outperforming the strong code generation
+  baseline by a wide margin. Our project page:https://sheetcopilot.github.io/.
+venue: arXiv
+year: 2023
+source: arxiv
+source_url: https://arxiv.org/abs/2305.19308v2
+pdf_url: https://arxiv.org/pdf/2305.19308v2
+pdf_sha256: 8177a60e58f07dee96d14504e3857ab1516c59b27c59b1124302250d8c606c10
+fetched_at: '2026-08-24T03:57:05Z'
+source_updated_at: '2023-10-30T06:36:24Z'
+ids:
+  doi: null
+  arxiv_id: 2305.19308v2
+  arxiv_base_id: '2305.19308'
+  arxiv_version: v2
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- document_agents
+- llm
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: medium
+  rationale: 'score=65 -> READ_SOON | strong: interest_fit(0.58), venue_quality(0.40) | interests: document_agents:group:document_agents,
+    llm:large language model, llm:group:llm | milestone/foundational floor applied'
+  matched_interests:
+  - document_agents:group:document_agents
+  - llm:large language model
+  - llm:group:llm
+  negative_signals: []
+  subscores:
+    interest_fit: 0.584
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 0.0
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/sheetcopilot-bringing-software-productivity-to-the-next-230519308/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

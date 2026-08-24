@@ -42,6 +42,7 @@ milestone:
   era: expansion
   significance: Leading open-LLM web agent (ChatGLM3-6B) via curriculum + RL bootstrapping; prior SOTA
     for trained open web agents.
+  subarea: web
 knowledge_concepts: []
 versions:
 - version_key: v1

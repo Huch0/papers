@@ -41,6 +41,7 @@ milestone:
   era: foundational
   significance: LLM commonsense + app dynamic analysis + memory injection for general Android automation;
     early LLM phone-automation system.
+  subarea: mobile
 knowledge_concepts: []
 versions:
 - version_key: v1

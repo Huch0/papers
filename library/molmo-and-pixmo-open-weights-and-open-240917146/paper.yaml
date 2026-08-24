@@ -1,0 +1,107 @@
+canonical_key: arxiv-2409.17146
+slug: molmo-and-pixmo-open-weights-and-open-240917146
+title: 'Molmo and PixMo: Open Weights and Open Data for State-of-the-Art Vision-Language Models'
+authors:
+- Matt Deitke
+- Christopher Clark
+- Sang-Ho Lee
+- Tripathi, Rohun
+- Yue Yang
+- Jae Sung Park
+- Mohammadreza Salehi
+- Niklas Muennighoff
+- Kyle Lo
+- Luca Soldaini
+- Jiasen Lu
+- Anderson, Taira
+- Erin Bransom
+- Kiana Ehsani
+- Huong Ngo
+- Y. Chen
+- Ajay Patel
+- Mark Yatskar
+- Chris Callison-Burch
+- Andrew Head
+- Rose Hendrix
+- Favyen Bastani
+- Eli VanderBilt
+- Nathan Lambert
+- Yvonne Chou
+- A. Chheda
+- Sparks, Jenna
+- Sam Skjonsberg
+- Michael Schmitz
+- Aaron Sarnat
+- Bischoff, Byron
+- Pete Walsh
+- Chris Newell
+- Piper Wolters
+- Tanmay Gupta
+- Kuo-Hao Zeng
+- Jon Borchardt
+- Dirk Groeneveld
+- Crystal Nam
+- Sophie Lebrecht
+- Caitlin Wittlif
+- Carissa Schoenick
+- Oscar Michel
+- Ranjay Krishna
+- Luca Weihs
+- Noah A. Smith
+- Hannaneh Hajishirzi
+- Ross Girshick
+- Ali Farhadi
+- Aniruddha Kembhavi
+year: 2024
+primary_ids:
+  doi: 10.48550/arxiv.2409.17146
+  arxiv_base_id: '2409.17146'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: https://openalex.org/W4403788644
+canonical_urls:
+- https://openalex.org/W4403788644
+- https://arxiv.org/pdf/2409.17146
+topic_groups:
+- vlm
+tags:
+- foundational
+venue:
+  name: arXiv (Cornell University)
+  tier: workshop_or_minor
+  status: unknown
+  year: 2024
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: medium
+  notes: null
+milestone:
+  field: vlm
+  era: expansion
+  significance: Fully open weights AND data (no distillation from proprietary VLMs) at frontier quality;
+    includes pointing supervision.
+  subarea: frontier
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: openalex
+  source: openalex
+  source_url: https://openalex.org/W4403788644
+  pdf_path: library/molmo-and-pixmo-open-weights-and-open-240917146/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/molmo-and-pixmo-open-weights-and-open-240917146/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:26:01Z'
+  source_updated_at: '2024-09-25'
+  arxiv_version: null
+  pdf_sha256: 54c5e78b4066eef960af1c108d758311b479879b6ba4215570e1c23f5f55510d
+  pdf_bytes: 6576158
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:26:01Z'
+  updated_at: '2026-08-24T03:26:01Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

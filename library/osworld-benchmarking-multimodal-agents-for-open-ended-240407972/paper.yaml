@@ -48,6 +48,7 @@ milestone:
   field: computer_use_agents
   era: expansion
   significance: Real OS-level desktop benchmark across applications.
+  subarea: os_desktop
 knowledge_concepts: []
 versions:
 - version_key: v1

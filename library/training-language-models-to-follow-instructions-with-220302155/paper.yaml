@@ -1,0 +1,78 @@
+canonical_key: arxiv-2203.02155
+slug: training-language-models-to-follow-instructions-with-220302155
+title: Training language models to follow instructions with human feedback
+authors:
+- Long Ouyang
+- Jeff Wu
+- Xu Jiang
+- Diogo Almeida
+- Carroll L. Wainwright
+- Pamela Mishkin
+- Chong Zhang
+- Sandhini Agarwal
+- Katarina Slama
+- Alex Ray
+- John Schulman
+- Jacob Hilton
+- Fraser Kelton
+- Luke Miller
+- Maddie Simens
+- Amanda Askell
+- Peter Welinder
+- Paul Christiano
+- Jan Leike
+- Ryan Lowe
+year: 2022
+primary_ids:
+  doi: null
+  arxiv_base_id: '2203.02155'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2203.02155v1
+- https://arxiv.org/pdf/2203.02155v1
+topic_groups:
+- llm
+- rl
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2022
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: medium
+  notes: null
+milestone:
+  field: llm
+  era: foundational
+  significance: 'InstructGPT: SFT + PPO RLHF; a 1.3B aligned model beat 175B GPT-3 on human preference
+    - the pipeline behind ChatGPT.'
+  subarea: alignment
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v1
+  source: arxiv
+  source_url: https://arxiv.org/abs/2203.02155v1
+  pdf_path: library/training-language-models-to-follow-instructions-with-220302155/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/training-language-models-to-follow-instructions-with-220302155/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:20:40Z'
+  source_updated_at: '2022-03-04T07:04:42Z'
+  arxiv_version: v1
+  pdf_sha256: c1984bb50a5b90fddb895fdc3a0f72e5bc977148c9f63ef6040cbe7a3e1f0d98
+  pdf_bytes: 1797405
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:20:40Z'
+  updated_at: '2026-08-24T03:20:40Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

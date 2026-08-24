@@ -43,6 +43,7 @@ milestone:
   era: foundational
   significance: First UI-focused dual-agent system for Windows, using UI Automation trees to operate native
     applications.
+  subarea: os_desktop
 knowledge_concepts: []
 versions:
 - version_key: v1

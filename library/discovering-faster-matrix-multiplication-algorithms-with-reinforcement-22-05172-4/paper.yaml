@@ -1,0 +1,70 @@
+canonical_key: doi-10-1038-s41586-022-05172-4
+slug: discovering-faster-matrix-multiplication-algorithms-with-reinforcement-22-05172-4
+title: Discovering faster matrix multiplication algorithms with reinforcement learning
+authors:
+- Alhussein Fawzi
+- Matej Balog
+- Aja Huang
+- Thomas Hubert
+- Bernardino Romera‐Paredes
+- Mohammadamin Barekatain
+- Alexander Novikov
+- Francisco J. R. Ruiz
+- Julian Schrittwieser
+- Grzegorz Świrszcz
+- David Silver
+- Demis Hassabis
+- Pushmeet Kohli
+year: 2022
+primary_ids:
+  doi: 10.1038/s41586-022-05172-4
+  arxiv_base_id: null
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: https://openalex.org/W4302010773
+canonical_urls:
+- https://openalex.org/W4302010773
+- https://www.nature.com/articles/s41586-022-05172-4.pdf
+topic_groups:
+- rl
+tags:
+- foundational
+venue:
+  name: Nature
+  tier: unknown
+  status: unknown
+  year: 2022
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: medium
+  notes: null
+milestone:
+  field: rl
+  era: expansion
+  significance: AlphaTensor's AlphaZero-style search found matrix-multiplication algorithms beating a
+    50-year-old record.
+  subarea: games
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: openalex
+  source: openalex
+  source_url: https://openalex.org/W4302010773
+  pdf_path: null
+  summary_path: null
+  metadata_path: library/discovering-faster-matrix-multiplication-algorithms-with-reinforcement-22-05172-4/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:29:53Z'
+  source_updated_at: '2022-10-05'
+  arxiv_version: null
+  pdf_sha256: null
+  pdf_bytes: null
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:29:53Z'
+  updated_at: '2026-08-24T03:29:53Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

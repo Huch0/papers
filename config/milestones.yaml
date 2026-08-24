@@ -610,6 +610,13 @@ fields:
       subarea: gui_grounding
       significance: Scales native GUI agents with stabilized multi-turn RL + unified sandbox; improves
         long-horizon grounding-and-acting over UI-TARS-1.x.
+    - title: 'OSWorld: Benchmarking Multimodal Agents for Open-Ended Tasks in Real Computer
+        Environments'
+      year: 2024
+      era: expansion
+      arxiv: '2404.07972'
+      subarea: os_desktop
+      significance: Real OS-level desktop benchmark across applications.
     - title: OSWorld-Verified
       year: 2025
       era: recent
@@ -666,7 +673,8 @@ fields:
       subarea: enabler_benchmark_survey
       significance: Updated survey framing element localization, knowledge retrieval, long-horizon planning,
         and safe execution.
-    - title: 'OS Agents: A Survey on MLLM-based Agents for Computer, Phone and Browser Use'
+    - title: 'OS Agents: A Survey on MLLM-based Agents for General Computing Devices Use'
+      arxiv: '2508.04482'
       year: 2025
       era: recent
       arxiv: '2508.04482'
@@ -726,21 +734,25 @@ fields:
       year: 2022
       era: emergence
       arxiv: '2210.03629'
+      subarea: prompting_reasoning
       significance: Interleaved reasoning + acting; foundational agent loop.
     - title: 'Toolformer: Language Models Can Teach Themselves to Use Tools'
       year: 2023
       era: foundational
       arxiv: '2302.04761'
+      subarea: tool_use
       significance: Self-supervised tool-use; canonical tool-learning reference.
     - title: 'Reflexion: Language Agents with Verbal Reinforcement Learning'
       year: 2023
       era: foundational
       arxiv: '2303.11366'
+      subarea: prompting_reasoning
       significance: Verbal self-reflection as an inference-time improvement loop.
     - title: 'Tree of Thoughts: Deliberate Problem Solving with Large Language Models'
       year: 2023
       era: expansion
       arxiv: '2305.10601'
+      subarea: prompting_reasoning
       significance: Inference-time search over reasoning states.
     - title: 'Do As I Can, Not As I Say: Grounding Language in Robotic Affordances'
       year: 2022
@@ -759,6 +771,7 @@ fields:
     - title: 'CAMEL: Communicative Agents for "Mind" Exploration of Large Language Model Society'
       year: 2023
       era: foundational
+      arxiv: '2303.17760'
       subarea: multi_agent
       significance: Role-playing two-agent framework for autonomous task solving; early evidence for structured
         multi-agent cooperation.
@@ -1091,6 +1104,7 @@ fields:
     - title: OpenAI o1 System Card
       year: 2024
       era: expansion
+      arxiv: '2412.16720'
       subarea: reasoning
       significance: First production reasoning model trained with RL to think in long chains before answering;
         opened the test-time-compute era.
@@ -1153,6 +1167,7 @@ fields:
     - title: Scaling Up Visual and Vision-Language Representation Learning With Noisy Text Supervision
       year: 2021
       era: emergence
+      arxiv: '2102.05918'
       subarea: contrastive
       significance: ALIGN scaled contrastive pretraining to 1.8B noisy alt-text pairs, showing raw web data
         suffices at scale.
@@ -1206,6 +1221,7 @@ fields:
     - title: 'InstructBLIP: Towards General-purpose Vision-Language Models with Instruction Tuning'
       year: 2023
       era: expansion
+      arxiv: '2305.06500'
       subarea: instruction
       significance: Systematized visual instruction tuning over BLIP-2 with instruction-aware query extraction
         across 26 datasets.
@@ -1213,6 +1229,7 @@ fields:
         Beyond'
       year: 2023
       era: expansion
+      arxiv: '2308.12966'
       subarea: frontier
       significance: Open frontier VLM line adding grounding and OCR-style reading; the base of the dominant
         Qwen-VL series.

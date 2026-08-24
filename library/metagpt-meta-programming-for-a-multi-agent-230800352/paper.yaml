@@ -1,0 +1,73 @@
+canonical_key: arxiv-2308.00352
+slug: metagpt-meta-programming-for-a-multi-agent-230800352
+title: 'MetaGPT: Meta Programming for A Multi-Agent Collaborative Framework'
+authors:
+- Sirui Hong
+- Mingchen Zhuge
+- Jiaqi Chen
+- Xiawu Zheng
+- Yuheng Cheng
+- Ceyao Zhang
+- Jinlin Wang
+- Zili Wang
+- Steven Ka Shing Yau
+- Zijuan Lin
+- Liyang Zhou
+- Chenyu Ran
+- Lingfeng Xiao
+- Chenglin Wu
+- Jürgen Schmidhuber
+year: 2023
+primary_ids:
+  doi: null
+  arxiv_base_id: '2308.00352'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2308.00352v7
+- https://arxiv.org/pdf/2308.00352v7
+topic_groups:
+- agent_harness
+- llm
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2023
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: agent_harness
+  era: foundational
+  significance: Organized LLM agents into an 'AI company' of specialized roles with SOP-encoded workflows;
+    structured multi-agent milestone.
+  subarea: multi_agent
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v7
+  source: arxiv
+  source_url: https://arxiv.org/abs/2308.00352v7
+  pdf_path: library/metagpt-meta-programming-for-a-multi-agent-230800352/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/metagpt-meta-programming-for-a-multi-agent-230800352/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:31:38Z'
+  source_updated_at: '2024-11-01T14:36:52Z'
+  arxiv_version: v7
+  pdf_sha256: 17582e47647fac8eaa3681feade41c8408310c4133acc5c6823565fbe880e1ac
+  pdf_bytes: 16753634
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:31:38Z'
+  updated_at: '2026-08-24T03:31:38Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

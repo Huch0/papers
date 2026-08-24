@@ -33,6 +33,7 @@ milestone:
   era: foundational
   significance: Auto-GUI; screen-only multimodal agent with chain-of-action bypassing HTML/API; early
     vision-centric mobile control model.
+  subarea: mobile
 knowledge_concepts: []
 versions:
 - version_key: v1

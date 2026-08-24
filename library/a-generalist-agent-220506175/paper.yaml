@@ -1,0 +1,77 @@
+canonical_key: arxiv-2205.06175
+slug: a-generalist-agent-220506175
+title: A Generalist Agent
+authors:
+- Scott Reed
+- Konrad Zolna
+- Emilio Parisotto
+- Sergio Gomez Colmenarejo
+- Alexander Novikov
+- Gabriel Barth-Maron
+- Mai Gimenez
+- Yury Sulsky
+- Jackie Kay
+- Jost Tobias Springenberg
+- Tom Eccles
+- Jake Bruce
+- Ali Razavi
+- Ashley Edwards
+- Nicolas Heess
+- Yutian Chen
+- Raia Hadsell
+- Oriol Vinyals
+- Mahyar Bordbar
+- Nando de Freitas
+year: 2022
+primary_ids:
+  doi: null
+  arxiv_base_id: '2205.06175'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2205.06175v3
+- https://arxiv.org/pdf/2205.06175v3
+topic_groups:
+- rl
+tags:
+- foundational
+venue:
+  name: Transactions on Machine Learning Research, 11/2022, https://openreview.net/forum?id=1ikK0kHjvj
+  tier: A_star
+  status: unknown
+  year: 2022
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: medium
+  notes: null
+milestone:
+  field: rl
+  era: expansion
+  significance: 'Gato: a single transformer policy performing 600+ tasks across games, vision, language,
+    and robotics.'
+  subarea: sequence_rl
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v3
+  source: arxiv
+  source_url: https://arxiv.org/abs/2205.06175v3
+  pdf_path: library/a-generalist-agent-220506175/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/a-generalist-agent-220506175/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:29:38Z'
+  source_updated_at: '2022-11-11T10:04:29Z'
+  arxiv_version: v3
+  pdf_sha256: 1d9ce8dfcac0f01296ac1dd6f1c0fbc94f7e180af2956adb5d27689407cf5332
+  pdf_bytes: 7662379
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:29:38Z'
+  updated_at: '2026-08-24T03:29:38Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

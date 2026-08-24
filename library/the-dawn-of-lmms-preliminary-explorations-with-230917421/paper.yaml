@@ -37,6 +37,7 @@ milestone:
   field: computer_use_agents
   era: foundational
   significance: Influential probe of GPT-4V that surfaced visual referring prompting for GUI interaction.
+  subarea: enabler_benchmark_survey
 knowledge_concepts: []
 versions:
 - version_key: v1

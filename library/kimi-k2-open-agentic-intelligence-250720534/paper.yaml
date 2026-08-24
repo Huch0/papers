@@ -1,0 +1,259 @@
+canonical_key: arxiv-2507.20534
+slug: kimi-k2-open-agentic-intelligence-250720534
+title: 'Kimi K2: Open Agentic Intelligence'
+authors:
+- Kimi Team
+- Yifan Bai
+- Yiping Bao
+- Y. Charles
+- Cheng Chen
+- Guanduo Chen
+- Haiting Chen
+- Huarong Chen
+- Jiahao Chen
+- Ningxin Chen
+- Ruijue Chen
+- Yanru Chen
+- Yuankun Chen
+- Yutian Chen
+- Zhuofu Chen
+- Jialei Cui
+- Hao Ding
+- Mengnan Dong
+- Angang Du
+- Chenzhuang Du
+- Dikang Du
+- Yulun Du
+- Yu Fan
+- Yichen Feng
+- Kelin Fu
+- Bofei Gao
+- Chenxiao Gao
+- Hongcheng Gao
+- Peizhong Gao
+- Tong Gao
+- Yuyao Ge
+- Shangyi Geng
+- Qizheng Gu
+- Xinran Gu
+- Longyu Guan
+- Haiqing Guo
+- Jianhang Guo
+- Xiaoru Hao
+- Tianhong He
+- Weiran He
+- Wenyang He
+- Yunjia He
+- Chao Hong
+- Hao Hu
+- Yangyang Hu
+- Zhenxing Hu
+- Weixiao Huang
+- Zhiqi Huang
+- Zihao Huang
+- Tao Jiang
+- Zhejun Jiang
+- Xinyi Jin
+- Yongsheng Kang
+- Guokun Lai
+- Cheng Li
+- Fang Li
+- Haoyang Li
+- Ming Li
+- Wentao Li
+- Yang Li
+- Yanhao Li
+- Yiwei Li
+- Zhaowei Li
+- Zheming Li
+- Hongzhan Lin
+- Xiaohan Lin
+- Zongyu Lin
+- Chengyin Liu
+- Chenyu Liu
+- Hongzhang Liu
+- Jingyuan Liu
+- Junqi Liu
+- Liang Liu
+- Shaowei Liu
+- T. Y. Liu
+- Tianwei Liu
+- Weizhou Liu
+- Yangyang Liu
+- Yibo Liu
+- Yiping Liu
+- Yue Liu
+- Zhengying Liu
+- Enzhe Lu
+- Haoyu Lu
+- Lijun Lu
+- Yashuo Luo
+- Shengling Ma
+- Xinyu Ma
+- Yingwei Ma
+- Shaoguang Mao
+- Jie Mei
+- Xin Men
+- Yibo Miao
+- Siyuan Pan
+- Yebo Peng
+- Ruoyu Qin
+- Zeyu Qin
+- Bowen Qu
+- Zeyu Shang
+- Lidong Shi
+- Shengyuan Shi
+- Feifan Song
+- Jianlin Su
+- Zhengyuan Su
+- Lin Sui
+- Xinjie Sun
+- Flood Sung
+- Yunpeng Tai
+- Heyi Tang
+- Jiawen Tao
+- Qifeng Teng
+- Chaoran Tian
+- Chensi Wang
+- Dinglu Wang
+- Feng Wang
+- Hailong Wang
+- Haiming Wang
+- Jianzhou Wang
+- Jiaxing Wang
+- Jinhong Wang
+- Shengjie Wang
+- Shuyi Wang
+- Si Wang
+- Xinyuan Wang
+- Yao Wang
+- Yejie Wang
+- Yiqin Wang
+- Yuxin Wang
+- Yuzhi Wang
+- Zhaoji Wang
+- Zhengtao Wang
+- Zhengtao Wang
+- Zhexu Wang
+- Chu Wei
+- Qianqian Wei
+- Haoning Wu
+- Wenhao Wu
+- Xingzhe Wu
+- Yuxin Wu
+- Chenjun Xiao
+- Jin Xie
+- Xiaotong Xie
+- Weimin Xiong
+- Boyu Xu
+- Jinjing Xu
+- L. H. Xu
+- Lin Xu
+- Suting Xu
+- Weixin Xu
+- Xinran Xu
+- Yangchuan Xu
+- Ziyao Xu
+- Jing Xu
+- Jing Xu
+- Junjie Yan
+- Yuzi Yan
+- Hao Yang
+- Xiaofei Yang
+- Yi Yang
+- Ying Yang
+- Zhen Yang
+- Zhilin Yang
+- Zonghan Yang
+- Haotian Yao
+- Xingcheng Yao
+- Wenjie Ye
+- Zhuorui Ye
+- Bohong Yin
+- Longhui Yu
+- Enming Yuan
+- Hongbang Yuan
+- Mengjie Yuan
+- Siyu Yuan
+- Haobing Zhan
+- Dehao Zhang
+- Hao Zhang
+- Wanlu Zhang
+- Xiaobin Zhang
+- Yadong Zhang
+- Yangkun Zhang
+- Yichi Zhang
+- Yizhi Zhang
+- Yongting Zhang
+- Yu Zhang
+- Yutao Zhang
+- Yutong Zhang
+- Zheng Zhang
+- Haotian Zhao
+- Yikai Zhao
+- Zijia Zhao
+- Huabin Zheng
+- Shaojie Zheng
+- Longguang Zhong
+- Jianren Zhou
+- Xinyu Zhou
+- Zaida Zhou
+- Jinguo Zhu
+- Zhen Zhu
+- Weiyu Zhuang
+- Xinxing Zu
+year: 2025
+primary_ids:
+  doi: null
+  arxiv_base_id: '2507.20534'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2507.20534v2
+- https://arxiv.org/pdf/2507.20534v2
+topic_groups:
+- llm
+- rl
+- software_engineering_agents
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2025
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: llm
+  era: recent
+  significance: 1T-param open MoE post-trained for agentic tool use with large-scale synthetic trajectories;
+    open agentic frontier marker.
+  subarea: open_models
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v2
+  source: arxiv
+  source_url: https://arxiv.org/abs/2507.20534v2
+  pdf_path: library/kimi-k2-open-agentic-intelligence-250720534/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/kimi-k2-open-agentic-intelligence-250720534/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:21:42Z'
+  source_updated_at: '2026-02-03T04:57:00Z'
+  arxiv_version: v2
+  pdf_sha256: 035062b5e1ab865ffad9f90f81d6c8332f8af805063fac54cc6f2cca1fe608b5
+  pdf_bytes: 5872335
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:21:42Z'
+  updated_at: '2026-08-24T03:21:42Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

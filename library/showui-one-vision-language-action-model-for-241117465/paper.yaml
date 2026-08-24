@@ -40,6 +40,7 @@ milestone:
   era: expansion
   significance: Lightweight (2B) VLA with UI-guided visual-token selection + interleaved VLA streaming;
     strong grounding with little data/tokens.
+  subarea: gui_grounding
 knowledge_concepts: []
 versions:
 - version_key: v1

@@ -1,0 +1,66 @@
+canonical_key: arxiv-2109.01652
+slug: finetuned-language-models-are-zero-shot-learners-210901652
+title: Finetuned Language Models Are Zero-Shot Learners
+authors:
+- Jason Wei
+- Maarten Bosma
+- Vincent Y. Zhao
+- Kelvin Guu
+- Adams Wei Yu
+- Brian Lester
+- Nan Du
+- Andrew M. Dai
+- Quoc V. Le
+year: 2021
+primary_ids:
+  doi: null
+  arxiv_base_id: '2109.01652'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2109.01652v5
+- https://arxiv.org/pdf/2109.01652v5
+topic_groups:
+- llm
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2021
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: medium
+  notes: null
+milestone:
+  field: llm
+  era: foundational
+  significance: FLAN introduced instruction tuning - multi-task instruction fine-tuning gives strong zero-shot
+    generalization.
+  subarea: alignment
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v5
+  source: arxiv
+  source_url: https://arxiv.org/abs/2109.01652v5
+  pdf_path: library/finetuned-language-models-are-zero-shot-learners-210901652/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/finetuned-language-models-are-zero-shot-learners-210901652/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:20:34Z'
+  source_updated_at: '2022-02-08T20:26:45Z'
+  arxiv_version: v5
+  pdf_sha256: 7126b83c5590b9eb4b6e6027446cb88c0aeff132e47d88e9407982b1f7fad044
+  pdf_bytes: 1626775
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:20:34Z'
+  updated_at: '2026-08-24T03:20:34Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

@@ -37,6 +37,7 @@ milestone:
   era: recent
   significance: Wide-scaling via Behavior Best-of-N with a Behavior Judge; ~69.9% on OSWorld (near human)
     with fewer LLM calls than Agent S2.
+  subarea: os_desktop
 knowledge_concepts: []
 versions:
 - version_key: v1

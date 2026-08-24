@@ -1,0 +1,67 @@
+canonical_key: arxiv-2305.16291
+slug: voyager-an-open-ended-embodied-agent-with-230516291
+title: 'Voyager: An Open-Ended Embodied Agent with Large Language Models'
+authors:
+- Guanzhi Wang
+- Yuqi Xie
+- Yunfan Jiang
+- Ajay Mandlekar
+- Chaowei Xiao
+- Yuke Zhu
+- Linxi Fan
+- Anima Anandkumar
+year: 2023
+primary_ids:
+  doi: null
+  arxiv_base_id: '2305.16291'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2305.16291v2
+- https://arxiv.org/pdf/2305.16291v2
+topic_groups:
+- agent_harness
+- llm
+- rl
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2023
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: agent_harness
+  era: foundational
+  significance: Lifelong Minecraft learner - writes and debugs code as actions, grows a persistent skill
+    library, no RL rewards.
+  subarea: embodied
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v2
+  source: arxiv
+  source_url: https://arxiv.org/abs/2305.16291v2
+  pdf_path: library/voyager-an-open-ended-embodied-agent-with-230516291/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/voyager-an-open-ended-embodied-agent-with-230516291/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:31:31Z'
+  source_updated_at: '2023-10-19T16:27:03Z'
+  arxiv_version: v2
+  pdf_sha256: 769a4e33ddeeb73870849232eece49afe882c2d146362e33917ccb432ba0efb8
+  pdf_bytes: 18830859
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:31:31Z'
+  updated_at: '2026-08-24T03:31:31Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

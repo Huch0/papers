@@ -1,0 +1,65 @@
+canonical_key: arxiv-2305.10601
+slug: tree-of-thoughts-deliberate-problem-solving-with-230510601
+title: 'Tree of Thoughts: Deliberate Problem Solving with Large Language Models'
+authors:
+- Shunyu Yao
+- Dian Yu
+- Jeffrey Zhao
+- Izhak Shafran
+- Thomas L. Griffiths
+- Yuan Cao
+- Karthik Narasimhan
+year: 2023
+primary_ids:
+  doi: null
+  arxiv_base_id: '2305.10601'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2305.10601v2
+- https://arxiv.org/pdf/2305.10601v2
+topic_groups:
+- agent_harness
+- llm
+- rl
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2023
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: agent_harness
+  era: expansion
+  significance: Inference-time search over reasoning states.
+  subarea: prompting_reasoning
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v2
+  source: arxiv
+  source_url: https://arxiv.org/abs/2305.10601v2
+  pdf_path: library/tree-of-thoughts-deliberate-problem-solving-with-230510601/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/tree-of-thoughts-deliberate-problem-solving-with-230510601/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:31:14Z'
+  source_updated_at: '2023-12-03T22:50:35Z'
+  arxiv_version: v2
+  pdf_sha256: 79c5237e3f63953a73f2b0d6894327702ee1f7e981450c251bb1b5cb4f8d7b8f
+  pdf_bytes: 799685
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:31:14Z'
+  updated_at: '2026-08-24T03:31:14Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

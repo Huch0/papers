@@ -42,8 +42,10 @@ user:
   notes: null
 milestone:
   field: computer_use_agents
-  era: expansion
-  significance: VLM purpose-built for GUI grounding and action.
+  era: foundational
+  significance: First large (18B) screenshot-only VLM with high-res cross-attention beating HTML methods
+    on Mind2Web/AITW; native GUI-VLM paradigm.
+  subarea: gui_grounding
 knowledge_concepts: []
 versions:
 - version_key: v1

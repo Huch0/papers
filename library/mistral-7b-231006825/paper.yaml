@@ -1,0 +1,75 @@
+canonical_key: arxiv-2310.06825
+slug: mistral-7b-231006825
+title: Mistral 7B
+authors:
+- Albert Q. Jiang
+- Alexandre Sablayrolles
+- Arthur Mensch
+- Chris Bamford
+- Devendra Singh Chaplot
+- Diego de las Casas
+- Florian Bressand
+- Gianna Lengyel
+- Guillaume Lample
+- Lucile Saulnier
+- Lélio Renard Lavaud
+- Marie-Anne Lachaux
+- Pierre Stock
+- Teven Le Scao
+- Thibaut Lavril
+- Thomas Wang
+- Timothée Lacroix
+- William El Sayed
+year: 2023
+primary_ids:
+  doi: null
+  arxiv_base_id: '2310.06825'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2310.06825v1
+- https://arxiv.org/pdf/2310.06825v1
+topic_groups:
+- llm
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2023
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: medium
+  notes: null
+milestone:
+  field: llm
+  era: expansion
+  significance: 7.3B model beating Llama 2 13B on all benchmarks via grouped-query and sliding-window
+    attention; design beats sheer scale.
+  subarea: efficiency
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v1
+  source: arxiv
+  source_url: https://arxiv.org/abs/2310.06825v1
+  pdf_path: library/mistral-7b-231006825/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/mistral-7b-231006825/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:21:10Z'
+  source_updated_at: '2023-10-10T17:54:58Z'
+  arxiv_version: v1
+  pdf_sha256: dfbac4e7035344b305c947481f2e7e8a02f7a24a563917eb6e47f6591d14c5ae
+  pdf_bytes: 3749788
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:21:10Z'
+  updated_at: '2026-08-24T03:21:10Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

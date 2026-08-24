@@ -42,6 +42,7 @@ milestone:
   field: computer_use_agents
   era: expansion
   significance: Comprehensive survey mapping GUI-agent frameworks, data, large action models, and benchmarks.
+  subarea: enabler_benchmark_survey
 knowledge_concepts: []
 versions:
 - version_key: v1

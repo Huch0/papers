@@ -1,0 +1,67 @@
+canonical_key: arxiv-1710.02298
+slug: rainbow-combining-improvements-in-deep-reinforcement-learning-171002298
+title: 'Rainbow: Combining Improvements in Deep Reinforcement Learning'
+authors:
+- Matteo Hessel
+- Joseph Modayil
+- Hado van Hasselt
+- Tom Schaul
+- Georg Ostrovski
+- Will Dabney
+- Dan Horgan
+- Bilal Piot
+- Mohammad Azar
+- David Silver
+year: 2017
+primary_ids:
+  doi: null
+  arxiv_base_id: '1710.02298'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/1710.02298v1
+- https://arxiv.org/pdf/1710.02298v1
+topic_groups:
+- rl
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2017
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: medium
+  notes: null
+milestone:
+  field: rl
+  era: foundational
+  significance: Combined six DQN enhancements into one SOTA Atari agent, showing the extensions are largely
+    complementary.
+  subarea: value_based
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v1
+  source: arxiv
+  source_url: https://arxiv.org/abs/1710.02298v1
+  pdf_path: library/rainbow-combining-improvements-in-deep-reinforcement-learning-171002298/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/rainbow-combining-improvements-in-deep-reinforcement-learning-171002298/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:27:56Z'
+  source_updated_at: '2017-10-06T07:45:46Z'
+  arxiv_version: v1
+  pdf_sha256: 0a209934694aa5575fb9bbce8db1c3a6a25a42e152df94eae7b8eacdc1dfc821
+  pdf_bytes: 1536440
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:27:56Z'
+  updated_at: '2026-08-24T03:27:56Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

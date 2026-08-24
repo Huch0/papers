@@ -1,0 +1,88 @@
+canonical_key: arxiv-2005.14165
+slug: language-models-are-few-shot-learners-200514165
+title: Language Models are Few-Shot Learners
+authors:
+- Tom B. Brown
+- Benjamin Mann
+- Nick Ryder
+- Melanie Subbiah
+- Jared Kaplan
+- Prafulla Dhariwal
+- Arvind Neelakantan
+- Pranav Shyam
+- Girish Sastry
+- Amanda Askell
+- Sandhini Agarwal
+- Ariel Herbert-Voss
+- Gretchen Krueger
+- Tom Henighan
+- Rewon Child
+- Aditya Ramesh
+- Daniel M. Ziegler
+- Jeffrey Wu
+- Clemens Winter
+- Christopher Hesse
+- Mark Chen
+- Eric Sigler
+- Mateusz Litwin
+- Scott Gray
+- Benjamin Chess
+- Jack Clark
+- Christopher Berner
+- Sam McCandlish
+- Alec Radford
+- Ilya Sutskever
+- Dario Amodei
+year: 2020
+primary_ids:
+  doi: null
+  arxiv_base_id: '2005.14165'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2005.14165v4
+- https://arxiv.org/pdf/2005.14165v4
+topic_groups:
+- llm
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2020
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: medium
+  notes: null
+milestone:
+  field: llm
+  era: foundational
+  significance: GPT-3 (175B) showed emergent few-shot in-context learning, popularizing prompting over
+    fine-tuning as scale unlocks abilities.
+  subarea: scaling
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v4
+  source: arxiv
+  source_url: https://arxiv.org/abs/2005.14165v4
+  pdf_path: library/language-models-are-few-shot-learners-200514165/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/language-models-are-few-shot-learners-200514165/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:20:30Z'
+  source_updated_at: '2020-07-22T19:47:17Z'
+  arxiv_version: v4
+  pdf_sha256: 97fd272f1fdfc18677462d0292f5fbf26ca86b4d1b485c2dba03269b643a0e83
+  pdf_bytes: 6768044
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:20:30Z'
+  updated_at: '2026-08-24T03:20:30Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

@@ -1,0 +1,84 @@
+canonical_key: arxiv-2305.06500
+version_key: v1
+title: 'InstructBLIP: Towards General-purpose Vision-Language Models with Instruction Tuning'
+authors:
+- Wenliang Dai
+- Junnan Li
+- Dongxu Li
+- Anthony Meng Huat Tiong
+- Junqi Zhao
+- Weisheng Wang
+- Boyang Li
+- Pascale Fung
+- Steven Hoi
+abstract: Large-scale pre-training and instruction tuning have been successful at creating general-purpose
+  language models with broad competence. However, building general-purpose vision-language models is challenging
+  due to the rich input distributions and task diversity resulting from the additional visual input. Although
+  vision-language pretraining has been widely studied, vision-language instruction tuning remains under-explored.
+  In this paper, we conduct a systematic and comprehensive study on vision-language instruction tuning
+  based on the pretrained BLIP-2 models. We gather 26 publicly available datasets, covering a wide variety
+  of tasks and capabilities, and transform them into instruction tuning format. Additionally, we introduce
+  an instruction-aware Query Transformer, which extracts informative features tailored to the given instruction.
+  Trained on 13 held-in datasets, InstructBLIP attains state-of-the-art zero-shot performance across all
+  13 held-out datasets, substantially outperforming BLIP-2 and larger Flamingo models. Our models also
+  lead to state-of-the-art performance when finetuned on individual downstream tasks (e.g., 90.7% accuracy
+  on ScienceQA questions with image contexts). Furthermore, we qualitatively demonstrate the advantages
+  of InstructBLIP over concurrent multimodal models. All InstructBLIP models are open-sourced at https://github.com/salesforce/LAVIS/tree/main/projects/instructblip.
+venue: arXiv
+year: 2023
+source: arxiv
+source_url: https://arxiv.org/abs/2305.06500v2
+pdf_url: https://arxiv.org/pdf/2305.06500v2
+pdf_sha256: 31c03f3ee54016e6da875593ed9d98419899d4164af638dc8cca76a4871beb35
+fetched_at: '2026-08-24T03:36:48Z'
+source_updated_at: '2023-06-15T08:00:18Z'
+ids:
+  doi: null
+  arxiv_id: 2305.06500v2
+  arxiv_base_id: '2305.06500'
+  arxiv_version: v2
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- llm
+- vlm
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: medium
+  rationale: 'score=65 -> READ_SOON | strong: novelty(0.80), artifact_availability(0.80), interest_fit(0.55)
+    | interests: llm:instruction tuning, llm:pretraining, llm:group:llm, vlm:vision-language model | milestone/foundational
+    floor applied'
+  matched_interests:
+  - llm:instruction tuning
+  - llm:pretraining
+  - llm:group:llm
+  - vlm:vision-language model
+  - vlm:group:vlm
+  negative_signals: []
+  subscores:
+    interest_fit: 0.55
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 0.8
+    artifact_availability: 0.8
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/instructblip-towards-general-purpose-vision-language-models-230506500/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

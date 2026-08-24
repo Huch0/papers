@@ -1,0 +1,85 @@
+canonical_key: arxiv-2205.01068
+version_key: v1
+title: 'OPT: Open Pre-trained Transformer Language Models'
+authors:
+- Susan Zhang
+- Stephen Roller
+- Naman Goyal
+- Mikel Artetxe
+- Moya Chen
+- Shuohui Chen
+- Christopher Dewan
+- Mona Diab
+- Xian Li
+- Xi Victoria Lin
+- Todor Mihaylov
+- Myle Ott
+- Sam Shleifer
+- Kurt Shuster
+- Daniel Simig
+- Punit Singh Koura
+- Anjali Sridhar
+- Tianlu Wang
+- Luke Zettlemoyer
+abstract: Large language models, which are often trained for hundreds of thousands of compute days, have
+  shown remarkable capabilities for zero- and few-shot learning. Given their computational cost, these
+  models are difficult to replicate without significant capital. For the few that are available through
+  APIs, no access is granted to the full model weights, making them difficult to study. We present Open
+  Pre-trained Transformers (OPT), a suite of decoder-only pre-trained transformers ranging from 125M to
+  175B parameters, which we aim to fully and responsibly share with interested researchers. We show that
+  OPT-175B is comparable to GPT-3, while requiring only 1/7th the carbon footprint to develop. We are
+  also releasing our logbook detailing the infrastructure challenges we faced, along with code for experimenting
+  with all of the released models.
+venue: arXiv
+year: 2022
+source: arxiv
+source_url: https://arxiv.org/abs/2205.01068v4
+pdf_url: https://arxiv.org/pdf/2205.01068v4
+pdf_sha256: dc88168a2514e4c66a5a791cab6dfacae9bbd566a3d86a119add151f31484d87
+fetched_at: '2026-08-24T03:20:46Z'
+source_updated_at: '2022-06-21T17:04:40Z'
+ids:
+  doi: null
+  arxiv_id: 2205.01068v4
+  arxiv_base_id: '2205.01068'
+  arxiv_version: v4
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- llm
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: medium
+  rationale: 'score=65 -> READ_SOON | strong: interest_fit(0.50), venue_quality(0.40) | interests: llm:large
+    language model, llm:group:llm | milestone/foundational floor applied'
+  matched_interests:
+  - llm:large language model
+  - llm:group:llm
+  negative_signals: []
+  subscores:
+    interest_fit: 0.501
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 0.0
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/opt-open-pre-trained-transformer-language-models-220501068/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

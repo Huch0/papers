@@ -1,0 +1,92 @@
+canonical_key: arxiv-2304.07327
+version_key: v1
+title: OpenAssistant Conversations -- Democratizing Large Language Model Alignment
+authors:
+- Andreas Köpf
+- Yannic Kilcher
+- Dimitri von Rütte
+- Sotiris Anagnostidis
+- Zhi-Rui Tam
+- Keith Stevens
+- Abdullah Barhoum
+- Nguyen Minh Duc
+- Oliver Stanley
+- Richárd Nagyfi
+- Shahul ES
+- Sameer Suri
+- David Glushkov
+- Arnav Dantuluri
+- Andrew Maguire
+- Christoph Schuhmann
+- Huu Nguyen
+- Alexander Mattick
+abstract: Aligning large language models (LLMs) with human preferences has proven to drastically improve
+  usability and has driven rapid adoption as demonstrated by ChatGPT. Alignment techniques such as supervised
+  fine-tuning (SFT) and reinforcement learning from human feedback (RLHF) greatly reduce the required
+  skill and domain knowledge to effectively harness the capabilities of LLMs, increasing their accessibility
+  and utility across various domains. However, state-of-the-art alignment techniques like RLHF rely on
+  high-quality human feedback data, which is expensive to create and often remains proprietary. In an
+  effort to democratize research on large-scale alignment, we release OpenAssistant Conversations, a human-generated,
+  human-annotated assistant-style conversation corpus consisting of 161,443 messages in 35 different languages,
+  annotated with 461,292 quality ratings, resulting in over 10,000 complete and fully annotated conversation
+  trees. The corpus is a product of a worldwide crowd-sourcing effort involving over 13,500 volunteers.
+  Models trained on OpenAssistant Conversations show consistent improvements on standard benchmarks over
+  respective base models. We release our code and data under a fully permissive licence.
+venue: arXiv
+year: 2023
+source: arxiv
+source_url: https://arxiv.org/abs/2304.07327v2
+pdf_url: https://arxiv.org/pdf/2304.07327v2
+pdf_sha256: 5ab012e9839b32efacd7eb1bca89ca7c6d29e49d9a6b8d23d23ea97a6916d62f
+fetched_at: '2026-08-24T03:20:57Z'
+source_updated_at: '2023-10-31T11:38:07Z'
+ids:
+  doi: null
+  arxiv_id: 2304.07327v2
+  arxiv_base_id: '2304.07327'
+  arxiv_version: v2
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- llm
+- rl
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: medium
+  rationale: 'score=65 -> READ_SOON | strong: interest_fit(0.55), novelty(0.55), artifact_availability(0.55)
+    | interests: llm:large language model, llm:RLHF, llm:group:llm, rl:reinforcement learning | milestone/foundational
+    floor applied'
+  matched_interests:
+  - llm:large language model
+  - llm:RLHF
+  - llm:group:llm
+  - rl:reinforcement learning
+  - rl:group:rl
+  negative_signals: []
+  subscores:
+    interest_fit: 0.55
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.36
+    novelty: 0.55
+    artifact_availability: 0.55
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/openassistant-conversations-democratizing-large-language-model-alignment-230407327/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

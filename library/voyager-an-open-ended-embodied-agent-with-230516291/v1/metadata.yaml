@@ -1,0 +1,84 @@
+canonical_key: arxiv-2305.16291
+version_key: v1
+title: 'Voyager: An Open-Ended Embodied Agent with Large Language Models'
+authors:
+- Guanzhi Wang
+- Yuqi Xie
+- Yunfan Jiang
+- Ajay Mandlekar
+- Chaowei Xiao
+- Yuke Zhu
+- Linxi Fan
+- Anima Anandkumar
+abstract: 'We introduce Voyager, the first LLM-powered embodied lifelong learning agent in Minecraft that
+  continuously explores the world, acquires diverse skills, and makes novel discoveries without human
+  intervention. Voyager consists of three key components: 1) an automatic curriculum that maximizes exploration,
+  2) an ever-growing skill library of executable code for storing and retrieving complex behaviors, and
+  3) a new iterative prompting mechanism that incorporates environment feedback, execution errors, and
+  self-verification for program improvement. Voyager interacts with GPT-4 via blackbox queries, which
+  bypasses the need for model parameter fine-tuning. The skills developed by Voyager are temporally extended,
+  interpretable, and compositional, which compounds the agent''s abilities rapidly and alleviates catastrophic
+  forgetting. Empirically, Voyager shows strong in-context lifelong learning capability and exhibits exceptional
+  proficiency in playing Minecraft. It obtains 3.3x more unique items, travels 2.3x longer distances,
+  and unlocks key tech tree milestones up to 15.3x faster than prior SOTA. Voyager is able to utilize
+  the learned skill library in a new Minecraft world to solve novel tasks from scratch, while other techniques
+  struggle to generalize. We open-source our full codebase and prompts at https://voyager.minedojo.org/.'
+venue: arXiv
+year: 2023
+source: arxiv
+source_url: https://arxiv.org/abs/2305.16291v2
+pdf_url: https://arxiv.org/pdf/2305.16291v2
+pdf_sha256: 769a4e33ddeeb73870849232eece49afe882c2d146362e33917ccb432ba0efb8
+fetched_at: '2026-08-24T03:31:23Z'
+source_updated_at: '2023-10-19T16:27:03Z'
+ids:
+  doi: null
+  arxiv_id: 2305.16291v2
+  arxiv_base_id: '2305.16291'
+  arxiv_version: v2
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- agent_harness
+- llm
+- rl
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: novelty(1.00), interest_fit(0.73), artifact_availability(0.55)
+    | interests: agent_harness:group:agent_harness, llm:large language model, llm:group:llm, rl:exploration
+    | milestone/foundational floor applied'
+  matched_interests:
+  - agent_harness:group:agent_harness
+  - llm:large language model
+  - llm:group:llm
+  - rl:exploration
+  - rl:group:rl
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.36
+    novelty: 1.0
+    artifact_availability: 0.55
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/voyager-an-open-ended-embodied-agent-with-230516291/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

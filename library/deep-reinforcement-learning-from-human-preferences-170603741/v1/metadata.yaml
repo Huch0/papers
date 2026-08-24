@@ -1,0 +1,73 @@
+canonical_key: arxiv-1706.03741
+version_key: v1
+title: Deep reinforcement learning from human preferences
+authors:
+- Paul Christiano
+- Jan Leike
+- Tom B. Brown
+- Miljan Martic
+- Shane Legg
+- Dario Amodei
+abstract: For sophisticated reinforcement learning (RL) systems to interact usefully with real-world environments,
+  we need to communicate complex goals to these systems. In this work, we explore goals defined in terms
+  of (non-expert) human preferences between pairs of trajectory segments. We show that this approach can
+  effectively solve complex RL tasks without access to the reward function, including Atari games and
+  simulated robot locomotion, while providing feedback on less than one percent of our agent's interactions
+  with the environment. This reduces the cost of human oversight far enough that it can be practically
+  applied to state-of-the-art RL systems. To demonstrate the flexibility of our approach, we show that
+  we can successfully train complex novel behaviors with about an hour of human time. These behaviors
+  and environments are considerably more complex than any that have been previously learned from human
+  feedback.
+venue: arXiv
+year: 2017
+source: arxiv
+source_url: https://arxiv.org/abs/1706.03741v4
+pdf_url: https://arxiv.org/pdf/1706.03741v4
+pdf_sha256: 4c2b5a0ff6f9cd6696d3e9c8263efbbe701123d4fa09f22bf28d6ef861b73a2a
+fetched_at: '2026-08-24T03:27:48Z'
+source_updated_at: '2023-02-17T17:00:34Z'
+ids:
+  doi: null
+  arxiv_id: 1706.03741v4
+  arxiv_base_id: '1706.03741'
+  arxiv_version: v4
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- rl
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: medium
+  rationale: 'score=65 -> READ_SOON | strong: novelty(0.80), harness_relevance(0.52), interest_fit(0.50)
+    | interests: rl:reinforcement learning, rl:group:rl | milestone/foundational floor applied'
+  matched_interests:
+  - rl:reinforcement learning
+  - rl:group:rl
+  negative_signals: []
+  subscores:
+    interest_fit: 0.501
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.52
+    novelty: 0.8
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/deep-reinforcement-learning-from-human-preferences-170603741/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

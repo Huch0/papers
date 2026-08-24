@@ -1,0 +1,64 @@
+canonical_key: arxiv-2303.17760
+slug: camel-communicative-agents-for-mind-exploration-of-230317760
+title: 'CAMEL: Communicative Agents for "Mind" Exploration of Large Language Model Society'
+authors:
+- Guohao Li
+- Hasan Abed Al Kader Hammoud
+- Hani Itani
+- Dmitrii Khizbullin
+- Bernard Ghanem
+year: 2023
+primary_ids:
+  doi: null
+  arxiv_base_id: '2303.17760'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2303.17760v2
+- https://arxiv.org/pdf/2303.17760v2
+topic_groups:
+- agent_harness
+- llm
+- rl
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2023
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: agent_harness
+  era: foundational
+  significance: Role-playing two-agent framework for autonomous task solving; early evidence for structured
+    multi-agent cooperation.
+  subarea: multi_agent
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v2
+  source: arxiv
+  source_url: https://arxiv.org/abs/2303.17760v2
+  pdf_path: library/camel-communicative-agents-for-mind-exploration-of-230317760/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/camel-communicative-agents-for-mind-exploration-of-230317760/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:37:43Z'
+  source_updated_at: '2023-11-02T17:34:57Z'
+  arxiv_version: v2
+  pdf_sha256: 926c73c2ae9f9abc7612ab58373e428476f4de55db78646ed59de09810db7777
+  pdf_bytes: 7536497
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:37:43Z'
+  updated_at: '2026-08-24T03:37:43Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

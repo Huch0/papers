@@ -1,0 +1,69 @@
+canonical_key: arxiv-1912.01603
+version_key: v1
+title: 'Dream to Control: Learning Behaviors by Latent Imagination'
+authors:
+- Danijar Hafner
+- Timothy Lillicrap
+- Jimmy Ba
+- Mohammad Norouzi
+abstract: Learned world models summarize an agent's experience to facilitate learning complex behaviors.
+  While learning world models from high-dimensional sensory inputs is becoming feasible through deep learning,
+  there are many potential ways for deriving behaviors from them. We present Dreamer, a reinforcement
+  learning agent that solves long-horizon tasks from images purely by latent imagination. We efficiently
+  learn behaviors by propagating analytic gradients of learned state values back through trajectories
+  imagined in the compact state space of a learned world model. On 20 challenging visual control tasks,
+  Dreamer exceeds existing approaches in data-efficiency, computation time, and final performance.
+venue: arXiv
+year: 2019
+source: arxiv
+source_url: https://arxiv.org/abs/1912.01603v3
+pdf_url: https://arxiv.org/pdf/1912.01603v3
+pdf_sha256: 318891d59ba0065f57eb0e735735700e5eb528f53bf08b81c773437385586c64
+fetched_at: '2026-08-24T03:28:21Z'
+source_updated_at: '2020-03-17T17:10:58Z'
+ids:
+  doi: null
+  arxiv_id: 1912.01603v3
+  arxiv_base_id: '1912.01603'
+  arxiv_version: v3
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- rl
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: medium
+  rationale: 'score=65 -> READ_SOON | strong: interest_fit(0.55), venue_quality(0.40) | interests: rl:reinforcement
+    learning, rl:world model, rl:group:rl | milestone/foundational floor applied'
+  matched_interests:
+  - rl:reinforcement learning
+  - rl:world model
+  - rl:group:rl
+  negative_signals: []
+  subscores:
+    interest_fit: 0.55
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 0.0
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/dream-to-control-learning-behaviors-by-latent-191201603/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

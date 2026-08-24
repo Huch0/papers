@@ -38,6 +38,7 @@ milestone:
   era: expansion
   significance: MCTS-driven multi-agent system; WebArena SOTA; advanced strategic exploration/planning
     for web agents.
+  subarea: web
 knowledge_concepts: []
 versions:
 - version_key: v1

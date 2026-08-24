@@ -33,7 +33,9 @@ user:
 milestone:
   field: computer_use_agents
   era: emergence
-  significance: First open-domain web-interaction RL platform (MiniWoB lineage).
+  significance: First open-domain platform/benchmark (incl. MiniWoB) for low-level keyboard/mouse web
+    actions; founded the field.
+  subarea: web
 knowledge_concepts: []
 versions:
 - version_key: v1

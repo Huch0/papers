@@ -52,12 +52,13 @@ scoring:
   label: READ_SOON
   confidence: high
   rationale: 'score=65 -> READ_SOON | strong: recency(1.00), artifact_availability(0.80), interest_fit(0.73)
-    | interests: computer_use_agents:group:computer_use_agents, general_agent_methods:reflection, general_agent_methods:group:general_agent_methods
-    | milestone/foundational floor applied'
+    | interests: computer_use_agents:group:computer_use_agents, general_agent_methods:reflection, general_agent_methods:group:general_agent_methods,
+    llm:large language model | milestone/foundational floor applied'
   matched_interests:
   - computer_use_agents:group:computer_use_agents
   - general_agent_methods:reflection
   - general_agent_methods:group:general_agent_methods
+  - llm:large language model
   negative_signals: []
   subscores:
     interest_fit: 0.73

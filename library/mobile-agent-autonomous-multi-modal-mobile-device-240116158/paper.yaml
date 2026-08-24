@@ -39,6 +39,7 @@ milestone:
   era: foundational
   significance: Vision-centric agent using visual perception tools (no XML/metadata) + Mobile-Eval benchmark;
     launched the Mobile-Agent line.
+  subarea: mobile
 knowledge_concepts: []
 versions:
 - version_key: v1

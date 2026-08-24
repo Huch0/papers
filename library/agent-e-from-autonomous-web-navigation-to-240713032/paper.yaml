@@ -37,6 +37,7 @@ milestone:
   era: expansion
   significance: Hierarchical planner-browser agent; SOTA on WebVoyager and reusable design principles
     for agentic web systems.
+  subarea: web
 knowledge_concepts: []
 versions:
 - version_key: v1

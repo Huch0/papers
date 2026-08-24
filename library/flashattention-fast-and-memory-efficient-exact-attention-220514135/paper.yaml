@@ -1,0 +1,62 @@
+canonical_key: arxiv-2205.14135
+slug: flashattention-fast-and-memory-efficient-exact-attention-220514135
+title: 'FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness'
+authors:
+- Tri Dao
+- Daniel Y. Fu
+- Stefano Ermon
+- Atri Rudra
+- Christopher Ré
+year: 2022
+primary_ids:
+  doi: null
+  arxiv_base_id: '2205.14135'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2205.14135v2
+- https://arxiv.org/pdf/2205.14135v2
+topic_groups:
+- llm
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2022
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: medium
+  notes: null
+milestone:
+  field: llm
+  era: foundational
+  significance: IO-aware exact attention kernel; made long-context training practical and became standard
+    infrastructure in every LLM stack.
+  subarea: efficiency
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v2
+  source: arxiv
+  source_url: https://arxiv.org/abs/2205.14135v2
+  pdf_path: library/flashattention-fast-and-memory-efficient-exact-attention-220514135/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/flashattention-fast-and-memory-efficient-exact-attention-220514135/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:20:48Z'
+  source_updated_at: '2022-06-23T17:53:32Z'
+  arxiv_version: v2
+  pdf_sha256: ca7f9fda10b90fc05dd291a3accc85e9c1a4a860b99b31928dab03ed3fcb14e4
+  pdf_bytes: 2630825
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:20:48Z'
+  updated_at: '2026-08-24T03:20:48Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

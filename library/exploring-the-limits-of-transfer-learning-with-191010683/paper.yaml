@@ -1,0 +1,67 @@
+canonical_key: arxiv-1910.10683
+slug: exploring-the-limits-of-transfer-learning-with-191010683
+title: Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer
+authors:
+- Colin Raffel
+- Noam Shazeer
+- Adam Roberts
+- Katherine Lee
+- Sharan Narang
+- Michael Matena
+- Yanqi Zhou
+- Wei Li
+- Peter J. Liu
+year: 2019
+primary_ids:
+  doi: null
+  arxiv_base_id: '1910.10683'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/1910.10683v4
+- https://arxiv.org/pdf/1910.10683v4
+topic_groups:
+- llm
+- rl
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2019
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: medium
+  notes: null
+milestone:
+  field: llm
+  era: emergence
+  significance: T5 reframed all NLP as text-to-text; one span-corruption-pretrained encoder-decoder fine-tunes
+    to SOTA across diverse tasks.
+  subarea: pretraining
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v4
+  source: arxiv
+  source_url: https://arxiv.org/abs/1910.10683v4
+  pdf_path: library/exploring-the-limits-of-transfer-learning-with-191010683/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/exploring-the-limits-of-transfer-learning-with-191010683/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:20:23Z'
+  source_updated_at: '2023-09-19T15:14:48Z'
+  arxiv_version: v4
+  pdf_sha256: ad07e47cedf437a4156419ce5d3076e08a3e59bbfd6dac7cc53df1009cdcbe7f
+  pdf_bytes: 1190021
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:20:23Z'
+  updated_at: '2026-08-24T03:20:23Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

@@ -38,6 +38,7 @@ milestone:
   era: expansion
   significance: MoE grounding model (3.9B active) with large synthesized instruction data and context-aware
     grounding; topped ScreenSpot averages.
+  subarea: gui_grounding
 knowledge_concepts: []
 versions:
 - version_key: v1

@@ -1,0 +1,280 @@
+canonical_key: arxiv-2507.20534
+version_key: v1
+title: 'Kimi K2: Open Agentic Intelligence'
+authors:
+- Kimi Team
+- Yifan Bai
+- Yiping Bao
+- Y. Charles
+- Cheng Chen
+- Guanduo Chen
+- Haiting Chen
+- Huarong Chen
+- Jiahao Chen
+- Ningxin Chen
+- Ruijue Chen
+- Yanru Chen
+- Yuankun Chen
+- Yutian Chen
+- Zhuofu Chen
+- Jialei Cui
+- Hao Ding
+- Mengnan Dong
+- Angang Du
+- Chenzhuang Du
+- Dikang Du
+- Yulun Du
+- Yu Fan
+- Yichen Feng
+- Kelin Fu
+- Bofei Gao
+- Chenxiao Gao
+- Hongcheng Gao
+- Peizhong Gao
+- Tong Gao
+- Yuyao Ge
+- Shangyi Geng
+- Qizheng Gu
+- Xinran Gu
+- Longyu Guan
+- Haiqing Guo
+- Jianhang Guo
+- Xiaoru Hao
+- Tianhong He
+- Weiran He
+- Wenyang He
+- Yunjia He
+- Chao Hong
+- Hao Hu
+- Yangyang Hu
+- Zhenxing Hu
+- Weixiao Huang
+- Zhiqi Huang
+- Zihao Huang
+- Tao Jiang
+- Zhejun Jiang
+- Xinyi Jin
+- Yongsheng Kang
+- Guokun Lai
+- Cheng Li
+- Fang Li
+- Haoyang Li
+- Ming Li
+- Wentao Li
+- Yang Li
+- Yanhao Li
+- Yiwei Li
+- Zhaowei Li
+- Zheming Li
+- Hongzhan Lin
+- Xiaohan Lin
+- Zongyu Lin
+- Chengyin Liu
+- Chenyu Liu
+- Hongzhang Liu
+- Jingyuan Liu
+- Junqi Liu
+- Liang Liu
+- Shaowei Liu
+- T. Y. Liu
+- Tianwei Liu
+- Weizhou Liu
+- Yangyang Liu
+- Yibo Liu
+- Yiping Liu
+- Yue Liu
+- Zhengying Liu
+- Enzhe Lu
+- Haoyu Lu
+- Lijun Lu
+- Yashuo Luo
+- Shengling Ma
+- Xinyu Ma
+- Yingwei Ma
+- Shaoguang Mao
+- Jie Mei
+- Xin Men
+- Yibo Miao
+- Siyuan Pan
+- Yebo Peng
+- Ruoyu Qin
+- Zeyu Qin
+- Bowen Qu
+- Zeyu Shang
+- Lidong Shi
+- Shengyuan Shi
+- Feifan Song
+- Jianlin Su
+- Zhengyuan Su
+- Lin Sui
+- Xinjie Sun
+- Flood Sung
+- Yunpeng Tai
+- Heyi Tang
+- Jiawen Tao
+- Qifeng Teng
+- Chaoran Tian
+- Chensi Wang
+- Dinglu Wang
+- Feng Wang
+- Hailong Wang
+- Haiming Wang
+- Jianzhou Wang
+- Jiaxing Wang
+- Jinhong Wang
+- Shengjie Wang
+- Shuyi Wang
+- Si Wang
+- Xinyuan Wang
+- Yao Wang
+- Yejie Wang
+- Yiqin Wang
+- Yuxin Wang
+- Yuzhi Wang
+- Zhaoji Wang
+- Zhengtao Wang
+- Zhengtao Wang
+- Zhexu Wang
+- Chu Wei
+- Qianqian Wei
+- Haoning Wu
+- Wenhao Wu
+- Xingzhe Wu
+- Yuxin Wu
+- Chenjun Xiao
+- Jin Xie
+- Xiaotong Xie
+- Weimin Xiong
+- Boyu Xu
+- Jinjing Xu
+- L. H. Xu
+- Lin Xu
+- Suting Xu
+- Weixin Xu
+- Xinran Xu
+- Yangchuan Xu
+- Ziyao Xu
+- Jing Xu
+- Jing Xu
+- Junjie Yan
+- Yuzi Yan
+- Hao Yang
+- Xiaofei Yang
+- Yi Yang
+- Ying Yang
+- Zhen Yang
+- Zhilin Yang
+- Zonghan Yang
+- Haotian Yao
+- Xingcheng Yao
+- Wenjie Ye
+- Zhuorui Ye
+- Bohong Yin
+- Longhui Yu
+- Enming Yuan
+- Hongbang Yuan
+- Mengjie Yuan
+- Siyu Yuan
+- Haobing Zhan
+- Dehao Zhang
+- Hao Zhang
+- Wanlu Zhang
+- Xiaobin Zhang
+- Yadong Zhang
+- Yangkun Zhang
+- Yichi Zhang
+- Yizhi Zhang
+- Yongting Zhang
+- Yu Zhang
+- Yutao Zhang
+- Yutong Zhang
+- Zheng Zhang
+- Haotian Zhao
+- Yikai Zhao
+- Zijia Zhao
+- Huabin Zheng
+- Shaojie Zheng
+- Longguang Zhong
+- Jianren Zhou
+- Xinyu Zhou
+- Zaida Zhou
+- Jinguo Zhu
+- Zhen Zhu
+- Weiyu Zhuang
+- Xinxing Zu
+abstract: We introduce Kimi K2, a Mixture-of-Experts (MoE) large language model with 32 billion activated
+  parameters and 1 trillion total parameters. We propose the MuonClip optimizer, which improves upon Muon
+  with a novel QK-clip technique to address training instability while enjoying the advanced token efficiency
+  of Muon. Based on MuonClip, K2 was pre-trained on 15.5 trillion tokens with zero loss spike. During
+  post-training, K2 undergoes a multi-stage post-training process, highlighted by a large-scale agentic
+  data synthesis pipeline and a joint reinforcement learning (RL) stage, where the model improves its
+  capabilities through interactions with real and synthetic environments. Kimi K2 achieves state-of-the-art
+  performance among open-source non-thinking models, with strengths in agentic capabilities. Notably,
+  K2 obtains 66.1 on Tau2-Bench, 76.5 on ACEBench (En), 65.8 on SWE-Bench Verified, and 47.3 on SWE-Bench
+  Multilingual -- surpassing most open and closed-sourced baselines in non-thinking settings. It also
+  exhibits strong capabilities in coding, mathematics, and reasoning tasks, with a score of 53.7 on LiveCodeBench
+  v6, 49.5 on AIME 2025, 75.1 on GPQA-Diamond, and 27.1 on OJBench, all without extended thinking. These
+  results position Kimi K2 as one of the most capable open-source large language models to date, particularly
+  in software engineering and agentic tasks. We release our base and post-trained model checkpoints to
+  facilitate future research and applications of agentic intelligence.
+venue: arXiv
+year: 2025
+source: arxiv
+source_url: https://arxiv.org/abs/2507.20534v2
+pdf_url: https://arxiv.org/pdf/2507.20534v2
+pdf_sha256: 035062b5e1ab865ffad9f90f81d6c8332f8af805063fac54cc6f2cca1fe608b5
+fetched_at: '2026-08-24T03:21:39Z'
+source_updated_at: '2026-02-03T04:57:00Z'
+ids:
+  doi: null
+  arxiv_id: 2507.20534v2
+  arxiv_base_id: '2507.20534'
+  arxiv_version: v2
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- llm
+- rl
+- software_engineering_agents
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: novelty(1.00), interest_fit(0.91), artifact_availability(0.80)
+    | interests: software_engineering_agents:SWE-bench, software_engineering_agents:group:software_engineering_agents,
+    llm:large language model, llm:mixture-of-experts | milestone/foundational floor applied'
+  matched_interests:
+  - software_engineering_agents:SWE-bench
+  - software_engineering_agents:group:software_engineering_agents
+  - llm:large language model
+  - llm:mixture-of-experts
+  - llm:group:llm
+  - rl:reinforcement learning
+  - rl:group:rl
+  negative_signals: []
+  subscores:
+    interest_fit: 0.91
+    recency: 0.643
+    venue_quality: 0.4
+    harness_relevance: 0.36
+    novelty: 1.0
+    artifact_availability: 0.8
+    evaluation_quality: 0.0
+    trend_signal: 0.7
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/kimi-k2-open-agentic-intelligence-250720534/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

@@ -44,6 +44,7 @@ milestone:
   era: recent
   significance: Self-evolving online curriculum RL lifting open 8-9B models past GPT-4 on WebArena-Lite;
     modern open web-agent recipe.
+  subarea: web
 knowledge_concepts: []
 versions:
 - version_key: v1

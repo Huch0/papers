@@ -1,0 +1,81 @@
+canonical_key: arxiv-2303.17760
+version_key: v1
+title: 'CAMEL: Communicative Agents for "Mind" Exploration of Large Language Model Society'
+authors:
+- Guohao Li
+- Hasan Abed Al Kader Hammoud
+- Hani Itani
+- Dmitrii Khizbullin
+- Bernard Ghanem
+abstract: 'The rapid advancement of chat-based language models has led to remarkable progress in complex
+  task-solving. However, their success heavily relies on human input to guide the conversation, which
+  can be challenging and time-consuming. This paper explores the potential of building scalable techniques
+  to facilitate autonomous cooperation among communicative agents, and provides insight into their "cognitive"
+  processes. To address the challenges of achieving autonomous cooperation, we propose a novel communicative
+  agent framework named role-playing. Our approach involves using inception prompting to guide chat agents
+  toward task completion while maintaining consistency with human intentions. We showcase how role-playing
+  can be used to generate conversational data for studying the behaviors and capabilities of a society
+  of agents, providing a valuable resource for investigating conversational language models. In particular,
+  we conduct comprehensive studies on instruction-following cooperation in multi-agent settings. Our contributions
+  include introducing a novel communicative agent framework, offering a scalable approach for studying
+  the cooperative behaviors and capabilities of multi-agent systems, and open-sourcing our library to
+  support research on communicative agents and beyond: https://github.com/camel-ai/camel.'
+venue: arXiv
+year: 2023
+source: arxiv
+source_url: https://arxiv.org/abs/2303.17760v2
+pdf_url: https://arxiv.org/pdf/2303.17760v2
+pdf_sha256: 926c73c2ae9f9abc7612ab58373e428476f4de55db78646ed59de09810db7777
+fetched_at: '2026-08-24T03:37:40Z'
+source_updated_at: '2023-11-02T17:34:57Z'
+ids:
+  doi: null
+  arxiv_id: 2303.17760v2
+  arxiv_base_id: '2303.17760'
+  arxiv_version: v2
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- agent_harness
+- llm
+- rl
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: interest_fit(0.73), novelty(0.55), artifact_availability(0.55)
+    | interests: agent_harness:group:agent_harness, llm:large language model, llm:group:llm, rl:exploration
+    | milestone/foundational floor applied'
+  matched_interests:
+  - agent_harness:group:agent_harness
+  - llm:large language model
+  - llm:group:llm
+  - rl:exploration
+  - rl:group:rl
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 0.55
+    artifact_availability: 0.55
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/camel-communicative-agents-for-mind-exploration-of-230317760/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

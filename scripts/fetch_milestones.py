@@ -119,6 +119,8 @@ def _apply_milestone(cand: dict, field: str, seed: dict, topic_group: str) -> di
         "era": seed.get("era", "foundational"),
         "significance": seed.get("significance", ""),
     }
+    if seed.get("subarea"):
+        cand["milestone"]["subarea"] = seed["subarea"]
     return cand
 
 

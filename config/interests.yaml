@@ -105,6 +105,56 @@ topic_groups:
     notes:
       - Include papers outside my main domains only if they illuminate harness design.
 
+  llm:
+    priority: medium
+    keywords:
+      - large language model
+      - scaling law
+      - instruction tuning
+      - RLHF
+      - preference optimization
+      - mixture-of-experts
+      - long context
+      - reasoning model
+      - chain-of-thought
+      - test-time compute
+      - pretraining
+    notes:
+      - Foundation track — milestone backfill via /milestone-papers (field llm); for daily
+        fetches prefer trend-setting releases and training/alignment advances, not applications.
+
+  vlm:
+    priority: medium
+    keywords:
+      - vision-language model
+      - multimodal LLM
+      - visual instruction tuning
+      - image-text pretraining
+      - contrastive vision-language
+      - visual grounding
+      - video-language model
+      - visual question answering
+    notes:
+      - Foundation track — milestone backfill via /milestone-papers (field vlm); GUI-specific
+        VLMs belong to computer_use_agents, not here.
+
+  rl:
+    priority: medium
+    keywords:
+      - reinforcement learning
+      - policy gradient
+      - Q-learning
+      - offline RL
+      - model-based RL
+      - world model
+      - exploration
+      - reward model
+      - verifiable reward
+      - self-play
+    notes:
+      - Foundation track — milestone backfill via /milestone-papers (field rl); deep-RL era
+        onward (2013+). RL-for-LLM-reasoning papers may double-tag with llm.
+
 # Authors / labs whose work should get a small positive signal (matched on author list).
 watch_authors: []
 watch_labs:

@@ -31,3 +31,6 @@ __pycache__/
 
 # derived contributor map (source: config/contributors.yaml)
 registry/contributors.json
+
+# derived milestone-field metadata for the site (source: config/milestones.yaml)
+registry/milestones.json

@@ -237,8 +237,31 @@ def build(write: bool = True) -> dict:
             path.write_text(content + "\n", encoding="utf-8")
         _maybe_sqlite(flats)
         _emit_contributors()
+        _emit_milestones_meta()
 
     return {"papers": len(flats), "counts": dict(counts)}
+
+
+def _emit_milestones_meta() -> None:
+    """Derive registry/milestones.json: field key -> display metadata for the site's
+    /milestones/ paths page. Source of truth is config/milestones.yaml; papers
+    themselves come from papers.jsonl milestone blocks. Deterministic (sorted, no
+    timestamp)."""
+    fields = pl.milestones_cfg().get("fields", {}) or {}
+    out = {}
+    for key in sorted(fields):
+        fcfg = fields[key] or {}
+        out[key] = {
+            "description": (fcfg.get("description") or "").strip(),
+            "emergence_year": fcfg.get("emergence_year"),
+            "topic_group": fcfg.get("topic_group") or key,
+            "display_name": fcfg.get("display_name") or key.replace("_", " ").title(),
+            "path_order": fcfg.get("path_order"),
+            "seed_count": len(fcfg.get("seeds") or []),
+        }
+    (pl.REGISTRY / "milestones.json").write_text(
+        __import__("json").dumps(out, indent=2, ensure_ascii=False, sort_keys=True) + "\n",
+        encoding="utf-8")
 
 
 def _emit_contributors() -> None:

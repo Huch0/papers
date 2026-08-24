@@ -1,6 +1,7 @@
 # Curated milestone / landmark papers per field, from a field's emergence to recent.
 # Durable record of "what counts as a milestone". /milestone-papers resolves each seed
-# to a real paper at fetch time (arxiv id when given, else title search), dedupes against
+# to a real paper at fetch time (arxiv id when given, else doi via OpenAlex, else title
+# search), dedupes against
 # the registry, and ingests non-duplicates tagged foundational with a milestone block.
 # A blank/uncertain arxiv id is resolved by search, so it never produces a wrong record.
 #
@@ -805,12 +806,14 @@ fields:
     - title: Executable Code Actions Elicit Better LLM Agents
       year: 2024
       era: expansion
+      arxiv: '2402.01030'
       subarea: tool_use
       significance: 'CodeAct: use executable Python as the unified action space instead of JSON tool calls;
         adopted by many coding agents.'
     - title: Agent Workflow Memory
       year: 2024
       era: expansion
+      arxiv: '2409.07429'
       subarea: memory
       significance: Induces reusable workflows from past trajectories and retrieves them to guide new tasks;
         procedural memory for agents.
@@ -1114,6 +1117,7 @@ fields:
     - title: 'Kimi K2: Open Agentic Intelligence'
       year: 2025
       era: recent
+      arxiv: '2507.20534'
       subarea: open_models
       significance: 1T-param open MoE post-trained for agentic tool use with large-scale synthetic trajectories;
         open agentic frontier marker.
@@ -1303,6 +1307,7 @@ fields:
     - title: Mastering the game of Go with deep neural networks and tree search
       year: 2016
       era: foundational
+      doi: 10.1038/nature16961
       subarea: games
       significance: 'AlphaGo: historic first AI to defeat a world Go champion, combining deep policy/value
         networks with MCTS.'
@@ -1441,6 +1446,7 @@ fields:
     - title: First return, then explore
       year: 2021
       era: expansion
+      doi: 10.1038/s41586-020-03157-9
       subarea: exploration
       significance: Go-Explore's remember-and-return strategy solved previously unsolved hard-exploration
         games like Montezuma's Revenge.
@@ -1454,6 +1460,7 @@ fields:
     - title: Open-Ended Learning Leads to Generally Capable Agents
       year: 2021
       era: expansion
+      arxiv: '2107.12808'
       subarea: games
       significance: 'XLand: open-ended training across 700k+ tasks produced generally capable agents that
         generalize to unseen games.'
@@ -1467,12 +1474,14 @@ fields:
     - title: Discovering faster matrix multiplication algorithms with reinforcement learning
       year: 2022
       era: expansion
+      doi: 10.1038/s41586-022-05172-4
       subarea: games
       significance: AlphaTensor's AlphaZero-style search found matrix-multiplication algorithms beating a
         50-year-old record.
     - title: Human-level play in the game of Diplomacy by combining language models with strategic reasoning
       year: 2022
       era: expansion
+      doi: 10.1126/science.ade9097
       subarea: games
       significance: 'CICERO: first AI with human-level Diplomacy play - a language model plus RL planning;
         top 10% of human players.'

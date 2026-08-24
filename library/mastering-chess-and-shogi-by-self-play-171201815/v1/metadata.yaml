@@ -1,0 +1,80 @@
+canonical_key: arxiv-1712.01815
+version_key: v1
+title: Mastering Chess and Shogi by Self-Play with a General Reinforcement Learning Algorithm
+authors:
+- David Silver
+- Thomas Hubert
+- Julian Schrittwieser
+- Ioannis Antonoglou
+- Matthew Lai
+- Arthur Guez
+- Marc Lanctot
+- Laurent Sifre
+- Dharshan Kumaran
+- Thore Graepel
+- Timothy Lillicrap
+- Karen Simonyan
+- Demis Hassabis
+abstract: The game of chess is the most widely-studied domain in the history of artificial intelligence.
+  The strongest programs are based on a combination of sophisticated search techniques, domain-specific
+  adaptations, and handcrafted evaluation functions that have been refined by human experts over several
+  decades. In contrast, the AlphaGo Zero program recently achieved superhuman performance in the game
+  of Go, by tabula rasa reinforcement learning from games of self-play. In this paper, we generalise this
+  approach into a single AlphaZero algorithm that can achieve, tabula rasa, superhuman performance in
+  many challenging domains. Starting from random play, and given no domain knowledge except the game rules,
+  AlphaZero achieved within 24 hours a superhuman level of play in the games of chess and shogi (Japanese
+  chess) as well as Go, and convincingly defeated a world-champion program in each case.
+venue: arXiv
+year: 2017
+source: arxiv
+source_url: https://arxiv.org/abs/1712.01815v1
+pdf_url: https://arxiv.org/pdf/1712.01815v1
+pdf_sha256: 26c43408551c22f4fdc98e47f9b4592ab2161fac1ba5df27c897f46d8b6cec7f
+fetched_at: '2026-08-24T03:27:58Z'
+source_updated_at: '2017-12-05T18:45:38Z'
+ids:
+  doi: null
+  arxiv_id: 1712.01815v1
+  arxiv_base_id: '1712.01815'
+  arxiv_version: v1
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- rl
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: medium
+  rationale: 'score=65 -> READ_SOON | strong: interest_fit(0.55), venue_quality(0.40) | interests: rl:reinforcement
+    learning, rl:self-play, rl:group:rl | milestone/foundational floor applied'
+  matched_interests:
+  - rl:reinforcement learning
+  - rl:self-play
+  - rl:group:rl
+  negative_signals: []
+  subscores:
+    interest_fit: 0.55
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 0.0
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/mastering-chess-and-shogi-by-self-play-171201815/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

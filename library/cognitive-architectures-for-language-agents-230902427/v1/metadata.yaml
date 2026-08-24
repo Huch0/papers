@@ -1,0 +1,75 @@
+canonical_key: arxiv-2309.02427
+version_key: v1
+title: Cognitive Architectures for Language Agents
+authors:
+- Theodore R. Sumers
+- Shunyu Yao
+- Karthik Narasimhan
+- Thomas L. Griffiths
+abstract: Recent efforts have augmented large language models (LLMs) with external resources (e.g., the
+  Internet) or internal control flows (e.g., prompt chaining) for tasks requiring grounding or reasoning,
+  leading to a new class of language agents. While these agents have achieved substantial empirical success,
+  we lack a systematic framework to organize existing agents and plan future developments. In this paper,
+  we draw on the rich history of cognitive science and symbolic artificial intelligence to propose Cognitive
+  Architectures for Language Agents (CoALA). CoALA describes a language agent with modular memory components,
+  a structured action space to interact with internal memory and external environments, and a generalized
+  decision-making process to choose actions. We use CoALA to retrospectively survey and organize a large
+  body of recent work, and prospectively identify actionable directions towards more capable agents. Taken
+  together, CoALA contextualizes today's language agents within the broader history of AI and outlines
+  a path towards language-based general intelligence.
+venue: arXiv
+year: 2023
+source: arxiv
+source_url: https://arxiv.org/abs/2309.02427v3
+pdf_url: https://arxiv.org/pdf/2309.02427v3
+pdf_sha256: fd93d2ef1b94f963b652136b8c792b01d7326d861f5ce918926c043934a48dbe
+fetched_at: '2026-08-24T03:31:42Z'
+source_updated_at: '2024-03-15T15:44:11Z'
+ids:
+  doi: null
+  arxiv_id: 2309.02427v3
+  arxiv_base_id: '2309.02427'
+  arxiv_version: v3
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- agent_harness
+- llm
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: interest_fit(0.73), venue_quality(0.40), harness_relevance(0.36)
+    | interests: agent_harness:group:agent_harness, llm:large language model, llm:group:llm | milestone/foundational
+    floor applied'
+  matched_interests:
+  - agent_harness:group:agent_harness
+  - llm:large language model
+  - llm:group:llm
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.36
+    novelty: 0.0
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/cognitive-architectures-for-language-agents-230902427/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

@@ -1,0 +1,62 @@
+canonical_key: arxiv-1506.02438
+slug: high-dimensional-continuous-control-using-generalized-advantage-150602438
+title: High-Dimensional Continuous Control Using Generalized Advantage Estimation
+authors:
+- John Schulman
+- Philipp Moritz
+- Sergey Levine
+- Michael Jordan
+- Pieter Abbeel
+year: 2015
+primary_ids:
+  doi: null
+  arxiv_base_id: '1506.02438'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/1506.02438v6
+- https://arxiv.org/pdf/1506.02438v6
+topic_groups:
+- rl
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2015
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: medium
+  notes: null
+milestone:
+  field: rl
+  era: emergence
+  significance: 'GAE: variance-reduced advantage estimates trading bias against variance; stabilized TRPO
+    and later PPO training.'
+  subarea: policy_gradient
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v6
+  source: arxiv
+  source_url: https://arxiv.org/abs/1506.02438v6
+  pdf_path: library/high-dimensional-continuous-control-using-generalized-advantage-150602438/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/high-dimensional-continuous-control-using-generalized-advantage-150602438/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:27:37Z'
+  source_updated_at: '2018-10-20T18:55:07Z'
+  arxiv_version: v6
+  pdf_sha256: 5aa736ccf3517a1f36d0ca8146982e69beaf9a2bdccac2ae324f780743bc045e
+  pdf_bytes: 1798117
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:27:37Z'
+  updated_at: '2026-08-24T03:27:37Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

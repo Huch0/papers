@@ -1,0 +1,81 @@
+canonical_key: arxiv-2205.01917
+version_key: v1
+title: 'CoCa: Contrastive Captioners are Image-Text Foundation Models'
+authors:
+- Jiahui Yu
+- Zirui Wang
+- Vijay K. Vasudevan
+- Legg Yeung
+- Mojtaba Seyedhosseini
+- Yonghui Wu
+abstract: Exploring large-scale pretrained foundation models is of significant interest in computer vision
+  because these models can be quickly transferred to many downstream tasks. This paper presents Contrastive
+  Captioner (CoCa), a minimalist design to pretrain an image-text encoder-decoder foundation model jointly
+  with contrastive loss and captioning loss, thereby subsuming model capabilities from contrastive approaches
+  like CLIP and generative methods like SimVLM. In contrast to standard encoder-decoder transformers where
+  all decoder layers attend to encoder outputs, CoCa omits cross-attention in the first half of decoder
+  layers to encode unimodal text representations, and cascades the remaining decoder layers which cross-attend
+  to the image encoder for multimodal image-text representations. We apply a contrastive loss between
+  unimodal image and text embeddings, in addition to a captioning loss on the multimodal decoder outputs
+  which predicts text tokens autoregressively. By sharing the same computational graph, the two training
+  objectives are computed efficiently with minimal overhead. CoCa is pretrained end-to-end and from scratch
+  on both web-scale alt-text data and annotated images by treating all labels simply as text, seamlessly
+  unifying natural language supervision for representation learning. Empirically, CoCa achieves state-of-the-art
+  performance with zero-shot transfer or minimal task-specific adaptation on a broad range of downstream
+  tasks, spanning visual recognition (ImageNet, Kinetics-400/600/700, Moments-in-Time), crossmodal retrieval
+  (MSCOCO, Flickr30K, MSR-VTT), multimodal understanding (VQA, SNLI-VE, NLVR2), and image captioning (MSCOCO,
+  NoCaps). Notably on ImageNet classification, CoCa obtains 86.3% zero-shot top-1 accuracy, 90.6% with
+  a frozen encoder and learned classification head, and new state-of-the-art 91.0% top-1 accuracy on ImageNet
+  with a finetuned encoder.
+venue: arXiv (Cornell University)
+year: 2022
+source: openalex
+source_url: https://openalex.org/W4229042118
+pdf_url: https://arxiv.org/pdf/2205.01917
+pdf_sha256: ebb8ecad1667502a8e016241b499b2479e296d59c7df06abdedb5cb51d26457b
+fetched_at: '2026-08-24T03:25:44Z'
+source_updated_at: '2022-05-04'
+ids:
+  doi: 10.48550/arxiv.2205.01917
+  arxiv_id: null
+  arxiv_base_id: '2205.01917'
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: https://openalex.org/W4229042118
+tags:
+- foundational
+topic_groups:
+- vlm
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: medium
+  rationale: 'score=65 -> READ_SOON | strong: novelty(0.80), interest_fit(0.40), venue_quality(0.40) |
+    interests: vlm:group:vlm | milestone/foundational floor applied'
+  matched_interests:
+  - vlm:group:vlm
+  negative_signals: []
+  subscores:
+    interest_fit: 0.402
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 0.8
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/coca-contrastive-captioners-are-image-text-foundation-220501917/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

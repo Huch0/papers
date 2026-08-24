@@ -1,0 +1,87 @@
+canonical_key: doi-10-1038-s41586-023-06004-9
+slug: faster-sorting-algorithms-discovered-using-deep-reinforcement-23-06004-9
+title: Faster sorting algorithms discovered using deep reinforcement learning
+authors:
+- D. Mankowitz
+- Andrea Michi
+- A. Zhernov
+- Marco Gelmi
+- M. Selvi
+- Cosmin Paduraru
+- Edouard Leurent
+- Shariq Iqbal
+- Jean-Baptiste Lespiau
+- Alexa Ahern
+- Thomas Köppe
+- Kevin Millikin
+- Stephen Gaffney
+- Sophie Elster
+- Jackson Broshear
+- Chris Gamble
+- Kieran Milan
+- R. Tung
+- Minjae Hwang
+- taylan. cemgil
+- M. Barekatain
+- Yujia Li
+- Amol Mandhane
+- T. Hubert
+- Julian Schrittwieser
+- D. Hassabis
+- Pushmeet Kohli
+- Martin A. Riedmiller
+- O. Vinyals
+- David Silver
+year: 2023
+primary_ids:
+  doi: 10.1038/s41586-023-06004-9
+  arxiv_base_id: null
+  openreview_id: null
+  semantic_scholar_id: 13f775d1b7f9de1168b5d37a2622ee1938bf43cd
+  openalex_id: null
+canonical_urls:
+- https://www.semanticscholar.org/paper/13f775d1b7f9de1168b5d37a2622ee1938bf43cd
+- https://www.nature.com/articles/s41586-023-06004-9.pdf
+topic_groups:
+- rl
+tags:
+- foundational
+venue:
+  name: Nature
+  tier: unknown
+  status: unknown
+  year: 2023
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: medium
+  notes: null
+milestone:
+  field: rl
+  era: recent
+  significance: AlphaDev discovered faster sorting routines; first RL-invented algorithms merged into
+    the LLVM libc++ standard library.
+  subarea: games
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: semantic_scholar
+  source: semantic_scholar
+  source_url: https://www.semanticscholar.org/paper/13f775d1b7f9de1168b5d37a2622ee1938bf43cd
+  pdf_path: null
+  summary_path: null
+  metadata_path: library/faster-sorting-algorithms-discovered-using-deep-reinforcement-23-06004-9/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:30:13Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: null
+  pdf_bytes: null
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:30:13Z'
+  updated_at: '2026-08-24T03:30:13Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

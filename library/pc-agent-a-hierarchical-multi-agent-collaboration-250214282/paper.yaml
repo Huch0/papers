@@ -43,6 +43,7 @@ milestone:
   era: expansion
   significance: Hierarchical Manager-Progress-Decision multi-agent framework with active perception for
     complex multi-app PC workflows.
+  subarea: os_desktop
 knowledge_concepts: []
 versions:
 - version_key: v1

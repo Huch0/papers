@@ -73,3 +73,229 @@
 {"ts": "2026-06-06T07:55:12Z", "stage": "milestones.resolve", "message": "arxiv 2410.14803: GET http://export.arxiv.org/api/query failed after 4 attempts: HTTP 429"}
 {"ts": "2026-06-06T07:56:20Z", "stage": "fetch.milestone_batch", "message": "GET failed: HTTP 429", "url": "http://export.arxiv.org/api/query"}
 {"ts": "2026-08-13T07:12:16Z", "stage": "tde.resolve", "message": "WebArena Verified (NeurIPS 2025 SEA workshop): no arXiv record; OpenReview bot-walled (Cloudflare challenge); skipped ingest — user can supply PDF to add", "work": "webarena-verified"}
+{"ts": "2026-08-24T03:04:49Z", "stage": "fetch.arxiv_id", "message": "GET failed: HTTPSConnectionPool(host='export.arxiv.org', port=443): Read timed out. (read timeout=30)", "url": "http://export.arxiv.org/api/query"}
+{"ts": "2026-08-24T03:04:49Z", "stage": "milestones.resolve", "message": "arxiv 2109.01652: GET http://export.arxiv.org/api/query failed after 4 attempts: HTTPSConnectionPool(host='export.arxiv.org', port=443): Read timed out. (read timeout=30)"}
+{"ts": "2026-08-24T03:05:04Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:05:04Z", "stage": "milestones.resolve", "message": "s2 'Finetuned Language Models are Zero-Shot Learners': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:08:00Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:08:00Z", "stage": "milestones.resolve", "message": "s2 'OpenAI o1 System Card': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:08:17Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:08:17Z", "stage": "milestones.resolve", "message": "s2 'Qwen3 Technical Report': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:08:34Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:08:34Z", "stage": "milestones.resolve", "message": "s2 'Kimi K2: Open Agentic Intelligence': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:09:01Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:09:01Z", "stage": "milestones.resolve", "message": "s2 'BLIP: Bootstrapping Language-Image Pre-training for Unified Vision-Language Understanding and Generation': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:09:17Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:09:17Z", "stage": "milestones.resolve", "message": "s2 'CoCa: Contrastive Captioners are Image-Text Foundation Models': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:09:50Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:09:50Z", "stage": "milestones.resolve", "message": "s2 'Sigmoid Loss for Language Image Pre-Training': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:10:07Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:10:07Z", "stage": "milestones.resolve", "message": "s2 'InstructBLIP: Towards General-purpose Vision-Language Models with Instruction Tuning': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:10:23Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:10:23Z", "stage": "milestones.resolve", "message": "s2 'Qwen-VL: A Versatile Vision-Language Model for Understanding, Localization, Text Reading, and Beyond': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:10:40Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:10:40Z", "stage": "milestones.resolve", "message": "s2 'InternVL: Scaling up Vision Foundation Models and Aligning for Generic Visual-Linguistic Tasks': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:10:58Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:10:58Z", "stage": "milestones.resolve", "message": "s2 'Molmo and PixMo: Open Weights and Open Data for State-of-the-Art Multimodal Models': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:11:15Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:11:15Z", "stage": "milestones.resolve", "message": "s2 'InternVL3: Exploring Advanced Training and Test-Time Recipes for Open-Source Multimodal Models': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:11:40Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:11:40Z", "stage": "milestones.resolve", "message": "s2 'Deterministic Policy Gradient Algorithms': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:11:59Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:11:59Z", "stage": "milestones.resolve", "message": "s2 'Mastering the game of Go with deep neural networks and tree search': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:12:15Z", "stage": "fetch.openalex", "message": "GET failed: HTTP 429", "url": "https://api.openalex.org/works"}
+{"ts": "2026-08-24T03:12:15Z", "stage": "milestones.resolve", "message": "openalex 'Mastering the game of Go with deep neural networks and tree search': GET https://api.openalex.org/works failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:12:32Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:12:32Z", "stage": "milestones.resolve", "message": "s2 'Mastering the game of Go without human knowledge': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:13:07Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:13:07Z", "stage": "milestones.resolve", "message": "s2 'Grandmaster level in StarCraft II using multi-agent reinforcement learning': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:13:58Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:13:58Z", "stage": "milestones.resolve", "message": "s2 'First return, then explore': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:14:13Z", "stage": "fetch.openalex", "message": "GET failed: HTTP 503", "url": "https://api.openalex.org/works"}
+{"ts": "2026-08-24T03:14:13Z", "stage": "milestones.resolve", "message": "openalex 'First return, then explore': GET https://api.openalex.org/works failed after 4 attempts: HTTP 503"}
+{"ts": "2026-08-24T03:14:29Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:14:29Z", "stage": "milestones.resolve", "message": "s2 'Open-Ended Learning Leads to Generally Capable Agents': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:14:44Z", "stage": "fetch.openalex", "message": "GET failed: HTTP 503", "url": "https://api.openalex.org/works"}
+{"ts": "2026-08-24T03:14:44Z", "stage": "milestones.resolve", "message": "openalex 'Open-Ended Learning Leads to Generally Capable Agents': GET https://api.openalex.org/works failed after 4 attempts: HTTP 503"}
+{"ts": "2026-08-24T03:15:01Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:15:01Z", "stage": "milestones.resolve", "message": "s2 'Discovering faster matrix multiplication algorithms with reinforcement learning': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:15:16Z", "stage": "fetch.openalex", "message": "GET failed: HTTP 503", "url": "https://api.openalex.org/works"}
+{"ts": "2026-08-24T03:15:16Z", "stage": "milestones.resolve", "message": "openalex 'Discovering faster matrix multiplication algorithms with reinforcement learning': GET https://api.openalex.org/works failed after 4 attempts: HTTP 503"}
+{"ts": "2026-08-24T03:15:31Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:15:31Z", "stage": "milestones.resolve", "message": "s2 'Human-level play in the game of Diplomacy by combining language models with strategic reasoning': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:15:47Z", "stage": "fetch.openalex", "message": "GET failed: HTTP 503", "url": "https://api.openalex.org/works"}
+{"ts": "2026-08-24T03:15:47Z", "stage": "milestones.resolve", "message": "openalex 'Human-level play in the game of Diplomacy by combining language models with strategic reasoning': GET https://api.openalex.org/works failed after 4 attempts: HTTP 503"}
+{"ts": "2026-08-24T03:16:02Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:16:02Z", "stage": "milestones.resolve", "message": "s2 'Faster sorting algorithms discovered using deep reinforcement learning': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:16:30Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:16:30Z", "stage": "milestones.resolve", "message": "s2 'CAMEL: Communicative Agents for \"Mind\" Exploration of Large Language Model Society': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:16:50Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:16:50Z", "stage": "milestones.resolve", "message": "s2 'Gorilla: Large Language Model Connected with Massive APIs': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:17:09Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:17:09Z", "stage": "milestones.resolve", "message": "s2 'Executable Code Actions Elicit Better LLM Agents': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:17:24Z", "stage": "fetch.openalex", "message": "GET failed: HTTP 503", "url": "https://api.openalex.org/works"}
+{"ts": "2026-08-24T03:17:24Z", "stage": "milestones.resolve", "message": "openalex 'Executable Code Actions Elicit Better LLM Agents': GET https://api.openalex.org/works failed after 4 attempts: HTTP 503"}
+{"ts": "2026-08-24T03:17:40Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:17:40Z", "stage": "milestones.resolve", "message": "s2 'Agent Workflow Memory': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:17:55Z", "stage": "fetch.openalex", "message": "GET failed: HTTP 503", "url": "https://api.openalex.org/works"}
+{"ts": "2026-08-24T03:17:55Z", "stage": "milestones.resolve", "message": "openalex 'Agent Workflow Memory': GET https://api.openalex.org/works failed after 4 attempts: HTTP 503"}
+{"ts": "2026-08-24T03:19:14Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:19:14Z", "stage": "milestones.resolve", "message": "s2 'Language Models are Unsupervised Multitask Learners': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:19:45Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:19:45Z", "stage": "milestones.resolve", "message": "s2 'OpenAI o1 System Card': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:20:00Z", "stage": "fetch.openalex", "message": "GET failed: HTTP 429", "url": "https://api.openalex.org/works"}
+{"ts": "2026-08-24T03:20:00Z", "stage": "milestones.resolve", "message": "openalex 'OpenAI o1 System Card': GET https://api.openalex.org/works failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:20:16Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:20:16Z", "stage": "milestones.resolve", "message": "s2 'Qwen3 Technical Report': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:21:59Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:21:59Z", "stage": "milestones.resolve", "message": "s2 'Scaling Up Visual and Vision-Language Representation Learning With Noisy Text Supervision': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:22:14Z", "stage": "fetch.openalex", "message": "GET failed: HTTP 429", "url": "https://api.openalex.org/works"}
+{"ts": "2026-08-24T03:22:14Z", "stage": "milestones.resolve", "message": "openalex 'Scaling Up Visual and Vision-Language Representation Learning With Noisy Text Supervision': GET https://api.openalex.org/works failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:22:30Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:22:30Z", "stage": "milestones.resolve", "message": "s2 'BLIP: Bootstrapping Language-Image Pre-training for Unified Vision-Language Understanding and Generation': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:22:54Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:22:54Z", "stage": "milestones.resolve", "message": "s2 'CoCa: Contrastive Captioners are Image-Text Foundation Models': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:23:20Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:23:20Z", "stage": "milestones.resolve", "message": "s2 'Sigmoid Loss for Language Image Pre-Training': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:23:38Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:23:38Z", "stage": "milestones.resolve", "message": "s2 'InstructBLIP: Towards General-purpose Vision-Language Models with Instruction Tuning': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:23:53Z", "stage": "fetch.openalex", "message": "GET failed: HTTP 429", "url": "https://api.openalex.org/works"}
+{"ts": "2026-08-24T03:23:53Z", "stage": "milestones.resolve", "message": "openalex 'InstructBLIP: Towards General-purpose Vision-Language Models with Instruction Tuning': GET https://api.openalex.org/works failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:24:08Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:24:08Z", "stage": "milestones.resolve", "message": "s2 'Qwen-VL: A Versatile Vision-Language Model for Understanding, Localization, Text Reading, and Beyond': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:24:24Z", "stage": "fetch.openalex", "message": "GET failed: HTTP 429", "url": "https://api.openalex.org/works"}
+{"ts": "2026-08-24T03:24:24Z", "stage": "milestones.resolve", "message": "openalex 'Qwen-VL: A Versatile Vision-Language Model for Understanding, Localization, Text Reading, and Beyond': GET https://api.openalex.org/works failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:24:40Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:24:40Z", "stage": "milestones.resolve", "message": "s2 'InternVL: Scaling up Vision Foundation Models and Aligning for Generic Visual-Linguistic Tasks': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:24:56Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:24:56Z", "stage": "milestones.resolve", "message": "s2 'Molmo and PixMo: Open Weights and Open Data for State-of-the-Art Multimodal Models': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:25:13Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:25:13Z", "stage": "milestones.resolve", "message": "s2 'InternVL3: Exploring Advanced Training and Test-Time Recipes for Open-Source Multimodal Models': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:26:21Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:26:21Z", "stage": "milestones.resolve", "message": "s2 'Deterministic Policy Gradient Algorithms': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:26:41Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:26:41Z", "stage": "milestones.resolve", "message": "s2 'Mastering the game of Go without human knowledge': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:27:07Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:27:07Z", "stage": "milestones.resolve", "message": "s2 'Grandmaster level in StarCraft II using multi-agent reinforcement learning': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:29:53Z", "stage": "download_pdf", "message": "('Connection aborted.', ConnectionResetError(54, 'Connection reset by peer'))", "url": "https://www.nature.com/articles/s41586-022-05172-4.pdf"}
+{"ts": "2026-08-24T03:29:53Z", "stage": "ingest.download", "message": "download failed after 4 attempts: ('Connection aborted.', ConnectionResetError(54, 'Connection reset by peer'))", "key": "doi-10-1038-s41586-022-05172-4"}
+{"ts": "2026-08-24T03:30:13Z", "stage": "download_pdf", "message": "('Connection aborted.', ConnectionResetError(54, 'Connection reset by peer'))", "url": "https://www.nature.com/articles/s41586-023-06004-9.pdf"}
+{"ts": "2026-08-24T03:30:13Z", "stage": "ingest.download", "message": "download failed after 4 attempts: ('Connection aborted.', ConnectionResetError(54, 'Connection reset by peer'))", "key": "doi-10-1038-s41586-023-06004-9"}
+{"ts": "2026-08-24T03:30:33Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:30:33Z", "stage": "milestones.resolve", "message": "s2 'CAMEL: Communicative Agents for \"Mind\" Exploration of Large Language Model Society': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:30:48Z", "stage": "fetch.openalex", "message": "GET failed: HTTP 429", "url": "https://api.openalex.org/works"}
+{"ts": "2026-08-24T03:30:48Z", "stage": "milestones.resolve", "message": "openalex 'CAMEL: Communicative Agents for \"Mind\" Exploration of Large Language Model Society': GET https://api.openalex.org/works failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:31:03Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:31:03Z", "stage": "milestones.resolve", "message": "s2 'Gorilla: Large Language Model Connected with Massive APIs': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:33:33Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:33:33Z", "stage": "milestones.resolve", "message": "s2 'Improving Language Understanding by Generative Pre-Training': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:34:19Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:34:19Z", "stage": "milestones.resolve", "message": "s2 'Qwen3 Technical Report': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:34:53Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:34:53Z", "stage": "milestones.resolve", "message": "s2 'BLIP: Bootstrapping Language-Image Pre-training for Unified Vision-Language Understanding and Generation': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:35:26Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:35:26Z", "stage": "milestones.resolve", "message": "s2 'PaLI: A Jointly-Scaled Multilingual Language-Image Model': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:35:47Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:35:47Z", "stage": "milestones.resolve", "message": "s2 'InternVL: Scaling up Vision Foundation Models and Aligning for Generic Visual-Linguistic Tasks': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:36:19Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:36:19Z", "stage": "milestones.resolve", "message": "s2 'Molmo and PixMo: Open Weights and Open Data for State-of-the-Art Multimodal Models': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:36:36Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:36:36Z", "stage": "milestones.resolve", "message": "s2 'InternVL3: Exploring Advanced Training and Test-Time Recipes for Open-Source Multimodal Models': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:37:13Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:37:13Z", "stage": "milestones.resolve", "message": "s2 'Gorilla: Large Language Model Connected with Massive APIs': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:38:02Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:38:02Z", "stage": "milestones.resolve", "message": "s2 'World of Bits: An Open-Domain Platform for Web-Based Agents': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:38:30Z", "stage": "fetch.arxiv_id", "message": "GET failed: HTTP 429", "url": "http://export.arxiv.org/api/query"}
+{"ts": "2026-08-24T03:38:30Z", "stage": "milestones.resolve", "message": "arxiv 2307.13854: GET http://export.arxiv.org/api/query failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:38:54Z", "stage": "fetch.arxiv_id", "message": "GET failed: HTTP 429", "url": "http://export.arxiv.org/api/query"}
+{"ts": "2026-08-24T03:38:54Z", "stage": "milestones.resolve", "message": "arxiv 2312.08914: GET http://export.arxiv.org/api/query failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:39:10Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:39:10Z", "stage": "milestones.resolve", "message": "s2 'CogAgent: A Visual Language Model for GUI Agents': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:39:28Z", "stage": "fetch.arxiv_id", "message": "GET failed: HTTP 429", "url": "http://export.arxiv.org/api/query"}
+{"ts": "2026-08-24T03:39:28Z", "stage": "milestones.resolve", "message": "arxiv 2309.11436: GET http://export.arxiv.org/api/query failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:39:43Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:39:43Z", "stage": "milestones.resolve", "message": "s2 'You Only Look at Screens: Multimodal Chain-of-Action Agents (Auto-GUI)': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:39:59Z", "stage": "fetch.openalex", "message": "GET failed: HTTP 429", "url": "https://api.openalex.org/works"}
+{"ts": "2026-08-24T03:39:59Z", "stage": "milestones.resolve", "message": "openalex 'You Only Look at Screens: Multimodal Chain-of-Action Agents (Auto-GUI)': GET https://api.openalex.org/works failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:40:15Z", "stage": "fetch.arxiv_id", "message": "GET failed: HTTP 429", "url": "http://export.arxiv.org/api/query"}
+{"ts": "2026-08-24T03:40:15Z", "stage": "milestones.resolve", "message": "arxiv 2307.10088: GET http://export.arxiv.org/api/query failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:40:46Z", "stage": "fetch.arxiv_id", "message": "GET failed: HTTP 429", "url": "http://export.arxiv.org/api/query"}
+{"ts": "2026-08-24T03:40:46Z", "stage": "milestones.resolve", "message": "arxiv 2308.15272: GET http://export.arxiv.org/api/query failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:41:02Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:41:02Z", "stage": "milestones.resolve", "message": "s2 'AutoDroid: LLM-powered Task Automation in Android': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:41:19Z", "stage": "fetch.arxiv_id", "message": "GET failed: HTTP 429", "url": "http://export.arxiv.org/api/query"}
+{"ts": "2026-08-24T03:41:19Z", "stage": "milestones.resolve", "message": "arxiv 2312.13771: GET http://export.arxiv.org/api/query failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:41:34Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:41:34Z", "stage": "milestones.resolve", "message": "s2 'AppAgent: Multimodal Agents as Smartphone Users': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:41:51Z", "stage": "fetch.arxiv_id", "message": "GET failed: HTTP 429", "url": "http://export.arxiv.org/api/query"}
+{"ts": "2026-08-24T03:41:51Z", "stage": "milestones.resolve", "message": "arxiv 2309.17421: GET http://export.arxiv.org/api/query failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:42:06Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:42:06Z", "stage": "milestones.resolve", "message": "s2 'The Dawn of LMMs: Preliminary Explorations with GPT-4V(ision)': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:42:24Z", "stage": "fetch.arxiv_id", "message": "GET failed: HTTP 429", "url": "http://export.arxiv.org/api/query"}
+{"ts": "2026-08-24T03:42:24Z", "stage": "milestones.resolve", "message": "arxiv 2310.11441: GET http://export.arxiv.org/api/query failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:42:39Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:42:39Z", "stage": "milestones.resolve", "message": "s2 'Set-of-Mark Prompting Unleashes Extraordinary Visual Grounding in GPT-4V': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:42:57Z", "stage": "fetch.arxiv_id", "message": "GET failed: HTTP 429", "url": "http://export.arxiv.org/api/query"}
+{"ts": "2026-08-24T03:42:57Z", "stage": "milestones.resolve", "message": "arxiv 2202.08137: GET http://export.arxiv.org/api/query failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:43:12Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:43:12Z", "stage": "milestones.resolve", "message": "s2 'A Data-Driven Approach for Learning to Control Computers (CC-Net)': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:43:30Z", "stage": "fetch.arxiv_id", "message": "GET failed: HTTP 429", "url": "http://export.arxiv.org/api/query"}
+{"ts": "2026-08-24T03:43:30Z", "stage": "milestones.resolve", "message": "arxiv 2112.09332: GET http://export.arxiv.org/api/query failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:43:45Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:43:45Z", "stage": "milestones.resolve", "message": "s2 'WebGPT: Browser-Assisted Question-Answering with Human Feedback': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:44:02Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:44:02Z", "stage": "milestones.resolve", "message": "s2 'Operator / Computer-Using Agent (CUA) System Card (OpenAI)': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:44:29Z", "stage": "fetch.arxiv_id", "message": "GET failed: HTTP 429", "url": "http://export.arxiv.org/api/query"}
+{"ts": "2026-08-24T03:44:29Z", "stage": "milestones.resolve", "message": "arxiv 2412.04454: GET http://export.arxiv.org/api/query failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:44:48Z", "stage": "fetch.arxiv_id", "message": "GET failed: HTTP 429", "url": "http://export.arxiv.org/api/query"}
+{"ts": "2026-08-24T03:44:48Z", "stage": "milestones.resolve", "message": "arxiv 2412.16256: GET http://export.arxiv.org/api/query failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:45:03Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:45:03Z", "stage": "milestones.resolve", "message": "s2 'Aria-UI: Visual Grounding for GUI Instructions': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:45:20Z", "stage": "fetch.arxiv_id", "message": "GET failed: HTTP 429", "url": "http://export.arxiv.org/api/query"}
+{"ts": "2026-08-24T03:45:20Z", "stage": "milestones.resolve", "message": "arxiv 2410.08164: GET http://export.arxiv.org/api/query failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:45:35Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:45:35Z", "stage": "milestones.resolve", "message": "s2 'Agent S: An Open Agentic Framework that Uses Computers Like a Human': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:45:52Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:45:52Z", "stage": "milestones.resolve", "message": "s2 'Claude 3.5 Sonnet Computer Use (Anthropic)': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:46:09Z", "stage": "fetch.arxiv_id", "message": "GET failed: HTTP 429", "url": "http://export.arxiv.org/api/query"}
+{"ts": "2026-08-24T03:46:09Z", "stage": "milestones.resolve", "message": "arxiv 2412.19723: GET http://export.arxiv.org/api/query failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:46:24Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:46:24Z", "stage": "milestones.resolve", "message": "s2 'OS-Genesis: Automating GUI Agent Trajectory Construction via Reverse Task Synthesis': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:46:41Z", "stage": "fetch.arxiv_id", "message": "GET failed: HTTP 429", "url": "http://export.arxiv.org/api/query"}
+{"ts": "2026-08-24T03:46:41Z", "stage": "milestones.resolve", "message": "arxiv 2405.14573: GET http://export.arxiv.org/api/query failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:46:57Z", "stage": "fetch.arxiv_id", "message": "GET failed: HTTP 429", "url": "http://export.arxiv.org/api/query"}
+{"ts": "2026-08-24T03:46:57Z", "stage": "milestones.resolve", "message": "arxiv 2406.01014: GET http://export.arxiv.org/api/query failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:47:12Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:47:12Z", "stage": "milestones.resolve", "message": "s2 'Mobile-Agent-v2: Mobile Device Operation Assistant with Effective Navigation via Multi-Agent Collaboration': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:47:30Z", "stage": "fetch.arxiv_id", "message": "GET failed: HTTP 429", "url": "http://export.arxiv.org/api/query"}
+{"ts": "2026-08-24T03:47:30Z", "stage": "milestones.resolve", "message": "arxiv 2406.03679: GET http://export.arxiv.org/api/query failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:47:45Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:47:45Z", "stage": "milestones.resolve", "message": "s2 'On the Effects of Data Scale on UI Control Agents (AndroidControl)': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:48:01Z", "stage": "fetch.arxiv_id", "message": "GET failed: HTTP 429", "url": "http://export.arxiv.org/api/query"}
+{"ts": "2026-08-24T03:48:01Z", "stage": "milestones.resolve", "message": "arxiv 2406.08451: GET http://export.arxiv.org/api/query failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:48:20Z", "stage": "fetch.arxiv_id", "message": "GET failed: HTTP 429", "url": "http://export.arxiv.org/api/query"}
+{"ts": "2026-08-24T03:48:20Z", "stage": "milestones.resolve", "message": "arxiv 2408.11824: GET http://export.arxiv.org/api/query failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:48:51Z", "stage": "fetch.arxiv_id", "message": "GET failed: HTTP 429", "url": "http://export.arxiv.org/api/query"}
+{"ts": "2026-08-24T03:48:51Z", "stage": "milestones.resolve", "message": "arxiv 2410.14803: GET http://export.arxiv.org/api/query failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:49:09Z", "stage": "fetch.arxiv_id", "message": "GET failed: HTTP 429", "url": "http://export.arxiv.org/api/query"}
+{"ts": "2026-08-24T03:49:09Z", "stage": "milestones.resolve", "message": "arxiv 2410.24024: GET http://export.arxiv.org/api/query failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:49:25Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:49:25Z", "stage": "milestones.resolve", "message": "s2 'AndroidLab: Training and Systematic Benchmarking of Android Autonomous Agents': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:49:41Z", "stage": "fetch.arxiv_id", "message": "GET failed: HTTP 429", "url": "http://export.arxiv.org/api/query"}
+{"ts": "2026-08-24T03:49:41Z", "stage": "milestones.resolve", "message": "arxiv 2407.10956: GET http://export.arxiv.org/api/query failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:49:57Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:49:57Z", "stage": "milestones.resolve", "message": "s2 'Spider2-V: How Far Are Multimodal Agents From Automating Data Science and Engineering Workflows?': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:50:13Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:50:13Z", "stage": "milestones.resolve", "message": "s2 'Project Mariner (Google DeepMind)': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:50:38Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:50:38Z", "stage": "milestones.resolve", "message": "s2 'OSWorld-Verified': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:50:58Z", "stage": "fetch.arxiv_id", "message": "GET failed: HTTP 429", "url": "http://export.arxiv.org/api/query"}
+{"ts": "2026-08-24T03:50:58Z", "stage": "milestones.resolve", "message": "arxiv 2504.13865: GET http://export.arxiv.org/api/query failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:51:13Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:51:13Z", "stage": "milestones.resolve", "message": "s2 'A Survey on (M)LLM-Based GUI Agents': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:51:30Z", "stage": "fetch.arxiv_id", "message": "GET failed: HTTP 429", "url": "http://export.arxiv.org/api/query"}
+{"ts": "2026-08-24T03:51:30Z", "stage": "milestones.resolve", "message": "arxiv 2508.04482: GET http://export.arxiv.org/api/query failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:51:47Z", "stage": "fetch.arxiv_id", "message": "GET failed: HTTP 429", "url": "http://export.arxiv.org/api/query"}
+{"ts": "2026-08-24T03:51:47Z", "stage": "milestones.resolve", "message": "arxiv 2412.05467: GET http://export.arxiv.org/api/query failed after 4 attempts: HTTP 429"}
+{"ts": "2026-08-24T03:52:02Z", "stage": "fetch.s2", "message": "GET failed: HTTP 429", "url": "https://api.semanticscholar.org/graph/v1/paper/search"}
+{"ts": "2026-08-24T03:52:02Z", "stage": "milestones.resolve", "message": "s2 'The BrowserGym Ecosystem for Web Agent Research': GET https://api.semanticscholar.org/graph/v1/paper/search failed after 4 attempts: HTTP 429"}

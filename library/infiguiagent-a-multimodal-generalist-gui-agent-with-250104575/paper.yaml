@@ -42,6 +42,7 @@ milestone:
   era: recent
   significance: Two-stage SFT giving a generalist GUI agent native hierarchical reasoning + reflection;
     integrates grounding with deliberative planning.
+  subarea: gui_grounding
 knowledge_concepts: []
 versions:
 - version_key: v1

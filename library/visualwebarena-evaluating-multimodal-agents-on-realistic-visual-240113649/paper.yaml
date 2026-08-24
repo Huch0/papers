@@ -42,6 +42,7 @@ milestone:
   era: expansion
   significance: Extended WebArena with visually grounded tasks; standard benchmark for multimodal/VLM
     web agents.
+  subarea: web
 knowledge_concepts: []
 versions:
 - version_key: v1

@@ -1,0 +1,71 @@
+canonical_key: arxiv-1312.5602
+version_key: v1
+title: Playing Atari with Deep Reinforcement Learning
+authors:
+- Volodymyr Mnih
+- Koray Kavukcuoglu
+- David Silver
+- Alex Graves
+- Ioannis Antonoglou
+- Daan Wierstra
+- Martin Riedmiller
+abstract: We present the first deep learning model to successfully learn control policies directly from
+  high-dimensional sensory input using reinforcement learning. The model is a convolutional neural network,
+  trained with a variant of Q-learning, whose input is raw pixels and whose output is a value function
+  estimating future rewards. We apply our method to seven Atari 2600 games from the Arcade Learning Environment,
+  with no adjustment of the architecture or learning algorithm. We find that it outperforms all previous
+  approaches on six of the games and surpasses a human expert on three of them.
+venue: arXiv
+year: 2013
+source: arxiv
+source_url: https://arxiv.org/abs/1312.5602v1
+pdf_url: https://arxiv.org/pdf/1312.5602v1
+pdf_sha256: 8db04120cace173151c77e0faa6f3eaa4207009da66b9417597dc70bfee56d9c
+fetched_at: '2026-08-24T03:27:32Z'
+source_updated_at: '2013-12-19T16:00:08Z'
+ids:
+  doi: null
+  arxiv_id: 1312.5602v1
+  arxiv_base_id: '1312.5602'
+  arxiv_version: v1
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- rl
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: medium
+  rationale: 'score=65 -> READ_SOON | strong: novelty(0.80), interest_fit(0.55), venue_quality(0.40) |
+    interests: rl:reinforcement learning, rl:Q-learning, rl:group:rl | milestone/foundational floor applied'
+  matched_interests:
+  - rl:reinforcement learning
+  - rl:Q-learning
+  - rl:group:rl
+  negative_signals: []
+  subscores:
+    interest_fit: 0.55
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.36
+    novelty: 0.8
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/playing-atari-with-deep-reinforcement-learning-13125602/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

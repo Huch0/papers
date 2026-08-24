@@ -37,6 +37,7 @@ milestone:
   era: expansion
   significance: Scalable async distributed RL decoupling collection from learning across emulators; improved
     online mobile-agent RL efficiency.
+  subarea: mobile
 knowledge_concepts: []
 versions:
 - version_key: v1

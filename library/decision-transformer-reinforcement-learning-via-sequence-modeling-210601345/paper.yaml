@@ -1,0 +1,66 @@
+canonical_key: arxiv-2106.01345
+slug: decision-transformer-reinforcement-learning-via-sequence-modeling-210601345
+title: 'Decision Transformer: Reinforcement Learning via Sequence Modeling'
+authors:
+- Lili Chen
+- Kevin Lu
+- Aravind Rajeswaran
+- Kimin Lee
+- Aditya Grover
+- Michael Laskin
+- Pieter Abbeel
+- Aravind Srinivas
+- Igor Mordatch
+year: 2021
+primary_ids:
+  doi: null
+  arxiv_base_id: '2106.01345'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2106.01345v2
+- https://arxiv.org/pdf/2106.01345v2
+topic_groups:
+- rl
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2021
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: medium
+  notes: null
+milestone:
+  field: rl
+  era: expansion
+  significance: Recast RL as return-conditioned sequence modeling with Transformers, matching SOTA offline
+    RL without value functions.
+  subarea: sequence_rl
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v2
+  source: arxiv
+  source_url: https://arxiv.org/abs/2106.01345v2
+  pdf_path: library/decision-transformer-reinforcement-learning-via-sequence-modeling-210601345/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/decision-transformer-reinforcement-learning-via-sequence-modeling-210601345/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:28:38Z'
+  source_updated_at: '2021-06-24T17:09:59Z'
+  arxiv_version: v2
+  pdf_sha256: 6ff675a7b8286ca7bf8e01e4b90a41bf5c90f4c3c007e17fdb4d24e26fd05e28
+  pdf_bytes: 704784
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:28:38Z'
+  updated_at: '2026-08-24T03:28:38Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

@@ -1,0 +1,67 @@
+canonical_key: arxiv-2001.08361
+slug: scaling-laws-for-neural-language-models-200108361
+title: Scaling Laws for Neural Language Models
+authors:
+- Jared Kaplan
+- Sam McCandlish
+- Tom Henighan
+- Tom B. Brown
+- Benjamin Chess
+- Rewon Child
+- Scott Gray
+- Alec Radford
+- Jeffrey Wu
+- Dario Amodei
+year: 2020
+primary_ids:
+  doi: null
+  arxiv_base_id: '2001.08361'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2001.08361v1
+- https://arxiv.org/pdf/2001.08361v1
+topic_groups:
+- llm
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2020
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: medium
+  notes: null
+milestone:
+  field: llm
+  era: foundational
+  significance: Quantified power-law loss scaling in model size, data, and compute, guiding how to allocate
+    compute for LLM training.
+  subarea: scaling
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v1
+  source: arxiv
+  source_url: https://arxiv.org/abs/2001.08361v1
+  pdf_path: library/scaling-laws-for-neural-language-models-200108361/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/scaling-laws-for-neural-language-models-200108361/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:20:26Z'
+  source_updated_at: '2020-01-23T03:59:20Z'
+  arxiv_version: v1
+  pdf_sha256: a41bd7877fd1a6bcbba096b2619618bd2f90e02488f2365644903eb2f7c6a494
+  pdf_bytes: 2493004
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:20:26Z'
+  updated_at: '2026-08-24T03:20:26Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

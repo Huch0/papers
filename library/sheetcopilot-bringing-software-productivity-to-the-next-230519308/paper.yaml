@@ -1,0 +1,61 @@
+canonical_key: arxiv-2305.19308
+slug: sheetcopilot-bringing-software-productivity-to-the-next-230519308
+title: 'SheetCopilot: Bringing Software Productivity to the Next Level through Large Language Models'
+authors:
+- Hongxin Li
+- Jingran Su
+- Yuntao Chen
+- Qing Li
+- Zhaoxiang Zhang
+year: 2023
+primary_ids:
+  doi: null
+  arxiv_base_id: '2305.19308'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2305.19308v2
+- https://arxiv.org/pdf/2305.19308v2
+topic_groups:
+- document_agents
+- llm
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2023
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: medium
+  notes: null
+milestone:
+  field: document_agents
+  era: foundational
+  significance: Spreadsheet manipulation agent over real software operations.
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v2
+  source: arxiv
+  source_url: https://arxiv.org/abs/2305.19308v2
+  pdf_path: library/sheetcopilot-bringing-software-productivity-to-the-next-230519308/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/sheetcopilot-bringing-software-productivity-to-the-next-230519308/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:57:11Z'
+  source_updated_at: '2023-10-30T06:36:24Z'
+  arxiv_version: v2
+  pdf_sha256: 8177a60e58f07dee96d14504e3857ab1516c59b27c59b1124302250d8c606c10
+  pdf_bytes: 12182431
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:57:11Z'
+  updated_at: '2026-08-24T03:57:11Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

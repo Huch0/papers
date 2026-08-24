@@ -39,6 +39,7 @@ milestone:
   era: recent
   significance: Hierarchical multi-agent framework with self-evolving Tips/Shortcuts memory; ~22% absolute
     gain on long-horizon mobile tasks.
+  subarea: mobile
 knowledge_concepts: []
 versions:
 - version_key: v1

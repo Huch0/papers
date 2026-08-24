@@ -29,6 +29,7 @@ milestone:
   era: expansion
   significance: OpenAI CUA model + Operator preview combining GPT-4o vision with RL for pixel-level GUI
     control; major commercial milestone.
+  subarea: os_desktop
 knowledge_concepts: []
 versions:
 - version_key: v1

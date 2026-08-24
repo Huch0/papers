@@ -1,0 +1,62 @@
+canonical_key: s2-9405cc0d6169988371b2755e573cc28650d14dfe
+slug: language-models-are-unsupervised-multitask-learners-8650d14dfe
+title: Language Models are Unsupervised Multitask Learners
+authors:
+- Alec Radford
+- Jeff Wu
+- R. Child
+- D. Luan
+- Dario Amodei
+- I. Sutskever
+year: 2019
+primary_ids:
+  doi: null
+  arxiv_base_id: null
+  openreview_id: null
+  semantic_scholar_id: 9405cc0d6169988371b2755e573cc28650d14dfe
+  openalex_id: null
+canonical_urls:
+- https://www.semanticscholar.org/paper/9405cc0d6169988371b2755e573cc28650d14dfe
+topic_groups:
+- llm
+tags:
+- foundational
+venue:
+  name: Not reported
+  tier: unknown
+  status: unknown
+  year: 2019
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: medium
+  notes: null
+milestone:
+  field: llm
+  era: emergence
+  significance: GPT-2 (1.5B) showed scaling model and data yields zero-shot abilities - coherent text,
+    QA, translation with no task training.
+  subarea: scaling
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: semantic_scholar
+  source: semantic_scholar
+  source_url: https://www.semanticscholar.org/paper/9405cc0d6169988371b2755e573cc28650d14dfe
+  pdf_path: null
+  summary_path: null
+  metadata_path: library/language-models-are-unsupervised-multitask-learners-8650d14dfe/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:34:32Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: null
+  pdf_bytes: null
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:34:32Z'
+  updated_at: '2026-08-24T03:34:32Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

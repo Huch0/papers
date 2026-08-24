@@ -47,6 +47,7 @@ milestone:
   era: expansion
   significance: Reverse-task-synthesis pipeline auto-generating high-quality GUI trajectories without
     human labels; data engine for desktop/GUI agents.
+  subarea: os_desktop
 knowledge_concepts: []
 versions:
 - version_key: v1

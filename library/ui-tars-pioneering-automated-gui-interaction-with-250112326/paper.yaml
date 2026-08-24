@@ -65,7 +65,9 @@ user:
 milestone:
   field: computer_use_agents
   era: recent
-  significance: Native end-to-end GUI agent model; strong recent baseline.
+  significance: End-to-end native agent unifying perception/grounding/memory/System-2 reasoning; trained
+    on 6M+ GUI tutorials; landmark open model.
+  subarea: gui_grounding
 knowledge_concepts: []
 versions:
 - version_key: v1

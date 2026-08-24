@@ -1,0 +1,65 @@
+canonical_key: arxiv-1509.02971
+slug: continuous-control-with-deep-reinforcement-learning-150902971
+title: Continuous control with deep reinforcement learning
+authors:
+- Timothy P. Lillicrap
+- Jonathan J. Hunt
+- Alexander Pritzel
+- Nicolas Heess
+- Tom Erez
+- Yuval Tassa
+- David Silver
+- Daan Wierstra
+year: 2015
+primary_ids:
+  doi: null
+  arxiv_base_id: '1509.02971'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/1509.02971v6
+- https://arxiv.org/pdf/1509.02971v6
+topic_groups:
+- rl
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2015
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: medium
+  notes: null
+milestone:
+  field: rl
+  era: emergence
+  significance: DDPG extended DPG with replay and target networks; breakthrough for high-dimensional continuous
+    control.
+  subarea: policy_gradient
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v6
+  source: arxiv
+  source_url: https://arxiv.org/abs/1509.02971v6
+  pdf_path: library/continuous-control-with-deep-reinforcement-learning-150902971/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/continuous-control-with-deep-reinforcement-learning-150902971/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:27:39Z'
+  source_updated_at: '2019-07-05T10:47:27Z'
+  arxiv_version: v6
+  pdf_sha256: 34ef677ecdee8c2a72721c70c7d849191be72af39ac8691a12e8c2979a28feda
+  pdf_bytes: 663643
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:27:39Z'
+  updated_at: '2026-08-24T03:27:39Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

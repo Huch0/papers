@@ -1,0 +1,75 @@
+canonical_key: arxiv-2109.01652
+version_key: v1
+title: Finetuned Language Models Are Zero-Shot Learners
+authors:
+- Jason Wei
+- Maarten Bosma
+- Vincent Y. Zhao
+- Kelvin Guu
+- Adams Wei Yu
+- Brian Lester
+- Nan Du
+- Andrew M. Dai
+- Quoc V. Le
+abstract: This paper explores a simple method for improving the zero-shot learning abilities of language
+  models. We show that instruction tuning -- finetuning language models on a collection of tasks described
+  via instructions -- substantially improves zero-shot performance on unseen tasks. We take a 137B parameter
+  pretrained language model and instruction-tune it on over 60 NLP tasks verbalized via natural language
+  instruction templates. We evaluate this instruction-tuned model, which we call FLAN, on unseen task
+  types. FLAN substantially improves the performance of its unmodified counterpart and surpasses zero-shot
+  175B GPT-3 on 20 of 25 tasks that we evaluate. FLAN even outperforms few-shot GPT-3 by a large margin
+  on ANLI, RTE, BoolQ, AI2-ARC, OpenbookQA, and StoryCloze. Ablation studies reveal that number of finetuning
+  datasets, model scale, and natural language instructions are key to the success of instruction tuning.
+venue: arXiv
+year: 2021
+source: arxiv
+source_url: https://arxiv.org/abs/2109.01652v5
+pdf_url: https://arxiv.org/pdf/2109.01652v5
+pdf_sha256: 7126b83c5590b9eb4b6e6027446cb88c0aeff132e47d88e9407982b1f7fad044
+fetched_at: '2026-08-24T03:20:33Z'
+source_updated_at: '2022-02-08T20:26:45Z'
+ids:
+  doi: null
+  arxiv_id: 2109.01652v5
+  arxiv_base_id: '2109.01652'
+  arxiv_version: v5
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- llm
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: medium
+  rationale: 'score=65 -> READ_SOON | strong: novelty(0.55), evaluation_quality(0.55), interest_fit(0.50)
+    | interests: llm:instruction tuning, llm:group:llm | milestone/foundational floor applied'
+  matched_interests:
+  - llm:instruction tuning
+  - llm:group:llm
+  negative_signals: []
+  subscores:
+    interest_fit: 0.501
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 0.55
+    artifact_availability: 0.0
+    evaluation_quality: 0.55
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/finetuned-language-models-are-zero-shot-learners-210901652/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

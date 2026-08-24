@@ -41,6 +41,7 @@ milestone:
   era: foundational
   significance: Google 5B VLM with screen-annotation pretraining + auto UI QA/nav data; SOTA on multiple
     UI/infographic benchmarks.
+  subarea: gui_grounding
 knowledge_concepts: []
 versions:
 - version_key: v1

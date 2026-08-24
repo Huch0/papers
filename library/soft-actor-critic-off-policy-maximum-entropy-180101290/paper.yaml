@@ -1,0 +1,61 @@
+canonical_key: arxiv-1801.01290
+slug: soft-actor-critic-off-policy-maximum-entropy-180101290
+title: 'Soft Actor-Critic: Off-Policy Maximum Entropy Deep Reinforcement Learning with a Stochastic Actor'
+authors:
+- Tuomas Haarnoja
+- Aurick Zhou
+- Pieter Abbeel
+- Sergey Levine
+year: 2018
+primary_ids:
+  doi: null
+  arxiv_base_id: '1801.01290'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/1801.01290v2
+- https://arxiv.org/pdf/1801.01290v2
+topic_groups:
+- rl
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2018
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: medium
+  notes: null
+milestone:
+  field: rl
+  era: foundational
+  significance: Maximum-entropy off-policy actor-critic with twin critics; SOTA stability and sample efficiency
+    in continuous control.
+  subarea: policy_gradient
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v2
+  source: arxiv
+  source_url: https://arxiv.org/abs/1801.01290v2
+  pdf_path: library/soft-actor-critic-off-policy-maximum-entropy-180101290/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/soft-actor-critic-off-policy-maximum-entropy-180101290/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:28:04Z'
+  source_updated_at: '2018-08-08T21:27:08Z'
+  arxiv_version: v2
+  pdf_sha256: 5c33fae017d02f7025730f05198d4a6b103402822c8bbf48cbc5d8a0474c336a
+  pdf_bytes: 4388102
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:28:04Z'
+  updated_at: '2026-08-24T03:28:04Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

@@ -52,9 +52,12 @@ scoring:
   label: READ_SOON
   confidence: high
   rationale: 'score=65 -> READ_SOON | strong: recency(1.00), interest_fit(0.73), artifact_availability(0.55)
-    | interests: computer_use_agents:group:computer_use_agents | milestone/foundational floor applied'
+    | interests: computer_use_agents:group:computer_use_agents, llm:large language model, vlm:multimodal
+    LLM | milestone/foundational floor applied'
   matched_interests:
   - computer_use_agents:group:computer_use_agents
+  - llm:large language model
+  - vlm:multimodal LLM
   negative_signals: []
   subscores:
     interest_fit: 0.73

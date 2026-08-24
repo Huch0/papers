@@ -35,6 +35,7 @@ milestone:
   era: expansion
   significance: Screen-parsing module converting screenshots into structured labeled elements; lets any
     VLM act without fine-tuning; widely adopted.
+  subarea: gui_grounding
 knowledge_concepts: []
 versions:
 - version_key: v1

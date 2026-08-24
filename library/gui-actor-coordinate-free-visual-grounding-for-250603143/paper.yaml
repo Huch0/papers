@@ -51,6 +51,7 @@ milestone:
   era: recent
   significance: Attention-based action head over visual patches replacing coordinate text; beats larger
     models on ScreenSpot-Pro; coordinate-free.
+  subarea: gui_grounding
 knowledge_concepts: []
 versions:
 - version_key: v1

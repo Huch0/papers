@@ -38,6 +38,7 @@ milestone:
   era: expansion
   significance: Open framework with experience-augmented hierarchical planning + ACI; early OSWorld SOTA;
     popularized modular GUI scaffolds.
+  subarea: os_desktop
 knowledge_concepts: []
 versions:
 - version_key: v1

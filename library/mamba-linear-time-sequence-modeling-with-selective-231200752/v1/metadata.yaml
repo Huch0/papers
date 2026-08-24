@@ -1,0 +1,76 @@
+canonical_key: arxiv-2312.00752
+version_key: v1
+title: 'Mamba: Linear-Time Sequence Modeling with Selective State Spaces'
+authors:
+- Albert Gu
+- Tri Dao
+abstract: Foundation models, now powering most of the exciting applications in deep learning, are almost
+  universally based on the Transformer architecture and its core attention module. Many subquadratic-time
+  architectures such as linear attention, gated convolution and recurrent models, and structured state
+  space models (SSMs) have been developed to address Transformers' computational inefficiency on long
+  sequences, but they have not performed as well as attention on important modalities such as language.
+  We identify that a key weakness of such models is their inability to perform content-based reasoning,
+  and make several improvements. First, simply letting the SSM parameters be functions of the input addresses
+  their weakness with discrete modalities, allowing the model to selectively propagate or forget information
+  along the sequence length dimension depending on the current token. Second, even though this change
+  prevents the use of efficient convolutions, we design a hardware-aware parallel algorithm in recurrent
+  mode. We integrate these selective SSMs into a simplified end-to-end neural network architecture without
+  attention or even MLP blocks (Mamba). Mamba enjoys fast inference (5$\times$ higher throughput than
+  Transformers) and linear scaling in sequence length, and its performance improves on real data up to
+  million-length sequences. As a general sequence model backbone, Mamba achieves state-of-the-art performance
+  across several modalities such as language, audio, and genomics. On language modeling, our Mamba-3B
+  model outperforms Transformers of the same size and matches Transformers twice its size, both in pretraining
+  and downstream evaluation.
+venue: arXiv
+year: 2023
+source: arxiv
+source_url: https://arxiv.org/abs/2312.00752v2
+pdf_url: https://arxiv.org/pdf/2312.00752v2
+pdf_sha256: adf70ed1803c85b1899dec3e21f3af0b124411439e8654b840ea65f7b9f52b2e
+fetched_at: '2026-08-24T03:21:12Z'
+source_updated_at: '2024-05-31T17:55:27Z'
+ids:
+  doi: null
+  arxiv_id: 2312.00752v2
+  arxiv_base_id: '2312.00752'
+  arxiv_version: v2
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- llm
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: medium
+  rationale: 'score=65 -> READ_SOON | strong: novelty(1.00), interest_fit(0.50), venue_quality(0.40) |
+    interests: llm:pretraining, llm:group:llm | milestone/foundational floor applied'
+  matched_interests:
+  - llm:pretraining
+  - llm:group:llm
+  negative_signals: []
+  subscores:
+    interest_fit: 0.501
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 1.0
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/mamba-linear-time-sequence-modeling-with-selective-231200752/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

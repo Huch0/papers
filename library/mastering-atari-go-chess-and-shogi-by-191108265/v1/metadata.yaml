@@ -1,0 +1,80 @@
+canonical_key: arxiv-1911.08265
+version_key: v1
+title: Mastering Atari, Go, Chess and Shogi by Planning with a Learned Model
+authors:
+- Julian Schrittwieser
+- Ioannis Antonoglou
+- Thomas Hubert
+- Karen Simonyan
+- Laurent Sifre
+- Simon Schmitt
+- Arthur Guez
+- Edward Lockhart
+- Demis Hassabis
+- Thore Graepel
+- Timothy Lillicrap
+- David Silver
+abstract: 'Constructing agents with planning capabilities has long been one of the main challenges in
+  the pursuit of artificial intelligence. Tree-based planning methods have enjoyed huge success in challenging
+  domains, such as chess and Go, where a perfect simulator is available. However, in real-world problems
+  the dynamics governing the environment are often complex and unknown. In this work we present the MuZero
+  algorithm which, by combining a tree-based search with a learned model, achieves superhuman performance
+  in a range of challenging and visually complex domains, without any knowledge of their underlying dynamics.
+  MuZero learns a model that, when applied iteratively, predicts the quantities most directly relevant
+  to planning: the reward, the action-selection policy, and the value function. When evaluated on 57 different
+  Atari games - the canonical video game environment for testing AI techniques, in which model-based planning
+  approaches have historically struggled - our new algorithm achieved a new state of the art. When evaluated
+  on Go, chess and shogi, without any knowledge of the game rules, MuZero matched the superhuman performance
+  of the AlphaZero algorithm that was supplied with the game rules.'
+venue: arXiv
+year: 2019
+source: arxiv
+source_url: https://arxiv.org/abs/1911.08265v2
+pdf_url: https://arxiv.org/pdf/1911.08265v2
+pdf_sha256: 25588ee1d48690b33359a08a42fadfe86335aefefeee241d465b8bbd5eaa445c
+fetched_at: '2026-08-24T03:28:19Z'
+source_updated_at: '2020-02-21T18:05:30Z'
+ids:
+  doi: 10.1038/s41586-020-03051-4
+  arxiv_id: 1911.08265v2
+  arxiv_base_id: '1911.08265'
+  arxiv_version: v2
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- rl
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: medium
+  rationale: 'score=65 -> READ_SOON | strong: interest_fit(0.40), venue_quality(0.40), harness_relevance(0.36)
+    | interests: rl:group:rl | milestone/foundational floor applied'
+  matched_interests:
+  - rl:group:rl
+  negative_signals: []
+  subscores:
+    interest_fit: 0.402
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.36
+    novelty: 0.0
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/mastering-atari-go-chess-and-shogi-by-191108265/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

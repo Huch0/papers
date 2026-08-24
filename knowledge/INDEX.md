@@ -8,6 +8,6 @@ _5 concept(s)._
 |---|---|---|---|
 | [Agent-Computer Interface (ACI)](concepts/agent-computer-interface-aci.md) | agent-harness, swe-agent | `arxiv-2405.15793`, `arxiv-2310.06770` | An ACI is the "keyboard, screen, and house rules" you hand an LLM so it can operate a |
 | [Causal DiT](concepts/causal-dit.md) | world-model | `arxiv-2602.15922` | <TLDR>Suppose you had to build a transformer that denoises video — you would be forced, step by |
-| [Flow Matching](concepts/flow-matching.md) | world-model | `arxiv-2602.15922` | A generative model must answer: *given pure randomness, produce something that looks like the data.* |
+| [Flow Matching](concepts/flow-matching.md) | world-model | `arxiv-2602.15922` | <TLDR>Flow matching trains a network to predict the velocity of a straight-line journey from noise to |
 | [Planner–Executor–Verifier](concepts/planner-executor-verifier.md) | agent-harness, verifier | `arxiv-2405.15793` | A common agent shape that splits one hard job into three roles: a **planner** decomposes |
 | [Web-Agent Generalization (cross-task / site / domain)](concepts/web-agent-generalization.md) | computer-use-agents, web-agent, evaluation | `arxiv-2306.06070`, `arxiv-2307.13854`, `arxiv-2307.10088` | A web agent can look competent on the sites it trained on and fall apart on a *new* |

@@ -41,6 +41,7 @@ milestone:
   era: expansion
   significance: Multi-platform (iPhone/Android/iPad/web/AppleTV) adaptive high-res grounding; generalizes
     UI understanding across ecosystems.
+  subarea: gui_grounding
 knowledge_concepts: []
 versions:
 - version_key: v1

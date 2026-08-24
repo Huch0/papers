@@ -49,6 +49,7 @@ milestone:
   era: foundational
   significance: First LLM fine-tuned via BC+RLHF to browse a text web environment and cite sources; seeded
     agentic search.
+  subarea: web
 knowledge_concepts: []
 versions:
 - version_key: v1

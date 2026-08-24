@@ -48,6 +48,7 @@ milestone:
   era: recent
   significance: Definitive survey of phone GUI agents (architectures, SFT, RL, datasets, benchmarks);
     reference map for the sub-area.
+  subarea: mobile
 knowledge_concepts: []
 versions:
 - version_key: v1

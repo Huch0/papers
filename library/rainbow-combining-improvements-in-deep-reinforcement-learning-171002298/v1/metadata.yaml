@@ -1,0 +1,73 @@
+canonical_key: arxiv-1710.02298
+version_key: v1
+title: 'Rainbow: Combining Improvements in Deep Reinforcement Learning'
+authors:
+- Matteo Hessel
+- Joseph Modayil
+- Hado van Hasselt
+- Tom Schaul
+- Georg Ostrovski
+- Will Dabney
+- Dan Horgan
+- Bilal Piot
+- Mohammad Azar
+- David Silver
+abstract: The deep reinforcement learning community has made several independent improvements to the DQN
+  algorithm. However, it is unclear which of these extensions are complementary and can be fruitfully
+  combined. This paper examines six extensions to the DQN algorithm and empirically studies their combination.
+  Our experiments show that the combination provides state-of-the-art performance on the Atari 2600 benchmark,
+  both in terms of data efficiency and final performance. We also provide results from a detailed ablation
+  study that shows the contribution of each component to overall performance.
+venue: arXiv
+year: 2017
+source: arxiv
+source_url: https://arxiv.org/abs/1710.02298v1
+pdf_url: https://arxiv.org/pdf/1710.02298v1
+pdf_sha256: 0a209934694aa5575fb9bbce8db1c3a6a25a42e152df94eae7b8eacdc1dfc821
+fetched_at: '2026-08-24T03:27:55Z'
+source_updated_at: '2017-10-06T07:45:46Z'
+ids:
+  doi: null
+  arxiv_id: 1710.02298v1
+  arxiv_base_id: '1710.02298'
+  arxiv_version: v1
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- rl
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: medium
+  rationale: 'score=65 -> READ_SOON | strong: novelty(0.55), evaluation_quality(0.55), interest_fit(0.50)
+    | interests: rl:reinforcement learning, rl:group:rl | milestone/foundational floor applied'
+  matched_interests:
+  - rl:reinforcement learning
+  - rl:group:rl
+  negative_signals: []
+  subscores:
+    interest_fit: 0.501
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 0.55
+    artifact_availability: 0.0
+    evaluation_quality: 0.55
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/rainbow-combining-improvements-in-deep-reinforcement-learning-171002298/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

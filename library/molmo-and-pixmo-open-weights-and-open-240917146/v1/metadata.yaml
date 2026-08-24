@@ -1,0 +1,120 @@
+canonical_key: arxiv-2409.17146
+version_key: v1
+title: 'Molmo and PixMo: Open Weights and Open Data for State-of-the-Art Vision-Language Models'
+authors:
+- Matt Deitke
+- Christopher Clark
+- Sang-Ho Lee
+- Tripathi, Rohun
+- Yue Yang
+- Jae Sung Park
+- Mohammadreza Salehi
+- Niklas Muennighoff
+- Kyle Lo
+- Luca Soldaini
+- Jiasen Lu
+- Anderson, Taira
+- Erin Bransom
+- Kiana Ehsani
+- Huong Ngo
+- Y. Chen
+- Ajay Patel
+- Mark Yatskar
+- Chris Callison-Burch
+- Andrew Head
+- Rose Hendrix
+- Favyen Bastani
+- Eli VanderBilt
+- Nathan Lambert
+- Yvonne Chou
+- A. Chheda
+- Sparks, Jenna
+- Sam Skjonsberg
+- Michael Schmitz
+- Aaron Sarnat
+- Bischoff, Byron
+- Pete Walsh
+- Chris Newell
+- Piper Wolters
+- Tanmay Gupta
+- Kuo-Hao Zeng
+- Jon Borchardt
+- Dirk Groeneveld
+- Crystal Nam
+- Sophie Lebrecht
+- Caitlin Wittlif
+- Carissa Schoenick
+- Oscar Michel
+- Ranjay Krishna
+- Luca Weihs
+- Noah A. Smith
+- Hannaneh Hajishirzi
+- Ross Girshick
+- Ali Farhadi
+- Aniruddha Kembhavi
+abstract: Today's most advanced vision-language models (VLMs) remain proprietary. The strongest open-weight
+  models rely heavily on synthetic data from proprietary VLMs to achieve good performance, effectively
+  distilling these closed VLMs into open ones. As a result, the community has been missing foundational
+  knowledge about how to build performant VLMs from scratch. We present Molmo, a new family of VLMs that
+  are state-of-the-art in their class of openness. Our key contribution is a collection of new datasets
+  called PixMo, including a dataset of highly detailed image captions for pre-training, a free-form image
+  Q&A dataset for fine-tuning, and an innovative 2D pointing dataset, all collected without the use of
+  external VLMs. The success of our approach relies on careful modeling choices, a well-tuned training
+  pipeline, and, most critically, the quality of our newly collected datasets. Our best-in-class 72B model
+  not only outperforms others in the class of open weight and data models, but also outperforms larger
+  proprietary models including Claude 3.5 Sonnet, and Gemini 1.5 Pro and Flash, second only to GPT-4o
+  based on both academic benchmarks and on a large human evaluation. Our model weights, new datasets,
+  and source code are available at https://molmo.allenai.org/blog.
+venue: arXiv (Cornell University)
+year: 2024
+source: openalex
+source_url: https://openalex.org/W4403788644
+pdf_url: https://arxiv.org/pdf/2409.17146
+pdf_sha256: 54c5e78b4066eef960af1c108d758311b479879b6ba4215570e1c23f5f55510d
+fetched_at: '2026-08-24T03:25:58Z'
+source_updated_at: '2024-09-25'
+ids:
+  doi: 10.48550/arxiv.2409.17146
+  arxiv_id: null
+  arxiv_base_id: '2409.17146'
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: https://openalex.org/W4403788644
+tags:
+- foundational
+topic_groups:
+- vlm
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: medium
+  rationale: 'score=65 -> READ_SOON | strong: novelty(0.80), evaluation_quality(0.55), interest_fit(0.50)
+    | interests: vlm:vision-language model, vlm:group:vlm | milestone/foundational floor applied'
+  matched_interests:
+  - vlm:vision-language model
+  - vlm:group:vlm
+  negative_signals: []
+  subscores:
+    interest_fit: 0.501
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 0.8
+    artifact_availability: 0.0
+    evaluation_quality: 0.55
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/molmo-and-pixmo-open-weights-and-open-240917146/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

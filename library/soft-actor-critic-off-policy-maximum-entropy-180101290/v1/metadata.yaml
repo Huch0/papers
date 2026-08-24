@@ -1,0 +1,75 @@
+canonical_key: arxiv-1801.01290
+version_key: v1
+title: 'Soft Actor-Critic: Off-Policy Maximum Entropy Deep Reinforcement Learning with a Stochastic Actor'
+authors:
+- Tuomas Haarnoja
+- Aurick Zhou
+- Pieter Abbeel
+- Sergey Levine
+abstract: 'Model-free deep reinforcement learning (RL) algorithms have been demonstrated on a range of
+  challenging decision making and control tasks. However, these methods typically suffer from two major
+  challenges: very high sample complexity and brittle convergence properties, which necessitate meticulous
+  hyperparameter tuning. Both of these challenges severely limit the applicability of such methods to
+  complex, real-world domains. In this paper, we propose soft actor-critic, an off-policy actor-critic
+  deep RL algorithm based on the maximum entropy reinforcement learning framework. In this framework,
+  the actor aims to maximize expected reward while also maximizing entropy. That is, to succeed at the
+  task while acting as randomly as possible. Prior deep RL methods based on this framework have been formulated
+  as Q-learning methods. By combining off-policy updates with a stable stochastic actor-critic formulation,
+  our method achieves state-of-the-art performance on a range of continuous control benchmark tasks, outperforming
+  prior on-policy and off-policy methods. Furthermore, we demonstrate that, in contrast to other off-policy
+  algorithms, our approach is very stable, achieving very similar performance across different random
+  seeds.'
+venue: arXiv
+year: 2018
+source: arxiv
+source_url: https://arxiv.org/abs/1801.01290v2
+pdf_url: https://arxiv.org/pdf/1801.01290v2
+pdf_sha256: 5c33fae017d02f7025730f05198d4a6b103402822c8bbf48cbc5d8a0474c336a
+fetched_at: '2026-08-24T03:28:00Z'
+source_updated_at: '2018-08-08T21:27:08Z'
+ids:
+  doi: null
+  arxiv_id: 1801.01290v2
+  arxiv_base_id: '1801.01290'
+  arxiv_version: v2
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- rl
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: medium
+  rationale: 'score=65 -> READ_SOON | strong: interest_fit(0.55), novelty(0.55), venue_quality(0.40) |
+    interests: rl:reinforcement learning, rl:Q-learning, rl:group:rl | milestone/foundational floor applied'
+  matched_interests:
+  - rl:reinforcement learning
+  - rl:Q-learning
+  - rl:group:rl
+  negative_signals: []
+  subscores:
+    interest_fit: 0.55
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 0.55
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/soft-actor-critic-off-policy-maximum-entropy-180101290/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

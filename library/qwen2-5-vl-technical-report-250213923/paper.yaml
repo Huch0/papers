@@ -1,0 +1,84 @@
+canonical_key: arxiv-2502.13923
+slug: qwen2-5-vl-technical-report-250213923
+title: Qwen2.5-VL Technical Report
+authors:
+- Shuai Bai
+- Keqin Chen
+- Xuejing Liu
+- Jialin Wang
+- Wenbin Ge
+- Sibo Song
+- Kai Dang
+- Peng Wang
+- Shijie Wang
+- Jun Tang
+- Humen Zhong
+- Yuanzhi Zhu
+- Mingkun Yang
+- Zhaohai Li
+- Jianqiang Wan
+- Pengfei Wang
+- Wei Ding
+- Zheren Fu
+- Yiheng Xu
+- Jiabo Ye
+- Xi Zhang
+- Tianbao Xie
+- Zesen Cheng
+- Hang Zhang
+- Zhibo Yang
+- Haiyang Xu
+- Junyang Lin
+year: 2025
+primary_ids:
+  doi: null
+  arxiv_base_id: '2502.13923'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2502.13923v1
+- https://arxiv.org/pdf/2502.13923v1
+topic_groups:
+- vlm
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2025
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: medium
+  notes: null
+milestone:
+  field: vlm
+  era: recent
+  significance: Dynamic-resolution, long-video, document-parsing open VLM; the open-weight frontier reference
+    of 2025.
+  subarea: frontier
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v1
+  source: arxiv
+  source_url: https://arxiv.org/abs/2502.13923v1
+  pdf_path: library/qwen2-5-vl-technical-report-250213923/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/qwen2-5-vl-technical-report-250213923/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:26:03Z'
+  source_updated_at: '2025-02-19T18:00:14Z'
+  arxiv_version: v1
+  pdf_sha256: 399a28f6ed79f4ece29cca93993fceb56fc304b1d779e49392aec05aff45aba5
+  pdf_bytes: 2219929
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:26:03Z'
+  updated_at: '2026-08-24T03:26:03Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

@@ -1,0 +1,84 @@
+canonical_key: arxiv-2305.10601
+version_key: v1
+title: 'Tree of Thoughts: Deliberate Problem Solving with Large Language Models'
+authors:
+- Shunyu Yao
+- Dian Yu
+- Jeffrey Zhao
+- Izhak Shafran
+- Thomas L. Griffiths
+- Yuan Cao
+- Karthik Narasimhan
+abstract: 'Language models are increasingly being deployed for general problem solving across a wide range
+  of tasks, but are still confined to token-level, left-to-right decision-making processes during inference.
+  This means they can fall short in tasks that require exploration, strategic lookahead, or where initial
+  decisions play a pivotal role. To surmount these challenges, we introduce a new framework for language
+  model inference, Tree of Thoughts (ToT), which generalizes over the popular Chain of Thought approach
+  to prompting language models, and enables exploration over coherent units of text (thoughts) that serve
+  as intermediate steps toward problem solving. ToT allows LMs to perform deliberate decision making by
+  considering multiple different reasoning paths and self-evaluating choices to decide the next course
+  of action, as well as looking ahead or backtracking when necessary to make global choices. Our experiments
+  show that ToT significantly enhances language models'' problem-solving abilities on three novel tasks
+  requiring non-trivial planning or search: Game of 24, Creative Writing, and Mini Crosswords. For instance,
+  in Game of 24, while GPT-4 with chain-of-thought prompting only solved 4% of tasks, our method achieved
+  a success rate of 74%. Code repo with all prompts: https://github.com/princeton-nlp/tree-of-thought-llm.'
+venue: arXiv
+year: 2023
+source: arxiv
+source_url: https://arxiv.org/abs/2305.10601v2
+pdf_url: https://arxiv.org/pdf/2305.10601v2
+pdf_sha256: 79c5237e3f63953a73f2b0d6894327702ee1f7e981450c251bb1b5cb4f8d7b8f
+fetched_at: '2026-08-24T03:31:14Z'
+source_updated_at: '2023-12-03T22:50:35Z'
+ids:
+  doi: null
+  arxiv_id: 2305.10601v2
+  arxiv_base_id: '2305.10601'
+  arxiv_version: v2
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- agent_harness
+- llm
+- rl
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: novelty(0.80), interest_fit(0.73), artifact_availability(0.55)
+    | interests: agent_harness:group:agent_harness, llm:large language model, llm:chain-of-thought, llm:group:llm
+    | milestone/foundational floor applied'
+  matched_interests:
+  - agent_harness:group:agent_harness
+  - llm:large language model
+  - llm:chain-of-thought
+  - llm:group:llm
+  - rl:exploration
+  - rl:group:rl
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 0.8
+    artifact_availability: 0.55
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/tree-of-thoughts-deliberate-problem-solving-with-230510601/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

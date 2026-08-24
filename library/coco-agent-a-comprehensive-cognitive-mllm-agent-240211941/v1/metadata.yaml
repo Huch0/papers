@@ -41,10 +41,11 @@ scoring:
   label: READ_SOON
   confidence: high
   rationale: 'score=67 -> READ_SOON | strong: recency(1.00), venue_quality(1.00), novelty(1.00) | interests:
-    computer_use_agents:GUI agent, computer_use_agents:group:computer_use_agents'
+    computer_use_agents:GUI agent, computer_use_agents:group:computer_use_agents, llm:large language model'
   matched_interests:
   - computer_use_agents:GUI agent
   - computer_use_agents:group:computer_use_agents
+  - llm:large language model
   negative_signals: []
   subscores:
     interest_fit: 0.91

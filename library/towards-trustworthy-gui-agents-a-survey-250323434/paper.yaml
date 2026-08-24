@@ -36,6 +36,7 @@ milestone:
   era: recent
   significance: First survey centering safety, reliability, and the perception-action execution gap for
     deployed GUI agents.
+  subarea: enabler_benchmark_survey
 knowledge_concepts: []
 versions:
 - version_key: v1

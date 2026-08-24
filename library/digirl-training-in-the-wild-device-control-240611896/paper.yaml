@@ -38,6 +38,7 @@ milestone:
   era: expansion
   significance: Offline-to-online autonomous RL with a VLM evaluator + curriculum; SOTA for in-the-wild
     Android control; anchored RL-for-device-control.
+  subarea: mobile
 knowledge_concepts: []
 versions:
 - version_key: v1

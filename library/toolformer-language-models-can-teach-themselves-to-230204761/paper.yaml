@@ -1,0 +1,65 @@
+canonical_key: arxiv-2302.04761
+slug: toolformer-language-models-can-teach-themselves-to-230204761
+title: 'Toolformer: Language Models Can Teach Themselves to Use Tools'
+authors:
+- Timo Schick
+- Jane Dwivedi-Yu
+- Roberto Dessì
+- Roberta Raileanu
+- Maria Lomeli
+- Luke Zettlemoyer
+- Nicola Cancedda
+- Thomas Scialom
+year: 2023
+primary_ids:
+  doi: null
+  arxiv_base_id: '2302.04761'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2302.04761v1
+- https://arxiv.org/pdf/2302.04761v1
+topic_groups:
+- agent_harness
+- general_agent_methods
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2023
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: agent_harness
+  era: foundational
+  significance: Self-supervised tool-use; canonical tool-learning reference.
+  subarea: tool_use
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v1
+  source: arxiv
+  source_url: https://arxiv.org/abs/2302.04761v1
+  pdf_path: library/toolformer-language-models-can-teach-themselves-to-230204761/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/toolformer-language-models-can-teach-themselves-to-230204761/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:31:11Z'
+  source_updated_at: '2023-02-09T16:49:57Z'
+  arxiv_version: v1
+  pdf_sha256: 6d7483d94653008e40c2058a1c22441c92e3713dae278b6361e8efc447c99522
+  pdf_bytes: 657966
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:31:11Z'
+  updated_at: '2026-08-24T03:31:11Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

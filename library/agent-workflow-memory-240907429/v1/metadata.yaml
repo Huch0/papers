@@ -1,0 +1,73 @@
+canonical_key: arxiv-2409.07429
+version_key: v1
+title: Agent Workflow Memory
+authors:
+- Zora Zhiruo Wang
+- Jiayuan Mao
+- Daniel Fried
+- Graham Neubig
+abstract: Despite the potential of language model-based agents to solve real-world tasks such as web navigation,
+  current methods still struggle with long-horizon tasks with complex action trajectories. In contrast,
+  humans can flexibly solve complex tasks by learning reusable task workflows from past experiences and
+  using them to guide future actions. To build agents that can similarly benefit from this process, we
+  introduce Agent Workflow Memory (AWM), a method for inducing commonly reused routines, i.e., workflows,
+  and selectively providing workflows to the agent to guide subsequent generations. AWM flexibly applies
+  to both offline and online scenarios, where agents induce workflows from training examples beforehand
+  or from test queries on the fly. We experiment on two major web navigation benchmarks -- Mind2Web and
+  WebArena -- that collectively cover 1000+ tasks from 200+ domains across travel, shopping, and social
+  media, among others. AWM substantially improves the baseline results by 24.6% and 51.1% relative success
+  rate on Mind2Web and WebArena while reducing the number of steps taken to solve WebArena tasks successfully.
+  Furthermore, online AWM robustly generalizes in cross-task, website, and domain evaluations, surpassing
+  baselines from 8.9 to 14.0 absolute points as train-test task distribution gaps widen.
+venue: arXiv
+year: 2024
+source: arxiv
+source_url: https://arxiv.org/abs/2409.07429v1
+pdf_url: https://arxiv.org/pdf/2409.07429v1
+pdf_sha256: ddc6f6fedec48c88ae743b43a464f7eb4aecaab05acd18c29cfb657ab445ebe4
+fetched_at: '2026-08-24T03:31:46Z'
+source_updated_at: '2024-09-11T17:21:00Z'
+ids:
+  doi: null
+  arxiv_id: 2409.07429v1
+  arxiv_base_id: '2409.07429'
+  arxiv_version: v1
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- agent_harness
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: interest_fit(0.73), trend_signal(0.70), novelty(0.55) |
+    interests: agent_harness:group:agent_harness | milestone/foundational floor applied'
+  matched_interests:
+  - agent_harness:group:agent_harness
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 0.55
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.7
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/agent-workflow-memory-240907429/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

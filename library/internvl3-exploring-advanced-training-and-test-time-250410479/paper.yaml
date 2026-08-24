@@ -1,0 +1,108 @@
+canonical_key: arxiv-2504.10479
+slug: internvl3-exploring-advanced-training-and-test-time-250410479
+title: 'InternVL3: Exploring Advanced Training and Test-Time Recipes for Open-Source Multimodal Models'
+authors:
+- Jinguo Zhu
+- Weiyun Wang
+- Zhe Chen
+- Zhaoyang Liu
+- Sheng‐Long Ye
+- Lixin Gu
+- Hao Tian
+- Yuchen Duan
+- Weijie Su
+- Shao, Jie
+- Zhangwei Gao
+- Erfei Cui
+- Xuehui Wang
+- Yue Cao
+- Yangzhou Liu
+- Xingguang Wei
+- Hongjie Zhang
+- Haomin Wang
+- Weiye Xu
+- Hao Li
+- Jiahao Wang
+- Deng, Nianchen
+- Songze Li
+- Yinan He
+- Tan Jiang
+- Jiapeng Luo
+- Zhichao Wang
+- Conghui He
+- Botian Shi
+- Zhang, Xingcheng
+- Wei Shao
+- Junjun He
+- Yingtong Xiong
+- Wenwen Qu
+- Peng Sun
+- Penglong Jiao
+- Han Lv
+- WU Li-jun
+- Kaipeng Zhang
+- Huipeng Deng
+- Jiaye Ge
+- Kai Chen
+- Limin Wang
+- Min Dou
+- Lewei Lu
+- Zhu, Xizhou
+- Tong Lü
+- Dahua Lin
+- Yu Qiao
+- Jifeng Dai
+- Wenhai Wang
+year: 2025
+primary_ids:
+  doi: 10.48550/arxiv.2504.10479
+  arxiv_base_id: '2504.10479'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: https://openalex.org/W4416053382
+canonical_urls:
+- https://openalex.org/W4416053382
+- https://arxiv.org/pdf/2504.10479
+topic_groups:
+- llm
+- vlm
+tags:
+- foundational
+venue:
+  name: arXiv (Cornell University)
+  tier: workshop_or_minor
+  status: unknown
+  year: 2025
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: medium
+  notes: null
+milestone:
+  field: vlm
+  era: recent
+  significance: Native multimodal pretraining (joint text+multimodal from scratch) at open frontier quality.
+  subarea: frontier
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: openalex
+  source: openalex
+  source_url: https://openalex.org/W4416053382
+  pdf_path: library/internvl3-exploring-advanced-training-and-test-time-250410479/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/internvl3-exploring-advanced-training-and-test-time-250410479/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:26:05Z'
+  source_updated_at: '2025-04-14'
+  arxiv_version: null
+  pdf_sha256: 5da94f2a229808a490e15c247b4321e1ef14a6272e992b07e236bc18f6553bc9
+  pdf_bytes: 997649
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:26:05Z'
+  updated_at: '2026-08-24T03:26:05Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

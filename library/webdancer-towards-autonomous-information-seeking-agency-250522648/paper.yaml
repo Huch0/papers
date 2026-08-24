@@ -43,6 +43,7 @@ milestone:
   era: recent
   significance: End-to-end native agentic-search model (data synthesis + SFT + RL); template for open
     Deep-Research-style browsing.
+  subarea: web
 knowledge_concepts: []
 versions:
 - version_key: v1

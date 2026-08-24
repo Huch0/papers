@@ -1,0 +1,61 @@
+canonical_key: arxiv-1912.01603
+slug: dream-to-control-learning-behaviors-by-latent-191201603
+title: 'Dream to Control: Learning Behaviors by Latent Imagination'
+authors:
+- Danijar Hafner
+- Timothy Lillicrap
+- Jimmy Ba
+- Mohammad Norouzi
+year: 2019
+primary_ids:
+  doi: null
+  arxiv_base_id: '1912.01603'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/1912.01603v3
+- https://arxiv.org/pdf/1912.01603v3
+topic_groups:
+- rl
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2019
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: medium
+  notes: null
+milestone:
+  field: rl
+  era: expansion
+  significance: Dreamer trained an actor-critic inside a learned latent world model by imagination; big
+    sample-efficiency gains from pixels.
+  subarea: model_based
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v3
+  source: arxiv
+  source_url: https://arxiv.org/abs/1912.01603v3
+  pdf_path: library/dream-to-control-learning-behaviors-by-latent-191201603/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/dream-to-control-learning-behaviors-by-latent-191201603/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:28:22Z'
+  source_updated_at: '2020-03-17T17:10:58Z'
+  arxiv_version: v3
+  pdf_sha256: 318891d59ba0065f57eb0e735735700e5eb528f53bf08b81c773437385586c64
+  pdf_bytes: 1999946
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:28:22Z'
+  updated_at: '2026-08-24T03:28:22Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

@@ -1,0 +1,61 @@
+canonical_key: arxiv-1511.05952
+slug: prioritized-experience-replay-151105952
+title: Prioritized Experience Replay
+authors:
+- Tom Schaul
+- John Quan
+- Ioannis Antonoglou
+- David Silver
+year: 2015
+primary_ids:
+  doi: null
+  arxiv_base_id: '1511.05952'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/1511.05952v4
+- https://arxiv.org/pdf/1511.05952v4
+topic_groups:
+- rl
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2015
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: medium
+  notes: null
+milestone:
+  field: rl
+  era: emergence
+  significance: Replays high-TD-error transitions more often, accelerating error correction and improving
+    sample efficiency.
+  subarea: value_based
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v4
+  source: arxiv
+  source_url: https://arxiv.org/abs/1511.05952v4
+  pdf_path: library/prioritized-experience-replay-151105952/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/prioritized-experience-replay-151105952/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:27:42Z'
+  source_updated_at: '2016-02-25T17:55:31Z'
+  arxiv_version: v4
+  pdf_sha256: c944277af1beef1567e1d0f9d87a263f2d5a5b272b9d79be94f578ec2191e3b3
+  pdf_bytes: 1685573
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:27:42Z'
+  updated_at: '2026-08-24T03:27:42Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

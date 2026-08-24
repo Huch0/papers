@@ -1,0 +1,140 @@
+canonical_key: arxiv-2204.02311
+version_key: v1
+title: 'PaLM: Scaling Language Modeling with Pathways'
+authors:
+- Aakanksha Chowdhery
+- Sharan Narang
+- Jacob Devlin
+- Maarten Bosma
+- Gaurav Mishra
+- Adam Roberts
+- Paul Barham
+- Hyung Won Chung
+- Charles Sutton
+- Sebastian Gehrmann
+- Parker Schuh
+- Kensen Shi
+- Sasha Tsvyashchenko
+- Joshua Maynez
+- Abhishek Rao
+- Parker Barnes
+- Yi Tay
+- Noam Shazeer
+- Vinodkumar Prabhakaran
+- Emily Reif
+- Nan Du
+- Ben Hutchinson
+- Reiner Pope
+- James Bradbury
+- Jacob Austin
+- Michael Isard
+- Guy Gur-Ari
+- Pengcheng Yin
+- Toju Duke
+- Anselm Levskaya
+- Sanjay Ghemawat
+- Sunipa Dev
+- Henryk Michalewski
+- Xavier Garcia
+- Vedant Misra
+- Kevin Robinson
+- Liam Fedus
+- Denny Zhou
+- Daphne Ippolito
+- David Luan
+- Hyeontaek Lim
+- Barret Zoph
+- Alexander Spiridonov
+- Ryan Sepassi
+- David Dohan
+- Shivani Agrawal
+- Mark Omernick
+- Andrew M. Dai
+- Thanumalayan Sankaranarayana Pillai
+- Marie Pellat
+- Aitor Lewkowycz
+- Erica Moreira
+- Rewon Child
+- Oleksandr Polozov
+- Katherine Lee
+- Zongwei Zhou
+- Xuezhi Wang
+- Brennan Saeta
+- Mark Diaz
+- Orhan Firat
+- Michele Catasta
+- Jason Wei
+- Kathy Meier-Hellstern
+- Douglas Eck
+- Jeff Dean
+- Slav Petrov
+- Noah Fiedel
+abstract: Large language models have been shown to achieve remarkable performance across a variety of
+  natural language tasks using few-shot learning, which drastically reduces the number of task-specific
+  training examples needed to adapt the model to a particular application. To further our understanding
+  of the impact of scale on few-shot learning, we trained a 540-billion parameter, densely activated,
+  Transformer language model, which we call Pathways Language Model PaLM. We trained PaLM on 6144 TPU
+  v4 chips using Pathways, a new ML system which enables highly efficient training across multiple TPU
+  Pods. We demonstrate continued benefits of scaling by achieving state-of-the-art few-shot learning results
+  on hundreds of language understanding and generation benchmarks. On a number of these tasks, PaLM 540B
+  achieves breakthrough performance, outperforming the finetuned state-of-the-art on a suite of multi-step
+  reasoning tasks, and outperforming average human performance on the recently released BIG-bench benchmark.
+  A significant number of BIG-bench tasks showed discontinuous improvements from model scale, meaning
+  that performance steeply increased as we scaled to our largest model. PaLM also has strong capabilities
+  in multilingual tasks and source code generation, which we demonstrate on a wide array of benchmarks.
+  We additionally provide a comprehensive analysis on bias and toxicity, and study the extent of training
+  data memorization with respect to model scale. Finally, we discuss the ethical considerations related
+  to large language models and discuss potential mitigation strategies.
+venue: arXiv
+year: 2022
+source: arxiv
+source_url: https://arxiv.org/abs/2204.02311v5
+pdf_url: https://arxiv.org/pdf/2204.02311v5
+pdf_sha256: 1e88f1f3027cd1abecb1713c1c08a89137c7730582549ec7ca78ca329f3f975d
+fetched_at: '2026-08-24T03:20:44Z'
+source_updated_at: '2022-10-05T06:02:24Z'
+ids:
+  doi: null
+  arxiv_id: 2204.02311v5
+  arxiv_base_id: '2204.02311'
+  arxiv_version: v5
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- llm
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: medium
+  rationale: 'score=65 -> READ_SOON | strong: novelty(0.55), interest_fit(0.50), venue_quality(0.40) |
+    interests: llm:large language model, llm:group:llm | milestone/foundational floor applied'
+  matched_interests:
+  - llm:large language model
+  - llm:group:llm
+  negative_signals: []
+  subscores:
+    interest_fit: 0.501
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 0.55
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/palm-scaling-language-modeling-with-pathways-220402311/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

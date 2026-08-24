@@ -1,0 +1,125 @@
+canonical_key: arxiv-2307.09288
+slug: llama-2-open-foundation-and-fine-tuned-230709288
+title: 'Llama 2: Open Foundation and Fine-Tuned Chat Models'
+authors:
+- Hugo Touvron
+- Louis Martin
+- Kevin Stone
+- Peter Albert
+- Amjad Almahairi
+- Yasmine Babaei
+- Nikolay Bashlykov
+- Soumya Batra
+- Prajjwal Bhargava
+- Shruti Bhosale
+- Dan Bikel
+- Lukas Blecher
+- Cristian Canton Ferrer
+- Moya Chen
+- Guillem Cucurull
+- David Esiobu
+- Jude Fernandes
+- Jeremy Fu
+- Wenyin Fu
+- Brian Fuller
+- Cynthia Gao
+- Vedanuj Goswami
+- Naman Goyal
+- Anthony Hartshorn
+- Saghar Hosseini
+- Rui Hou
+- Hakan Inan
+- Marcin Kardas
+- Viktor Kerkez
+- Madian Khabsa
+- Isabel Kloumann
+- Artem Korenev
+- Punit Singh Koura
+- Marie-Anne Lachaux
+- Thibaut Lavril
+- Jenya Lee
+- Diana Liskovich
+- Yinghai Lu
+- Yuning Mao
+- Xavier Martinet
+- Todor Mihaylov
+- Pushkar Mishra
+- Igor Molybog
+- Yixin Nie
+- Andrew Poulton
+- Jeremy Reizenstein
+- Rashi Rungta
+- Kalyan Saladi
+- Alan Schelten
+- Ruan Silva
+- Eric Michael Smith
+- Ranjan Subramanian
+- Xiaoqing Ellen Tan
+- Binh Tang
+- Ross Taylor
+- Adina Williams
+- Jian Xiang Kuan
+- Puxin Xu
+- Zheng Yan
+- Iliyan Zarov
+- Yuchen Zhang
+- Angela Fan
+- Melanie Kambadur
+- Sharan Narang
+- Aurelien Rodriguez
+- Robert Stojnic
+- Sergey Edunov
+- Thomas Scialom
+year: 2023
+primary_ids:
+  doi: null
+  arxiv_base_id: '2307.09288'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2307.09288v2
+- https://arxiv.org/pdf/2307.09288v2
+topic_groups:
+- llm
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2023
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: medium
+  notes: null
+milestone:
+  field: llm
+  era: expansion
+  significance: Open release up to 70B with RLHF-tuned chat models and a commercial license, setting the
+    standard for open chat LLMs.
+  subarea: open_models
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v2
+  source: arxiv
+  source_url: https://arxiv.org/abs/2307.09288v2
+  pdf_path: library/llama-2-open-foundation-and-fine-tuned-230709288/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/llama-2-open-foundation-and-fine-tuned-230709288/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:21:06Z'
+  source_updated_at: '2023-07-19T17:08:59Z'
+  arxiv_version: v2
+  pdf_sha256: 1df284ce95f783002074bfe8f21d47c646b396ceb1736ea3ec0ea212fc070d91
+  pdf_bytes: 13661300
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:21:06Z'
+  updated_at: '2026-08-24T03:21:06Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

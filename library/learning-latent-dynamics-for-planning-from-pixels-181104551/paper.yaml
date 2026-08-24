@@ -1,0 +1,64 @@
+canonical_key: arxiv-1811.04551
+slug: learning-latent-dynamics-for-planning-from-pixels-181104551
+title: Learning Latent Dynamics for Planning from Pixels
+authors:
+- Danijar Hafner
+- Timothy Lillicrap
+- Ian Fischer
+- Ruben Villegas
+- David Ha
+- Honglak Lee
+- James Davidson
+year: 2018
+primary_ids:
+  doi: null
+  arxiv_base_id: '1811.04551'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/1811.04551v5
+- https://arxiv.org/pdf/1811.04551v5
+topic_groups:
+- rl
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2018
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: medium
+  notes: null
+milestone:
+  field: rl
+  era: foundational
+  significance: PlaNet learned latent-space dynamics from images to plan without a known model, enabling
+    strong control from pixels.
+  subarea: model_based
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v5
+  source: arxiv
+  source_url: https://arxiv.org/abs/1811.04551v5
+  pdf_path: library/learning-latent-dynamics-for-planning-from-pixels-181104551/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/learning-latent-dynamics-for-planning-from-pixels-181104551/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:28:16Z'
+  source_updated_at: '2019-06-04T18:13:09Z'
+  arxiv_version: v5
+  pdf_sha256: abac727526e6a45669d3ab9957126587e22aacf4dc9bcd60ffe5c853108e5bcc
+  pdf_bytes: 3146899
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:28:16Z'
+  updated_at: '2026-08-24T03:28:16Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

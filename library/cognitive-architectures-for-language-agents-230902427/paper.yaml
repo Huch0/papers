@@ -1,0 +1,62 @@
+canonical_key: arxiv-2309.02427
+slug: cognitive-architectures-for-language-agents-230902427
+title: Cognitive Architectures for Language Agents
+authors:
+- Theodore R. Sumers
+- Shunyu Yao
+- Karthik Narasimhan
+- Thomas L. Griffiths
+year: 2023
+primary_ids:
+  doi: null
+  arxiv_base_id: '2309.02427'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2309.02427v3
+- https://arxiv.org/pdf/2309.02427v3
+topic_groups:
+- agent_harness
+- llm
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2023
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: agent_harness
+  era: foundational
+  significance: 'CoALA: organized the agent design space (memory, action space, decision loop); the conceptual
+    map of harness design.'
+  subarea: autonomous_frameworks
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v3
+  source: arxiv
+  source_url: https://arxiv.org/abs/2309.02427v3
+  pdf_path: library/cognitive-architectures-for-language-agents-230902427/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/cognitive-architectures-for-language-agents-230902427/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:31:43Z'
+  source_updated_at: '2024-03-15T15:44:11Z'
+  arxiv_version: v3
+  pdf_sha256: fd93d2ef1b94f963b652136b8c792b01d7326d861f5ce918926c043934a48dbe
+  pdf_bytes: 2785564
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:31:43Z'
+  updated_at: '2026-08-24T03:31:43Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

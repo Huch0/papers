@@ -42,6 +42,7 @@ milestone:
   era: foundational
   significance: First agent to reach human-level mean on MiniWoB++ from pixels via demos+RL; capstone
     of pixel-based RL web control.
+  subarea: web
 knowledge_concepts: []
 versions:
 - version_key: v1

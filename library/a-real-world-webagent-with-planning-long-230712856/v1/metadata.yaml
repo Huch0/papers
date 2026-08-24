@@ -46,9 +46,12 @@ scoring:
   label: READ_SOON
   confidence: high
   rationale: 'score=65 -> READ_SOON | strong: recency(1.00), venue_quality(1.00), interest_fit(0.73) |
-    interests: computer_use_agents:group:computer_use_agents | milestone/foundational floor applied'
+    interests: computer_use_agents:group:computer_use_agents, llm:large language model, llm:long context
+    | milestone/foundational floor applied'
   matched_interests:
   - computer_use_agents:group:computer_use_agents
+  - llm:large language model
+  - llm:long context
   negative_signals: []
   subscores:
     interest_fit: 0.73

@@ -1,0 +1,64 @@
+canonical_key: arxiv-1312.5602
+slug: playing-atari-with-deep-reinforcement-learning-13125602
+title: Playing Atari with Deep Reinforcement Learning
+authors:
+- Volodymyr Mnih
+- Koray Kavukcuoglu
+- David Silver
+- Alex Graves
+- Ioannis Antonoglou
+- Daan Wierstra
+- Martin Riedmiller
+year: 2013
+primary_ids:
+  doi: null
+  arxiv_base_id: '1312.5602'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/1312.5602v1
+- https://arxiv.org/pdf/1312.5602v1
+topic_groups:
+- rl
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2013
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: medium
+  notes: null
+milestone:
+  field: rl
+  era: emergence
+  significance: 'DQN: first agent to learn many Atari games at human level via CNN Q-learning from raw
+    pixels (Nature 2015 follow-up).'
+  subarea: value_based
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v1
+  source: arxiv
+  source_url: https://arxiv.org/abs/1312.5602v1
+  pdf_path: library/playing-atari-with-deep-reinforcement-learning-13125602/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/playing-atari-with-deep-reinforcement-learning-13125602/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:27:32Z'
+  source_updated_at: '2013-12-19T16:00:08Z'
+  arxiv_version: v1
+  pdf_sha256: 8db04120cace173151c77e0faa6f3eaa4207009da66b9417597dc70bfee56d9c
+  pdf_bytes: 483443
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:27:32Z'
+  updated_at: '2026-08-24T03:27:32Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

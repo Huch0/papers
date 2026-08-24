@@ -46,6 +46,7 @@ milestone:
   era: recent
   significance: Updated survey framing element localization, knowledge retrieval, long-horizon planning,
     and safe execution.
+  subarea: enabler_benchmark_survey
 knowledge_concepts: []
 versions:
 - version_key: v1

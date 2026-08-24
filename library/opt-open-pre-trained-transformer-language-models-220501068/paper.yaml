@@ -1,0 +1,76 @@
+canonical_key: arxiv-2205.01068
+slug: opt-open-pre-trained-transformer-language-models-220501068
+title: 'OPT: Open Pre-trained Transformer Language Models'
+authors:
+- Susan Zhang
+- Stephen Roller
+- Naman Goyal
+- Mikel Artetxe
+- Moya Chen
+- Shuohui Chen
+- Christopher Dewan
+- Mona Diab
+- Xian Li
+- Xi Victoria Lin
+- Todor Mihaylov
+- Myle Ott
+- Sam Shleifer
+- Kurt Shuster
+- Daniel Simig
+- Punit Singh Koura
+- Anjali Sridhar
+- Tianlu Wang
+- Luke Zettlemoyer
+year: 2022
+primary_ids:
+  doi: null
+  arxiv_base_id: '2205.01068'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2205.01068v4
+- https://arxiv.org/pdf/2205.01068v4
+topic_groups:
+- llm
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2022
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: medium
+  notes: null
+milestone:
+  field: llm
+  era: foundational
+  significance: Meta openly released a GPT-3-class 175B model with weights and logs - a milestone in LLM
+    democratization.
+  subarea: open_models
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v4
+  source: arxiv
+  source_url: https://arxiv.org/abs/2205.01068v4
+  pdf_path: library/opt-open-pre-trained-transformer-language-models-220501068/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/opt-open-pre-trained-transformer-language-models-220501068/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:20:47Z'
+  source_updated_at: '2022-06-21T17:04:40Z'
+  arxiv_version: v4
+  pdf_sha256: dc88168a2514e4c66a5a791cab6dfacae9bbd566a3d86a119add151f31484d87
+  pdf_bytes: 1765159
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:20:47Z'
+  updated_at: '2026-08-24T03:20:47Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

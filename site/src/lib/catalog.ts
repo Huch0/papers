@@ -24,7 +24,25 @@ export interface PaperEntry {
   summary_path: string | null;
   source_link: string | null;
   abstract: string | null;
-  milestone: { field?: string; era?: string; significance?: string } | null;
+  milestone: { field?: string; era?: string; significance?: string; subarea?: string } | null;
+}
+
+// Field-level metadata for the /milestones/ paths page (registry/milestones.json,
+// derived from config/milestones.yaml by update_indexes.py).
+export interface MilestoneField {
+  description: string;
+  emergence_year: number | null;
+  topic_group: string;
+  display_name: string;
+  path_order: number | null;
+  seed_count: number;
+}
+
+const MILESTONES_META = path.resolve(process.cwd(), "..", "registry", "milestones.json");
+
+export function loadMilestoneFields(): Record<string, MilestoneField> {
+  if (!fs.existsSync(MILESTONES_META)) return {};
+  return JSON.parse(fs.readFileSync(MILESTONES_META, "utf-8"));
 }
 
 const FEED = path.resolve(process.cwd(), "..", "registry", "papers.jsonl");

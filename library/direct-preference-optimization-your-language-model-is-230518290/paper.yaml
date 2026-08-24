@@ -1,0 +1,64 @@
+canonical_key: arxiv-2305.18290
+slug: direct-preference-optimization-your-language-model-is-230518290
+title: 'Direct Preference Optimization: Your Language Model is Secretly a Reward Model'
+authors:
+- Rafael Rafailov
+- Archit Sharma
+- Eric Mitchell
+- Stefano Ermon
+- Christopher D. Manning
+- Chelsea Finn
+year: 2023
+primary_ids:
+  doi: null
+  arxiv_base_id: '2305.18290'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2305.18290v3
+- https://arxiv.org/pdf/2305.18290v3
+topic_groups:
+- llm
+- rl
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2023
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: medium
+  notes: null
+milestone:
+  field: llm
+  era: expansion
+  significance: RL-free alignment - optimizes the LM directly on preference data as its own reward model,
+    matching RLHF with simpler training.
+  subarea: alignment
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v3
+  source: arxiv
+  source_url: https://arxiv.org/abs/2305.18290v3
+  pdf_path: library/direct-preference-optimization-your-language-model-is-230518290/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/direct-preference-optimization-your-language-model-is-230518290/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:21:00Z'
+  source_updated_at: '2024-07-29T22:26:36Z'
+  arxiv_version: v3
+  pdf_sha256: 92cb3a2b71362acda98a789b03d88688fd33cf5fcf13f81d2b1de30ee7d3b67a
+  pdf_bytes: 1299212
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:21:00Z'
+  updated_at: '2026-08-24T03:21:00Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

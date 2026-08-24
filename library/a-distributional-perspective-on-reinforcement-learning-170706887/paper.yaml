@@ -1,0 +1,60 @@
+canonical_key: arxiv-1707.06887
+slug: a-distributional-perspective-on-reinforcement-learning-170706887
+title: A Distributional Perspective on Reinforcement Learning
+authors:
+- Marc G. Bellemare
+- Will Dabney
+- Rémi Munos
+year: 2017
+primary_ids:
+  doi: null
+  arxiv_base_id: '1707.06887'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/1707.06887v1
+- https://arxiv.org/pdf/1707.06887v1
+topic_groups:
+- rl
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2017
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: medium
+  notes: null
+milestone:
+  field: rl
+  era: foundational
+  significance: C51 learned full return distributions instead of expected values; influenced Rainbow and
+    many successors.
+  subarea: value_based
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v1
+  source: arxiv
+  source_url: https://arxiv.org/abs/1707.06887v1
+  pdf_path: library/a-distributional-perspective-on-reinforcement-learning-170706887/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/a-distributional-perspective-on-reinforcement-learning-170706887/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:27:54Z'
+  source_updated_at: '2017-07-21T13:21:54Z'
+  arxiv_version: v1
+  pdf_sha256: a176a82385802ed7c7073eb9634fe01741da5789bd58063f8274033524e48524
+  pdf_bytes: 1712018
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:27:54Z'
+  updated_at: '2026-08-24T03:27:54Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

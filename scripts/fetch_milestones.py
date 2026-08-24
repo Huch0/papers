@@ -70,6 +70,17 @@ def _resolve_seed(seed: dict) -> tuple[dict | None, str]:
         except Exception as e:  # noqa: BLE001
             pl.log_error("milestones.resolve", f"arxiv {arxiv}: {e}")
 
+    # DOI (for milestones with no arXiv version, e.g. Nature/Science papers)
+    doi = (seed.get("doi") or "").strip()
+    if doi:
+        try:
+            cands = fetch_openalex.fetch(argparse.Namespace(
+                doi=doi, arxiv=None, title=None, search=None, since=None, max=1))
+            if cands and _title_match(title, cands[0].get("title", "")) >= 0.6:
+                return cands[0], f"doi:{doi}"
+        except Exception as e:  # noqa: BLE001
+            pl.log_error("milestones.resolve", f"doi {doi}: {e}")
+
     # title search: Semantic Scholar first, then OpenAlex
     for fn, label in ((_s2_title, "s2"), (_oa_title, "openalex")):
         try:
@@ -119,6 +130,8 @@ def _apply_milestone(cand: dict, field: str, seed: dict, topic_group: str) -> di
         "era": seed.get("era", "foundational"),
         "significance": seed.get("significance", ""),
     }
+    if seed.get("subarea"):
+        cand["milestone"]["subarea"] = seed["subarea"]
     return cand
 
 

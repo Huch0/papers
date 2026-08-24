@@ -1,0 +1,75 @@
+canonical_key: arxiv-2302.13971
+version_key: v1
+title: 'LLaMA: Open and Efficient Foundation Language Models'
+authors:
+- Hugo Touvron
+- Thibaut Lavril
+- Gautier Izacard
+- Xavier Martinet
+- Marie-Anne Lachaux
+- Timothée Lacroix
+- Baptiste Rozière
+- Naman Goyal
+- Eric Hambro
+- Faisal Azhar
+- Aurelien Rodriguez
+- Armand Joulin
+- Edouard Grave
+- Guillaume Lample
+abstract: We introduce LLaMA, a collection of foundation language models ranging from 7B to 65B parameters.
+  We train our models on trillions of tokens, and show that it is possible to train state-of-the-art models
+  using publicly available datasets exclusively, without resorting to proprietary and inaccessible datasets.
+  In particular, LLaMA-13B outperforms GPT-3 (175B) on most benchmarks, and LLaMA-65B is competitive with
+  the best models, Chinchilla-70B and PaLM-540B. We release all our models to the research community.
+venue: arXiv
+year: 2023
+source: arxiv
+source_url: https://arxiv.org/abs/2302.13971v1
+pdf_url: https://arxiv.org/pdf/2302.13971v1
+pdf_sha256: 2e663675ae36ad12adb2f5a05281bac2747ecf8d23d92bedd9f937a89fee7136
+fetched_at: '2026-08-24T03:20:53Z'
+source_updated_at: '2023-02-27T17:11:15Z'
+ids:
+  doi: null
+  arxiv_id: 2302.13971v1
+  arxiv_base_id: '2302.13971'
+  arxiv_version: v1
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- llm
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: medium
+  rationale: 'score=65 -> READ_SOON | strong: novelty(1.00), artifact_availability(0.55), interest_fit(0.40)
+    | interests: llm:group:llm | milestone/foundational floor applied'
+  matched_interests:
+  - llm:group:llm
+  negative_signals: []
+  subscores:
+    interest_fit: 0.402
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 1.0
+    artifact_availability: 0.55
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/llama-open-and-efficient-foundation-language-models-230213971/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

@@ -46,6 +46,7 @@ milestone:
   era: recent
   significance: 4M-example Jedi grounding dataset via UI decomposition + OSWorld-G; lifted OSWorld agent
     success from 23% to 51%.
+  subarea: gui_grounding
 knowledge_concepts: []
 versions:
 - version_key: v1

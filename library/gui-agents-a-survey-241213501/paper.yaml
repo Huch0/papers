@@ -59,6 +59,7 @@ milestone:
   field: computer_use_agents
   era: expansion
   significance: Widely cited taxonomy of GUI-agent perception, reasoning, and action across web/desktop/mobile.
+  subarea: enabler_benchmark_survey
 knowledge_concepts: []
 versions:
 - version_key: v1

@@ -43,6 +43,7 @@ milestone:
   era: expansion
   significance: Enterprise (ServiceNow) knowledge-work benchmark; introduced BrowserGym; pushed agents
     toward workplace automation.
+  subarea: web
 knowledge_concepts: []
 versions:
 - version_key: v1

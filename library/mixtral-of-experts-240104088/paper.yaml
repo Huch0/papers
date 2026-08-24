@@ -1,0 +1,83 @@
+canonical_key: arxiv-2401.04088
+slug: mixtral-of-experts-240104088
+title: Mixtral of Experts
+authors:
+- Albert Q. Jiang
+- Alexandre Sablayrolles
+- Antoine Roux
+- Arthur Mensch
+- Blanche Savary
+- Chris Bamford
+- Devendra Singh Chaplot
+- Diego de las Casas
+- Emma Bou Hanna
+- Florian Bressand
+- Gianna Lengyel
+- Guillaume Bour
+- Guillaume Lample
+- Lélio Renard Lavaud
+- Lucile Saulnier
+- Marie-Anne Lachaux
+- Pierre Stock
+- Sandeep Subramanian
+- Sophia Yang
+- Szymon Antoniak
+- Teven Le Scao
+- Théophile Gervet
+- Thibaut Lavril
+- Thomas Wang
+- Timothée Lacroix
+- William El Sayed
+year: 2024
+primary_ids:
+  doi: null
+  arxiv_base_id: '2401.04088'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2401.04088v1
+- https://arxiv.org/pdf/2401.04088v1
+topic_groups:
+- llm
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2024
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: medium
+  notes: null
+milestone:
+  field: llm
+  era: expansion
+  significance: Open sparse MoE (8x7B, ~13B active) matching Llama 2 70B and GPT-3.5 while far faster;
+    mainstreamed MoE for open models.
+  subarea: efficiency
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v1
+  source: arxiv
+  source_url: https://arxiv.org/abs/2401.04088v1
+  pdf_path: library/mixtral-of-experts-240104088/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/mixtral-of-experts-240104088/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:21:27Z'
+  source_updated_at: '2024-01-08T18:47:34Z'
+  arxiv_version: v1
+  pdf_sha256: f8bbf0e9d979b7a8ce7be65119266545a229a85b57e077d8bd048e458bb642da
+  pdf_bytes: 2475990
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:21:27Z'
+  updated_at: '2026-08-24T03:21:27Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

@@ -57,6 +57,7 @@ milestone:
   era: recent
   significance: Long-horizon agentic-search eval with rubric-based Agent-as-a-Judge + source attribution;
     Deep Research benchmark.
+  subarea: web
 knowledge_concepts: []
 versions:
 - version_key: v1

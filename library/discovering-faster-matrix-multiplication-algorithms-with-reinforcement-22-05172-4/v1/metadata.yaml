@@ -1,0 +1,87 @@
+canonical_key: doi-10-1038-s41586-022-05172-4
+version_key: v1
+title: Discovering faster matrix multiplication algorithms with reinforcement learning
+authors:
+- Alhussein Fawzi
+- Matej Balog
+- Aja Huang
+- Thomas Hubert
+- Bernardino Romera‐Paredes
+- Mohammadamin Barekatain
+- Alexander Novikov
+- Francisco J. R. Ruiz
+- Julian Schrittwieser
+- Grzegorz Świrszcz
+- David Silver
+- Demis Hassabis
+- Pushmeet Kohli
+abstract: 'Abstract Improving the efficiency of algorithms for fundamental computations can have a widespread
+  impact, as it can affect the overall speed of a large amount of computations. Matrix multiplication
+  is one such primitive task, occurring in many systems—from neural networks to scientific computing routines.
+  The automatic discovery of algorithms using machine learning offers the prospect of reaching beyond
+  human intuition and outperforming the current best human-designed algorithms. However, automating the
+  algorithm discovery procedure is intricate, as the space of possible algorithms is enormous. Here we
+  report a deep reinforcement learning approach based on AlphaZero 1 for discovering efficient and provably
+  correct algorithms for the multiplication of arbitrary matrices. Our agent, AlphaTensor, is trained
+  to play a single-player game where the objective is finding tensor decompositions within a finite factor
+  space. AlphaTensor discovered algorithms that outperform the state-of-the-art complexity for many matrix
+  sizes. Particularly relevant is the case of 4 × 4 matrices in a finite field, where AlphaTensor’s algorithm
+  improves on Strassen’s two-level algorithm for the first time, to our knowledge, since its discovery
+  50 years ago 2 . We further showcase the flexibility of AlphaTensor through different use-cases: algorithms
+  with state-of-the-art complexity for structured matrix multiplication and improved practical efficiency
+  by optimizing matrix multiplication for runtime on specific hardware. Our results highlight AlphaTensor’s
+  ability to accelerate the process of algorithmic discovery on a range of problems, and to optimize for
+  different criteria.'
+venue: Nature
+year: 2022
+source: openalex
+source_url: https://openalex.org/W4302010773
+pdf_url: https://www.nature.com/articles/s41586-022-05172-4.pdf
+pdf_sha256: null
+fetched_at: '2026-08-24T03:29:39Z'
+source_updated_at: '2022-10-05'
+ids:
+  doi: 10.1038/s41586-022-05172-4
+  arxiv_id: null
+  arxiv_base_id: null
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: https://openalex.org/W4302010773
+tags:
+- foundational
+topic_groups:
+- rl
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: medium
+  rationale: 'score=65 -> READ_SOON | strong: novelty(0.80), interest_fit(0.50), venue_quality(0.30) |
+    interests: rl:reinforcement learning, rl:group:rl | milestone/foundational floor applied'
+  matched_interests:
+  - rl:reinforcement learning
+  - rl:group:rl
+  negative_signals: []
+  subscores:
+    interest_fit: 0.501
+    recency: 0.0
+    venue_quality: 0.3
+    harness_relevance: 0.0
+    novelty: 0.8
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: null
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: false
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

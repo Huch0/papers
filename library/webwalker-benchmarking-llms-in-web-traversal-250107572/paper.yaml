@@ -41,6 +41,7 @@ milestone:
   era: recent
   significance: WebWalkerQA benchmark for deep multi-page traversal and info seeking; first of the Tongyi
     agentic-search lineage.
+  subarea: web
 knowledge_concepts: []
 versions:
 - version_key: v1

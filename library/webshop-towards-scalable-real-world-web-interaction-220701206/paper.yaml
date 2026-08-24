@@ -33,7 +33,9 @@ user:
 milestone:
   field: computer_use_agents
   era: foundational
-  significance: Realistic web shopping environment; grounded language agents at scale.
+  significance: Large-scale simulated e-commerce env (1.18M products); standard instruction-following
+    shopping benchmark + sim-to-real.
+  subarea: web
 knowledge_concepts: []
 versions:
 - version_key: v1

@@ -42,6 +42,7 @@ milestone:
   era: expansion
   significance: Largest open cross-platform grounding corpus (13M+ elements) + foundation action model
     with unified action space; key open backbone.
+  subarea: gui_grounding
 knowledge_concepts: []
 versions:
 - version_key: v1

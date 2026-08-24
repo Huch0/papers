@@ -1,0 +1,96 @@
+canonical_key: arxiv-2107.12808
+version_key: v1
+title: Open-Ended Learning Leads to Generally Capable Agents
+authors:
+- Open Ended Learning Team
+- Adam Stooke
+- Anuj Mahajan
+- Catarina Barros
+- Charlie Deck
+- Jakob Bauer
+- Jakub Sygnowski
+- Maja Trebacz
+- Max Jaderberg
+- Michael Mathieu
+- Nat McAleese
+- Nathalie Bradley-Schmieg
+- Nathaniel Wong
+- Nicolas Porcel
+- Roberta Raileanu
+- Steph Hughes-Fitt
+- Valentin Dalibard
+- Wojciech Marian Czarnecki
+abstract: In this work we create agents that can perform well beyond a single, individual task, that exhibit
+  much wider generalisation of behaviour to a massive, rich space of challenges. We define a universe
+  of tasks within an environment domain and demonstrate the ability to train agents that are generally
+  capable across this vast space and beyond. The environment is natively multi-agent, spanning the continuum
+  of competitive, cooperative, and independent games, which are situated within procedurally generated
+  physical 3D worlds. The resulting space is exceptionally diverse in terms of the challenges posed to
+  agents, and as such, even measuring the learning progress of an agent is an open research problem. We
+  propose an iterative notion of improvement between successive generations of agents, rather than seeking
+  to maximise a singular objective, allowing us to quantify progress despite tasks being incomparable
+  in terms of achievable rewards. We show that through constructing an open-ended learning process, which
+  dynamically changes the training task distributions and training objectives such that the agent never
+  stops learning, we achieve consistent learning of new behaviours. The resulting agent is able to score
+  reward in every one of our humanly solvable evaluation levels, with behaviour generalising to many held-out
+  points in the universe of tasks. Examples of this zero-shot generalisation include good performance
+  on Hide and Seek, Capture the Flag, and Tag. Through analysis and hand-authored probe tasks we characterise
+  the behaviour of our agent, and find interesting emergent heuristic behaviours such as trial-and-error
+  experimentation, simple tool use, option switching, and cooperation. Finally, we demonstrate that the
+  general capabilities of this agent could unlock larger scale transfer of behaviour through cheap finetuning.
+venue: arXiv
+year: 2021
+source: arxiv
+source_url: https://arxiv.org/abs/2107.12808v2
+pdf_url: https://arxiv.org/pdf/2107.12808v2
+pdf_sha256: 26ec9a3be81af360b268f1a9fb3552b8be6716bebbdb3a09dc83eee0d00e7188
+fetched_at: '2026-08-24T03:28:39Z'
+source_updated_at: '2021-07-31T16:55:19Z'
+ids:
+  doi: null
+  arxiv_id: 2107.12808v2
+  arxiv_base_id: '2107.12808'
+  arxiv_version: v2
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- agent_harness
+- rl
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: interest_fit(0.91), harness_relevance(0.68), venue_quality(0.40)
+    | interests: agent_harness:tool use, agent_harness:group:agent_harness, rl:group:rl | milestone/foundational
+    floor applied'
+  matched_interests:
+  - agent_harness:tool use
+  - agent_harness:group:agent_harness
+  - rl:group:rl
+  negative_signals: []
+  subscores:
+    interest_fit: 0.91
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.68
+    novelty: 0.0
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/open-ended-learning-leads-to-generally-capable-210712808/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

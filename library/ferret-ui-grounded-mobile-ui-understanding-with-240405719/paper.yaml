@@ -39,6 +39,7 @@ milestone:
   era: foundational
   significance: Apple MLLM for mobile screens with any-resolution sub-image splitting for referring/grounding;
     surpassed GPT-4V on UI tasks.
+  subarea: gui_grounding
 knowledge_concepts: []
 versions:
 - version_key: v1

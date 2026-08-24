@@ -40,6 +40,7 @@ milestone:
   era: emergence
   significance: DeepMind RL environment exposing a real Android device via touchscreen + pixels; foundational
     device-control platform.
+  subarea: mobile
 knowledge_concepts: []
 versions:
 - version_key: v1

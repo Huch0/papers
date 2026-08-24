@@ -41,6 +41,7 @@ milestone:
   era: expansion
   significance: Planning/decision/reflection multi-agent architecture markedly improving long-horizon
     mobile navigation.
+  subarea: mobile
 knowledge_concepts: []
 versions:
 - version_key: v1

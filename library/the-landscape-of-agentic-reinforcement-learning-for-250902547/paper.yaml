@@ -1,0 +1,84 @@
+canonical_key: arxiv-2509.02547
+slug: the-landscape-of-agentic-reinforcement-learning-for-250902547
+title: 'The Landscape of Agentic Reinforcement Learning for LLMs: A Survey'
+authors:
+- Guibin Zhang
+- Hejia Geng
+- Xiaohang Yu
+- Zhenfei Yin
+- Zaibin Zhang
+- Zelin Tan
+- Heng Zhou
+- Zhongzhi Li
+- Xiangyuan Xue
+- Yijiang Li
+- Yifan Zhou
+- Yang Chen
+- Chen Zhang
+- Yutao Fan
+- Zihu Wang
+- Songtao Huang
+- Francisco Piedrahita-Velez
+- Yue Liao
+- Hongru Wang
+- Mengyue Yang
+- Heng Ji
+- Jun Wang
+- Shuicheng Yan
+- Philip Torr
+- Lei Bai
+year: 2025
+primary_ids:
+  doi: null
+  arxiv_base_id: '2509.02547'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2509.02547v5
+- https://arxiv.org/pdf/2509.02547v5
+topic_groups:
+- agent_harness
+- llm
+- rl
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2025
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: agent_harness
+  era: recent
+  significance: Formalized agentic LLM-RL - LLMs as policies in sequential decision processes; the map
+    of the training-side counterpart.
+  subarea: rl_agents
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v5
+  source: arxiv
+  source_url: https://arxiv.org/abs/2509.02547v5
+  pdf_path: library/the-landscape-of-agentic-reinforcement-learning-for-250902547/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/the-landscape-of-agentic-reinforcement-learning-for-250902547/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:31:55Z'
+  source_updated_at: '2026-04-17T18:09:08Z'
+  arxiv_version: v5
+  pdf_sha256: d95cfa7b0d708f5ddc35f87a62080277616dd5dfa529e5c002dc20867f45d849
+  pdf_bytes: 9660671
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:31:55Z'
+  updated_at: '2026-08-24T03:31:55Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

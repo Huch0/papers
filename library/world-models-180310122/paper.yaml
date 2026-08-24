@@ -1,0 +1,59 @@
+canonical_key: arxiv-1803.10122
+slug: world-models-180310122
+title: World Models
+authors:
+- David Ha
+- Jürgen Schmidhuber
+year: 2018
+primary_ids:
+  doi: 10.5281/zenodo.1207631
+  arxiv_base_id: '1803.10122'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/1803.10122v4
+- https://arxiv.org/pdf/1803.10122v4
+topic_groups:
+- rl
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2018
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: medium
+  notes: null
+milestone:
+  field: rl
+  era: foundational
+  significance: Learned a compact latent model of the environment and trained the policy inside the dream;
+    inspired PlaNet and Dreamer.
+  subarea: model_based
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v4
+  source: arxiv
+  source_url: https://arxiv.org/abs/1803.10122v4
+  pdf_path: library/world-models-180310122/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/world-models-180310122/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:28:14Z'
+  source_updated_at: '2018-05-09T09:06:27Z'
+  arxiv_version: v4
+  pdf_sha256: b0c1e30aab53efd28ddf61d661f680150918d4d03b77bae62bc52d62dbd76cce
+  pdf_bytes: 3147467
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:28:14Z'
+  updated_at: '2026-08-24T03:28:14Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

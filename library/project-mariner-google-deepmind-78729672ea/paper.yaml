@@ -29,6 +29,7 @@ milestone:
   era: expansion
   significance: Google's browser-agent prototype demonstrating multi-task autonomous web use, later folded
     into Gemini.
+  subarea: enabler_benchmark_survey
 knowledge_concepts: []
 versions:
 - version_key: v1

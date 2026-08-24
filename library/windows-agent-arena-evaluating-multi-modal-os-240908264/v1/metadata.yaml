@@ -57,10 +57,12 @@ scoring:
   label: READ_SOON
   confidence: high
   rationale: 'score=73 -> READ_SOON | strong: recency(1.00), venue_quality(1.00), interest_fit(0.91) |
-    interests: computer_use_agents:OS agent, computer_use_agents:group:computer_use_agents'
+    interests: computer_use_agents:OS agent, computer_use_agents:group:computer_use_agents, llm:large
+    language model'
   matched_interests:
   - computer_use_agents:OS agent
   - computer_use_agents:group:computer_use_agents
+  - llm:large language model
   negative_signals: []
   subscores:
     interest_fit: 0.91

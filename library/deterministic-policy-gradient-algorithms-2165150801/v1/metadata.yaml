@@ -1,0 +1,73 @@
+canonical_key: openalex-W2165150801
+version_key: v1
+title: Deterministic Policy Gradient Algorithms
+authors:
+- David Silver
+- Guy Lever
+- Nicolas Heess
+- Thomas Degris
+- Daan Wierstra
+- Martin Riedmiller
+abstract: '2014 In this paper we consider deterministic policy gradient algorithms for reinforcement learning
+  with continuous actions. The deterministic policy gradient has a particularly appealing form: it is
+  the expected gradient of the action-value function. This simple form means that the deterministic policy
+  gradient can be estimated much more efficiently than the usual stochastic policy gradient. To ensure
+  adequate exploration, we introduce an off-policy actor-critic algorithm that learns a deterministic
+  target policy from an exploratory behaviour policy. We demonstrate that deterministic policy gradient
+  algorithms can significantly outperform their stochastic counterparts in high-dimensional action spaces.'
+venue: HAL (Le Centre pour la Communication Scientifique Directe)
+year: 2014
+source: openalex
+source_url: https://openalex.org/W2165150801
+pdf_url: null
+pdf_sha256: null
+fetched_at: '2026-08-24T03:27:33Z'
+source_updated_at: '2014-01-01'
+ids:
+  doi: null
+  arxiv_id: null
+  arxiv_base_id: null
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: https://openalex.org/W2165150801
+tags:
+- foundational
+topic_groups:
+- rl
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: medium
+  rationale: 'score=65 -> READ_SOON | strong: interest_fit(0.55), novelty(0.55), venue_quality(0.30) |
+    interests: rl:reinforcement learning, rl:policy gradient, rl:exploration | negatives: abstract_only
+    | milestone/foundational floor applied'
+  matched_interests:
+  - rl:reinforcement learning
+  - rl:policy gradient
+  - rl:exploration
+  negative_signals:
+  - abstract_only
+  subscores:
+    interest_fit: 0.55
+    recency: 0.0
+    venue_quality: 0.3
+    harness_relevance: 0.0
+    novelty: 0.55
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: null
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: false
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

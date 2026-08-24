@@ -1,0 +1,83 @@
+canonical_key: arxiv-2309.11235
+version_key: v1
+title: 'OpenChat: Advancing Open-source Language Models with Mixed-Quality Data'
+authors:
+- Guan Wang
+- Sijie Cheng
+- Xianyuan Zhan
+- Xiangang Li
+- Sen Song
+- Yang Liu
+abstract: Nowadays, open-source large language models like LLaMA have emerged. Recent developments have
+  incorporated supervised fine-tuning (SFT) and reinforcement learning fine-tuning (RLFT) to align these
+  models with human goals. However, SFT methods treat all training data with mixed quality equally, while
+  RLFT methods require high-quality pairwise or ranking-based preference data. In this study, we present
+  a novel framework, named OpenChat, to advance open-source language models with mixed-quality data. Specifically,
+  we consider the general SFT training data, consisting of a small amount of expert data mixed with a
+  large proportion of sub-optimal data, without any preference labels. We propose the C(onditioned)-RLFT,
+  which regards different data sources as coarse-grained reward labels and learns a class-conditioned
+  policy to leverage complementary data quality information. Interestingly, the optimal policy in C-RLFT
+  can be easily solved through single-stage, RL-free supervised learning, which is lightweight and avoids
+  costly human preference labeling. Through extensive experiments on three standard benchmarks, our openchat-13b
+  fine-tuned with C-RLFT achieves the highest average performance among all 13b open-source language models.
+  Moreover, we use AGIEval to validate the model generalization performance, in which only openchat-13b
+  surpasses the base model. Finally, we conduct a series of analyses to shed light on the effectiveness
+  and robustness of OpenChat. Our code, data, and models are publicly available at https://github.com/imoneoi/openchat
+  and https://huggingface.co/openchat.
+venue: arXiv
+year: 2023
+source: arxiv
+source_url: https://arxiv.org/abs/2309.11235v2
+pdf_url: https://arxiv.org/pdf/2309.11235v2
+pdf_sha256: 4383255a586b07a00320df3a2572f301f3457dcda2a44bd9c06dc54228cf591f
+fetched_at: '2026-08-24T03:21:07Z'
+source_updated_at: '2024-03-16T04:32:25Z'
+ids:
+  doi: null
+  arxiv_id: 2309.11235v2
+  arxiv_base_id: '2309.11235'
+  arxiv_version: v2
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- llm
+- rl
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: medium
+  rationale: 'score=65 -> READ_SOON | strong: artifact_availability(1.00), novelty(0.55), interest_fit(0.50)
+    | interests: llm:large language model, llm:group:llm, rl:reinforcement learning, rl:group:rl | milestone/foundational
+    floor applied'
+  matched_interests:
+  - llm:large language model
+  - llm:group:llm
+  - rl:reinforcement learning
+  - rl:group:rl
+  negative_signals: []
+  subscores:
+    interest_fit: 0.501
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 0.55
+    artifact_availability: 1.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/openchat-advancing-open-source-language-models-with-230911235/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

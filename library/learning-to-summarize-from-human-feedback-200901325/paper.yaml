@@ -1,0 +1,67 @@
+canonical_key: arxiv-2009.01325
+slug: learning-to-summarize-from-human-feedback-200901325
+title: Learning to summarize from human feedback
+authors:
+- Nisan Stiennon
+- Long Ouyang
+- Jeff Wu
+- Daniel M. Ziegler
+- Ryan Lowe
+- Chelsea Voss
+- Alec Radford
+- Dario Amodei
+- Paul Christiano
+year: 2020
+primary_ids:
+  doi: null
+  arxiv_base_id: '2009.01325'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2009.01325v3
+- https://arxiv.org/pdf/2009.01325v3
+topic_groups:
+- llm
+- rl
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2020
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: medium
+  notes: null
+milestone:
+  field: llm
+  era: foundational
+  significance: Scaled RLHF to summarization; KL-regularized RL beat SOTA and human-written references,
+    surpassing supervised learning.
+  subarea: alignment
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v3
+  source: arxiv
+  source_url: https://arxiv.org/abs/2009.01325v3
+  pdf_path: library/learning-to-summarize-from-human-feedback-200901325/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/learning-to-summarize-from-human-feedback-200901325/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:20:31Z'
+  source_updated_at: '2022-02-15T19:09:36Z'
+  arxiv_version: v3
+  pdf_sha256: 6bb15be37338385cae1d910bcb46bb2cc99e599918a0625c9c1d0a57f90e5224
+  pdf_bytes: 1670544
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:20:31Z'
+  updated_at: '2026-08-24T03:20:31Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

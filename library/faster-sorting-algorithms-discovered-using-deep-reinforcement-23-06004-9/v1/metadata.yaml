@@ -1,0 +1,101 @@
+canonical_key: doi-10-1038-s41586-023-06004-9
+version_key: v1
+title: Faster sorting algorithms discovered using deep reinforcement learning
+authors:
+- D. Mankowitz
+- Andrea Michi
+- A. Zhernov
+- Marco Gelmi
+- M. Selvi
+- Cosmin Paduraru
+- Edouard Leurent
+- Shariq Iqbal
+- Jean-Baptiste Lespiau
+- Alexa Ahern
+- Thomas Köppe
+- Kevin Millikin
+- Stephen Gaffney
+- Sophie Elster
+- Jackson Broshear
+- Chris Gamble
+- Kieran Milan
+- R. Tung
+- Minjae Hwang
+- taylan. cemgil
+- M. Barekatain
+- Yujia Li
+- Amol Mandhane
+- T. Hubert
+- Julian Schrittwieser
+- D. Hassabis
+- Pushmeet Kohli
+- Martin A. Riedmiller
+- O. Vinyals
+- David Silver
+abstract:  Artificial intelligence goes beyond the current state of the art by discovering unknown, faster
+  sorting algorithms as a single-player game using a deep reinforcement learning agent. These algorithms
+  are now used in the standard C++ sort library. Fundamental algorithms such as sorting or hashing are
+  used trillions of times on any given day^ 1 . As demand for computation grows, it has become critical
+  for these algorithms to be as performant as possible. Whereas remarkable progress has been achieved
+  in the past^ 2 , making further improvements on the efficiency of these routines has proved challenging
+  for both human scientists and computational approaches. Here we show how artificial intelligence can
+  go beyond the current state of the art by discovering hitherto unknown routines. To realize this, we
+  formulated the task of finding a better sorting routine as a single-player game. We then trained a new
+  deep reinforcement learning agent, AlphaDev, to play this game. AlphaDev discovered small sorting algorithms
+  from scratch that outperformed previously known human benchmarks. These algorithms have been integrated
+  into the LLVM standard C++ sort library^ 3 . This change to this part of the sort library represents
+  the replacement of a component with an algorithm that has been automatically discovered using reinforcement
+  learning. We also present results in extra domains, showcasing the generality of the approach.
+venue: Nature
+year: 2023
+source: semantic_scholar
+source_url: https://www.semanticscholar.org/paper/13f775d1b7f9de1168b5d37a2622ee1938bf43cd
+pdf_url: https://www.nature.com/articles/s41586-023-06004-9.pdf
+pdf_sha256: null
+fetched_at: '2026-08-24T03:29:58Z'
+source_updated_at: null
+ids:
+  doi: 10.1038/s41586-023-06004-9
+  arxiv_id: null
+  arxiv_base_id: null
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: 13f775d1b7f9de1168b5d37a2622ee1938bf43cd
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- rl
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: medium
+  rationale: 'score=65 -> READ_SOON | strong: recency(1.00), interest_fit(0.50), venue_quality(0.30) |
+    interests: rl:reinforcement learning, rl:group:rl | milestone/foundational floor applied'
+  matched_interests:
+  - rl:reinforcement learning
+  - rl:group:rl
+  negative_signals: []
+  subscores:
+    interest_fit: 0.501
+    recency: 1.0
+    venue_quality: 0.3
+    harness_relevance: 0.0
+    novelty: 0.0
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: null
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: false
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

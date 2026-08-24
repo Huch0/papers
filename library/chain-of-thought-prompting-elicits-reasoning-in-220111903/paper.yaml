@@ -1,0 +1,68 @@
+canonical_key: arxiv-2201.11903
+slug: chain-of-thought-prompting-elicits-reasoning-in-220111903
+title: Chain-of-Thought Prompting Elicits Reasoning in Large Language Models
+authors:
+- Jason Wei
+- Xuezhi Wang
+- Dale Schuurmans
+- Maarten Bosma
+- Brian Ichter
+- Fei Xia
+- Ed Chi
+- Quoc Le
+- Denny Zhou
+year: 2022
+primary_ids:
+  doi: null
+  arxiv_base_id: '2201.11903'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2201.11903v6
+- https://arxiv.org/pdf/2201.11903v6
+topic_groups:
+- general_agent_methods
+- llm
+- software_engineering_agents
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2022
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: llm
+  era: foundational
+  significance: Few-shot step-by-step exemplars unlock multi-step reasoning in ~100B+ models - emergent
+    ability tapped by prompting alone.
+  subarea: reasoning
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v6
+  source: arxiv
+  source_url: https://arxiv.org/abs/2201.11903v6
+  pdf_path: library/chain-of-thought-prompting-elicits-reasoning-in-220111903/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/chain-of-thought-prompting-elicits-reasoning-in-220111903/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:20:37Z'
+  source_updated_at: '2023-01-10T23:07:57Z'
+  arxiv_version: v6
+  pdf_sha256: 7d9f878c23b460e4566aa4ec9201b1abfb3b8faefb2b1356e411cb90fef72a12
+  pdf_bytes: 891773
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:20:37Z'
+  updated_at: '2026-08-24T03:20:37Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

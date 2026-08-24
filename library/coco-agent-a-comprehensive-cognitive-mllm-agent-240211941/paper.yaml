@@ -34,6 +34,7 @@ milestone:
   era: foundational
   significance: Comprehensive environment perception + conditional action prediction; SOTA on AitW and
     META-GUI among trained MLLM agents.
+  subarea: mobile
 knowledge_concepts: []
 versions:
 - version_key: v1

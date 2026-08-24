@@ -1,0 +1,117 @@
+canonical_key: arxiv-2201.08239
+slug: lamda-language-models-for-dialog-applications-220108239
+title: 'LaMDA: Language Models for Dialog Applications'
+authors:
+- Romal Thoppilan
+- Daniel De Freitas
+- Jamie Hall
+- Noam Shazeer
+- Apoorv Kulshreshtha
+- Heng-Tze Cheng
+- Alicia Jin
+- Taylor Bos
+- Leslie Baker
+- Yu Du
+- YaGuang Li
+- Hongrae Lee
+- Huaixiu Steven Zheng
+- Amin Ghafouri
+- Marcelo Menegali
+- Yanping Huang
+- Maxim Krikun
+- Dmitry Lepikhin
+- James Qin
+- Dehao Chen
+- Yuanzhong Xu
+- Zhifeng Chen
+- Adam Roberts
+- Maarten Bosma
+- Vincent Zhao
+- Yanqi Zhou
+- Chung-Ching Chang
+- Igor Krivokon
+- Will Rusch
+- Marc Pickett
+- Pranesh Srinivasan
+- Laichee Man
+- Kathleen Meier-Hellstern
+- Meredith Ringel Morris
+- Tulsee Doshi
+- Renelito Delos Santos
+- Toju Duke
+- Johnny Soraker
+- Ben Zevenbergen
+- Vinodkumar Prabhakaran
+- Mark Diaz
+- Ben Hutchinson
+- Kristen Olson
+- Alejandra Molina
+- Erin Hoffman-John
+- Josh Lee
+- Lora Aroyo
+- Ravi Rajakumar
+- Alena Butryna
+- Matthew Lamm
+- Viktoriya Kuzmina
+- Joe Fenton
+- Aaron Cohen
+- Rachel Bernstein
+- Ray Kurzweil
+- Blaise Aguera-Arcas
+- Claire Cui
+- Marian Croak
+- Ed Chi
+- Quoc Le
+year: 2022
+primary_ids:
+  doi: null
+  arxiv_base_id: '2201.08239'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2201.08239v3
+- https://arxiv.org/pdf/2201.08239v3
+topic_groups:
+- llm
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2022
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: medium
+  notes: null
+milestone:
+  field: llm
+  era: foundational
+  significance: 137B model tuned for open-domain dialogue with safety/groundedness training; the shift
+    to conversation-optimized LLMs.
+  subarea: alignment
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v3
+  source: arxiv
+  source_url: https://arxiv.org/abs/2201.08239v3
+  pdf_path: library/lamda-language-models-for-dialog-applications-220108239/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/lamda-language-models-for-dialog-applications-220108239/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:20:38Z'
+  source_updated_at: '2022-02-10T16:30:11Z'
+  arxiv_version: v3
+  pdf_sha256: c2b9f7d10729fe742326a7b4ff41430899e2455700920ab464f8974e7ffcb718
+  pdf_bytes: 1509689
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:20:38Z'
+  updated_at: '2026-08-24T03:20:38Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

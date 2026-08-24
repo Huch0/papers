@@ -38,6 +38,7 @@ milestone:
   era: foundational
   significance: GUI-grounding pretraining for screenshot-only agents; created ScreenSpot, first realistic
     cross-platform grounding benchmark.
+  subarea: gui_grounding
 knowledge_concepts: []
 versions:
 - version_key: v1

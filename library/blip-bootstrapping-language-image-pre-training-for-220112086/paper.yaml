@@ -1,0 +1,62 @@
+canonical_key: arxiv-2201.12086
+slug: blip-bootstrapping-language-image-pre-training-for-220112086
+title: 'BLIP: Bootstrapping Language-Image Pre-training for Unified Vision-Language Understanding and
+  Generation'
+authors:
+- Junnan Li
+- Dongxu Li
+- Caiming Xiong
+- Steven C. H. Hoi
+year: 2022
+primary_ids:
+  doi: 10.48550/arxiv.2201.12086
+  arxiv_base_id: '2201.12086'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: https://openalex.org/W4226182655
+canonical_urls:
+- https://openalex.org/W4226182655
+- https://arxiv.org/pdf/2201.12086
+topic_groups:
+- vlm
+tags:
+- foundational
+venue:
+  name: arXiv (Cornell University)
+  tier: workshop_or_minor
+  status: unknown
+  year: 2022
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: medium
+  notes: null
+milestone:
+  field: vlm
+  era: foundational
+  significance: Unified understanding+generation pretraining with caption bootstrapping (CapFilt) over
+    noisy web data.
+  subarea: pretraining
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: openalex
+  source: openalex
+  source_url: https://openalex.org/W4226182655
+  pdf_path: library/blip-bootstrapping-language-image-pre-training-for-220112086/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/blip-bootstrapping-language-image-pre-training-for-220112086/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:25:43Z'
+  source_updated_at: '2022-01-28'
+  arxiv_version: null
+  pdf_sha256: 63e0335cdd57c3d92b907b89c93d10befdd29b8aeed108091bbde90c121ed97a
+  pdf_bytes: 1303121
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:25:43Z'
+  updated_at: '2026-08-24T03:25:43Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

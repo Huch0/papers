@@ -1,0 +1,74 @@
+canonical_key: arxiv-1509.02971
+version_key: v1
+title: Continuous control with deep reinforcement learning
+authors:
+- Timothy P. Lillicrap
+- Jonathan J. Hunt
+- Alexander Pritzel
+- Nicolas Heess
+- Tom Erez
+- Yuval Tassa
+- David Silver
+- Daan Wierstra
+abstract: 'We adapt the ideas underlying the success of Deep Q-Learning to the continuous action domain.
+  We present an actor-critic, model-free algorithm based on the deterministic policy gradient that can
+  operate over continuous action spaces. Using the same learning algorithm, network architecture and hyper-parameters,
+  our algorithm robustly solves more than 20 simulated physics tasks, including classic problems such
+  as cartpole swing-up, dexterous manipulation, legged locomotion and car driving. Our algorithm is able
+  to find policies whose performance is competitive with those found by a planning algorithm with full
+  access to the dynamics of the domain and its derivatives. We further demonstrate that for many of the
+  tasks the algorithm can learn policies end-to-end: directly from raw pixel inputs.'
+venue: arXiv
+year: 2015
+source: arxiv
+source_url: https://arxiv.org/abs/1509.02971v6
+pdf_url: https://arxiv.org/pdf/1509.02971v6
+pdf_sha256: 34ef677ecdee8c2a72721c70c7d849191be72af39ac8691a12e8c2979a28feda
+fetched_at: '2026-08-24T03:27:38Z'
+source_updated_at: '2019-07-05T10:47:27Z'
+ids:
+  doi: null
+  arxiv_id: 1509.02971v6
+  arxiv_base_id: '1509.02971'
+  arxiv_version: v6
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- rl
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: medium
+  rationale: 'score=65 -> READ_SOON | strong: interest_fit(0.55), venue_quality(0.40) | interests: rl:reinforcement
+    learning, rl:policy gradient, rl:Q-learning | milestone/foundational floor applied'
+  matched_interests:
+  - rl:reinforcement learning
+  - rl:policy gradient
+  - rl:Q-learning
+  negative_signals: []
+  subscores:
+    interest_fit: 0.55
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 0.0
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/continuous-control-with-deep-reinforcement-learning-150902971/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

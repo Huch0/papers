@@ -1,0 +1,72 @@
+canonical_key: arxiv-2201.12086
+version_key: v1
+title: 'BLIP: Bootstrapping Language-Image Pre-training for Unified Vision-Language Understanding and
+  Generation'
+authors:
+- Junnan Li
+- Dongxu Li
+- Caiming Xiong
+- Steven C. H. Hoi
+abstract: Vision-Language Pre-training (VLP) has advanced the performance for many vision-language tasks.
+  However, most existing pre-trained models only excel in either understanding-based tasks or generation-based
+  tasks. Furthermore, performance improvement has been largely achieved by scaling up the dataset with
+  noisy image-text pairs collected from the web, which is a suboptimal source of supervision. In this
+  paper, we propose BLIP, a new VLP framework which transfers flexibly to both vision-language understanding
+  and generation tasks. BLIP effectively utilizes the noisy web data by bootstrapping the captions, where
+  a captioner generates synthetic captions and a filter removes the noisy ones. We achieve state-of-the-art
+  results on a wide range of vision-language tasks, such as image-text retrieval (+2.7% in average recall@1),
+  image captioning (+2.8% in CIDEr), and VQA (+1.6% in VQA score). BLIP also demonstrates strong generalization
+  ability when directly transferred to video-language tasks in a zero-shot manner. Code, models, and datasets
+  are released at https://github.com/salesforce/BLIP.
+venue: arXiv (Cornell University)
+year: 2022
+source: openalex
+source_url: https://openalex.org/W4226182655
+pdf_url: https://arxiv.org/pdf/2201.12086
+pdf_sha256: 63e0335cdd57c3d92b907b89c93d10befdd29b8aeed108091bbde90c121ed97a
+fetched_at: '2026-08-24T03:25:42Z'
+source_updated_at: '2022-01-28'
+ids:
+  doi: 10.48550/arxiv.2201.12086
+  arxiv_id: null
+  arxiv_base_id: '2201.12086'
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: https://openalex.org/W4226182655
+tags:
+- foundational
+topic_groups:
+- vlm
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: medium
+  rationale: 'score=65 -> READ_SOON | strong: novelty(0.55), artifact_availability(0.55), interest_fit(0.40)
+    | interests: vlm:group:vlm | milestone/foundational floor applied'
+  matched_interests:
+  - vlm:group:vlm
+  negative_signals: []
+  subscores:
+    interest_fit: 0.402
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 0.55
+    artifact_availability: 0.55
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/blip-bootstrapping-language-image-pre-training-for-220112086/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

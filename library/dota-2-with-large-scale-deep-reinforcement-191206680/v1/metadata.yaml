@@ -1,0 +1,93 @@
+canonical_key: arxiv-1912.06680
+version_key: v1
+title: Dota 2 with Large Scale Deep Reinforcement Learning
+authors:
+- OpenAI
+- ':'
+- Christopher Berner
+- Greg Brockman
+- Brooke Chan
+- Vicki Cheung
+- Przemysław Dębiak
+- Christy Dennison
+- David Farhi
+- Quirin Fischer
+- Shariq Hashme
+- Chris Hesse
+- Rafal Józefowicz
+- Scott Gray
+- Catherine Olsson
+- Jakub Pachocki
+- Michael Petrov
+- Henrique P. d. O. Pinto
+- Jonathan Raiman
+- Tim Salimans
+- Jeremy Schlatter
+- Jonas Schneider
+- Szymon Sidor
+- Ilya Sutskever
+- Jie Tang
+- Filip Wolski
+- Susan Zhang
+abstract: On April 13th, 2019, OpenAI Five became the first AI system to defeat the world champions at
+  an esports game. The game of Dota 2 presents novel challenges for AI systems such as long time horizons,
+  imperfect information, and complex, continuous state-action spaces, all challenges which will become
+  increasingly central to more capable AI systems. OpenAI Five leveraged existing reinforcement learning
+  techniques, scaled to learn from batches of approximately 2 million frames every 2 seconds. We developed
+  a distributed training system and tools for continual training which allowed us to train OpenAI Five
+  for 10 months. By defeating the Dota 2 world champion (Team OG), OpenAI Five demonstrates that self-play
+  reinforcement learning can achieve superhuman performance on a difficult task.
+venue: arXiv
+year: 2019
+source: arxiv
+source_url: https://arxiv.org/abs/1912.06680v1
+pdf_url: https://arxiv.org/pdf/1912.06680v1
+pdf_sha256: 9af6c436cf61b4e48fadfebe067d5e1779fff4d687ccbe59ca9e5abb1e1a6b70
+fetched_at: '2026-08-24T03:28:23Z'
+source_updated_at: '2019-12-13T19:56:40Z'
+ids:
+  doi: null
+  arxiv_id: 1912.06680v1
+  arxiv_base_id: '1912.06680'
+  arxiv_version: v1
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- rl
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: medium
+  rationale: 'score=65 -> READ_SOON | strong: author_or_lab_signal(1.00), novelty(0.80), interest_fit(0.55)
+    | interests: rl:reinforcement learning, rl:self-play, rl:group:rl | milestone/foundational floor applied'
+  matched_interests:
+  - rl:reinforcement learning
+  - rl:self-play
+  - rl:group:rl
+  negative_signals: []
+  subscores:
+    interest_fit: 0.55
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.36
+    novelty: 0.8
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 1.0
+artifacts:
+  pdf: library/dota-2-with-large-scale-deep-reinforcement-191206680/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

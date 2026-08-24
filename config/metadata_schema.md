@@ -61,6 +61,7 @@ milestone:            # null, or a curated-landmark block (set by /milestone-pap
   # field:            #   field key from config/milestones.yaml (e.g. computer_use_agents)
   # era:              #   emergence | foundational | expansion | recent
   # significance:     #   one-line why-it-matters
+  # subarea:          #   optional short snake_case lane within the field (from the seed)
 knowledge_concepts: []# list[str] concept slugs in knowledge/ linked to this paper
                       # (bidirectional with knowledge/concepts/<slug>.md: related_papers)
 versions:             # list, newest last; each mirrors the version dir

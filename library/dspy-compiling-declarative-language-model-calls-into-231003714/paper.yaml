@@ -1,0 +1,70 @@
+canonical_key: arxiv-2310.03714
+slug: dspy-compiling-declarative-language-model-calls-into-231003714
+title: 'DSPy: Compiling Declarative Language Model Calls into Self-Improving Pipelines'
+authors:
+- Omar Khattab
+- Arnav Singhvi
+- Paridhi Maheshwari
+- Zhiyuan Zhang
+- Keshav Santhanam
+- Sri Vardhamanan
+- Saiful Haq
+- Ashutosh Sharma
+- Thomas T. Joshi
+- Hanna Moazam
+- Heather Miller
+- Matei Zaharia
+- Christopher Potts
+year: 2023
+primary_ids:
+  doi: null
+  arxiv_base_id: '2310.03714'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2310.03714v1
+- https://arxiv.org/pdf/2310.03714v1
+topic_groups:
+- agent_harness
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2023
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: agent_harness
+  era: foundational
+  significance: Declarative LM pipelines with optimizable prompts/weights - turned harness design into
+    a compiled, optimized artifact.
+  subarea: harness_optimization
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v1
+  source: arxiv
+  source_url: https://arxiv.org/abs/2310.03714v1
+  pdf_path: library/dspy-compiling-declarative-language-model-calls-into-231003714/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/dspy-compiling-declarative-language-model-calls-into-231003714/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:31:45Z'
+  source_updated_at: '2023-10-05T17:37:25Z'
+  arxiv_version: v1
+  pdf_sha256: 5309836325c3a580b6c176242f49f21ca40e413b0acd514e74b67e16bb1b56bc
+  pdf_bytes: 460814
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:31:45Z'
+  updated_at: '2026-08-24T03:31:45Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

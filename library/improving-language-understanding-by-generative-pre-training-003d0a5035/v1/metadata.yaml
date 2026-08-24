@@ -1,0 +1,60 @@
+canonical_key: s2-cd18800a0fe0b668a1cc19f2ec95b5003d0a5035
+version_key: v1
+title: Improving Language Understanding by Generative Pre-Training
+authors:
+- Alec Radford
+- Karthik Narasimhan
+abstract: Not reported
+venue: Not reported
+year: 2018
+source: semantic_scholar
+source_url: https://www.semanticscholar.org/paper/cd18800a0fe0b668a1cc19f2ec95b5003d0a5035
+pdf_url: ''
+pdf_sha256: null
+fetched_at: '2026-08-24T03:20:21Z'
+source_updated_at: null
+ids:
+  doi: null
+  arxiv_id: null
+  arxiv_base_id: null
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: cd18800a0fe0b668a1cc19f2ec95b5003d0a5035
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- llm
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: medium
+  rationale: 'score=65 -> READ_SOON | strong: recency(1.00), interest_fit(0.40), venue_quality(0.30) |
+    interests: llm:group:llm | negatives: abstract_only | milestone/foundational floor applied'
+  matched_interests:
+  - llm:group:llm
+  negative_signals:
+  - abstract_only
+  subscores:
+    interest_fit: 0.402
+    recency: 1.0
+    venue_quality: 0.3
+    harness_relevance: 0.0
+    novelty: 0.0
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: null
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: false
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

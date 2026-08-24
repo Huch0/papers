@@ -1,0 +1,84 @@
+canonical_key: arxiv-1912.06680
+slug: dota-2-with-large-scale-deep-reinforcement-191206680
+title: Dota 2 with Large Scale Deep Reinforcement Learning
+authors:
+- OpenAI
+- ':'
+- Christopher Berner
+- Greg Brockman
+- Brooke Chan
+- Vicki Cheung
+- Przemysław Dębiak
+- Christy Dennison
+- David Farhi
+- Quirin Fischer
+- Shariq Hashme
+- Chris Hesse
+- Rafal Józefowicz
+- Scott Gray
+- Catherine Olsson
+- Jakub Pachocki
+- Michael Petrov
+- Henrique P. d. O. Pinto
+- Jonathan Raiman
+- Tim Salimans
+- Jeremy Schlatter
+- Jonas Schneider
+- Szymon Sidor
+- Ilya Sutskever
+- Jie Tang
+- Filip Wolski
+- Susan Zhang
+year: 2019
+primary_ids:
+  doi: null
+  arxiv_base_id: '1912.06680'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/1912.06680v1
+- https://arxiv.org/pdf/1912.06680v1
+topic_groups:
+- rl
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2019
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: medium
+  notes: null
+milestone:
+  field: rl
+  era: expansion
+  significance: OpenAI Five used massively scaled PPO self-play to defeat the Dota 2 world champions in
+    5v5.
+  subarea: games
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v1
+  source: arxiv
+  source_url: https://arxiv.org/abs/1912.06680v1
+  pdf_path: library/dota-2-with-large-scale-deep-reinforcement-191206680/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/dota-2-with-large-scale-deep-reinforcement-191206680/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:28:27Z'
+  source_updated_at: '2019-12-13T19:56:40Z'
+  arxiv_version: v1
+  pdf_sha256: 9af6c436cf61b4e48fadfebe067d5e1779fff4d687ccbe59ca9e5abb1e1a6b70
+  pdf_bytes: 8811456
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:28:27Z'
+  updated_at: '2026-08-24T03:28:27Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

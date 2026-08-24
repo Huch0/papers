@@ -1,0 +1,77 @@
+canonical_key: arxiv-1908.02265
+version_key: v1
+title: 'ViLBERT: Pretraining Task-Agnostic Visiolinguistic Representations for Vision-and-Language Tasks'
+authors:
+- Jiasen Lu
+- Dhruv Batra
+- Devi Parikh
+- Stefan Lee
+abstract: We present ViLBERT (short for Vision-and-Language BERT), a model for learning task-agnostic
+  joint representations of image content and natural language. We extend the popular BERT architecture
+  to a multi-modal two-stream model, pro-cessing both visual and textual inputs in separate streams that
+  interact through co-attentional transformer layers. We pretrain our model through two proxy tasks on
+  the large, automatically collected Conceptual Captions dataset and then transfer it to multiple established
+  vision-and-language tasks -- visual question answering, visual commonsense reasoning, referring expressions,
+  and caption-based image retrieval -- by making only minor additions to the base architecture. We observe
+  significant improvements across tasks compared to existing task-specific models -- achieving state-of-the-art
+  on all four tasks. Our work represents a shift away from learning groundings between vision and language
+  only as part of task training and towards treating visual grounding as a pretrainable and transferable
+  capability.
+venue: arXiv
+year: 2019
+source: arxiv
+source_url: https://arxiv.org/abs/1908.02265v1
+pdf_url: https://arxiv.org/pdf/1908.02265v1
+pdf_sha256: 7dc9e620eb3db596c61f639976657c3196f689faf1584cbbb1ba63f74324228c
+fetched_at: '2026-08-24T03:25:17Z'
+source_updated_at: '2019-08-06T17:33:52Z'
+ids:
+  doi: null
+  arxiv_id: 1908.02265v1
+  arxiv_base_id: '1908.02265'
+  arxiv_version: v1
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- llm
+- vlm
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: medium
+  rationale: 'score=65 -> READ_SOON | strong: interest_fit(0.55), novelty(0.55), venue_quality(0.40) |
+    interests: llm:pretraining, llm:group:llm, vlm:visual grounding, vlm:visual question answering | milestone/foundational
+    floor applied'
+  matched_interests:
+  - llm:pretraining
+  - llm:group:llm
+  - vlm:visual grounding
+  - vlm:visual question answering
+  - vlm:group:vlm
+  negative_signals: []
+  subscores:
+    interest_fit: 0.55
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 0.55
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/vilbert-pretraining-task-agnostic-visiolinguistic-representations-for-190802265/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

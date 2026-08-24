@@ -1,0 +1,70 @@
+canonical_key: arxiv-1712.01815
+slug: mastering-chess-and-shogi-by-self-play-171201815
+title: Mastering Chess and Shogi by Self-Play with a General Reinforcement Learning Algorithm
+authors:
+- David Silver
+- Thomas Hubert
+- Julian Schrittwieser
+- Ioannis Antonoglou
+- Matthew Lai
+- Arthur Guez
+- Marc Lanctot
+- Laurent Sifre
+- Dharshan Kumaran
+- Thore Graepel
+- Timothy Lillicrap
+- Karen Simonyan
+- Demis Hassabis
+year: 2017
+primary_ids:
+  doi: null
+  arxiv_base_id: '1712.01815'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/1712.01815v1
+- https://arxiv.org/pdf/1712.01815v1
+topic_groups:
+- rl
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2017
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: medium
+  notes: null
+milestone:
+  field: rl
+  era: foundational
+  significance: AlphaZero generalized self-play plus search to master chess, shogi, and Go with one algorithm
+    (Science 2018).
+  subarea: games
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v1
+  source: arxiv
+  source_url: https://arxiv.org/abs/1712.01815v1
+  pdf_path: library/mastering-chess-and-shogi-by-self-play-171201815/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/mastering-chess-and-shogi-by-self-play-171201815/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:27:59Z'
+  source_updated_at: '2017-12-05T18:45:38Z'
+  arxiv_version: v1
+  pdf_sha256: 26c43408551c22f4fdc98e47f9b4592ab2161fac1ba5df27c897f46d8b6cec7f
+  pdf_bytes: 636527
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:27:59Z'
+  updated_at: '2026-08-24T03:27:59Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

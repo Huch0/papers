@@ -1,0 +1,132 @@
+canonical_key: arxiv-2307.09288
+version_key: v1
+title: 'Llama 2: Open Foundation and Fine-Tuned Chat Models'
+authors:
+- Hugo Touvron
+- Louis Martin
+- Kevin Stone
+- Peter Albert
+- Amjad Almahairi
+- Yasmine Babaei
+- Nikolay Bashlykov
+- Soumya Batra
+- Prajjwal Bhargava
+- Shruti Bhosale
+- Dan Bikel
+- Lukas Blecher
+- Cristian Canton Ferrer
+- Moya Chen
+- Guillem Cucurull
+- David Esiobu
+- Jude Fernandes
+- Jeremy Fu
+- Wenyin Fu
+- Brian Fuller
+- Cynthia Gao
+- Vedanuj Goswami
+- Naman Goyal
+- Anthony Hartshorn
+- Saghar Hosseini
+- Rui Hou
+- Hakan Inan
+- Marcin Kardas
+- Viktor Kerkez
+- Madian Khabsa
+- Isabel Kloumann
+- Artem Korenev
+- Punit Singh Koura
+- Marie-Anne Lachaux
+- Thibaut Lavril
+- Jenya Lee
+- Diana Liskovich
+- Yinghai Lu
+- Yuning Mao
+- Xavier Martinet
+- Todor Mihaylov
+- Pushkar Mishra
+- Igor Molybog
+- Yixin Nie
+- Andrew Poulton
+- Jeremy Reizenstein
+- Rashi Rungta
+- Kalyan Saladi
+- Alan Schelten
+- Ruan Silva
+- Eric Michael Smith
+- Ranjan Subramanian
+- Xiaoqing Ellen Tan
+- Binh Tang
+- Ross Taylor
+- Adina Williams
+- Jian Xiang Kuan
+- Puxin Xu
+- Zheng Yan
+- Iliyan Zarov
+- Yuchen Zhang
+- Angela Fan
+- Melanie Kambadur
+- Sharan Narang
+- Aurelien Rodriguez
+- Robert Stojnic
+- Sergey Edunov
+- Thomas Scialom
+abstract: In this work, we develop and release Llama 2, a collection of pretrained and fine-tuned large
+  language models (LLMs) ranging in scale from 7 billion to 70 billion parameters. Our fine-tuned LLMs,
+  called Llama 2-Chat, are optimized for dialogue use cases. Our models outperform open-source chat models
+  on most benchmarks we tested, and based on our human evaluations for helpfulness and safety, may be
+  a suitable substitute for closed-source models. We provide a detailed description of our approach to
+  fine-tuning and safety improvements of Llama 2-Chat in order to enable the community to build on our
+  work and contribute to the responsible development of LLMs.
+venue: arXiv
+year: 2023
+source: arxiv
+source_url: https://arxiv.org/abs/2307.09288v2
+pdf_url: https://arxiv.org/pdf/2307.09288v2
+pdf_sha256: 1df284ce95f783002074bfe8f21d47c646b396ceb1736ea3ec0ea212fc070d91
+fetched_at: '2026-08-24T03:21:00Z'
+source_updated_at: '2023-07-19T17:08:59Z'
+ids:
+  doi: null
+  arxiv_id: 2307.09288v2
+  arxiv_base_id: '2307.09288'
+  arxiv_version: v2
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- llm
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: medium
+  rationale: 'score=65 -> READ_SOON | strong: artifact_availability(0.55), evaluation_quality(0.55), interest_fit(0.50)
+    | interests: llm:large language model, llm:group:llm | milestone/foundational floor applied'
+  matched_interests:
+  - llm:large language model
+  - llm:group:llm
+  negative_signals: []
+  subscores:
+    interest_fit: 0.501
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 0.0
+    artifact_availability: 0.55
+    evaluation_quality: 0.55
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/llama-2-open-foundation-and-fine-tuned-230709288/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

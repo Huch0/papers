@@ -47,6 +47,7 @@ milestone:
   era: foundational
   significance: Defined General Computer Control (screenshots in, keyboard/mouse out) with modular self-reflective
     framework across games/apps/OSWorld.
+  subarea: os_desktop
 knowledge_concepts: []
 versions:
 - version_key: v1

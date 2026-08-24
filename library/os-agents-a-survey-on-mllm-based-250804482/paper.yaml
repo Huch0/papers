@@ -60,6 +60,7 @@ milestone:
   era: recent
   significance: Unifying survey across computer/phone/browser OS agents covering foundations, capabilities,
     and benchmarks.
+  subarea: enabler_benchmark_survey
 knowledge_concepts: []
 versions:
 - version_key: v1

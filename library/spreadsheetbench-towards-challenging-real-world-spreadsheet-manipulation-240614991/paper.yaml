@@ -41,6 +41,7 @@ milestone:
   era: foundational
   significance: 912 real-forum Excel tasks with online-judge evaluation; canonical office/spreadsheet
     desktop-agent benchmark.
+  subarea: os_desktop
 knowledge_concepts: []
 versions:
 - version_key: v1

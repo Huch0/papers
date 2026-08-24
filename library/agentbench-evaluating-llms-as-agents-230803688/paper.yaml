@@ -55,6 +55,7 @@ milestone:
   era: foundational
   significance: First broad multi-environment benchmark spanning OS, web, and games to measure LLM agentic
     ability.
+  subarea: enabler_benchmark_survey
 knowledge_concepts: []
 versions:
 - version_key: v1

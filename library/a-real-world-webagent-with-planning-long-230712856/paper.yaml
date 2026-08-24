@@ -38,6 +38,7 @@ milestone:
   era: foundational
   significance: HTML-T5 long-context model + plan-then-program-synthesis agent on real sites; foundational
     LLM web-agent architecture.
+  subarea: web
 knowledge_concepts: []
 versions:
 - version_key: v1

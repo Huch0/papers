@@ -29,6 +29,7 @@ milestone:
   era: recent
   significance: In-place upgrade fixing 300+ OSWorld task/eval issues with 50x AWS parallelization; default
     trusted computer-use leaderboard.
+  subarea: os_desktop
 knowledge_concepts: []
 versions:
 - version_key: v1

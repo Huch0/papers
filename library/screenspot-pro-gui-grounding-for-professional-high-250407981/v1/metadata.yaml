@@ -58,6 +58,7 @@ scoring:
   - computer_use_agents:group:computer_use_agents
   - general_agent_methods:benchmark design
   - general_agent_methods:group:general_agent_methods
+  - llm:large language model
   negative_signals:
   - gui_only_misclassified
   subscores:

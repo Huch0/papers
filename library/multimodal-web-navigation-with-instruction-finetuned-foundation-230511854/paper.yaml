@@ -37,6 +37,7 @@ milestone:
   era: foundational
   significance: Multimodal (HTML+screenshot) instruction-finetuned web agent; large MiniWoB/WebShop gains
     and transfer to Mind2Web.
+  subarea: web
 knowledge_concepts: []
 versions:
 - version_key: v1

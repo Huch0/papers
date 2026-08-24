@@ -34,7 +34,8 @@ user:
 milestone:
   field: computer_use_agents
   era: emergence
-  significance: MiniWoB++; workflow-guided exploration for web UI control.
+  significance: Introduced MiniWoB++ and workflow-guided exploration; canonical RL-era web benchmark.
+  subarea: web
 knowledge_concepts: []
 versions:
 - version_key: v1

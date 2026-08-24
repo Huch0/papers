@@ -1,0 +1,78 @@
+canonical_key: arxiv-2106.01345
+version_key: v1
+title: 'Decision Transformer: Reinforcement Learning via Sequence Modeling'
+authors:
+- Lili Chen
+- Kevin Lu
+- Aravind Rajeswaran
+- Kimin Lee
+- Aditya Grover
+- Michael Laskin
+- Pieter Abbeel
+- Aravind Srinivas
+- Igor Mordatch
+abstract: We introduce a framework that abstracts Reinforcement Learning (RL) as a sequence modeling problem.
+  This allows us to draw upon the simplicity and scalability of the Transformer architecture, and associated
+  advances in language modeling such as GPT-x and BERT. In particular, we present Decision Transformer,
+  an architecture that casts the problem of RL as conditional sequence modeling. Unlike prior approaches
+  to RL that fit value functions or compute policy gradients, Decision Transformer simply outputs the
+  optimal actions by leveraging a causally masked Transformer. By conditioning an autoregressive model
+  on the desired return (reward), past states, and actions, our Decision Transformer model can generate
+  future actions that achieve the desired return. Despite its simplicity, Decision Transformer matches
+  or exceeds the performance of state-of-the-art model-free offline RL baselines on Atari, OpenAI Gym,
+  and Key-to-Door tasks.
+venue: arXiv
+year: 2021
+source: arxiv
+source_url: https://arxiv.org/abs/2106.01345v2
+pdf_url: https://arxiv.org/pdf/2106.01345v2
+pdf_sha256: 6ff675a7b8286ca7bf8e01e4b90a41bf5c90f4c3c007e17fdb4d24e26fd05e28
+fetched_at: '2026-08-24T03:28:37Z'
+source_updated_at: '2021-06-24T17:09:59Z'
+ids:
+  doi: null
+  arxiv_id: 2106.01345v2
+  arxiv_base_id: '2106.01345'
+  arxiv_version: v2
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- rl
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: medium
+  rationale: 'score=65 -> READ_SOON | strong: author_or_lab_signal(1.00), novelty(0.80), interest_fit(0.55)
+    | interests: rl:reinforcement learning, rl:policy gradient, rl:offline RL | milestone/foundational
+    floor applied'
+  matched_interests:
+  - rl:reinforcement learning
+  - rl:policy gradient
+  - rl:offline RL
+  negative_signals: []
+  subscores:
+    interest_fit: 0.55
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 0.8
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 1.0
+artifacts:
+  pdf: library/decision-transformer-reinforcement-learning-via-sequence-modeling-210601345/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

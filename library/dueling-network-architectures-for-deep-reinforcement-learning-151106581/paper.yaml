@@ -1,0 +1,63 @@
+canonical_key: arxiv-1511.06581
+slug: dueling-network-architectures-for-deep-reinforcement-learning-151106581
+title: Dueling Network Architectures for Deep Reinforcement Learning
+authors:
+- Ziyu Wang
+- Tom Schaul
+- Matteo Hessel
+- Hado van Hasselt
+- Marc Lanctot
+- Nando de Freitas
+year: 2015
+primary_ids:
+  doi: null
+  arxiv_base_id: '1511.06581'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/1511.06581v3
+- https://arxiv.org/pdf/1511.06581v3
+topic_groups:
+- rl
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2015
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: medium
+  notes: null
+milestone:
+  field: rl
+  era: emergence
+  significance: Split the Q-network into state-value and advantage streams, improving performance across
+    Atari.
+  subarea: value_based
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v3
+  source: arxiv
+  source_url: https://arxiv.org/abs/1511.06581v3
+  pdf_path: library/dueling-network-architectures-for-deep-reinforcement-learning-151106581/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/dueling-network-architectures-for-deep-reinforcement-learning-151106581/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:27:44Z'
+  source_updated_at: '2016-04-05T09:03:06Z'
+  arxiv_version: v3
+  pdf_sha256: 11239e342d42a03836fc9772b1a408bd8c2d483a86b5a18202dd1ef4d1f86a47
+  pdf_bytes: 688509
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:27:44Z'
+  updated_at: '2026-08-24T03:27:44Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

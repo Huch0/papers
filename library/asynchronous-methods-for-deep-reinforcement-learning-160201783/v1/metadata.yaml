@@ -1,0 +1,73 @@
+canonical_key: arxiv-1602.01783
+version_key: v1
+title: Asynchronous Methods for Deep Reinforcement Learning
+authors:
+- Volodymyr Mnih
+- Adrià Puigdomènech Badia
+- Mehdi Mirza
+- Alex Graves
+- Timothy P. Lillicrap
+- Tim Harley
+- David Silver
+- Koray Kavukcuoglu
+abstract: We propose a conceptually simple and lightweight framework for deep reinforcement learning that
+  uses asynchronous gradient descent for optimization of deep neural network controllers. We present asynchronous
+  variants of four standard reinforcement learning algorithms and show that parallel actor-learners have
+  a stabilizing effect on training allowing all four methods to successfully train neural network controllers.
+  The best performing method, an asynchronous variant of actor-critic, surpasses the current state-of-the-art
+  on the Atari domain while training for half the time on a single multi-core CPU instead of a GPU. Furthermore,
+  we show that asynchronous actor-critic succeeds on a wide variety of continuous motor control problems
+  as well as on a new task of navigating random 3D mazes using a visual input.
+venue: ICML 2016
+year: 2016
+source: arxiv
+source_url: https://arxiv.org/abs/1602.01783v2
+pdf_url: https://arxiv.org/pdf/1602.01783v2
+pdf_sha256: f56a70559364254c4d60d9b697e7345add402ae1de081075aaddc060c5cbe964
+fetched_at: '2026-08-24T03:27:46Z'
+source_updated_at: '2016-06-16T16:38:45Z'
+ids:
+  doi: null
+  arxiv_id: 1602.01783v2
+  arxiv_base_id: '1602.01783'
+  arxiv_version: v2
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- rl
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: medium
+  rationale: 'score=65 -> READ_SOON | strong: venue_quality(1.00), novelty(0.55), interest_fit(0.50) |
+    interests: rl:reinforcement learning, rl:group:rl | milestone/foundational floor applied'
+  matched_interests:
+  - rl:reinforcement learning
+  - rl:group:rl
+  negative_signals: []
+  subscores:
+    interest_fit: 0.501
+    recency: 0.0
+    venue_quality: 1.0
+    harness_relevance: 0.0
+    novelty: 0.55
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/asynchronous-methods-for-deep-reinforcement-learning-160201783/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

@@ -1,0 +1,62 @@
+canonical_key: arxiv-2305.15334
+slug: gorilla-large-language-model-connected-with-massive-230515334
+title: 'Gorilla: Large Language Model Connected with Massive APIs'
+authors:
+- Shishir G. Patil
+- Tianjun Zhang
+- Xin Wang
+- Joseph E. Gonzalez
+year: 2023
+primary_ids:
+  doi: 10.48550/arxiv.2305.15334
+  arxiv_base_id: '2305.15334'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: https://openalex.org/W4378474282
+canonical_urls:
+- https://openalex.org/W4378474282
+- https://arxiv.org/pdf/2305.15334
+topic_groups:
+- agent_harness
+- llm
+tags:
+- foundational
+venue:
+  name: arXiv (Cornell University)
+  tier: workshop_or_minor
+  status: unknown
+  year: 2023
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: agent_harness
+  era: foundational
+  significance: Retriever-aware finetuning for accurate API calling over huge tool sets; reduced hallucinated
+    tool use.
+  subarea: tool_use
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: openalex
+  source: openalex
+  source_url: https://openalex.org/W4378474282
+  pdf_path: library/gorilla-large-language-model-connected-with-massive-230515334/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/gorilla-large-language-model-connected-with-massive-230515334/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:31:22Z'
+  source_updated_at: '2023-05-24'
+  arxiv_version: null
+  pdf_sha256: 1aeae54095cdae3a3ebaa29f7af0919d666e0c87d961848ae85b991b3c022718
+  pdf_bytes: 1247664
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:31:22Z'
+  updated_at: '2026-08-24T03:31:22Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

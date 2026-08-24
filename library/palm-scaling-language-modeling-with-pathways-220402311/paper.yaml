@@ -1,0 +1,124 @@
+canonical_key: arxiv-2204.02311
+slug: palm-scaling-language-modeling-with-pathways-220402311
+title: 'PaLM: Scaling Language Modeling with Pathways'
+authors:
+- Aakanksha Chowdhery
+- Sharan Narang
+- Jacob Devlin
+- Maarten Bosma
+- Gaurav Mishra
+- Adam Roberts
+- Paul Barham
+- Hyung Won Chung
+- Charles Sutton
+- Sebastian Gehrmann
+- Parker Schuh
+- Kensen Shi
+- Sasha Tsvyashchenko
+- Joshua Maynez
+- Abhishek Rao
+- Parker Barnes
+- Yi Tay
+- Noam Shazeer
+- Vinodkumar Prabhakaran
+- Emily Reif
+- Nan Du
+- Ben Hutchinson
+- Reiner Pope
+- James Bradbury
+- Jacob Austin
+- Michael Isard
+- Guy Gur-Ari
+- Pengcheng Yin
+- Toju Duke
+- Anselm Levskaya
+- Sanjay Ghemawat
+- Sunipa Dev
+- Henryk Michalewski
+- Xavier Garcia
+- Vedant Misra
+- Kevin Robinson
+- Liam Fedus
+- Denny Zhou
+- Daphne Ippolito
+- David Luan
+- Hyeontaek Lim
+- Barret Zoph
+- Alexander Spiridonov
+- Ryan Sepassi
+- David Dohan
+- Shivani Agrawal
+- Mark Omernick
+- Andrew M. Dai
+- Thanumalayan Sankaranarayana Pillai
+- Marie Pellat
+- Aitor Lewkowycz
+- Erica Moreira
+- Rewon Child
+- Oleksandr Polozov
+- Katherine Lee
+- Zongwei Zhou
+- Xuezhi Wang
+- Brennan Saeta
+- Mark Diaz
+- Orhan Firat
+- Michele Catasta
+- Jason Wei
+- Kathy Meier-Hellstern
+- Douglas Eck
+- Jeff Dean
+- Slav Petrov
+- Noah Fiedel
+year: 2022
+primary_ids:
+  doi: null
+  arxiv_base_id: '2204.02311'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2204.02311v5
+- https://arxiv.org/pdf/2204.02311v5
+topic_groups:
+- llm
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2022
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: medium
+  notes: null
+milestone:
+  field: llm
+  era: foundational
+  significance: 540B dense Transformer trained across TPU pods; emergent few-shot reasoning beat prior
+    SOTA on 28 of 29 benchmarks.
+  subarea: scaling
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v5
+  source: arxiv
+  source_url: https://arxiv.org/abs/2204.02311v5
+  pdf_path: library/palm-scaling-language-modeling-with-pathways-220402311/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/palm-scaling-language-modeling-with-pathways-220402311/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:20:45Z'
+  source_updated_at: '2022-10-05T06:02:24Z'
+  arxiv_version: v5
+  pdf_sha256: 1e88f1f3027cd1abecb1713c1c08a89137c7730582549ec7ca78ca329f3f975d
+  pdf_bytes: 2711295
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:20:45Z'
+  updated_at: '2026-08-24T03:20:45Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

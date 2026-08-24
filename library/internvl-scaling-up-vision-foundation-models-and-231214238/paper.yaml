@@ -1,0 +1,73 @@
+canonical_key: arxiv-2312.14238
+slug: internvl-scaling-up-vision-foundation-models-and-231214238
+title: 'InternVL: Scaling up Vision Foundation Models and Aligning for Generic Visual-Linguistic Tasks'
+authors:
+- Zhe Chen
+- Jiannan Wu
+- Wenhai Wang
+- Weijie Su
+- Chen Guo
+- Sen Xing
+- Zhong Muyan
+- Qinglong Zhang
+- Xizhou Zhu
+- Lewei Lu
+- Bin Li
+- Ping Luo
+- Tong Lu
+- Yu Qiao
+- Jifeng Dai
+year: 2023
+primary_ids:
+  doi: 10.48550/arxiv.2312.14238
+  arxiv_base_id: '2312.14238'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: https://openalex.org/W4390214291
+canonical_urls:
+- https://openalex.org/W4390214291
+- https://arxiv.org/pdf/2312.14238
+topic_groups:
+- llm
+- vlm
+tags:
+- foundational
+venue:
+  name: arXiv (Cornell University)
+  tier: workshop_or_minor
+  status: unknown
+  year: 2023
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: medium
+  notes: null
+milestone:
+  field: vlm
+  era: expansion
+  significance: Scaled the vision encoder to 6B and progressively aligned it with LLMs; the leading open
+    frontier VLM family.
+  subarea: frontier
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: openalex
+  source: openalex
+  source_url: https://openalex.org/W4390214291
+  pdf_path: library/internvl-scaling-up-vision-foundation-models-and-231214238/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/internvl-scaling-up-vision-foundation-models-and-231214238/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:25:57Z'
+  source_updated_at: '2023-12-21'
+  arxiv_version: null
+  pdf_sha256: a948f7499c06b8a6cb0073149f1b8f41d3acd10c4bb29fe79f250806f32e5fab
+  pdf_bytes: 1315333
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:25:57Z'
+  updated_at: '2026-08-24T03:25:57Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

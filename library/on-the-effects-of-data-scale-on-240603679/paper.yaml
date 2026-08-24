@@ -38,6 +38,7 @@ milestone:
   era: expansion
   significance: AndroidControl dataset (15k demos) + definitive study of data-scaling limits for in/out-of-domain
     UI control.
+  subarea: mobile
 knowledge_concepts: []
 versions:
 - version_key: v1

@@ -1,0 +1,261 @@
+---
+import Base from "../../layouts/Base.astro";
+import { getCollection } from "astro:content";
+import { loadCatalog, loadMilestoneFields, summaryEntryId } from "../../lib/catalog";
+
+// The milestone paths: every library paper carrying a milestone block, grouped by
+// field (config/milestones.yaml via registry/milestones.json), ordered era -> year.
+const ERA_ORDER: Record<string, number> = { emergence: 0, foundational: 1, expansion: 2, recent: 3 };
+const ERAS = ["emergence", "foundational", "expansion", "recent"];
+
+const sums = await getCollection("summaries");
+const dateById = new Map(sums.map((e) => [e.id.toLowerCase(), (e.data as any).summary_date ?? null]));
+
+const cat = loadCatalog();
+const meta = loadMilestoneFields();
+const base = import.meta.env.BASE_URL;
+
+type Row = {
+  key: string; title: string; year: number | null; venue: string | null;
+  era: string; subarea: string | null; significance: string;
+  href: string | null; external: boolean; hasSummary: boolean; marker: string;
+};
+
+const byField = new Map<string, Row[]>();
+for (const p of cat) {
+  const m = p.milestone;
+  if (!m?.field) continue;
+  const id = summaryEntryId(p.summary_path);
+  const summaryDate = id ? (dateById.get(id) ?? null) : null;
+  const hasSummary = !!p.summary_path && summaryDate !== null;
+  const row: Row = {
+    key: p.canonical_key,
+    title: p.title,
+    year: p.year,
+    venue: p.venue,
+    era: m.era ?? "foundational",
+    subarea: m.subarea ?? null,
+    significance: m.significance ?? "",
+    href: hasSummary
+      ? `${base}papers/${p.canonical_key}/`.replace(/\/+/g, "/")
+      : (p.source_link ?? null),
+    external: !hasSummary,
+    hasSummary,
+    marker: `${p.latest_version ?? "v?"}__${summaryDate ?? ""}`,
+  };
+  if (!byField.has(m.field)) byField.set(m.field, []);
+  byField.get(m.field)!.push(row);
+}
+
+const fields = Array.from(byField.keys()).sort((a, b) => {
+  const oa = meta[a]?.path_order ?? 99;
+  const ob = meta[b]?.path_order ?? 99;
+  return oa - ob || a.localeCompare(b);
+});
+
+function eraGroups(rows: Row[]) {
+  const sorted = [...rows].sort(
+    (a, b) =>
+      (ERA_ORDER[a.era] ?? 9) - (ERA_ORDER[b.era] ?? 9) ||
+      (a.year ?? 0) - (b.year ?? 0) ||
+      a.title.localeCompare(b.title),
+  );
+  return ERAS.map((era) => {
+    const items = sorted.filter((r) => r.era === era);
+    const years = items.map((r) => r.year).filter((y): y is number => !!y);
+    const span = years.length
+      ? Math.min(...years) === Math.max(...years)
+        ? `${years[0]}`
+        : `${Math.min(...years)}–${Math.max(...years)}`
+      : "";
+    return { era, span, items };
+  }).filter((g) => g.items.length);
+}
+
+const displayName = (f: string) => meta[f]?.display_name ?? f.replace(/_/g, " ");
+const total = fields.reduce((n, f) => n + byField.get(f)!.length, 0);
+
+// Subarea lanes per field (for the filter chips); only shown when a field has >= 2 lanes.
+function lanes(rows: Row[]) {
+  const counts = new Map<string, number>();
+  for (const r of rows) if (r.subarea) counts.set(r.subarea, (counts.get(r.subarea) ?? 0) + 1);
+  return Array.from(counts.entries())
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+    .map(([name, n]) => ({ name, n }));
+}
+---
+<Base title="Milestone Paths — Paper Library">
+  <h1 class="title">Milestone Paths</h1>
+  <p class="count">
+    {total} landmark papers across {fields.length} fields, from each field's emergence to today.
+    Follow a path top-to-bottom to build the foundations; ✓ marks what you've read.
+  </p>
+
+  <nav class="path-nav" aria-label="fields">
+    {fields.map((f) => (
+      <a href={`#${f}`}>{displayName(f)} <span class="n">{byField.get(f)!.length}</span></a>
+    ))}
+  </nav>
+
+  {fields.map((f) => {
+    const rows = byField.get(f)!;
+    const withSummary = rows.filter((r) => r.hasSummary).length;
+    const fieldLanes = lanes(rows);
+    return (
+      <section class="path" id={f} data-field={f}>
+        <header class="path-head">
+          <h2>{displayName(f)}</h2>
+          <p class="desc">{meta[f]?.description}</p>
+          <p class="stats">
+            <span class="read-stat" data-stat-for={f}>0</span> read ·
+            {withSummary} of {rows.length} summarized
+          </p>
+          <div class="bar" role="presentation"><div class="fill" data-bar-for={f}></div></div>
+          {fieldLanes.length >= 2 && (
+            <div class="lanes" role="group" aria-label="filter by sub-area">
+              <button class="lane-chip active" data-lane="">all <span class="n">{rows.length}</span></button>
+              {fieldLanes.map((l) => (
+                <button class="lane-chip" data-lane={l.name}>
+                  {l.name.replace(/_/g, " ")} <span class="n">{l.n}</span>
+                </button>
+              ))}
+            </div>
+          )}
+        </header>
+        {eraGroups(rows).map((g) => (
+          <div class="era">
+            <h3><span class="era-name">{g.era}</span>{g.span && <span class="era-span">{g.span}</span>}</h3>
+            <ol class="steps">
+              {g.items.map((r) => (
+                <li
+                  class:list={["step", { "no-summary": !r.hasSummary }]}
+                  data-key={r.key}
+                  data-marker={r.marker}
+                  data-summarized={r.hasSummary ? "1" : "0"}
+                  data-subarea={r.subarea ?? ""}
+                >
+                  <span class="dot" aria-hidden="true"></span>
+                  <span class="yr">{r.year ?? "—"}</span>
+                  <span class="body">
+                    {r.href ? (
+                      <a href={r.href} rel={r.external ? "noopener" : undefined}>{r.title}</a>
+                    ) : (
+                      <span class="t">{r.title}</span>
+                    )}
+                    {r.subarea && <span class="lane">{r.subarea.replace(/_/g, " ")}</span>}
+                    {!r.hasSummary && <span class="lane ghost">record only</span>}
+                    <span class="sig">{r.significance}</span>
+                  </span>
+                </li>
+              ))}
+            </ol>
+          </div>
+        ))}
+      </section>
+    );
+  })}
+</Base>
+
+<script>
+  // Decorate read state from the reading tracker's local cache (see lib/reads.ts):
+  // a step is "read" when the stored marker matches the current version+summary-date.
+  let reads: Record<string, string> = {};
+  try { reads = JSON.parse(localStorage.getItem("paper-reads") || "{}"); } catch { /* ignore */ }
+  const counts: Record<string, { read: number; summarized: number }> = {};
+  document.querySelectorAll<HTMLElement>(".step").forEach((el) => {
+    const field = el.closest<HTMLElement>(".path")?.dataset.field;
+    if (!field) return;
+    counts[field] ??= { read: 0, summarized: 0 };
+    if (el.dataset.summarized === "1") {
+      counts[field].summarized++;
+      if (reads[el.dataset.key || ""] === el.dataset.marker) {
+        el.classList.add("is-read");
+        counts[field].read++;
+      }
+    }
+  });
+  for (const [field, c] of Object.entries(counts)) {
+    const stat = document.querySelector<HTMLElement>(`[data-stat-for="${field}"]`);
+    if (stat) stat.textContent = String(c.read);
+    const bar = document.querySelector<HTMLElement>(`[data-bar-for="${field}"]`);
+    if (bar) bar.style.width = c.summarized ? `${(100 * c.read) / c.summarized}%` : "0";
+  }
+
+  // Sub-area filter chips: show only the selected lane's steps; hide eras left empty.
+  document.querySelectorAll<HTMLElement>(".path").forEach((section) => {
+    const chips = section.querySelectorAll<HTMLButtonElement>(".lane-chip");
+    if (!chips.length) return;
+    chips.forEach((chip) =>
+      chip.addEventListener("click", () => {
+        chips.forEach((c) => c.classList.toggle("active", c === chip));
+        const lane = chip.dataset.lane ?? "";
+        section.querySelectorAll<HTMLElement>(".step").forEach((el) => {
+          el.style.display = !lane || el.dataset.subarea === lane ? "" : "none";
+        });
+        section.querySelectorAll<HTMLElement>(".era").forEach((era) => {
+          const any = Array.from(era.querySelectorAll<HTMLElement>(".step")).some(
+            (el) => el.style.display !== "none",
+          );
+          era.style.display = any ? "" : "none";
+        });
+      }),
+    );
+  });
+</script>
+
+<style>
+  .path-nav { display: flex; flex-wrap: wrap; gap: .5rem; margin: 1.2rem 0 2rem; }
+  .path-nav a {
+    font-family: var(--font-body); font-size: .82rem; text-decoration: none;
+    color: var(--ink); background: var(--soft); border: 1px solid var(--line);
+    border-radius: 999px; padding: .22rem .7rem;
+  }
+  .path-nav a:hover { border-color: var(--accent); }
+  .path-nav .n { color: var(--mut); font-size: .75rem; margin-left: .15rem; }
+
+  .path { margin: 0 0 3rem; scroll-margin-top: 1rem; }
+  .path-head h2 { font-family: var(--font-display); font-weight: 600; margin: 0 0 .3rem; }
+  .path-head .desc { color: var(--mut); font-size: .9rem; margin: 0 0 .35rem; max-width: 60ch; }
+  .path-head .stats { font-size: .8rem; color: var(--mut); margin: 0 0 .3rem;
+    font-variant: all-small-caps; letter-spacing: .05em; }
+  .path-head .read-stat { color: var(--accent); font-weight: 600; }
+  .bar { height: 3px; background: var(--soft); border-radius: 2px; max-width: 22rem; margin-bottom: .8rem; }
+  .bar .fill { height: 100%; width: 0; background: var(--accent); border-radius: 2px; transition: width .3s; }
+
+  .lanes { display: flex; flex-wrap: wrap; gap: .35rem; margin: .1rem 0 .6rem; }
+  .lane-chip {
+    font-family: var(--font-body); font-size: .72rem; color: var(--mut);
+    background: none; border: 1px solid var(--line); border-radius: 999px;
+    padding: .12rem .6rem; cursor: pointer;
+  }
+  .lane-chip:hover { border-color: var(--accent); }
+  .lane-chip.active { color: var(--accent); border-color: var(--accent); }
+  .lane-chip .n { opacity: .65; font-size: .66rem; }
+
+  .era h3 { font-size: .8rem; margin: 1.1rem 0 .4rem; display: flex; align-items: baseline; gap: .5rem; }
+  .era-name { font-variant: all-small-caps; letter-spacing: .12em; color: var(--accent); }
+  .era-span { color: var(--mut); font-weight: 400; font-size: .75rem; }
+
+  .steps { list-style: none; margin: 0; padding: 0; border-left: 2px solid var(--line); }
+  .step { position: relative; display: flex; gap: .6rem; padding: .34rem 0 .34rem 1.1rem; }
+  .step .dot {
+    position: absolute; left: -5px; top: .78em; width: 8px; height: 8px;
+    border-radius: 50%; background: var(--paper); border: 2px solid var(--mut); box-sizing: border-box;
+  }
+  .step.is-read .dot { background: var(--accent); border-color: var(--accent); }
+  .step.no-summary .dot { border-style: dotted; opacity: .6; }
+  .step.is-read .body > a::after { content: " ✓"; color: var(--accent); }
+  .yr { font-family: var(--font-body); font-size: .78rem; color: var(--mut);
+    min-width: 2.9em; text-align: right; padding-top: .12em; }
+  .body { flex: 1; font-size: .95rem; line-height: 1.45; }
+  .body a { text-decoration: none; }
+  .body a:hover { text-decoration: underline; }
+  .step.no-summary .body a, .step.no-summary .t { color: var(--mut); }
+  .lane {
+    font-size: .68rem; font-family: var(--font-body); color: var(--mut);
+    border: 1px solid var(--line); border-radius: 999px; padding: 0 .45em;
+    margin-left: .45em; white-space: nowrap; vertical-align: .12em;
+  }
+  .lane.ghost { border-style: dashed; opacity: .8; }
+  .sig { display: block; color: var(--mut); font-size: .8rem; line-height: 1.4; }
+</style>

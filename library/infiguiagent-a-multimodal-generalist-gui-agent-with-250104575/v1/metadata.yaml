@@ -54,6 +54,7 @@ scoring:
   - computer_use_agents:group:computer_use_agents
   - general_agent_methods:reflection
   - general_agent_methods:group:general_agent_methods
+  - llm:large language model
   negative_signals: []
   subscores:
     interest_fit: 0.91

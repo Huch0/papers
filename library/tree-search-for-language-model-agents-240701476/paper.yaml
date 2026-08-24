@@ -36,6 +36,7 @@ milestone:
   era: expansion
   significance: Brought best-first/MCTS inference-time search to LLM web agents; boosted WebArena/VisualWebArena
     success.
+  subarea: web
 knowledge_concepts: []
 versions:
 - version_key: v1

@@ -1,0 +1,71 @@
+canonical_key: arxiv-2302.13971
+slug: llama-open-and-efficient-foundation-language-models-230213971
+title: 'LLaMA: Open and Efficient Foundation Language Models'
+authors:
+- Hugo Touvron
+- Thibaut Lavril
+- Gautier Izacard
+- Xavier Martinet
+- Marie-Anne Lachaux
+- Timothée Lacroix
+- Baptiste Rozière
+- Naman Goyal
+- Eric Hambro
+- Faisal Azhar
+- Aurelien Rodriguez
+- Armand Joulin
+- Edouard Grave
+- Guillaume Lample
+year: 2023
+primary_ids:
+  doi: null
+  arxiv_base_id: '2302.13971'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2302.13971v1
+- https://arxiv.org/pdf/2302.13971v1
+topic_groups:
+- llm
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2023
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: medium
+  notes: null
+milestone:
+  field: llm
+  era: expansion
+  significance: Open 7B-65B models; Chinchilla-style training on public data let 13B beat 175B GPT-3,
+    igniting the open-source LLM wave.
+  subarea: open_models
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v1
+  source: arxiv
+  source_url: https://arxiv.org/abs/2302.13971v1
+  pdf_path: library/llama-open-and-efficient-foundation-language-models-230213971/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/llama-open-and-efficient-foundation-language-models-230213971/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:20:53Z'
+  source_updated_at: '2023-02-27T17:11:15Z'
+  arxiv_version: v1
+  pdf_sha256: 2e663675ae36ad12adb2f5a05281bac2747ecf8d23d92bedd9f937a89fee7136
+  pdf_bytes: 726566
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:20:53Z'
+  updated_at: '2026-08-24T03:20:53Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

@@ -1,0 +1,71 @@
+canonical_key: arxiv-2311.16867
+slug: the-falcon-series-of-open-language-models-231116867
+title: The Falcon Series of Open Language Models
+authors:
+- Ebtesam Almazrouei
+- Hamza Alobeidli
+- Abdulaziz Alshamsi
+- Alessandro Cappelli
+- Ruxandra Cojocaru
+- Mérouane Debbah
+- Étienne Goffinet
+- Daniel Hesslow
+- Julien Launay
+- Quentin Malartic
+- Daniele Mazzotta
+- Badreddine Noune
+- Baptiste Pannier
+- Guilherme Penedo
+year: 2023
+primary_ids:
+  doi: null
+  arxiv_base_id: '2311.16867'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2311.16867v2
+- https://arxiv.org/pdf/2311.16867v2
+topic_groups:
+- llm
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2023
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: medium
+  notes: null
+milestone:
+  field: llm
+  era: expansion
+  significance: Apache-2.0 Falcon-40B topped the open leaderboard; Falcon-180B (3.5T tokens) was the largest
+    open LLM of its moment.
+  subarea: open_models
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v2
+  source: arxiv
+  source_url: https://arxiv.org/abs/2311.16867v2
+  pdf_path: library/the-falcon-series-of-open-language-models-231116867/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/the-falcon-series-of-open-language-models-231116867/v1/metadata.yaml
+  fetched_at: '2026-08-24T03:21:11Z'
+  source_updated_at: '2023-11-29T19:45:10Z'
+  arxiv_version: v2
+  pdf_sha256: bd216a639168da065373e9116562f8108bc4e6876b21d1f43fa8610ad82fa95b
+  pdf_bytes: 1254650
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-24T03:21:11Z'
+  updated_at: '2026-08-24T03:21:11Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

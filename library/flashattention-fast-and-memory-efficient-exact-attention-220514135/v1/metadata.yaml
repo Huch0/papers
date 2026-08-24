@@ -1,0 +1,78 @@
+canonical_key: arxiv-2205.14135
+version_key: v1
+title: 'FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness'
+authors:
+- Tri Dao
+- Daniel Y. Fu
+- Stefano Ermon
+- Atri Rudra
+- Christopher Ré
+abstract: 'Transformers are slow and memory-hungry on long sequences, since the time and memory complexity
+  of self-attention are quadratic in sequence length. Approximate attention methods have attempted to
+  address this problem by trading off model quality to reduce the compute complexity, but often do not
+  achieve wall-clock speedup. We argue that a missing principle is making attention algorithms IO-aware
+  -- accounting for reads and writes between levels of GPU memory. We propose FlashAttention, an IO-aware
+  exact attention algorithm that uses tiling to reduce the number of memory reads/writes between GPU high
+  bandwidth memory (HBM) and GPU on-chip SRAM. We analyze the IO complexity of FlashAttention, showing
+  that it requires fewer HBM accesses than standard attention, and is optimal for a range of SRAM sizes.
+  We also extend FlashAttention to block-sparse attention, yielding an approximate attention algorithm
+  that is faster than any existing approximate attention method. FlashAttention trains Transformers faster
+  than existing baselines: 15% end-to-end wall-clock speedup on BERT-large (seq. length 512) compared
+  to the MLPerf 1.1 training speed record, 3$\times$ speedup on GPT-2 (seq. length 1K), and 2.4$\times$
+  speedup on long-range arena (seq. length 1K-4K). FlashAttention and block-sparse FlashAttention enable
+  longer context in Transformers, yielding higher quality models (0.7 better perplexity on GPT-2 and 6.4
+  points of lift on long-document classification) and entirely new capabilities: the first Transformers
+  to achieve better-than-chance performance on the Path-X challenge (seq. length 16K, 61.4% accuracy)
+  and Path-256 (seq. length 64K, 63.1% accuracy).'
+venue: arXiv
+year: 2022
+source: arxiv
+source_url: https://arxiv.org/abs/2205.14135v2
+pdf_url: https://arxiv.org/pdf/2205.14135v2
+pdf_sha256: ca7f9fda10b90fc05dd291a3accc85e9c1a4a860b99b31928dab03ed3fcb14e4
+fetched_at: '2026-08-24T03:20:47Z'
+source_updated_at: '2022-06-23T17:53:32Z'
+ids:
+  doi: null
+  arxiv_id: 2205.14135v2
+  arxiv_base_id: '2205.14135'
+  arxiv_version: v2
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- llm
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: medium
+  rationale: 'score=65 -> READ_SOON | strong: novelty(0.55), interest_fit(0.40), venue_quality(0.40) |
+    interests: llm:group:llm | milestone/foundational floor applied'
+  matched_interests:
+  - llm:group:llm
+  negative_signals: []
+  subscores:
+    interest_fit: 0.402
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 0.55
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/flashattention-fast-and-memory-efficient-exact-attention-220514135/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

@@ -41,6 +41,7 @@ milestone:
   era: recent
   significance: API-GUI paradigm + distributed RL over thousands of parallel desktops; AutoGLM-OS new
     open OSWorld SOTA at the time.
+  subarea: os_desktop
 knowledge_concepts: []
 versions:
 - version_key: v1

@@ -1,6 +1,7 @@
 # Curated milestone / landmark papers per field, from a field's emergence to recent.
 # Durable record of "what counts as a milestone". /milestone-papers resolves each seed
-# to a real paper at fetch time (arxiv id when given, else title search), dedupes against
+# to a real paper at fetch time (arxiv id when given, else doi via OpenAlex, else title
+# search), dedupes against
 # the registry, and ingests non-duplicates tagged foundational with a milestone block.
 # A blank/uncertain arxiv id is resolved by search, so it never produces a wrong record.
 #
@@ -12,6 +13,8 @@ version: 1
 fields:
   computer_use_agents:
     topic_group: computer_use_agents
+    display_name: Computer-Use Agents
+    path_order: 4
     emergence_year: 2017
     description: 'Agents that operate computers through web, GUI, OS/desktop, and mobile interfaces, plus
       the environments, datasets, grounding models, benchmarks, and surveys that define the field. Sub-areas:
@@ -607,6 +610,13 @@ fields:
       subarea: gui_grounding
       significance: Scales native GUI agents with stabilized multi-turn RL + unified sandbox; improves
         long-horizon grounding-and-acting over UI-TARS-1.x.
+    - title: 'OSWorld: Benchmarking Multimodal Agents for Open-Ended Tasks in Real Computer
+        Environments'
+      year: 2024
+      era: expansion
+      arxiv: '2404.07972'
+      subarea: os_desktop
+      significance: Real OS-level desktop benchmark across applications.
     - title: OSWorld-Verified
       year: 2025
       era: recent
@@ -663,7 +673,8 @@ fields:
       subarea: enabler_benchmark_survey
       significance: Updated survey framing element localization, knowledge retrieval, long-horizon planning,
         and safe execution.
-    - title: 'OS Agents: A Survey on MLLM-based Agents for Computer, Phone and Browser Use'
+    - title: 'OS Agents: A Survey on MLLM-based Agents for General Computing Devices Use'
+      arxiv: '2508.04482'
       year: 2025
       era: recent
       arxiv: '2508.04482'
@@ -686,6 +697,8 @@ fields:
         standard web-agent infra.
   software_engineering_agents:
     topic_group: software_engineering_agents
+    display_name: Software-Engineering Agents
+    path_order: 6
     emergence_year: 2021
     description: 'Agents that resolve real software tasks (issues, bugs, features) in repositories, evaluated
       by execution/tests.
@@ -709,6 +722,8 @@ fields:
       significance: The ACI concept; agent scaffold that made SWE-bench tractable.
   agent_harness:
     topic_group: agent_harness
+    display_name: Agent Harness
+    path_order: 5
     emergence_year: 2022
     description: 'Methods that optimize the scaffolding around a model: tools, prompts, verifiers, search,
       memory, and environment interfaces.
@@ -719,24 +734,120 @@ fields:
       year: 2022
       era: emergence
       arxiv: '2210.03629'
+      subarea: prompting_reasoning
       significance: Interleaved reasoning + acting; foundational agent loop.
     - title: 'Toolformer: Language Models Can Teach Themselves to Use Tools'
       year: 2023
       era: foundational
       arxiv: '2302.04761'
+      subarea: tool_use
       significance: Self-supervised tool-use; canonical tool-learning reference.
     - title: 'Reflexion: Language Agents with Verbal Reinforcement Learning'
       year: 2023
       era: foundational
       arxiv: '2303.11366'
+      subarea: prompting_reasoning
       significance: Verbal self-reflection as an inference-time improvement loop.
     - title: 'Tree of Thoughts: Deliberate Problem Solving with Large Language Models'
       year: 2023
       era: expansion
       arxiv: '2305.10601'
+      subarea: prompting_reasoning
       significance: Inference-time search over reasoning states.
+    - title: 'Do As I Can, Not As I Say: Grounding Language in Robotic Affordances'
+      year: 2022
+      era: emergence
+      arxiv: '2204.01691'
+      subarea: embodied
+      significance: 'SayCan: LLM decomposes instructions while RL-learned affordance values ground feasible
+        robot actions; first big LLM+RL agent.'
+    - title: 'Generative Agents: Interactive Simulacra of Human Behavior'
+      year: 2023
+      era: foundational
+      arxiv: '2304.03442'
+      subarea: memory
+      significance: 25 LLM agents with long-term memory, retrieval, and reflection showed emergent social
+        behavior; the agent-memory blueprint.
+    - title: 'CAMEL: Communicative Agents for "Mind" Exploration of Large Language Model Society'
+      year: 2023
+      era: foundational
+      arxiv: '2303.17760'
+      subarea: multi_agent
+      significance: Role-playing two-agent framework for autonomous task solving; early evidence for structured
+        multi-agent cooperation.
+    - title: 'Gorilla: Large Language Model Connected with Massive APIs'
+      year: 2023
+      era: foundational
+      subarea: tool_use
+      significance: Retriever-aware finetuning for accurate API calling over huge tool sets; reduced hallucinated
+        tool use.
+    - title: 'Voyager: An Open-Ended Embodied Agent with Large Language Models'
+      year: 2023
+      era: foundational
+      arxiv: '2305.16291'
+      subarea: embodied
+      significance: Lifelong Minecraft learner - writes and debugs code as actions, grows a persistent skill
+        library, no RL rewards.
+    - title: 'MetaGPT: Meta Programming for A Multi-Agent Collaborative Framework'
+      year: 2023
+      era: foundational
+      arxiv: '2308.00352'
+      subarea: multi_agent
+      significance: Organized LLM agents into an 'AI company' of specialized roles with SOP-encoded workflows;
+        structured multi-agent milestone.
+    - title: 'AutoGen: Enabling Next-Gen LLM Applications via Multi-Agent Conversation'
+      year: 2023
+      era: foundational
+      arxiv: '2308.08155'
+      subarea: multi_agent
+      significance: Conversable-agent framework composing LLMs, tools, and humans via automated chat; the
+        standard multi-agent toolkit.
+    - title: Cognitive Architectures for Language Agents
+      year: 2023
+      era: foundational
+      arxiv: '2309.02427'
+      subarea: autonomous_frameworks
+      significance: 'CoALA: organized the agent design space (memory, action space, decision loop); the conceptual
+        map of harness design.'
+    - title: 'DSPy: Compiling Declarative Language Model Calls into Self-Improving Pipelines'
+      year: 2023
+      era: foundational
+      arxiv: '2310.03714'
+      subarea: harness_optimization
+      significance: Declarative LM pipelines with optimizable prompts/weights - turned harness design into
+        a compiled, optimized artifact.
+    - title: Executable Code Actions Elicit Better LLM Agents
+      year: 2024
+      era: expansion
+      arxiv: '2402.01030'
+      subarea: tool_use
+      significance: 'CodeAct: use executable Python as the unified action space instead of JSON tool calls;
+        adopted by many coding agents.'
+    - title: Agent Workflow Memory
+      year: 2024
+      era: expansion
+      arxiv: '2409.07429'
+      subarea: memory
+      significance: Induces reusable workflows from past trajectories and retrieves them to guide new tasks;
+        procedural memory for agents.
+    - title: 'GEPA: Reflective Prompt Evolution Can Outperform Reinforcement Learning'
+      year: 2025
+      era: recent
+      arxiv: '2507.19457'
+      subarea: harness_optimization
+      significance: Reflective prompt evolution beats GRPO with up to 35x fewer rollouts; landmark for optimizing
+        harnesses instead of weights.
+    - title: 'The Landscape of Agentic Reinforcement Learning for LLMs: A Survey'
+      year: 2025
+      era: recent
+      arxiv: '2509.02547'
+      subarea: rl_agents
+      significance: Formalized agentic LLM-RL - LLMs as policies in sequential decision processes; the map
+        of the training-side counterpart.
   document_agents:
     topic_group: document_agents
+    display_name: Document Agents
+    path_order: 7
     emergence_year: 2023
     description: 'Agents that edit/manage documents, spreadsheets, slides, and office workflows.
 
@@ -753,6 +864,664 @@ fields:
       era: foundational
       arxiv: '2305.19308'
       significance: Spreadsheet manipulation agent over real software operations.
+  llm:
+    topic_group: llm
+    display_name: Large Language Models
+    path_order: 1
+    emergence_year: 2017
+    description: 'Large language models: the Transformer lineage through pretraining, scaling laws, alignment
+      (RLHF and successors), open-weight releases, efficiency, and reasoning models.'
+    seeds:
+    - title: Attention Is All You Need
+      year: 2017
+      era: emergence
+      arxiv: '1706.03762'
+      subarea: architecture
+      significance: Introduced the Transformer, replacing recurrence with self-attention; the foundational
+        architecture of virtually all LLMs.
+    - title: Improving Language Understanding by Generative Pre-Training
+      year: 2018
+      era: emergence
+      subarea: pretraining
+      significance: GPT-1 established the pretrain-then-finetune paradigm; one Transformer pretrained on unlabeled
+        text beat task-specific models.
+    - title: 'BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding'
+      year: 2018
+      era: emergence
+      arxiv: '1810.04805'
+      subarea: pretraining
+      significance: Masked language modeling for bidirectional context; the ubiquitous pretrained encoder
+        baseline across NLU tasks.
+    - title: Language Models are Unsupervised Multitask Learners
+      year: 2019
+      era: emergence
+      subarea: scaling
+      significance: GPT-2 (1.5B) showed scaling model and data yields zero-shot abilities - coherent text,
+        QA, translation with no task training.
+    - title: Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer
+      year: 2019
+      era: emergence
+      arxiv: '1910.10683'
+      subarea: pretraining
+      significance: T5 reframed all NLP as text-to-text; one span-corruption-pretrained encoder-decoder fine-tunes
+        to SOTA across diverse tasks.
+    - title: Fine-Tuning Language Models from Human Preferences
+      year: 2019
+      era: emergence
+      arxiv: '1909.08593'
+      subarea: alignment
+      significance: First applied RLHF to LMs - fine-tuned GPT-2 with learned rewards so outputs match human
+        preferences.
+    - title: Scaling Laws for Neural Language Models
+      year: 2020
+      era: foundational
+      arxiv: '2001.08361'
+      subarea: scaling
+      significance: Quantified power-law loss scaling in model size, data, and compute, guiding how to allocate
+        compute for LLM training.
+    - title: Language Models are Few-Shot Learners
+      year: 2020
+      era: foundational
+      arxiv: '2005.14165'
+      subarea: scaling
+      significance: GPT-3 (175B) showed emergent few-shot in-context learning, popularizing prompting over
+        fine-tuning as scale unlocks abilities.
+    - title: Learning to Summarize from Human Feedback
+      year: 2020
+      era: foundational
+      arxiv: '2009.01325'
+      subarea: alignment
+      significance: Scaled RLHF to summarization; KL-regularized RL beat SOTA and human-written references,
+        surpassing supervised learning.
+    - title: 'Switch Transformers: Scaling to Trillion Parameter Models with Simple and Efficient Sparsity'
+      year: 2021
+      era: foundational
+      arxiv: '2101.03961'
+      subarea: architecture
+      significance: Mixture-of-Experts sparsity; first model past 1 trillion params without proportional compute,
+        cementing MoE for scaling.
+    - title: Finetuned Language Models are Zero-Shot Learners
+      year: 2021
+      era: foundational
+      arxiv: '2109.01652'
+      subarea: alignment
+      significance: FLAN introduced instruction tuning - multi-task instruction fine-tuning gives strong zero-shot
+        generalization.
+    - title: Improving Language Models by Retrieving from Trillions of Tokens
+      year: 2021
+      era: foundational
+      arxiv: '2112.04426'
+      subarea: efficiency
+      significance: RETRO coupled a 7.5B LM with a 2T-token retrieval database, matching GPT-3-level performance
+        with 25x fewer parameters.
+    - title: Chain-of-Thought Prompting Elicits Reasoning in Large Language Models
+      year: 2022
+      era: foundational
+      arxiv: '2201.11903'
+      subarea: reasoning
+      significance: Few-shot step-by-step exemplars unlock multi-step reasoning in ~100B+ models - emergent
+        ability tapped by prompting alone.
+    - title: 'LaMDA: Language Models for Dialog Applications'
+      year: 2022
+      era: foundational
+      arxiv: '2201.08239'
+      subarea: alignment
+      significance: 137B model tuned for open-domain dialogue with safety/groundedness training; the shift
+        to conversation-optimized LLMs.
+    - title: Training language models to follow instructions with human feedback
+      year: 2022
+      era: foundational
+      arxiv: '2203.02155'
+      subarea: alignment
+      significance: 'InstructGPT: SFT + PPO RLHF; a 1.3B aligned model beat 175B GPT-3 on human preference
+        - the pipeline behind ChatGPT.'
+    - title: Training Compute-Optimal Large Language Models
+      year: 2022
+      era: foundational
+      arxiv: '2203.15556'
+      subarea: scaling
+      significance: Chinchilla scaling law - params and tokens scale together; 70B on 4x data beat 280B Gopher,
+        recalibrating LLM training.
+    - title: 'PaLM: Scaling Language Modeling with Pathways'
+      year: 2022
+      era: foundational
+      arxiv: '2204.02311'
+      subarea: scaling
+      significance: 540B dense Transformer trained across TPU pods; emergent few-shot reasoning beat prior
+        SOTA on 28 of 29 benchmarks.
+    - title: 'OPT: Open Pre-trained Transformer Language Models'
+      year: 2022
+      era: foundational
+      arxiv: '2205.01068'
+      subarea: open_models
+      significance: Meta openly released a GPT-3-class 175B model with weights and logs - a milestone in LLM
+        democratization.
+    - title: 'FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness'
+      year: 2022
+      era: foundational
+      arxiv: '2205.14135'
+      subarea: efficiency
+      significance: IO-aware exact attention kernel; made long-context training practical and became standard
+        infrastructure in every LLM stack.
+    - title: 'BLOOM: A 176B-Parameter Open-Access Multilingual Language Model'
+      year: 2022
+      era: foundational
+      arxiv: '2211.05100'
+      subarea: open_models
+      significance: BigScience 1000+ researcher effort; first massive fully open multilingual LLM - a watershed
+        for open science.
+    - title: 'Constitutional AI: Harmlessness from AI Feedback'
+      year: 2022
+      era: foundational
+      arxiv: '2212.08073'
+      subarea: alignment
+      significance: Aligned Claude via a written principle set and AI self-critique (RLAIF), gaining harmlessness
+        without human harm labels.
+    - title: 'LLaMA: Open and Efficient Foundation Language Models'
+      year: 2023
+      era: expansion
+      arxiv: '2302.13971'
+      subarea: open_models
+      significance: Open 7B-65B models; Chinchilla-style training on public data let 13B beat 175B GPT-3,
+        igniting the open-source LLM wave.
+    - title: GPT-4 Technical Report
+      year: 2023
+      era: expansion
+      arxiv: '2303.08774'
+      subarea: multimodal
+      significance: Large-scale multimodal model with human-level results on professional exams; new SOTA
+        in reasoning and steerability.
+    - title: OpenAssistant Conversations -- Democratizing Large Language Model Alignment
+      year: 2023
+      era: expansion
+      arxiv: '2304.07327'
+      subarea: alignment
+      significance: Crowd-sourced 600k+ message dialogue corpus from 13k+ volunteers plus open chat models;
+        community-driven RLHF proved viable.
+    - title: 'Direct Preference Optimization: Your Language Model is Secretly a Reward Model'
+      year: 2023
+      era: expansion
+      arxiv: '2305.18290'
+      subarea: alignment
+      significance: RL-free alignment - optimizes the LM directly on preference data as its own reward model,
+        matching RLHF with simpler training.
+    - title: 'Llama 2: Open Foundation and Fine-Tuned Chat Models'
+      year: 2023
+      era: expansion
+      arxiv: '2307.09288'
+      subarea: open_models
+      significance: Open release up to 70B with RLHF-tuned chat models and a commercial license, setting the
+        standard for open chat LLMs.
+    - title: 'OpenChat: Advancing Open-source Language Models with Mixed-Quality Data'
+      year: 2023
+      era: expansion
+      arxiv: '2309.11235'
+      subarea: alignment
+      significance: C-RLFT treats mixed-quality data sources as coarse rewards; its 13B beat all other 13B
+        open models without preference labels.
+    - title: Mistral 7B
+      year: 2023
+      era: expansion
+      arxiv: '2310.06825'
+      subarea: efficiency
+      significance: 7.3B model beating Llama 2 13B on all benchmarks via grouped-query and sliding-window
+        attention; design beats sheer scale.
+    - title: The Falcon Series of Open Language Models
+      year: 2023
+      era: expansion
+      arxiv: '2311.16867'
+      subarea: open_models
+      significance: Apache-2.0 Falcon-40B topped the open leaderboard; Falcon-180B (3.5T tokens) was the largest
+        open LLM of its moment.
+    - title: 'Mamba: Linear-Time Sequence Modeling with Selective State Spaces'
+      year: 2023
+      era: expansion
+      arxiv: '2312.00752'
+      subarea: architecture
+      significance: Selective state-space model matching Transformer quality with linear-time inference; the
+        leading attention alternative.
+    - title: 'Gemini: A Family of Highly Capable Multimodal Models'
+      year: 2023
+      era: expansion
+      arxiv: '2312.11805'
+      subarea: multimodal
+      significance: Natively multimodal family trained on text+images from scratch; Gemini Ultra surpassed
+        GPT-4 on several benchmarks.
+    - title: Mixtral of Experts
+      year: 2024
+      era: expansion
+      arxiv: '2401.04088'
+      subarea: efficiency
+      significance: Open sparse MoE (8x7B, ~13B active) matching Llama 2 70B and GPT-3.5 while far faster;
+        mainstreamed MoE for open models.
+    - title: The Llama 3 Herd of Models
+      year: 2024
+      era: expansion
+      arxiv: '2407.21783'
+      subarea: open_models
+      significance: 405B-scale open frontier models with a full training/infra report; open weights reached
+        GPT-4-class capability.
+    - title: OpenAI o1 System Card
+      year: 2024
+      era: expansion
+      arxiv: '2412.16720'
+      subarea: reasoning
+      significance: First production reasoning model trained with RL to think in long chains before answering;
+        opened the test-time-compute era.
+    - title: DeepSeek-V3 Technical Report
+      year: 2024
+      era: expansion
+      arxiv: '2412.19437'
+      subarea: efficiency
+      significance: 671B MoE (37B active) trained for ~$5.5M with FP8 + MLA; open frontier-class quality at
+        a fraction of expected compute.
+    - title: 'DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning'
+      year: 2025
+      era: recent
+      arxiv: '2501.12948'
+      subarea: reasoning
+      significance: Pure-RL (GRPO) elicited emergent long-form reasoning ("aha moment"); widely called the
+        biggest training advance since InstructGPT.
+    - title: Qwen3 Technical Report
+      year: 2025
+      era: recent
+      subarea: open_models
+      significance: Unified thinking/non-thinking open MoE family with a thinking budget; the dominant open-weight
+        line of 2025.
+    - title: 'Kimi K2: Open Agentic Intelligence'
+      year: 2025
+      era: recent
+      arxiv: '2507.20534'
+      subarea: open_models
+      significance: 1T-param open MoE post-trained for agentic tool use with large-scale synthetic trajectories;
+        open agentic frontier marker.
+  vlm:
+    topic_group: vlm
+    display_name: Vision-Language Models
+    path_order: 2
+    emergence_year: 2019
+    description: 'Vision-language models: visual backbones, contrastive image-text pretraining, frozen-LM
+      bridging, visual instruction tuning, and open frontier VLM families.'
+    seeds:
+    - title: 'ViLBERT: Pretraining Task-Agnostic Visiolinguistic Representations for Vision-and-Language Tasks'
+      year: 2019
+      era: emergence
+      arxiv: '1908.02265'
+      subarea: fusion
+      significance: Two-stream BERT-era vision-language pretraining with co-attention; opened the pretrain-then-transfer
+        era for V+L.
+    - title: 'An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale'
+      year: 2020
+      era: emergence
+      arxiv: '2010.11929'
+      subarea: backbone
+      significance: 'ViT: pure Transformer on image patches beats CNNs at scale; the visual backbone of nearly
+        every later VLM.'
+    - title: Learning Transferable Visual Models From Natural Language Supervision
+      year: 2021
+      era: emergence
+      arxiv: '2103.00020'
+      subarea: contrastive
+      significance: 'CLIP: contrastive image-text pretraining on 400M pairs gives zero-shot classification;
+        the field-defining V+L encoder.'
+    - title: Scaling Up Visual and Vision-Language Representation Learning With Noisy Text Supervision
+      year: 2021
+      era: emergence
+      arxiv: '2102.05918'
+      subarea: contrastive
+      significance: ALIGN scaled contrastive pretraining to 1.8B noisy alt-text pairs, showing raw web data
+        suffices at scale.
+    - title: 'Flamingo: a Visual Language Model for Few-Shot Learning'
+      year: 2022
+      era: foundational
+      arxiv: '2204.14198'
+      subarea: fusion
+      significance: Bridged a frozen LM and vision encoder with gated cross-attention; few-shot multimodal
+        in-context learning.
+    - title: 'BLIP: Bootstrapping Language-Image Pre-training for Unified Vision-Language Understanding and
+        Generation'
+      year: 2022
+      era: foundational
+      subarea: pretraining
+      significance: Unified understanding+generation pretraining with caption bootstrapping (CapFilt) over
+        noisy web data.
+    - title: 'CoCa: Contrastive Captioners are Image-Text Foundation Models'
+      year: 2022
+      era: foundational
+      subarea: pretraining
+      significance: Combined contrastive and captioning losses in one foundation model; long-standing SOTA
+        on retrieval and captioning.
+    - title: 'PaLI: A Jointly-Scaled Multilingual Language-Image Model'
+      year: 2022
+      era: foundational
+      subarea: pretraining
+      significance: Jointly scaled vision and language components (ViT-e + mT5) with multilingual data; evidence
+        for balanced V+L scaling.
+    - title: 'BLIP-2: Bootstrapping Language-Image Pre-training with Frozen Image Encoders and Large Language
+        Models'
+      year: 2023
+      era: expansion
+      arxiv: '2301.12597'
+      subarea: fusion
+      significance: Q-Former bridges frozen vision encoders to frozen LLMs; cheap modular recipe behind a
+        generation of open MLLMs.
+    - title: Sigmoid Loss for Language Image Pre-Training
+      year: 2023
+      era: expansion
+      subarea: contrastive
+      significance: SigLIP replaced softmax contrastive loss with a pairwise sigmoid, better at small batches;
+        the default open CLIP successor.
+    - title: Visual Instruction Tuning
+      year: 2023
+      era: expansion
+      arxiv: '2304.08485'
+      subarea: instruction
+      significance: 'LLaVA: GPT-4-generated visual instruction data turns CLIP+LLM into a general assistant;
+        the open MLLM recipe.'
+    - title: 'InstructBLIP: Towards General-purpose Vision-Language Models with Instruction Tuning'
+      year: 2023
+      era: expansion
+      arxiv: '2305.06500'
+      subarea: instruction
+      significance: Systematized visual instruction tuning over BLIP-2 with instruction-aware query extraction
+        across 26 datasets.
+    - title: 'Qwen-VL: A Versatile Vision-Language Model for Understanding, Localization, Text Reading, and
+        Beyond'
+      year: 2023
+      era: expansion
+      arxiv: '2308.12966'
+      subarea: frontier
+      significance: Open frontier VLM line adding grounding and OCR-style reading; the base of the dominant
+        Qwen-VL series.
+    - title: 'InternVL: Scaling up Vision Foundation Models and Aligning for Generic Visual-Linguistic Tasks'
+      year: 2023
+      era: expansion
+      subarea: frontier
+      significance: Scaled the vision encoder to 6B and progressively aligned it with LLMs; the leading open
+        frontier VLM family.
+    - title: 'Molmo and PixMo: Open Weights and Open Data for State-of-the-Art Multimodal Models'
+      year: 2024
+      era: expansion
+      subarea: frontier
+      significance: Fully open weights AND data (no distillation from proprietary VLMs) at frontier quality;
+        includes pointing supervision.
+    - title: Qwen2.5-VL Technical Report
+      year: 2025
+      era: recent
+      arxiv: '2502.13923'
+      subarea: frontier
+      significance: Dynamic-resolution, long-video, document-parsing open VLM; the open-weight frontier reference
+        of 2025.
+    - title: 'InternVL3: Exploring Advanced Training and Test-Time Recipes for Open-Source Multimodal Models'
+      year: 2025
+      era: recent
+      subarea: frontier
+      significance: Native multimodal pretraining (joint text+multimodal from scratch) at open frontier quality.
+  rl:
+    topic_group: rl
+    display_name: Reinforcement Learning
+    path_order: 3
+    emergence_year: 2013
+    description: 'Deep reinforcement learning: value-based and policy-gradient methods, self-play and game
+      milestones, world models, exploration, offline RL, sequence-model RL, and preference/verifiable-reward
+      RL feeding modern LLM training.'
+    seeds:
+    - title: Playing Atari with Deep Reinforcement Learning
+      year: 2013
+      era: emergence
+      arxiv: '1312.5602'
+      subarea: value_based
+      significance: 'DQN: first agent to learn many Atari games at human level via CNN Q-learning from raw
+        pixels (Nature 2015 follow-up).'
+    - title: Deterministic Policy Gradient Algorithms
+      year: 2014
+      era: emergence
+      subarea: policy_gradient
+      significance: Theoretical groundwork for deterministic actor-critic in continuous action spaces; direct
+        precursor to DDPG.
+    - title: Trust Region Policy Optimization
+      year: 2015
+      era: emergence
+      arxiv: '1502.05477'
+      subarea: policy_gradient
+      significance: Stabilized on-policy policy gradients with a KL trust-region constraint, preventing catastrophic
+        policy drops.
+    - title: High-Dimensional Continuous Control Using Generalized Advantage Estimation
+      year: 2015
+      era: emergence
+      arxiv: '1506.02438'
+      subarea: policy_gradient
+      significance: 'GAE: variance-reduced advantage estimates trading bias against variance; stabilized TRPO
+        and later PPO training.'
+    - title: Continuous control with deep reinforcement learning
+      year: 2015
+      era: emergence
+      arxiv: '1509.02971'
+      subarea: policy_gradient
+      significance: DDPG extended DPG with replay and target networks; breakthrough for high-dimensional continuous
+        control.
+    - title: Deep Reinforcement Learning with Double Q-learning
+      year: 2015
+      era: emergence
+      arxiv: '1509.06461'
+      subarea: value_based
+      significance: Decoupled action selection from evaluation to fix DQN overestimation bias; made deep Q-learning
+        reliable.
+    - title: Prioritized Experience Replay
+      year: 2015
+      era: emergence
+      arxiv: '1511.05952'
+      subarea: value_based
+      significance: Replays high-TD-error transitions more often, accelerating error correction and improving
+        sample efficiency.
+    - title: Dueling Network Architectures for Deep Reinforcement Learning
+      year: 2015
+      era: emergence
+      arxiv: '1511.06581'
+      subarea: value_based
+      significance: Split the Q-network into state-value and advantage streams, improving performance across
+        Atari.
+    - title: Mastering the game of Go with deep neural networks and tree search
+      year: 2016
+      era: foundational
+      doi: 10.1038/nature16961
+      subarea: games
+      significance: 'AlphaGo: historic first AI to defeat a world Go champion, combining deep policy/value
+        networks with MCTS.'
+    - title: Asynchronous Methods for Deep Reinforcement Learning
+      year: 2016
+      era: foundational
+      arxiv: '1602.01783'
+      subarea: policy_gradient
+      significance: A3C used parallel asynchronous actors to decorrelate data without a replay buffer, dramatically
+        boosting learning speed.
+    - title: Deep Reinforcement Learning from Human Preferences
+      year: 2017
+      era: foundational
+      arxiv: '1706.03741'
+      subarea: rlhf
+      significance: Introduced RLHF - a reward model learned from human preference comparisons replaces hand-crafted
+        rewards.
+    - title: Proximal Policy Optimization Algorithms
+      year: 2017
+      era: foundational
+      arxiv: '1707.06347'
+      subarea: policy_gradient
+      significance: Clipped surrogate objective made trust-region-style updates simple and reliable; the most
+        popular deep-RL algorithm.
+    - title: A Distributional Perspective on Reinforcement Learning
+      year: 2017
+      era: foundational
+      arxiv: '1707.06887'
+      subarea: value_based
+      significance: C51 learned full return distributions instead of expected values; influenced Rainbow and
+        many successors.
+    - title: 'Rainbow: Combining Improvements in Deep Reinforcement Learning'
+      year: 2017
+      era: foundational
+      arxiv: '1710.02298'
+      subarea: value_based
+      significance: Combined six DQN enhancements into one SOTA Atari agent, showing the extensions are largely
+        complementary.
+    - title: Mastering the game of Go without human knowledge
+      year: 2017
+      era: foundational
+      subarea: games
+      significance: AlphaGo Zero learned Go from scratch through pure self-play RL plus MCTS, surpassing AlphaGo
+        without human games.
+    - title: Mastering Chess and Shogi by Self-Play with a General Reinforcement Learning Algorithm
+      year: 2017
+      era: foundational
+      arxiv: '1712.01815'
+      subarea: games
+      significance: AlphaZero generalized self-play plus search to master chess, shogi, and Go with one algorithm
+        (Science 2018).
+    - title: 'Soft Actor-Critic: Off-Policy Maximum Entropy Deep Reinforcement Learning with a Stochastic
+        Actor'
+      year: 2018
+      era: foundational
+      arxiv: '1801.01290'
+      subarea: policy_gradient
+      significance: Maximum-entropy off-policy actor-critic with twin critics; SOTA stability and sample efficiency
+        in continuous control.
+    - title: 'IMPALA: Scalable Distributed Deep-RL with Importance Weighted Actor-Learner Architectures'
+      year: 2018
+      era: foundational
+      arxiv: '1802.01561'
+      subarea: policy_gradient
+      significance: V-trace off-policy correction let a central learner scale to many distributed actors;
+        shaped large-scale RL systems.
+    - title: Addressing Function Approximation Error in Actor-Critic Methods
+      year: 2018
+      era: foundational
+      arxiv: '1802.09477'
+      subarea: policy_gradient
+      significance: TD3 fixed DDPG overestimation via twin Q-networks, delayed policy updates, and target
+        smoothing.
+    - title: World Models
+      year: 2018
+      era: foundational
+      arxiv: '1803.10122'
+      subarea: model_based
+      significance: Learned a compact latent model of the environment and trained the policy inside the dream;
+        inspired PlaNet and Dreamer.
+    - title: Learning Latent Dynamics for Planning from Pixels
+      year: 2018
+      era: foundational
+      arxiv: '1811.04551'
+      subarea: model_based
+      significance: PlaNet learned latent-space dynamics from images to plan without a known model, enabling
+        strong control from pixels.
+    - title: Grandmaster level in StarCraft II using multi-agent reinforcement learning
+      year: 2019
+      era: expansion
+      subarea: games
+      significance: AlphaStar reached Grandmaster level in StarCraft II via a multi-agent self-play league,
+        defeating professionals.
+    - title: Mastering Atari, Go, Chess and Shogi by Planning with a Learned Model
+      year: 2019
+      era: expansion
+      arxiv: '1911.08265'
+      subarea: model_based
+      significance: MuZero planned with a learned dynamics model without given rules; superhuman in board
+        games plus SOTA Atari.
+    - title: 'Dream to Control: Learning Behaviors by Latent Imagination'
+      year: 2019
+      era: expansion
+      arxiv: '1912.01603'
+      subarea: model_based
+      significance: Dreamer trained an actor-critic inside a learned latent world model by imagination; big
+        sample-efficiency gains from pixels.
+    - title: Dota 2 with Large Scale Deep Reinforcement Learning
+      year: 2019
+      era: expansion
+      arxiv: '1912.06680'
+      subarea: games
+      significance: OpenAI Five used massively scaled PPO self-play to defeat the Dota 2 world champions in
+        5v5.
+    - title: 'Agent57: Outperforming the Atari Human Benchmark'
+      year: 2020
+      era: expansion
+      arxiv: '2003.13350'
+      subarea: exploration
+      significance: First deep-RL agent above the human baseline on all 57 Atari games, pairing NGU exploration
+        with a meta-controller.
+    - title: Conservative Q-Learning for Offline Reinforcement Learning
+      year: 2020
+      era: expansion
+      arxiv: '2006.04779'
+      subarea: offline_rl
+      significance: CQL regularizes Q-values to stay conservative on out-of-distribution actions; the anchor
+        algorithm of offline RL.
+    - title: Mastering Atari with Discrete World Models
+      year: 2020
+      era: expansion
+      arxiv: '2010.02193'
+      subarea: model_based
+      significance: 'DreamerV2: first model-based agent to reach human-level Atari, matching top model-free
+        methods with equal experience.'
+    - title: First return, then explore
+      year: 2021
+      era: expansion
+      doi: 10.1038/s41586-020-03157-9
+      subarea: exploration
+      significance: Go-Explore's remember-and-return strategy solved previously unsolved hard-exploration
+        games like Montezuma's Revenge.
+    - title: 'Decision Transformer: Reinforcement Learning via Sequence Modeling'
+      year: 2021
+      era: expansion
+      arxiv: '2106.01345'
+      subarea: sequence_rl
+      significance: Recast RL as return-conditioned sequence modeling with Transformers, matching SOTA offline
+        RL without value functions.
+    - title: Open-Ended Learning Leads to Generally Capable Agents
+      year: 2021
+      era: expansion
+      arxiv: '2107.12808'
+      subarea: games
+      significance: 'XLand: open-ended training across 700k+ tasks produced generally capable agents that
+        generalize to unseen games.'
+    - title: A Generalist Agent
+      year: 2022
+      era: expansion
+      arxiv: '2205.06175'
+      subarea: sequence_rl
+      significance: 'Gato: a single transformer policy performing 600+ tasks across games, vision, language,
+        and robotics.'
+    - title: Discovering faster matrix multiplication algorithms with reinforcement learning
+      year: 2022
+      era: expansion
+      doi: 10.1038/s41586-022-05172-4
+      subarea: games
+      significance: AlphaTensor's AlphaZero-style search found matrix-multiplication algorithms beating a
+        50-year-old record.
+    - title: Human-level play in the game of Diplomacy by combining language models with strategic reasoning
+      year: 2022
+      era: expansion
+      doi: 10.1126/science.ade9097
+      subarea: games
+      significance: 'CICERO: first AI with human-level Diplomacy play - a language model plus RL planning;
+        top 10% of human players.'
+    - title: Mastering Diverse Domains through World Models
+      year: 2023
+      era: recent
+      arxiv: '2301.04104'
+      subarea: model_based
+      significance: DreamerV3 mastered 150+ diverse tasks with one configuration; first agent to collect Minecraft
+        diamonds from scratch.
+    - title: Faster sorting algorithms discovered using deep reinforcement learning
+      year: 2023
+      era: recent
+      subarea: games
+      significance: AlphaDev discovered faster sorting routines; first RL-invented algorithms merged into
+        the LLVM libc++ standard library.
+    - title: 'DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models'
+      year: 2024
+      era: recent
+      arxiv: '2402.03300'
+      subarea: rlhf
+      significance: Introduced GRPO, the critic-free PPO variant that became the de facto algorithm for RL
+        with verifiable rewards on LLMs.
 discovery:
   per_field_suggestions: 15
   min_influential_citations: 25

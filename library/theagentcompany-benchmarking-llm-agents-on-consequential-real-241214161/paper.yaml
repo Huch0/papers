@@ -52,6 +52,7 @@ milestone:
   era: expansion
   significance: Self-contained simulated software-company env (web/code/terminal/coworker chat) testing
     long-horizon digital-worker tasks.
+  subarea: os_desktop
 knowledge_concepts: []
 versions:
 - version_key: v1

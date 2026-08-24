@@ -48,12 +48,13 @@ scoring:
   label: READ_SOON
   confidence: high
   rationale: 'score=65 -> READ_SOON | strong: recency(1.00), novelty(0.80), interest_fit(0.73) | interests:
-    computer_use_agents:group:computer_use_agents, document_agents:spreadsheet manipulation, document_agents:group:document_agents
-    | milestone/foundational floor applied'
+    computer_use_agents:group:computer_use_agents, document_agents:spreadsheet manipulation, document_agents:group:document_agents,
+    llm:large language model | milestone/foundational floor applied'
   matched_interests:
   - computer_use_agents:group:computer_use_agents
   - document_agents:spreadsheet manipulation
   - document_agents:group:document_agents
+  - llm:large language model
   negative_signals: []
   subscores:
     interest_fit: 0.73

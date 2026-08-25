@@ -1,0 +1,126 @@
+---
+canonical_key: arxiv-2311.16867
+version_key: v1
+title: The Falcon Series of Open Language Models
+authors:
+- Ebtesam Almazrouei
+- Hamza Alobeidli
+- Abdulaziz Alshamsi
+- Alessandro Cappelli
+- Ruxandra Cojocaru
+- Mérouane Debbah
+- Étienne Goffinet
+- Daniel Hesslow
+- Julien Launay
+- Quentin Malartic
+- Daniele Mazzotta
+- Badreddine Noune
+- Baptiste Pannier
+- Guilherme Penedo
+venue: arXiv
+year: 2023
+tags:
+- foundational
+topic_groups:
+- llm
+triage_label: READ_SOON
+triage_confidence: medium
+source_link: https://arxiv.org/abs/2311.16867v2
+summary_date: '2026-08-25'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>The most complete public documentation of a frontier-scale pretraining run: ablation-driven recipe, web-only data philosophy (RefinedWeb), and custom 3D-parallel training of a 180B model on 3.5T tokens across 4,096 cloud A100s — landing between GPT-3.5 and GPT-4 and recovering 99.5% of PaLM-2 Large on 1-shot NLP aggregates.</TLDR>
+
+<WhyItMatters>Falcon is the field's reference manual for how big pretraining actually gets done — the data-pipeline, infrastructure, and negative-results detail that GPT-4/PaLM-2 reports withheld. Its "filtered web data beats curated corpora" finding seeded the RefinedWeb→FineWeb line that today's open pretraining runs on.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "3.5T", label: "pretraining tokens, single epoch", sub: "largest openly documented run; no upsampling (Tab.1, §5.1)" },
+  { value: "99.5%", label: "of PaLM-2 Large recovered", sub: "1-shot NLP aggregate, Falcon-180B (Tab.18)" },
+  { value: "4,096", label: "A100-40GB on AWS", sub: "50Gbps/GPU interconnect, 43,500 PF-days (Tab.1, §5.3)" },
+  { value: "~12%", label: "of CommonCrawl survives", sub: "filtering + two-stage dedup → 5T-token RefinedWeb (Fig.6)" },
+]} />
+
+## Motivation
+
+Two gaps, scientific and practical. Scientifically, <Problem>state-of-the-art models (GPT-4, PaLM-2, Chinchilla) ship with scarce documentation — the recipes, ablations, and failure modes behind them are hidden, so the field cannot build on them</Problem> (§1, §2). Practically, <Problem>the received wisdom says frontier pretraining needs curated "high-quality" corpora (books, papers, conversations) and expensive dedicated HPC interconnect — both hard to scale: curated sources are cumbersome and increasingly legally restricted, and InfiniBand-class clusters are prohibitively costly</Problem> (§3, §4.2). If either belief is wrong, open groups can compete; nobody had tested them rigorously at scale.
+
+## Contribution (what's new)
+
+The central claim is about data: <Novelty>stringently filtered and deduplicated web data alone matches or beats curated corpora — and adding curated data to a strong web baseline buys nothing</Novelty> (§4.2). The design follows: since data quality, not architecture, moves task performance, spend engineering on a scalable web pipeline (Macrodata Refinement → RefinedWeb, 5T tokens) and pick architecture solely for hardware efficiency — <Novelty>multigroup attention (KV heads = tensor-parallel degree, concurrent with GQA), parallel attention/MLP, no biases — validated as costing no task performance while collapsing the KV-cache 30x</Novelty> (§4.3, §4.5). Around this: the openly documented recipe itself — ablation methodology with quantified variance, hyperparameter search procedure, a proprietary-infrastructure playbook (Gigatron: 3D parallelism + ZeRO-1 on commodity 50Gbps cloud), a catalog of negative results (UL2, µP, Amos), and released artifacts: Falcon-7/40B (Apache 2.0), Falcon-180B, and a 600B-token RefinedWeb extract (§8).
+
+## Research questions
+
+1. Can filtered, deduplicated web data alone train state-of-the-art models — is curated data necessary at all? (§4.2)
+2. Which architecture and hyperparameter choices actually matter at scale, versus merely improving hardware/inference scalability? (§4.3)
+3. Can a GPT-3-class-plus run (180B, 3.5T tokens, Chinchilla-style scaling without upsampling) be executed on cost-efficient cloud infrastructure — and where does the result land against GPT-3.5/4 and PaLM-2? (§5, §6)
+
+## Methodology
+
+Everything is decided by small-scale ablation first: 1B/3B models trained to Chinchilla-optimality (30/60B tokens) and scored on task aggregates pre-selected for low variance across seeds (a rigor step most papers skip — differences below 1–2σ are explicitly refused as evidence, §4.1). The winning recipe — GPT-3-shaped causal decoder, RoPE, GeLU (deliberately *not* SwiGLU), multigroup attention, z-loss, ~85% web data — is then validated at 1B/7B for 350B tokens (§4.5) before committing 43,500 PF-days to Falcon-180B (80 layers, d=14,848, KV=8, 2,048 context, Tab.16).
+
+<Pass title="Method details — data pipeline, ablation results, infrastructure">
+**Macrodata Refinement (§5.1.1, Fig.6):** URL blocklist → text extraction from raw WARC (not WET) → fastText language ID (~48% of docs survive) → Gopher-style heuristics + line-wise corrections (~23%) → MinHash fuzzy dedup + exact substring dedup (~12% kept). Deliberately no ML quality filters (bias amplification concerns) — "neutral filtering". Final mixture (Tab.15): RefinedWeb-English 76% (2,700B), RW-Euro 8%, books 6%, conversations 5%, code 3% (115B), technical 2% — single epoch, nothing upsampled.
+
+**Key ablations (§4):** RefinedWeb beats The Pile (1B scale: 56.2 vs 53.4; 3B: 59.8 vs 57.9, Tab.4); curated categories mixed into a web baseline never uplift and degrade past 50% fraction — books/technical worst, conversations mildest (Fig.4); 10% multilingual or 5% code cost almost nothing on English tasks (Tab.7). Multigroup KV=8 ≈ vanilla attention on tasks (Tab.9) while the 180B KV-cache drops from 10GB to 335MB per 2,048-token sequence (Tab.8) — scaling argument: multihead cache grows as <M tex="O(\sqrt{N}\log N)" />, multiquery as <M tex="O(\log N)" />. RoPE beats ALiBi at 1B but the edge fades at 3B (Tab.10). SwiGLU: no zero-shot gain and +33% MLP activation memory per parameter — rejected to fit A100-40GB (§4.3.3). Weight decay (0.1) helps disproportionately on *non-deduplicated* data (Tab.12). LR chosen by loss ranking after a 500M-token warmup, which predicts end-of-run ranking (Tab.13).
+
+**Conversation trees (§5.1.2, Fig.7):** Reddit-style threads are serialized depth-first with position = tree depth, and an attention mask restricts each turn to its own trajectory — training on every branch without repeating shared prefixes.
+
+**Gigatron infrastructure (§5.3–5.4):** 3D parallelism (TP=8 / PP=8 / DP=64 for 180B) + ZeRO-1 optimizer sharding (20 bytes/param → 4 + 16/DP); custom Triton FlashAttention (fast enough to skip activation checkpointing entirely); "monolayer" selective recomputation halving decoder-block memory; bfloat16 throughout; topology discovered by measuring inter-node bandwidth and solved as a Gromov-Wasserstein optimal-transport placement problem; topology-agnostic checkpoints; data streamed from S3, no distributed filesystem. Run reality: a faulty-A100 hunt via NaN matrix-multiplication tests (a day on 4,096 GPUs = 11 years of hardware wear), and 9 loss spikes across 40B+180B handled by rollback + skipping 1B tokens.
+</Pass>
+
+## Main result
+
+<Finding src="Tab.18, §6.2">On the PaLM-2 paper's 1-shot NLP aggregate, Falcon-180B scores 77.1 vs PaLM-2 Large's 77.5 — 99.5% recovery, above PaLM-2 Medium (94.8%) and PaLM-540B (94.4%), winning outright on HellaSwag, Winogrande, and PIQA but lagging on RACE and ANLI</Finding>. <Finding src="Tab.19, §6.3">Against OpenAI's reported numbers it sits between GPT-3.5 and GPT-4 everywhere — nearly matching GPT-4 on Winogrande (87.1 vs 87.5) while barely passing GPT-3.5 on MMLU (70.6 vs 70.0)</Finding>.
+
+<SortableTable columns={["Model", "HellaSwag 10-shot", "Winogrande 5-shot", "MMLU 5-shot", "HumanEval pass@1"]} rows={[
+  ["GPT-3.5", 85.5, 81.6, 70.0, 48.1],
+  ["GPT-4", 95.3, 87.5, 86.5, 67.0],
+  ["LLaMA-2 70B", 85.3, 80.2, 68.9, 30.5],
+  ["Inflection-1", 89.0, 88.2, "—", 35.4],
+  ["Falcon-180B", 89.0, 87.1, 70.6, 35.4],
+]} />
+
+(HellaSwag/Winogrande/MMLU from Tab.19–21; LLaMA-2/Inflection-1 rows from Tab.20–22; Inflection-1 Winogrande as reported in Tab.20.)
+
+## Key findings
+
+- <Finding src="Tab.4, Fig.4, §4.2">Web data, properly cleaned, is sufficient — and curated data added on top never significantly helps, turning detrimental past 50% (books, technical)</Finding>; the authors attribute the degradation to "mode collapse" against the web's diversity. This inverts the GPT-3/Pile-era data doctrine.
+- <Finding src="§4.5, Tab.14">Data interventions move task performance; architecture interventions essentially do not — they buy training/inference scalability</Finding>: the Falcon architecture scores slightly *below* the GPT-3 baseline at fixed scale (uncompensated multiquery parameter loss), yet was adopted for its 30x KV-cache reduction.
+- <Finding src="Tab.17, §6.1">Evaluation formatting is a 10–20-point lever: outlining answer choices in the prompt lifts Falcon-180B's ARC-Challenge from 63.7 to 83.5 while *hurting* Falcon-7B</Finding> — capability-dependent prompt sensitivity that makes cross-paper score tables treacherous; and <Finding src="Fig.12, §6">a FLAN-tuned Falcon-40B is the best variant on SuperGLUE but the *least* preferred by human raters</Finding>.
+- <Finding src="Tab.20–22, §6.4">Within open models, compute ranks outcomes: Falcon-40B sits just under LLaMA-2 34B (2,800 vs 4,700 PF-days), while Falcon-180B beats LLaMA-2 70B and Inflection-1 broadly — and hits 35.4 HumanEval with only 3% code data, near code-specialized PaLM-Coder (35.9)</Finding>.
+- <Finding src="Fig.14, §6.5">Under the strictly-identical EleutherAI-harness comparison, Falcon-40B outperforms GPT-3 175B on less compute, and 1/7B models trained on RefinedWeb alone reproduce GPT-3-series performance</Finding> — the cleanest evidence the web-only recipe transfers across scales.
+- <Finding src="§4.4">The negative-results catalog: UL2 mixture-of-objectives gave no zero-shot uplift, µ-parametrization did not beat naive LR search, the Amos optimizer did not beat AdamW</Finding> — rare, explicitly published nulls that save the community repeated experiments.
+
+## Implications
+
+The paper functions as open infrastructure: RefinedWeb (and its 600B public extract) became the template for web-scale open datasets — <Related>the FineWeb/DCLM lineage descends directly from its filtering+deduplication doctrine, and its multigroup attention is the same mechanism popularized as GQA (Ainslie et al.) now standard in Llama 2/Mistral</Related>. It also quietly relitigates scaling strategy: <Related>trained near Chinchilla-optimality rather than LLaMA-style overtraining</Related>, Falcon-180B demonstrates the ceiling of that choice — and the authors themselves recommend 4–15T tokens for successors (§7.2). <FollowUp>Data-quality-driven scaling as the primary axis (the paper suspects dedup works partly by deleting the worst samples — untested), MoE for decoupling inference cost, code-heavy mixes (10–30%), and staged longer-context pretraining</FollowUp>.
+
+## Limitations
+
+- <Caveat>Ablations are 1–3B-scale, logprob-only, English-centric; the paper concedes they mostly measure "general gains" and cannot resolve targeted effects (e.g., technical data never measurably lifted SciQ/PubMedQA)</Caveat> (§7.1).
+- <Caveat>40B/180B were trained near compute-optimal, not overtrained — by the authors' own analysis the wrong point on the curve for deployment economics, forced partly by not knowing the final RefinedWeb stock when training started</Caveat> (§7.2).
+- <Caveat>2,048-token context — short even at release; long-context ability deferred to post-hoc RoPE extension</Caveat> (§7.2).
+- <Caveat>Pretrained-only: no RLHF, no safety tuning, and no bias/toxicity/truthfulness evaluations anywhere in the paper; deployment guardrails are explicitly punted to users</Caveat> (§7.2).
+- <Caveat>MMLU is a relative weak spot (attributed to the web-heavy mix), and Falcon-180B ships under a bespoke "responsible AI use" license rather than Apache 2.0</Caveat> (§6.4, §8).
+
+## Critiques and Questions
+
+1. The "top-3 model in the world" framing rests entirely on logprob-based NLP aggregates — the paper's own Fig.12 demonstrates such scores can anti-correlate with human preference, and no human evaluation of the released models is reported.
+2. No contamination analysis over 3.5T web tokens (contrast Llama 2's App.A.6); with benchmark-adjacent text abundant on the web, the 99.5%-of-PaLM-2 headline carries unquantified upside bias.
+3. The evaluation-practices section (§6.1) is candid that formatting choices swing scores by 10–20 points, yet the headline comparisons against PaLM-2/GPT-4 must *guess* those models' exact setups — the error bars on the central claim are unknowable.
+4. The no-SwiGLU fork proved a dead end: the memory argument was specific to A100-40GB cost constraints, and the LLaMA/Mistral consensus kept SwiGLU — a reminder that this recipe optimizes for TII's infrastructure, not universally.
+5. Economically, Falcon-180B was arguably outcompeted at release by LLaMA-2 70B (MMLU 68.9 vs 70.6 at 2.5x fewer parameters) — the strongest evidence in the paper for its own §7.2 recommendation to overtrain smaller models instead.
+
+<SelfCheck q="Falcon's ablations show its architecture slightly *underperforms* a GPT-3 baseline at fixed scale — why did the team adopt it anyway?" a="Because the ablations also showed task performance is driven by data, not architecture (Tab.14): the degradation traces to multiquery's uncompensated parameter reduction, while multigroup attention (KV=TP=8) cuts the 180B KV-cache from 10GB to 335MB per sequence and parallel attention/MLP halves tensor-parallel sync points. Architecture was optimized for hardware and inference scalability; data (RefinedWeb) was optimized for capability (§4.3, §4.5)." />
+
+## Glossary
+
+Key terms defined inline. Remaining: <Term def="petaflop/s-days — total pretraining compute; 1 PF-day = one petaflop/s sustained for a day">PF-days</Term>, <Term def="combining tensor (within-node), pipeline (across-node stages), and data parallelism to shard a training run">3D parallelism</Term>, <Term def="ZeRO stage 1 — shard optimizer state across data-parallel replicas, cutting per-GPU memory from 20 to 4+16/DP bytes per parameter">ZeRO-1 optimizer sharding</Term>, <Term def="attention variant with a single shared key/value head; multigroup/GQA generalizes to a few KV heads">multiquery attention</Term>, <Term def="relative position scheme that biases attention scores by distance with per-head slopes; extrapolates to longer sequences without embeddings">ALiBi</Term>, <Term def="auxiliary loss keeping logits near zero for training stability">z-loss</Term>, <Term def="EleutherAI's open evaluation framework fixing prompts and metrics, enabling strictly comparable scores">EleutherAI Harness</Term>.
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

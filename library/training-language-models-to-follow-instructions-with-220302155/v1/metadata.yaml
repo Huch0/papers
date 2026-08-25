@@ -82,14 +82,15 @@ scoring:
     author_or_lab_signal: 1.0
 artifacts:
   pdf: library/training-language-models-to-follow-instructions-with-220302155/v1/paper.pdf
-  extraction: null
-  summary: null
+  extraction: library/training-language-models-to-follow-instructions-with-220302155/v1/extraction.txt
+  summary: library/training-language-models-to-follow-instructions-with-220302155/v1/summary.mdx
   code_url: null
   project_url: null
   dataset_url: null
 status:
   downloaded: true
-  extracted: false
-  summarized: false
+  extracted: true
+  summarized: true
   triaged: true
   user_read_status: unread
+  summary_format: mdx

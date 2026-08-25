@@ -433,17 +433,17 @@ versions:
   source: arxiv
   source_url: https://arxiv.org/abs/2211.05100v4
   pdf_path: library/bloom-a-176b-parameter-open-access-multilingual-221105100/v1/paper.pdf
-  summary_path: null
+  summary_path: library/bloom-a-176b-parameter-open-access-multilingual-221105100/v1/summary.mdx
   metadata_path: library/bloom-a-176b-parameter-open-access-multilingual-221105100/v1/metadata.yaml
   fetched_at: '2026-08-24T03:20:50Z'
   source_updated_at: '2023-06-27T09:57:58Z'
   arxiv_version: v4
   pdf_sha256: 8033c3e611aaa120cb7294085ebd6ee297ffae9ec02393b1c4f1593d7e6ee065
   pdf_bytes: 3029243
-  summary_status: none
-  extraction_status: none
+  summary_status: full
+  extraction_status: full
   created_at: '2026-08-24T03:20:50Z'
-  updated_at: '2026-08-24T03:20:50Z'
+  updated_at: '2026-08-25T06:42:25Z'
 relations:
   duplicate_candidates: []
   related_papers: []

@@ -1,0 +1,130 @@
+---
+canonical_key: arxiv-2201.11903
+version_key: v1
+title: Chain-of-Thought Prompting Elicits Reasoning in Large Language Models
+authors:
+- Jason Wei
+- Xuezhi Wang
+- Dale Schuurmans
+- Maarten Bosma
+- Brian Ichter
+- Fei Xia
+- Ed Chi
+- Quoc Le
+- Denny Zhou
+venue: arXiv
+year: 2022
+tags:
+- foundational
+topic_groups:
+- general_agent_methods
+- llm
+- software_engineering_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2201.11903v6
+summary_date: '2026-08-25'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>Writing worked step-by-step rationales into few-shot exemplars — chain-of-thought prompting — makes large language models generate their own intermediate reasoning before answering, an ability that emerges only around ~100B parameters and that lets PaLM 540B beat the finetuned-GPT-3-plus-verifier SOTA on GSM8K with eight exemplars and zero gradient updates.</TLDR>
+
+<WhyItMatters>The single most influential prompting paper: it created the "reasoning via generated intermediate tokens" paradigm that everything from self-consistency and zero-shot CoT to agent scaffolds and test-time-compute models descends from, and it supplied the canonical evidence for emergent abilities of scale.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "56.9%", label: "GSM8K solve rate, PaLM 540B + CoT", sub: "vs 17.9% standard prompting; 58.6% with calculator; prior finetuned SOTA 55% (Tab.1)" },
+  { value: "~100B", label: "scale where CoT starts helping", sub: "below ~10B it actively hurts (Tab.2, §3.2)" },
+  { value: "8", label: "hand-written exemplars, fixed across benchmarks", sub: "no finetuning anywhere in the paper (§3.1, §6)" },
+  { value: "0.0 → 63.0%", label: "OOD 4-word letter concatenation", sub: "length generalization, PaLM 540B (Tab.5)" },
+]} />
+
+## Motivation
+
+Two known routes to machine reasoning each had a disqualifying flaw. <Problem>Training or finetuning models to produce natural-language rationales (Ling et al. 2017; Cobbe et al. 2021) works, but writing thousands of high-quality rationales per task is far costlier than collecting plain input-output pairs</Problem>. And <Problem>few-shot prompting à la GPT-3 needs no data, but performs badly on reasoning tasks and — worse — stays flat as models scale</Problem> (§1). The field's takeaway circa 2021 (e.g., the Gopher report) was that <Problem>arithmetic, commonsense, and symbolic reasoning are things scaling alone does not buy</Problem>.
+
+## Contribution (what's new)
+
+Merge the two routes so each cancels the other's flaw: <Novelty>put the rationale *inside the prompt* — few-shot exemplars become input → chain of thought → answer triples, so an off-the-shelf model imitates the format and generates its own reasoning steps before its answer, at a cost of eight hand-written examples instead of a training set</Novelty> (§2). Two claims elevate this above a prompting trick: <Novelty>the ability is *emergent* — CoT hurts models below ~10B (they produce fluent but illogical chains) and only pays off around 100B, turning previously-flat scaling curves steeply upward</Novelty> (§3.2), and the ablations show the design is minimal: <Novelty>neither extra computation (dots), nor equations alone, nor reasoning given *after* the answer reproduces the gain — the load-bearing element is natural-language intermediate steps generated before the answer</Novelty> (§3.3).
+
+## Research questions
+
+1. Can few-shot prompting alone elicit multi-step reasoning that finetuned, task-specific systems needed verifiers and architectures for? (§1)
+2. Is the effect specific to arithmetic, or general across commonsense and symbolic reasoning? (§4–5)
+3. *Why* does it work — extra compute, equation extraction, knowledge activation, or the generated reasoning itself? (§3.3)
+4. How sensitive is it to who writes the exemplars, which exemplars, their order and number? (§3.4, App.A.2)
+
+## Methodology
+
+Take the standard 8-shot prompt and rewrite each exemplar's answer as a short worked solution ending in "The answer is X." (Fig.1: Roger's tennis balls — "Roger started with 5 balls. 2 cans of 3 tennis balls each is 6 tennis balls. 5 + 6 = 11."). One fixed exemplar set, written by one author without prompt engineering, is reused across all math benchmarks (AQuA gets 4 exemplars from its train set); greedy decoding; only the final answer is scored (§3.1).
+
+<Pass title="Evaluation grid and variants">
+- **Models**: GPT-3 (350M–175B, text-ada through text-davinci-002), LaMDA (422M–137B), PaLM (8B–540B), UL2 20B, Codex (code-davinci-002). No model is finetuned. LaMDA results average 5 random exemplar orders; other models one order (§3.1).
+- **Tasks**: arithmetic — GSM8K, SVAMP, ASDiv, AQuA, MAWPS (Tab.12); commonsense — CSQA, StrategyQA, BIG-bench Date & Sports Understanding, SayCan robot planning (§4); symbolic — last-letter concatenation and coin-flip state tracking, each with in-domain (2 steps, matching exemplars) and out-of-domain longer variants (§5).
+- **External calculator** (optional post-hoc): run every generated equation through Python `eval`, propagating results between equations — worth at most a few points (Tab.1).
+- **Ablations** (§3.3): *equation only* (emit the equation, then answer); *variable compute only* (emit dots matching the equation's character count); *chain of thought after answer*.
+</Pass>
+
+## Main result
+
+<Finding src="Tab.1, Fig.2">With 8 exemplars and no training, PaLM 540B + CoT reaches 56.9% on GSM8K (58.6% with calculator) versus 17.9% for standard prompting — surpassing the prior SOTA of 55% from finetuned GPT-3 175B with a trained verifier</Finding>. CoT sets new SOTA on GSM8K, SVAMP, and MAWPS and comes within 2% on ASDiv and AQuA (§3.2).
+
+<SortableTable columns={["Model (GSM8K)", "Standard", "Chain of thought", "+ calculator"]} rows={[
+  ["PaLM 540B", 17.9, 56.9, 58.6],
+  ["Codex (code-davinci-002)", 19.7, 63.1, 65.4],
+  ["GPT-3 175B (text-davinci-002)", 15.6, 46.9, 49.6],
+  ["LaMDA 137B", 6.5, 14.3, 17.8],
+  ["UL2 20B", 4.1, 4.4, 6.9],
+]} />
+
+Beyond arithmetic (PaLM 540B, Tab.4–5): StrategyQA 68.6 → 77.8 (prior SOTA 69.4), Sports Understanding 80.5 → 95.4 (unaided sports enthusiast: 84), Date 49.0 → 65.3, SayCan robot planning 80.8 → 91.7, coin flip 98.1 → 100, last-letter concatenation 7.6 → 99.4.
+
+## Key findings
+
+- <Finding src="Tab.2, §3.2">CoT is an emergent ability: below ~10B parameters it *hurts* (GPT-3 6.7B GSM8K: 4.0 → 2.4; LaMDA 420M: 2.6 → 0.4) because small models produce fluent but illogical chains; gains appear only near 100B</Finding> — the definitional example for the emergent-abilities literature.
+- <Finding src="Tab.3, App.A.3">Gains concentrate where problems are multi-step and the scaling curve is flat: MultiArith jumps 42.2 → 94.7 while one-step SingleOp stays at 94.1 → 94.1 for PaLM 540B</Finding> — CoT buys reasoning depth, not knowledge.
+- <Finding src="Fig.5, Tab.6">All three ablations collapse to the baseline on GSM8K (equation-only 5.4, dots 6.4, reasoning-after-answer 6.1, vs CoT 14.3 for LaMDA 137B)</Finding>: the benefit is not extra token compute nor knowledge activation — the model *depends* on its generated natural-language steps to reach the answer.
+- <Finding src="Tab.6–7, §3.4">The gap survives different annotators (14.3/15.5/17.6), a concise style (11.1), exemplars sampled from GSM8K's own train set (12.6–12.7), varying exemplar order and count — all far above standard's 6.5</Finding>; but variance is real: on coin flip, annotator prompts range 71.4–99.6, and for a list-reversal task two co-authors failed to write any working CoT prompt while a third succeeded (App.A.2).
+- <Finding src="App.D.2, Fig.9">Error anatomy: of LaMDA 137B's wrong GSM8K answers, 46% are near-misses (8% pure calculator slips, 16% symbol-mapping errors, 22% one missing step) and 54% have genuine semantic/coherence failures; scaling PaLM 62B → 540B fixes 12/18 one-step-missing and 6/20 semantic-understanding errors</Finding> — scale buys semantic understanding, the calculator patches arithmetic.
+- <Finding src="Tab.5, §5">CoT enables length generalization: on out-of-domain 4-word letter concatenation, standard prompting scores 0.0 and CoT reaches 63.0 (coin flip 4-flip: 54.8 → 90.2)</Finding> — the model reuses the demonstrated procedure on longer inputs than it ever saw.
+- <Finding src="App.D.1">When the final answer is right, the reasoning usually is too: of 50 correct LaMDA GSM8K chains, essentially all were logically and mathematically sound (1–2 coincidentally correct)</Finding> — though for multiple-choice/binary tasks, right-for-wrong-reasons is much more likely (App.D.1).
+- <Finding src="Tab.4, App.A.2">Transfer across models is imperfect: the same CoT prompts *hurt* GPT-3 on CSQA (79.5 → 73.5) and StrategyQA</Finding> — prompt-model interaction is unexplained.
+
+## Implications
+
+This paper converted "reasoning" from a finetuning problem into a decoding-time problem, spawning <Related>self-consistency (majority vote over sampled chains, cited as follow-up in §3.1), zero-shot CoT, STaR-style bootstrapped rationale training, and ultimately the test-time-compute / reasoning-model line</Related>; the SayCan result seeds <Related>CoT-based planning in embodied and software agents</Related>. Its framing that "standard prompting only provides a lower bound on model capabilities" (§6) reshaped how the field evaluates LLMs, and its emergence claim became the centerpiece of <Related>the emergent-abilities debate (Wei et al., 2022b)</Related>. Chase next: <FollowUp>whether emergence is a property of the model or of exact-match metrics (the "mirage" critique)</FollowUp>, <FollowUp>eliciting reasoning below 100B (distillation, rationale finetuning)</FollowUp>, and <FollowUp>faithfulness — whether the stated chain is the computation that produced the answer</FollowUp>.
+
+## Limitations
+
+- <Caveat>The paper explicitly does not claim the model is "reasoning" — whether the chains reflect actual computation is left open (§6)</Caveat>.
+- <Caveat>No correctness guarantee: chains can be wrong yet yield right answers and vice versa; factuality of generations is unaddressed (§6, App.D.2)</Caveat>.
+- <Caveat>Only helps at ~100B+ scale, making it expensive to serve, and "model scale is conflated with other factors, such as amount of training compute" (§6, App.A.1)</Caveat> — the emergence threshold is not causally isolated.
+- <Caveat>Manual rationale cost is trivial for 8-shot prompting but prohibitive if the same idea were applied as finetuning data (§6)</Caveat>.
+- <Caveat>Robustness statistics (5 seeds, std devs) exist only for LaMDA; GPT-3/PaLM results are single runs of a single exemplar order, justified by cost (Tab.6 caption)</Caveat>.
+
+## Critiques and Questions
+
+1. **Is the sharp emergence real or metric-induced?** Solve-rate on exact final answers can turn a smoothly improving underlying capability into an apparent phase transition (a multi-step answer is all-or-nothing). The paper's own hedge — scale conflated with compute and data (App.A.1) — plus the later "mirage" literature make the ~100B threshold the paper's most contestable claim.
+2. **Internal inconsistency in the faithfulness analysis**: §3.2 says 2 of 50 correct chains were coincidentally correct; App.D.1 says only 1 — and the acknowledgements thank a reader for catching a mistake in the original error analysis, suggesting this audit was fragile.
+3. **Contamination is untested here.** GSM8K and its rationales were public before these models' training cutoffs; this paper does no n-gram overlap analysis (the PaLM paper's separate analysis found none for its corpus, but GPT-3/Codex remain unaudited).
+4. The prior-SOTA comparisons pit a 540B prompted model against ≤175B finetuned models from a year earlier — fair as a "prompting can match finetuning" claim, less so as a systems comparison.
+5. Why the same prompts *hurt* GPT-3 on CSQA/StrategyQA is never explained — a crack in the "general method" framing that later prompt-sensitivity work widened.
+
+<SelfCheck q="What do the three ablations (equation-only, dots-only, reasoning-after-answer) each rule out as the explanation for CoT's gains?" a="Equation-only (5.4 on GSM8K vs CoT 14.3) rules out 'it just extracts the math': GSM8K semantics are too hard to translate directly to an equation. Variable-compute-only dots (6.4 ≈ baseline 6.5) rules out 'more tokens = more computation' by itself. Reasoning-after-answer (6.1 ≈ baseline) rules out 'the prompt merely activates relevant pretraining knowledge' — the answer must be conditioned on the generated steps. Together they show natural-language intermediate reasoning produced before the answer is the operative ingredient (Fig.5, Tab.6)." />
+
+## Glossary
+
+- <Term def="Few-shot prompting where each exemplar shows input, a worked natural-language reasoning sequence, and the final answer, so the model generates reasoning before answering">chain-of-thought prompting</Term>
+- <Term def="Few-shot prompting with plain input-answer exemplar pairs (GPT-3 style); the baseline throughout">standard prompting</Term>
+- <Term def="A capability absent (or harmful) in small models that appears only past a scale threshold, unpredictable by extrapolating small-model performance">emergent ability</Term>
+- <Term def="8.5k grade-school math word problems with free-response numeric answers; the paper's hardest arithmetic benchmark">GSM8K</Term>
+- <Term def="Error class where the reasoning words are right but a number is copied or placed wrongly in the equations; fixable by editing equations only">symbol mapping error</Term>
+- <Term def="Post-hoc Python evaluation of the equations inside a generated chain, replacing the model's arithmetic; adds ~2–4 points">external calculator</Term>
+- <Term def="Test examples requiring more reasoning steps (longer names, more flips) than any few-shot exemplar demonstrated">out-of-domain (OOD)</Term>
+- <Term def="Grounding natural-language instructions into robot action sequences from a fixed primitive set (find/pick/put)">SayCan</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

@@ -50,17 +50,17 @@ versions:
   source: arxiv
   source_url: https://arxiv.org/abs/2201.11903v6
   pdf_path: library/chain-of-thought-prompting-elicits-reasoning-in-220111903/v1/paper.pdf
-  summary_path: null
+  summary_path: library/chain-of-thought-prompting-elicits-reasoning-in-220111903/v1/summary.mdx
   metadata_path: library/chain-of-thought-prompting-elicits-reasoning-in-220111903/v1/metadata.yaml
   fetched_at: '2026-08-24T03:20:37Z'
   source_updated_at: '2023-01-10T23:07:57Z'
   arxiv_version: v6
   pdf_sha256: 7d9f878c23b460e4566aa4ec9201b1abfb3b8faefb2b1356e411cb90fef72a12
   pdf_bytes: 891773
-  summary_status: none
-  extraction_status: none
+  summary_status: full
+  extraction_status: full
   created_at: '2026-08-24T03:20:37Z'
-  updated_at: '2026-08-24T03:20:37Z'
+  updated_at: '2026-08-25T06:43:23Z'
 relations:
   duplicate_candidates: []
   related_papers: []

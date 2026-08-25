@@ -1,0 +1,114 @@
+---
+canonical_key: s2-cd18800a0fe0b668a1cc19f2ec95b5003d0a5035
+version_key: v1
+title: Improving Language Understanding by Generative Pre-Training
+authors:
+- Alec Radford
+- Karthik Narasimhan
+venue: Not reported
+year: 2018
+tags:
+- foundational
+topic_groups:
+- llm
+triage_label: READ_SOON
+triage_confidence: medium
+source_link: https://www.semanticscholar.org/paper/cd18800a0fe0b668a1cc19f2ec95b5003d0a5035
+summary_date: '2026-08-25'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>GPT-1 shows that generatively pre-training a 12-layer Transformer decoder as a plain language model on contiguous book text, then fine-tuning that same network with structured task inputs flattened into one token sequence, beats task-specific architectures on 9 of 12 language-understanding benchmarks.</TLDR>
+
+<WhyItMatters>This is the paper that fixed the GPT recipe — decoder-only Transformer + next-token prediction + minimal task heads — and its zero-shot analysis (Fig.2) is the visible seed of GPT-2's "language models are multitask learners" thesis. Read it against BERT: same paradigm, opposite directionality bet.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "9 / 12", label: "tasks at new SOTA", sub: "one task-agnostic model vs per-task architectures (§4.2)" },
+  { value: "86.5", label: "Story Cloze accuracy", sub: "+8.9 absolute over prior best (Tab.3)" },
+  { value: "72.8", label: "GLUE score", sub: "prior best 68.9 (Tab.4)" },
+  { value: "12 × 768", label: "layers × hidden dim", sub: "Transformer decoder, BPE 40k, trained on 7,000+ books (§4.1)" },
+]} />
+
+## Motivation
+Labeled data for language understanding is scarce while raw text is abundant, and <Problem>discriminatively trained models starve on the annotation that exists</Problem> (§1). Word embeddings transfer only word-level information. For anything richer, two questions were genuinely open in early 2018: <Problem>which unsupervised objective learns transferable representations — language modeling, translation, and discourse coherence each won on different tasks</Problem>; and <Problem>how to transfer them — existing recipes needed task-specific architectures on top (ELMo-style), intricate training schemes (ULMFiT), or auxiliary objectives</Problem> (§1). The closest prior fine-tuning work (Dai and Le; Howard and Ruder) used LSTMs, whose <Problem>short-range prediction ability limits what pre-training can capture</Problem> (§2).
+
+## Contribution (what's new)
+The claim that survives deleting "we propose": <Novelty>a generic next-token language-modeling objective on long contiguous text, run through a Transformer decoder, learns representations that transfer to *every* understanding task with only a linear head — no task architecture at all</Novelty> (§1, §3). Two choices carry the design. First, <Novelty>the Transformer replaces the LSTM specifically for its structured long-range memory</Novelty>; this is not aesthetic — swapping in an LSTM costs 5.6 average points (Tab.5), and the corpus is chosen to match (BooksCorpus's long stretches of contiguous text, versus the sentence-shuffled 1B Word Benchmark that destroys exactly the structure the model is supposed to learn, §4.1). Second, <Novelty>traversal-style input transformations: entailment pairs, similarity pairs, and (document, question, answer) triples are rearranged into single delimited token sequences, so the pre-trained weights — not new task modules — do all the work</Novelty> (§3.3). Task-specific architectures would re-introduce untrained parameters precisely where transfer should happen.
+
+## Research questions
+1. Can one task-agnostic pre-trained model beat architectures crafted per task across NLI, QA, similarity, and classification (§1, §4)?
+2. What does each pre-trained layer contribute, and does the generative model already perform tasks *without* fine-tuning (§5)?
+3. Do the Transformer (vs LSTM) and the auxiliary LM objective each earn their place (§5, Tab.5)?
+
+## Methodology
+Stage 1: maximize the standard left-to-right language-modeling likelihood over BooksCorpus with a 12-layer masked-self-attention Transformer decoder. Stage 2: fine-tune everything on the labeled task, feeding the final position's top-layer state into one new linear layer, with the LM loss kept as an auxiliary term. Carry an entailment example through: premise "children smiling and waving" and hypothesis "there are children present" become one sequence — start token, premise, `$` delimiter, hypothesis, end token; the extract token's final hidden state goes through `softmax(h W_y)` to predict entail/contradict/neutral. Similarity, which has no natural order, runs both orderings and adds the two representations; multiple-choice QA runs one sequence per candidate answer and softmaxes over the per-sequence scores (§3.3, Fig.1). The only parameters learned from scratch are <M tex="W_y" /> and the delimiter embeddings (§3.2).
+
+<Pass title="Method details (objectives, architecture, hyperparameters)">
+**Objectives.** Pre-training maximizes
+
+<MathBlock>{`L_1(\\mathcal{U}) = \\sum_i \\log P(u_i \\mid u_{i-k},\\ldots,u_{i-1};\\,\\Theta)`}</MathBlock>
+
+with the model <M tex="h_0 = U W_e + W_p" />, <M tex="h_l = \mathrm{transformer\_block}(h_{l-1})" />, <M tex="P(u) = \mathrm{softmax}(h_n W_e^{\top})" /> — note the tied embedding/output matrix <M tex="W_e" /> (§3.1). Fine-tuning maximizes <M tex="L_3(\mathcal{C}) = L_2(\mathcal{C}) + \lambda\, L_1(\mathcal{C})" /> with <M tex="\lambda = 0.5" />, where <M tex="L_2" /> is the label likelihood; the auxiliary LM term improves generalization and speeds convergence (§3.2).
+
+**Architecture and training** (§4.1). 12 layers, 768-d states, 12 heads, 3072-d FFN, <Term def="Gaussian Error Linear Unit activation, a smooth ReLU variant">GELU</Term>, *learned* position embeddings (not sinusoids), <Term def="subword tokenization by merging frequent character pairs">BPE</Term> with 40k merges, dropout 0.1 everywhere, modified L2 (w=0.01), init N(0, 0.02). Adam, max lr 2.5e-4, 2000-step linear warmup then cosine anneal to 0; 100 epochs, batches of 64 contiguous 512-token sequences. Corpus: BooksCorpus, 7,000+ unique unpublished books; the trained LM reaches token-level perplexity 18.4 on this corpus (held-out or train split: Unclear). Text cleaned with ftfy, tokenized with spaCy.
+
+**Fine-tuning** (§4.1). Reuses pre-training hyperparameters; classifier dropout 0.1, lr 6.25e-5, batch 32, ~3 epochs, warmup over 0.2% of training. Fine-tuning is fast and cheap relative to pre-training.
+</Pass>
+
+## Main result
+<Finding src="Tab.2–4, §4.2">One fine-tuned LM sets new state of the art on 9 of 12 datasets — often beating ensembles — and lifts GLUE from 68.9 to 72.8</Finding>. Per task (metric: accuracy unless noted; prior best is the strongest system in Tab.2–4):
+
+<SortableTable columns={["Task", "Prior best", "GPT (ours)", "SOTA?"]} rows={[
+  ["MNLI-m", 80.6, 82.1, "yes"],
+  ["SNLI", 89.3, 89.9, "yes"],
+  ["SciTail", 83.3, 88.3, "yes"],
+  ["QNLI", 82.3, 88.1, "yes"],
+  ["RTE", 61.7, 56.0, "no"],
+  ["Story Cloze", 77.6, 86.5, "yes"],
+  ["RACE", 53.3, 59.0, "yes"],
+  ["CoLA (mc)", 35.0, 45.4, "yes"],
+  ["SST-2", 93.2, 91.3, "no"],
+  ["MRPC (F1)", 86.0, 82.3, "no"],
+  ["STS-B (pc)", 81.0, 82.0, "yes"],
+  ["QQP (F1)", 66.1, 70.3, "yes"],
+  ["GLUE overall", 68.9, 72.8, "—"],
+]} />
+
+The biggest jumps are on tasks needing multi-sentence, long-range reasoning — Story Cloze +8.9 and <Term def="reading-comprehension dataset of middle/high-school exam questions, heavier on reasoning than SQuAD">RACE</Term> +5.7 — exactly what pre-training on contiguous book text was supposed to buy (§4.2). Gains hold from ~5.7k training examples (STS-B) to ~550k (SNLI).
+
+## Key findings
+- <Finding src="Tab.5, §5">Pre-training is nearly everything: training the same Transformer directly on the supervised tasks drops the average score from 74.7 to 59.9 (−14.8)</Finding> — the architecture without the generative stage is unremarkable.
+- <Finding src="Tab.5, §5">The Transformer earns its place: an LSTM in the same framework loses 5.6 average points and wins on only one dataset (MRPC)</Finding>.
+- <Finding src="Fig.2 left, §5">Every transferred layer helps — moving from embeddings-only to all 12 layers adds up to 9% on MultiNLI</Finding>: the useful task functionality is distributed through the stack, not concentrated in the embeddings.
+- <Finding src="Fig.2 right, §5">Zero-shot heuristics that use the raw generative model (no fine-tuning) — e.g. sentiment by comparing P(positive) vs P(negative) after appending "very", RACE by answer log-probability — improve steadily and stably over the course of pre-training</Finding>; the LM is *acquiring the tasks themselves* as a byproduct of predicting text. The LSTM's zero-shot performance is higher-variance, suggesting the Transformer's inductive bias aids transfer.
+- <Finding src="Tab.5, §5">The auxiliary LM objective during fine-tuning helps only the large datasets (NLI, QQP); the no-aux ablation actually has a slightly higher overall average (75.0 vs 74.7)</Finding> — the headline configuration is not uniformly the best one.
+- <Finding src="§4.2">Where the model loses, data is small or the metric idiosyncratic: RTE (2,490 examples) reaches 56.0 vs 61.7 for a multi-task baseline</Finding> — single-task fine-tuning on tiny data is a real weakness, with multi-task training flagged but unexplored.
+
+## Implications
+This paper and <Related>BERT (published months later, explicitly positioning against it)</Related> jointly ended the era of per-task NLP architectures; GPT-1 supplies the *generative* half of the argument: <Related>ELMo's frozen features and ULMFiT's LSTM recipe</Related> are both subsumed by "pre-train a Transformer LM, fine-tune it whole". The zero-shot section is the thread to pull: <FollowUp>if task ability grows monotonically with LM pre-training, scaling the LM and dropping fine-tuning entirely is the natural next experiment — which is precisely GPT-2</FollowUp>. Also worth chasing: <FollowUp>why the auxiliary LM objective helps only large datasets</FollowUp>, and <FollowUp>whether multi-task fine-tuning rescues small datasets like RTE</FollowUp> (§4.2, §5).
+
+## Limitations
+- <Caveat>Unidirectional context: every prediction conditions only on the left</Caveat> — the design cost that BERT's ablations later quantify on span and pair tasks; this paper does not measure it.
+- <Caveat>Three losses out of twelve (RTE, MRPC, SST-2) cluster on small datasets or single-sentence tasks</Caveat>, and the RTE gap to a multi-task baseline is 5.7 points (Tab.2, Tab.4).
+- <Caveat>Single runs; no variance, significance, or compute-matched baseline comparisons are reported</Caveat> — several wins (SNLI +0.6, STS-B +1.0) are within plausible run-to-run noise.
+- <Caveat>The corpus is a confound: BooksCorpus differs from the baselines' training data, so "Transformer + LM objective" and "long-contiguous-text corpus" are never separated</Caveat> (§4.1) — the 1B-Word comparison is argued, not run.
+- <Caveat>Parameter count, training compute, and hardware are not reported</Caveat>; perplexity 18.4 is reported without stating the evaluation split.
+
+## Critiques and Questions
+1. The intro claims a 5.5% absolute GLUE improvement, but Tab.4 shows 72.8 vs 68.9 — a 3.9-point delta over the best listed baseline; which baseline yields 5.5 is unclear.
+2. The auxiliary-LM ablation undercuts the paper's own recipe (75.0 without vs 74.7 with, Tab.5), yet the headline results keep the auxiliary loss everywhere — per-task configuration is doing quiet work.
+3. The LSTM comparison uses a *single-layer* 2048-unit LSTM against a 12-layer Transformer (§5); depth and parameters are not matched, so "Transformer beats LSTM" is weaker than it reads.
+4. Zero-shot results are normalized between random guess and per-task SOTA (Fig.2), which hides absolute performance; the heuristics are also hand-designed per task, so "the LM learned the task" and "the probe is clever" are entangled.
+5. Similarity tasks need both orderings processed and summed (§3.3) — a hint that flattening structure into a sequence is not free; how much does this cost versus a symmetric architecture?
+
+<SelfCheck q="Why did GPT-1 pre-train on BooksCorpus instead of the similarly sized 1B Word Benchmark, and what design choice does this pair with?" a="BooksCorpus contains long stretches of contiguous text, letting the LM learn to condition on long-range information, while the 1B Word Benchmark is shuffled at the sentence level, destroying that structure. This pairs with choosing the Transformer over the LSTM: its structured memory can exploit exactly those long-range dependencies, and the tasks with the biggest gains (Story Cloze +8.9, RACE +5.7) are the long-context ones (§2, §4.1–4.2)." />
+
+## Glossary
+<Term def="judging whether a hypothesis sentence follows from, contradicts, or is neutral to a premise; a.k.a. NLI">textual entailment</Term>, <Term def="GLUE's linguistic-acceptability task; scored by Matthews correlation (mc)">CoLA</Term>, <Term def="choose the correct ending of a four-sentence story from two options">Story Cloze Test</Term>, <Term def="rearranging structured inputs (pairs, triples) into one delimited token sequence so a sequence model can consume them; from Rocktäschel et al.">traversal-style input transformation</Term>, <Term def="nine-task benchmark suite for natural language understanding with a single leaderboard score">GLUE</Term>, <Term def="exponentiated average negative log-likelihood per token; lower is better">perplexity</Term>.
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

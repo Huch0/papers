@@ -1,0 +1,127 @@
+---
+canonical_key: arxiv-1910.10683
+version_key: v1
+title: Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer
+authors:
+- Colin Raffel
+- Noam Shazeer
+- Adam Roberts
+- Katherine Lee
+- Sharan Narang
+- Michael Matena
+- Yanqi Zhou
+- Wei Li
+- Peter J. Liu
+venue: arXiv
+year: 2019
+tags:
+- foundational
+topic_groups:
+- llm
+- rl
+triage_label: READ_SOON
+triage_confidence: medium
+source_link: https://arxiv.org/abs/1910.10683v4
+summary_date: '2026-08-25'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>Cast every NLP task as text-in → text-out so a single encoder-decoder Transformer with one loss and one decoding rule covers translation, classification, regression, and summarization — then use that fixed harness to ablate the entire transfer-learning design space (objective, architecture, corpus, adaptation, scale) and push the winning recipe to 11B parameters on the new ~750 GB C4 corpus, reaching state of the art on 18 of 24 tasks.</TLDR>
+
+<WhyItMatters>T5 standardized the "everything is text-to-text" interface that prompting-era LLMs inherit, released C4 (the ancestor of most open web-scale pre-training corpora), and framed the "you have 4× compute — where do you spend it?" question that scaling-laws work then formalized. A cornerstone of the LLM milestone path.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "90.3", label: "GLUE (prev SOTA 89.4)", sub: "T5-11B, test set (Tab.14)" },
+  { value: "88.9", label: "SuperGLUE (human 89.8)", sub: "prev SOTA 84.6 (Tab.14)" },
+  { value: "18/24", label: "tasks at state of the art", sub: "GLUE/SGLUE subtasks, SQuAD, CNN/DM (§3.7)" },
+  { value: "11B", label: "largest of 5 model sizes", sub: "60M → 11B, ~1T pre-training tokens" },
+]} />
+
+## Motivation
+By late 2019, transfer learning owned NLP: pre-train on unlabeled web text, fine-tune per task (the ELMo/GPT/BERT/XLNet/RoBERTa lineage). But the field was advancing by bundled changes: <Problem>each new method altered the pre-training objective, architecture, corpus, compute budget, and fine-tuning scheme simultaneously, so published comparisons could not attribute a gain to any single ingredient</Problem> (§1). And the data axis was nearly unstudiable: <Problem>pre-training corpora were often unreleased, differently scoped (news-only, Wikipedia-only), and rarely compared head-to-head — there was no standard pre-training data set at all</Problem> (§3.4). If I want to know *what actually matters*, I have to hold everything else fixed — and the existing zoo of task-specific heads and losses makes that impossible.
+
+## Contribution (what's new)
+The enabling insight is the interface, not a new method (the paper is explicit that it proposes none, §1). <Novelty>Casting every task — generative, classification, even regression — as "feed text in, train the model to emit the answer as text" means one model, one maximum-likelihood loss, and one decoding procedure serve every task</Novelty>, so any factor (objective, architecture, corpus, adaptation strategy) can be swapped in isolation while the rest of the pipeline stays byte-identical. The form is forced: with per-task heads, an architecture swap requires re-engineering every task, and objective comparisons leak through task-specific plumbing; prior unifications (QA-format, span extraction) cannot express generative tasks. On top of this harness sit two more deltas: <Novelty>C4, a ~750 GB heuristically filtered Common Crawl corpus, released publicly so the data axis becomes an experimental variable</Novelty> (§2.2), and <Novelty>the empirical map itself — a coordinate-ascent sweep over the design space whose combined insights, plus scale, become the T5 recipe</Novelty> (§3).
+
+## Research questions
+1. Holding a fixed text-to-text pipeline, which transfer-learning ingredients — unsupervised objective, architecture, pre-training corpus, fine-tuning/multi-task strategy — actually move downstream performance? (§3)
+2. Given 4× more compute, is it better spent on a bigger model, longer training, or ensembling? (§3.6)
+3. How far do the combined insights go when scaled to billions of parameters and ~1T tokens? (§3.7)
+
+## Methodology
+Start from a deliberately typical baseline: a BERT-Base-sized encoder-decoder Transformer (~220M parameters), pre-trained on C4 for 524,288 steps (~34B tokens) with a span-replacing denoising objective, then fine-tuned separately per task (§3.1). Every task is serialized with a text prefix. The paper's own running example: "translate English to German: That is good." trains the model to emit "Das ist gut."; even the STS-B similarity *regression* becomes text by rounding scores to 0.2 increments and predicting the string "3.8" (§2.4). From this baseline, change exactly one axis at a time — architectures, objectives, corpora, adaptation strategies, scaling strategies — measuring GLUE, SuperGLUE, SQuAD, CNN/Daily Mail, and three WMT translation pairs each time. Statistical grounding comes from 10 reruns of the baseline, whose variance is assumed to carry over to all variants (§3.1.5).
+
+<Pass title="Method details: baseline, objective, and the compared variants">
+**Baseline model and training** (§3.1). Encoder and decoder each have 12 blocks, <M tex="d_{\text{model}}=768" />, <M tex="d_{\text{ff}}=3072" />, 12 heads; simplified LayerNorm (no bias, outside the residual path) and relative position embeddings shared across layers. AdaFactor optimizer; inverse-square-root LR schedule for pre-training, constant 0.001 for fine-tuning (262,144 steps); greedy decoding; SentencePiece vocabulary of 32,000 wordpieces trained on English C4 plus German/French/Romanian pages. Pre-training covers ~34B tokens — a quarter of BERT's budget — and never repeats data.
+
+**The baseline objective, on the paper's running sentence** (Fig.2). From "Thank you for inviting me to your party last week ." randomly drop 15% of tokens; consecutive dropped tokens collapse into one sentinel. Input becomes "Thank you `<X>` me to your party `<Y>` week ." and the target is only the dropped material: "`<X>` for inviting `<Y>` last `<Z>`". Predicting just the missing spans (not the full sentence) keeps targets short, which is what makes pre-training cheap.
+
+**Architecture grid** (§3.2). Encoder-decoder (2P params, cost M — the P-parameter single stack is applied to both input and output, so an L+L encoder-decoder matches an L-layer decoder-only model in FLOPs); shared-parameter encoder-decoder (P, M); half-depth encoder-decoder (P, M/2); decoder-only language model (P, M); decoder-only prefix LM (P, M) which applies fully-visible attention over the input portion — the closest text-to-text analog of BERT.
+
+**Objective taxonomy** (§3.3, Tab.3). High-level: prefix LM vs BERT-style masked reconstruction vs deshuffling. Then simplifications of the winner: MASS-style masking, replace-spans-with-sentinels (baseline), drop-tokens-entirely; corruption rates 10/15/25/50%; explicit span corruption with mean span lengths 2/3/5/10.
+
+**Adaptation and multi-task** (§3.5). Adapter layers (inner dim d from 32 to 2048) and gradual unfreezing vs full fine-tuning; multi-task mixing by examples-proportional sampling with dataset-size cap K, temperature-scaled mixing, or equal mixing; and multi-task pre-training followed by per-task fine-tuning (MT-DNN-style), including a leave-one-out variant.
+
+**The final T5 recipe** (§3.7): span corruption (mean length 3, 15%), 1M steps at batch 2048×512 ≈ 1 trillion tokens on C4, multi-task pre-training, per-task GLUE/SuperGLUE fine-tuning with small batches, beam search (width 4, length penalty 0.6). Sizes: Small 60M, Base 220M, Large 770M, 3B, and 11B (24 layers, <M tex="d_{\text{ff}}=65{,}536" />, 128 heads — widened because dense matmuls are what TPUs do efficiently).
+</Pass>
+
+## Main result
+Scaling the study's combined insights delivers <Finding src="Tab.14, §3.7">state of the art on 18 of 24 tasks: GLUE 90.3 (prev 89.4), SuperGLUE 88.9 — within 0.9 of the 89.8 human baseline on a benchmark designed to be hard for transfer learning — SQuAD EM 91.26, and CNN/DM ROUGE-2 21.55</Finding>. Translation is the telling failure: <Finding src="Tab.14">English-only pre-training never beats back-translation-based SOTA on any WMT pair (e.g. EnDe 32.1 vs 33.8)</Finding>.
+
+<SortableTable columns={["Benchmark", "Metric", "Prev SOTA", "T5-11B"]} rows={[
+  ["GLUE", "average", 89.4, 90.3],
+  ["SuperGLUE", "average", 84.6, 88.9],
+  ["SQuAD", "Exact Match", 90.1, 91.26],
+  ["CNN/DM", "ROUGE-2", 20.3, 21.55],
+  ["WMT En-De", "BLEU", 33.8, 32.1],
+  ["WMT En-Fr", "BLEU", 43.8, 43.4],
+  ["WMT En-Ro", "BLEU", 38.5, 28.1],
+]} />
+
+Crucially, scale is not the whole story: <Finding src="Tab.15">pre-training the plain baseline on the same 1T tokens ("baseline-1T") reaches GLUE 84.80, while T5-Base — identical compute, plus the study's design changes — reaches 85.97 (SQuAD 85.44 vs 83.01)</Finding>, isolating the value of the non-scaling insights.
+
+## Key findings
+- <Finding src="Tab.2">At matched FLOPs, the encoder-decoder with a denoising objective beats a decoder-only LM by huge margins (GLUE 83.28 vs 74.70; SQuAD 80.88 vs 61.14)</Finding>: sharing encoder/decoder parameters costs almost nothing (82.81 GLUE at half the parameters), while halving depth clearly hurts — so the win is partly "2× parameters at equal FLOPs". The prefix LM closes most of the gap (81.82 GLUE).
+- <Finding src="Tab.4, §3.3.5">Denoising decisively beats language-modeling and deshuffling pre-training (GLUE 82.96 vs 80.69 vs 73.17), but among denoising variants — masking style, corruption rate 10–25%, span length — differences are marginal</Finding>: the paper's advice is to choose the variant with the shortest targets (span corruption, mean length 3) purely for training speed.
+- <Finding src="Tab.8">Data quality and domain matter: unfiltered C4 (6.1 TB) is the worst corpus on every task despite being 8× larger, and in-domain pre-training gives big targeted gains — Wikipedia+TBC lifts MultiRC EM from 25.78 to 50.93 (fiction domain), RealNews lifts ReCoRD from 68.16 to 73.72</Finding>.
+- <Finding src="Tab.9, Fig.6">Repeating pre-training data degrades performance — 64 repeats is benign, but 1,024 repeats drops GLUE 83.28 → 79.55 — and the accompanying fall in training loss suggests memorization</Finding>: an early data-constrained-scaling result.
+- <Finding src="Tab.10–12">Full fine-tuning beats parameter-efficient alternatives (adapters need d matched to task size; d=32 collapses translation to 13.84 BLEU), and pure multi-task training underperforms pre-train-then-fine-tune — but multi-task *pre-training* + per-task fine-tuning matches the baseline (83.11 vs 83.28 GLUE), and leave-one-out multi-task pre-training barely hurts</Finding>: task interference is mild once you fine-tune.
+- <Finding src="Tab.13">Given 4× compute, model size beats training length: 2× size + 2× steps reaches GLUE 86.18 vs 85.33 for 4× steps alone; ensembling 4 models is a strong orthogonal use of the same compute (best CNN/DM and WMT EnDe)</Finding>.
+
+## Implications
+The text-to-text interface became the field's default abstraction: task prefixes are proto-prompts, and <Related>the instruction-tuning line (FLAN-T5 and successors) fine-tunes exactly this interface on thousands of tasks</Related>. C4 seeded the open pre-training corpus lineage, and the repeat-degradation and data-filtering results anticipate data-centric scaling work. The scaling section's question — where to spend marginal compute — is answered qualitatively here ("bigger model") and quantitatively by <Related>Kaplan et al.'s scaling laws, published three months later</Related>. Worth chasing: <FollowUp>why the field converged on decoder-only models anyway despite Tab.2 (zero-shot generation, KV-cache inference, and scaling behavior differ from this fine-tuning-centric comparison)</FollowUp>, and <FollowUp>the paper's own outlook item that span denoising is an inefficient knowledge-extraction mechanism — the thread ELECTRA and later objective work pull on</FollowUp> (§4.2).
+
+## Limitations
+- <Caveat>Coordinate ascent: each axis is varied around one baseline, so interaction effects (e.g. an objective that only wins at larger scale) are invisible by design</Caveat> — author-stated (§3).
+- <Caveat>All ablations run at Base scale (220M params, ~34B tokens); conclusions like "encoder-decoder wins" are extrapolated to 11B without re-verification</Caveat> (§3, inferred).
+- <Caveat>Each variant is a single run; significance rests on the assumption that 10 baseline reruns' variance transfers, and high-variance small tasks (CoLA, CB, COPA) make GLUE/SGLUE averages noisy</Caveat> (§3.1.5).
+- <Caveat>English-only pre-training with a fixed 4-language vocabulary: no WMT SOTA, and the model cannot process unanticipated languages at all</Caveat> (§3.7, §4.2).
+- <Caveat>MultiRC and ReCoRD exceed human performance, which the authors read as metric bias toward machine predictions; SQuAD is reported on validation because the test server could not run the 11B model</Caveat> (§3.7).
+
+## Critiques and Questions
+1. The architecture comparison is fair-by-construction but ambiguous in interpretation: at matched FLOPs the encoder-decoder holds 2× the parameters, and at matched parameters (shared variant) it still sees each token through both stacks. "Encoder-decoder is better" and "parameters-per-FLOP is better spent with an encoder" are not distinguished.
+2. Casting the LM architecture into denoising via concatenation (§3.2.3) plays away from its home game; the decisive Tab.2 gap partly measures objective-architecture mismatch, not architecture alone.
+3. The text-to-text claim "we never observed illegal label outputs" holds for fine-tuned models but is a fragile property — it silently depends on fine-tuning; zero-shot use of the same interface (GPT-2 style) is explicitly out of scope, which limits what the comparison says about the prompting era that followed.
+4. C4's filters (drop any page with a curly brace, bad-word list, terminal-punctuation lines) are pragmatic but consequential — they excise code and legitimate content wholesale, shaping (and biasing) everything trained on it; the paper does not audit what the filters removed.
+5. SOTA at 11B leans on per-task fine-tuning, task-specific checkpoint selection, and beam search; the headline "limits of transfer learning" is really "limits of this fine-tuning recipe under generous adaptation budget".
+
+<SelfCheck q="In T5's baseline objective, what exactly does the decoder predict for the input 'Thank you <X> me to your party <Y> week .'?" a="Only the dropped-out spans, delimited by their sentinels: '<X> for inviting <Y> last <Z>'. Predicting just the corrupted spans (not the full original text) keeps target sequences short, which makes pre-training substantially cheaper — and Tab.5 shows it loses nothing versus reconstructing the full sequence." />
+
+## Glossary
+- <Term def="Pre-train on a data-rich task, then adapt (fine-tune) the same parameters to a downstream task">transfer learning</Term>
+- <Term def="Colossal Clean Crawled Corpus: ~750 GB of heuristically filtered English text from one month of Common Crawl">C4</Term>
+- <Term def="Pre-training that corrupts input text (masking/dropping tokens) and trains the model to reconstruct what was removed">denoising objective</Term>
+- <Term def="T5's denoising variant: contiguous token spans are each replaced by a unique sentinel token, and the target is the sequence of removed spans">span corruption</Term>
+- <Term def="Decoder-only Transformer that applies bidirectional (fully-visible) attention over the input prefix and causal attention over the generated target">prefix LM</Term>
+- <Term def="9-task (GLUE) / 8-task (SuperGLUE) English language-understanding benchmark suites scored as an average over subtasks">GLUE / SuperGLUE</Term>
+- <Term def="Reading-comprehension QA benchmark on Wikipedia passages; Exact Match (EM) requires the predicted answer string to match exactly">SQuAD</Term>
+- <Term def="N-gram overlap metrics for translation (BLEU) and summarization (ROUGE); higher is better">BLEU / ROUGE</Term>
+- <Term def="Small trainable bottleneck layers inserted into a frozen pre-trained network so fine-tuning touches few parameters">adapter layers</Term>
+- <Term def="Sampling multi-task training examples proportionally to dataset size, after capping each dataset at an artificial size K so giant tasks don't crowd out small ones">examples-proportional mixing</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

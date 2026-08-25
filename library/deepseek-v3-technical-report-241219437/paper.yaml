@@ -240,17 +240,17 @@ versions:
   source: arxiv
   source_url: https://arxiv.org/abs/2412.19437v2
   pdf_path: library/deepseek-v3-technical-report-241219437/v1/paper.pdf
-  summary_path: null
+  summary_path: library/deepseek-v3-technical-report-241219437/v1/summary.mdx
   metadata_path: library/deepseek-v3-technical-report-241219437/v1/metadata.yaml
   fetched_at: '2026-08-24T03:21:34Z'
   source_updated_at: '2025-02-18T17:26:38Z'
   arxiv_version: v2
   pdf_sha256: 812a3fd645c80725354de9d831a6785503007a60681461407f64e97305fa9330
   pdf_bytes: 1887366
-  summary_status: none
-  extraction_status: none
+  summary_status: full
+  extraction_status: full
   created_at: '2026-08-24T03:21:34Z'
-  updated_at: '2026-08-24T03:21:34Z'
+  updated_at: '2026-08-25T06:37:13Z'
 relations:
   duplicate_candidates: []
   related_papers: []

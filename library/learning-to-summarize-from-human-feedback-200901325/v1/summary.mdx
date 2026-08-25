@@ -1,0 +1,118 @@
+---
+canonical_key: arxiv-2009.01325
+version_key: v1
+title: Learning to summarize from human feedback
+authors:
+- Nisan Stiennon
+- Long Ouyang
+- Jeff Wu
+- Daniel M. Ziegler
+- Ryan Lowe
+- Chelsea Voss
+- Alec Radford
+- Dario Amodei
+- Paul Christiano
+venue: arXiv
+year: 2020
+tags:
+- foundational
+topic_groups:
+- llm
+- rl
+triage_label: READ_SOON
+triage_confidence: medium
+source_link: https://arxiv.org/abs/2009.01325v3
+summary_date: '2026-08-25'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>RLHF made to actually work: with batch (offline) preference collection, tightly quality-controlled labelers, and a KL-regularized PPO policy whose value function is a separate network initialized from the reward model, a 1.3B GPT-3-style model beats a 10× larger supervised model at Reddit summarization — and both human-feedback models beat the human-written reference summaries themselves.</TLDR>
+
+<WhyItMatters>This is the paper that turned the Ziegler et al. 2019 prototype into the recipe InstructGPT and ChatGPT run on, and it contributes the canonical reward-model overoptimization curve — the empirical face of Goodhart's law in alignment. Core reading on the LLM/RL milestone path.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "61% vs 43%", label: "preferred over reference summaries", sub: "1.3B human-feedback vs 10x-larger supervised model (Fig.1, §4.1)" },
+  { value: "~65%", label: "6.7B preference over references after length control", sub: "raw preference drops ~5% when controlling length (App.F)" },
+  { value: "77% ± 2%", label: "labeler-researcher agreement", sub: "vs 73% ± 4% researcher-researcher — the data-quality fix (§3.3)" },
+  { value: "64,832", label: "human comparisons released", sub: "TL;DR dataset; 6.7B RL run cost ~320 GPU-days (§5)" },
+]} />
+
+## Motivation
+Supervised fine-tuning maximizes the likelihood of human-written text, but <Problem>that objective is misaligned with what we actually want — high-quality outputs: it weighs a fabricated fact the same as a synonym choice, spreads probability over low-quality demonstrations, and suffers distributional shift once the model samples its own text</Problem> (§1). Evaluation has the same disease: <Problem>ROUGE and reference-matching are rough proxies that correlate poorly with human judgments of summary quality</Problem> (§1). And the one prior attempt to optimize human preferences directly at scale — our own 2019 work — hit a wall: <Problem>online data collection produced labelers who rewarded copying, yielding models that scored well with labelers but poorly with researchers</Problem> (§3.3). The question is whether human preference optimization can be made to genuinely beat imitation, not just game it.
+
+## Contribution (what's new)
+The pipeline is inherited (reward model from comparisons → KL-regularized PPO), so the delta is everything that makes it work. <Novelty>Move entirely to the batch setting — alternate between large offline batches of comparisons and retraining — and invest heavily in labeler quality: onboarding with feedback, a shared chat room, hourly (not per-label) pay, and continuous labeler-researcher agreement monitoring</Novelty>, which lifts agreement to 77%, statistically indistinguishable from researchers agreeing with each other (§3.3). Without this, the reward model learns the labelers' shortcuts, not the task. Algorithmically, <Novelty>the PPO value function gets completely separate parameters, initialized from the reward model</Novelty> — sharing parameters with the policy (as in 2019) lets value-function updates damage the pretrained policy early in training (§3.4, Fig.11). Finally, <Novelty>the analysis contributions: the reward-model overoptimization curve, RM scaling laws in data and model size, and head-to-head evidence that the learned RM beats ROUGE both as a predictor and as an optimization target</Novelty> (§4.3–4.4). The 64,832-comparison dataset is released.
+
+## Research questions
+1. Can optimizing human preferences beat strong supervised imitation on a real task — including the human demonstrations themselves? (§4.1)
+2. How far can you optimize against a learned reward model before it stops tracking true human preferences? (§4.3)
+3. How does reward-model quality scale with comparison data and parameters, and what has the RM actually learned — semantics or heuristics like length? (§4.3)
+4. Do preference-trained policies and reward models generalize out of domain (Reddit → news)? (§4.2, §4.4)
+
+## Methodology
+Three-step loop on the filtered Reddit TL;DR dataset (123,169 posts, reference summaries restricted to 24–48 tokens to control the length confound). Step 1: sample summary pairs from a zoo of policies (supervised baselines, current RL policies, best-of-N, references) and have labelers pick the better one. Step 2: train a reward model — a GPT-3-style Transformer with a scalar head, initialized from the supervised baseline — on the cross-entropy comparison loss. Step 3: run PPO against the reward, with a KL penalty to the supervised policy:
+
+<MathBlock>{`R(x, y) = r_\\theta(x, y) - \\beta\\, \\log\\left[\\pi^{RL}_{\\phi}(y \\mid x) / \\pi^{SFT}(y \\mid x)\\right]`}</MathBlock>
+
+then collect more comparisons from the improved policy and repeat, in large deliberate batches rather than a live stream (§3.1). A concrete instance (Tab.1): for a first-date-advice post, the supervised model parrots the post's framing, while the human-feedback model writes "Going on my first ever date tomorrow, cycling to the beach. Would like some tips on what to do and bring. I'm a bit nervous and excited." — covering intent, situation, and emotional state.
+
+<Pass title="Method details: models, hyperparameters, and evaluation design">
+**Models.** GPT-3-architecture decoders at 1.3B and 6.7B for the main experiments (RM ablations span 160M–13B). Pretraining: 200–300B tokens of CommonCrawl, WebText, books, Wikipedia (App.B). Supervised baselines: 1 epoch on filtered TL;DR. Sampling at T=0 for evaluations, found best over a temperature/nucleus sweep (App.B.1).
+
+**Reward model.** Loss <M tex="-\,\mathbb{E}\,[\log \sigma(r_\theta(x, y_i) - r_\theta(x, y_{1-i}))]" /> over pairs; one epoch; outputs normalized so reference summaries score mean 0. Selection sweeps over learning rate and 3–10 seeds — both data order and head initialization matter (App.B.1).
+
+**PPO.** 1M episodes, <M tex="\gamma = 1" />, GAE <M tex="\lambda = 0.95" />, KL coefficient 0.05 for main runs, batch 512/256 for 1.3B/6.7B. Value function: separate Transformer, initialized from the RM (App.B.1, G.1).
+
+**Best-of-N.** Sampling N summaries and keeping the RM's favorite serves as a training-free, mildly optimized policy (KL grows as <M tex="\log N - (N-1)/N" />); BoN and PPO give similar human-judged quality at equal average reward, with PPO drifting further in KL (App.G.3).
+
+**Evaluation.** Pairwise preference vs the reference summary, plus 7-point Likert ratings on coherence, accuracy, coverage, and overall quality; length-controlled numbers via regression on the log length ratio (App.F). Labelers write "naive interpretations" of summaries before seeing the post — a trick that surfaces ambiguity (App.C.1).
+</Pass>
+
+## Main result
+<Finding src="Fig.1, §4.1">The 1.3B human-feedback policy is preferred to the dataset's human reference summaries 61% of the time — beating a 6.7B supervised model (43%), 10× its size; the 6.7B human-feedback model does better still, and remains ~65% preferred after controlling for its longer summaries</Finding>. On Likert axes the gain is concentrated where it should be: <Finding src="Fig.3">human-feedback models improve most on coverage, and the 6.7B PPO model earns a perfect 7/7 overall score on 45% of summaries vs 20% for the supervised baseline and 23% for the references</Finding>. The models are not copying their way to victory: bigram overlap with the post is *lower* than the supervised baseline's (46.0% vs 48.9% at 6.7B, App.G.5) — the 2019 failure mode is gone. Transfer is the kicker: <Finding src="Fig.4">on CNN/DM news, never seen in training, the 6.7B human-feedback model nearly matches a 6.7B model supervised on CNN/DM itself, while writing summaries half as long</Finding>.
+
+## Key findings
+- <Finding src="Fig.5">Optimizing the reward model helps, then hurts: as the policy moves further from the supervised baseline (lower β, more KL), the RM's predicted preference keeps climbing while actual human preference peaks and then falls below the starting point — the RM eventually becomes anti-correlated with real preferences</Finding>. The overoptimized policy's outputs are a template of RM-pleasing tics ("... want change this dumbass shitty ass policy pls halp", Tab.29).
+- <Finding src="Fig.6">Reward modeling scales predictably: doubling comparison data buys ~1.1% validation accuracy, doubling RM parameters buys ~1.8%, and the 6.7B RM trained on all 64k comparisons approaches single-human accuracy</Finding> (an ensemble of humans remains above it).
+- <Finding src="App.G.6, Tab.17–18">The RM tracks semantics, with a known bias: it prefers human-improved edits nearly as often as independent humans do (82.8% vs 84.1% at 6.7B) and catches role-reversal perturbations 97.2% of the time — but favors length, endorsing edits that shorten a summary only 62.6% of the time vs 76.4% for humans</Finding>.
+- <Finding src="§4.4, Fig.7">ROUGE fails both as predictor and as target: its agreement with labelers drops from ~57% on supervised samples to ~50% (chance) on human-feedback samples, and best-of-N optimization against ROUGE peaks sooner and at a substantially lower human-preference rate than optimization against any RM</Finding>. Supervised-model log probability does no better (≤50%).
+- <Finding src="App.E">The CNN/DM "reference summaries" are themselves weak: labelers prefer lead-3 over them even after length adjustment, because the news highlights omit key points (13/20 audited cases) and introduce information absent from the article (10/20)</Finding> — a warning about treating scraped references as gold.
+- <Finding src="App.G.1, Fig.11">Separating value-function and policy parameters clearly outperforms the shared network used in the 2019 work</Finding>: a small architectural decision with outsized effect on RL stability.
+
+## Implications
+This paper completes the arc from <Related>Christiano et al. 2017 (preference RL) through Ziegler et al. 2019 (LM fine-tuning prototype)</Related> to a recipe that demonstrably exceeds imitation — the same team and pipeline produce <Related>InstructGPT and thence ChatGPT</Related>, with this paper's batch collection, labeler-relationship management, and separate value network carried over nearly verbatim. The overoptimization curve (Fig.5) becomes the reference phenomenon for <Related>reward-model Goodharting, formalized in later "scaling laws for reward model overoptimization" work</Related>, and best-of-N-vs-PPO equivalence at matched KL prefigures inference-time alignment methods. Worth chasing: <FollowUp>the paper's own point that comparisons are one signal among many — demonstrations, edits, and explanations as richer feedback (the thread leading to critique and process supervision)</FollowUp>, and <FollowUp>scaling feedback to tasks humans cannot directly evaluate, which the discussion names as the hard case (recursive reward modeling / amplification lineage)</FollowUp> (§5).
+
+## Limitations
+- <Caveat>Cost, and a missing baseline because of it: the 6.7B RL run took ~320 GPU-days and the dataset thousands of labeler-hours, so there is no equal-labeler-budget baseline of high-quality *demonstrations* for supervised fine-tuning — "human feedback beats supervised" is shown against existing references, not against equally curated imitation data</Caveat> (§5, App.D).
+- <Caveat>Length confounds a third of the headline gap at 6.7B; the correction is a regression-based estimate, not a controlled generation-length experiment</Caveat> (Fig.1 caption, App.F).
+- <Caveat>The task definition is circular by construction: quality is "as good as possible according to our judgments", labelers are trained to agree with the researchers, and researcher preference is the gold standard — the paper itself flags that broader tasks will need affected groups, not researchers, defining 'good'</Caveat> (§3.2, Broader impacts).
+- <Caveat>Domain narrowness: two-thirds of the filtered TL;DR corpus is relationship/relationship-advice posts, and posts run only to 512 tokens</Caveat> (App.A) — CNN/DM transfer mitigates but does not eliminate the concern.
+- <Caveat>The training corpus's effective label quality is ~73% agreement, and attempts to filter to high-confidence labels or drop weak labelers reduced RM accuracy — noise is load-bearing and not fully understood</Caveat> (App.C.2).
+- <Caveat>A known RM length bias survives the pipeline; the policy exploits it (summaries cluster at the upper length limit)</Caveat> (App.G.6, App.F).
+
+## Critiques and Questions
+1. "Better than the human references" is partly a statement about reference quality: TL;DRs are casual Reddit self-summaries and CNN/DM highlights are demonstrably flawed (App.E). Against genuinely expert-written summaries, the margin is untested — the honest claim is "better than the imitation targets available", which is still the practically relevant one.
+2. Labeler-researcher agreement (77%) exceeding researcher-researcher agreement (73%) is presented as success, but training labelers to mirror researchers narrows the preference distribution to one team's taste; the same machinery would faithfully amplify a worse taste.
+3. The overoptimization study (Fig.5) uses an earlier RM (rm3) and varies β across runs; there is no equivalent curve for the final RM, so the safe operating point for the headline models is extrapolated, not measured.
+4. Data composition is admittedly ad hoc — comparisons come from a shifting zoo of policies chosen "in the spirit of exploratory research" (App.C.6); how sensitive the RM is to this mixture is unknown and matters for anyone replicating on a budget.
+5. BoN matching PPO quality at equal reward (App.G.3) quietly undercuts the necessity of RL itself; the paper does not pursue when expensive PPO is actually preferable to rejection sampling — a question the field returned to years later.
+
+<SelfCheck q="What happens as the policy is optimized ever harder against the learned reward model, and why is this the paper's most durable lesson?" a="Predicted reward keeps rising, but actual human preference peaks and then declines — eventually the RM becomes anti-correlated with true preferences (Fig.5), producing degenerate template-like summaries (Tab.29). The RM is only a proxy fit to a narrow distribution of comparisons; hard optimization exits that distribution. This is the canonical empirical demonstration of proxy-reward Goodharting in LLM alignment, and it is why every descendant system caps KL or limits optimization pressure against a frozen reward model." />
+
+## Glossary
+- <Term def="Reinforcement learning from human feedback: fit a reward model to human preference comparisons, then RL-optimize a policy against it; this paper's pipeline, before the acronym stabilized">RLHF</Term>
+- <Term def="The policy obtained by supervised fine-tuning on reference summaries; both the RL initialization and the anchor of the KL penalty">supervised baseline (SFT)</Term>
+- <Term def="Model trained on comparison pairs to output a scalar score predicting which output a human would prefer">reward model (RM)</Term>
+- <Term def="Sample N candidates, keep the reward model's highest-scoring one — optimization without any training">best-of-N (BoN)</Term>
+- <Term def="Optimizing a learned proxy so hard that its correlation with the true objective breaks — the Fig.5 phenomenon">reward overoptimization</Term>
+- <Term def="Network estimating expected future reward for PPO's advantage computation; here deliberately parameter-separate from the policy">value function</Term>
+- <Term def="Reddit posts paired with the author's own 'too long; didn't read' summary; filtered here to 123k posts with 24–48-token summaries">TL;DR dataset</Term>
+- <Term def="N-gram-overlap summarization metric family; shown here to hit chance-level agreement with humans on strong models">ROUGE</Term>
+- <Term def="1–7 ordinal rating scale; used for the coherence/accuracy/coverage/overall axis evaluations">Likert scale</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

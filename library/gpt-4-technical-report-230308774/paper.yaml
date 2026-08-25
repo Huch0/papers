@@ -320,17 +320,17 @@ versions:
   source: arxiv
   source_url: https://arxiv.org/abs/2303.08774v6
   pdf_path: library/gpt-4-technical-report-230308774/v1/paper.pdf
-  summary_path: null
+  summary_path: library/gpt-4-technical-report-230308774/v1/summary.mdx
   metadata_path: library/gpt-4-technical-report-230308774/v1/metadata.yaml
   fetched_at: '2026-08-24T03:20:56Z'
   source_updated_at: '2024-03-04T06:01:33Z'
   arxiv_version: v6
   pdf_sha256: c33a66dadca2388d7b172d6293b00dc32b71110c6f38fafe0d41112e61be7774
   pdf_bytes: 5245564
-  summary_status: none
-  extraction_status: none
+  summary_status: full
+  extraction_status: full
   created_at: '2026-08-24T03:20:56Z'
-  updated_at: '2026-08-24T03:20:56Z'
+  updated_at: '2026-08-25T06:34:04Z'
 relations:
   duplicate_candidates: []
   related_papers: []

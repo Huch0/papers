@@ -53,17 +53,17 @@ versions:
   source: arxiv
   source_url: https://arxiv.org/abs/2311.16867v2
   pdf_path: library/the-falcon-series-of-open-language-models-231116867/v1/paper.pdf
-  summary_path: null
+  summary_path: library/the-falcon-series-of-open-language-models-231116867/v1/summary.mdx
   metadata_path: library/the-falcon-series-of-open-language-models-231116867/v1/metadata.yaml
   fetched_at: '2026-08-24T03:21:11Z'
   source_updated_at: '2023-11-29T19:45:10Z'
   arxiv_version: v2
   pdf_sha256: bd216a639168da065373e9116562f8108bc4e6876b21d1f43fa8610ad82fa95b
   pdf_bytes: 1254650
-  summary_status: none
-  extraction_status: none
+  summary_status: full
+  extraction_status: full
   created_at: '2026-08-24T03:21:11Z'
-  updated_at: '2026-08-24T03:21:11Z'
+  updated_at: '2026-08-25T06:42:40Z'
 relations:
   duplicate_candidates: []
   related_papers: []

@@ -99,17 +99,17 @@ versions:
   source: openalex
   source_url: https://openalex.org/W4414939355
   pdf_path: library/qwen3-technical-report-250509388/v1/paper.pdf
-  summary_path: null
+  summary_path: library/qwen3-technical-report-250509388/v1/summary.mdx
   metadata_path: library/qwen3-technical-report-250509388/v1/metadata.yaml
   fetched_at: '2026-08-24T03:21:38Z'
   source_updated_at: '2025-05-14'
   arxiv_version: null
   pdf_sha256: 84a5e2b1fa04bb774bf12ae606d1e6d9dd2147ed2ebe78a4cfeb91ba380ffdd5
   pdf_bytes: 779424
-  summary_status: none
-  extraction_status: none
+  summary_status: full
+  extraction_status: full
   created_at: '2026-08-24T03:21:38Z'
-  updated_at: '2026-08-24T03:21:38Z'
+  updated_at: '2026-08-25T06:44:22Z'
 relations:
   duplicate_candidates: []
   related_papers: []

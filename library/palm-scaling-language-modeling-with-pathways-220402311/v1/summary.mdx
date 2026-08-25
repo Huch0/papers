@@ -1,0 +1,197 @@
+---
+canonical_key: arxiv-2204.02311
+version_key: v1
+title: 'PaLM: Scaling Language Modeling with Pathways'
+authors:
+- Aakanksha Chowdhery
+- Sharan Narang
+- Jacob Devlin
+- Maarten Bosma
+- Gaurav Mishra
+- Adam Roberts
+- Paul Barham
+- Hyung Won Chung
+- Charles Sutton
+- Sebastian Gehrmann
+- Parker Schuh
+- Kensen Shi
+- Sasha Tsvyashchenko
+- Joshua Maynez
+- Abhishek Rao
+- Parker Barnes
+- Yi Tay
+- Noam Shazeer
+- Vinodkumar Prabhakaran
+- Emily Reif
+- Nan Du
+- Ben Hutchinson
+- Reiner Pope
+- James Bradbury
+- Jacob Austin
+- Michael Isard
+- Guy Gur-Ari
+- Pengcheng Yin
+- Toju Duke
+- Anselm Levskaya
+- Sanjay Ghemawat
+- Sunipa Dev
+- Henryk Michalewski
+- Xavier Garcia
+- Vedant Misra
+- Kevin Robinson
+- Liam Fedus
+- Denny Zhou
+- Daphne Ippolito
+- David Luan
+- Hyeontaek Lim
+- Barret Zoph
+- Alexander Spiridonov
+- Ryan Sepassi
+- David Dohan
+- Shivani Agrawal
+- Mark Omernick
+- Andrew M. Dai
+- Thanumalayan Sankaranarayana Pillai
+- Marie Pellat
+- Aitor Lewkowycz
+- Erica Moreira
+- Rewon Child
+- Oleksandr Polozov
+- Katherine Lee
+- Zongwei Zhou
+- Xuezhi Wang
+- Brennan Saeta
+- Mark Diaz
+- Orhan Firat
+- Michele Catasta
+- Jason Wei
+- Kathy Meier-Hellstern
+- Douglas Eck
+- Jeff Dean
+- Slav Petrov
+- Noah Fiedel
+venue: arXiv
+year: 2022
+tags:
+- foundational
+topic_groups:
+- llm
+triage_label: READ_SOON
+triage_confidence: medium
+source_link: https://arxiv.org/abs/2204.02311v5
+summary_date: '2026-08-25'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>Scaling a dense decoder-only Transformer to 540B parameters (on 6144 TPU v4 chips via Pathways, at record 46.2% model-FLOPs utilization) shows few-shot gains have not plateaued: new SOTA on 28/29 English NLP benchmarks, above-average-human BIG-bench performance, ~25% of tasks improving *discontinuously* with scale, and — combined with chain-of-thought prompting — few-shot reasoning that matches finetuned SOTA.</TLDR>
+
+<WhyItMatters>PaLM is the "scale axis pushed to its limit" landmark: it made emergent capabilities and chain-of-thought reasoning the field's central storyline, introduced MFU as the standard training-efficiency metric, and (read against Chinchilla, published a week earlier) is the clearest natural experiment on parameters-vs-tokens allocation.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "540B / 780B", label: "parameters / training tokens", sub: "dense decoder-only, one epoch (§1, §3)" },
+  { value: "28/29", label: "English NLP benchmarks at few-shot SOTA", sub: "vs best per-task prior LLM (Tab.4)" },
+  { value: "58%", label: "GSM8K accuracy, 8-shot CoT + calculator", sub: "beats finetuned GPT-3+verifier at 55% (Tab.10)" },
+  { value: "46.2%", label: "model FLOPs utilization", sub: "vs 21.3% GPT-3, 32.5% Gopher (Tab.3)" },
+]} />
+
+## Motivation
+
+After GPT-3, every frontier model (GLaM, Gopher, Chinchilla, MT-NLG, LaMDA) improved few-shot performance through some mix of four levers: size, training tokens, data quality, and sparsity (§1). Two things blocked us from pushing the first lever further. <Problem>Nobody knew whether pure scale was already saturating — whether the next 4× of parameters buys log-linear gains, nothing, or something qualitatively new</Problem>. And <Problem>no training system could efficiently go past a single accelerator pod without pipeline parallelism, whose "bubble" overhead and per-microbatch weight reloading waste exactly the compute you are trying to scale</Problem> (§4). A secondary annoyance: <Problem>reported "hardware FLOPs utilization" numbers are implementation-dependent (rematerialization inflates them), so training-efficiency claims across systems were not comparable</Problem> (§4.1).
+
+## Contribution (what's new)
+
+Not a new architecture — a deliberate bet on a well-established recipe at unprecedented scale, made possible by systems work. <Novelty>Pathways orchestrates two full TPU v4 pods (6144 chips) with pod-level two-way data parallelism and *no* pipelining — each pod holds a complete model copy (12-way tensor × 256-way sharded-data parallel), pods exchange 1.3 GB of gradients per host pair per step (81 Tbps bursts), reaching 1.95× single-pod throughput</Novelty> (§4). <Novelty>MFU — observed tokens/sec over the theoretical peak counting only required forward+backward FLOPs (≈ 6N per token) — makes efficiency comparable across systems</Novelty> (§4.1, App.B). On top of that infrastructure, the scientific payload: <Novelty>evaluating three identically-trained scales (8B/62B/540B) exposes *discontinuous* capability jumps that log-linear extrapolation from the two smaller models cannot predict</Novelty>, and <Novelty>scale × chain-of-thought prompting replaces task-specific finetuning pipelines on multi-step reasoning</Novelty> (§6.2, §6.3).
+
+## Research questions
+
+1. Have few-shot improvements from model scale plateaued at the ~200–500B regime? (§1)
+2. Which capabilities emerge only past a scale threshold, rather than growing smoothly? (§6.2)
+3. Can few-shot prompting alone (no finetuning, no verifiers, no domain architectures) reach finetuned SOTA on multi-step reasoning? (§6.3)
+4. How do you train past one pod at high efficiency without pipelining? (§4)
+
+## Methodology
+
+Train three dense decoder-only Transformers — 8B, 62B, 540B (118 layers, <M tex="d_{model}=18432" />, 48 heads, Tab.1) — identically on the same 780B-token corpus for exactly one epoch, then compare scaling curves internally. The corpus (from the LaMDA/GLaM line): 50% social-media conversations, 27% filtered webpages, 13% books, 5% GitHub code, 4% Wikipedia, 1% news; ~22% non-English (Tab.2, §1). No new objective, no sparsity — so any capability difference is attributable to scale.
+
+<Pass title="Architecture and training choices (and why)">
+Modifications to the vanilla Transformer, each with a stated reason (§2):
+- **SwiGLU MLP activations** — quality gain in compute-matched comparisons.
+- **Parallel layers** — `y = x + MLP(LN(x)) + Attn(LN(x))` instead of sequential composition: ~15% faster large-scale training since MLP and attention input matmuls fuse; measured quality-neutral at 62B (small degradation at 8B), *extrapolated* neutral at 540B.
+- **Multi-query attention** — one shared key/value head, <M tex="k" /> query heads: neutral for training, large speedup for autoregressive decoding.
+- **RoPE embeddings**, **shared input/output embeddings**, **no bias terms** (stability), and a **lossless 256k SentencePiece vocabulary** (whitespace-preserving for code; digits split individually).
+
+Training (§5): Adafactor without factorization (= Adam + parameter scaling), LR <M tex="10^{-2}" /> for 10k steps then <M tex="1/\sqrt{k}" /> decay, <M tex="\beta_2 = 1-k^{-0.8}" /> (rare-token second moments are poorly estimated with the standard 0.99), global-norm clip 1.0, dynamic weight decay <M tex="lr^2" />, auxiliary z-loss <M tex="10^{-4}\cdot\log^2 Z" /> to keep the softmax normalizer near zero (stability), no dropout, sequence length 2048, batch ramp 512 → 1024 → 2048 (1M → 4M tokens), 255k steps, bitwise-deterministic restarts.
+
+**Instability (§5.1):** ~20 loss spikes at the 540B scale despite clipping, absent in smaller models. Mitigation: restart ~100 steps before the spike and skip 200–500 batches. Replaying the *same* batches from a different checkpoint does not spike — so spikes come from a specific data + parameter-state combination, not "bad data". No principled fix; this is admitted engineering folklore.
+</Pass>
+
+## Main result
+
+Scale still pays, across the board: <Finding src="Tab.4, §6.1">few-shot SOTA on 28 of the 29 most-evaluated English NLP benchmarks (24/29 at 1-shot) versus the best per-task result from GPT-3, GLaM, Gopher, Chinchilla, MT-NLG, and LaMDA — and PaLM 540B beats the similarly-sized MT-NLG 530B on every one</Finding>, so tokens and data quality matter beyond raw size.
+
+<SortableTable columns={["Benchmark", "PaLM 540B", "Best prior LLM", "Anchor"]} rows={[
+  ["MMLU 5-shot avg", 69.3, 67.5, "Tab.6 (Chinchilla)"],
+  ["BIG-bench 58-task avg (5-shot)", "> avg human", "Gopher/Chinchilla below", "Fig.3"],
+  ["GSM8K 8-shot CoT+calc", 58, 55, "Tab.10 (finetuned GPT-3+verifier)"],
+  ["Avg NLU 1-shot (29 tasks)", 74.7, 68.7, "Tab.5 (GLaM)"],
+  ["Avg NLG 1-shot (29 tasks)", 63.9, 58.4, "Tab.5 (GLaM)"],
+  ["HumanEval pass@100", 76.2, 72.3, "Tab.12 (Codex 12B)"],
+  ["WMT de-en few-shot BLEU", 47.5, 41.2, "Tab.14 (supervised SOTA)"],
+  ["SuperGLUE test avg (finetuned)", 90.4, 91.2, "Tab.9 (ST-MoE-32B)"],
+]} />
+
+On <Term def="150+ collaboratively-written hard language tasks (Beyond the Imitation Game benchmark), with crowdworker human baselines allowed external tools">BIG-bench</Term>, 5-shot PaLM 540B exceeds the *average* human score on both the 58-task and 150-task aggregates and beats prior SOTA on 44/58 common tasks (Fig.3–4) — though average humans still beat it on 35% of individual tasks and "best human" remains far ahead (Fig.6–7).
+
+## Key findings
+
+- <Finding src="§6.2, Fig.5">Discontinuous improvement is common, not exotic: 25% of 150 BIG-bench tasks jump more than +10% over the log-linear projection from 8B→62B (15% jump more than +20%)</Finding>. Example: `logical_sequence` scores 13/25/87 across 8B/62B/540B where extrapolation predicts ~37; `english_proverbs` goes 25% → 87% from 62B → 540B. This is the paper's core evidence that capabilities *emerge* past a scale threshold.
+- <Finding src="Tab.10, Fig.9">Chain-of-thought is the multiplier on scale: on GSM8K, 540B goes 17% → 54% just by adding CoT exemplars (calculator adds only ~4 more points), and scaling 62B→540B fixes 22 of 45 analyzed reasoning errors</Finding> — SOTA on 4 of 7 reasoning benchmarks with 8-shot prompting alone; neither CoT nor scale suffices by itself (62B+CoT: 33%).
+- <Finding src="§13, Tab.21, Fig.24">The concurrent Chinchilla comparison undercuts pure parameter scaling: Chinchilla (70B/1.4T tokens, 588 ZFLOPs) sits *above* PaLM's interpolated compute-scaling curve on BIG-bench while PaLM 540B used 2527 ZFLOPs</Finding> — the authors concede they cannot answer "would 120B on 3.6T tokens have matched 540B?" partly because their corpus starts repeating after 780B tokens.
+- <Finding src="App.F, Tab.32–33">Training 62B longer (to 1.325T tokens) on *refreshed* data closes much of the gap — MMLU 53.7→62.8, GSM8K 33.0→48.7, HumanEval 15.9→23.7 — while repeating subcorpora is measurably worse than adding new data; but even +67% FLOPs does not bridge to 540B</Finding>: both axes matter, and repeated data has degraded value.
+- <Finding src="Tab.5, §13">PaLM 62B beats GPT-3 175B on both average NLU (67.3 vs 65.4) and NLG (57.7 vs 52.9)</Finding> — data quality (lever 3) can substitute for ~3× parameters, though the paper does not ablate this.
+- <Finding src="§7, Fig.18">Memorization scales with size and duplication: 540B exactly reproduces 2.4% of sampled 50-token training continuations (8B: 1.6%); spans seen once are memorized 0.75% of the time, spans seen 500+ times over 40%</Finding> — and the contamination audit (§8, Tab.18) shows balanced clean-vs-full deltas across scales, arguing headline results are not memorization-inflated.
+- <Finding src="Fig.23, §10.2">Model continuations track prompt toxicity far more tightly than human continuations do</Finding>, and identity-term bias co-occurrences (e.g., Islam with "terrorist") are ~70% identical between 62B and 540B — bias is inherited from data, not created by scale (§10.1.2).
+- <Finding src="Fig.15, §6.5">0-shot translation jumps discontinuously too: +13 BLEU (en-de) and +17 BLEU (en-fr) going 62B→540B, with de-en and ro-en few-shot beating (dated) supervised SOTA</Finding>; translating *into* English remains much stronger than out of it.
+
+## Implications
+
+PaLM set the agenda for the next two years: <Related>the "emergent abilities" research program (Wei et al.), chain-of-thought prompting as default methodology, and the Flan-PaLM / U-PaLM / Minerva / PaLM 2 line all build directly on this model</Related>; MFU became the standard way to report training efficiency, and multi-query attention + parallel layers became standard inference-friendly architecture choices. Read together with <Related>Chinchilla (Hoffmann et al., 2022), which §13 engages honestly</Related>, PaLM marks the moment the field pivoted from "more parameters" to "more (fresh) tokens per parameter". Worth chasing: <FollowUp>whether discontinuities are real capability phase-changes or artifacts of exact-match metrics (the later "mirage" debate)</FollowUp>, <FollowUp>the value of repeated data when fresh data runs out (App.F is an early data-constrained-scaling result)</FollowUp>, and <FollowUp>principled explanations for large-scale loss spikes</FollowUp>.
+
+## Limitations
+
+- <Caveat>No size-vs-tokens ablation at scale — the paper's own "critical open scaling question" (62B@7T vs 540B@780B) is explicitly left unanswered due to cost, batch-size limits, and data exhaustion</Caveat> (§13).
+- <Caveat>Corpus data begins repeating at 780B tokens, capping the token axis for this data pipeline</Caveat> (§13).
+- <Caveat>The parallel-layers choice was validated at 62B and *extrapolated* to 540B without a check</Caveat> (§2); similarly, 540B loss-spike mitigation (skip batches) is unprincipled (§5.1).
+- <Caveat>Fairness/bias analysis is English-only despite a multilingual model, uses brittle prompt templates, and Winogender-style benchmarks are acknowledged proxies</Caveat> (§10.3).
+- <Caveat>Checkpoint-to-checkpoint 1-shot variance is large on some tasks (WebQuestions was SOTA at the 770B-token checkpoint but worse at the reported final one; 62B was evaluated at 795B tokens "due to an oversight")</Caveat> (§6.8, Fig.17).
+- <Caveat>The "explaining jokes / logical inference" showcase (§9) uses author-written, author-selected examples with no quantitative evaluation</Caveat>.
+
+## Critiques and Questions
+
+1. **Is "discontinuous" a property of the model or the metric?** The discontinuity statistic is computed on normalized exact-match-style preferred metrics; a smoothly-improving underlying capability can look like a jump when a multi-step task only scores on the final token. The paper does not test this alternative (later literature made this exact argument).
+2. **The headline comparisons are compute-unfair in both directions.** PaLM beats per-task SOTA from models with 4–70× less training compute; meanwhile its own Fig.24 shows Chinchilla above PaLM's compute-efficiency curve on BIG-bench. "Scale works" and "this was a compute-suboptimal way to buy the capability" are both true, and only §13 says the second part out loud.
+3. **"Above average human" on BIG-bench is a weak bar**: crowdworkers of unknown effort, with the model still losing on 35% of tasks and losing badly to best-human (Fig.6–7); several model "wins" are multilingual tasks the raters likely couldn't read (§6.2).
+4. **Davinci Codex comparisons are uncontrolled** — unknown size, data, and contamination (§6.4 admits this) — so the code-model rankings are indicative only.
+5. The 46.2% MFU claim depends on their own new metric; HFU (57.8%) is reported but the GPT-3/Gopher/MT-NLG MFU numbers are reconstructed from throughput figures and personal communication, with error bars unstated.
+
+<SelfCheck q="Why did PaLM's authors conclude that both chain-of-thought prompting AND 540B scale were necessary for reasoning SOTA, rather than either alone?" a="Ablations in Tab.10: PaLM 540B without CoT gets 17% on GSM8K, PaLM 62B with CoT gets 33%, but PaLM 540B with CoT gets 54% (58% with a calculator), beating the finetuned GPT-3+verifier SOTA of 55%. Without both together, PaLM would have reached SOTA on only one of the seven reasoning benchmarks (SVAMP)." />
+
+## Glossary
+
+- <Term def="Google's ML system for asynchronous dataflow across thousands of accelerators; here used for pipeline-free two-pod data parallelism">Pathways</Term>
+- <Term def="Model FLOPs utilization: observed tokens/sec divided by the theoretical peak throughput counting only required forward+backward matmul FLOPs (~6N per token), excluding rematerialization — unlike hardware FLOPs utilization (HFU)">MFU</Term>
+- <Term def="Attention variant sharing a single key/value projection across all query heads; neutral for quality, much faster autoregressive decoding">multi-query attention</Term>
+- <Term def="Prompting with worked step-by-step solutions in the few-shot exemplars so the model generates intermediate reasoning before its answer (Wei et al., 2022)">chain-of-thought (CoT)</Term>
+- <Term def="A jump in task performance from 62B to 540B far exceeding the log-linear projection from 8B to 62B; formalized as actual minus projected score">discontinuous improvement</Term>
+- <Term def="8.5k grade-school math word problems requiring 2–8 reasoning steps (Cobbe et al., 2021)">GSM8K</Term>
+- <Term def="Memory-efficient Adam variant; used here unfactorized, i.e., Adam with learning rate scaled by parameter RMS">Adafactor</Term>
+- <Term def="Auxiliary loss penalizing the log of the softmax normalizer, keeping logits' scale bounded for training stability">z-loss</Term>
+- <Term def="Fraction of problems solved when k samples are drawn per problem and any passing sample counts">pass@k</Term>
+- <Term def="Recomputing forward activations during the backward pass to save memory at the cost of extra FLOPs">rematerialization</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

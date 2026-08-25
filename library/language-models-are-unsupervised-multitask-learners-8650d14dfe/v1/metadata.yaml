@@ -14,7 +14,7 @@ year: 2019
 source: semantic_scholar
 source_url: https://www.semanticscholar.org/paper/9405cc0d6169988371b2755e573cc28650d14dfe
 pdf_url: ''
-pdf_sha256: null
+pdf_sha256: d9d852e2894556e73f53cb22b7c605a9643d6f0b19bf604b429ed6192fa24f4e
 fetched_at: '2026-08-24T03:34:32Z'
 source_updated_at: null
 ids:
@@ -50,15 +50,16 @@ scoring:
     trend_signal: 0.0
     author_or_lab_signal: 0.0
 artifacts:
-  pdf: null
-  extraction: null
-  summary: null
+  pdf: library/language-models-are-unsupervised-multitask-learners-8650d14dfe/v1/paper.pdf
+  extraction: library/language-models-are-unsupervised-multitask-learners-8650d14dfe/v1/extraction.txt
+  summary: library/language-models-are-unsupervised-multitask-learners-8650d14dfe/v1/summary.mdx
   code_url: null
   project_url: null
   dataset_url: null
 status:
-  downloaded: false
-  extracted: false
-  summarized: false
+  downloaded: true
+  extracted: true
+  summarized: true
   triaged: true
   user_read_status: unread
+  summary_format: mdx

@@ -1,0 +1,125 @@
+---
+canonical_key: arxiv-2001.08361
+version_key: v1
+title: Scaling Laws for Neural Language Models
+authors:
+- Jared Kaplan
+- Sam McCandlish
+- Tom Henighan
+- Tom B. Brown
+- Benjamin Chess
+- Rewon Child
+- Scott Gray
+- Alec Radford
+- Jeffrey Wu
+- Dario Amodei
+venue: arXiv
+year: 2020
+tags:
+- foundational
+topic_groups:
+- llm
+triage_label: READ_SOON
+triage_confidence: medium
+source_link: https://arxiv.org/abs/2001.08361v1
+summary_date: '2026-08-25'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>Language-model loss falls as a smooth power law in model size, data, and compute — over up to seven orders of magnitude, nearly independent of architecture shape — and the fitted laws combine into a predictive framework whose punchline is that a fixed compute budget is best spent on very large models trained on modest data, stopped far short of convergence.</TLDR>
+
+<WhyItMatters>This is the paper that made "just scale it" a quantitative engineering discipline: it justified GPT-3's design, introduced the loss-prediction machinery every frontier lab now runs before training, and set up the compute-allocation question that Chinchilla later revised. The essential companion to T5 and GPT-3 on the LLM milestone path.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "7 orders", label: "of magnitude spanned by power-law trends", sub: "no deviation observed at the top end (Fig.1, §1.1)" },
+  { value: "0.076 / 0.095 / 0.050", label: "exponents for N, D, and compute", sub: "L falls ~5% per doubling of parameters (Tab.5)" },
+  { value: "N ∝ C^0.73", label: "compute-optimal model growth", sub: "10× compute → ~5× model, ~2× data, ~no extra steps (Fig.14)" },
+  { value: "768 → 1.5B", label: "non-embedding parameters studied", sub: "WebText2, 22M–23B token subsets, ctx 1024 (§3)" },
+]} />
+
+## Motivation
+By early 2020 it was clear that bigger language models trained on more data performed better — but only qualitatively. <Problem>Nobody could say how much better: there was no quantitative relationship between loss and model size, data size, or compute, so training decisions (how big a model, how much data, when to stop) were folklore rather than calculation</Problem> (§1). And with each ingredient entangled with the others — a bigger model, trained longer, on more data — <Problem>the field could not tell whether performance was limited by capacity, data, or optimization, nor whether architectural tinkering (depth vs width, heads) mattered at all compared to raw scale</Problem>. Language modeling is the ideal testbed: cross-entropy gives a smooth, unbounded metric with a high ceiling and low floor, so trends can be measured across many orders of magnitude.
+
+## Contribution (what's new)
+<Novelty>The empirical laws themselves: test loss is a precise power law in each of non-embedding parameters N, dataset tokens D, and optimally-allocated compute, and single two-variable equations — <M tex="L(N,D)" /> and <M tex="L(N,S)" /> — govern their joint behavior, including overfitting and the whole shape of training curves</Novelty> (§1.2, §4–5). The form is forced by three constraints: tokenization can only rescale the loss (so constants like <M tex="N_c" /> carry no fundamental meaning), each variable's law must be recovered when the other goes to infinity, and overfitting should admit a <M tex="1/D" /> expansion (§4.1). From the fitted laws follows the second delta: <Novelty>a derived, then empirically confirmed, compute-allocation rule — spend budget overwhelmingly on model size, grow data sublinearly, and stop training at roughly 10% above the converged loss</Novelty> (§6, App.B). A methodological choice makes all of it work: <Novelty>counting only non-embedding parameters, which collapses models of wildly different depths onto one clean trend</Novelty> (Fig.6).
+
+## Research questions
+1. How does language-modeling loss depend, quantitatively, on model size, dataset size, compute, and architecture shape — and over how many orders of magnitude do the dependencies hold? (§3)
+2. How do N and D trade off — how fast must data grow with model size to keep overfitting controlled? (§4)
+3. Given a fixed compute budget and freedom over everything else, what allocation of model size, batch size, and training steps minimizes loss? (§5–6)
+
+## Methodology
+Train a large family of decoder-only Transformers (768 to 1.5B non-embedding parameters; shapes from 2 layers × 128 wide to 207 × 768) on WebText2 (22.9B BPE tokens, vocab 50,257, context 1024), varying exactly one bottleneck at a time: model size on unlimited data, dataset subsets (22M–23B tokens) with early stopping, fixed compute with a scan over model sizes (§2–3). Compute is estimated as <M tex="C \approx 6NBS" /> FLOPs (forward + backward, embeddings and context-dependent terms excluded). Two corrections make the trends clean: measure N without embedding parameters, and convert step counts to <M tex="S_{\min}" /> — the steps that would be needed at very large batch — using the critical-batch-size theory of gradient noise, since most runs used one fixed batch size (§5.1). Then fit the two master equations and *derive* the compute frontier from them, checking the derivation against the empirical optimum (§6).
+
+<Pass title="Method details: the master equations and the frontier derivation">
+**Joint model/data law** (Eq.1.5, fits in Tab.2: <M tex="\alpha_N = 0.076,\ \alpha_D = 0.103" />):
+
+<MathBlock>{`L(N, D) = \\left[\\left(\\frac{N_c}{N}\\right)^{\\alpha_N/\\alpha_D} + \\frac{D_c}{D}\\right]^{\\alpha_D}`}</MathBlock>
+
+**Model/training-time law** (Eq.1.6, Tab.3: <M tex="\alpha_S = 0.76,\ S_c \approx 2.1\times10^3" />), valid after the initial transient:
+
+<MathBlock>{`L(N, S) = \\left(\\frac{N_c}{N}\\right)^{\\alpha_N} + \\left(\\frac{S_c}{S_{\\min}(S)}\\right)^{\\alpha_S}`}</MathBlock>
+
+**Critical batch size** obeys its own law in the loss only — <M tex="B_{\text{crit}}(L) = B_* / L^{1/\alpha_B}" /> with <M tex="B_* \approx 2\times10^8" /> tokens, <M tex="\alpha_B \approx 0.21" /> — independent of model size, roughly doubling per 13% loss decrease, ~1–2M tokens for the largest models (Fig.10). Training at <M tex="B_{\text{crit}}" /> costs 2× the minimum steps and 2× the minimum examples — the optimal time/compute compromise.
+
+**Frontier**: substituting <M tex="S_{\min} = C_{\min}/(6NB)" /> into <M tex="L(N,S)" /> and minimizing over N at fixed compute yields <M tex="L(C_{\min}) \propto C_{\min}^{-\alpha_C^{\min}}" /> with <M tex="\alpha_C^{\min} = (1/\alpha_S + 1/\alpha_B + 1/\alpha_N)^{-1} \approx 0.054" />, and allocations <M tex="N \propto C_{\min}^{0.71}" /> — against measured 0.050 and 0.73 (App.B, Fig.13–14). The same algebra says compute-efficient training terminates at a fixed fraction <M tex="\alpha_N/\alpha_S \approx 10\%" /> above the converged loss; versus the usual train-to-2%-of-convergence habit, that is 2.7× more parameters, 7.7× fewer steps, 65% less compute for equal loss (App.B.3).
+
+**Training details**: Adam (Adafactor above 1B), 250k steps, batch 512 × 1024 tokens, 3k-step warmup + cosine decay; schedule choice found mostly irrelevant (App.D.6). Seed-to-seed loss variation ~0.02 (§4.2).
+</Pass>
+
+## Main result
+Three clean single-variable laws (Fig.1, Tab.5): <Finding src="Eq.1.1–1.3, Tab.5">L(N) = (8.8×10^13 / N)^0.076 for models trained to convergence on ample data; L(D) = (5.4×10^13 / D)^0.095 for large models on limited data with early stopping; L(C_min) = (3.1×10^8 / C_min)^0.050 for optimally allocated compute — trends holding over six to eight orders of magnitude with no visible deviation at the top</Finding>. Combined, they dictate the allocation answer: <Finding src="Fig.3, Fig.14, §6.1">as compute grows 10×, the optimal model grows ~5× (N ∝ C^0.73) while data processed grows only ~2× (D ∝ C^0.27) — almost all of it absorbed by larger batches (B ∝ C^0.24), with serial steps nearly constant (S ∝ C^0.03)</Finding>. Big models trained briefly, not small models trained long.
+
+<SortableTable columns={["Quantity", "Law", "Exponent", "Scale constant"]} rows={[
+  ["Loss vs parameters", "L(N)", "0.076", "Nc = 8.8e13 non-embed params"],
+  ["Loss vs data", "L(D)", "0.095", "Dc = 5.4e13 tokens"],
+  ["Loss vs optimal compute", "L(Cmin)", "0.050", "Cc = 3.1e8 PF-days"],
+  ["Optimal model size", "N(Cmin)", "0.73", "1.3e9 params at 1 PF-day"],
+  ["Optimal batch", "B(Cmin)", "0.24", "2.0e6 tokens at 1 PF-day"],
+  ["Optimal serial steps", "S(Cmin)", "0.03", "5.4e3 steps at 1 PF-day"],
+]} />
+
+## Key findings
+- <Finding src="Fig.5–6, §3.1">Shape barely matters: at fixed N, varying depth/width aspect ratio by 40× moves loss only a few percent (a 6-layer, 4288-wide model lands within 3% of GPT-2's 48×1600), and depth curves collapse onto one trend once embedding parameters are excluded</Finding> — scale, not architecture tuning, is the lever.
+- <Finding src="Eq.4.4, Fig.9">Overfitting is governed by a single ratio: the penalty depends on N^0.74/D, so data may grow sublinearly — 8× the model needs only ~5× the data, and D ≳ 5000·N^0.74 suffices to overfit by less than run-to-run variance</Finding>.
+- <Finding src="Fig.2, Fig.19">Larger models are drastically more sample-efficient, reaching a fixed loss with up to ~100× fewer examples and far fewer serial steps than the smallest capable model</Finding> — the mechanism behind "train big, stop early".
+- <Finding src="Fig.8, App.D.8">Transfer to other text distributions (books, Wikipedia, Common Crawl) costs only a roughly constant loss offset: out-of-distribution performance is a function of in-distribution validation loss alone, independent of depth or training phase</Finding> — validation loss is a sufficient statistic for generalization.
+- <Finding src="Fig.7, App.D.5">LSTMs match Transformers on early context tokens but plateau after ~100 tokens, while Transformer per-token loss keeps improving as a power law in context position — larger models also learn patterns from less context</Finding>.
+- <Finding src="§6.3, Fig.15">Extrapolated, the laws self-contradict: compute-optimal data grows as C^0.26 but overfitting control demands C^0.54, forcing an intersection at roughly C* ~ 10^4 PF-days, N* ~ 10^12 parameters, D* ~ 10^12 tokens, L* ~ 1.7 nats/token — either where the laws break down, or (conjecturally) where models exhaust the reliable information in language</Finding>; the point is uncertain by an order of magnitude in either direction.
+
+## Implications
+The paper converts scaling from an article of faith (the "bitter lesson" reading of <Related>T5's scaling section and its "given 4× compute" question</Related>) into arithmetic — and its prescription was executed months later as <Related>GPT-3, a very large model trained on relatively few tokens, stopped far short of convergence</Related>. Its loss-prediction methodology became standard pre-training practice. The allocation exponents, however, did not survive: <Related>Hoffmann et al. 2022 (Chinchilla) redid the analysis with learning-rate schedules matched to each budget and found N and D should scale roughly equally (about 20 tokens per parameter), meaning GPT-3-era models were substantially undertrained on data</Related> — the qualitative framework held, the 0.73/0.27 split did not. Threads worth pulling: <FollowUp>whether smooth loss improvements hide discontinuous capability changes — the paper's own "more is different" warning, which becomes the emergent-abilities debate</FollowUp>, <FollowUp>the conjectured universality of these laws across modalities (tested by the same group's follow-up on autoregressive generative modeling)</FollowUp>, and <FollowUp>a theory that derives the exponents — the "statistical mechanics beneath the thermodynamics" the discussion explicitly asks for</FollowUp> (§8).
+
+## Limitations
+- <Caveat>No theoretical understanding of any of the laws — the authors state the scalings with model size and compute are "especially mysterious", and without a theory of corrections it is unclear when the laws can be trusted</Caveat> (App.C).
+- <Caveat>Everything is cross-entropy on one dataset with one tokenizer: WebText2, BPE-50257, context 1024. The scale constants are explicitly tokenization-dependent, and no downstream task is evaluated</Caveat> (§1.2, §2.3).
+- <Caveat>The fitted exponents come from models up to only 1.5B parameters and ~10^0 PF-days; the headline allocations are extrapolations across many untested orders of magnitude, and the L(N,D) fit already fails for the smallest data subsets (40 steps per epoch)</Caveat> (§4.2, App.C).
+- <Caveat>Bcrit(L) is trusted far outside the measured loss range, and the compute estimate C ≈ 6N drops context-dependent terms, confounding the laws when context length rivals 12·d_model</Caveat> (App.C).
+- <Caveat>Regularization was fixed (10% dropout, early stopping) rather than tuned per (N, D), and hyperparameters beyond learning rate were not swept — either could shift the overfitting law</Caveat> (§4.2, App.C).
+
+## Critiques and Questions
+1. The most consequential number — N ∝ C^0.73 — was later shown to be an artifact: with cosine schedules tuned to each compute budget (rather than a fixed 250k-step schedule) and larger-scale fits, Chinchilla obtained ~C^0.5 for both N and D. The paper's own caveat about untuned optimization hyperparameters (App.C) turned out to be exactly where the error lived. Lesson for reading any scaling paper: exponents inherit every fixed hyperparameter of the sweep.
+2. "Performance depends weakly on shape" is measured within the vanilla Transformer family at fixed N ≤ 1.5B; it licensed years of architectural conservatism, but the claim never covered attention variants, sparsity, or scale-dependent shape effects.
+3. Excluding embedding parameters is what makes the laws clean (Fig.6) — but it is a post-hoc variable choice justified by its own cleanliness; with today's vocabularies and tied embeddings the accounting convention materially changes reported exponents at small scale.
+4. The L* ≈ 1.7 nats "entropy of natural language" reading of the contradiction point is intriguing but unfalsifiable as stated: the intersection moves an order of magnitude with small exponent perturbations, and the two extrapolated laws need only one to bend.
+5. Loss is treated as the objective; the paper flags but does not test whether equal loss from different (N, D) mixes yields equal capabilities — later work on data-constrained scaling and memorization shows it does not always.
+
+<SelfCheck q="You are given a 10× larger compute budget. According to this paper, how do you spend it, and when do you stop training?" a="Grow the model ~5× (N ∝ C^0.73), process only ~2× more data (D ∝ C^0.27), and take almost no additional serial steps (S ∝ C^0.03) — the extra data throughput comes from larger batches near the critical batch size. Stop when the loss is still ~10% above what the model would reach at convergence: training to near-convergence is compute-inefficient, costing ~3× the compute of the optimal early stop (App.B.2–B.3)." />
+
+## Glossary
+- <Term def="Relationship of the form L = (X_c/X)^α: on log-log axes a straight line; the constant X_c depends on tokenization and carries no fundamental meaning">power law</Term>
+- <Term def="Parameter count excluding token and positional embeddings, N ≈ 12·n_layer·d_model²; the variable under which scaling trends collapse cleanly">non-embedding parameters</Term>
+- <Term def="One petaflop/s sustained for a day = 8.64×10^19 FLOPs; the paper's unit of training compute, estimated as C ≈ 6·N·B·S">PF-day</Term>
+- <Term def="Batch size below which compute is used efficiently and above which returns diminish; predicted by the gradient noise scale, it depends only on the current loss, not model size">critical batch size</Term>
+- <Term def="Steps (S_min) or compute (C_min) that training would need at the ideal batch-size extreme; the batch-corrected quantities in which the laws are stated">S_min / C_min</Term>
+- <Term def="Halting training when validation loss stops improving; how the data-limited runs are compared fairly">early stopping</Term>
+- <Term def="Cross-entropy measured in natural-log units; 1 nat ≈ 1.44 bits per token">nats</Term>
+- <Term def="Extended GPT-2 training corpus: outbound Reddit links (3+ karma) through Oct 2018; 20.3M documents, 96 GB, 2.29×10^10 tokens">WebText2</Term>
+- <Term def="Fraction by which current loss exceeds the model's converged loss; compute-efficient training stops at ~10%">convergence factor</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

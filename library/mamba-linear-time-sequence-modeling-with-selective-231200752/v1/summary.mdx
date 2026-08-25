@@ -1,0 +1,124 @@
+---
+canonical_key: arxiv-2312.00752
+version_key: v1
+title: 'Mamba: Linear-Time Sequence Modeling with Selective State Spaces'
+authors:
+- Albert Gu
+- Tri Dao
+venue: arXiv
+year: 2023
+tags:
+- foundational
+topic_groups:
+- llm
+triage_label: READ_SOON
+triage_confidence: medium
+source_link: https://arxiv.org/abs/2312.00752v2
+summary_date: '2026-08-25'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>Mamba makes state space model parameters functions of the input ("selection"), which destroys the convolutional shortcut that made prior SSMs fast — so it recovers speed with a hardware-aware fused parallel scan that never writes the expanded state to GPU main memory, yielding the first attention-free architecture to match a strong Transformer recipe on language modeling while scaling linearly in sequence length and running 4–5x faster at inference.</TLDR>
+
+<WhyItMatters>The most credible challenge to attention's monopoly since 2017: a fully recurrent model with constant-time-per-token generation and no KV cache that holds up on language, not just on synthetic long-range benchmarks. Foundational for anyone tracking long-context architectures, and the origin of the SSM/hybrid line (Mamba-2, Jamba, Zamba, Falcon-Mamba).</WhyItMatters>
+
+<KeyStats items={[
+  { value: "63.3 vs 59.1", label: "avg zero-shot accuracy, Mamba-2.8B vs Pythia-2.8B", sub: "also beats Pythia-6.9B's 61.7 (Tab.3)" },
+  { value: "4-5x", label: "inference throughput vs same-size Transformer", sub: "no KV cache ⇒ far larger batches (Fig.8)" },
+  { value: "1M tokens", label: "induction-heads extrapolation from 256-token training", sub: "4000x; no baseline exceeds 2x (Tab.2/11)" },
+  { value: "20-40x", label: "fused scan speedup vs naive PyTorch scan", sub: "beats FlashAttention-2 past 2K length (§4.5)" },
+  { value: "8.69 vs 10.56", label: "perplexity, S6 vs S4 inside the same block", sub: "350M models, the selection ablation (Tab.6)" },
+]} />
+
+## Motivation
+Sequence modeling forces a single tradeoff: <Problem>attention is effective precisely because it does not compress context at all — it keeps every token in the KV cache — which is why it costs quadratic time in training and linear memory per generated token, and cannot see beyond a finite window</Problem> (§3.1). Recurrent models invert this: a fixed-size state buys constant-time inference, but their quality is capped by how well that state compresses history. Structured SSMs (S4 and descendants) seemed to escape the dilemma by expanding the effective state and computing efficiently as a global convolution — but only under a hidden constraint: <Problem>all prior structured SSMs must be linear time-invariant (their dynamics constant across timesteps) to be computable as convolutions, and an LTI model physically cannot decide *based on content* what to keep or discard</Problem> (§2, §3.1). That is why <Problem>SSMs dominated continuous modalities (audio, vision, Long Range Arena) yet lost to attention on discrete, information-dense text</Problem>. The failure is visible in two synthetics: the ordinary Copying task (constant spacing) is solvable by time-awareness alone, but Selective Copying (random spacing) and Induction Heads (associative recall of "…Harry Potter … Harry → ?") demand content-awareness, and LTI models fail both.
+
+## Contribution (what's new)
+<Novelty>Selection: make Δ, B, and C functions of the input token — so the recurrence itself becomes time-varying and can filter, forget, or persist based on content</Novelty> (§3.2, Alg.2). One token of intuition: with a large <M tex="\Delta_t" /> the state resets and absorbs the current input; with <M tex="\Delta_t \to 0" /> the input is ignored and the state passes through untouched, so "um" in a sentence or 500 noise tokens between two data tokens simply do not enter the state. <Novelty>Theorem 1 shows that classic RNN gating is exactly the 1-dimensional special case of this mechanism — <M tex="h_t = (1-g_t)h_{t-1} + g_t x_t" /> with <M tex="g_t = \sigma(\mathrm{Linear}(x_t))" /> — so discretization of a continuous system is the principled origin of heuristic gates</Novelty> (§3.5.1).
+
+The cost is that time-varying dynamics kill the convolutional form, and the naive recurrence must materialize a state of shape `(B, L, D, N)` — N (≈16) times larger than the input. <Novelty>The fix is a hardware-aware fused kernel: load the compact parameters from HBM to SRAM, discretize and run a work-efficient parallel scan entirely in SRAM, write back only the `(B, L, D)` output, and recompute intermediate states in the backward pass instead of storing them</Novelty> (§3.3, App.D) — reducing memory IO by a factor of N and making the layer as memory-frugal as FlashAttention. <Novelty>Third, the architecture is simplified: the H3-style SSM block and the Transformer's MLP block are fused into one homogeneous block (expansion factor E=2, no attention and no separate MLP), stacked uniformly</Novelty> (§3.4, Fig.3).
+
+## Research questions
+1. Is content-based selection the missing ingredient that keeps efficient sub-quadratic models from matching attention on discrete data? (§3.1, §4.1)
+2. Can a time-varying (non-convolutional) SSM still be fast on real GPUs? (§3.3, §4.5)
+3. Does a fully recurrent, attention-free model match a modern Transformer recipe on language, and generalize across modalities (DNA, audio) and to million-token contexts? (§4.2–4.4)
+
+## Methodology
+A structured SSM maps each channel of the input through a latent state <M tex="h_t \in \mathbb{R}^N" />: <M tex="h_t = \bar{A}h_{t-1} + \bar{B}x_t" />, <M tex="y_t = Ch_t" />, where the discrete <M tex="(\bar{A}, \bar{B})" /> come from continuous <M tex="(A, B)" /> via a step size Δ (zero-order hold: <M tex="\bar{A} = \exp(\Delta A)" />). In S4 these are constants; in Mamba's S6 layer, B and C are linear projections of the input and Δ is a broadcast projection through softplus, so the recurrence changes at every position. Training uses the fused selective scan; inference is a plain recurrence with O(1) state per step and no cache. Evaluation spans synthetics (Selective Copying, Induction Heads), Pile language modeling with Chinchilla-protocol scaling laws (125M–1.3B) and 300B-token models for zero-shot eval (130M–2.8B), human-genome DNA (HG38), and audio waveforms (YouTubeMix, SC09).
+
+<Pass title="Method details: the selective scan, the block, and training setup">
+**Why the state cannot simply be materialized**: an SSM applied per channel with state dimension N has total hidden state `(B, L, D, N)`, a factor of N ≈ 16–100 larger than the input `(B, L, D)`. LTI models dodge this by expanding into a convolution kernel of size `(B, L, D)` instead. Selective SSMs cannot, so the state must live in fast memory only.
+
+<Stepper steps={[
+  {title: "1. Load compact parameters", body: "Read Δ, A, B, C — O(BLN + DN) bytes — from slow HBM into fast SRAM, rather than the expanded (B,L,D,N) tensors."},
+  {title: "2. Discretize in SRAM", body: "Compute the discrete Ā, B̄ of size (B,L,D,N) inside SRAM; they never touch HBM."},
+  {title: "3. Parallel associative scan", body: "The recurrence is sequential but associative, so a work-efficient parallel scan (Blelloch) computes all states in O(L log L) depth with O(BLDN) FLOPs — fewer FLOPs than the convolutional path's O(BLD log L) with a lower constant, for long L and modest N."},
+  {title: "4. Contract and write out", body: "Multiply by C and sum over the state dimension, writing only the (B,L,D) output back to HBM. Net effect: memory IO reduced by a factor of O(N)."},
+  {title: "5. Recompute on the backward pass", body: "Intermediate states are not saved; they are recomputed from re-loaded inputs during backprop. Reading them back from HBM would cost more than recomputing, so this is a speedup as well as a memory saving."},
+]} />
+
+For sequences too long to fit SRAM, the scan is chunked, carrying intermediate states across chunks.
+
+**Block**: each Mamba block is a SwiGLU-style gated MLP with a `conv → SSM` path added on the main branch (SiLU activation, optional LayerNorm borrowed from RetNet). Most parameters (`3ED²`) sit in the linear projections; the SSM itself contributes few. Two Mamba blocks are stacked to match the `12D²` parameters of one MHA+MLP Transformer layer (§3.4).
+
+**Design choices with reasons** (§3.6): real-valued state by default (complex helps only on continuous modalities — used solely in the audio experiment); S4D-Real initialization; only Δ, B, C are made selective — A affects the model only through <M tex="\bar{A} = \exp(\Delta A)" />, so selectivity in Δ already induces selectivity in <M tex="\bar{A}" />.
+
+**Training** (App.E.2): Pile, GPT-2 tokenizer for scaling laws (GPT-NeoX for the 300B-token models), AdamW, cosine schedule, gradient clip 1.0, weight decay 0.1, no dropout. The Transformer++ baseline gets rotary embeddings, SwiGLU, RMSNorm, no linear biases, and 5x the GPT-3 peak learning rate — the strongest Transformer recipe the authors know of, and Mamba is given the same improved recipe.
+</Pass>
+
+## Main result
+<Finding src="Fig.4">Mamba is the first attention-free model to match Transformer++ on Pile scaling laws from 125M to 1.3B parameters, with the gap widening in Mamba's favor as context grows from 2K to 8K</Finding>, while Hyena, RWKV, RetNet, and H3++ all trail. Downstream, quality transfers:
+
+<SortableTable columns={["Model", "Pile ppl", "LAMBADA acc", "HellaSwag", "PIQA", "ARC-E", "ARC-C", "WinoGrande", "Avg"]} rows={[
+  ["Mamba-130M", 10.56, 44.3, 35.3, 64.5, 48.0, 24.3, 51.9, 44.7],
+  ["Pythia-160M", 29.64, 33.0, 30.2, 61.4, 43.2, 24.1, 51.9, 40.6],
+  ["Mamba-370M", 8.28, 55.6, 46.5, 69.5, 55.1, 28.0, 55.3, 50.0],
+  ["Pythia-410M", 9.95, 51.4, 40.6, 66.9, 52.1, 24.6, 53.8, 48.2],
+  ["Mamba-1.4B", 6.80, 64.9, 59.1, 74.2, 65.5, 32.8, 61.5, 59.7],
+  ["Pythia-1.4B", 7.51, 61.7, 52.1, 71.0, 60.5, 28.5, 57.2, 55.2],
+  ["RWKV-1.5B", 7.70, 56.4, 52.5, 72.4, 60.5, 29.4, 54.6, 54.3],
+  ["Mamba-2.8B", 6.22, 69.2, 66.1, 75.2, 69.7, 36.3, 63.5, 63.3],
+  ["Pythia-2.8B", 6.73, 64.7, 59.3, 74.0, 64.1, 32.9, 59.7, 59.1],
+  ["Pythia-6.9B", 6.51, 67.1, 64.0, 75.2, 67.3, 35.5, 61.3, 61.7],
+  ["RWKV-7.4B", 6.31, 67.2, 65.5, 76.1, 67.8, 37.5, 61.0, 62.5],
+]} />
+
+<Finding src="Tab.3">Mamba-2.8B is best-in-class on every single evaluation at its size and beats models roughly twice its size — including Pythia-6.9B (63.3 vs 61.7 average) trained on the same data, tokenizer, and token budget</Finding>.
+
+## Key findings
+- <Finding src="Tab.1, Tab.2/11">Selection, not architectural gating, is what solves content-aware tasks: on Selective Copying, S6 reaches 97.0–99.8% in any block while every LTI layer stalls at 18–57% (S4 18.3, H3+S4 57.0, Hyena 30.1); on Induction Heads, Mamba trained at length 256 stays at perfect accuracy out to 2^20 = 1M tokens while attention (even with xPos), H3, and Hyena all collapse past ~512–1024</Finding>. The authors explicitly reject the common claim that multiplicative gating confers "data-dependence" — gating does not interact along the sequence axis and cannot change token spacing (§4.1.1, App.A).
+- <Finding src="Tab.7">Δ is the single most important selective parameter (9.81 ppl alone vs 10.93 with none), but the three synergize far beyond their individual effects (all three: 8.71)</Finding> — consistent with Theorem 1's identification of Δ with gating.
+- <Finding src="Tab.10">State expansion only pays off when B and C are selective: with fixed B, C, growing N from 1 to 16 buys 0.07 ppl (9.88→9.81); with selective B, C the same growth buys over 1.0 ppl (9.73→8.71) for ~1% more parameters</Finding> — the empirical core of the paper's "bigger state is better, if you can choose what enters it" thesis.
+- <Finding src="Tab.6, Fig.9">The block design barely matters; the inner layer is everything. Mamba+S6 (8.69) vs H3+S6 (8.95) is a small gap, while every LTI inner layer clusters near 10.2–10.8 regardless of block. Interleaving Mamba with MHA helps only slightly, and with plain MLPs hurts only slightly</Finding> (App.E.2.2) — notable because prior work found big gains from adding attention to LTI SSMs.
+- <Finding src="Fig.5, Fig.6, Tab.13">Longer context genuinely helps Mamba: on DNA its perplexity keeps improving out to 1M-token sequences while HyenaDNA gets *worse*, and on great-apes classification (5 species sharing 99% of DNA) accuracy rises with context to 81.3% at 1M tokens (7M-param Mamba) vs HyenaDNA's 54.9%</Finding>. LTI models cannot ignore irrelevant history, so a very long convolution kernel just aggregates noise.
+- <Finding src="Fig.10, §5">Honest negative result: selection *hurts* on audio waveforms — a uniformly sampled, smooth continuous signal where LTI inductive bias is correct — and the complex-valued S4 parameterization still wins there</Finding>. The gap shrinks when only the U-Net's inner (already-pooled, "tokenized") blocks are made selective, supporting a continuous-discrete spectrum rather than a universal win. Even so, Mamba-UNet halves SC09 speech-generation FID vs SaShiMi (0.94 vs 1.99 at ~6M params; 0.67 at 24M), beating much larger GAN and diffusion baselines (Tab.4).
+- <Finding src="Fig.8, Tab.15">Efficiency is real, not asymptotic hand-waving: the fused scan beats FlashAttention-2 beyond 2K length (up to ~7x at 32K) and is 20–40x faster than a naive PyTorch scan, while training memory matches an optimized Transformer (4.8GB vs 4.6GB at batch 1)</Finding>. Inference throughput gains come from the absence of a KV cache allowing much larger batches (Mamba-6.9B: 515 tok/s at batch 128 where Transformer-6.7B OOMs past batch 16 at 120 tok/s).
+
+## Implications
+If selection is the missing ingredient, the field's decade-long "efficient attention" search was aimed at the wrong target: the problem was never the cost of attention but the *inability of cheap alternatives to choose*. <Related>Mamba unifies the S4/S5/DSS structured-SSM line with the gated-RNN tradition (LSTM/GRU, QRNN, SRU) via Theorem 1, and positions H3, Hyena, RetNet, and RWKV as LTI special cases that inherit the same blind spot</Related>. The practical payoff — constant memory per generated token — reframes long-context serving economics, and the hardware-aware-algorithm methodology continues the FlashAttention thesis that IO, not FLOPs, sets the frontier. <FollowUp>Whether the advantage survives at 7B+ scale is the paper's own biggest open question</FollowUp>; <FollowUp>whether SSMs support the Transformer ecosystem's affordances (in-context learning, instruction tuning, RLHF, quantization, LoRA) is entirely untested here</FollowUp>; <FollowUp>the audio result suggests hybrid stacks where outer layers stay LTI and inner layers are selective</FollowUp>; and <FollowUp>the fixed-size state must eventually lose to attention on exact long-range recall — where that boundary lies is the question later Mamba-vs-Transformer copying/recall studies pursued</FollowUp>.
+
+## Limitations
+- <Caveat>Scale: scaling laws stop at 1.3B and downstream models at 2.8B, below the 7B scale at which RWKV, RetNet, and Llama were evaluated; the authors note that scaling SSMs may require further engineering not discussed here</Caveat> (§5).
+- <Caveat>No free lunch: selection degrades performance on continuous modalities (audio waveforms), where LTI and complex-valued parameterizations remain better</Caveat> (§5, Fig.10) — Mamba is not a universal replacement.
+- <Caveat>Downstream affordances (fine-tuning, prompting, in-context learning beyond induction heads, RLHF, quantization) are explicitly unexamined</Caveat> (§5).
+- <Caveat>Evaluations are all pretraining-quality and zero-shot commonsense; no instruction-following, reasoning, code, or long-context retrieval benchmarks on natural text</Caveat> (inferred from §4.2).
+- <Caveat>Several results are single-run with tuned-per-model learning rates (Mamba's optimal DNA LR of 8e-3 sits at the top of the swept range and may still be suboptimal), and induction-heads baselines were reported at different epoch counts</Caveat> (App.E.1, E.3.2).
+
+## Critiques and Questions
+1. The strongest claim — "Transformer-quality" — rests on perplexity and six zero-shot commonsense tasks. Those are exactly the metrics a well-compressed state does well on. The tasks that should most stress a fixed-size state (multi-fact retrieval over long natural-language context, in-context copying of arbitrary strings) are tested only in the synthetic induction-heads setting, where the vocabulary is 16 tokens.
+2. Induction-heads extrapolation to 1M is a striking demonstration but a favorable one: a 2-layer, 74K-parameter model on a task with one relevant bigram. Attention baselines OOM past 16K, so the comparison at 1M is against nothing.
+3. Some baseline comparisons are underpowered by the authors' own admission — RWKV and RetNet lack 8K-context results due to missing efficient implementations, and Hyena's induction-heads model carries 69M parameters (mostly positional encodings) against Mamba's 74K, so those rows are not like-for-like.
+4. The Mamba block is largely a SwiGLU MLP with a conv→SSM path added, and the ablations show block choice barely matters. The architecture section is therefore closer to simplification than contribution; the real content is the S6 layer plus the kernel.
+5. The scan's O(BLDN) FLOPs beat convolution's O(BLD log L) only "for long sequences and not-too-large state dimension N" — the crossover is asserted rather than mapped, and all benchmarks fix N=16.
+
+<SelfCheck q="Why can't prior structured SSMs (S4, H3, Hyena) simply be made input-dependent, and what breaks if you do it naively?" a="Their efficiency depends on linear time-invariance: with constant (Δ, A, B, C) the recurrence unrolls into a single global convolution whose kernel is only (B, L, D), so the N-times-larger latent state never has to be materialized. Making the parameters input-dependent makes the dynamics time-varying, which destroys the convolutional form and forces the recurrent path — whose naive implementation must write the (B, L, D, N) state to GPU HBM, making it memory-bandwidth bound and impractically slow. Mamba's fused selective scan resolves this by materializing that state only in SRAM and recomputing it in the backward pass, cutting IO by a factor of N." />
+
+## Glossary
+<Term def="Structured State Space Model: a sequence layer mapping input to output through a latent state via h' = Ah + Bx, y = Ch, with structure (usually diagonal A) imposed for efficiency">SSM</Term> · <Term def="The original structured SSM (Gu, Goel, Ré 2022), computed as a global convolution using HIPPO-derived initialization">S4</Term> · <Term def="Mamba's layer: S4 plus a selection mechanism, computed with a scan — 'S4 + selection + scan'">S6</Term> · <Term def="Linear Time Invariance: the model's dynamics are constant across timesteps, which makes recurrence equivalent to convolution but blocks content-dependent behavior">LTI</Term> · <Term def="Making Δ, B, C functions of the current input so the recurrence can filter, forget, or persist based on content">selection mechanism</Term> · <Term def="Converting continuous-time (Δ, A, B) into discrete (Ā, B̄), e.g. by zero-order hold Ā = exp(ΔA); the step size Δ generalizes an RNN gate">discretization</Term> · <Term def="A parallel algorithm computing all prefix aggregations of an associative operation in logarithmic depth; used to parallelize the time-varying recurrence">parallel associative scan</Term> · <Term def="GPU high-bandwidth memory (large, slow) versus SRAM (small, fast); most non-matmul ops are bandwidth-bound, so keeping data in SRAM is the optimization">HBM / SRAM</Term> · <Term def="A circuit that copies from earlier context — seeing 'Harry Potter' then predicting 'Potter' after a later 'Harry'; strongly predictive of in-context learning ability">induction head</Term> · <Term def="Copying task with randomly varying gaps between the tokens to memorize, so time-awareness alone cannot solve it">Selective Copying</Term> · <Term def="A strong modern Transformer baseline: rotary embeddings, SwiGLU MLP, RMSNorm, no linear biases, higher learning rates (PaLM/LLaMA-style)">Transformer++</Term> · <Term def="Fréchet Inception Distance — a generation-quality metric comparing feature distributions of generated and real samples; lower is better">FID</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

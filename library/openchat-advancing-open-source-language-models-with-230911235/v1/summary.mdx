@@ -1,0 +1,114 @@
+---
+canonical_key: arxiv-2309.11235
+version_key: v1
+title: 'OpenChat: Advancing Open-source Language Models with Mixed-Quality Data'
+authors:
+- Guan Wang
+- Sijie Cheng
+- Xianyuan Zhan
+- Xiangang Li
+- Sen Song
+- Yang Liu
+venue: arXiv
+year: 2023
+tags:
+- foundational
+topic_groups:
+- llm
+- rl
+triage_label: READ_SOON
+triage_confidence: medium
+source_link: https://arxiv.org/abs/2309.11235v2
+summary_date: '2026-08-25'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>OpenChat's C-RLFT aligns an open-source LLM using ordinary mixed-quality SFT data (ShareGPT: ~6k GPT-4 conversations mixed with ~64k GPT-3.5 ones) by treating the *data source itself* as a coarse reward and conditioning the policy on source-specific prompt tokens — a single-stage, RL-free, preference-label-free weighted SFT that makes a llama-2-13b the best-scoring 13B open model of its time (77.3 avg win rate, above Claude's 76.6).</TLDR>
+
+<WhyItMatters>Between "just SFT on distilled conversations" (Vicuna) and "full RLHF" (Llama-2-chat), this paper stakes out the practical middle: quality signal is already in your dataset's metadata, and conditioning + reweighting extracts it for free. It imports offline-RL ideas (reward-weighted regression, goal-conditioned SL) into LLM post-training, and its inference trick — prompt as the expert class — anticipates quality-steering via system prompts.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "77.3", label: "avg win rate across AlpacaEval / MT-bench / Vicuna-bench", sub: "best 13B open model; Claude 76.6, gpt-3.5-turbo 62.0 (Tab.1)" },
+  { value: "+24.6", label: "over vanilla SFT on the same 70k conversations", sub: "77.3 vs 52.7 (Tab.2)" },
+  { value: "~6k / ~70k", label: "expert (GPT-4) fraction of ShareGPT", sub: "rest is GPT-3.5, no preference labels (§4.1)" },
+  { value: "36.4 vs 35.0", label: "AGIEval: the only fine-tune beating its base model", sub: "all other 13B chat models regress (Fig.2b, Tab.5)" },
+]} />
+
+## Motivation
+Open-source alignment in 2023 had two doors, both partly stuck. Door one, SFT on collected conversations (Vicuna-style ShareGPT): <Problem>these datasets are inherently mixed-quality — a sliver of expert (GPT-4) responses inside a mass of sub-optimal (GPT-3.5) ones — and SFT's maximum-likelihood objective imitates all of it uniformly, so the low-quality mass drags the model down</Problem> (§1, §2). Door two, RLFT/RLHF: <Problem>it needs high-quality *pairwise or ranking* preference annotations plus reward-model training and RL optimization — expensive human labeling and unstable multi-stage training that most open efforts cannot afford</Problem> (§1, §2; even DPO-style single-stage methods still require the preference pairs). The data everyone already has carries no preference labels — but it does carry *source labels*, and nobody was using them.
+
+## Contribution (what's new)
+<Novelty>Treat data provenance as a coarse-grained reward — expert source (GPT-4) gets reward 1, sub-optimal source (GPT-3.5) gets α below 1 — and, because such a reward is far too crude to optimize directly, pair it with a class-conditioned policy <M tex="\pi_\theta(y \mid x, c)" /> that is KL-regularized toward the class-conditioned behavior policy <M tex="\pi_c" /> of the dataset instead of the pretrained model <M tex="\pi_0" /></Novelty> (§3, Eq.3–4). Both replacements are forced: the reward alone cannot rank two responses *within* a class, so the class token must inject the missing quality information into the input; and regularizing toward <M tex="\pi_0" /> would anchor the model to something *worse* than even the sub-optimal data's generator (base llama-2 vs GPT-3.5). <Novelty>The KL-regularized optimum then collapses, via the standard closed form, into single-stage reward-weighted regression — plain SFT with per-class weights and source-tagged prompts — no reward model, no RL, no reference model in memory during training</Novelty> (Eq.5–6).
+
+## Research questions
+1. Can quality *metadata* (which model generated this conversation) substitute for preference labels in aligning open LLMs? (§3)
+2. Does exploiting the sub-optimal majority beat simply filtering down to the expert slice? (§5.2)
+3. Does the resulting model generalize (AGIEval) rather than overfit chat-style benchmarks? (§4.2)
+
+## Methodology
+Tag every ShareGPT conversation with its source class using distinct conversation templates — expert turns get `GPT4 User:` / `GPT4 Assistant:`, sub-optimal turns get `GPT3 User:` / `GPT3 Assistant:`, with a new `<|end of turn|>` special token separating utterances (§3.2). Fine-tune llama-2-13b on all ~70k conversations with a weighted log-likelihood: weight 1.0 on GPT-4 examples, 0.1 on GPT-3.5 examples (the class-constant simplification of <M tex="\exp(r_c/\beta)" />, §4.1). At inference, always present the GPT-4 template, steering generation into the expert-conditioned distribution (§3.2).
+
+<Pass title="Method details: derivation, setup, and evaluation">
+**Derivation** (Eq.4–6, App.B): maximize <M tex="\mathbb{E}_{y\sim\pi}[r_c(x,y)] - \beta D_{\mathrm{KL}}(\pi, \pi_c)" />. The KKT conditions give the Gibbs form <M tex="\pi^*(y\mid x,c) \propto \pi_c(y\mid x,c)\exp(r_c(x,y)/\beta)" />. Projecting <M tex="\pi^*" /> onto the parametric policy by minimizing forward KL over the dataset — where <M tex="\pi_c" /> is by construction the dataset's own class-conditional distribution — yields
+
+<MathBlock>{`\\pi_\\theta = \\arg\\max_\\theta\\; \\mathbb{E}_{(x,y,c)\\sim\\mathcal{D}_c}\\Big[\\exp\\big(\\tfrac{1}{\\beta} r_c(x,y)\\big)\\, \\log \\pi_\\theta(y \\mid x, c)\\Big]`}</MathBlock>
+
+i.e. reward-weighted regression (the AWR/Peters-Schaal line, imported from offline RL). Unlike PPO-based RLHF, no reference model is kept in memory during training — after initializing from <M tex="\pi_0" />, only one network trains (§3.2).
+
+**Conditioning implementation** (App.A, Tab.3, Fig.7): the class token must be repeated *every turn* (before speaker or before assistant — similar performance); conditioning only once at conversation start is much worse, consistent with LLMs forgetting early prompts over long contexts (the Llama-2 multi-turn-consistency observation).
+
+**Training** (§4.1): 5 epochs, sequence length 4,096, effective batch 200k tokens, AdamW (β1 0.9, β2 0.95, weight decay 0.1), cosine schedule peaking at 6.7e-5 — pretraining-style hyperparameters with lr scaled by the square root of batch size.
+
+**Evaluation** (§4.1, App.C): instruction following via three LLM-judged benchmarks — AlpacaEval (805 instructions, win rate vs text-davinci-003), MT-bench (80 multi-turn questions; win rate vs gpt-3.5-turbo), Vicuna-bench (80 questions, win rate vs gpt-3.5-turbo) — plus AGIEval English multiple-choice exams (SAT, LSAT, LogiQA, AQuA-RAT), zero-shot, accuracy-scored, as the generalization check. Judge robustness probed with gpt-3.5 and claude-2 as alternate evaluators (App.E/H).
+</Pass>
+
+## Main result
+<Finding src="Tab.1">openchat-13b reaches a 77.3 average win rate — the best of all 13B open models, above Claude (76.6) and far above gpt-3.5-turbo's own average (62.0) — winning AlpacaEval (89.5) and MT-bench (57.5) outright and placing second on Vicuna-bench (85.0 vs llama-2-chat-13b's 86.9)</Finding>. It does this with ~70k unlabeled conversations, where llama-2-chat-13b used ~27k curated SFT examples plus ~2.9M preference annotations and RLHF (Tab.4).
+
+<SortableTable columns={["Model (13B unless noted)", "Method", "AlpacaEval", "MT-bench", "Vicuna-bench", "Average"]} rows={[
+  ["openchat-13b", "C-RLFT", 89.5, 57.5, 85.0, 77.3],
+  ["llama-2-chat-13b", "SFT + RLHF", 81.1, 55.3, 86.9, 74.4],
+  ["wizardlm-v1.2-13b", "SFT", 89.2, 53.1, 80.6, 74.3],
+  ["ultralm-13b", "SFT", 80.6, 37.2, 50.0, 55.9],
+  ["vicuna-v1.5-13b", "SFT", 78.8, 37.2, 47.1, 54.4],
+  ["gpt-3.5-turbo", "SFT + RLFT", 86.1, 50.0, 50.0, 62.0],
+  ["claude", "SFT + RLFT", 88.4, 65.0, 76.3, 76.6],
+  ["llama-2-chat-70b (70B)", "SFT + RLHF", 92.7, 60.0, 87.5, 80.1],
+  ["gpt-4", "SFT + RLFT", 95.3, 82.5, 90.0, 89.3],
+]} />
+
+## Key findings
+- <Finding src="Tab.2">The class-conditioned policy is the load-bearing component: removing conditioning drops the average from 77.3 to 60.5, while removing the reward weights costs only 3.3 points (74.0)</Finding> — the quality signal is delivered mostly through the *input tokens*, not the loss weights.
+- <Finding src="Tab.2">Quality beats quantity, but exploiting beats filtering: SFT on only the ~6k GPT-4 conversations (64.5) crushes SFT on all ~70k (52.7) and on the ~64k GPT-3.5 subset (42.8) — yet C-RLFT on everything (77.3) beats even the clean-data SFT by 12.8 points</Finding>; the sub-optimal majority contains real signal if the model can tell it apart. Scaling naive SFT data to 125k (vicuna-v1.5, 54.4) barely helps.
+- <Finding src="Fig.2b, Tab.5">On AGIEval, openchat-13b (36.4) is the *only* fine-tuned model to surpass its base llama-2-13b (35.0); llama-2-chat-13b falls to 25.8 and vicuna-v1.5 to 20.7</Finding> — chat fine-tuning typically pays a capability/forgetting tax that C-RLFT avoids.
+- <Finding src="Fig.4, Fig.5">The model demonstrably internalizes the quality classes: UMAP of its representations separates GPT-4 from GPT-3.5 conversations (SFT-only representations are intermingled), and swapping the inference prompt from the GPT4 to the GPT3 template causes a substantial performance drop</Finding> (§5.3) — conditioning works as designed, and the class token is a controllable quality dial.
+- <Finding src="Fig.6">Sub-sampling the ~6k expert conversations hurts more than sub-sampling the 10x-larger GPT-3.5 pool</Finding> (§5.4) — scarce expert data is the binding resource.
+- <Finding src="App.E/H, Fig.8-9">The ranking is judge-robust: with gpt-3.5 and claude-2 as evaluators (inter-judge Pearson r = 0.91; r = 0.79/0.73 vs gpt-4), openchat-13b still tops all 13B open models</Finding> — partially defusing the GPT-4-judges-GPT-4-distilled-style worry.
+
+## Implications
+The paper reframes "clean your SFT data" as "condition on your SFT data's quality structure": provenance metadata is a free, weak reward, and <Related>offline-RL machinery (KL-regularized reward maximization, reward-weighted regression, goal/outcome-conditioned supervised learning à la Decision Transformer / RvS)</Related> is exactly the right tool to consume it. It sits beside <Related>DPO</Related> as the second 2023 demonstration that the RLHF objective's closed-form optimum lets you skip RL — but under weaker supervision (class labels instead of preference pairs). Practically it fed the OpenChat model line (later openchat-3.5 on Mistral) and legitimized weighted/conditioned SFT in open post-training stacks. <FollowUp>Finer-grained conditioning — per-example quality scores instead of binary source classes — is the obvious extension the authors themselves flag</FollowUp>; <FollowUp>whether conditioning tokens can steer other latent attributes (style, safety tier) at inference</FollowUp> and <FollowUp>how C-RLFT composes with preference-based methods like DPO when some pairs exist</FollowUp> are open threads.
+
+## Limitations
+- <Caveat>Source-equals-quality is an approximation the authors call "overly simplistic": every GPT-4 response counts as expert and every GPT-3.5 response as sub-optimal, with a single global weight (α, in practice 0.1) chosen without reported sensitivity analysis</Caveat> (§7).
+- <Caveat>Two quality classes, one dataset (ShareGPT), one base model (llama-2-13b): generality across class counts, data mixes, and scales is asserted but untested</Caveat> (§4.1).
+- <Caveat>The headline benchmarks are all LLM-judged, short-form instruction following; AlpacaEval's comparison target is the weak text-davinci-003, and AGIEval is the only ground-truth-scored evaluation</Caveat>. The model is trained on OpenAI-model outputs and judged mostly by an OpenAI model — evaluator-consistency checks (r = 0.91 between alternate judges) mitigate but cannot eliminate style-matching bias.
+- <Caveat>Improving reasoning is explicitly out of scope — the AGIEval gain over base is 1.4 points, so C-RLFT mostly *avoids* regression rather than adding capability</Caveat> (§7).
+- <Caveat>No safety/harmlessness evaluation at all — unlike the RLHF pipelines it replaces, which were built partly for that purpose</Caveat> (inferred; Not reported).
+
+## Critiques and Questions
+1. The theory-practice gap is wider than the paper admits: the derivation optimizes reward under a KL to <M tex="\pi_c" />, but the implementation is exactly class-weighted SFT with tagged prompts. Any weighting scheme admits a post-hoc reward interpretation; the KKT derivation lends elegance, not evidence. The ablations, not the math, carry the claim.
+2. Since removing reward weights costs only 3.3 points, the mechanism is mostly "tell the model who wrote this" — which makes the comparison to a simple baseline conspicuously absent: SFT on all data with source tags but *no* weights and no RL framing (their "w/o reward" is close, at 74.0, quietly confirming this).
+3. Distillation ceiling: everything the model learns comes from GPT-3.5/GPT-4 outputs, so the method cannot exceed its teachers on substance — the 89.5 AlpacaEval number measures style-and-helpfulness match against a weak target, and the gpt-4 row (89.3 average) still dominates every open model on the harder MT-bench.
+4. Multi-turn conversations mixing quality levels within one dialogue, near-duplicate prompts across classes, and contamination between ShareGPT and the judged benchmarks are not analyzed.
+
+<SelfCheck q="Why does C-RLFT regularize toward the class-conditioned dataset policy πc instead of the pretrained model π0, as standard KL-regularized RLFT does?" a="Two reasons (§3.2): (1) the base pretrained LLM is typically *worse* than even the sub-optimal data's generator (GPT-3.5), so anchoring to π0 pulls the policy toward lower quality, whereas πc anchors it to the data's own behavior; (2) πc carries the class information — conditioning on the source token is what lets the model separate expert from sub-optimal behavior, compensating for the reward being too coarse to distinguish examples within a class." />
+
+## Glossary
+<Term def="Conditioned Reinforcement Learning Fine-Tuning: this paper's method — class-conditioned policy + coarse source-based rewards + KL regularization to the dataset's conditional policy, solved as weighted SFT">C-RLFT</Term> · <Term def="Fine-tuning on (instruction, response) pairs by maximum likelihood, treating all examples equally">SFT</Term> · <Term def="Fine-tuning driven by a reward signal (learned from preferences or predefined), typically maximized with RL under a KL penalty; RLHF is the human-preference special case">RLFT</Term> · <Term def="~70k user-shared ChatGPT conversations scraped from sharegpt.com; ~6k generated by GPT-4, the rest by GPT-3.5">ShareGPT</Term> · <Term def="The empirical conditional distribution of responses in the dataset given prompt and source class; the class-conditioned analogue of offline RL's behavior policy">behavior policy πc</Term> · <Term def="Fitting a policy by likelihood weighted with exp(reward/β) — the closed-form projection of the KL-regularized RL optimum (Peters and Schaal; AWR)">reward-weighted regression</Term> · <Term def="805-instruction benchmark judged by an LLM as win rate against text-davinci-003 responses">AlpacaEval</Term> · <Term def="80 multi-turn questions across 8 categories judged by GPT-4; used here in pairwise win-rate mode against gpt-3.5-turbo">MT-bench</Term> · <Term def="Human standardized-exam benchmark (SAT, LSAT, LogiQA, AQuA-RAT); accuracy-scored, used as the generalization/forgetting check">AGIEval</Term> · <Term def="An LLM judge preferring outputs of models similar to itself (e.g., GPT-4 judging GPT-4-distilled students)">self-enhancement bias</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

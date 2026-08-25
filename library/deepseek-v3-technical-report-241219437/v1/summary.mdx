@@ -1,0 +1,340 @@
+---
+canonical_key: arxiv-2412.19437
+version_key: v1
+title: DeepSeek-V3 Technical Report
+authors:
+- DeepSeek-AI
+- Aixin Liu
+- Bei Feng
+- Bing Xue
+- Bingxuan Wang
+- Bochao Wu
+- Chengda Lu
+- Chenggang Zhao
+- Chengqi Deng
+- Chenyu Zhang
+- Chong Ruan
+- Damai Dai
+- Daya Guo
+- Dejian Yang
+- Deli Chen
+- Dongjie Ji
+- Erhang Li
+- Fangyun Lin
+- Fucong Dai
+- Fuli Luo
+- Guangbo Hao
+- Guanting Chen
+- Guowei Li
+- H. Zhang
+- Han Bao
+- Hanwei Xu
+- Haocheng Wang
+- Haowei Zhang
+- Honghui Ding
+- Huajian Xin
+- Huazuo Gao
+- Hui Li
+- Hui Qu
+- J. L. Cai
+- Jian Liang
+- Jianzhong Guo
+- Jiaqi Ni
+- Jiashi Li
+- Jiawei Wang
+- Jin Chen
+- Jingchang Chen
+- Jingyang Yuan
+- Junjie Qiu
+- Junlong Li
+- Junxiao Song
+- Kai Dong
+- Kai Hu
+- Kaige Gao
+- Kang Guan
+- Kexin Huang
+- Kuai Yu
+- Lean Wang
+- Lecong Zhang
+- Lei Xu
+- Leyi Xia
+- Liang Zhao
+- Litong Wang
+- Liyue Zhang
+- Meng Li
+- Miaojun Wang
+- Mingchuan Zhang
+- Minghua Zhang
+- Minghui Tang
+- Mingming Li
+- Ning Tian
+- Panpan Huang
+- Peiyi Wang
+- Peng Zhang
+- Qiancheng Wang
+- Qihao Zhu
+- Qinyu Chen
+- Qiushi Du
+- R. J. Chen
+- R. L. Jin
+- Ruiqi Ge
+- Ruisong Zhang
+- Ruizhe Pan
+- Runji Wang
+- Runxin Xu
+- Ruoyu Zhang
+- Ruyi Chen
+- S. S. Li
+- Shanghao Lu
+- Shangyan Zhou
+- Shanhuang Chen
+- Shaoqing Wu
+- Shengfeng Ye
+- Shengfeng Ye
+- Shirong Ma
+- Shiyu Wang
+- Shuang Zhou
+- Shuiping Yu
+- Shunfeng Zhou
+- Shuting Pan
+- T. Wang
+- Tao Yun
+- Tian Pei
+- Tianyu Sun
+- W. L. Xiao
+- Wangding Zeng
+- Wanjia Zhao
+- Wei An
+- Wen Liu
+- Wenfeng Liang
+- Wenjun Gao
+- Wenqin Yu
+- Wentao Zhang
+- X. Q. Li
+- Xiangyue Jin
+- Xianzu Wang
+- Xiao Bi
+- Xiaodong Liu
+- Xiaohan Wang
+- Xiaojin Shen
+- Xiaokang Chen
+- Xiaokang Zhang
+- Xiaosha Chen
+- Xiaotao Nie
+- Xiaowen Sun
+- Xiaoxiang Wang
+- Xin Cheng
+- Xin Liu
+- Xin Xie
+- Xingchao Liu
+- Xingkai Yu
+- Xinnan Song
+- Xinxia Shan
+- Xinyi Zhou
+- Xinyu Yang
+- Xinyuan Li
+- Xuecheng Su
+- Xuheng Lin
+- Y. K. Li
+- Y. Q. Wang
+- Y. X. Wei
+- Y. X. Zhu
+- Yang Zhang
+- Yanhong Xu
+- Yanhong Xu
+- Yanping Huang
+- Yao Li
+- Yao Zhao
+- Yaofeng Sun
+- Yaohui Li
+- Yaohui Wang
+- Yi Yu
+- Yi Zheng
+- Yichao Zhang
+- Yifan Shi
+- Yiliang Xiong
+- Ying He
+- Ying Tang
+- Yishi Piao
+- Yisong Wang
+- Yixuan Tan
+- Yiyang Ma
+- Yiyuan Liu
+- Yongqiang Guo
+- Yu Wu
+- Yuan Ou
+- Yuchen Zhu
+- Yuduan Wang
+- Yue Gong
+- Yuheng Zou
+- Yujia He
+- Yukun Zha
+- Yunfan Xiong
+- Yunxian Ma
+- Yuting Yan
+- Yuxiang Luo
+- Yuxiang You
+- Yuxuan Liu
+- Yuyang Zhou
+- Z. F. Wu
+- Z. Z. Ren
+- Zehui Ren
+- Zhangli Sha
+- Zhe Fu
+- Zhean Xu
+- Zhen Huang
+- Zhen Zhang
+- Zhenda Xie
+- Zhengyan Zhang
+- Zhewen Hao
+- Zhibin Gou
+- Zhicheng Ma
+- Zhigang Yan
+- Zhihong Shao
+- Zhipeng Xu
+- Zhiyu Wu
+- Zhongyu Zhang
+- Zhuoshu Li
+- Zihui Gu
+- Zijia Zhu
+- Zijun Liu
+- Zilin Li
+- Ziwei Xie
+- Ziyang Song
+- Ziyi Gao
+- Zizheng Pan
+venue: arXiv
+year: 2024
+tags:
+- foundational
+topic_groups:
+- llm
+- rl
+triage_label: READ_SOON
+triage_confidence: medium
+source_link: https://arxiv.org/abs/2412.19437v2
+summary_date: '2026-08-25'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>DeepSeek-V3 is a 671B-parameter MoE model (37B active per token) trained on 14.8T tokens for 2.788M H800 GPU hours (~$5.6M) that matches GPT-4o/Claude-3.5-Sonnet-class performance by co-designing everything around the compute bottleneck: bias-based auxiliary-loss-free expert balancing, multi-token prediction, first-ever FP8 training at this scale, near-zero-overhead MoE communication (DualPipe), and distillation of reasoning from DeepSeek-R1.</TLDR>
+
+<WhyItMatters>This is the report that reset expectations for what a frontier open-weights model costs, and the systems playbook (MLA + fine-grained MoE + FP8 + comm overlap) became the reference design for efficient LLM training. It is also the base model on which DeepSeek-R1 is built — the two papers form one lineage.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "2.788M", label: "H800 GPU hours, full training", sub: "~$5.576M at $2/hr (Tab.1)" },
+  { value: "671B / 37B", label: "total / activated params", sub: "MoE, 256 routed + 1 shared expert per layer (§4.2)" },
+  { value: "90.2", label: "MATH-500 (EM)", sub: "vs 78.3 Claude-3.5, 74.6 GPT-4o (Tab.6)" },
+  { value: "85.5", label: "Arena-Hard", sub: "first open model above 85% (Tab.7)" },
+]} />
+
+## Motivation
+
+Our starting point is a budget, not a benchmark. We want frontier capability on a cluster of 2048 export-grade H800 GPUs, so every FLOP, byte of memory, and byte of bandwidth must earn its keep. Sparse <Term def="Mixture-of-Experts: each layer holds many expert FFNs but routes each token through only a few, decoupling total capacity from per-token compute">MoE</Term> is the obvious lever — capability scales with total parameters while cost scales with activated ones — but the standard recipe carries two taxes. First, <Problem>routers collapse without pressure toward balance, and the conventional fix — an auxiliary balancing loss — injects a gradient that directly fights the language-modeling objective, degrading the model to keep the hardware happy</Problem>. Second, <Problem>fine-grained cross-node expert routing makes all-to-all communication the bottleneck: for V3 the naive computation-to-communication ratio is roughly 1:1, meaning half the cluster's time would be spent waiting (§3.2.1)</Problem>. On top of that, <Problem>FP8 training — the most direct way to double compute throughput — had never been validated on an extremely large model, because activation outliers overwhelm the format's tiny dynamic range (§3.3)</Problem>, and <Problem>long-CoT reasoning models (o1-style) achieve accuracy that standard chat LLMs cannot, but their verbose, overthinking outputs are unacceptable in a general-purpose model (§5.1)</Problem>.
+
+## Contribution (what's new)
+
+The architecture (MLA + DeepSeekMoE) is inherited from DeepSeek-V2; the genuine deltas are the four mechanisms that remove the taxes above:
+
+- <Novelty>Auxiliary-loss-free load balancing: a per-expert bias term is added to routing scores only for top-K selection — never to the gating weight — and is nudged up/down after each step depending on whether the expert is under- or over-loaded (§2.1.2)</Novelty>. The form is forced: balance is a control problem, not a learning problem, so the control signal must be moved out of the gradient path to stop it corrupting the LM objective.
+- <Novelty>Multi-token prediction (MTP) that keeps the causal chain: a sequential extra module predicts token t+2, conditioned on the main model's representation, rather than parallel independent heads (§2.2)</Novelty> — densifying training signal without teaching the model to ignore causality; discarded at inference or reused for speculative decoding.
+- <Novelty>First validated FP8 mixed-precision training at frontier scale, built on tile-wise (1x128) activation and block-wise (128x128) weight quantization plus FP32 accumulation promoted to CUDA cores every 128 elements (§3.3)</Novelty> — because H800 Tensor Cores internally accumulate at only ~14 bits, precision must be rescued outside them.
+- <Novelty>DualPipe + custom all-to-all kernels: bidirectional pipeline scheduling that overlaps a forward chunk's communication with a backward chunk's computation, so 20 of 132 SMs fully saturate InfiniBand + NVLink and cross-node MoE runs with near-zero visible communication cost (§3.2)</Novelty>.
+- In post-training, <Novelty>a pipeline that distills DeepSeek-R1's verification/reflection patterns into a standard LLM via domain expert models and rejection sampling, trading a controlled amount of verbosity for large reasoning gains (§5.1)</Novelty>.
+
+## Research questions
+
+1. Can MoE load balance be achieved without any interfering auxiliary gradient — and does removing it actually improve the model?
+2. Does FP8 training hold up numerically over 14.8T tokens at 671B parameters?
+3. Can o1-style reasoning accuracy be transferred into a non-reasoning chat model without inheriting its output length?
+4. Concretely, what does a GPT-4o-class model minimally cost when algorithms, framework, and hardware are co-designed?
+
+## Methodology
+
+Follow one token through the stack. Entering an attention layer, <Term def="Multi-head Latent Attention: keys/values are jointly compressed into a small latent vector; only the latent plus one shared RoPE key is cached, shrinking KV-cache memory by an order of magnitude">MLA</Term> compresses its keys/values into a 512-dim latent (against 128 heads x 128 dims), so inference caches almost nothing (§2.1.1). Entering the MoE layer, the router computes sigmoid affinities over 256 routed experts, adds each expert's balance bias, picks the top 8 within at most 4 nodes, but weights outputs by the original bias-free affinities (§2.1.2). The forward/backward GEMMs run in FP8 (E4M3 everywhere); the pipeline schedule hides the resulting dispatch/combine traffic behind computation. Training: 14.8T tokens at 4K context, then two YaRN phases (1000 steps each) extend context to 32K and 128K (§4.3). Post-training: SFT on 1.5M instances — reasoning data generated by R1-based expert models, non-reasoning data by DeepSeek-V2.5 with human verification — then GRPO-based RL with rule-based rewards (boxed math answers, compiler test cases) plus a model-based reward model for open-ended tasks (§5.1–5.2).
+
+<Pass title="Method details">
+**Bias-based routing update.** After each training step, each expert's bias is decreased by the bias update speed if the expert was overloaded in that batch, increased if underloaded (speed 0.001 for the first 14.3T tokens, then 0). A sequence-wise auxiliary loss is kept only as a safety valve at negligible strength (balance factor 0.0001). Result: no token dropping in training or inference (§2.1.2, §4.2).
+
+**MTP.** Depth 1: one extra transformer block, sharing embedding and output head with the main model, predicts the second-next token from the concatenation of the main model's hidden state and the next token's embedding. MTP loss weight 0.3 for the first 10T tokens, then 0.1 (§2.2, §4.2).
+
+**GRPO.** For each prompt, sample a group of G responses from the old policy, score them, and use the group-normalized reward as the advantage — no critic model:
+
+<MathBlock>{`A_i = \\frac{r_i - \\mathrm{mean}(\\{r_1,\\dots,r_G\\})}{\\mathrm{std}(\\{r_1,\\dots,r_G\\})}`}</MathBlock>
+
+with a clipped PPO-style objective plus a KL penalty against a reference model (§5.2.2).
+
+**FP8 specifics.** Sensitive components (embedding, output head, gating, normalization, attention operators, master weights, optimizer states' storage) stay BF16/FP32; AdamW moments are BF16. Scaling factors are computed online per tile/block instead of from delayed history. E4M3 is usable everywhere only because fine-grained scaling shares exponent bits per small group (§3.3).
+
+**Parallelism.** 16-way pipeline parallelism, 64-way expert parallelism across 8 nodes, ZeRO-1 data parallelism — and no tensor parallelism at all, thanks to FP8 memory savings, recomputation of RMSNorm/MLA up-projections, and EMA in CPU (§3.2). Inference separates prefill (minimum 4 nodes, 32 GPUs) from decoding (40 nodes, 320 GPUs, one expert per GPU) with dynamically detected redundant experts to keep load flat (§3.4).
+
+**Hyper-parameters.** 61 layers, hidden 7168; first 3 layers dense; expert hidden 2048; max lr 2.2e-4; batch ramped 3072 to 15360 over the first 469B tokens; FIM (fill-in-middle) objective at rate 0.1 (§4.1–4.2).
+</Pass>
+
+## Main result
+
+<Finding src="Tab.3, §4.4.2">DeepSeek-V3-Base surpasses Qwen2.5-72B and LLaMA-3.1-405B on most benchmarks — with 11x fewer activated parameters than the latter — making it the strongest open-source base model, especially in code and math</Finding>. The chat model closes most of the gap to closed frontier models and inverts it on math and algorithmic coding: <Finding src="Tab.6">MATH-500 90.2 and AIME 2024 39.2 versus GPT-4o's 74.6/9.3 and Claude-3.5-Sonnet's 78.3/16.0, and Codeforces percentile 51.6 versus 23.6/20.3 — while SWE-bench Verified (42.0 vs Claude's 50.8) and SimpleQA (24.9 vs GPT-4o's 38.2) still favor closed models</Finding>. All of this from a training run costing <Finding src="Tab.1">2.788M H800 GPU hours end-to-end — 180K GPU hours per trillion pre-training tokens — with no irrecoverable loss spike or rollback</Finding>.
+
+<SortableTable columns={["Benchmark", "DeepSeek-V3", "GPT-4o-0513", "Claude-3.5-1022", "Best open baseline"]} rows={[
+  ["MMLU-Pro (EM)", 75.9, 72.6, 78.0, "71.6 (Qwen2.5-72B)"],
+  ["GPQA-Diamond (Pass@1)", 59.1, 49.9, 65.0, "51.1 (LLaMA-405B)"],
+  ["MATH-500 (EM)", 90.2, 74.6, 78.3, "80.0 (Qwen2.5-72B)"],
+  ["AIME 2024 (Pass@1)", 39.2, 9.3, 16.0, "23.3 (both)"],
+  ["Codeforces (percentile)", 51.6, 23.6, 20.3, "25.3 (LLaMA-405B)"],
+  ["SWE-bench Verified", 42.0, 38.8, 50.8, "24.5 (LLaMA-405B)"],
+  ["Arena-Hard", 85.5, 80.4, 85.2, "81.2 (Qwen2.5-72B)"],
+  ["AlpacaEval 2.0 (LC)", 70.0, 51.1, 52.0, "50.5 (V2.5)"],
+]} />
+
+## Key findings
+
+- <Finding src="Tab.5, §4.5.3">Auxiliary-loss-free balancing beats the auxiliary-loss baseline across scales (e.g. large-MoE HumanEval 46.3 vs 40.2, GSM8K 74.5 vs 70.7) — but the controlled follow-up shows the real cause is the balancing *scope*, not the missing loss: a batch-wise auxiliary loss matches the loss-free method's validation loss exactly (2.253 vs 2.253 at 1B; 2.080 vs 2.080 at 3B), while sequence-wise balancing lags</Finding>. Freed from per-sequence balance, experts visibly specialize by domain (Fig.9).
+- <Finding src="Tab.4, §5.4.3">MTP improves most benchmarks at both 15.7B and 228.7B scale (e.g. HumanEval 53.7 vs 44.5) at zero inference cost, and the discarded module doubles as a speculative decoder: the second predicted token is accepted 85–90% of the time, yielding 1.8x decoding TPS</Finding>.
+- <Finding src="App.B.1, §3.3">FP8 training stays within 0.25% relative loss error of BF16 on ~16B and ~230B proxy models over ~1T tokens</Finding> — but the margin is thin: <Finding src="App.B.2">quantizing activation gradients block-wise instead of tile-wise diverges a 16B model after ~300B tokens, because token-correlated outliers in Dgrad cannot be absorbed by coarse scaling</Finding>.
+- <Finding src="Tab.9, §5.4.1">R1 distillation on a V2.5 testbed lifts LiveCodeBench-CoT from 31.1 to 37.4 and MATH-500 from 74.6 to 83.2, but nearly doubles MATH response length (769 to 1510 tokens)</Finding> — the accuracy-verbosity trade-off is real, and V3's expert-model + rejection-sampling pipeline exists precisely to keep the accuracy while clipping the length.
+- <Finding src="Tab.8, §5.3.4">V3 is itself a frontier-grade judge: RewardBench 87.0 (89.6 with maj@6 voting), on par with Claude-3.5-Sonnet-1022 (88.7) and above GPT-4o-0806 (86.7)</Finding> — which is what makes its constitutional-AI-style self-rewarding loop for open-ended RL viable (§5.4.2).
+- <Finding src="Tab.6, §5.3.2">The capability profile is deliberately lopsided: English factuality (SimpleQA 24.9) is sacrificed for Chinese knowledge (C-SimpleQA 64.8, beating Qwen2.5-72B by 16.4 despite 20% fewer training tokens) and for math/code density in the corpus</Finding>.
+
+## Implications
+
+The report demonstrates that the binding constraint on frontier models is engineering quality per dollar, not raw GPU count — an existence proof that reshaped both open-source strategy and the market's cost assumptions. Its pieces became defaults: <Related>MLA and fine-grained MoE trace to DeepSeek-V2/DeepSeekMoE; the bias-based balancing comes from Wang et al. 2024; GRPO from DeepSeekMath — and V3 in turn is the base and the distillation target of DeepSeek-R1, forming a V3-to-R1-to-V3 flywheel</Related>. The infrastructure sections read as a public bug report on Hopper (14-bit Tensor Core accumulation, no native fine-grained scaling, SMs burned on communication) with explicit hardware asks (§3.5). Worth chasing: <FollowUp>whether bias-based balancing stays stable under distribution shift at inference (the paper handles it operationally with redundant experts rather than algorithmically)</FollowUp>, and <FollowUp>how far the self-rewarding loop can go before reward hacking outpaces the CoT-augmented reward model safeguards</FollowUp>.
+
+## Limitations
+
+- <Caveat>The efficient inference design assumes big deployment units — 32 GPUs minimum for prefill, 320 for decoding — which the authors themselves flag as a burden for small teams (§6)</Caveat>.
+- <Caveat>The $5.576M figure covers only the final official run, explicitly excluding all prior research, architecture/data ablations, and failed experiments (§1)</Caveat> — it is a marginal cost, not the program cost.
+- <Caveat>Pre-training data is described only qualitatively (more math/programming, broader multilingual coverage); composition, sources, and contamination controls are Not reported (§4.1)</Caveat>.
+- <Caveat>There is no safety evaluation of any kind in the report — no refusal, jailbreak, or misuse analysis — a stark contrast with contemporaneous frontier releases</Caveat>.
+- <Caveat>Closed-source baselines are queried through their APIs with an 8192-token output cap for all models (§5.3.1); version and serving-stack differences make those comparisons softer than the open-model ones run in-house</Caveat>.
+
+## Critiques and Questions
+
+1. The gains from the two headline training innovations are not uniform: at large scale, MMLU slightly *drops* under both MTP (67.5 to 66.6, Tab.4) and aux-loss-free balancing (68.3 to 67.2, Tab.5) while generation-heavy benchmarks improve. The narrative says "consistently better"; the tables say "better on most, with knowledge-recall as the exception."
+2. The §4.5.3 analysis quietly undercuts the branding: if a batch-wise auxiliary loss matches aux-loss-free performance, the contribution is really "balance at batch scope" — the bias mechanism is then an implementation choice (gradient-free, cheap) rather than the source of quality.
+3. Reasoning data comes from "an internal DeepSeek-R1 model" that post-dates none of the evaluation sets but is itself unpublished at this point — the pipeline is not reproducible from this report alone, and how much of the math/code jump is distillation versus base-model quality is only partially isolated (Tab.9 is on V2.5, not V3).
+4. FP8 stability is validated on proxy runs up to ~230B params and ~1T tokens, then extrapolated 15x in token count to the real run; the absence of loss spikes is the evidence, but it is observational, not guaranteed.
+
+<SelfCheck q="Why does the auxiliary-loss-free strategy add the bias to the routing score but compute the gating weight from the original affinity?" a="The bias exists only to steer which experts are selected (a load-control signal); if it also scaled the expert's output contribution, load control would distort the function the model computes and re-introduce the interference the method is designed to remove. Selection uses s + b; the mixture weight uses s alone (§2.1.2, Eq.16)." />
+
+## Glossary
+
+- <Term def="Mixture-of-Experts: many parallel expert FFNs per layer with a router activating a few per token">MoE</Term>
+- <Term def="Multi-head Latent Attention: low-rank joint compression of attention keys/values into a cached latent vector, drastically shrinking KV cache">MLA</Term>
+- <Term def="an extra loss term pushing the router toward uniform expert usage; the conventional fix for routing collapse">auxiliary loss</Term>
+- <Term def="Multi-Token Prediction: training-time objective predicting several future tokens per position">MTP</Term>
+- <Term def="generating draft tokens cheaply and verifying them with the full model in one pass to speed decoding">speculative decoding</Term>
+- <Term def="8-bit floating point; E4M3 means 4 exponent and 3 mantissa bits">FP8 (E4M3)</Term>
+- <Term def="Group Relative Policy Optimization: PPO-style RL that replaces the critic with group-normalized rewards over sampled responses">GRPO</Term>
+- <Term def="pipeline parallelism idle time while stages wait for each other's micro-batches">pipeline bubble</Term>
+- <Term def="the MoE token-shuffling collective where every GPU exchanges tokens with every other">all-to-all</Term>
+- <Term def="streaming multiprocessor, the compute unit of an NVIDIA GPU (H800 has 132)">SM</Term>
+- <Term def="context-window extension method that rescales rotary position embeddings for longer sequences">YaRN</Term>
+- <Term def="fill-in-middle: training format where the model reconstructs a masked middle span from prefix and suffix">FIM</Term>
+- <Term def="LLM-as-judge benchmark of hard prompts scored pairwise against a GPT-4 baseline">Arena-Hard</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

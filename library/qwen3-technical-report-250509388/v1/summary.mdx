@@ -1,0 +1,184 @@
+---
+canonical_key: arxiv-2505.09388
+version_key: v1
+title: Qwen3 Technical Report
+authors:
+- An Yang
+- Anfeng Li
+- Baosong Yang
+- Beichen Zhang
+- Binyuan Hui
+- Bo Zheng
+- B. X. Yu
+- Chang Gao
+- C. Huang
+- Chenxu Lv
+- Chujie Zheng
+- Dayiheng Liu
+- Fan Zhou
+- Fei Huang
+- H Feng
+- Hao Ge
+- Haoran Wei
+- Lin Huan
+- Jialong Tang
+- Jian Yang
+- Jianhong Tu
+- Jianwei Zhang
+- Jianxin Yang
+- Jiaxi Yang
+- Jing Zhou
+- Jingren Zhou
+- Junyang Lin
+- Kai Dang
+- Keqin Bao
+- Kexin Yang
+- Le Yu
+- Deng, Lianghao
+- Mei Li
+- Mingfeng Xue
+- Mingze Li
+- Pei Zhang
+- Peng Wang
+- Qin Zhu
+- Rui Men
+- Ruize Gao
+- Shixuan Liu
+- Shuang Luo
+- Tianhao Li
+- Tianyi Tang
+- Wenbiao Yin
+- Xingzhang Ren
+- Xinyu Wang
+- Xinyu Zhang
+- Xuancheng Ren
+- Fan Yang
+- Su Yang
+- Yichang Zhang
+- Yinger Zhang
+- Yu Wan
+- Yuqiong Liu
+- Zekun Wang
+- Zeyu Cui
+- Zhenru Zhang
+- Zhipeng Zhou
+- Zihan Qiu
+venue: arXiv (Cornell University)
+year: 2025
+tags:
+- foundational
+topic_groups:
+- llm
+triage_label: READ_SOON
+triage_confidence: medium
+source_link: https://openalex.org/W4414939355
+summary_date: '2026-08-25'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>Qwen3 fuses a chat model and a reasoning model into one set of weights: a chat-template flag switches thinking on or off, an inference-time token budget dials reasoning depth, and a strong-to-weak distillation pipeline (off-policy then on-policy logit matching) builds the six small models at 1/10 the GPU hours of full training — with the 235B-A22B flagship (36T pre-training tokens, 119 languages) beating DeepSeek-R1 on 17/23 benchmarks at 60% of its activated parameters.</TLDR>
+
+<WhyItMatters>This report standardized the "hybrid reasoning" design that the post-R1 era converged on — one model, a mode switch, and a compute dial — and it is the clearest published evidence that distillation beats RL for building small reasoners. It also shows, with unusual honesty, what fusing modes costs.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "85.7", label: "AIME'24 (thinking)", sub: "Qwen3-235B-A22B vs 79.8 DeepSeek-R1 (Tab.11)" },
+  { value: "36T / 119", label: "pre-training tokens / languages", sub: "vs 18T / 29 for Qwen2.5 (§3.1)" },
+  { value: "1/10", label: "GPU hours, distillation vs RL", sub: "1,800 vs 17,920 for the 8B tier (Tab.21)" },
+  { value: "8", label: "models, 0.6B to 235B", sub: "6 dense + 2 MoE, all Apache-2.0 (§2)" },
+]} />
+
+## Motivation
+
+After DeepSeek-R1 and o1, the ecosystem split into two product lines. <Problem>Users had to route every query between a chat-optimized model (fast, no reasoning trace) and a dedicated reasoning model (slow, always thinking) — two deployments, two sets of weights, and no way to pay for exactly as much reasoning as a task needs (§1)</Problem>. Underneath that, two more problems: <Problem>building a competitive model at every size by running the full post-training pipeline per model multiplies cost by the size of the family</Problem>, and <Problem>open models remained heavily English/Chinese-biased — Qwen2.5 covered only 29 languages — limiting global deployment (§1, §3.1)</Problem>.
+
+## Contribution (what's new)
+
+- <Novelty>Thinking Mode Fusion: one model serves both modes because the chat template makes reasoning a runtime decision — a /think or /no think flag in the user or system message, with non-thinking data trained to emit an *empty* think block so the format never forks (§4.3, Tab.9)</Novelty>. The form is forced: if the two behaviors lived in different formats or weights, per-query control and mid-conversation switching would be impossible.
+- <Novelty>Thinking budget as an emergent capability: because the fused model has seen complete and absent reasoning, it can answer from *truncated* reasoning — so budget control is implemented by simply halting the thought at N tokens and inserting a stop-thinking sentence, with no explicit training for it (§4.3)</Novelty>.
+- <Novelty>Strong-to-weak distillation replaces the whole four-stage pipeline for the six lightweight models: off-policy distillation of teacher outputs in both modes, then on-policy training where the student samples and its logits are pulled toward the teacher's by KL — 1/10 the GPU hours with better results than RL (§4.5, Tab.21)</Novelty>.
+- A model-powered data flywheel: Qwen2.5-VL extracts trillions of tokens from PDFs, Qwen2.5-Math/Coder synthesize domain data, and a multilingual annotation system labels 30T+ tokens (educational value, domain, safety) enabling instance-level rather than source-level data-mixture optimization (§3.1).
+- Architecture is deliberately conservative — Qwen2.5 plus QK-Norm (replacing QKV-bias) for stability, and an MoE with 128 fine-grained experts, no shared expert, and a global-batch load-balancing loss to push expert specialization (§2).
+
+## Research questions
+
+1. Can one model host both instant chat and deep reasoning without materially degrading either mode?
+2. Does performance scale smoothly with an inference-time thinking budget?
+3. For the small tier of a model family, is direct RL or distillation from the flagship the better investment?
+
+## Methodology
+
+Pre-training: 36T tokens over three stages — 30T general tokens at 4K context (S1), ~5T STEM/code/reasoning-heavy tokens with faster LR decay (S2), then hundreds of billions of long-context tokens at 32K with RoPE base raised to 1M, plus YaRN and Dual Chunk Attention for 4x length extrapolation at inference (§3.2). Post-training for the two flagships is a four-stage pipeline (Fig.1): long-CoT cold start on doubly-filtered data (queries that Qwen2.5-72B cannot answer without CoT; QwQ-32B responses purged of wrong answers, repetition, guessing, and language mixing) → reasoning RL with GRPO on just 3,995 curated query-verifier pairs → thinking-mode fusion SFT combining rejection-sampled thinking data with curated non-thinking data under the flag template → general RL over 20+ reward-bearing tasks (instruction/format following, preference, agent tool use with real multi-turn environment feedback, RAG), graded by rules, a reference-answer judge (Qwen2.5-72B-Instruct), or a preference reward model (§4.1–4.4). Everything below 32B is distilled instead (§4.5).
+
+<Pass title="Details that matter">
+- **Family** (Tab.1–2): dense 0.6B/1.7B/4B/8B/14B/32B (GQA, SwiGLU, RMSNorm; 32K context for the two smallest, 128K otherwise); MoE 30B-A3B (48 layers, 3B active) and 235B-A22B (94 layers, 22B active), both 128 experts with 8 active, no shared expert. Tokenizer: BBPE, 151,669 vocab.
+- **Reasoning RL** (§4.2): large batch, many rollouts per query, off-policy reuse for sample efficiency, and entropy control to keep exploration steady — AIME'24 of the flagship climbs 70.1 to 85.1 in 170 RL steps with no manual hyper-parameter intervention.
+- **Budget mechanics** (§4.3): at the user-set token threshold the runtime inserts "Considering the limited time by the user, I have to give the solution based on the thinking directly now." and closes the think block; the model then answers from partial reasoning.
+- **Evaluation protocol** (§4.6): thinking mode at temperature 0.6 / top-p 0.95, non-thinking at 0.7 / 0.8; max output 32,768 (38,912 for AIME); AIME averaged over 64 samples; GPQA over 10.
+- **Not reported**: pre-training compute/cost, cluster hardware, wall-clock time, any safety evaluation, and the RL data scale beyond the 3,995 reasoning pairs.
+</Pass>
+
+## Main result
+
+<Finding src="Tab.11">In thinking mode, Qwen3-235B-A22B beats DeepSeek-R1 on 17 of 23 benchmarks with 60% of its activated and 35% of its total parameters — AIME'24 85.7 vs 79.8, LiveCodeBench v5 70.7 vs 64.3, Codeforces rating 2056 vs 2029, BFCL v3 70.8 vs 56.9 — while remaining behind Gemini-2.5-Pro on GPQA (71.1 vs 84.0) and AIME'24 (vs 92.0)</Finding>. <Finding src="Tab.12">In non-thinking mode the same weights beat GPT-4o-2024-11-20 on 18 of 23 benchmarks (Arena-Hard 96.1 vs 85.3)</Finding>, and <Finding src="Tab.3">the base model outperforms DeepSeek-V3-Base on 14 of 15 benchmarks with one third of its total parameters</Finding>.
+
+<SortableTable columns={["Model (thinking)", "AIME'24", "LiveCodeBench v5", "Codeforces rating", "BFCL v3", "Arena-Hard"]} rows={[
+  ["Qwen3-235B-A22B", 85.7, 70.7, 2056, 70.8, 95.6],
+  ["DeepSeek-R1", 79.8, 64.3, 2029, 56.9, 92.3],
+  ["OpenAI o1", 74.3, 63.9, 1891, 67.8, 92.1],
+  ["Gemini-2.5-Pro", 92.0, 70.4, 2001, 62.9, 96.4],
+  ["Qwen3-32B", 81.4, 65.7, 1977, 70.3, 93.8],
+  ["QwQ-32B", 79.5, 62.7, 1982, 66.4, 89.5],
+  ["Qwen3-30B-A3B", 80.4, 62.6, 1974, 69.1, 91.0],
+]} />
+
+## Key findings
+
+- <Finding src="Fig.2, §4.7">Performance scales smoothly and monotonically with the thinking budget on math, coding, and STEM benchmarks</Finding> — the compute dial works, and the authors expect further gains past the current 32K output ceiling. (Figure-only evidence; no per-point numbers are printed.)
+- <Finding src="Tab.21">From the same off-policy-distilled 8B checkpoint, on-policy distillation reaches AIME'24 74.4 vs 67.6 for RL at ~1/10 the GPU hours (1,800 vs 17,920) — and only distillation raises pass@64 (90.0 to 93.3 on AIME'24), while RL leaves it flat</Finding>. RL sharpens what the model can already sample; teacher logits expand the exploration space itself. This refines DeepSeek-R1's distillation lesson from output-level to logit-level.
+- <Finding src="Tab.22">The fusion tax is real and accepted: stages 3–4 lift mode-switching accuracy (ThinkFollow 88.7 then 98.9), tool use (+15.1), and general/instruction benchmarks, but *cost* thinking-mode performance on the hardest tasks — AIME'24 drops 83.8 to 81.4 and LiveCodeBench 68.4 to 65.7 across the two stages</Finding>. Versatility is bought with specialized capability; the report says so explicitly.
+- <Finding src="Tab.23, A.1.1">Thinking hurts long-context retrieval: on RULER, every Qwen3 model scores *lower* in thinking mode than non-thinking (flagship 92.2 vs 95.0 average)</Finding> — reasoning tokens interfere with tasks that are retrieval, not inference. Mode choice is a real trade-off, not a free upgrade.
+- <Finding src="Tab.15, §3.3">The efficiency ladder holds across the family: Qwen3-30B-A3B matches QwQ-32B with ~1/10 the activated parameters; each Qwen3 dense base matches the Qwen2.5 base one tier larger; the MoE bases match dense bases with 1/5 the activated parameters</Finding>.
+- <Finding src="§4.2">Reasoning RL ran on only 3,995 query-verifier pairs — deliberately excluding anything the cold-start model finds easy or was already trained on</Finding>: the scarce resource in reasoning RL is not prompt volume but learnable, verifiable difficulty.
+
+## Implications
+
+Qwen3 made "hybrid reasoning" the default template for open releases: a single checkpoint whose reasoning is a runtime parameter, plus a distilled ladder of sizes. <Related>It inherits GRPO and the distillation-beats-small-scale-RL finding from DeepSeek-R1/DeepSeekMath, the budget idea parallels o1's reasoning-effort control and Claude's extended thinking, and the MoE design quietly diverges from DeepSeek-V3 (no shared expert, batch-level balancing loss — converging on the same batch-scope insight V3 reached via bias terms)</Related>. Open threads: <FollowUp>whether the fusion tax can be closed, or whether frontier pressure pushes families back toward separate instruct/thinking variants</FollowUp>; <FollowUp>agent-focused RL with environment feedback, which the conclusion names as the next scaling axis</FollowUp>; <FollowUp>budget-aware training (the stop-thinking trick is inference-time only — training against budgets could make truncated reasoning first-class)</FollowUp>.
+
+## Limitations
+
+- <Caveat>No safety evaluation of any kind appears in the report, and no training-compute or cost figures are disclosed — both in sharp contrast to the DeepSeek and OpenAI reports it compares against</Caveat>.
+- <Caveat>Thinking mode degrades RULER long-context performance, and the authors defer fixing it (A.1.1)</Caveat>.
+- <Caveat>The fusion pipeline sacrifices peak reasoning (about 2.4 AIME'24 points, 2.7 LiveCodeBench points on the 32B ablation) for versatility (§4.7)</Caveat>.
+- <Caveat>Multilingual coverage claims rest on sampled evaluation — only 10% of INCLUDE/MMMLU items were run for efficiency (§4.6) — and 42 unoptimized languages are excluded from Belebele reporting (A.1.2)</Caveat>.
+- <Caveat>Trillions of pre-training tokens are synthesized by Qwen's own earlier models (§3.1); no contamination analysis or decontamination protocol is described anywhere in the report</Caveat>.
+
+## Critiques and Questions
+
+1. The strongest headline — base model beats DeepSeek-V3-Base on 14/15 — is partly a data-targeting result: S2 explicitly up-weights STEM/code/synthetic data resembling the evaluation distribution, and with in-house synthetic data plus no described decontamination, benchmark hardening cannot be ruled out.
+2. The distill-vs-RL comparison (Tab.21) fixes the student and its data but presupposes a strong teacher exists; it demonstrates "distill when you have a flagship", not "distillation beats RL" — the RL baseline's configuration is also barely specified.
+3. Mode switching obeys whichever /think–/no think flag appears last in the conversation (§4.3) — a user- and injection-controllable surface whose abuse cases (e.g., forcing no-think on a safety-relevant task, or budget exhaustion) are never discussed.
+4. Per-benchmark sampling (64x AIME, 10x GPQA) is sensible for variance but makes cross-report comparisons soft; several baselines are imported from leaderboards under different formats (BFCL FC vs Prompt).
+5. Fig.2's budget-scaling claim is central to the paper's pitch yet is presented without numbers, error bars, or a described x-axis protocol.
+
+<SelfCheck q="Why does the thinking-budget mechanism require Thinking Mode Fusion to exist at all?" a="Budget control works by truncating the thought and forcing an answer from partial reasoning. A model trained only on complete reasoning traces has never answered from an interrupted thought; one trained on both full thinking and empty-think (non-thinking) responses has learned the intermediate behavior implicitly — so the ability to answer from truncated thinking emerges from fusion training without being explicitly taught (§4.3)." />
+
+## Glossary
+
+- <Term def="operating state where the model emits an explicit reasoning trace inside think tags before its answer">thinking mode</Term>
+- <Term def="a user-set cap on reasoning tokens; at the cap the runtime closes the thought and the model answers from partial reasoning">thinking budget</Term>
+- <Term def="Grouped Query Attention: multiple query heads share each key/value head, shrinking KV cache">GQA</Term>
+- <Term def="normalizing query and key vectors before attention, replacing QKV-bias, for training stability">QK-Norm</Term>
+- <Term def="an auxiliary MoE loss computed over the whole batch rather than per sequence, permitting domain specialization of experts">global-batch load-balancing loss</Term>
+- <Term def="critic-free RL algorithm using group-normalized rewards as advantages">GRPO</Term>
+- <Term def="training a student on a fixed corpus of teacher-generated outputs">off-policy distillation</Term>
+- <Term def="student samples its own responses and its logits are pulled toward the teacher's via KL divergence">on-policy distillation</Term>
+- <Term def="synthetic-task benchmark suite measuring effective context length (retrieval, tracing, aggregation) up to 128K">RULER</Term>
+- <Term def="Berkeley Function-Calling Leaderboard: evaluates tool/function-call correctness, including multi-turn">BFCL</Term>
+- <Term def="rotary-position-embedding tricks (base-frequency raising, interpolation, chunked attention) for extending context beyond the trained length">ABF / YaRN / DCA</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

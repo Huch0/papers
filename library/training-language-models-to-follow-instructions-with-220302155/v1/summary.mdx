@@ -1,0 +1,149 @@
+---
+canonical_key: arxiv-2203.02155
+version_key: v1
+title: Training language models to follow instructions with human feedback
+authors:
+- Long Ouyang
+- Jeff Wu
+- Xu Jiang
+- Diogo Almeida
+- Carroll L. Wainwright
+- Pamela Mishkin
+- Chong Zhang
+- Sandhini Agarwal
+- Katarina Slama
+- Alex Ray
+- John Schulman
+- Jacob Hilton
+- Fraser Kelton
+- Luke Miller
+- Maddie Simens
+- Amanda Askell
+- Peter Welinder
+- Paul Christiano
+- Jan Leike
+- Ryan Lowe
+venue: arXiv
+year: 2022
+tags:
+- foundational
+topic_groups:
+- llm
+- rl
+triage_label: READ_SOON
+triage_confidence: medium
+source_link: https://arxiv.org/abs/2203.02155v1
+summary_date: '2026-08-25'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>InstructGPT is the canonical <Term def="Reinforcement Learning from Human Feedback: fine-tune on human demonstrations, train a reward model on human preference rankings, then optimize the policy against that reward with RL">RLHF</Term> recipe — SFT on demonstrations, a preference reward model, then PPO — and it makes a 1.3B model's outputs preferred over those of the 175B GPT-3 on real user prompts, at under 2% of GPT-3's pretraining compute.</TLDR>
+
+<WhyItMatters>This is the alignment pipeline behind ChatGPT-class assistants; its vocabulary — SFT → RM → PPO, alignment tax, pretraining mix, "who are we aligning to" — organizes essentially all post-2022 work on instruction following and preference tuning.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "85 ± 3%", label: "175B InstructGPT preferred over 175B GPT-3", sub: "labeler head-to-head, API prompts" },
+  { value: "100×", label: "parameter gap overcome", sub: "1.3B InstructGPT beats 175B GPT-3" },
+  { value: "21% vs 41%", label: "closed-domain hallucination rate", sub: "InstructGPT vs GPT-3" },
+  { value: "60 vs 3,640", label: "petaflop/s-days: align vs pretrain", sub: "175B PPO-ptx vs GPT-3 pretraining" },
+]} />
+
+## Motivation
+
+I train a language model by asking it to predict the next token of internet text, then I hand it to a user who types "List five ideas for how to regain enthusiasm for my career" and expect help. Those are two different objectives. <Problem>The language-modeling objective is misaligned with "follow the user's instructions helpfully and safely" — untruthful, toxic, or unhelpful completions are not bugs, they are faithful imitation of the training distribution</Problem> (§1). Making the model bigger does not fix this, because scale optimizes the wrong objective harder.
+
+The obvious prior fix — fine-tune on public NLP task collections with instructions (<Term def="GPT-3 fine-tuned on ~60 NLP datasets with natural-language instructions (Wei et al. 2021)">FLAN</Term>, <Term def="multitask prompted-training dataset/model (Sanh et al. 2021); we use the T0++ variant">T0</Term>) — assumes those datasets cover what users actually want. They don't: <Problem>on our API, open-ended generation plus brainstorming is ~57% of usage while classification and QA — what public datasets are built from — is only ~18%</Problem> (Tab.1, §4.1).
+
+## Contribution (what's new)
+
+<Novelty>Human preference rankings, distilled into a reward model and optimized with PPO, provide a training signal for "what the user meant" that demonstrations alone cannot</Novelty>: a demonstration shows one good answer, but ranking K sampled outputs grades the model's *own* failure modes, and RL lets the policy climb that grade. The form is forced — you cannot write a loss function for "helpful, honest, harmless", so you must learn the judge.
+
+Second delta: <Novelty>mixing pretraining-distribution gradients into PPO ("PPO-ptx") removes most of the alignment tax</Novelty> — plain PPO regresses on SQuADv2, DROP, HellaSwag, and translation, and no setting of the KL penalty recovers this (App E.6); direct gradients on pretraining data do. The headline insight: on real user prompts, alignment supervision is worth more than a 100× parameter scale-up (Fig.1).
+
+## Research questions
+
+1. Can fine-tuning with human feedback make LMs follow real users' instructions better than scale does?
+2. What does aligning cost in capabilities (the <Term def="performance drop on standard NLP benchmarks caused by alignment fine-tuning">alignment tax</Term>), and can the tax be avoided?
+3. Do learned preferences generalize — to held-out labelers, to non-instruction prompt styles, to task types (languages, code) never supervised?
+
+## Methodology
+
+Start from pretrained GPT-3 (1.3B, 6B, 175B) and a distribution of real prompts — mostly submitted by customers to early InstructGPT models on the API Playground, bootstrapped by labeler-written prompts (§3.2). Hire ~40 screened contractors (§3.4). Then three steps (Fig.2): (1) labelers write demonstrations; supervised fine-tune GPT-3 on them (<Term def="supervised fine-tuning on human-written demonstrations">SFT</Term>). (2) labelers rank K = 4–9 model outputs per prompt; train a 6B <Term def="model mapping (prompt, response) to a scalar score predicting which output humans prefer">reward model</Term> on all pairwise comparisons. (3) fine-tune the SFT policy with <Term def="Proximal Policy Optimization, a clipped policy-gradient RL algorithm">PPO</Term> against the RM, with a per-token KL penalty toward the SFT model to stop reward over-optimization; PPO-ptx additionally mixes in pretraining gradients. Evaluation is labeler win rate against the 175B SFT baseline on prompts from held-out customers, plus 1–7 Likert scores, behavior metadata (Tab.3), and public NLP benchmarks (§3.6).
+
+<Pass title="Method details">
+
+<Stepper steps={[
+  { title: "Step 1 — SFT", body: "~13k training prompts (11,295 labeler-written + 1,430 customer; Tab.6). 16 epochs, cosine decay, dropout 0.2. Validation loss overfits after epoch 1, yet RM score and human preference keep improving with more epochs — so we select on RM score, not val loss (§3.5, App C.1)." },
+  { title: "Step 2 — Reward model", body: "~33k prompts (Tab.6). Labelers rank K = 4–9 completions per prompt. Train on all pairwise comparisons from one prompt as a single batch element: shuffling them as independent examples lets each completion drive K−1 updates and the RM overfits in one epoch; batching fixes overfitting and needs only one forward pass per completion (§3.5). 6B RM only — 175B RM training was unstable and too costly as a PPO value function (App C.2). Reward normalized so demonstrations score mean 0." },
+  { title: "Step 3 — PPO / PPO-ptx", body: "~31k customer prompts, 256k episodes, batch 512, KL coefficient 0.02, value function initialized from the RM. PPO-ptx accumulates pretraining-data gradients with coefficient 27.8 at a pretraining:RL data ratio of 8 (App C.4)." },
+]} />
+
+The RM is trained with a pairwise cross-entropy loss — the reward difference is the log-odds that a human prefers one response:
+
+<MathBlock>{`\\mathrm{loss}(\\theta) = -\\tfrac{1}{\\binom{K}{2}}\\, \\mathbb{E}_{(x, y_w, y_l)\\sim D}\\big[\\log \\sigma\\big(r_\\theta(x, y_w) - r_\\theta(x, y_l)\\big)\\big]`}</MathBlock>
+
+The RL objective combines RM reward, the KL brake, and (for PPO-ptx) pretraining log-likelihood, with <M tex="\beta = 0.02" /> and <M tex="\gamma = 27.8" /> (<M tex="\gamma = 0" /> for plain PPO):
+
+<MathBlock>{`\\mathrm{objective}(\\phi) = \\mathbb{E}_{(x,y)\\sim D_{\\pi^{RL}_\\phi}}\\big[r_\\theta(x,y) - \\beta \\log\\big(\\pi^{RL}_\\phi(y\\mid x)/\\pi^{SFT}(y\\mid x)\\big)\\big] + \\gamma\\, \\mathbb{E}_{x\\sim D_{\\mathrm{pretrain}}}\\big[\\log \\pi^{RL}_\\phi(x)\\big]`}</MathBlock>
+
+Data hygiene: prompts deduplicated by common prefix, capped ~200 per user/organization, PII-filtered, and train/val/test split by customer ID so evaluation customers are unseen (§3.2). The dataset is over 96% English (§3.3). Labelers prioritized helpfulness during training data collection but truthfulness/harmlessness during final evaluations (§3.4, App B.2). Inter-annotator agreement: 72.6 ± 1.5% (training labelers), 77.3 ± 1.3% (held-out) (§3.4).
+</Pass>
+
+## Main result
+
+Take the strongest baseline seriously: give GPT-3 a carefully engineered few-shot instruction prefix, and it still loses. <Finding src="§1, p.3">175B InstructGPT is preferred over 175B GPT-3 85 ± 3% of the time, and over few-shot-prompted GPT-3 71 ± 4%</Finding>; ordering is GPT-3 &lt; GPT-3-prompted &lt; SFT &lt; PPO ≈ PPO-ptx across all sizes (Fig.1, §4.1). <Finding src="Fig.1">Even 1.3B PPO-ptx outputs are preferred to 175B GPT-3's</Finding> — same architecture, 100× fewer parameters, different fine-tuning data.
+
+<SortableTable columns={["Head-to-head (175B)", "InstructGPT win rate", "Anchor"]} rows={[
+  ["vs GPT-3", "85 ± 3%", "§1, p.3"],
+  ["vs GPT-3 (few-shot prompted)", "71 ± 4%", "§1, p.3"],
+  ["vs GPT-3 fine-tuned on FLAN", "78 ± 4%", "§4.1, p.13"],
+  ["vs GPT-3 fine-tuned on T0++", "79 ± 4%", "§4.1, p.13"],
+]} />
+
+Win rates against the 175B SFT baseline: InstructGPT 73.4 ± 2%, versus 29.8 ± 2% for our FLAN model and 26.8 ± 2% for our T0 model (§1, p.4).
+
+## Key findings
+
+- <Finding src="§5.1, p.17">Alignment is cheap relative to pretraining</Finding>: 175B SFT costs 4.9 petaflop/s-days and 175B PPO-ptx 60, versus 3,640 for pretraining GPT-3 — yet buys more than a 100× scale-up on this distribution.
+- <Finding src="Fig.33–34, App E.6">The alignment tax is fixed by pretraining gradients, not by the KL penalty</Finding>: a pretraining coefficient ≥ 20 recovers SQuADv2/DROP with minimal reward loss, while raising the KL coefficient 100× never recovers them and collapses reward. Training longer (512k episodes) brings the regressions back (Fig.35).
+- <Finding src="§4.1, Fig.3">Preferences generalize across labelers</Finding>: held-out labelers (no training data, no screening) prefer InstructGPT at about the same rate; RMs trained on 4/5 labeler groups predict the held-out group at 69.6 ± 0.9% vs 72.4 ± 0.4% in-group — the model is not just overfitting 40 people's taste.
+- <Finding src="§4.3, Fig.8">Instruction following generalizes beyond its supervision</Finding>: the model follows non-English instructions and answers questions about code although both are a tiny fraction of the ~96%-English fine-tuning data; GPT-3 needs careful prompting for the same.
+- <Finding src="Tab.14, §5.3">Alignment is steerable in both directions</Finding>: instructed to be respectful, InstructGPT is ~25% less toxic than GPT-3; instructed to be maximally biased, it is *more* toxic than GPT-3 (Perspective score 0.427 vs 0.285 at 175B) — it follows bad instructions better too. Bias on Winogender/CrowS-Pairs does not improve at all.
+- <Finding src="§4.3, Fig.9">Characteristic failure modes remain</Finding>: accepting false premises ("why is it important to eat socks after meditating?"), over-hedging on questions with clear answers — plausibly because we told labelers to reward epistemic humility and the RM learned it — and degrading when instructions carry multiple explicit constraints.
+
+## Implications
+
+The result reframes the scaling conversation: for making models *useful*, human-feedback fine-tuning currently buys more than parameters do, at negligible relative compute. It also grounds alignment research in deployed systems — RLHF moves from <Related>summarization testbeds (Ziegler et al. 2019; Stiennon et al. 2020) and the concurrent assistant framing of Askell et al. 2021</Related> to the full distribution of things people actually ask, and this pipeline becomes the template for assistant training generally. The paper is unusually honest that "alignment" here means alignment to specific people: our labelers, our instructions, our customers (§5.2). Threads to chase: <FollowUp>training refusals so harmlessness can override helpfulness (explicitly deferred here)</FollowUp>, <FollowUp>adversarial data collection for false premises and worst-case behavior</FollowUp>, and <FollowUp>richer feedback channels than rankings — edits, natural-language critiques</FollowUp> (§5.4).
+
+## Limitations
+
+- <Caveat>Aligned to ~40 mostly English-speaking US/Southeast-Asian contractors, steered by researcher-written instructions, on prompts from waitlisted early-adopter API customers</Caveat> — three nested filters between "human values" and the training signal (§5.2–5.3, App B).
+- <Caveat>Most comparisons were labeled by a single contractor</Caveat>, for cost; disagreement regions are invisible (§5.3).
+- <Caveat>Not safe by construction: the model follows harmful instructions, and becomes more toxic than GPT-3 when told to be</Caveat> (§5.3); training prioritized helpfulness over harmlessness.
+- <Caveat>PPO-ptx still lags GPT-3 on DROP, SQuADv2, and Fr→En translation</Caveat> — the tax is reduced, not eliminated (§4.2), and the pretraining mix could reinforce undesirable pretraining behaviors (§5.4).
+- <Caveat>No quantitative evaluation of the language/code generalization claims</Caveat> — qualitative examples only (§4.3).
+
+## Critiques and Questions
+
+1. The headline metric is partly circular: labelers evaluate the very notion of quality the RM was trained on, and "held-out labelers" come from the same vendors without screening. Generalization is shown across labelers within a narrow demographic, not across cultures of preference.
+2. The evaluation prompt distribution was submitted *to InstructGPT-style models*, which plausibly favors instruction-phrased prompts; the GPT-3-submitted-prompt evaluation (Fig.3, left) partly answers this — InstructGPT still wins — but PPO-ptx gets slightly worse there at scale, which is left unexplained.
+3. The acknowledgements note the automatic TruthfulQA metrics overstated the PPO gains; the paper leans on human TruthfulQA evals, a good catch that also illustrates how fragile automatic alignment metrics are.
+4. Was 100× the right comparison? SFT alone captures a large share of the gain (Fig.1); the marginal value of the RL step over well-scaled SFT with more demonstrations is not isolated at matched data cost.
+
+<SelfCheck q="Why does mixing pretraining gradients into PPO fix the alignment tax when increasing the KL penalty cannot?" a="The KL penalty only keeps the policy close to the SFT model overall — even at 100x the default coefficient the DROP/SQuAD regressions remain while validation reward collapses (Fig.34). Gradients on actual pretraining data directly maintain the pretrained capabilities inside the policy, recovering the benchmarks with minimal reward loss (Fig.33); a coefficient around 27.8 works across all model sizes." />
+
+## Glossary
+
+- <Term def="model outputs preferred by labelers as a fraction of pairwise comparisons against a fixed baseline (here the 175B SFT model)">win rate</Term>
+- <Term def="fabricating content not present in the input on closed-domain tasks like summarization">hallucination</Term>
+- <Term def="benchmark of 817 questions targeting common human falsehoods (Lin et al. 2021)">TruthfulQA</Term>
+- <Term def="dataset of sentence beginnings used to elicit and measure toxic continuations, scored by the Perspective API">RealToxicityPrompts</Term>
+- <Term def="the paper's full model: PPO fine-tuning with pretraining gradients mixed in; 'InstructGPT' refers to this variant unless stated otherwise">PPO-ptx</Term>
+- <Term def="1–7 ordinal quality rating collected from labelers alongside rankings">Likert score</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

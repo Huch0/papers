@@ -1,0 +1,187 @@
+---
+canonical_key: arxiv-2307.09288
+version_key: v1
+title: 'Llama 2: Open Foundation and Fine-Tuned Chat Models'
+authors:
+- Hugo Touvron
+- Louis Martin
+- Kevin Stone
+- Peter Albert
+- Amjad Almahairi
+- Yasmine Babaei
+- Nikolay Bashlykov
+- Soumya Batra
+- Prajjwal Bhargava
+- Shruti Bhosale
+- Dan Bikel
+- Lukas Blecher
+- Cristian Canton Ferrer
+- Moya Chen
+- Guillem Cucurull
+- David Esiobu
+- Jude Fernandes
+- Jeremy Fu
+- Wenyin Fu
+- Brian Fuller
+- Cynthia Gao
+- Vedanuj Goswami
+- Naman Goyal
+- Anthony Hartshorn
+- Saghar Hosseini
+- Rui Hou
+- Hakan Inan
+- Marcin Kardas
+- Viktor Kerkez
+- Madian Khabsa
+- Isabel Kloumann
+- Artem Korenev
+- Punit Singh Koura
+- Marie-Anne Lachaux
+- Thibaut Lavril
+- Jenya Lee
+- Diana Liskovich
+- Yinghai Lu
+- Yuning Mao
+- Xavier Martinet
+- Todor Mihaylov
+- Pushkar Mishra
+- Igor Molybog
+- Yixin Nie
+- Andrew Poulton
+- Jeremy Reizenstein
+- Rashi Rungta
+- Kalyan Saladi
+- Alan Schelten
+- Ruan Silva
+- Eric Michael Smith
+- Ranjan Subramanian
+- Xiaoqing Ellen Tan
+- Binh Tang
+- Ross Taylor
+- Adina Williams
+- Jian Xiang Kuan
+- Puxin Xu
+- Zheng Yan
+- Iliyan Zarov
+- Yuchen Zhang
+- Angela Fan
+- Melanie Kambadur
+- Sharan Narang
+- Aurelien Rodriguez
+- Robert Stojnic
+- Sergey Edunov
+- Thomas Scialom
+venue: arXiv
+year: 2023
+tags:
+- foundational
+topic_groups:
+- llm
+triage_label: READ_SOON
+triage_confidence: medium
+source_link: https://arxiv.org/abs/2307.09288v2
+summary_date: '2026-08-25'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>Llama 2 pairs a stronger open base model (2T tokens, 4k context, GQA, commercial license) with the first fully documented industrial RLHF pipeline — quality-first SFT, two reward models, five iterations of rejection sampling + PPO, and Ghost Attention — yielding a chat model that human raters judge on par with ChatGPT on helpfulness and safety.</TLDR>
+
+<WhyItMatters>This is the paper that made open-weight *aligned* models real: before it, open bases existed but the product-grade RLHF recipe was a trade secret. Every open post-training pipeline since (and most of what I know about reward modeling in practice) descends from what this paper chose to write down.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "36% / 31.5%", label: "win / tie vs ChatGPT", sub: "Llama 2-Chat 70B, human eval on ~4k prompts (Fig.12)" },
+  { value: "1.4M", label: "Meta preference comparisons", sub: "avg 3.9 turns, collected in weekly batches (Tab.6)" },
+  { value: "2T", label: "pretraining tokens", sub: "4k context, GQA at 34B/70B; loss not saturated (Fig.5)" },
+  { value: "24.6 → 0.01", label: "ToxiGen toxic generations, %", sub: "Llama 2 70B base → chat (Tab.11, Tab.14)" },
+]} />
+
+## Motivation
+
+Open pretrained models had caught up; open *assistants* had not. <Problem>BLOOM, LLaMA-1, and Falcon match GPT-3-class base models, but none is a substitute for the closed "product" LLMs — ChatGPT, Bard, Claude — because those are heavily fine-tuned to human preferences</Problem>, and <Problem>that alignment step is costly in compute and annotation and is neither transparent nor reproducible, which blocks the community from doing alignment research at all</Problem> (§1). Distillation-style imitations (Alpaca, Vicuna) narrow the gap superficially but fall short of the closed bar (§6). The missing artifact was not weights — it was the recipe.
+
+## Contribution (what's new)
+
+The core contribution is <Novelty>the recipe itself, published end-to-end with its ablations: iterative RLHF where preference data, reward models, and policy improve together in weekly cycles, so the reward model stays on-distribution for the policy it must judge</Novelty>. The form is forced: a static reward model goes stale as the policy improves (its accuracy degrades off-distribution), so annotation must be interleaved with training, not collected once. Around this core sit deliberate design choices, each justified by a failure it prevents: <Novelty>two separate reward models (helpfulness, safety), because the two objectives trade off and confuse a single model</Novelty>; <Novelty>rejection-sampling fine-tuning for breadth plus PPO for depth</Novelty>; and <Novelty>Ghost Attention (GAtt), a data-side trick that stops multi-turn system-instruction forgetting</Novelty> (§3). Plus the released artifacts: Llama 2 base (7B/13B/70B; 2T tokens, 4k context, <Term def="grouped-query attention — several query heads share one key/value head, shrinking the KV cache for fast large-batch inference">GQA</Term>) and Llama 2-Chat under a commercial license (§1, Tab.1).
+
+## Research questions
+
+1. Can an open, documented pipeline reproduce the helpfulness and safety of closed product LLMs — and what does it actually take (data volumes, reward-model quality, number of iterations)? (§1, §3)
+2. Is RLHF a costly add-on or the essential ingredient — what does preference optimization do that supervised fine-tuning cannot? (§3.1, §5.1)
+3. Can safety be improved aggressively without taxing helpfulness? (§4.2)
+
+## Methodology
+
+Pretrain a Llama-1-style transformer, longer and wider in the ways that matter for serving (2T tokens, doubled 4k context, GQA at 34B/70B — each ablated in App.A.2.1). Then align in three stages (Fig.4): SFT on a small curated set, then iterative RLHF (V1→V5) driven by two reward models trained on ~1.4M in-house preference comparisons, mixing rejection-sampling fine-tuning with PPO. Safety gets its own parallel track: safety SFT, a safety reward model, and targeted <Term def="prefix a safety preprompt to get a safer answer, then fine-tune on that answer without the preprompt, distilling the prefix into the weights">context distillation</Term>, audited by 350+ red-teamers (§4).
+
+<Pass title="Method details — SFT, reward models, RLHF iterations, GAtt, ablations">
+**SFT (§3.1):** bootstrap from public instruction data, then replace scale with curation: 27,540 vendor-annotated prompt+response pairs. Cosine LR 2e−5, 2 epochs, 4096 sequence length, loss only on answer tokens.
+
+**Preference data (§3.2.1, Tab.6):** annotators write a prompt, pick the better of two responses sampled from different model variants/temperatures, and grade the gap on a 4-point scale (significantly better → negligibly better). Helpfulness and safety are collected under separate guidelines; safety pairs also get a 3-way label (safe-vs-unsafe 18%, both safe 47%, both unsafe 35%). 1,418,091 Meta comparisons (longer and more multi-turn than any open preference set), plus ~1.5M open-source comparisons.
+
+**Reward models (§3.2.2):** initialized *from the chat model checkpoint* so the RM "knows what the chat model knows" (prevents rewarding hallucinations it cannot detect), with the LM head swapped for a scalar head. Loss = binary ranking with a rating-dependent margin:
+
+<MathBlock>{`\\mathcal{L}_{\\text{ranking}} = -\\log\\Big(\\sigma\\big(r_\\theta(x, y_c) - r_\\theta(x, y_r) - m(r)\\big)\\Big)`}</MathBlock>
+
+where <M tex="m(r)" /> grows with how separable the pair is — this margin measurably improves helpfulness-RM accuracy on distinct pairs (Tab.28, App.A.3.3). One epoch only (more overfits). Helpfulness RM trains on all Meta Helpfulness + balanced Safety/open-source data; Safety RM on all Meta Safety + Anthropic Harmless with 10% helpfulness data, which specifically helps accuracy on both-responses-safe pairs.
+
+**RLHF (§3.2.3):** five iterations. Rejection sampling (70B only; smaller models are fine-tuned on the 70B's selected samples — a distillation): sample K responses per prompt, fine-tune on the argmax-reward one. PPO on top from V4 onward, with the piecewise reward — safety RM score if the prompt is safety-tagged or the safety score falls below 0.15 (precision 0.89 / recall 0.55), else helpfulness RM — whitened via logit, plus a KL penalty (<M tex="\beta = 0.01" /> at 7B/13B, 0.005 at 34B/70B) to prevent reward hacking. A found-the-hard-way lesson: restricting rejection sampling to the *latest* model's samples caused capability regressions by V3 (e.g., rhyming), fixed by pooling top samples from all prior iterations.
+
+**GAtt (§3.3):** to stop system instructions ("act as Napoleon", "answer in haiku") being forgotten after a few turns, synthetically append the instruction to *every* user turn of a dialogue, sample responses, then train with the instruction kept only in the first turn — zeroing the loss on all earlier turns to avoid a train/inference mismatch. Attention maps show the system message stays attended for many more turns (Fig.10); control holds beyond 20 turns (App.A.3.5).
+
+**Architecture ablations (App.A.2.1):** at fixed 150B tokens, 4k context beats 2k on long-input tasks (SCROLLS; NarrativeQA F1 0.21 → 17.26) with no loss on standard tasks (Tab.16–17); GQA matches MHA quality while MQA trails on average (Tab.18), and GQA/MQA sustain much larger inference batch sizes (MHA hits OOM where they run, Fig.24) — hence GQA for 34B/70B.
+</Pass>
+
+## Main result
+
+On human evaluation over ~4,000 helpfulness prompts with 3 raters each, <Finding src="Fig.12, §3.4.2">Llama 2-Chat 70B is competitive with ChatGPT (36% win / 31.5% tie), beats PaLM-bison by a large margin, and the 34B model wins more than 75% against Vicuna-33B and Falcon-40B</Finding>. On safety, <Finding src="Fig.17–18, §4.4">Llama 2-Chat shows the lowest violation rates across sizes on ~2,000 adversarial prompts, single- and multi-turn</Finding>. The base model leads all open models on academic benchmarks — <Finding src="Tab.3">Llama 2 70B: MMLU 68.9 (+5 over Llama 1 65B), BBH 51.2 (+8)</Finding> — and sits near GPT-3.5 except on code:
+
+<SortableTable columns={["Model", "MMLU 5-shot", "GSM8K 8-shot", "HumanEval 0-shot", "NQ 1-shot", "TriviaQA 1-shot"]} rows={[
+  ["GPT-3.5", 70.0, 57.1, 48.1, "—", "—"],
+  ["GPT-4", 86.4, 92.0, 67.0, "—", "—"],
+  ["PaLM 540B", 69.3, 56.5, 26.2, 29.3, 81.4],
+  ["PaLM-2-L", 78.3, 80.7, "—", 37.5, 86.1],
+  ["Llama 2 70B", 68.9, 56.8, 29.9, 33.0, 85.0],
+]} />
+
+## Key findings
+
+- <Finding src="§3.1">SFT quality beats quantity: setting aside millions of third-party examples for 27,540 curated annotations "notably improved" results — and the SFT model's own outputs soon rivaled human-written data</Finding>, which is why annotation budget was reallocated from demonstrations to preferences.
+- <Finding src="§5.1, Fig.20">RLHF surpasses SFT because humans compare better than they write: SFT inherits the tail of bad annotations and is capped by the best annotator's skill, while preference-driven reward pushes the response distribution past both</Finding> — the paper's provocative framing: "supervised data may no longer be the gold standard."
+- <Finding src="Tab.7, Fig.6">The in-house reward models beat all public RMs *and* zero-shot GPT-4 at judging Meta preference data (Helpfulness RM 63.2 vs GPT-4 58.6), and RM accuracy scales with data and size without saturating</Finding> — treated as *the* proxy metric: RM gains translate directly into chat-model gains.
+- <Finding src="Fig.15, §4.2.3">Safety data scaling is nearly free: raising safety data from 0% to 100% (~0.1M examples) sharply improves the safety score distribution while mean helpfulness stays flat</Finding>; the tax shows up only as false refusals — ~0.05% on the helpfulness set but substantial on a 210-prompt borderline set ("Christmas Crack" tripping the word "crack"-adjacent pattern) (App.Fig.33, Tab.41).
+- <Finding src="Fig.8, Fig.21, §5.1">RLHF dynamically rescales temperature per prompt type: factual prompts converge to the same answer even at high temperature while creative prompts keep diversity</Finding> — sampling hyperparameters must be re-tuned every RLHF iteration (optimal T rises to ~1.2–1.3).
+- <Finding src="Fig.22–23, Tab.15">Alignment surfaces latent abilities: zero-shot multi-tool use emerges without any tool-use training (with a calculator: 67.1/69.2/82.4 on ASDiv/SVAMP/MAWPS vs Toolformer's 40.4/29.4/44.0), and 1,000 date-tagged SFT examples suffice for robust temporal organization of knowledge</Finding>.
+- <Finding src="App.A.6, Tab.51">A token-level skipgram contamination audit (10+-token matches, 4-token slack) finds only HellaSwag and MMLU-Humanities meaningfully boosted by contamination — with the 70B benefiting more than the 7B</Finding>; other benchmarks show no significant effect.
+
+## Implications
+
+The open ecosystem got its alignment textbook: preference-data volumes, RM training mixes, iteration counts, and the failure modes (RM staleness, rejection-sampling forgetting, false refusals) that closed labs had kept internal. <Related>It operationalizes the InstructGPT/Anthropic HH line of RLHF work at open scale, supersedes LLaMA-1, and is the direct substrate for the Code Llama / open fine-tune wave; its two-RM safety design anticipates later safety-classifier stacks, and its "humans compare better than they write" argument is the practical case later formalized by DPO-style direct preference methods</Related>. <FollowUp>Whether the pricey PPO stage is necessary at all (DPO), whether iterative on-distribution annotation can be replaced by AI feedback (RLAIF), and how the false-refusal/borderline trade-off should be measured as a first-class metric</FollowUp>.
+
+## Limitations
+
+- <Caveat>English-only in practice: 89.7% of pretraining data is English (Tab.10) and all testing was in English; non-English performance is called "fragile"</Caveat> (§5.2).
+- <Caveat>The helpfulness human eval's ~4k prompts include no coding or reasoning prompts, and only the final turn of multi-turn dialogues is judged</Caveat> (§3.4.2) — exactly where Tab.4 shows the biggest closed-model gap (HumanEval 29.9 vs GPT-3.5's 48.1).
+- <Caveat>Safety evaluations use Meta's own content standards and prompt set, which the paper concedes are "likely biased towards Llama 2-Chat"</Caveat> (Fig.3 caption, §4.4).
+- <Caveat>Safety tuning overshoots at times: over-cautious refusals and safety boilerplate are acknowledged</Caveat> (§5.2), and the 34B model was withheld for lack of red-teaming time (§1).
+- <Caveat>Inter-rater reliability on helpfulness is modest (Gwet's AC2 0.37–0.55), so close comparisons (vs ChatGPT) are noisy</Caveat> (§3.4.2).
+
+## Critiques and Questions
+
+1. The headline "on par with ChatGPT" rests on a prompt set that excludes the categories where the model is weakest (code, reasoning); the academic tables and the human eval quietly measure different models.
+2. The pipeline is documented but not reproducible: the 1.4M preference comparisons — by the paper's own logic the decisive asset — are not released, so the community gets the recipe without the key ingredient.
+3. Reward models serve as both training signal and primary evaluator (Fig.11 left); the Goodhart risk is acknowledged and partially hedged with GPT-4-as-judge, but GPT-4 win-rates and human win-rates are never reconciled quantitatively.
+4. There is no controlled comparison of rejection sampling vs PPO vs both — the sequential adoption (RS until V4, then +PPO) confounds algorithm choice with data iteration, so "what did PPO buy" is unanswerable from the paper.
+5. Emergent tool use is demonstrated with an illustrative figure and one calculator benchmark; "never trained on tool use" is hard to audit given 2T undisclosed pretraining tokens.
+
+<SelfCheck q="Why does Llama 2 train two separate reward models, and what keeps them accurate across RLHF iterations?" a="Helpfulness and safety trade off — one model must both rank quality and detect adversarial prompts, which degrades both skills — so separate RMs each get a cleaner objective (§3.2.2). Accuracy is maintained by iterating: each week's preference data is collected on outputs of the *latest* chat model, because RM accuracy degrades off-distribution as the policy improves (§3.2.1)." />
+
+## Glossary
+
+Key terms are defined inline. Remaining: <Term def="reinforcement learning from human feedback — fit a reward model to human preference comparisons, then optimize the LLM policy against it">RLHF</Term>, <Term def="policy-gradient RL algorithm with a clipped update that keeps the new policy close to the old one; the standard RLHF optimizer">PPO</Term>, <Term def="sample K responses, keep the highest-reward one, and fine-tune on it — RL by filtered imitation">rejection-sampling fine-tuning</Term>, <Term def="machine-generated benchmark of implicitly hateful statements; the metric is the fraction of model generations a classifier deems toxic">ToxiGen</Term>, <Term def="adversarially probing a model with expert humans to surface unsafe behavior before release">red teaming</Term>, <Term def="BLEU of a model's samples against its own other samples; lower means more diverse generations">Self-BLEU</Term>.
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

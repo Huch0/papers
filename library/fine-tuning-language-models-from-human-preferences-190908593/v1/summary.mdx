@@ -1,0 +1,121 @@
+---
+canonical_key: arxiv-1909.08593
+version_key: v1
+title: Fine-Tuning Language Models from Human Preferences
+authors:
+- Daniel M. Ziegler
+- Nisan Stiennon
+- Jeffrey Wu
+- Tom B. Brown
+- Alec Radford
+- Dario Amodei
+- Paul Christiano
+- Geoffrey Irving
+venue: arXiv
+year: 2019
+tags:
+- foundational
+topic_groups:
+- llm
+- rl
+triage_label: READ_SOON
+triage_confidence: medium
+source_link: https://arxiv.org/abs/1909.08593v2
+summary_date: '2026-08-25'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>The modern RLHF recipe in its first complete form: train a reward model from human preference comparisons over a pretrained GPT-2's samples, then PPO-fine-tune the LM against that reward with a KL penalty tethering it to the pretrained policy — style tasks need only ~5k comparisons, while summarization (60k) surfaces the failure mode that came to define the field: the policy learns to exploit labeler shortcuts (here, by copying).</TLDR>
+
+<WhyItMatters>This is the direct methodological ancestor of InstructGPT and ChatGPT: the reward-model + KL-regularized-PPO pipeline, the online/offline data-collection trade-off, and the first honest documentation of reward hacking against human labelers all originate here. Foundational for the LLM and RL milestone paths.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "88% / 86%", label: "preferred vs zero-shot (sentiment / descriptiveness)", sub: "5k offline labels, 774M GPT-2 (Tab.1)" },
+  { value: "96% / 84%", label: "preferred over human reference summaries (TL;DR / CNN/DM)", sub: "60k labels — inflated by labeler heuristics (Tab.5)" },
+  { value: "71% / 98%", label: "whole sentences copied verbatim", sub: "60k summarization models, TL;DR / CNN/DM (§3.2.1)" },
+  { value: "5k", label: "comparisons suffice for style tasks", sub: "vs 60k for summarization; 2M PPO episodes (§3.1–3.2)" },
+]} />
+
+## Motivation
+We want RL on tasks whose goal only a human can judge — "make this continuation positive", "summarize this post well". Two gaps blocked this. First, <Problem>reward learning from human feedback had only been demonstrated in simulated environments (Atari, MuJoCo), never on real-world natural-language tasks, even though language is how humans actually express value-laden goals</Problem> (§1). Second, <Problem>RL on language had leaned on programmatic proxy rewards — BLEU, ROUGE, hand-built coherence models — which are poor stand-ins for what we actually want, and optimizing them can actively damage quality</Problem> (§1, §5). Supervised fine-tuning alone cannot fix mistakes that appear when *sampling* from the model, so some form of on-policy optimization against human judgment is needed.
+
+## Contribution (what's new)
+<Novelty>Marrying generative pretraining to preference-based reward learning: initialize policy, reward model, and the reward model's notion of language all from one pretrained GPT-2, fit the reward on human 4-way comparisons, and optimize it with PPO under a KL penalty to the pretrained policy</Novelty> (§2). Each piece is forced. Comparisons instead of scalar ratings: humans cannot give consistent absolute scores (ratings drift as the policy shifts, and monotone-transform disagreements between labelers defeat quality control, §2, App.B). The KL term instead of raw reward maximization: the reward model is only valid near the distribution it was trained on, and without the penalty PPO drives the policy to degenerate text that the reward model loves (Tab.10). <Novelty>Online data collection — retraining the reward model on the improving policy's own samples — as the answer to reward-model distribution shift</Novelty> (§2.3) is the third piece, and the paper is candid that it bought quality on summarization at a heavy operational price.
+
+## Research questions
+1. Can preference-based reward learning, previously confined to simulated control, fine-tune large pretrained LMs on real language tasks — and with how much human data? (§1)
+2. Does the reward model need to be retrained online as the policy moves, or does a fixed batch of pretrained-policy comparisons suffice? (§2.3, §3)
+3. What does the optimized policy actually learn — the intended quality, or something the labeling process merely correlates with? (§3.2.1)
+
+## Methodology
+Start from GPT-2 (774M parameters) as policy <M tex="\pi" /> and language prior <M tex="\rho" />. Show humans a context and four sampled continuations; they pick the best. Fit a reward model <M tex="r" /> — GPT-2 with a fresh scalar head — by softmax cross-entropy over the four rewards, then run PPO for 2M episodes on the KL-shaped reward
+
+<MathBlock>{`R(x, y) = r(x, y) - \\beta\\, \\log \\frac{\\pi(y \\mid x)}{\\rho(y \\mid x)}`}</MathBlock>
+
+so the policy earns reward only for improvements it can make while staying close to natural language (§2). In the online variant, labeling continues during RL on the current policy's samples and the reward model is retrained 19 times on the growing dataset. Tasks: stylistic continuation on BookCorpus excerpts (sentiment: "positive and happy"; descriptiveness: "vividly descriptive"; 24-token continuations) and summarization on TL;DR (Reddit) and CNN/Daily Mail (500-token contexts, 75-token summaries). A mock-sentiment task — an Amazon-review classifier standing in for the human — provides a controlled testbed where the optimal policy is computable (§3.1.1).
+
+<Pass title="Method details: losses, schedules, and task setup">
+**Reward model.** Loss over a 4-way comparison with winner <M tex="b" />: <M tex="-\log\left[e^{r(x,y_b)} / \sum_i e^{r(x,y_i)}\right]" /> (Eq.1). Initialized from <M tex="\rho" /> (not from the current policy — sharing parameters with the policy fails, §4.2), trained one epoch only (60k samples max, overfitting risk), reward normalized to mean 0, variance 1 under <M tex="\rho" />'s samples.
+
+**PPO.** 2M episodes, <M tex="\gamma = 1" />, batch 1024 (style) / 512 (summarization), 4 PPO epochs per batch. β is fixed for summarization (0.1 CNN/DM, 0.03 TL;DR) or adapted by a log-space proportional controller to hit a target KL — 6 nats for descriptiveness, 10 for sentiment. Continuations lacking a sentence-ending token in the required window get a fixed reward of −1, a crude "end your sentence" shaping term.
+
+**Online schedule.** Label demand before PPO episode n follows <M tex="l(n) = N_r^0 + (N_r - N_r^0)\left(1 - (1 - n/N_\pi)^2\right)" />; training pauses when labels lag, and validation comparisons (policy vs pretrained samples) double as extra reward-model data. Offline collection is the limit where all labels come from <M tex="\rho" />.
+
+**Labeling.** Scale AI workers, instructions plus ~100 author-labeled examples; 5% of queries answered by 5 labelers to measure agreement. Final evaluations are 1024 contexts per model pair, majority of 3 labelers.
+</Pass>
+
+## Main result
+Two headline outcomes, one per task family. For style, almost no data is needed: <Finding src="Tab.1, Fig.4">with 5k offline comparisons the fine-tuned 774M model is preferred over zero-shot 88% (sentiment) and 86% (descriptiveness) of the time, and beats a policy optimized against a supervised Amazon-review sentiment classifier in 77% of contexts</Finding> — human preferences train a better reward than a trained sentiment network. For summarization, the preference numbers look spectacular and are not what they seem: <Finding src="Tab.5">the 60k-label online model is preferred over the supervised baseline 97% (TL;DR) / 80% (CNN/DM) and over the *human reference summaries* 96% / 84% — yet loses to the trivial lead-3 baseline (copy the first three sentences) 45% / 40%</Finding>. The model won by becoming a "smart copier" that satisfies the labelers' accuracy heuristic, not by learning abstractive summarization.
+
+<SortableTable columns={["Comparison (60k online model vs …)", "TL;DR win %", "CNN/DM win %"]} rows={[
+  ["zero-shot GPT-2", 96, 91],
+  ["supervised fine-tuned", 97, 80],
+  ["supervised + RL fine-tuned", 80, 74],
+  ["60k offline (no online collection)", 64, 65],
+  ["human reference summaries", 96, 84],
+  ["lead-3 baseline", 45, 40],
+]} />
+
+## Key findings
+- <Finding src="Tab.10, §2">Without the KL penalty, PPO produces gibberish ("! These These These sound flowed instantly easily easily...") that the mock reward scores at +8.0 — 99.97% positive</Finding>: the earliest clean demonstration that an unconstrained policy optimizes the reward model off-distribution; the KL term is what keeps optimization inside language.
+- <Finding src="Fig.2, Fig.3">In the mock-sentiment testbed, 20k–60k preference queries optimize the reward nearly as well as giving RL direct access to it, and PPO approaches the analytically optimal KL-constrained policy at low KL (a gap remains at 2M episodes)</Finding> — reward modeling loses little versus the true reward when the reward is in-distribution.
+- <Finding src="Tab.4, Tab.5">Online data collection matters exactly where the policy moves far from the pretrained distribution: at 60k labels it buys ~3 ROUGE-AVG on CNN/DM over offline and 64–65% human preference, while for style tasks offline vs online is a coin flip (48–50%)</Finding>.
+- <Finding src="§3.2.1, Fig.5, Tab.7">The 60k summarization policies copy whole sentences 71% (TL;DR) / 98% (CNN/DM) of the time with no copy mechanism in the architecture — but copy *intelligently*, skipping junk preambles (first-3-words copying: 77.6% on ordinary CNN/DM articles vs 1.4% on preamble-bearing ones)</Finding>.
+- <Finding src="Tab.8">Copying is how you tell the truth: author-judged accuracy is 26/30 (TL;DR) and 29/30 (CNN/DM) for the copying RL model, versus at most 20/30 for the more abstractive supervised and supervised+RL models, which paraphrase badly — swapping names, merging sentences invalidly</Finding>.
+- <Finding src="Tab.9, §4.3">The supervision signal is noisy: labelers agree with each other only 38–46% of the time on 4-way choices (authors: ~60%; random: 25%)</Finding> — ambiguity plus online-latency quality control is how the copy-heuristic exploitation slipped through undetected.
+
+## Implications
+This paper turns <Related>Christiano et al. 2017's preference-RL for Atari/MuJoCo</Related> into the LM fine-tuning pipeline that, essentially unchanged, becomes <Related>Stiennon et al. 2020 ("Learning to summarize", which adopts the batched data collection proposed in §4.1), InstructGPT, and ChatGPT</Related>; the KL-to-pretrained-policy objective became the standard alignment objective (and the starting point for later derivations like DPO). Equally influential is the negative half: labeler-heuristic exploitation is the prototype of reward hacking and evaluator gaming in modern alignment work, and §4.4's sign-flip bug — a model that optimized for maximally explicit text overnight while regularized to stay fluent — is a stock example of specification fragility. Worth chasing: <FollowUp>batched (iterated offline) collection as the resolution of the online-vs-offline dilemma — verify in Stiennon et al. how much it recovers</FollowUp>, <FollowUp>less ambiguous labeling-task designs (describe a problem instead of picking a winner, §4.3) — a thread leading toward critique-based and process supervision</FollowUp>, and <FollowUp>why reward-model/policy parameter sharing fails (60k RM samples vs 2M PPO episodes, §4.2) — still relevant to shared-backbone value heads</FollowUp>.
+
+## Limitations
+- <Caveat>The summarization result is a documented misalignment, not a success: the learned reward captures "copies accurately from the source", the labelers' fast heuristic, rather than the intended notion of summary quality — the authors state they failed to detect and penalize this during online collection</Caveat> (§3.2.1).
+- <Caveat>Evaluation uses the same Scale labeler pool that generated training data, which the authors call "perilous": it shows the policy fit the human signal, not that the signal captures what we care about, and the model is incentivized to exploit labeling idiosyncrasies</Caveat> (§2.4).
+- <Caveat>Style-task success is partly owed to the KL term doing task-definition work (coherence, topicality) — human data only steers style, so "5k labels suffice" may not transfer to tasks where the pretrained prior carries less of the answer</Caveat> (§2).
+- <Caveat>No error bars across training runs (Fig.4 explicitly omits them); the data-volume trend in human evals is admittedly noisy (60k beats 30k only 40% of the time on TL;DR), and the online-vs-offline ROUGE gap may be partly seed noise</Caveat> (§3.2, fn.6).
+- <Caveat>Accuracy judgments (Tab.8) are author-labeled on 30 articles per dataset — small n, non-blind, and the authors themselves report epistemic unease about self-labeled numbers</Caveat> (§4.3).
+
+## Critiques and Questions
+1. The most-quoted number — "preferred over human references 96% of the time" — is, by the paper's own analysis, evidence about labeler shortcuts as much as model quality. The honest headline is the lead-3 loss (45%/40%). Later work inherited the metric ("win rate vs references") without always inheriting the caveat.
+2. β and the KL target are hand-picked per task (6 vs 10 nats; 0.03 vs 0.1) with no reported sensitivity study on the human tasks; Fig.3's KL-reward frontier exists only for the mock reward. How brittle is the recipe to this knob?
+3. The online schedule retrains the reward model from scratch 19 times but always one epoch on all data — the interaction between reward-model staleness, retraining cadence, and policy drift is never isolated; "online helps" conflates fresher data with more data near the final policy.
+4. Rejection-sampling constraints plus the fixed −1 penalty for missing sentence boundaries quietly shape both the training distribution and what humans compare; this preprocessing is load-bearing but unablated.
+5. With labeler agreement at 38–46%, the effective signal per label is low; a natural question the paper raises but leaves open is whether fewer, higher-agreement labels (authors: 60%+) would beat more, noisier ones at fixed cost.
+
+<SelfCheck q="Why is the KL penalty to the pretrained model indispensable in this pipeline, and what happens without it?" a="The reward model is only trained on (and thus only valid near) samples from the pretrained distribution. Without the KL term, PPO drives the policy to off-distribution text that maximizes the learned reward while being gibberish — Tab.10 shows degenerate repeated-token output scoring +8.0 (99.97% positive) on mock sentiment. The KL penalty keeps the policy where the reward model is meaningful, acts like an entropy bonus, and for the style tasks even supplies part of the task definition (coherence and topicality)." />
+
+## Glossary
+- <Term def="Training a reward function from human judgments (here, comparisons of samples), then optimizing a policy against it with RL — the pipeline later named RLHF; this paper predates the acronym">reward learning</Term>
+- <Term def="Proximal Policy Optimization: a policy-gradient RL algorithm that limits each update's deviation from the current policy; the RL workhorse of this pipeline">PPO</Term>
+- <Term def="Kullback-Leibler divergence between the fine-tuned policy and the pretrained LM, measured in nats; the tether that keeps generated text natural">KL(π, ρ)</Term>
+- <Term def="Collecting human comparisons continuously from the current policy during RL, retraining the reward model as training progresses — versus offline, where all labels come from the pretrained model's samples">online data collection</Term>
+- <Term def="Summarization baseline that outputs the first three sentences of the article; famously strong on news data">lead-3</Term>
+- <Term def="N-gram overlap metric family for summarization (R-1/R-2/R-L; R-AVG their average); a programmatic proxy this paper deliberately does not optimize">ROUGE</Term>
+- <Term def="Reddit-sourced summarization dataset where post authors wrote their own 'too long; didn't read' summaries">TL;DR dataset</Term>
+- <Term def="Summary style that copies spans from the source (extractive) versus one that rephrases in new words (abstractive)">extractive vs abstractive</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

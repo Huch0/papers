@@ -61,17 +61,17 @@ versions:
   source: arxiv
   source_url: https://arxiv.org/abs/2203.15556v1
   pdf_path: library/training-compute-optimal-large-language-models-220315556/v1/paper.pdf
-  summary_path: null
+  summary_path: library/training-compute-optimal-large-language-models-220315556/v1/summary.mdx
   metadata_path: library/training-compute-optimal-large-language-models-220315556/v1/metadata.yaml
   fetched_at: '2026-08-24T03:20:43Z'
   source_updated_at: '2022-03-29T13:38:03Z'
   arxiv_version: v1
   pdf_sha256: 3fd3632a8ef48171bd25282990221d49535d75356192f068b3b2ebe08f2aedd4
   pdf_bytes: 6004349
-  summary_status: none
-  extraction_status: none
+  summary_status: full
+  extraction_status: full
   created_at: '2026-08-24T03:20:43Z'
-  updated_at: '2026-08-24T03:20:43Z'
+  updated_at: '2026-08-25T06:32:49Z'
 relations:
   duplicate_candidates: []
   related_papers: []

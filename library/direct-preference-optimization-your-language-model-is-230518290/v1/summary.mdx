@@ -1,0 +1,111 @@
+---
+canonical_key: arxiv-2305.18290
+version_key: v1
+title: 'Direct Preference Optimization: Your Language Model is Secretly a Reward Model'
+authors:
+- Rafael Rafailov
+- Archit Sharma
+- Eric Mitchell
+- Stefano Ermon
+- Christopher D. Manning
+- Chelsea Finn
+venue: arXiv
+year: 2023
+tags:
+- foundational
+topic_groups:
+- llm
+- rl
+triage_label: READ_SOON
+triage_confidence: medium
+source_link: https://arxiv.org/abs/2305.18290v3
+summary_date: '2026-08-25'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>DPO shows that the KL-constrained RLHF objective has a closed-form optimal policy, and that inverting this mapping turns preference learning into a single binary cross-entropy loss on the policy itself — no reward model, no sampling, no PPO — matching or beating PPO-based RLHF on sentiment control, TL;DR summarization, and Anthropic-HH dialogue at up to 6B parameters.</TLDR>
+
+<WhyItMatters>This is the paper that made preference alignment accessible: it collapsed the three-stage RLHF pipeline into supervised fine-tuning with a clever loss, and became the default alignment recipe for the open-source ecosystem (Zephyr, Llama-3-era post-training, and the whole *PO family of successors). Core reading for both the LLM and RL milestone paths.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "61% vs 57%", label: "TL;DR win rate vs human summaries", sub: "DPO at temp 0 vs PPO at its best temp, GPT-4 judge (Fig.2)" },
+  { value: "0.36 vs 0.26", label: "out-of-distribution win rate (CNN/DailyMail)", sub: "DPO vs PPO, temp 0 (Tab.1)" },
+  { value: "0", label: "reward models, RL loops, and generation passes during training", sub: "one classification loss on offline pairs" },
+  { value: "6B", label: "largest model tested (GPT-J)", sub: "β=0.1 default, essentially untuned (App.B)" },
+]} />
+
+## Motivation
+We want to select behaviors a pretrained LM should express from the many it has absorbed — that is preference alignment. The standard recipe (RLHF as in Ziegler/Stiennon/InstructGPT) does this in three stages: SFT, fit a reward model on human preference pairs, then run PPO against that reward with a KL penalty keeping the policy near the reference. The problem is the third stage: <Problem>RL fine-tuning of LMs is complex and unstable — it trains multiple networks, samples from the policy inside the training loop (expensive), and needs baselines or a learned value function to control the high variance of the policy gradient</Problem> (§1, §5.2). Meanwhile <Problem>the obvious supervised shortcuts fail: fine-tuning only on preferred completions (Preferred-FT) barely improves over SFT, and naively pushing likelihood up on preferred and down on dispreferred responses (unlikelihood) degenerates into gibberish</Problem> (§6.2; App. Tab.3 shows the collapse — endless repeated tokens). So the field was stuck paying the full RL cost for something that smells like a classification problem.
+
+## Contribution (what's new)
+<Novelty>A change of variables: the KL-constrained reward-maximization problem has an analytical solution <M tex="\pi_r(y \mid x) \propto \pi_{\mathrm{ref}}(y \mid x)\exp(r(x,y)/\beta)" />, which can be inverted to write the reward as <M tex="r(x,y) = \beta \log \tfrac{\pi_r(y \mid x)}{\pi_{\mathrm{ref}}(y \mid x)} + \beta \log Z(x)" />; because Bradley-Terry preferences depend only on reward *differences*, the intractable partition function <M tex="Z(x)" /> cancels, and the reward-model likelihood becomes a loss directly on the policy</Novelty> (Eq.4–7). The form is forced, not chosen: the whole obstruction to using the closed-form policy directly is <M tex="Z(x)" />, and pairwise comparison is exactly the structure that deletes it. <Novelty>Theorem 1 shows the reparameterization <M tex="r(x,y)=\beta\log\tfrac{\pi(y\mid x)}{\pi_{\mathrm{ref}}(y\mid x)}" /> loses no generality — every reward equivalence class (rewards differing by a function of x alone) contains exactly one member of this form</Novelty> (§5.1, App.A.6). Hence the title: the language model *is* the reward model, with implicit reward <M tex="\hat{r}_\theta(x,y) = \beta \log \tfrac{\pi_\theta(y \mid x)}{\pi_{\mathrm{ref}}(y \mid x)}" />.
+
+## Research questions
+1. Can the exact RLHF objective be optimized without RL — and how efficiently does DPO trade reward against KL compared to PPO? (§6.1)
+2. Does this hold on real preference datasets at real scale (summarization, dialogue, 2.8B–6B models)? (§6.2)
+3. Does a policy trained without an explicit reward model still generalize out of distribution? (§6.3)
+
+## Methodology
+Take an offline dataset of preference pairs <M tex="(x, y_w, y_l)" /> (prompt, preferred, dispreferred). Set the reference <M tex="\pi_{\mathrm{ref}}" /> to the SFT model (or, when no SFT model exists, fine-tune on the preferred completions first — this keeps the reference close to the distribution that generated the pairs). Then minimize one loss:
+
+<MathBlock>{`\\mathcal{L}_{\\mathrm{DPO}}(\\pi_\\theta;\\pi_{\\mathrm{ref}}) = -\\mathbb{E}_{(x,y_w,y_l)\\sim\\mathcal{D}}\\Big[\\log\\sigma\\Big(\\beta\\log\\tfrac{\\pi_\\theta(y_w\\mid x)}{\\pi_{\\mathrm{ref}}(y_w\\mid x)} - \\beta\\log\\tfrac{\\pi_\\theta(y_l\\mid x)}{\\pi_{\\mathrm{ref}}(y_l\\mid x)}\\Big)\\Big]`}</MathBlock>
+
+That is binary logistic regression where the "logit" is the difference of implicit rewards. The gradient explains why it works where unlikelihood fails: each pair's update — up-weight <M tex="y_w" />, down-weight <M tex="y_l" /> — is scaled by <M tex="\sigma(\hat{r}_\theta(x,y_l)-\hat{r}_\theta(x,y_w))" />, i.e. by *how wrongly the implicit reward currently orders the pair*. Already-correct pairs stop pushing; without this dynamic per-example weight the model degenerates (§4; App. Tab.3).
+
+<Pass title="Method details: derivation, theory, and experimental setup">
+**Derivation in three steps** (App.A.1–A.2): (1) the KL-constrained objective rewrites as a single KL to the Gibbs distribution <M tex="\pi^*(y\mid x) = \tfrac{1}{Z(x)}\pi_{\mathrm{ref}}(y\mid x)\exp(r(x,y)/\beta)" />, minimized iff <M tex="\pi = \pi^*" /> (Gibbs' inequality); (2) solve for r and substitute into Bradley-Terry <M tex="p^*(y_1 \succ y_2 \mid x) = \sigma(r^*(x,y_1) - r^*(x,y_2))" /> — the <M tex="\beta\log Z(x)" /> terms cancel; (3) do maximum likelihood in <M tex="\pi_\theta" />. The same trick works for Plackett-Luce rankings over K responses (App.A.3).
+
+**Why PPO is unstable, in this framework** (§5.2): the ideally-normalized reward subtracts <M tex="\beta\log Z(x)" /> — the soft value function of the reference policy. It does not change the optimum but omitting it inflates policy-gradient variance; prior work approximates it with a learned value function or a single-sample human-completion baseline. DPO's reparameterized reward needs no baseline at all.
+
+**Theory** (§5.1): rewards equivalent up to <M tex="f(x)" /> induce identical preference distributions (Lemma 1) and identical optimal policies (Lemma 2); Theorem 1 + Proposition 1: the DPO form picks out exactly the unique member of each class whose induced partition function is 1 — so restricting to it costs nothing.
+
+**Setup**: three tasks. (1) IMDb controlled sentiment: GPT-2-large, synthetic preferences from a ground-truth sentiment classifier (4 completions per prefix → 6 pairs, 25k prefixes), which makes the true reward-vs-KL frontier computable (App.C.1). (2) Reddit TL;DR summarization: GPT-J-6B SFT model, Stiennon et al. human preferences. (3) Anthropic Helpful-Harmless single-turn dialogue: Pythia-2.8B with Preferred-FT reference (170k dialogues). Baselines: SFT, Preferred-FT, Unlikelihood, PPO (learned reward), PPO-GT (oracle ground-truth reward, sentiment only), Best-of-N reranking with the learned reward. Evaluation: exact frontier where ground truth exists; elsewhere GPT-4 win rates against reference/chosen completions, validated by a 25-rater human study. Hyperparameters: β=0.1 (0.5 for TL;DR), RMSprop lr 1e-6, batch 64 — "almost no tuning" (App.B; the loss is ~10 lines of PyTorch).
+</Pass>
+
+## Main result
+<Finding src="Fig.2">DPO strictly dominates PPO on the reward-KL frontier in controlled sentiment generation — achieving higher true reward at every KL budget, even against PPO-GT, the oracle given the ground-truth reward function DPO never sees</Finding> (22-run sweep over conservativeness hyperparameters, §6.1). On real preference data:
+
+<SortableTable columns={["Task (judge)", "DPO", "PPO", "Best-of-128", "Preferred-FT"]} rows={[
+  ["TL;DR win rate vs human summaries (GPT-4, best temp)", "~61%", "~57%", "lower max than DPO", "~SFT level"],
+  ["TL;DR human eval, DPO(t=0.25) vs PPO(t=0)", "58% preferred", "42%", "-", "-"],
+  ["Anthropic-HH win rate vs chosen response (GPT-4)", "improves over chosen", "public PPO model: below base Pythia-2.8B", "similar to DPO", "below 50%"],
+  ["CNN/DailyMail OOD win rate vs ground truth (t=0)", "0.36", "0.26", "-", "-"],
+]} />
+
+<Finding src="Fig.3">On Anthropic-HH, DPO is the only computationally efficient method that improves over the dataset's chosen completions, matching Best-of-128 reranking without paying 128 samples per query at inference</Finding> (§6.2).
+
+## Key findings
+- <Finding src="Fig.2, §6.1">Same objective, better optimizer: DPO's frontier beats PPO *with ground-truth rewards* (PPO-GT)</Finding> — the gap is attributable to optimization (policy-gradient variance, value estimation), not reward-model error, which is the cleanest evidence in the paper that RL was the bottleneck, not the objective.
+- <Finding src="Fig.2 right, §6.2">DPO is far more robust to sampling temperature than PPO, whose TL;DR win rate degrades to base-GPT-J level at high temperature</Finding> — the aligned distribution, not just the greedy mode, has improved.
+- <Finding src="Tab.1, §6.3">Without ever using the extra unlabeled prompts PPO trains on, the DPO policy transfers better to a new input distribution (Reddit → news: 0.36 vs 0.26 win rate)</Finding> — initial evidence the implicit reward does not overfit its training distribution more than an explicit one.
+- <Finding src="App. Tab.3, §4">The per-example weight <M tex="\sigma(\hat{r}_\theta(x,y_l)-\hat{r}_\theta(x,y_w))" /> is load-bearing: removing it (unlikelihood) produces degenerate repeated-token outputs on summarization</Finding> — plain "raise preferred, lower dispreferred" is not a viable objective.
+- <Finding src="Tab.2, §6.4">GPT-4-as-judge agrees with humans 67–86% of the time — about as often as humans agree with each other (65–87%)</Finding> — an early, quantified validation of LLM-as-judge, though the win rates shift with the judge prompt (the "concise" prompt tracks humans better because plain GPT-4 prefers longer, more repetitive summaries).
+- <Finding src="Fig.3 right">Dialogue win rate climbs quickly and stays roughly stable through training, with a slight late decline the authors themselves flag as possible reward over-optimization in the DPO setting</Finding> (§7).
+
+## Implications
+The three-stage RLHF pipeline is not the price of principled preference learning — the RL machinery was an artifact of treating the reward as a separate object. <Related>DPO sits on the lineage of Christiano et al. preference RL, Ziegler/Stiennon reward-model fine-tuning, and InstructGPT</Related>, and its closed-form-policy trick comes from the same control-as-inference family as reward-weighted regression. Downstream, it became the workhorse of open-source alignment and spawned a family of direct-alignment objectives (IPO, KTO, ORPO, SimPO and successors) plus the offline-preference default in most post-training stacks. <FollowUp>Whether an explicit reward model still wins when you can sample and label new data on-policy (the online vs offline question) became the central follow-up debate</FollowUp>; <FollowUp>reward over-optimization in the implicit-reward setting</FollowUp> and <FollowUp>DPO's implicit reward as a reusable ranker (Best-of-N with the DPO logratio)</FollowUp> are threads the paper explicitly opens (§7).
+
+## Limitations
+- <Caveat>Scale stops at 6B parameters (GPT-J); nothing here shows DPO holds at frontier scale or on multi-turn, multi-objective post-training</Caveat> (§7).
+- <Caveat>OOD generalization evidence is one experiment (CNN/DailyMail); the comparison with explicit-reward methods that exploit unlabeled prompts is acknowledged as preliminary</Caveat> (§6.3, §7).
+- <Caveat>Main win rates use GPT-4 as judge, and the paper itself shows the measured win rate depends on the judge prompt (S vs C)</Caveat>; the human study covers only TL;DR with 25 STEM-student volunteer raters (§6.4, App.D.3).
+- <Caveat>The Anthropic-HH PPO comparison is indirect: the authors could not get a public PPO-HH checkpoint to beat the base model, so Best-of-128 stands in as the "PPO-level" proxy</Caveat> (§6.2).
+- <Caveat>Sensitivity to β and to reference-model quality is not systematically studied ("we did not meaningfully tune DPO's β")</Caveat> (§6.2, App.B).
+
+## Critiques and Questions
+1. The equivalence "DPO solves the same problem as RLHF" holds for the *nonparametric* optimum under Bradley-Terry; with a finite-capacity policy trained on finite offline pairs, the two methods optimize genuinely different empirical objectives (offline maximum likelihood vs on-policy reward maximization). The paper's own framing glosses this gap, which later work (on-policy DPO variants, distribution shift between πref and the pair-generating policy) reopened.
+2. DPO fits preferences only where the data has support; PPO evaluates the reward on fresh samples. The CNN/DailyMail result is encouraging but does not settle whether the implicit reward extrapolates as well as an explicit RM under heavy optimization pressure.
+3. Sentiment is the only setting with a ground-truth frontier, and it is also the setting where preferences were generated *synthetically from a classifier that exactly satisfies Bradley-Terry* — the cleanest possible match to DPO's modeling assumption. Real human preferences (intransitive, noisy, annotator-dependent) may fit the BT model far worse.
+4. No compute comparison is quantified; "computationally lightweight" is argued structurally (no sampling, no extra models) but wall-clock/GPU numbers are Not reported.
+
+<SelfCheck q="Why does the partition function Z(x) — the reason the closed-form optimal policy is 'unusable' — disappear in the DPO loss?" a="Because Z(x) depends only on the prompt x, not on the response y. Inverting the optimal-policy formula gives r(x,y) = β·log(π(y|x)/πref(y|x)) + β·log Z(x), and the Bradley-Terry preference probability depends only on the difference r(x,y_w) − r(x,y_l) for the same x — so the β·log Z(x) terms subtract away, leaving a loss expressed purely in policy log-ratios." />
+
+## Glossary
+<Term def="Reinforcement Learning from Human Feedback: SFT, then fit a reward model on human preference pairs, then optimize the LM against it with RL under a KL penalty">RLHF</Term> · <Term def="A preference model asserting P(y1 preferred over y2) = sigmoid of the reward difference; the standard assumption connecting pairwise choices to a latent scalar reward">Bradley-Terry model</Term> · <Term def="Generalization of Bradley-Terry from pairs to full rankings of K responses">Plackett-Luce</Term> · <Term def="Proximal Policy Optimization: the policy-gradient RL algorithm used in standard RLHF fine-tuning">PPO</Term> · <Term def="The reward DPO implicitly defines: beta times the log-ratio of policy to reference probabilities">implicit reward</Term> · <Term def="The frozen SFT model the policy is KL-penalized against; also the denominator in DPO's log-ratios">reference policy</Term> · <Term def="Sample N completions, return the one the (learned) reward model scores highest — strong but costs N generations per query">Best-of-N</Term> · <Term def="Fine-tuning only on the preferred completions of a preference dataset — a supervised baseline that barely beats SFT here">Preferred-FT</Term> · <Term def="Raising log-likelihood of preferred and directly lowering it on dispreferred responses without DPO's adaptive weighting; degenerates on long-form tasks">unlikelihood</Term> · <Term def="The normalizing sum over all responses y of πref(y|x)·exp(r(x,y)/β); intractable because the response space is exponential">partition function Z(x)</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

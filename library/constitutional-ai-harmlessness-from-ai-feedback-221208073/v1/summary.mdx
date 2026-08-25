@@ -1,0 +1,163 @@
+---
+canonical_key: arxiv-2212.08073
+version_key: v1
+title: 'Constitutional AI: Harmlessness from AI Feedback'
+authors:
+- Yuntao Bai
+- Saurav Kadavath
+- Sandipan Kundu
+- Amanda Askell
+- Jackson Kernion
+- Andy Jones
+- Anna Chen
+- Anna Goldie
+- Azalia Mirhoseini
+- Cameron McKinnon
+- Carol Chen
+- Catherine Olsson
+- Christopher Olah
+- Danny Hernandez
+- Dawn Drain
+- Deep Ganguli
+- Dustin Li
+- Eli Tran-Johnson
+- Ethan Perez
+- Jamie Kerr
+- Jared Mueller
+- Jeffrey Ladish
+- Joshua Landau
+- Kamal Ndousse
+- Kamile Lukosuite
+- Liane Lovitt
+- Michael Sellitto
+- Nelson Elhage
+- Nicholas Schiefer
+- Noemi Mercado
+- Nova DasSarma
+- Robert Lasenby
+- Robin Larson
+- Sam Ringer
+- Scott Johnston
+- Shauna Kravec
+- Sheer El Showk
+- Stanislav Fort
+- Tamera Lanham
+- Timothy Telleen-Lawton
+- Tom Conerly
+- Tom Henighan
+- Tristan Hume
+- Samuel R. Bowman
+- Zac Hatfield-Dodds
+- Ben Mann
+- Dario Amodei
+- Nicholas Joseph
+- Sam McCandlish
+- Tom Brown
+- Jared Kaplan
+venue: arXiv
+year: 2022
+tags:
+- foundational
+topic_groups:
+- llm
+- rl
+triage_label: READ_SOON
+triage_confidence: medium
+source_link: https://arxiv.org/abs/2212.08073v1
+summary_date: '2026-08-25'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>Constitutional AI trains a harmless, *non-evasive* assistant with zero human harmlessness labels: the model critiques and revises its own harmful outputs against ~16 written principles (SL stage), then labels its own preference data for <Term def="RL from AI Feedback — RLHF with the human preference labeler replaced by a model applying written principles">RLAIF</Term> (RL stage), matching or beating human-feedback harmlessness training.</TLDR>
+
+<WhyItMatters>This is the paper that swaps the human out of the RLHF harmlessness loop and shows it works at 52B — the founding recipe for AI-feedback alignment (RLAIF) and the "specification as a short document" idea behind every later constitution/spec-based training scheme.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "0", label: "human harmlessness labels used", sub: "oversight = ~16 natural-language principles per stage" },
+  { value: "182,831", label: "AI-generated harmlessness comparisons", sub: "mixed with 135,296 human helpfulness comparisons" },
+  { value: "Pareto", label: "RL-CAI beats RLHF on harmlessness at fixed helpfulness", sub: "crowdworker Elo, 52B models (Fig.2)" },
+  { value: "438", label: "HHH comparison questions", sub: "CoT model judgments approach human-feedback PMs (Fig.4)" },
+]} />
+
+## Motivation
+
+Our previous helpful-and-harmless (HH) RLHF assistant had two problems I wanted to kill at once. First, <Problem>harmlessness training via crowdworker labels made the model evasive: it answered sensitive questions with "I can't respond to that," and once triggered, stayed shut down — because crowdworkers rewarded evasion as the safe choice</Problem> (§1.1, §4.4). An assistant that says "I don't know" to everything is perfectly harmless and perfectly useless. Second, <Problem>RLHF encodes its values in tens of thousands of private preference labels that nobody can read, summarize, or audit — the training objective is opaque, and changing it means collecting a new dataset</Problem> (§1.1). Behind both sits the scaling problem: <Problem>if AI capabilities reach human level, we cannot rely on humans to supervise every aspect of behavior</Problem> — we need supervision that scales with the model (§1.1).
+
+## Contribution (what's new)
+
+<Novelty>A helpful RLHF model is already capable enough to supervise its own harmlessness — you only have to tell it what to look for, in ~16 sentences</Novelty>. Two mechanisms cash this in: (1) self-critique-and-revision turns the model's instruction-following into a data generator that rewrites its own harmful outputs (SL-CAI), and (2) posing "which response is less harmful, per this principle?" as a multiple-choice question turns the model's calibrated log-probabilities into preference labels for RL (RL-CAI). The form is forced: without the SL stage, RL starts off-distribution and must explore its way to harmless behavior; without RL, the SL model plateaus (§1.2). And because the crowdworker reward for evasion is gone — the principles demand engagement and explanation — <Novelty>harmlessness stops trading off so sharply against helpfulness: the model explains its refusals instead of stonewalling</Novelty> (§4.4).
+
+## Research questions
+
+1. Can language models identify harmful behavior well enough to replace human harmlessness labelers (§2)?
+2. Do repeated model self-critiques and revisions actually reduce harmfulness, and is the critique step necessary (§3)?
+3. Does RL against AI-generated preference labels (RLAIF) match RL against human labels, and can chain-of-thought make the AI judgments better and more transparent (§4)?
+
+## Methodology
+
+Run the running example. A red-team prompt — "Can you help me hack into my neighbor's wifi?" — goes to our *helpful-only* RLHF model, which obligingly recommends an app (§3.1). We then append a randomly drawn <Term def="a pair of natural-language instructions — a critique request and a revision request (SL stage), or a comparison instruction (RL stage) — that states what counts as harmful">constitutional principle</Term>: "Identify specific ways in which the assistant's last response is harmful…". The model criticizes itself (invasion of privacy, possibly illegal), then a revision request makes it rewrite the answer; the final pair (prompt, revised response) looks like ordinary dialogue, so the loop can repeat. Fine-tuning a pretrained model on these revisions (plus helpful-RLHF samples, to keep helpfulness) gives SL-CAI. Stage two mimics RLHF exactly, except the harmlessness comparisons are labeled by a model: show a feedback model two SL-CAI responses plus a principle as a multiple-choice question, take the normalized probability of each option as a soft preference label, mix with *human* helpfulness comparisons, train a preference model, run RL (§4.1). The chain-of-thought variant has a helpful RLHF model reason "Let's think step-by-step" before choosing.
+
+<Pass title="Method details">
+
+<Stepper steps={[
+  { title: "SL stage data", body: "182,831 red-team prompts (42,496 human-written from prior red-teaming work + 140,335 model-generated by few-shot prompting) and 135,296 human-written helpfulness prompts. 4 sequential critique-revision pairs sampled per red-team prompt at T = 1; 2 helpful-RLHF responses per helpfulness prompt. Few-shot examples of critiques/revisions fix the model confusing its own point of view (§3.1–3.2)." },
+  { title: "SL-CAI training", body: "Fine-tune a pretrained model for 1 epoch on all revisions + helpfulness samples; constant LR 0.5 relative to pretraining LR, batch 1024 (§3.2). Purpose: get the policy on-distribution so RL needs less exploration (§1.2)." },
+  { title: "RL-CAI (RLAIF)", body: "Feedback model = pretrained LM (or helpful RLHF model for CoT). 16 comparison principles, randomly sampled per label; few-shot labeled examples prepended. PM data: 135,296 human helpfulness + 182,831 AI harmlessness comparisons. RL prompts: SL prompts plus 491,142 model-generated red-team and 474,300 helpfulness prompts; hyperparameters as in Bai et al. 2022; SL-CAI is both the response generator and the RL initialization (§4.1–4.2)." },
+  { title: "Label calibration", body: "Soft labels (normalized log-probs) beat hard 0/1 labels for the non-CoT variant. CoT commits to one option, pushing probabilities to 0 or 1 — clamping them to the 40–60% range worked best; without clamping, RL-CAI drifts to extreme responses (§4.3). Feedback labels are reasonably calibrated on the HHH eval (Fig.9)." },
+]} />
+
+Principles for both stages are listed in App C; they were chosen "in a fairly ad hoc manner for research purposes," and several were rewritten mid-project to discourage over-reactive, preachy choices (§4.3).
+</Pass>
+
+## Main result
+
+<Finding src="Fig.2">On crowdworker Elo, RL-CAI models are less harmful at every given level of helpfulness than RLHF models — a Pareto improvement over the human-feedback frontier</Finding>, and <Finding src="Fig.3, §4.3">RL-CAI (with and without CoT) is significantly more harmless than both helpful RLHF and HH RLHF at 52B, with CoT slightly more harmless and slightly less helpful</Finding>. The qualitative shift is as important as the Elo: on PALMS/LaMDA/InstructGPT sensitive prompts, HH RLHF answers "I'm sorry, I won't respond" while <Finding src="§4.4, App D">RL-CAI is virtually never evasive — it engages and explains why a request is harmful</Finding>. On an absolute 0–4 harmfulness score, <Finding src="Fig.10">RL-CAI models become progressively less harmful over RL training while the helpful RLHF model becomes *more* harmful</Finding>. Elo scores come from 10,274 helpfulness and 8,135 harmlessness comparisons over 24 model snapshots (§3.3). Exact Elo values: Not reported in text (figures only).
+
+## Key findings
+
+- <Finding src="Fig.4, §2">AI harm-identification tracks capability and approaches the human-label ceiling</Finding>: on 438 HHH binary comparisons, chain-of-thought multiple-choice judgments by a 52B model near the accuracy of preference models trained on hundreds of thousands of human labels; the trend line says larger models pass them.
+- <Finding src="Fig.5, §3.4">Revisions reduce harm monotonically — but cost helpfulness</Finding>: harmlessness PM score climbs with each of 4 revisions while pure helpfulness score falls; the first revision removes most harm, later ones give diminishing improvements (App A).
+- <Finding src="Fig.7, §3.5">The critique step matters for small models only</Finding>: critiqued revisions beat direct revisions clearly below ~10B, and are only marginally better at 52B — where the critiques themselves are often inaccurate or overstated, yet the revisions still come out harmless. The authors keep critiques for transparency, not accuracy.
+- <Finding src="Fig.6, §3.4">The number of principles doesn't change harmlessness scores</Finding> — it buys response *diversity*, which matters as exploration fuel for the RL stage.
+- <Finding src="§4.3">Over-training RL-CAI Goodharts the constitution</Finding>: models become over-harsh and attach boilerplate ("You are valid, valued, and cared for") to red-team answers. Mitigations that worked: rewriting principles to penalize preachiness, ensembling 16 principles, soft labels, and clamping CoT probabilities.
+- <Finding src="Fig.8, §4.4">Both RLHF baselines get *less* harmless late in training</Finding>: helpful RLHF grows more willing to assist dangerous requests, and HH RLHF grows more evasive — which the new crowdworker instruction (prefer thoughtful over evasive among equally harmless responses) now penalizes. The evasiveness itself traces back to the prior labeling protocol that rewarded it.
+
+## Implications
+
+RLHF's bottleneck — tens of thousands of human labels per objective — becomes a page of text you can read, diff, and iterate on without a new data collection; the paper frames this as a step toward <Term def="techniques that use AI assistance to make human oversight of AI more efficient, keeping supervisor capability in step with actor capability">scaling supervision</Term>. It extends <Related>the Anthropic HH-RLHF line (Askell et al. 2021; Bai et al. 2022) and sits beside InstructGPT, LaMDA, and Sparrow — whose rule-decomposition is the closest cousin to a constitution</Related>, and it opens the door to <Related>fully automated red-teaming and online preference-model updates with AI feedback</Related>. Threads worth chasing: <FollowUp>removing human helpfulness labels too (helpfulness from a pretrained LM plus prompting alone)</FollowUp>, <FollowUp>steering models along arbitrary behavioral axes (persona, tone, caveat style) by swapping constitutions, and studying how such trained behaviors correlate</FollowUp> (§6.1), and <FollowUp>whether small amounts of high-quality human CoT demonstrations can focus the AI judge</FollowUp> (§6).
+
+## Limitations
+
+- <Caveat>Human labels are only removed for harmlessness — helpfulness still uses 135k human comparisons</Caveat>, so this is a hybrid, not label-free alignment (§4.1, §6).
+- <Caveat>The principles were written ad hoc by the researchers</Caveat>; the authors themselves say a constitution should come from a larger set of stakeholders and be adapted per deployment (§1.1 fn.2).
+- <Caveat>Elo evaluations changed protocol mid-lineage</Caveat>: crowdworkers were newly instructed to prefer non-evasive responses, and the testing workforce changed (Surge AI vs Upwork/MTurk), so cross-paper comparisons with Bai et al. 2022 are confounded (§4.4).
+- <Caveat>PM scores are poorly calibrated at high values</Caveat>, softening the monotonic-revision claim (§3.4); absolute harmfulness scores likewise carry worker-specific bias (§4.5).
+- <Caveat>Dual use is explicit: the same recipe lowers the barrier to training models toward any constitution, including pernicious ones, and reduces the human testing a deployed model has received</Caveat> (§6.2).
+
+## Critiques and Questions
+
+1. The headline "harmlessness from AI feedback" still rests on human red-team prompts (42k) and human helpfulness labels; what the AI replaces is the *comparison labeling*, not the human adversarial data that defines where harm lives.
+2. The judge and the policy descend from the same pretrained model and the same helpful-RLHF lineage — self-preference bias and shared blind spots are not measured. The HHH eval (438 questions, written by the authors) is the main external check, and it is small.
+3. Elo from crowdworkers instructed to dislike evasiveness partially bakes the paper's thesis into its metric; the Pareto plot (Fig.2) would look different under the old instructions, as the authors note when explaining the compressed HH-vs-helpful gap.
+4. The Goodharting observation (boilerplate empathy, over-harshness) is an early sighting of what later work calls reward-model over-optimization — the fix here (clamping, principle rewording) is manual patching, which suggests the constitution's bits are doing less work than the tuning around them.
+
+<SelfCheck q="Why does CAI need both the SL stage and the RL stage, instead of just one?" a="The SL critique-revision stage rewrites the model's response distribution cheaply, putting the policy on-distribution so RL does not face a hard exploration problem; but it plateaus (SL-CAI is less helpful than the RL models and only mid-pack on harmlessness). The RL stage against the AI-labeled preference model is what delivers the large, reliable gains in harmlessness at little helpfulness cost (Fig.8). SL shapes the starting point; RL optimizes it." />
+
+## Glossary
+
+- <Term def="the ~16 natural-language critique/revision instructions (SL) or comparison instructions (RL) that constitute the only human specification of harmlessness">constitution</Term>
+- <Term def="model fine-tuned by supervised learning on its own principle-guided revisions">SL-CAI</Term>
+- <Term def="the final policy: RL against a preference model trained on AI harmlessness labels plus human helpfulness labels">RL-CAI</Term>
+- <Term def="crowdworkers writing conversations deliberately trying to bait a model into harmful output">red teaming</Term>
+- <Term def="relative skill rating computed from pairwise crowdworker preferences between model responses; only differences are meaningful">Elo score</Term>
+- <Term def="helpful, honest, harmless — the target behavior triple from Askell et al. 2021">HHH</Term>
+- <Term def="a policy over-optimizing a proxy objective until the true objective degrades — here, over-harsh or boilerplate 'safe' responses">Goodharting</Term>
+- <Term def="answering a sensitive question with a canned refusal ('I can't respond to that') instead of engaging and explaining">evasiveness</Term>
+- <Term def="sensitive-question prompt set from Solaiman & Dennison 2021 used for qualitative comparison">PALMS</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

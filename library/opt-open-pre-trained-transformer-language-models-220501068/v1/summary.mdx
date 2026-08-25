@@ -1,0 +1,135 @@
+---
+canonical_key: arxiv-2205.01068
+version_key: v1
+title: 'OPT: Open Pre-trained Transformer Language Models'
+authors:
+- Susan Zhang
+- Stephen Roller
+- Naman Goyal
+- Mikel Artetxe
+- Moya Chen
+- Shuohui Chen
+- Christopher Dewan
+- Mona Diab
+- Xian Li
+- Xi Victoria Lin
+- Todor Mihaylov
+- Myle Ott
+- Sam Shleifer
+- Kurt Shuster
+- Daniel Simig
+- Punit Singh Koura
+- Anjali Sridhar
+- Tianlu Wang
+- Luke Zettlemoyer
+venue: arXiv
+year: 2022
+tags:
+- foundational
+topic_groups:
+- llm
+triage_label: READ_SOON
+triage_confidence: medium
+source_link: https://arxiv.org/abs/2205.01068v4
+summary_date: '2026-08-25'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>OPT is Meta's open replication of the GPT-3 model family — eight decoder-only transformers from 125M to 175B parameters with weights released to researchers, roughly matching GPT-3 on zero-shot NLP averages at 1/7th the carbon footprint — plus the training logbook and codebase that show what training at 175B scale actually costs in restarts, divergences, and mid-flight surgery.</TLDR>
+
+<WhyItMatters>Before Llama, this was the moment "GPT-3-class" stopped meaning "API-only": the weights, the metaseq code, and especially the logbook made 175B-scale training and its failure modes publicly studyable, setting the template for open-weights LLM releases.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "125M–175B", label: "8-model suite, weights shared", sub: "up to 66B open; 175B by research request" },
+  { value: "1/7th", label: "carbon footprint vs GPT-3", sub: "~75 vs ~500 tons CO2eq (§6)" },
+  { value: "147 TFLOP/s", label: "per-GPU utilization", sub: "992 × 80GB A100s (§2.4)" },
+  { value: "180B", label: "training tokens (~800 GB)", sub: "deduplicated RoBERTa + Pile + Reddit corpus" },
+  { value: "35+ / 100+", label: "manual restarts / hosts cycled", sub: "2 months of 175B training (§2.5)" },
+]} />
+
+## Motivation
+
+By 2022, everything the field knew about 100B+ language models came through a paywall. <Problem>Every generative model over 100B parameters — GPT-3, Gopher, LaMDA, PaLM, MT-NLG — was closed, reachable at best through a paid API with no weight access</Problem> (§1, §7), so research on how these models work — robustness, bias, toxicity, scaling — was gated on a handful of resourced labs. Worse, <Problem>the *process* was hidden too: published papers omit the hardware failures, loss divergences, and ad-hoc mid-flight decisions that dominate real large-scale training</Problem>, partly because nobody can afford to ablate them (§6). And <Problem>who gets to define risk and harm for LLMs was being decided by whoever could afford to train one</Problem> (§1).
+
+## Contribution (what's new)
+
+There is deliberately no modeling novelty — that is the point. <Novelty>The contribution is the artifact plus its provenance: GPT-3-class weights at eight scales, the only open-source codebase then capable of training a 175B decoder-only model on NVIDIA GPUs without pipeline parallelism (metaseq), and a day-by-day logbook of the training run</Novelty> (§6). The form is forced by the goal: to make LLM limitations studyable you need the weights; to make results *reproducible* you need the exact code; and to make scale-training *learnable* you need the failure record that papers normally delete. A secondary delta: <Novelty>an existence proof that GPT-3-level performance is reachable at 1/7th the development carbon cost</Novelty>, by using newer hardware (A100s) and efficiency work (§1, §6).
+
+## Research questions
+
+1. Can GPT-3-class performance be replicated outside OpenAI, with current best practices in data and training efficiency, and released openly (§1)?
+2. What does 175B-scale training actually involve operationally — instabilities, restarts, interventions (§2.5)?
+3. How does the replica behave on capabilities *and* on safety/bias/toxicity axes relative to GPT-3 Davinci (§3–4)?
+
+## Methodology
+
+Architecture and hyperparameters deliberately shadow GPT-3 (Brown et al. 2020) to reduce instability risk — 175B: 96 layers, 96 heads, d_model 12288, sequence length 2048, batch sizes 0.5M–4M tokens tuned mainly for hardware efficiency (Tab.1, §2.1–2.2). The corpus concatenates the RoBERTa datasets (BookCorpus, CC-Stories, CCNews v2), a stability-filtered subset of the Pile, and PushShift.io Reddit reduced to the longest comment chain per thread, all deduplicated with <Term def="locality-sensitive hashing over document shingles; here filtering pairs with Jaccard similarity at or above 0.95">MinhashLSH</Term> — roughly 180B tokens (§2.3). Training runs on 992 80GB A100s with <Term def="Fully Sharded Data Parallel: shards parameters, gradients, and optimizer state across workers">FSDP</Term> plus Megatron tensor parallelism, FP16 weights with FP32 Adam state and dynamic loss scaling (§2.4). Evaluation copies GPT-3's prompts and settings on 16 standard NLP tasks, adds dialogue benchmarks, and adds safety evaluations GPT-3's paper predates (ETHOS, CrowS-Pairs, StereoSet, RealToxicityPrompts, dialogue safety) (§3–4).
+
+<Pass title="Training-run forensics (§2.5) and details">
+The running example of what the logbook buys you: a loss divergence at 175B. The signature is the dynamic loss scalar crashing toward 0 together with the l2-norm of final-layer activations spiking. The recipe that worked: rewind to a checkpoint where the loss scalar was still healthy (at or above 1.0) and activation norms trended down, lower the LR, resume. The empirical LR schedule (Fig.1) is therefore not a smooth curve but a record of interventions; validation perplexity visibly responds to each change (Fig.2). Other facts the paper preserves:
+
+- Hardware: at least 35 manual restarts, an estimated 70+ automatic restarts, over 100 hosts cycled in 2 months.
+- Gradient clipping lowered mid-flight from 1.0 to 0.3; a gradient predivide factor splits the world-size division into two <M tex="\sqrt{N}" /> divisions to dodge FP16 over/underflow.
+- Failed experiments kept in the record: switching to vanilla SGD (plateaued, reverted to AdamW); resetting the loss scalar (partial help); upgrading Megatron (helped activation-norm pressure and throughput).
+- Optimizer: AdamW, betas 0.9/0.95, weight decay 0.1; linear warmup (2000 steps at 175B; 375M tokens for small models), decay to 10% of peak over 300B tokens; dropout 0.1 with none on embeddings; weight init normal(0, 0.006) with output layers scaled by <M tex="1/\sqrt{2L}" /> (§2.2).
+- Pile subsets were dropped specifically because they caused gradient-norm spikes in 1.3B-scale trials; the Pile was "particularly full of duplicate documents" (§2.3).
+</Pass>
+
+## Main result
+
+<Finding src="Fig.3, §3.1">Average zero-shot accuracy across 14 NLP tasks tracks GPT-3 across the full 125M–175B range</Finding>: performance roughly matched on 10 tasks, below GPT-3 on ARC-Challenge and MultiRC, erratic-for-both on CB/BoolQ/WSC, and above GPT-3 on WIC. <Finding src="Fig.4, §3.1">One-shot and 32-shot averages lag GPT-3</Finding>, though the same 10 tasks stay comparable — the authors suspect evaluation-setup mismatch with Brown et al. rather than a capability gap. In dialogue, <Finding src="Tab.2, §3.2">unsupervised OPT-175B beats the unsupervised Reddit 2.7B baseline on all five datasets and is competitive with the *supervised* BlenderBot 1 (ConvAI2 perplexity 10.8 vs 10.2; UF1 0.185 vs 0.183)</Finding> — verified against leakage via the never-released ConvAI2 hidden test set (10.7 ppl, matching validation).
+
+<SortableTable columns={["Safety axis", "OPT-175B", "GPT-3 Davinci", "Read"]} rows={[
+  ["Hate-speech detection F1, few-shot multiclass (Tab.3)", 0.812, 0.672, "OPT better at detecting"],
+  ["CrowS-Pairs overall bias, lower=better (Tab.4)", 69.5, 67.2, "OPT more stereotyping"],
+  ["StereoSet overall ICAT, higher=better (Tab.5)", 60.0, 60.8, "about equal"],
+  ["RealToxicityPrompts (Fig.5)", "higher TPC", "lower", "OPT more toxic (PaLM lowest)"],
+]} />
+
+## Key findings
+
+- <Finding src="§6">The carbon claim comes with an honest asterisk</Finding>: 75 tons CO2eq for the final run vs ~500 (GPT-3) and ~380 (Gopher), but total development cost including ablations, baselines, and downtime is estimated at roughly 2× — and accounting methodologies across labs are not standardized.
+- <Finding src="Tab.3–4, Fig.5, §4">The same data choice cuts both ways</Finding>: unmoderated Reddit/social-media text plausibly makes OPT-175B *better than Davinci at detecting* hate speech (F1 0.759 vs 0.354 few-shot binary) while making it *more biased* on CrowS-Pairs and *more toxic* on RealToxicityPrompts than Davinci or PaLM. Toxicity rises with prompt toxicity for all three models.
+- <Finding src="§3.1">Several benchmark deltas are evaluation artifacts, not model differences</Finding>: CB/BoolQ/WSC have 56/277/104 validation examples and hover near majority class; GPT-3's reported 0% on WIC implies an inverted binary task; the GPT-3 MultiRC result could not be reproduced through the Davinci API. Replicating a model is easier than replicating its evaluation.
+- <Finding src="§3.1">PaLM outperforms every model at matched parameter count, which the authors attribute to pre-training data quality and diversity</Finding> — an early flag, alongside the Chinchilla citation in §6, that OPT's 180B-token budget leaves the suite under-trained and data, not parameters, is the open frontier.
+- <Finding src="§5">A base LM does not follow instructions</Finding>: given a declarative instruction, OPT-175B tends to *simulate a dialogue containing the instruction* rather than execute it; it is also repetitive and loops easily. The authors point to InstructGPT-style instruction learning as the fix — a clean statement of why the RLHF line exists.
+- <Finding src="Tab.6, §4.5">For dialogue safety, OPT-175B sits at raw-Reddit level (worst on the Unsafe bucket, 0.567)</Finding> while models fine-tuned on curated dialogue data are much safer — deployment requires curated fine-tuning, and no mitigations were applied because the goal was a faithful GPT-3 replication.
+
+## Implications
+
+OPT reframes "open" for LLMs: not just weights, but code and the operational record, with a datasheet and model card attached and access governed by a non-commercial research license (§6, App C–D). It extends <Related>the open-model line of EleutherAI's GPT-NeoX-20B and the concurrent BigScience effort (BLOOM)</Related>, and its limitations section reads as a to-do list that <Related>InstructGPT-style instruction tuning and retrieval-augmented models</Related> would address. Threads to chase: <FollowUp>whether continuing training past 180B tokens closes the gap Chinchilla predicts</FollowUp>, <FollowUp>standardized cross-lab evaluation harnesses, since prompt/shot differences alone changed conclusions here</FollowUp>, and <FollowUp>whole-lifecycle carbon accounting (embodied carbon, experimentation, inference) rather than final-run-only estimates</FollowUp> (§6).
+
+## Limitations
+
+- <Caveat>Trained on ~180B tokens — far short of compute-optimal by the Chinchilla analysis the authors themselves cite — so the suite likely understates what these parameter counts can do</Caveat> (§6).
+- <Caveat>More toxic and more stereotype-prone than Davinci, with adversarial prompts "trivial to find"; explicitly premature for any commercial deployment</Caveat> (§4–5).
+- <Caveat>Instruction following, repetition, and factuality failures are documented but unmitigated by design</Caveat> (§5).
+- <Caveat>Few-shot comparisons to GPT-3 are confounded by unreplicable evaluation setups</Caveat> (§3.1).
+- <Caveat>OPT-175B weights are request-gated under a non-commercial license, and the corpus itself is not distributed</Caveat> (§6, App C.6) — open for research, not open-source in the full sense.
+
+## Critiques and Questions
+
+1. "Comparable to GPT-3" rests on task averages that the paper itself shows are fragile — two tasks dropped from the average as systematically favoring one model (MultiRC, WIC), three more dismissed as noise. The honest headline is "comparable on the subset where evaluation is trustworthy."
+2. The Davinci safety comparisons are confounded: the API may wrap the raw 175B model with safety mechanisms (§4.1 speculates exactly this), so OPT-vs-Davinci differences mix model and deployment stack.
+3. The stability narrative (drop LR, rewind, clip harder) is descriptive, not causal — no ablation separates which interventions mattered, which the authors acknowledge is unaffordable at this scale; the logbook is data for a science of training stability that this paper does not itself do.
+4. Choosing to replicate GPT-3's architecture and (pre-Chinchilla) token budget in mid-2022 made the artifact immediately comparable but immediately dated — the more useful open model would arguably have been compute-optimal.
+
+<SelfCheck q="Why does OPT-175B beat Davinci at hate-speech detection while also being more toxic and more biased than Davinci?" a="Both effects plausibly trace to the same corpus decision: a large share of unmoderated social-media text (PushShift.io Reddit). Familiarity with toxic language improves recognition (ETHOS F1 up to 0.812 vs 0.672) but also raises the propensity to generate toxic continuations (RealToxicityPrompts) and stereotypical associations (CrowS-Pairs). The Davinci comparison is additionally confounded by possible safety layers in the API (§4.1, §4.4)." />
+
+## Glossary
+
+- <Term def="Meta's open-source training/inference codebase for OPT; then the only public implementation training a 175B decoder-only model on NVIDIA GPUs without pipeline parallelism">metaseq</Term>
+- <Term def="the released day-by-day record of the OPT-175B training run: failures, restarts, and mid-flight hyperparameter changes">logbook</Term>
+- <Term def="FP16 training mechanism that multiplies the loss to keep gradients in representable range; its scalar crashing to 0 signals divergence">dynamic loss scaling</Term>
+- <Term def="hate-speech detection dataset of English statements labeled racist/sexist/neither">ETHOS</Term>
+- <Term def="sentence-pair benchmark measuring preference for stereotypical phrasing across 9 social categories; higher = more biased">CrowS-Pairs</Term>
+- <Term def="stereotype benchmark whose ICAT score combines language-modeling ability (LMS) with stereotype avoidance (SS)">StereoSet</Term>
+- <Term def="unigram F1 overlap between generated and gold dialogue responses (ConvAI2 metric)">UF1</Term>
+- <Term def="Hoffmann et al. 2022 result that most LLMs are under-trained: compute-optimal training uses far more tokens per parameter than GPT-3-style budgets">Chinchilla</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

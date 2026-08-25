@@ -43,17 +43,17 @@ versions:
   source: arxiv
   source_url: https://arxiv.org/abs/1810.04805v2
   pdf_path: library/bert-pre-training-of-deep-bidirectional-transformers-181004805/v1/paper.pdf
-  summary_path: null
+  summary_path: library/bert-pre-training-of-deep-bidirectional-transformers-181004805/v1/summary.mdx
   metadata_path: library/bert-pre-training-of-deep-bidirectional-transformers-181004805/v1/metadata.yaml
   fetched_at: '2026-08-24T03:20:22Z'
   source_updated_at: '2019-05-24T20:37:26Z'
   arxiv_version: v2
   pdf_sha256: 5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e
   pdf_bytes: 775166
-  summary_status: none
-  extraction_status: none
+  summary_status: full
+  extraction_status: full
   created_at: '2026-08-24T03:20:22Z'
-  updated_at: '2026-08-24T03:20:22Z'
+  updated_at: '2026-08-25T06:34:53Z'
 relations:
   duplicate_candidates: []
   related_papers: []

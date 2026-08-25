@@ -1,0 +1,115 @@
+---
+canonical_key: s2-9405cc0d6169988371b2755e573cc28650d14dfe
+version_key: v1
+title: Language Models are Unsupervised Multitask Learners
+authors:
+- Alec Radford
+- Jeff Wu
+- R. Child
+- D. Luan
+- Dario Amodei
+- I. Sutskever
+venue: Not reported
+year: 2019
+tags:
+- foundational
+topic_groups:
+- llm
+triage_label: READ_SOON
+triage_confidence: medium
+source_link: https://www.semanticscholar.org/paper/9405cc0d6169988371b2755e573cc28650d14dfe
+summary_date: '2026-08-25'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>GPT-2 — a 1.5B-parameter Transformer LM trained on 40GB of Reddit-curated web text — performs downstream tasks zero-shot, with no parameter or architecture change, purely because a big enough language model must learn the tasks demonstrated in text in order to predict that text; it sets zero-shot SOTA on 7 of 8 language-modeling benchmarks while still underfitting its corpus.</TLDR>
+
+<WhyItMatters>This is where the modern LLM playbook is written: task specification in natural language (prompting), web-scale curated data, capacity scaling with log-linear zero-shot gains, and contamination analysis. GPT-3's in-context learning is this paper's trend line extended one more order of magnitude.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "1.5B", label: "parameters (GPT-2)", sub: "48 layers, d_model 1600; still underfits WebText (Tab.2, §3, Fig.4)" },
+  { value: "7 / 8", label: "zero-shot LM SOTA", sub: "no training on any benchmark; the miss is 1BW (Tab.3)" },
+  { value: "55 F1", label: "CoQA, zero-shot", sub: "matches/beats 3 of 4 supervised baselines trained on 127k+ examples (§3.5)" },
+  { value: "8.6", label: "LAMBADA perplexity", sub: "prior SOTA 99.8; accuracy 19% → 52.7% (§3.3)" },
+]} />
+
+## Motivation
+Supervised ML builds <Problem>narrow experts: single-task training on single-domain datasets yields systems that are brittle to slight shifts in data distribution or task specification</Problem> (§1). The obvious fix, multitask learning, does not scale: <Problem>the most ambitious NLP efforts trained on only 10–17 (dataset, objective) pairs, and from a meta-learning view each pair is *one training example* — inducing generalization would need hundreds or thousands of such pairs, which cannot be brute-forced by dataset creation</Problem> (§1). Meanwhile the pre-train/fine-tune line (<Related>GPT, BERT</Related>) had removed task architectures but <Problem>still requires supervised fine-tuning for every task</Problem> (§1).
+
+## Contribution (what's new)
+The claim that survives deleting "we propose": <Novelty>task conditioning does not need architecture or labels — since language can express task, input, and output as one symbol sequence ("translate to french, english text, french text"), a language model trained on sufficiently large and *diverse* text is already an unsupervised multitask learner, and tasks can be invoked zero-shot with natural-language hints</Novelty> (§2). The supervised objective is the unsupervised one evaluated on a subsequence, so their global minima coincide; the open question is purely practical optimization (§2). Two components are forced by this bet:
+- <Novelty>WebText</Novelty>: the model can only learn tasks that are *demonstrated* in its corpus, so data must be diverse and high-quality — Common Crawl is largely unintelligible, so instead scrape the 45M outbound links from Reddit posts with at least 3 karma (human curation as a filter), giving 8M+ documents / 40GB, with Wikipedia removed to limit test overlap (§2.1). The demonstrations really are there — WebText contains naturally occurring EN↔FR translation pairs like "Mentez mentez, il en restera toujours quelque chose," which translates as, "Lie lie and something will always remain." (Tab.1).
+- <Novelty>Byte-level BPE</Novelty>: to *evaluate* on any benchmark without lossy preprocessing, the model must assign probability to any Unicode string; word-level vocabularies cannot, raw byte LMs underperform, and code-point BPE needs a 130k+ base vocabulary — so run BPE over bytes (base 256) but forbid merges across character categories (else "dog." "dog!" "dog?" all buy vocabulary slots), with a space exception; final vocabulary 50,257 (§2.2).
+
+## Research questions
+1. Does a high-capacity LM trained on diverse text perform downstream tasks zero-shot — and how does that ability scale with capacity (§1–3, Fig.1)?
+2. Can natural-language hints ("TL;DR:", example pairs) invoke specific task behavior in an unmodified LM (§3.6–3.8)?
+3. Are the results generalization or memorization of overlapping web data (§4)?
+
+## Methodology
+Train four GPT-style Transformer decoders of log-uniformly spaced size — 117M (= GPT-1), 345M (= BERT-LARGE's size), 762M, 1542M — on WebText, then evaluate everything zero-shot: no gradient step touches any benchmark (§3, Tab.2). Task invocation is pure conditioning. Summarization: append "TL;DR:" after the article and sample. Translation: show a few `english sentence = french sentence` pairs, then prompt with a new English sentence and `=`. Reading comprehension: condition on document + dialogue history + "A:". The paper's framing makes the mechanism concrete: to keep lowering loss on text like Tab.1's quotation-plus-translation, the model has no choice but to get better at translation itself — prediction pressure *is* the supervision (§2).
+
+<Pass title="Method details (architecture, data, evaluation mechanics)">
+**Architecture** (§2.3). GPT-1's decoder-only Transformer with: layer normalization moved to each sub-block's input (pre-LN, as in pre-activation ResNets) plus one extra LN after the final block; residual weights scaled at init by <M tex="1/\sqrt{N}" /> for N residual layers (accounting for accumulation along the residual path at depth); context 512 → 1024 tokens; batch size 512; vocabulary 50,257. Learning rate manually tuned per model on 5% held-out WebText. Training compute, steps, and hardware: Not reported. All four models still underfit WebText — held-out perplexity keeps improving with more training (§3).
+
+**Zero-shot LM evaluation** (§3.1). Because the model is byte-level, any benchmark can be scored as log-prob per canonical unit (word/byte/char). Benchmarks are heavily preprocessed (`<UNK>` occurs only 26 times in 40B bytes of WebText), so invertible "de-tokenizers" strip tokenization artifacts — worth 2.5–5 perplexity for GPT-2 — a mild, admitted form of domain adaptation.
+
+**Per-task protocols** (§3.2–3.8). CBT: pick the cloze choice whose full sentence has highest LM probability. LAMBADA: predict the final word; a stop-word filter approximates the "must be a final word" constraint. Winograd: Trinh & Le's LM-probability resolution scoring. Summarization: top-k sampling with k=2, 100 tokens, take the first 3 generated sentences. Natural Questions: seed context with example QA pairs to fix the answer style. CoQA: greedy decoding.
+</Pass>
+
+## Main result
+<Finding src="Tab.3, §3.1">Zero-shot GPT-2 beats the (mostly supervised, domain-trained) state of the art on 7 of 8 LM benchmarks — with the largest gains exactly where long-range structure matters (LAMBADA, CBT) and on small datasets (PTB, WikiText-2)</Finding>:
+
+<SortableTable columns={["Dataset (metric)", "Prior SOTA", "GPT-2 117M", "GPT-2 1.5B"]} rows={[
+  ["LAMBADA (ppl, lower better)", 99.8, 35.13, 8.63],
+  ["LAMBADA (acc)", 59.23, 45.99, 63.24],
+  ["CBT common nouns (acc)", 85.7, 87.65, 93.3],
+  ["CBT named entities (acc)", 82.3, 83.4, 89.05],
+  ["WikiText-2 (ppl)", 39.14, 29.41, 18.34],
+  ["PTB (ppl)", 46.54, 65.85, 35.76],
+  ["enwik8 (bits/byte)", 0.99, 1.16, 0.93],
+  ["text8 (bits/char)", 1.08, 1.17, 0.98],
+  ["WikiText-103 (ppl)", 18.3, 37.5, 17.48],
+  ["1BW (ppl)", 21.8, 75.2, 42.16],
+]} />
+
+The one loss, the One Billion Word Benchmark, is diagnostic: it is both the largest dataset and sentence-shuffled — <Finding src="§3.1">1BW's preprocessing destroys exactly the long-range structure WebText LMs exploit</Finding>. On downstream tasks the picture is graded: CoQA 55 F1 (supervised BERT SOTA nears the 89 F1 of humans), Winograd 70.7% (+7), summarization ROUGE barely above picking 3 random sentences, translation 11.5 BLEU FR→EN, open-domain QA 4.1% (§3.4–3.8).
+
+## Key findings
+- <Finding src="Fig.1, §1, §3.8">Zero-shot task performance improves log-linearly with model capacity across tasks, and capacity is often the difference between trivial and non-trivial</Finding>: on Natural Questions, GPT-2 answers 4.1% exactly right — 5.3× the smallest model, which cannot beat a return-the-most-common-answer-per-question-type baseline (1.0%).
+- <Finding src="§3.6">Natural-language task invocation is real: removing the "TL;DR:" hint drops summarization by 6.4 ROUGE points</Finding> — the hint, not fine-tuning, is what switches the behavior on. This is prompting, named before the name.
+- <Finding src="§3.7">Translation emerges from almost no parallel signal: only ~10MB of French survived WebText's English filtering (~500× less than standard corpora), yet FR→EN reaches 11.5 BLEU, beating several dedicated unsupervised MT baselines</Finding> (though far below the best, 33.5).
+- <Finding src="§4, Tab.6">Contamination is measurable and small: benchmark test sets overlap WebText's training 8-grams by 3.2% on average — *less* than they overlap their own training splits (5.9%; 1BW self-overlaps 13.2%)</Finding>; excluding all overlapping LAMBADA examples moves 8.6 → 8.7 ppl and 63.2% → 62.9% accuracy. The recommendation — n-gram overlap checks when building any new split — became standard practice.
+- <Finding src="Fig.4, §4">Train and held-out WebText perplexity are similar and fall together with size: even 1.5B parameters underfit 40GB</Finding> — the direct license for the next scale-up. Memorization exists but is bounded: GPT-2 can recite the Gettysburg Address (~40 copies in WebText), yet its samples overlap training 8-grams *less* than genuinely held-out articles do (Fig.5, Appendix 8.2).
+- <Finding src="§3.5, §3.3">Error analysis tempers the wins: CoQA answers often come from retrieval-ish heuristics (answer a who-question with any document name), and most LAMBADA errors are valid continuations that ignore the "final word" constraint</Finding> — a stop-word filter alone buys ~10 accuracy points (52.7 → 63.2).
+- <Finding src="§6">Author verdict: zero-shot GPT-2 is competitive on reading comprehension but "still far from use-able" in practice</Finding>; summarization is qualitatively a summary and quantitatively near-random.
+
+## Implications
+The paper flips the field's question from "how do we transfer representations?" to "how much task ability is already inside p(text)?" — <Related>GPT-1's fine-tuning recipe and BERT's bidirectional encoders</Related> are the immediate ancestors, <Related>decaNLP/MQAN supplied the everything-is-a-sequence task format</Related>, and <Related>GPT-3's in-context learning is the declared trend line (log-linear capacity gains + persistent underfitting) continued</Related>. Threads worth chasing: <FollowUp>where fine-tuning GPT-2 lands on GLUE/decaNLP, and whether its data and capacity overcome the unidirectional-representation inefficiency BERT demonstrated (author-stated plan, §6)</FollowUp>; <FollowUp>how far hand-designed prompts (TL;DR:, example seeding) can be pushed and systematized</FollowUp>; <FollowUp>data curation as a first-class lever — karma-filtered links outperformed raw Common Crawl</FollowUp>; and <FollowUp>fuzzy-matching contamination detection beyond 8-gram recall (author-flagged)</FollowUp>.
+
+## Limitations
+- <Caveat>Zero-shot performance is far below supervised systems on most application tasks — summarization barely beats 3 random sentences, EN→FR translation (5 BLEU) is worse than word-by-word lexicon substitution, QA is 4.1% vs 30–50% for retrieval systems</Caveat> (§3.6–3.8, §6).
+- <Caveat>Every task needs a hand-crafted invocation protocol (hints, example seeding, stop-word filters, first-3-sentences heuristics)</Caveat> — the model is task-general, the evaluation harness is not (§3).
+- <Caveat>Winograd's 70.7% rests on 273 examples, and the authors themselves point to Trichelair et al. for caveats</Caveat> (§3.4).
+- <Caveat>Training compute, token counts, and hardware are Not reported; the abstract's "log-linear" scaling claim is drawn from 4 model sizes with admittedly noisy per-task curves</Caveat> (§3, §5).
+- <Caveat>WebText is English-filtered and Reddit-selected</Caveat> — the curation that makes the data clean also imports a specific demographic's link taste; the paper does not analyze this.
+- <Caveat>Only the smallest model's code was released with the paper</Caveat> (fn.5) — full verification required later releases.
+
+## Critiques and Questions
+1. The headline "7 of 8 SOTA" is a *language-modeling* claim; on end tasks GPT-2 mostly loses to supervised systems. The paper is honest about this (§6), but the abstract's framing invites over-reading — the durable result is the slope, not the level.
+2. The CoQA claim ("matches or exceeds 3 of 4 baselines") is carefully scoped against older baselines while supervised BERT sits near human performance — accurate, and also the most favorable available comparison.
+3. Contamination analysis measures verbatim 8-gram overlap with high precision but unknown recall for paraphrase; "small benefit" is credible for LAMBADA-style metrics, less certain for factoid QA where knowledge, not strings, leaks.
+4. Is 1BW's failure fully explained by sentence shuffling? It is also the benchmark whose supervised SOTA had the most dedicated tuning; the two explanations are not separated.
+5. Prompt sensitivity is demonstrated (−6.4 ROUGE without the hint) but not characterized — how much of each result depends on the specific phrasing is unmeasured, a question the field then spent years on.
+
+<SelfCheck q="Why does the paper argue that a language model can learn tasks without any labels, and what two ingredients make it work in practice?" a="Because a task example written in language (task description, input, output) is just a text sequence, the supervised objective is the LM objective restricted to a subsequence — their global minima coincide — so predicting diverse text well forces learning the tasks demonstrated in it (§2). Practically it requires (1) capacity — performance scales log-linearly and small models stay at trivial baselines — and (2) a large, diverse, quality-filtered corpus (WebText) that actually contains natural task demonstrations, like the EN↔FR pairs of Tab.1." />
+
+## Glossary
+<Term def="performing a task from instructions/context alone, with no gradient updates or task-specific parameters">zero-shot</Term>, <Term def="40GB / 8M-document corpus of outbound Reddit links with 3+ karma, deduplicated, Wikipedia removed">WebText</Term>, <Term def="BPE run over raw bytes (base vocab 256) with merges blocked across character categories; final vocab 50,257">byte-level BPE</Term>, <Term def="predict the final word of a passage that requires 50+ tokens of context; tests long-range dependency">LAMBADA</Term>, <Term def="Children's Book Test: 10-way cloze over named entities, nouns, verbs, prepositions">CBT</Term>, <Term def="pronoun-resolution problems requiring commonsense; 273 examples">Winograd Schema Challenge</Term>, <Term def="conversational reading-comprehension QA over documents with dialogue history">CoQA</Term>, <Term def="n-gram overlap metrics (R-1/R-2/R-L) for summarization">ROUGE</Term>, <Term def="sampling restricted to the k most probable next tokens">top-k sampling</Term>, <Term def="probabilistic set-membership structure used here to test 8-gram overlap with false-positive rate below 1e-8">Bloom filter</Term>, <Term def="One Billion Word Benchmark; sentence-shuffled, destroying document structure">1BW</Term>.
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

@@ -10,7 +10,7 @@ year: 2018
 source: semantic_scholar
 source_url: https://www.semanticscholar.org/paper/cd18800a0fe0b668a1cc19f2ec95b5003d0a5035
 pdf_url: ''
-pdf_sha256: null
+pdf_sha256: eb81a65e0856bd38e855e1f1de6ee12e7c3eb92ae05c8270d345a475beb631d0
 fetched_at: '2026-08-24T03:20:21Z'
 source_updated_at: null
 ids:
@@ -46,15 +46,16 @@ scoring:
     trend_signal: 0.0
     author_or_lab_signal: 0.0
 artifacts:
-  pdf: null
-  extraction: null
-  summary: null
+  pdf: library/improving-language-understanding-by-generative-pre-training-003d0a5035/v1/paper.pdf
+  extraction: library/improving-language-understanding-by-generative-pre-training-003d0a5035/v1/extraction.txt
+  summary: library/improving-language-understanding-by-generative-pre-training-003d0a5035/v1/summary.mdx
   code_url: null
   project_url: null
   dataset_url: null
 status:
-  downloaded: false
-  extracted: false
-  summarized: false
+  downloaded: true
+  extracted: true
+  summarized: true
   triaged: true
   user_read_status: unread
+  summary_format: mdx

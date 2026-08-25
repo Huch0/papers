@@ -1,0 +1,69 @@
+canonical_key: arxiv-2402.04788
+slug: mllm-as-a-judge-assessing-multimodal-llm-240204788
+title: 'MLLM-as-a-Judge: Assessing Multimodal LLM-as-a-Judge with Vision-Language Benchmark'
+authors:
+- Dongping Chen
+- Ruoxi Chen
+- Shilin Zhang
+- Yinuo Liu
+- Yaochen Wang
+- Huichi Zhou
+- Qihui Zhang
+- Yao Wan
+- Pan Zhou
+- Lichao Sun
+year: 2024
+primary_ids:
+  doi: null
+  arxiv_base_id: '2402.04788'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2402.04788v3
+- https://arxiv.org/pdf/2402.04788v3
+topic_groups:
+- interactive_component_synthesis
+- llm
+- vlm
+tags:
+- foundational
+- interactive-component-survey
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2024
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: interactive_component_synthesis
+  era: foundational
+  significance: Reliability limits of multimodal judges.
+  subarea: vlm_critic_probing
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v3
+  source: arxiv
+  source_url: https://arxiv.org/abs/2402.04788v3
+  pdf_path: library/mllm-as-a-judge-assessing-multimodal-llm-240204788/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/mllm-as-a-judge-assessing-multimodal-llm-240204788/v1/metadata.yaml
+  fetched_at: '2026-08-25T12:49:59Z'
+  source_updated_at: '2024-06-11T06:21:46Z'
+  arxiv_version: v3
+  pdf_sha256: 0c13cf4252520f6bdda86902dbe28446caea86a839a117f3447cbbc993df291e
+  pdf_bytes: 2872394
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-25T12:49:59Z'
+  updated_at: '2026-08-25T12:49:59Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

@@ -156,6 +156,36 @@ topic_groups:
         onward (2013+). RL-for-LLM-reasoning papers may double-tag with llm.
 
 # Authors / labs whose work should get a small positive signal (matched on author list).
+
+  interactive_component_synthesis:
+    priority: very_high
+    keywords:
+      - interactive component
+      - interactive visualization
+      - UI code generation
+      - web generation
+      - design to code
+      - screenshot to code
+      - sketch to code
+      - chart-to-code
+      - text-to-visualization
+      - visual feedback
+      - execution feedback
+      - self-repair
+      - self-debug
+      - GUI testing
+      - visual critic
+      - interaction-to-code
+      - stateful
+      - D3
+      - Plotly
+      - Vega-Lite
+      - p5.js
+    notes:
+      - 'Thesis survey (directions 5+6): execution-grounded synthesis and repair of interactive, stateful visual components (simulators, live plots, widgets) with open-weight models.'
+      - 'Four adjacent fields: code generation with execution feedback; UI/web generation from images; text/chart-to-vis; VLM critics and probing of running UIs.'
+      - Separate static-render work from behaviorally-interactive work when triaging.
+
 watch_authors: []
 watch_labs:
   - OpenAI

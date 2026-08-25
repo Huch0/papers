@@ -1,0 +1,67 @@
+canonical_key: arxiv-2606.31732
+slug: unicoder-unified-visual-to-code-generation-via-260631732
+title: 'UniCoder: Unified Visual-to-Code Generation via Symbolic Rewards and Reference-Guided Code Optimization'
+authors:
+- Yaozhi Zheng
+- Yilei Jiang
+- Manyuan Zhang
+- Yuxuan Wan
+- Kaituo Feng
+- Tianshuo Peng
+- Bo Zhang
+- Xiangyu Yue
+year: 2026
+primary_ids:
+  doi: null
+  arxiv_base_id: '2606.31732'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2606.31732v1
+- https://arxiv.org/pdf/2606.31732v1
+topic_groups:
+- interactive_component_synthesis
+- llm
+- rl
+tags:
+- foundational
+- interactive-component-survey
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2026
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: interactive_component_synthesis
+  era: recent
+  significance: Dense symbolic rewards; explicitly static-only - articulates the gap.
+  subarea: text_to_vis
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v1
+  source: arxiv
+  source_url: https://arxiv.org/abs/2606.31732v1
+  pdf_path: library/unicoder-unified-visual-to-code-generation-via-260631732/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/unicoder-unified-visual-to-code-generation-via-260631732/v1/metadata.yaml
+  fetched_at: '2026-08-25T12:49:56Z'
+  source_updated_at: '2026-06-30T14:29:48Z'
+  arxiv_version: v1
+  pdf_sha256: bf66e200cc3097cc11611168f24b2a65d133171c436aca26a942d46ecf192fc8
+  pdf_bytes: 5717180
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-25T12:49:56Z'
+  updated_at: '2026-08-25T12:49:56Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

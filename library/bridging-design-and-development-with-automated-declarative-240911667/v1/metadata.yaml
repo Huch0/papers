@@ -1,0 +1,85 @@
+canonical_key: arxiv-2409.11667
+version_key: v1
+title: Bridging Design and Development with Automated Declarative UI Code Generation
+authors:
+- Ting Zhou
+- Yanjie Zhao
+- Xinyi Hou
+- Xiaoyu Sun
+- Kai Chen
+- Haoyu Wang
+abstract: Declarative UI frameworks have gained widespread adoption in mobile app development, offering
+  benefits such as improved code readability and easier maintenance. Despite these advantages, the process
+  of translating UI designs into functional code remains challenging and time-consuming. Recent advancements
+  in multimodal large language models (MLLMs) have shown promise in directly generating mobile app code
+  from user interface (UI) designs. However, the direct application of MLLMs to this task is limited by
+  challenges in accurately recognizing UI components and comprehensively capturing interaction logic.
+  To address these challenges, we propose DeclarUI, an automated approach that synergizes computer vision
+  (CV), MLLMs, and iterative compiler-driven optimization to generate and refine declarative UI code from
+  designs. DeclarUI enhances visual fidelity, functional completeness, and code quality through precise
+  component segmentation, Page Transition Graphs (PTGs) for modeling complex inter-page relationships,
+  and iterative optimization. In our evaluation, DeclarUI outperforms baselines on React Native, a widely
+  adopted declarative UI framework, achieving a 96.8% PTG coverage rate and a 98% compilation success
+  rate. Notably, DeclarUI demonstrates significant improvements over state-of-the-art MLLMs, with a 123%
+  increase in PTG coverage rate, up to 55% enhancement in visual similarity scores, and a 29% boost in
+  compilation success rate. We further demonstrate DeclarUI's generalizability through successful applications
+  to Flutter and ArkUI frameworks.
+venue: arXiv
+year: 2024
+source: arxiv
+source_url: https://arxiv.org/abs/2409.11667v1
+pdf_url: https://arxiv.org/pdf/2409.11667v1
+pdf_sha256: 036e94d9a138eff1fa23f421a451b587cda4cd4a16e12f1cb74900c434ce1698
+fetched_at: '2026-08-25T12:48:28Z'
+source_updated_at: '2024-09-18T03:04:12Z'
+ids:
+  doi: null
+  arxiv_id: 2409.11667v1
+  arxiv_base_id: '2409.11667'
+  arxiv_version: v1
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+- interactive-component-survey
+topic_groups:
+- interactive_component_synthesis
+- llm
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: interest_fit(0.91), novelty(0.80), venue_quality(0.40) |
+    interests: llm:large language model, llm:group:llm, interactive_component_synthesis:UI code generation,
+    interactive_component_synthesis:group:interactive_component_synthesis | milestone/foundational floor
+    applied'
+  matched_interests:
+  - llm:large language model
+  - llm:group:llm
+  - interactive_component_synthesis:UI code generation
+  - interactive_component_synthesis:group:interactive_component_synthesis
+  negative_signals: []
+  subscores:
+    interest_fit: 0.91
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.36
+    novelty: 0.8
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/bridging-design-and-development-with-automated-declarative-240911667/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

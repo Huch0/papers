@@ -1,0 +1,62 @@
+canonical_key: arxiv-1910.08930
+slug: sketch2code-transformation-of-sketches-to-ui-in-191008930
+title: 'Sketch2Code: Transformation of Sketches to UI in Real-time Using Deep Neural Network'
+authors:
+- Vanita Jain
+- Piyush Agrawal
+- Subham Banga
+- Rishabh Kapoor
+- Shashwat Gulyani
+year: 2019
+primary_ids:
+  doi: null
+  arxiv_base_id: '1910.08930'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/1910.08930v1
+- https://arxiv.org/pdf/1910.08930v1
+topic_groups:
+- interactive_component_synthesis
+tags:
+- foundational
+- interactive-component-survey
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2019
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: interactive_component_synthesis
+  era: emergence
+  significance: Hand-drawn mockup to website; sketch input modality.
+  subarea: ui_from_image
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v1
+  source: arxiv
+  source_url: https://arxiv.org/abs/1910.08930v1
+  pdf_path: library/sketch2code-transformation-of-sketches-to-ui-in-191008930/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/sketch2code-transformation-of-sketches-to-ui-in-191008930/v1/metadata.yaml
+  fetched_at: '2026-08-25T12:48:09Z'
+  source_updated_at: '2019-10-20T08:59:11Z'
+  arxiv_version: v1
+  pdf_sha256: 7eef298fcb442f89ffbf4ca39ac42f805926b0dec11cb4da67d0f9f6ede71dc8
+  pdf_bytes: 5906766
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-25T12:48:09Z'
+  updated_at: '2026-08-25T12:48:09Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

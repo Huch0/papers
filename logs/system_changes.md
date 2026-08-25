@@ -346,3 +346,31 @@ Each entry: date, trigger, change, files touched, migration status.
   running example, honest admission of fragile/unexplained parts. The
   concise/core-first section structure is unchanged — the principle governs
   voice and reasoning, not layout.
+
+## 2026-08-25 — Interactive-component synthesis/repair survey as a milestone reading path
+
+- Trigger: user is scoping an M.S. thesis (Computable Canvas directions 5+6:
+  execution-grounded synthesis and repair of interactive, stateful visual
+  components) and asked how best to read + track a survey in the library.
+- config/milestones.yaml: new field `interactive_component_synthesis`
+  (path_order 8, 42 curated seeds across subareas exec_feedback_codegen /
+  ui_from_image / interactive_ui / text_to_vis / vlm_critic_probing; arXiv ids
+  from the 2026-08-25 deep-research report, VisEval resolved by title).
+  /milestones shows it as an era-ordered reading path with a read counter.
+- config/interests.yaml: new topic group `interactive_component_synthesis`
+  (very_high) so daily fetches and scoring follow the field.
+- config/tag_taxonomy.yaml: collection tag `interactive-component-survey` and a
+  `survey_axes` group (feedback-*, output-*, training-*, model-*) so the survey
+  gap table (feedback x output x training x model) is derived from BY_TAG.md
+  instead of a drifting spreadsheet. Tag papers on these axes when summarizing.
+- Migration: none (additive config only). Existing seeds already in the library
+  get a `milestone` block via `fetch_milestones.py --mark-existing`.
+- scripts/fetch_milestones.py: `--mark-existing` no longer clobbers a paper's
+  existing `milestone` block when it belongs to a different field (a paper has
+  one block; the first field keeps it and the skip is logged to stderr). Found
+  because Reflexion / SWE-agent / VisualWebArena / OSWorld are seeds of both
+  their home field and this survey; they stay on their original paths.
+- Ingested the 35 new seeds via ingest.py (PDFs local-only); full summaries
+  for the top of the reading order (WebGen-Agent, PlayCoder, WebRISE,
+  Interaction2Code, ReLook; WebGrader already had one), the rest are triage
+  records to summarize on demand with /summarize-paper.

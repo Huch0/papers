@@ -1,0 +1,86 @@
+canonical_key: arxiv-2506.11442
+version_key: v1
+title: 'ReVeal: Self-Evolving Code Agents via Reliable Self-Verification'
+authors:
+- Yiyang Jin
+- Kunzhao Xu
+- Hang Li
+- Xueting Han
+- Yanmin Zhou
+- Cheng Li
+- Jing Bai
+abstract: Reinforcement learning with verifiable rewards (RLVR) has advanced the reasoning capabilities
+  of large language models. However, existing methods rely solely on outcome rewards, without explicitly
+  optimizing verification or leveraging reliable signals from realistic environments, leading to unreliable
+  self-verification and limited test-time scaling. To address this, we widen the verification-generation
+  asymmetry by explicitly optimizing self-verification, making it a reliable driver of deeper test-time
+  scaling. We introduce ReVeal, a multi-turn reinforcement learning framework that evolves code generation
+  through self-verification and tool-based evaluation. ReVeal structures long-horizon reasoning as iterative
+  generation-verification turns and incorporates TAPO for turn-level credit assignment, fostering the
+  co-evolution of code and test generation. At inference, this strengthened self-verification enables
+  the model to use self-constructed tests and tool feedback to continuously evolve code for 20+ turns
+  on LiveCodeBench despite training on only three. It also significantly improves Pass@k, indicating stronger
+  exploration that expands the reasoning boundaries of the base model. These findings highlight the promise
+  of ReVeal as a scalable paradigm for RL training and test-time scaling, paving the way for more robust
+  and autonomous AI agents.
+venue: arXiv
+year: 2025
+source: arxiv
+source_url: https://arxiv.org/abs/2506.11442v2
+pdf_url: https://arxiv.org/pdf/2506.11442v2
+pdf_sha256: e250c2a1b48f5156efa53330f1bd148111a4af7770ba411c99fc556eb10ed2eb
+fetched_at: '2026-08-25T12:48:01Z'
+source_updated_at: '2025-10-21T12:49:25Z'
+ids:
+  doi: null
+  arxiv_id: 2506.11442v2
+  arxiv_base_id: '2506.11442'
+  arxiv_version: v2
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+- interactive-component-survey
+topic_groups:
+- interactive_component_synthesis
+- llm
+- rl
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: interest_fit(0.73), novelty(0.55), harness_relevance(0.52)
+    | interests: llm:large language model, llm:group:llm, rl:reinforcement learning, rl:exploration |
+    milestone/foundational floor applied'
+  matched_interests:
+  - llm:large language model
+  - llm:group:llm
+  - rl:reinforcement learning
+  - rl:exploration
+  - rl:verifiable reward
+  - interactive_component_synthesis:group:interactive_component_synthesis
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 0.441
+    venue_quality: 0.4
+    harness_relevance: 0.52
+    novelty: 0.55
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/reveal-self-evolving-code-agents-via-reliable-250611442/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

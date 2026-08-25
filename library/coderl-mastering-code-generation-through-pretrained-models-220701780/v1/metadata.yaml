@@ -1,0 +1,85 @@
+canonical_key: arxiv-2207.01780
+version_key: v1
+title: 'CodeRL: Mastering Code Generation through Pretrained Models and Deep Reinforcement Learning'
+authors:
+- Hung Le
+- Yue Wang
+- Akhilesh Deepak Gotmare
+- Silvio Savarese
+- Steven C. H. Hoi
+abstract: Program synthesis or code generation aims to generate a program that satisfies a problem specification.
+  Recent approaches using large-scale pretrained language models (LMs) have shown promising results, yet
+  they have some critical limitations. In particular, they often follow a standard supervised fine-tuning
+  procedure to train a code generation model only from the pairs of natural-language problem descriptions
+  and ground-truth programs. Such paradigm largely ignores some important but potentially useful signals
+  in the problem specification such as unit tests, which thus often results in poor performance when solving
+  complex unseen coding tasks. To address the limitations, we propose "CodeRL", a new framework for program
+  synthesis tasks through pretrained LMs and deep reinforcement learning (RL). Specifically, during training,
+  we treat the code-generating LM as an actor network, and introduce a critic network that is trained
+  to predict the functional correctness of generated programs and provide dense feedback signals to the
+  actor. During inference, we introduce a new generation procedure with a critical sampling strategy that
+  allows a model to automatically regenerate programs based on feedback from example unit tests and critic
+  scores. For the model backbones, we extended the encoder-decoder architecture of CodeT5 with enhanced
+  learning objectives, larger model sizes, and better pretraining data. Our method not only achieves new
+  SOTA results on the challenging APPS benchmark, but also shows strong zero-shot transfer capability
+  with new SOTA results on the simpler MBPP benchmark.
+venue: arXiv
+year: 2022
+source: arxiv
+source_url: https://arxiv.org/abs/2207.01780v3
+pdf_url: https://arxiv.org/pdf/2207.01780v3
+pdf_sha256: baac51d227441123433533e5ce3a40b32bd3affd09af4286acc607818d15c599
+fetched_at: '2026-08-25T12:47:46Z'
+source_updated_at: '2022-11-03T08:32:59Z'
+ids:
+  doi: null
+  arxiv_id: 2207.01780v3
+  arxiv_base_id: '2207.01780'
+  arxiv_version: v3
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+- interactive-component-survey
+topic_groups:
+- interactive_component_synthesis
+- llm
+- rl
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: interest_fit(0.73), novelty(0.55), venue_quality(0.40) |
+    interests: llm:pretraining, llm:group:llm, rl:reinforcement learning, rl:group:rl | milestone/foundational
+    floor applied'
+  matched_interests:
+  - llm:pretraining
+  - llm:group:llm
+  - rl:reinforcement learning
+  - rl:group:rl
+  - interactive_component_synthesis:group:interactive_component_synthesis
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 0.55
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/coderl-mastering-code-generation-through-pretrained-models-220701780/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

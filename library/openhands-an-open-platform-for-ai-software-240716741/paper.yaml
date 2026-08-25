@@ -1,0 +1,83 @@
+canonical_key: arxiv-2407.16741
+slug: openhands-an-open-platform-for-ai-software-240716741
+title: 'OpenHands: An Open Platform for AI Software Developers as Generalist Agents'
+authors:
+- Xingyao Wang
+- Boxuan Li
+- Yufan Song
+- Frank F. Xu
+- Xiangru Tang
+- Mingchen Zhuge
+- Jiayi Pan
+- Yueqi Song
+- Bowen Li
+- Jaskirat Singh
+- Hoang H. Tran
+- Fuqiang Li
+- Ren Ma
+- Mingzhang Zheng
+- Bill Qian
+- Yanjun Shao
+- Niklas Muennighoff
+- Yizhe Zhang
+- Binyuan Hui
+- Junyang Lin
+- Robert Brennan
+- Hao Peng
+- Heng Ji
+- Graham Neubig
+year: 2024
+primary_ids:
+  doi: null
+  arxiv_base_id: '2407.16741'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2407.16741v3
+- https://arxiv.org/pdf/2407.16741v3
+topic_groups:
+- interactive_component_synthesis
+- llm
+- software_engineering_agents
+tags:
+- foundational
+- interactive-component-survey
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2024
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: interactive_component_synthesis
+  era: foundational
+  significance: Open harness (sandbox + browser) reusable for interactive-artifact experiments.
+  subarea: exec_feedback_codegen
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v3
+  source: arxiv
+  source_url: https://arxiv.org/abs/2407.16741v3
+  pdf_path: library/openhands-an-open-platform-for-ai-software-240716741/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/openhands-an-open-platform-for-ai-software-240716741/v1/metadata.yaml
+  fetched_at: '2026-08-25T12:47:53Z'
+  source_updated_at: '2025-04-18T18:14:31Z'
+  arxiv_version: v3
+  pdf_sha256: 5d802255c4a58104a06147ba736fee09569faf3c26f251e5e9b7eff5d7662c14
+  pdf_bytes: 3293124
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-25T12:47:53Z'
+  updated_at: '2026-08-25T12:47:53Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

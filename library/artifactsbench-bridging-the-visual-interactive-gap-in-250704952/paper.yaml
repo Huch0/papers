@@ -1,0 +1,79 @@
+canonical_key: arxiv-2507.04952
+slug: artifactsbench-bridging-the-visual-interactive-gap-in-250704952
+title: 'ArtifactsBench: Bridging the Visual-Interactive Gap in LLM Code Generation Evaluation'
+authors:
+- Chenchen Zhang
+- Yuhang Li
+- Can Xu
+- Jiaheng Liu
+- Ao Liu
+- Changzhi Zhou
+- Ken Deng
+- Dengpeng Wu
+- Guanhua Huang
+- Kejiao Li
+- Qi Yi
+- Ruibin Xiong
+- Shihui Hu
+- Yue Zhang
+- Yuhao Jiang
+- Zenan Xu
+- Yuanxing Zhang
+- Wiggin Zhou
+- Chayse Zhou
+- Fengzong Lian
+year: 2025
+primary_ids:
+  doi: null
+  arxiv_base_id: '2507.04952'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2507.04952v2
+- https://arxiv.org/pdf/2507.04952v2
+topic_groups:
+- interactive_component_synthesis
+- llm
+- vlm
+tags:
+- foundational
+- interactive-component-survey
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2025
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: interactive_component_synthesis
+  era: expansion
+  significance: Visual-interactive artifact tasks with a validated MLLM-judge protocol.
+  subarea: interactive_ui
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v2
+  source: arxiv
+  source_url: https://arxiv.org/abs/2507.04952v2
+  pdf_path: library/artifactsbench-bridging-the-visual-interactive-gap-in-250704952/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/artifactsbench-bridging-the-visual-interactive-gap-in-250704952/v1/metadata.yaml
+  fetched_at: '2026-08-25T12:48:43Z'
+  source_updated_at: '2025-09-29T15:55:28Z'
+  arxiv_version: v2
+  pdf_sha256: 130ccc820358c996caaae058bc78c3081e742e48c7102f1254525862d8b117a3
+  pdf_bytes: 6465040
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-25T12:48:43Z'
+  updated_at: '2026-08-25T12:48:43Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

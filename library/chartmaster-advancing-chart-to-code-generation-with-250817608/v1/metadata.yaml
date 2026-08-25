@@ -1,0 +1,89 @@
+canonical_key: arxiv-2508.17608
+version_key: v1
+title: 'ChartMaster: Advancing Chart-to-Code Generation with Real-World Charts and Chart Similarity Reinforcement
+  Learning'
+authors:
+- Wentao Tan
+- Qiong Cao
+- Chao Xue
+- Yibing Zhan
+- Changxing Ding
+- Xiaodong He
+abstract: 'The chart-to-code generation task requires MLLMs to convert chart images into executable code.
+  This task faces two main challenges: limited data diversity and the difficulty of maintaining visual
+  consistency between generated charts and the original ones. Existing datasets mainly rely on synthetic
+  seed data to prompt GPT models for code generation, resulting in homogeneous samples that limit model
+  generalization to real-world chart styles. To address this, we propose ReChartPrompt, leveraging real-world,
+  human-designed charts extracted from arXiv papers as prompts. By harnessing the rich content and diverse
+  visual styles of arXiv charts, we construct ReChartPrompt-240K, a large-scale and highly diverse dataset
+  that better reflects realistic chart variations. For the second challenge, although SFT improves code
+  understanding by optimizing next-token prediction, it does not provide direct supervision on visual
+  features. As a result, it often fails to guarantee that the generated charts visually match the original
+  ones. To address this, we propose ChartSimRL, a GRPO-based reinforcement learning algorithm guided by
+  a novel chart similarity reward. This reward consists of two components: attribute similarity, which
+  measures the overlap of chart attributes like layout and color between the generated and original charts,
+  and visual similarity, which evaluates overall visual features, including texture, using convolutional
+  neural networks. Unlike traditional text-based rewards, our reward accounts for the multimodal nature
+  of the chart-to-code generation task, significantly enhancing the model''s ability to accurately reproduce
+  charts. Integrating ReChartPrompt and ChartSimRL, we develop the ChartMaster model, achieving SOTA results
+  among 7B-parameter models and rivaling GPT-4o on various chart-to-code benchmarks. All resources are
+  available at https://github.com/WentaoTan/ChartMaster.'
+venue: arXiv
+year: 2025
+source: arxiv
+source_url: https://arxiv.org/abs/2508.17608v2
+pdf_url: https://arxiv.org/pdf/2508.17608v2
+pdf_sha256: 291546848c6dfc01cb28fcf3d5eb0ab7e95c8ea0a2511ab892761777621c80cc
+fetched_at: '2026-08-25T12:49:51Z'
+source_updated_at: '2025-09-28T06:18:42Z'
+ids:
+  doi: null
+  arxiv_id: 2508.17608v2
+  arxiv_base_id: '2508.17608'
+  arxiv_version: v2
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+- interactive-component-survey
+topic_groups:
+- interactive_component_synthesis
+- rl
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: interest_fit(0.91), novelty(0.55), artifact_availability(0.55)
+    | interests: rl:reinforcement learning, rl:group:rl, interactive_component_synthesis:chart-to-code,
+    interactive_component_synthesis:group:interactive_component_synthesis | milestone/foundational floor
+    applied'
+  matched_interests:
+  - rl:reinforcement learning
+  - rl:group:rl
+  - interactive_component_synthesis:chart-to-code
+  - interactive_component_synthesis:group:interactive_component_synthesis
+  negative_signals: []
+  subscores:
+    interest_fit: 0.91
+    recency: 0.397
+    venue_quality: 0.4
+    harness_relevance: 0.36
+    novelty: 0.55
+    artifact_availability: 0.55
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/chartmaster-advancing-chart-to-code-generation-with-250817608/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

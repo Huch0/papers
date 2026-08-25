@@ -1,0 +1,81 @@
+canonical_key: arxiv-2403.03163
+version_key: v1
+title: 'Design2Code: Benchmarking Multimodal Code Generation for Automated Front-End Engineering'
+authors:
+- Chenglei Si
+- Yanzhe Zhang
+- Ryan Li
+- Zhengyuan Yang
+- Ruibo Liu
+- Diyi Yang
+abstract: Generative AI has made rapid advancements in recent years, achieving unprecedented capabilities
+  in multimodal understanding and code generation. This can enable a new paradigm of front-end development
+  in which multimodal large language models (MLLMs) directly convert visual designs into code implementations.
+  In this work, we construct Design2Code - the first real-world benchmark for this task. Specifically,
+  we manually curate 484 diverse real-world webpages as test cases and develop a set of automatic evaluation
+  metrics to assess how well current multimodal LLMs can generate the code implementations that directly
+  render into the given reference webpages, given the screenshots as input. We also complement automatic
+  metrics with comprehensive human evaluations to validate the performance ranking. To rigorously benchmark
+  MLLMs, we test various multimodal prompting methods on frontier models such as GPT-4o, GPT-4V, Gemini,
+  and Claude. Our fine-grained break-down metrics indicate that models mostly lag in recalling visual
+  elements from the input webpages and generating correct layout designs.
+venue: arXiv
+year: 2024
+source: arxiv
+source_url: https://arxiv.org/abs/2403.03163v3
+pdf_url: https://arxiv.org/pdf/2403.03163v3
+pdf_sha256: 2e077154eea527a0cffd2473760233d89cd3c6f564b1eefa5112939373e6fb30
+fetched_at: '2026-08-25T12:48:12Z'
+source_updated_at: '2025-02-09T04:22:26Z'
+ids:
+  doi: null
+  arxiv_id: 2403.03163v3
+  arxiv_base_id: '2403.03163'
+  arxiv_version: v3
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+- interactive-component-survey
+topic_groups:
+- interactive_component_synthesis
+- llm
+- vlm
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: interest_fit(0.73), novelty(0.55), evaluation_quality(0.55)
+    | interests: llm:large language model, llm:group:llm, vlm:multimodal LLM, vlm:group:vlm | milestone/foundational
+    floor applied'
+  matched_interests:
+  - llm:large language model
+  - llm:group:llm
+  - vlm:multimodal LLM
+  - vlm:group:vlm
+  - interactive_component_synthesis:group:interactive_component_synthesis
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 0.55
+    artifact_availability: 0.0
+    evaluation_quality: 0.55
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/design2code-benchmarking-multimodal-code-generation-for-automated-240303163/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

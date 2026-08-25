@@ -1,0 +1,81 @@
+canonical_key: arxiv-2410.02089
+version_key: v1
+title: 'RLEF: Grounding Code LLMs in Execution Feedback with Reinforcement Learning'
+authors:
+- Jonas Gehring
+- Kunhao Zheng
+- Jade Copet
+- Vegard Mella
+- Quentin Carbonneaux
+- Taco Cohen
+- Gabriel Synnaeve
+abstract: Large language models (LLMs) deployed as agents solve user-specified tasks over multiple steps
+  while keeping the required manual engagement to a minimum. Crucially, such LLMs need to ground their
+  generations in any feedback obtained to reliably achieve the desired outcomes. We propose an end-to-end
+  reinforcement learning method for teaching models to leverage execution feedback in the realm of code
+  synthesis, where state-of-the-art LLMs struggle to improve code iteratively compared to independent
+  sampling. We benchmark on competitive programming tasks, where we achieve new state-of-the art results
+  with both small (8B parameters) and large (70B) models while reducing the amount of samples required
+  by an order of magnitude. Our analysis of inference-time behavior demonstrates that our method produces
+  LLMs that effectively leverage automatic feedback over multiple steps.
+venue: arXiv
+year: 2024
+source: arxiv
+source_url: https://arxiv.org/abs/2410.02089v2
+pdf_url: https://arxiv.org/pdf/2410.02089v2
+pdf_sha256: d0b1575783af2da3860d8deff208e012fc2859aea30d7e319485ba7ba8c10326
+fetched_at: '2026-08-25T12:47:56Z'
+source_updated_at: '2025-02-18T11:39:46Z'
+ids:
+  doi: null
+  arxiv_id: 2410.02089v2
+  arxiv_base_id: '2410.02089'
+  arxiv_version: v2
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+- interactive-component-survey
+topic_groups:
+- interactive_component_synthesis
+- llm
+- rl
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: interest_fit(0.91), novelty(0.55), venue_quality(0.40) |
+    interests: llm:large language model, llm:group:llm, rl:reinforcement learning, rl:group:rl | milestone/foundational
+    floor applied'
+  matched_interests:
+  - llm:large language model
+  - llm:group:llm
+  - rl:reinforcement learning
+  - rl:group:rl
+  - interactive_component_synthesis:execution feedback
+  - interactive_component_synthesis:group:interactive_component_synthesis
+  negative_signals: []
+  subscores:
+    interest_fit: 0.91
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 0.55
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/rlef-grounding-code-llms-in-execution-feedback-241002089/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

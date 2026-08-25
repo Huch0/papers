@@ -1,0 +1,88 @@
+canonical_key: arxiv-2402.04788
+version_key: v1
+title: 'MLLM-as-a-Judge: Assessing Multimodal LLM-as-a-Judge with Vision-Language Benchmark'
+authors:
+- Dongping Chen
+- Ruoxi Chen
+- Shilin Zhang
+- Yinuo Liu
+- Yaochen Wang
+- Huichi Zhou
+- Qihui Zhang
+- Yao Wan
+- Pan Zhou
+- Lichao Sun
+abstract: 'Multimodal Large Language Models (MLLMs) have gained significant attention recently, showing
+  remarkable potential in artificial general intelligence. However, assessing the utility of MLLMs presents
+  considerable challenges, primarily due to the absence of multimodal benchmarks that align with human
+  preferences. Drawing inspiration from the concept of LLM-as-a-Judge within LLMs, this paper introduces
+  a novel benchmark, termed MLLM-as-a-Judge, to assess the ability of MLLMs in assisting judges across
+  diverse modalities, encompassing three distinct tasks: Scoring Evaluation, Pair Comparison, and Batch
+  Ranking. Our study reveals that, while MLLMs demonstrate remarkable human-like discernment in Pair Comparison,
+  there is a significant divergence from human preferences in Scoring Evaluation and Batch Ranking. Furthermore,
+  a closer examination reveals persistent challenges in the judgment capacities of LLMs, including diverse
+  biases, hallucinatory responses, and inconsistencies in judgment, even in advanced models such as GPT-4V.
+  These findings emphasize the pressing need for enhancements and further research efforts to be undertaken
+  before regarding MLLMs as fully reliable evaluators. In light of this, we advocate for additional efforts
+  dedicated to supporting the continuous development within the domain of MLLM functioning as judges.
+  The code and dataset are publicly available at our project homepage: \url{https://mllm-judge.github.io/}.'
+venue: arXiv
+year: 2024
+source: arxiv
+source_url: https://arxiv.org/abs/2402.04788v3
+pdf_url: https://arxiv.org/pdf/2402.04788v3
+pdf_sha256: 0c13cf4252520f6bdda86902dbe28446caea86a839a117f3447cbbc993df291e
+fetched_at: '2026-08-25T12:49:58Z'
+source_updated_at: '2024-06-11T06:21:46Z'
+ids:
+  doi: null
+  arxiv_id: 2402.04788v3
+  arxiv_base_id: '2402.04788'
+  arxiv_version: v3
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+- interactive-component-survey
+topic_groups:
+- interactive_component_synthesis
+- llm
+- vlm
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: interest_fit(0.73), novelty(0.55), venue_quality(0.40) |
+    interests: llm:large language model, llm:group:llm, vlm:multimodal LLM, vlm:group:vlm | milestone/foundational
+    floor applied'
+  matched_interests:
+  - llm:large language model
+  - llm:group:llm
+  - vlm:multimodal LLM
+  - vlm:group:vlm
+  - interactive_component_synthesis:group:interactive_component_synthesis
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 0.55
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/mllm-as-a-judge-assessing-multimodal-llm-240204788/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

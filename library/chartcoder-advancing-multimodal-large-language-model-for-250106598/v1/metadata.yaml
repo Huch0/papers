@@ -1,0 +1,84 @@
+canonical_key: arxiv-2501.06598
+version_key: v1
+title: 'ChartCoder: Advancing Multimodal Large Language Model for Chart-to-Code Generation'
+authors:
+- Xuanle Zhao
+- Xianzhen Luo
+- Qi Shi
+- Chi Chen
+- Shuo Wang
+- Zhiyuan Liu
+- Maosong Sun
+abstract: 'Multimodal Large Language Models (MLLMs) have demonstrated remarkable capabilities in chart
+  understanding tasks. However, interpreting charts with textual descriptions often leads to information
+  loss, as it fails to fully capture the dense information embedded in charts. In contrast, parsing charts
+  into code provides lossless representations that can effectively contain all critical details. Although
+  existing open-source MLLMs have achieved success in chart understanding tasks, they still face two major
+  challenges when applied to chart-to-code tasks: (1) Low executability and poor restoration of chart
+  details in the generated code and (2) Lack of large-scale and diverse training data. To address these
+  challenges, we propose \textbf{ChartCoder}, the first dedicated chart-to-code MLLM, which leverages
+  Code LLMs as the language backbone to enhance the executability of the generated code. Furthermore,
+  we introduce \textbf{Chart2Code-160k}, the first large-scale and diverse dataset for chart-to-code generation,
+  and propose the \textbf{Snippet-of-Thought (SoT)} method, which transforms direct chart-to-code generation
+  data into step-by-step generation. Experiments demonstrate that ChartCoder, with only 7B parameters,
+  surpasses existing open-source MLLMs on chart-to-code benchmarks, achieving superior chart restoration
+  and code excitability. Our code is available at https://github.com/thunlp/ChartCoder.'
+venue: arXiv
+year: 2025
+source: arxiv
+source_url: https://arxiv.org/abs/2501.06598v3
+pdf_url: https://arxiv.org/pdf/2501.06598v3
+pdf_sha256: df62e42f7ed13af22744dd9fa246046a1a0a5606394bdfd36c1581e9fcd1b37e
+fetched_at: '2026-08-25T12:49:46Z'
+source_updated_at: '2025-07-02T04:47:37Z'
+ids:
+  doi: null
+  arxiv_id: 2501.06598v3
+  arxiv_base_id: '2501.06598'
+  arxiv_version: v3
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+- interactive-component-survey
+topic_groups:
+- interactive_component_synthesis
+- llm
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: artifact_availability(1.00), interest_fit(0.91), novelty(0.80)
+    | interests: llm:large language model, llm:group:llm, interactive_component_synthesis:chart-to-code,
+    interactive_component_synthesis:group:interactive_component_synthesis | milestone/foundational floor
+    applied'
+  matched_interests:
+  - llm:large language model
+  - llm:group:llm
+  - interactive_component_synthesis:chart-to-code
+  - interactive_component_synthesis:group:interactive_component_synthesis
+  negative_signals: []
+  subscores:
+    interest_fit: 0.91
+    recency: 0.35
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 0.8
+    artifact_availability: 1.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/chartcoder-advancing-multimodal-large-language-model-for-250106598/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

@@ -1,0 +1,86 @@
+canonical_key: arxiv-2605.17439
+version_key: v1
+title: 'DiagEval: Trajectory-Conditioned Diagnosis for Reliable Software Evaluation with GUI Agents'
+authors:
+- Sirui Hong
+- Zhijie Liu
+- Tengfei Li
+- Wei Tao
+- Yifan Wu
+- Chenglin Wu
+abstract: Evaluating LLM-generated interactive software requires execution in addition to static analysis.
+  The key difficulty is that correctness is a graph-level reachable property over latent UI state-transition
+  graphs, whereas a GUI evaluator observes only a single execution trajectory. A failed rollout therefore
+  rules out only one realized path, leaving failure attribution ambiguous between evaluator-side execution
+  error and genuine software defect. We present DiagEval, a trajectory-conditioned diagnostic evaluation
+  protocol for post-failure GUI-agent evaluation of interactive software. Rather than blindly retrying
+  from scratch, DiagEval reuses the failed trajectory to choose targeted diagnostic probes and aggregates
+  their outcomes into an internal attribution signal. The latent-graph view motivates the diagnostic problem;
+  DiagEval does not reconstruct the graph or estimate calibrated posterior probabilities. We evaluate
+  DiagEval on WebDevJudge-Unit and RealDevBench across multiple GUI-agent evaluators and LLM backbones.
+  On false-negative cases, DiagEval recovers 45.6-62.1% of failures that were initially misattributed
+  to software defects, outperforming retry-based baselines with 34.4-160.6% relative gains. On the full
+  evaluation sets, this recovery improves accuracy from 69.9% to 78.3% on WebDevJudge-Unit and from 65.0%
+  to 81.6% on RealDevBench. These results suggest that reliable GUI-agent evaluation requires not only
+  stronger execution, but also active failure diagnosis to disambiguate evaluator-side errors from genuine
+  software defects. Our code is available at https://github.com/scutGit/DiagEval.
+venue: arXiv
+year: 2026
+source: arxiv
+source_url: https://arxiv.org/abs/2605.17439v2
+pdf_url: https://arxiv.org/pdf/2605.17439v2
+pdf_sha256: 2ad7c45998c9a73d54f1650ca3fadb157cc0974291581106fed93c4884addbcf
+fetched_at: '2026-08-25T12:50:09Z'
+source_updated_at: '2026-05-19T07:14:09Z'
+ids:
+  doi: null
+  arxiv_id: 2605.17439v2
+  arxiv_base_id: '2605.17439'
+  arxiv_version: v2
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+- interactive-component-survey
+topic_groups:
+- computer_use_agents
+- general_agent_methods
+- interactive_component_synthesis
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: interest_fit(0.91), recency(0.84), artifact_availability(0.80)
+    | interests: computer_use_agents:GUI agent, computer_use_agents:group:computer_use_agents, general_agent_methods:agent
+    evaluation, general_agent_methods:group:general_agent_methods | milestone/foundational floor applied'
+  matched_interests:
+  - computer_use_agents:GUI agent
+  - computer_use_agents:group:computer_use_agents
+  - general_agent_methods:agent evaluation
+  - general_agent_methods:group:general_agent_methods
+  - interactive_component_synthesis:group:interactive_component_synthesis
+  negative_signals: []
+  subscores:
+    interest_fit: 0.91
+    recency: 0.84
+    venue_quality: 0.4
+    harness_relevance: 0.36
+    novelty: 0.0
+    artifact_availability: 0.8
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/diageval-trajectory-conditioned-diagnosis-for-reliable-software-260517439/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

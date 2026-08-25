@@ -24,8 +24,10 @@ topic_groups:
 - software_engineering_agents
 tags:
 - execution-based-eval
+- foundational
 - tde-related-work
 - verifier
+- interactive-component-survey
 venue:
   name: ICML
   tier: A_star
@@ -33,10 +35,14 @@ venue:
   year: 2023
 user:
   read_status: unread
-  triage_label: SKIP
+  triage_label: READ_SOON
   triage_confidence: high
   notes: null
-milestone: null
+milestone:
+  field: interactive_component_synthesis
+  era: emergence
+  significance: Execution-conditioned verifier/reranker; conceptual base for execution critics.
+  subarea: exec_feedback_codegen
 knowledge_concepts: []
 versions:
 - version_key: v1

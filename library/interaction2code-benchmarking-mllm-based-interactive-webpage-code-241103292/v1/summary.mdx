@@ -1,0 +1,141 @@
+---
+canonical_key: arxiv-2411.03292
+version_key: v1
+title: 'Interaction2Code: Benchmarking MLLM-based Interactive Webpage Code Generation from Interactive
+  Prototyping'
+authors:
+- Jingyu Xiao
+- Yuxuan Wan
+- Yintong Huo
+- Zixin Wang
+- Xinyi Xu
+- Wenxuan Wang
+- Zhiyao Xu
+- Yuhang Wang
+- Michael R. Lyu
+venue: arXiv
+year: 2024
+tags:
+- foundational
+- benchmark
+- interactive-component-survey
+- feedback-none
+- output-interactive
+- training-prompt
+- model-open
+- model-closed
+topic_groups:
+- interactive_component_synthesis
+- llm
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2411.03292v3
+summary_date: '2026-08-25'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>Interaction2Code turns design-to-code into an execution-checked, behavioral task: given a pre/post-interaction screenshot pair (an "interactive prototype"), a multimodal LLM must emit a single HTML/CSS/JS file whose interaction, replayed by Selenium, reproduces the after-state; on 127 real webpages / 374 interactions, every model does clearly worse on the interactive region than on the static page, fails in ten catalogued ways, and only recovers with highlighting, failure-aware prompts, cropping, and textual descriptions.</TLDR>
+
+<WhyItMatters>This is the closest existing benchmark to my thesis (execution-grounded synthesis and repair of stateful visual components): it already replays interactions in a real browser and diffs screenshots, and it shows that open-weight Qwen2.5-VL-72B sits at Gemini-1.5-flash level while 3B/7B collapse. Its failure taxonomy (spatial / type / behavioral) is a ready-made target list for a repair loop.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "374", label: "interactions on 127 real webpages", sub: "15 topics, 31 interaction categories (23 tag + 8 visual)" },
+  { value: "0.72 → 0.57", label: "Claude-3.5 full-page vs interaction-part CLIP (Direct)", sub: "Tab.IV; every model drops on the interactive region" },
+  { value: "81%", label: "best Implement Rate", sub: "GPT-4o + Mark prompt, Tab.IV" },
+  { value: "10", label: "failure types", sub: "3 of them (missing element, no interaction, wrong function) have usability < 10%, Tab.V" },
+]} />
+
+## Motivation
+Design-to-code benchmarks (<Related>Design2Code, WebSight, Vision2UI, DesignBench</Related>) score a generated page by how much it *looks* like a screenshot. <Problem>They never ask whether anything on the page *works*: a size selector that does not open, a quantity button that does not count, a carousel that does not advance all score perfectly on CLIP/SSIM</Problem>. That gap is not a corner case — on 10 random real pages the authors count interactive elements at more than 50% of all elements in every topic, up to 96% for "music" (Fig.1b, p.1). <Problem>Prior MLLM UI-code work (Design2Code, DCGen, DeclarUI) therefore optimizes the static half of the page and has no signal at all on the dynamic half</Problem>. Nobody had defined the task, built a dataset of real interactions, or catalogued how models fail on them.
+
+## Contribution (what's new)
+The insight that survives deleting "we propose": <Novelty>an interaction can be specified purely visually as a pair of screenshots (before, after) — an <Term def="A functional model of a UI where users can simulate interactions; here operationalised as the pair {screenshot before interaction, screenshot after interaction}">interactive prototype</Term> — and it can be *graded by execution*, because the generated page is asked to tag its interactive element with a known id (`interact1`), so a webdriver can click it, screenshot the result, and diff against the reference after-state</Novelty>. This must take this form: without the id convention there is no deterministic way to trigger the interaction in generated code; without the after-screenshot there is no ground truth for what the interaction should do; without diffing the *changed region* the static page dominates the score and hides the interaction (Limitation 1 is exactly that hiding). On top of this, the paper contributes (1) the benchmark with human failure annotations (Tab.I is the only one with real-world + failure annotation + interactive), (2) four diagnosed limitations, and (3) four prompt/input-level fixes that follow one-to-one from the diagnoses.
+
+## Research questions
+1. How well do SOTA MLLMs (closed and open-weight) generate *interactive* webpages from interactive prototypes, relative to generating the static page?
+2. How do they fail, and how severe is each failure for usability?
+3. Which input properties (visual saliency of the interaction area, modality of the description) drive failures?
+4. Do simple interventions targeted at those causes (highlighting, failure-aware prompting, cropping, text+vision) recover performance, and are they complementary?
+
+## Methodology
+Running example: a shop page where clicking the "M" size button changes the displayed size. The prototype is `{screenshot_before, screenshot_after_click}`. The MLLM gets both images plus the Direct prompt (Fig.5) and must return one HTML/CSS/JS file with `id="interact1"` on the button. Evaluation loads the file, clicks `#interact1` with Selenium, screenshots, and compares two things: the whole page against the reference, and the *interaction region* — extracted by pixel subtraction when page size is unchanged, or by `git diff` on rows/columns when the page grows (Alg.1, p.4) — against the reference region.
+
+<Pass title="Benchmark construction and metrics">
+<Stepper steps={[
+  { title: "Webpage selection", body: "100 pages from C4 (Design2Code-style filtering, 15 topics, 1,000 sampled, 4 PhD students pick ~25 each with 'at least one meaningful interaction' as the criterion) + 27 GitHub open-source production projects (avg 13k stars) so that React/Vue/Angular/Next.js pages (56/22/11/11%, Fig.4b) are represented. Total 127 pages (§III-A)." },
+  { title: "Interaction extraction", body: "The same 4 students interact manually, keep 1-10 'important and functional' interactions per page (trivial hover effects are excluded), and capture before/after screenshots. 374 interactions; annotated with HTML tag category (23: button 235, input 52, span 37, link 36, select 35, ...) and visual-effect category (8: text 162, new component 161, color 85, position 45, switch 41, new page 37, new window 34, size 20; Tab.II). One interaction can carry several categories." },
+  { title: "Automated interaction", body: "Prompt asks the model to encode interact ids; Selenium locates by id and performs the click. An interaction counts as 'implemented' iff the webdriver can detect it (Implement Rate, IR)." },
+  { title: "Metrics", body: "Full page: CLIP (visual), SSIM (structure), OCR+BLEU (text), Widget Similarity / Widget Match Rate via GUIPilot. Interaction part: CLIP, SSIM, Text on the extracted region; Position similarity P = 1 - max(|x_o - x_g|, |y_o - y_g|) on normalized region centers; IR; and Usability Rate (UR) judged by humans as 'precisely matches the prototype behavior'." },
+  { title: "Models and settings", body: "Gemini-1.5-flash, GPT-4o-20240806, Claude-3.5-Sonnet-20240620, Qwen2.5-VL-Instruct 3B/7B/72B (chosen because many open MLLMs cannot take multiple images). Temperature 0, max tokens 4096 (closed) / 2048 (Qwen). Prompts: Direct, CoT (3 steps: analyze effect, locate element, implement), Mark (red bounding boxes drawn on the screenshots), FAP (list of the 10 failure types to avoid)." },
+]} />
+
+<MathBlock>{`\\mathrm{IR}=\\frac{N(\\text{implemented})}{N(\\text{implemented})+N(\\text{unimplemented})},\\qquad \\mathrm{VS}(I)=\\frac{\\mathrm{area}(I)}{\\mathrm{area}(S_I)}`}</MathBlock>
+
+Contamination check: BLEU between generated and original HTML is 0.12–0.14 for all four large models (Tab.III), so pages are not being recited. The four fixes are each tested on a *different* slice: CoT/Mark on the full benchmark (Tab.IV); FAP on a 1/3 held-out split after annotating failures on 2/3 (Tab.VI); Visual Saliency Enhancement (crop the screenshot so the interaction occupies a larger fraction) on 10 failure-case pages (Fig.11, Tab.VII); modality ablation (V / T / V+T, human-written one-line descriptions) on 10 failure-case pages with GPT-4o (Tab.VIII); combined ablation on GPT-4o (Tab.IX).
+</Pass>
+
+## Main result
+<Finding src="Tab.IV, p.6">Every model scores lower on the interaction part than on the full page, on every metric</Finding> — Claude-3.5-Sonnet Direct: CLIP 0.7172 → 0.5674, SSIM 0.5318 → 0.4209, Text 0.6003 → 0.3833. <Finding src="Tab.IV">GPT-4o and Claude-3.5-Sonnet lead; open-weight Qwen2.5-VL-72B (avg IR 0.7005) matches Gemini-1.5-flash (0.7059), and Qwen scales monotonically 3B → 7B → 72B</Finding>. Best single configuration: GPT-4o + Mark, IR 0.8128, interaction CLIP 0.5955. Human usability (Fig.6a) tells the same story: Claude Mark 77% usable, GPT-4o Mark 81%, Gemini Mark 64%, Qwen-72B Mark 54%, Qwen-7B ≈30%, Qwen-3B ≈18%.
+
+<SortableTable columns={["Model (Direct)", "Full CLIP", "Inter. CLIP", "Inter. SSIM", "Inter. Position", "IR", "Usable % (Fig.6a)"]} rows={[
+  ["Qwen2.5-VL-3B", 0.3220, 0.2100, 0.1531, 0.2090, 0.3449, 17],
+  ["Qwen2.5-VL-7B", 0.4169, 0.3230, 0.2177, 0.2529, 0.4786, 30],
+  ["Qwen2.5-VL-72B", 0.6430, 0.4624, 0.3207, 0.3950, 0.6524, 41],
+  ["Gemini-1.5-flash", 0.5967, 0.4737, 0.3616, 0.4320, 0.6738, 47],
+  ["GPT-4o", 0.7114, 0.5605, 0.4149, 0.4888, 0.7754, 73],
+  ["Claude-3.5-Sonnet", 0.7172, 0.5674, 0.4209, 0.5123, 0.7914, 66],
+]} />
+
+## Key findings
+- <Finding src="Tab.IV, Fig.6">Highlighting the interaction helps, and drawing boxes beats reasoning about it</Finding>: Mark > CoT > Direct for the large models (Gemini interaction CLIP 0.4737 → 0.5093 → 0.5194; IR 0.6738 → 0.7112 → 0.7326). Claude's usability rises 11 pts over Direct and 8 over CoT with Mark. For CoT the gain is model-dependent: GPT-4o and Claude *lose* under CoT on most metrics (GPT-4o IR 0.7754 → 0.7273), and Qwen-3B collapses (IR 0.3449 → 0.1979), presumably because the 2048-token budget is eaten by reasoning. The paper's summary sentence "both CoT and Mark improve over direct" is only true on average.
+- <Finding src="Tab.V, Fig.9, §V-B">Ten failure types, clustered into three causes</Finding>: spatial (missing element, wrong element, wrong element position, wrong effect position), type (wrong widget type, wrong effect type), behavioral (no interaction, effect on wrong element, partial implementation, wrong function). Most frequent: no interaction, partial implementation, missing element, wrong function. Most severe (usability rate): missing element 0%, wrong function 0%, no interaction 6.9%, effect on wrong element 44.4%, wrong effect type 57.1% — whereas positional/type errors leave the interaction mostly usable (89–98%). So the *behavioral* failures are the ones that matter, and they are exactly the ones a screenshot-similarity metric cannot see.
+- <Finding src="Tab.VI">Failure-aware prompting helps the four large models but not the small open ones</Finding>: on the 1/3 held-out split, IR rises for Gemini 0.7636 → 0.8182, GPT-4o 0.7636 → 0.8364, Claude 0.6364 → 0.6545, Qwen-72B 0.6545 → 0.7636; but Qwen-3B *drops* on 7 of 8 metrics (IR 0.4727 → 0.3818) and Qwen-7B is mixed (interaction CLIP 0.2802 → 0.2603). The text claims FAP "can improve ... on all models"; the table contradicts this for 3B/7B.
+- <Finding src="Fig.10, §V-C">Visually subtle interactions fail</Finding>: binning Gemini's 374 samples by <Term def="Fraction of the after-screenshot's pixel area occupied by the interaction region, area(I)/area(S_I)">visual saliency</Term> into five roughly equal groups, SSIM and Position similarity increase monotonically with saliency (lowest for VS in `[0, 0.025)`, highest for `[0.2, 1)`); CLIP and Text merely fluctuate. Cropping to magnify the interaction (VSE) turns 10 total failures (all metrics 0 at 1x) into successes: from 1.2x the interaction appears, and by 3x CLIP/SSIM approach 0.8 and Text/Position ≈0.6 (Fig.11), while full-page scores stay flat (CLIP 0.826–0.843, Tab.VII) when the cropped-off remainder is generated separately and stitched.
+- <Finding src="Tab.VIII">A one-line human text description is worth more than the screenshots</Finding> (GPT-4o, 10 failure pages): Direct V-only Position 0.3951, T-only 0.4293, V+T 0.7157; CLIP 0.3737 / 0.4174 / 0.6735. V+T wins across all three prompt styles. The screenshots alone leave the model guessing *what* the interaction is.
+- <Finding src="Tab.IX">The four fixes are complementary</Finding> (GPT-4o): base 0.5700/0.4891/0.3652/0.5802 (CLIP/SSIM/Text/Position) → all four 0.6937/0.6251/0.5187/0.7371; the strongest single fix is the textual description (Position 0.7024), and dropping any one from the full stack lowers every metric.
+- <Finding src="Tab.X">User study: an Interaction2Code tool cuts task time 413s → 279s (32.4%) and raises expert-rated quality 3.875 → 4.5 (16.1%)</Finding> — but on 4 tasks with 2 developers per arm, so treat it as anecdotal.
+- <Finding src="§V-A1">Widget-level matching (WS ≈ 0.02–0.05) is uninformative</Finding>: GUIPilot's detector, built for compact mobile screens, misses most web elements, so the widget metrics say more about the detector than the models.
+
+## Implications
+For anyone building an interactive-component synthesizer, the takeaways are concrete. (1) Behavior is the bottleneck, not appearance: the fatal failures are "no interaction", "wrong function", "missing element", none of which visual similarity detects, so <FollowUp>a behavioral oracle — replay the event, diff the DOM/state, not just pixels — is the metric that should drive training or repair</FollowUp>. (2) The three failure clusters map onto three separable sub-skills — localize the element, pick the widget type, infer the state-transition logic — and <FollowUp>a repair loop could dispatch on which cluster the execution diff reveals</FollowUp>. (3) Screenshot pairs underspecify the transition (toggle vs. open-modal) — the V+T result says a short textual spec of the *intended* behavior is the cheapest fix, which argues for spec-plus-screenshot inputs. (4) Open weights are viable at 72B and useless below it with pure prompting; the CoT/FAP regressions on 3B/7B show that prompt-only fixes do not transfer down, which leaves room for <FollowUp>execution-feedback fine-tuning or RL on small open models</FollowUp>. Lineage: extends <Related>Design2Code / DCGen (static UI2Code)</Related>, and the same group's <Related>DesignBench, MRWeb, EfficientUICoder</Related>; the execution harness (id tagging + Selenium + region diff) is reusable as a <Related>test oracle for stateful component generation</Related>.
+
+## Limitations
+- <Caveat>Ground truth is a single click and a single after-screenshot</Caveat>: multi-step, stateful, or timing-dependent interactions (drag, typing sequences, animations, toggling back) are reduced to one transition; "partial implementation" (e.g., select but cannot unselect) is only caught by humans.
+- <Caveat>Usability, failure types, and pairwise wins are judged by 4–5 annotators who are also the dataset builders</Caveat>; no inter-annotator agreement is reported.
+- <Caveat>FAP, VSE, and the modality study use tiny or non-comparable slices</Caveat> (1/3 split; 10 failure pages; 10 pages for V+T), and Tab.VI's Claude Direct IR (0.6364) is far below Tab.IV's (0.7914), so the subsets differ in difficulty. VSE is only shown for cases that failed at 1x.
+- <Caveat>Position similarity uses only region centers</Caveat> and ignores region size; the region extractor uses pixel/`git diff` heuristics that break on any incidental change (animations, ads).
+- <Caveat>No backend</Caveat>: login/search-type interactions cannot be verified (author-stated, §VI). Context length for many-interaction pages is also author-stated.
+- <Caveat>No training or execution-feedback baselines</Caveat>: all fixes are prompt/input-level; whether models can *repair* a page given the Selenium diff is untested.
+- <Caveat>Interaction categories are per-element tags, not behavioral classes</Caveat> — "31 categories" = 23 HTML tags + 8 visual effects, which says little about state complexity.
+
+## Critiques and Questions
+1. The headline "MLLMs do worse on the interaction part than the full page" partly conflates two things: the interaction region is smaller (so per-pixel metrics are noisier) and it requires behavior. The saliency analysis (Fig.10) suggests much of the gap is the former; the behavioral gap is better measured by IR/UR alone.
+2. IR counts an interaction as "implemented" if Selenium can find the id and interact — a page with the right id and a no-op handler passes IR. The failure "no interaction" (6.9% usable) shows this is a real gap between IR and usability.
+3. The Mark prompt injects human-drawn boxes, and the V+T setting injects human-written descriptions — both are oracle-assisted, so they are upper bounds on what an automatic pipeline could get, not deployable methods.
+4. Is the per-model drop under CoT a token-budget artifact (2048 for Qwen) rather than a reasoning failure? Not reported.
+5. Selection was "at least one meaningful interaction" by the annotators, and trivial hovers were excluded — the distribution of difficulty is curated, so absolute numbers are not comparable across benchmarks.
+
+<SelfCheck q="Why does the benchmark require the model to write id='interact1' on the interactive element, and what breaks without it?" a="The id is the handle that lets a Selenium webdriver deterministically find and trigger the generated interaction so the after-state can be screenshotted and diffed against the reference. Without it there is no automatic way to execute the interaction, so evaluation would collapse back to static screenshot similarity — exactly the blind spot the benchmark exists to remove." />
+
+<SelfCheck q="Which failure types matter most, and why can screenshot-similarity metrics not catch them?" a="Missing interactive element, wrong function, and no interaction have usability rates of 0%, 0%, and 6.9% (Tab.V). They are behavioral: the page can look identical before the click and simply do nothing or the wrong thing, so CLIP/SSIM on the static page stay high while the interaction is useless." />
+
+## Glossary
+- <Term def="Multimodal Large Language Model: an LLM that accepts images (here, screenshots) in addition to text">MLLM</Term>
+- <Term def="Generating HTML/CSS(/JS) that reproduces a UI from a static screenshot or mock-up; also called UI2Code / Design2Code">Design-to-Code</Term>
+- <Term def="The task defined by this paper: generate an interactive webpage from a pair of before/after-interaction screenshots">Interaction-to-Code</Term>
+- <Term def="Fraction of generated interactions the Selenium webdriver can locate (by id) and trigger">Implement Rate (IR)</Term>
+- <Term def="Fraction of generated interactions human annotators judge to precisely match the prototype's behavior">Usability Rate (UR)</Term>
+- <Term def="Image-embedding cosine similarity between two screenshots using OpenAI CLIP">CLIP score</Term>
+- <Term def="Structural Similarity Index Measure, a pixel-structure similarity between two images">SSIM</Term>
+- <Term def="Widget Similarity / Widget Match Rate: element-level consistency computed with GUIPilot's widget detector">WS / WMR</Term>
+- <Term def="Prompt that lists the ten annotated failure types and tells the model to avoid them">Failure-aware Prompting (FAP)</Term>
+- <Term def="Cropping the input screenshots so the interaction region occupies a larger share of the image">Visual Saliency Enhancement (VSE)</Term>
+- <Term def="Drawing red bounding boxes around the interactive element and its effect in the input screenshots">Mark prompt</Term>
+- <Term def="Colossal Clean Crawled Corpus, a web-text corpus from CommonCrawl whose validation split supplies 100 of the 127 pages">C4</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

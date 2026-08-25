@@ -41,20 +41,24 @@ ids:
 tags:
 - execution-based-eval
 - tde-related-work
+- foundational
+- interactive-component-survey
 topic_groups:
 - software_engineering_agents
 scoring:
-  score: 15.0
-  label: SKIP
+  score: 65
+  label: READ_SOON
   confidence: high
-  rationale: 'score=15 -> SKIP | strong: interest_fit(0.91), novelty(0.55), venue_quality(0.40) | interests:
-    software_engineering_agents:program repair, software_engineering_agents:group:software_engineering_agents
-    | negatives: old_in_fast_area'
+  rationale: 'score=65 -> READ_SOON | strong: interest_fit(0.91), novelty(0.55), venue_quality(0.40) |
+    interests: software_engineering_agents:program repair, software_engineering_agents:group:software_engineering_agents,
+    llm:large language model, interactive_component_synthesis:self-debug | milestone/foundational floor
+    applied'
   matched_interests:
   - software_engineering_agents:program repair
   - software_engineering_agents:group:software_engineering_agents
-  negative_signals:
-  - old_in_fast_area
+  - llm:large language model
+  - interactive_component_synthesis:self-debug
+  negative_signals: []
   subscores:
     interest_fit: 0.91
     recency: 0.0

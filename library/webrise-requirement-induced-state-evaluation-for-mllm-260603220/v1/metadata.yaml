@@ -1,0 +1,88 @@
+canonical_key: arxiv-2606.03220
+version_key: v1
+title: 'WebRISE: Requirement-Induced State Evaluation for MLLM-Generated Web Artifacts'
+authors:
+- Yuxin Meng
+- Yuhan Suo
+- Junjie Wang
+- Yuhan Sun
+- Yiyao Yu
+- Ruixu Zhang
+- Ruining Hu
+- Yubin Wang
+- Shouwei Ruan
+- Bin Wang
+- Yuxiang Zhang
+- Yujiu Yang
+abstract: 'Existing benchmarks for MLLM-generated web artifacts assess interaction through local evidence
+  and miss the requirement-induced states and transitions that determine whether a page works. We introduce
+  WebRISE, which compiles task requirements into Interaction Contract Graphs (ICGs) of observable states,
+  user-intent transitions, and DOM/visual assertions for implementation-agnostic browser execution. WebRISE
+  spans 442 tasks across five input modalities (Text, Markdown, Sketch, Image, Video), with 5,495 transitions
+  and 5,271 requirement checks that separate user-stated functions from implicit product-level constraints.
+  Across 14 MLLMs, even the strongest model reaches only 65.6% transition validity and 66.3% requirement
+  coverage, and visual quality is no proxy for behavior (Qwen3.6-35B-A3B on Markdown: V=80.8 yet T=15.5).
+  Video gives the strongest interaction signal (+10.6 pp implicit coverage over Text), while implicit
+  constraints persist; defect injection shows ICG-based scoring detects state errors at 2-16x the rate
+  of checkpoint-style evaluation.'
+venue: arXiv
+year: 2026
+source: arxiv
+source_url: https://arxiv.org/abs/2606.03220v1
+pdf_url: https://arxiv.org/pdf/2606.03220v1
+pdf_sha256: f66ecabf153ab5cb4f0f619ab285485c641345cf927e0bba9cbea84058c9a988
+fetched_at: '2026-08-25T12:49:09Z'
+source_updated_at: '2026-06-02T06:29:40Z'
+ids:
+  doi: null
+  arxiv_id: 2606.03220v1
+  arxiv_base_id: '2606.03220'
+  arxiv_version: v1
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+- feedback-behavioral
+- feedback-visual
+- output-interactive
+- training-prompt
+- model-open
+- model-closed
+- interactive-component-survey
+topic_groups:
+- interactive_component_synthesis
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: recency(0.87), interest_fit(0.73), novelty(0.55) | interests:
+    interactive_component_synthesis:group:interactive_component_synthesis | milestone/foundational floor
+    applied'
+  matched_interests:
+  - interactive_component_synthesis:group:interactive_component_synthesis
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 0.866
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 0.55
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/webrise-requirement-induced-state-evaluation-for-mllm-260603220/v1/paper.pdf
+  extraction: library/webrise-requirement-induced-state-evaluation-for-mllm-260603220/v1/extraction.txt
+  summary: library/webrise-requirement-induced-state-evaluation-for-mllm-260603220/v1/summary.mdx
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread
+  summary_format: mdx

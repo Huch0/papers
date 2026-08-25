@@ -1,0 +1,71 @@
+canonical_key: arxiv-2112.12926
+version_key: v1
+title: 'nvBench: A Large-Scale Synthesized Dataset for Cross-Domain Natural Language to Visualization
+  Task'
+authors:
+- Yuyu Luo
+- Jiawei Tang
+- Guoliang Li
+abstract: NL2VIS - which translates natural language (NL) queries to corresponding visualizations (VIS)
+  - has attracted more and more attention both in commercial visualization vendors and academic researchers.
+  In the last few years, the advanced deep learning-based models have achieved human-like abilities in
+  many natural language processing (NLP) tasks, which clearly tells us that the deep learning-based technique
+  is a good choice to push the field of NL2VIS. However, a big balk is the lack of benchmarks with lots
+  of (NL, VIS) pairs. We present nvBench, the first large-scale NL2VIS benchmark, containing 25,750 (NL,
+  VIS) pairs from 750 tables over 105 domains, synthesized from (NL, SQL) benchmarks to support cross-domain
+  NL2VIS task. The quality of nvBench has been extensively validated by 23 experts and 300+ crowd workers.
+  Deep learning-based models training using nvBench demonstrate that nvBench can push the field of NL2VIS.
+venue: arXiv
+year: 2021
+source: arxiv
+source_url: https://arxiv.org/abs/2112.12926v1
+pdf_url: https://arxiv.org/pdf/2112.12926v1
+pdf_sha256: f17f01abc00b6aaf765f2eebbfd3fba91d529746d1d53e42b4733618b3667d21
+fetched_at: '2026-08-25T12:49:13Z'
+source_updated_at: '2021-12-24T03:33:20Z'
+ids:
+  doi: null
+  arxiv_id: 2112.12926v1
+  arxiv_base_id: '2112.12926'
+  arxiv_version: v1
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+- interactive-component-survey
+topic_groups:
+- interactive_component_synthesis
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: interest_fit(0.73), novelty(0.55), venue_quality(0.40) |
+    interests: interactive_component_synthesis:group:interactive_component_synthesis | milestone/foundational
+    floor applied'
+  matched_interests:
+  - interactive_component_synthesis:group:interactive_component_synthesis
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 0.55
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/nvbench-a-large-scale-synthesized-dataset-for-211212926/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

@@ -1,0 +1,64 @@
+canonical_key: arxiv-1705.07962
+version_key: v1
+title: 'pix2code: Generating Code from a Graphical User Interface Screenshot'
+authors:
+- Tony Beltramelli
+abstract: Transforming a graphical user interface screenshot created by a designer into computer code
+  is a typical task conducted by a developer in order to build customized software, websites, and mobile
+  applications. In this paper, we show that deep learning methods can be leveraged to train a model end-to-end
+  to automatically generate code from a single input image with over 77% of accuracy for three different
+  platforms (i.e. iOS, Android and web-based technologies).
+venue: arXiv
+year: 2017
+source: arxiv
+source_url: https://arxiv.org/abs/1705.07962v2
+pdf_url: https://arxiv.org/pdf/1705.07962v2
+pdf_sha256: bed68bf0c339f8fc4fe4bd17887213defa0aa4a71325d2ae8eb9d1b27d38713f
+fetched_at: '2026-08-25T12:48:04Z'
+source_updated_at: '2017-09-19T11:27:47Z'
+ids:
+  doi: null
+  arxiv_id: 1705.07962v2
+  arxiv_base_id: '1705.07962'
+  arxiv_version: v2
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+- interactive-component-survey
+topic_groups:
+- interactive_component_synthesis
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: interest_fit(0.73), venue_quality(0.40), harness_relevance(0.36)
+    | interests: interactive_component_synthesis:group:interactive_component_synthesis | milestone/foundational
+    floor applied'
+  matched_interests:
+  - interactive_component_synthesis:group:interactive_component_synthesis
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.36
+    novelty: 0.0
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/pix2code-generating-code-from-a-graphical-user-170507962/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

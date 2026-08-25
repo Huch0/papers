@@ -1,0 +1,88 @@
+canonical_key: arxiv-2402.11453
+version_key: v1
+title: 'MatPlotAgent: Method and Evaluation for LLM-Based Agentic Scientific Data Visualization'
+authors:
+- Zhiyu Yang
+- Zihan Zhou
+- Shuo Wang
+- Xin Cong
+- Xu Han
+- Yukun Yan
+- Zhenghao Liu
+- Zhixing Tan
+- Pengyuan Liu
+- Dong Yu
+- Zhiyuan Liu
+- Xiaodong Shi
+- Maosong Sun
+abstract: 'Scientific data visualization plays a crucial role in research by enabling the direct display
+  of complex information and assisting researchers in identifying implicit patterns. Despite its importance,
+  the use of Large Language Models (LLMs) for scientific data visualization remains rather unexplored.
+  In this study, we introduce MatPlotAgent, an efficient model-agnostic LLM agent framework designed to
+  automate scientific data visualization tasks. Leveraging the capabilities of both code LLMs and multi-modal
+  LLMs, MatPlotAgent consists of three core modules: query understanding, code generation with iterative
+  debugging, and a visual feedback mechanism for error correction. To address the lack of benchmarks in
+  this field, we present MatPlotBench, a high-quality benchmark consisting of 100 human-verified test
+  cases. Additionally, we introduce a scoring approach that utilizes GPT-4V for automatic evaluation.
+  Experimental results demonstrate that MatPlotAgent can improve the performance of various LLMs, including
+  both commercial and open-source models. Furthermore, the proposed evaluation method shows a strong correlation
+  with human-annotated scores.'
+venue: arXiv
+year: 2024
+source: arxiv
+source_url: https://arxiv.org/abs/2402.11453v3
+pdf_url: https://arxiv.org/pdf/2402.11453v3
+pdf_sha256: 721ba9f69b3d830bcb77c7207ef1d964f036b35f4b476cfa228d5f7eb5a60ce6
+fetched_at: '2026-08-25T12:49:17Z'
+source_updated_at: '2024-03-19T14:44:22Z'
+ids:
+  doi: null
+  arxiv_id: 2402.11453v3
+  arxiv_base_id: '2402.11453'
+  arxiv_version: v3
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+- interactive-component-survey
+topic_groups:
+- interactive_component_synthesis
+- llm
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: interest_fit(0.91), novelty(0.55), artifact_availability(0.55)
+    | interests: llm:large language model, llm:group:llm, interactive_component_synthesis:visual feedback,
+    interactive_component_synthesis:group:interactive_component_synthesis | milestone/foundational floor
+    applied'
+  matched_interests:
+  - llm:large language model
+  - llm:group:llm
+  - interactive_component_synthesis:visual feedback
+  - interactive_component_synthesis:group:interactive_component_synthesis
+  negative_signals: []
+  subscores:
+    interest_fit: 0.91
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 0.55
+    artifact_availability: 0.55
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/matplotagent-method-and-evaluation-for-llm-based-240211453/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

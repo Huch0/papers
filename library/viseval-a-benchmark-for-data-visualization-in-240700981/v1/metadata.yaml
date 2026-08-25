@@ -1,0 +1,79 @@
+canonical_key: arxiv-2407.00981
+version_key: v1
+title: 'VisEval: A Benchmark for Data Visualization in the Era of Large Language Models'
+authors:
+- Nan Chen
+- Yuge Zhang
+- Jiahang Xu
+- Kan Ren
+- Yuqing Yang
+abstract: Translating natural language to visualization (NL2VIS) has shown great promise for visual data
+  analysis, but it remains a challenging task that requires multiple low-level implementations, such as
+  natural language processing and visualization design. Recent advancements in pre-trained large language
+  models (LLMs) are opening new avenues for generating visualizations from natural language. However,
+  the lack of a comprehensive and reliable benchmark hinders our understanding of LLMs' capabilities in
+  visualization generation. In this paper, we address this gap by proposing a new NL2VIS benchmark called
+  VisEval. Firstly, we introduce a high-quality and large-scale dataset. This dataset includes 2,524 representative
+  queries covering 146 databases, paired with accurately labeled ground truths. Secondly, we advocate
+  for a comprehensive automated evaluation methodology covering multiple dimensions, including validity,
+  legality, and readability. By systematically scanning for potential issues with a number of heterogeneous
+  checkers, VisEval provides reliable and trustworthy evaluation outcomes. We run VisEval on a series
+  of state-of-the-art LLMs. Our evaluation reveals prevalent challenges and delivers essential insights
+  for future advancements.
+venue: IEEE Transactions on Visualization and Computer Graphics
+year: 2024
+source: semantic_scholar
+source_url: https://www.semanticscholar.org/paper/57b657524721da25c4f6591f063249888d619220
+pdf_url: http://arxiv.org/pdf/2407.00981
+pdf_sha256: c0f400459cd2ce2bd06cf672feaf881d613cce20fa0ed99cdf20fa13103c1f65
+fetched_at: '2026-08-25T12:49:30Z'
+source_updated_at: null
+ids:
+  doi: 10.1109/TVCG.2024.3456320
+  arxiv_id: '2407.00981'
+  arxiv_base_id: '2407.00981'
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: 57b657524721da25c4f6591f063249888d619220
+  openalex_id: null
+tags:
+- foundational
+- interactive-component-survey
+topic_groups:
+- interactive_component_synthesis
+- llm
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: recency(1.00), novelty(1.00), interest_fit(0.73) | interests:
+    llm:large language model, llm:group:llm, interactive_component_synthesis:group:interactive_component_synthesis
+    | milestone/foundational floor applied'
+  matched_interests:
+  - llm:large language model
+  - llm:group:llm
+  - interactive_component_synthesis:group:interactive_component_synthesis
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 1.0
+    venue_quality: 0.3
+    harness_relevance: 0.0
+    novelty: 1.0
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/viseval-a-benchmark-for-data-visualization-in-240700981/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

@@ -1,0 +1,64 @@
+canonical_key: arxiv-2604.19750
+slug: coding-with-eyes-visual-feedback-unlocks-reliable-260419750
+title: 'Coding with Eyes: Visual Feedback Unlocks Reliable GUI Code Generating and Debugging'
+authors:
+- Zhilin Liu
+- Ye Huang
+- Ting Xie
+- Ruizhi Zhang
+- Wen Li
+- Lixin Duan
+year: 2026
+primary_ids:
+  doi: null
+  arxiv_base_id: '2604.19750'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2604.19750v1
+- https://arxiv.org/pdf/2604.19750v1
+topic_groups:
+- interactive_component_synthesis
+- llm
+tags:
+- foundational
+- interactive-component-survey
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2026
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: interactive_component_synthesis
+  era: recent
+  significance: 'VF-Coder: visual feedback for GUI code generation and debugging.'
+  subarea: interactive_ui
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v1
+  source: arxiv
+  source_url: https://arxiv.org/abs/2604.19750v1
+  pdf_path: library/coding-with-eyes-visual-feedback-unlocks-reliable-260419750/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/coding-with-eyes-visual-feedback-unlocks-reliable-260419750/v1/metadata.yaml
+  fetched_at: '2026-08-25T12:48:59Z'
+  source_updated_at: '2026-03-14T05:40:30Z'
+  arxiv_version: v1
+  pdf_sha256: ae8fd1ffe62894048089c3a4aae3cf6bda518f3baeea1f0abd0c28e0fb8d787c
+  pdf_bytes: 8055231
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-25T12:48:59Z'
+  updated_at: '2026-08-25T12:48:59Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

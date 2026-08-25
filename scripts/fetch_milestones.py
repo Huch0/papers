@@ -222,6 +222,12 @@ def mark_existing(cands: list[dict]) -> list[dict]:
         pf = pdir / "paper.yaml"
         paper = pl.load_yaml(pf)
         changed = False
+        prev = paper.get("milestone") or {}
+        if prev.get("field") and prev.get("field") != c["milestone"].get("field"):
+            # A paper carries one milestone block; never clobber another field's path.
+            sys.stderr.write(f"[mark-existing] keep {ck} in field '{prev['field']}' "
+                             f"(also a seed of '{c['milestone'].get('field')}')\n")
+            continue
         if paper.get("milestone") != c["milestone"]:
             paper["milestone"] = c["milestone"]
             changed = True

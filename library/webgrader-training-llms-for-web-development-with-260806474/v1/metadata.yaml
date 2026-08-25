@@ -40,21 +40,25 @@ tags:
 - evaluation-harness
 - execution-based-eval
 - tde-related-work
+- foundational
+- interactive-component-survey
 topic_groups:
 - computer_use_agents
 - agent_harness
 scoring:
-  score: 42.6
-  label: TRACK_ONLY
+  score: 65
+  label: READ_SOON
   confidence: high
-  rationale: 'score=43 -> TRACK_ONLY | strong: recency(1.00), interest_fit(0.73), harness_relevance(0.52)
+  rationale: 'score=65 -> READ_SOON | strong: recency(1.00), interest_fit(0.73), harness_relevance(0.52)
     | interests: agent_harness:group:agent_harness, computer_use_agents:group:computer_use_agents, software_engineering_agents:verifier,
-    general_agent_methods:verifier'
+    general_agent_methods:verifier | milestone/foundational floor applied'
   matched_interests:
   - agent_harness:group:agent_harness
   - computer_use_agents:group:computer_use_agents
   - software_engineering_agents:verifier
   - general_agent_methods:verifier
+  - llm:large language model
+  - rl:reinforcement learning
   negative_signals: []
   subscores:
     interest_fit: 0.73

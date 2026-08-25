@@ -1,0 +1,63 @@
+canonical_key: arxiv-2407.00981
+slug: viseval-a-benchmark-for-data-visualization-in-240700981
+title: 'VisEval: A Benchmark for Data Visualization in the Era of Large Language Models'
+authors:
+- Nan Chen
+- Yuge Zhang
+- Jiahang Xu
+- Kan Ren
+- Yuqing Yang
+year: 2024
+primary_ids:
+  doi: 10.1109/TVCG.2024.3456320
+  arxiv_base_id: '2407.00981'
+  openreview_id: null
+  semantic_scholar_id: 57b657524721da25c4f6591f063249888d619220
+  openalex_id: null
+canonical_urls:
+- https://www.semanticscholar.org/paper/57b657524721da25c4f6591f063249888d619220
+- http://arxiv.org/pdf/2407.00981
+topic_groups:
+- interactive_component_synthesis
+- llm
+tags:
+- foundational
+- interactive-component-survey
+venue:
+  name: IEEE Transactions on Visualization and Computer Graphics
+  tier: unknown
+  status: unknown
+  year: 2024
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: interactive_component_synthesis
+  era: foundational
+  significance: NL2VIS evaluation with validity/legality/readability checks.
+  subarea: text_to_vis
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: semantic_scholar
+  source: semantic_scholar
+  source_url: https://www.semanticscholar.org/paper/57b657524721da25c4f6591f063249888d619220
+  pdf_path: library/viseval-a-benchmark-for-data-visualization-in-240700981/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/viseval-a-benchmark-for-data-visualization-in-240700981/v1/metadata.yaml
+  fetched_at: '2026-08-25T12:49:31Z'
+  source_updated_at: null
+  arxiv_version: null
+  pdf_sha256: c0f400459cd2ce2bd06cf672feaf881d613cce20fa0ed99cdf20fa13103c1f65
+  pdf_bytes: 17055961
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-25T12:49:31Z'
+  updated_at: '2026-08-25T12:49:31Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

@@ -1,0 +1,90 @@
+canonical_key: arxiv-2603.13224
+version_key: v1
+title: 'Visual-ERM: Reward Modeling for Visual Equivalence'
+authors:
+- Ziyu Liu
+- Shengyuan Ding
+- Xinyu Fang
+- Xuanlang Dai
+- Penghui Yang
+- Jianze Liang
+- Jiaqi Wang
+- Kai Chen
+- Dahua Lin
+- Yuhang Zang
+abstract: Vision-to-code tasks require models to reconstruct structured visual inputs, such as charts,
+  tables, and SVGs, into executable or structured representations with high visual fidelity. While recent
+  Large Vision Language Models (LVLMs) achieve strong results via supervised fine-tuning, reinforcement
+  learning remains challenging due to misaligned reward signals. Existing rewards either rely on textual
+  rules or coarse visual embedding similarity, both of which fail to capture fine-grained visual discrepancies
+  and are vulnerable to reward hacking. We propose Visual Equivalence Reward Model (Visual-ERM), a multimodal
+  generative reward model that provides fine-grained, interpretable, and task-agnostic feedback to evaluate
+  vision-to-code quality directly in the rendered visual space. Integrated into RL, Visual-ERM improves
+  Qwen3-VL-8B-Instruct by +8.4 on chart-to-code and yields consistent gains on table and SVG parsing (+2.7,
+  +4.1 on average), and further strengthens test-time scaling via reflection and revision. We also introduce
+  VisualCritic-RewardBench (VC-RewardBench), a benchmark for judging fine-grained image-to-image discrepancies
+  on structured visual data, where Visual-ERM at 8B decisively outperforms Qwen3-VL-235B-Instruct and
+  approaches leading closed-source models. Our results suggest that fine-grained visual reward supervision
+  is both necessary and sufficient for vision-to-code RL, regardless of task specificity.
+venue: arXiv
+year: 2026
+source: arxiv
+source_url: https://arxiv.org/abs/2603.13224v2
+pdf_url: https://arxiv.org/pdf/2603.13224v2
+pdf_sha256: bc898705e80c4787cbe4e945731a016bcf5788e2c64fea604e2f703f6f1aa5e2
+fetched_at: '2026-08-25T12:50:05Z'
+source_updated_at: '2026-05-09T03:24:22Z'
+ids:
+  doi: null
+  arxiv_id: 2603.13224v2
+  arxiv_base_id: '2603.13224'
+  arxiv_version: v2
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+- interactive-component-survey
+topic_groups:
+- general_agent_methods
+- interactive_component_synthesis
+- rl
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: interest_fit(0.91), recency(0.82), novelty(0.55) | interests:
+    general_agent_methods:reflection, general_agent_methods:group:general_agent_methods, rl:reinforcement
+    learning, rl:reward model | milestone/foundational floor applied'
+  matched_interests:
+  - general_agent_methods:reflection
+  - general_agent_methods:group:general_agent_methods
+  - rl:reinforcement learning
+  - rl:reward model
+  - rl:group:rl
+  - interactive_component_synthesis:chart-to-code
+  - interactive_component_synthesis:group:interactive_component_synthesis
+  negative_signals: []
+  subscores:
+    interest_fit: 0.91
+    recency: 0.821
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 0.55
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/visual-erm-reward-modeling-for-visual-equivalence-260313224/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

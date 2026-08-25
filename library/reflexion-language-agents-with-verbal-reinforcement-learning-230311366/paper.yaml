@@ -24,6 +24,7 @@ topic_groups:
 - rl
 tags:
 - foundational
+- interactive-component-survey
 venue:
   name: arXiv
   tier: workshop_or_minor

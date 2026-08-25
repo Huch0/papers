@@ -39,6 +39,7 @@ ids:
   openalex_id: null
 tags:
 - foundational
+- interactive-component-survey
 topic_groups:
 - agent_harness
 - software_engineering_agents

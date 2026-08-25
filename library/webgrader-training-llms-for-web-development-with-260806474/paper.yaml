@@ -21,7 +21,9 @@ topic_groups:
 tags:
 - evaluation-harness
 - execution-based-eval
+- foundational
 - tde-related-work
+- interactive-component-survey
 venue:
   name: arXiv
   tier: workshop_or_minor
@@ -29,10 +31,15 @@ venue:
   year: 2026
 user:
   read_status: unread
-  triage_label: TRACK_ONLY
+  triage_label: READ_SOON
   triage_confidence: high
   notes: null
-milestone: null
+milestone:
+  field: interactive_component_synthesis
+  era: recent
+  significance: 'Nearest prior: 8B policy, SFT+GRPO from requirement-conditioned browser interactions
+    incl. persistent state.'
+  subarea: interactive_ui
 knowledge_concepts: []
 versions:
 - version_key: v1

@@ -1,0 +1,61 @@
+canonical_key: arxiv-2112.12926
+slug: nvbench-a-large-scale-synthesized-dataset-for-211212926
+title: 'nvBench: A Large-Scale Synthesized Dataset for Cross-Domain Natural Language to Visualization
+  Task'
+authors:
+- Yuyu Luo
+- Jiawei Tang
+- Guoliang Li
+year: 2021
+primary_ids:
+  doi: null
+  arxiv_base_id: '2112.12926'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2112.12926v1
+- https://arxiv.org/pdf/2112.12926v1
+topic_groups:
+- interactive_component_synthesis
+tags:
+- foundational
+- interactive-component-survey
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2021
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: interactive_component_synthesis
+  era: emergence
+  significance: NL-to-visualization benchmark; static charts.
+  subarea: text_to_vis
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v1
+  source: arxiv
+  source_url: https://arxiv.org/abs/2112.12926v1
+  pdf_path: library/nvbench-a-large-scale-synthesized-dataset-for-211212926/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/nvbench-a-large-scale-synthesized-dataset-for-211212926/v1/metadata.yaml
+  fetched_at: '2026-08-25T12:49:14Z'
+  source_updated_at: '2021-12-24T03:33:20Z'
+  arxiv_version: v1
+  pdf_sha256: f17f01abc00b6aaf765f2eebbfd3fba91d529746d1d53e42b4733618b3667d21
+  pdf_bytes: 1521811
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-25T12:49:14Z'
+  updated_at: '2026-08-25T12:49:14Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

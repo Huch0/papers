@@ -1,0 +1,73 @@
+canonical_key: arxiv-2403.09029
+version_key: v1
+title: Unlocking the conversion of Web Screenshots into HTML Code with the WebSight Dataset
+authors:
+- Hugo Laurençon
+- Léo Tronchon
+- Victor Sanh
+abstract: 'Using vision-language models (VLMs) in web development presents a promising strategy to increase
+  efficiency and unblock no-code solutions: by providing a screenshot or a sketch of a UI, a VLM could
+  generate the code to reproduce it, for instance in a language like HTML. Despite the advancements in
+  VLMs for various tasks, the specific challenge of converting a screenshot into a corresponding HTML
+  has been minimally explored. We posit that this is mainly due to the absence of a suitable, high-quality
+  dataset. This work introduces WebSight, a synthetic dataset consisting of 2 million pairs of HTML codes
+  and their corresponding screenshots. We fine-tune a foundational VLM on our dataset and show proficiency
+  in converting webpage screenshots to functional HTML code. To accelerate the research in this area,
+  we open-source WebSight.'
+venue: arXiv
+year: 2024
+source: arxiv
+source_url: https://arxiv.org/abs/2403.09029v1
+pdf_url: https://arxiv.org/pdf/2403.09029v1
+pdf_sha256: da2c37b9521b78862a94b640d708f43406c071020cc88f3a5453dbc527694855
+fetched_at: '2026-08-25T12:48:15Z'
+source_updated_at: '2024-03-14T01:40:40Z'
+ids:
+  doi: null
+  arxiv_id: 2403.09029v1
+  arxiv_base_id: '2403.09029'
+  arxiv_version: v1
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+- interactive-component-survey
+topic_groups:
+- interactive_component_synthesis
+- vlm
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: interest_fit(0.73), artifact_availability(0.55), venue_quality(0.40)
+    | interests: vlm:vision-language model, vlm:group:vlm, interactive_component_synthesis:group:interactive_component_synthesis
+    | milestone/foundational floor applied'
+  matched_interests:
+  - vlm:vision-language model
+  - vlm:group:vlm
+  - interactive_component_synthesis:group:interactive_component_synthesis
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 0.0
+    artifact_availability: 0.55
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/unlocking-the-conversion-of-web-screenshots-into-240309029/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

@@ -1,0 +1,82 @@
+canonical_key: arxiv-2604.19750
+version_key: v1
+title: 'Coding with Eyes: Visual Feedback Unlocks Reliable GUI Code Generating and Debugging'
+authors:
+- Zhilin Liu
+- Ye Huang
+- Ting Xie
+- Ruizhi Zhang
+- Wen Li
+- Lixin Duan
+abstract: 'Recent advances in Large Language Model (LLM)-based agents have shown remarkable progress in
+  code generation. However, current agent methods mainly rely on text-output-based feedback (e.g. command-line
+  outputs) for multi-round debugging and struggle in graphical user interface (GUI) that involve visual
+  information. This is mainly due to two limitations: 1) GUI programs are event-driven, yet existing methods
+  cannot simulate user interactions to trigger GUI element logic 2) GUI programs possess visual attributes,
+  making it difficult for text-based approaches to assess whether the rendered interface meets user needs.
+  To systematically address these challenges, we first introduce InteractGUI Bench, a novel benchmark
+  comprising 984 commonly used real-world desktop GUI application tasks designed for fine-grained evaluation
+  of both interaction logic and visual structure. Furthermore, we propose VF-Coder, a vision-feedback-based
+  multi-agent system for debugging GUI code. By perceiving visual information and directly interacting
+  with program interfaces, VF-Coder can identify potential logic and layout issues in a human-like manner.
+  On InteractGUI Bench, our VF-Coder approach increases the success rate of Gemini-3-Flash from 21.68%
+  to 28.29% and raises the visual score from 0.4284 to 0.5584, indicating the effectiveness of visual
+  feedback in GUI debugging.'
+venue: arXiv
+year: 2026
+source: arxiv
+source_url: https://arxiv.org/abs/2604.19750v1
+pdf_url: https://arxiv.org/pdf/2604.19750v1
+pdf_sha256: ae8fd1ffe62894048089c3a4aae3cf6bda518f3baeea1f0abd0c28e0fb8d787c
+fetched_at: '2026-08-25T12:48:57Z'
+source_updated_at: '2026-03-14T05:40:30Z'
+ids:
+  doi: null
+  arxiv_id: 2604.19750v1
+  arxiv_base_id: '2604.19750'
+  arxiv_version: v1
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+- interactive-component-survey
+topic_groups:
+- interactive_component_synthesis
+- llm
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: interest_fit(0.91), novelty(0.80), recency(0.71) | interests:
+    llm:large language model, llm:group:llm, interactive_component_synthesis:visual feedback, interactive_component_synthesis:group:interactive_component_synthesis
+    | milestone/foundational floor applied'
+  matched_interests:
+  - llm:large language model
+  - llm:group:llm
+  - interactive_component_synthesis:visual feedback
+  - interactive_component_synthesis:group:interactive_component_synthesis
+  negative_signals: []
+  subscores:
+    interest_fit: 0.91
+    recency: 0.714
+    venue_quality: 0.4
+    harness_relevance: 0.36
+    novelty: 0.8
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/coding-with-eyes-visual-feedback-unlocks-reliable-260419750/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

@@ -1,0 +1,154 @@
+---
+canonical_key: arxiv-2509.22644
+version_key: v1
+title: 'WebGen-Agent: Enhancing Interactive Website Generation with Multi-Level Feedback and Step-Level
+  Reinforcement Learning'
+authors:
+- Zimu Lu
+- Houxing Ren
+- Yunqiao Yang
+- Ke Wang
+- Zhuofan Zong
+- Junting Pan
+- Mingjie Zhan
+- Hongsheng Li
+venue: arXiv
+year: 2025
+tags:
+- foundational
+- interactive-component-survey
+- feedback-run
+- feedback-visual
+- feedback-behavioral
+- output-interactive
+- training-sft
+- training-rl
+- model-open
+- model-closed
+topic_groups:
+- interactive_component_synthesis
+- llm
+- rl
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2509.22644v1
+summary_date: '2026-08-25'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>Website generation gets reliable process reward for free if the agent's own loop scores every step with a VLM screenshot grade plus a GUI-agent functional-test grade; feeding those scores back as suggestions, backtracking, and select-best lifts Claude-3.5-Sonnet from 26.4% to 51.9% on WebGen-Bench, and using them as per-step GRPO advantages lifts Qwen2.5-Coder-7B from 38.9% to 45.4%.</TLDR>
+
+<WhyItMatters>This is the closest existing template for my thesis: execution-grounded (render + interact) feedback on interactive web artifacts, turned into a dense reward for an open-weight 7B/8B model. It also shows exactly where the signal is noisy (GUI scores ~90% human-agreement) and where functional fixes break appearance.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "26.4→51.9%", label: "WebGen-Bench accuracy", sub: "Claude-3.5-Sonnet, Bolt.diy → WebGen-Agent (Tab.1)" },
+  { value: "38.9→45.4%", label: "SFT → Step-GRPO accuracy", sub: "Qwen2.5-Coder-7B-Instruct (Tab.1/3)" },
+  { value: "58.2% / 4.3", label: "best accuracy / appearance", sub: "Qwen3-Coder-480B-A35B in WebGen-Agent (Tab.1)" },
+  { value: "94% / 90%", label: "score agreement with humans", sub: "screenshot / GUI-agent scores (Tab.5)" },
+]} />
+
+## Motivation
+I want an agent that turns a one-paragraph request ("a food-distribution site with donation, distribution and volunteer pages, azure background, midnight-blue components") into a working multi-file Vite/React codebase. <Problem>Existing code agents (OpenHands, Aider, Bolt.diy) only see stdout/stderr: a site that installs and starts but renders a blank page, misaligns cards, or has a dead "Add New Link" button looks identical to a good one</Problem>. The result on <Term def="Benchmark of 101 natural-language website-generation instructions with 647 GUI-agent test cases; accuracy = fraction of test cases a GUI agent passes, appearance = GPT-4o score of the landing page">WebGen-Bench</Term> is that even Claude-3.5-Sonnet in Bolt.diy passes only 26.4% of functional tests (Tab.1). A second problem sits underneath: <Problem>small open-weight models (7B–8B) lag far behind proprietary engines, and the usual RL fixes either give a sparse outcome reward or need step-level ground truth that nobody has for websites</Problem>.
+
+## Contribution (what's new)
+The insight that survives deleting "we propose": <Novelty>the two signals a website needs — how it looks and whether it works — can be measured at every step by cheap machinery already in the loop (a VLM grading a screenshot 0–5, and a VLM-driven GUI agent clicking through the requirements and graded 1–5), and the sum of those two grades is simultaneously (a) a repair signal, (b) a selection criterion for backtracking/select-best, and (c) a dense per-step reward for GRPO</Novelty>. The form is forced: the appearance score must be visual because a DOM/console cannot see "disharmonious colouring"; the functional score must come from *interaction* because dead buttons only show up when clicked; and the reward must be per-step and non-cumulative because the score of step `j` is a direct measurement of the codebase at step `j`, not a noisy prediction of a distant outcome.
+
+## Research questions
+1. Does multi-level visual feedback (screenshot + GUI-agent testing + backtracking + select-best) beat execution-only feedback for repository-level website generation, across many engine LLMs?
+2. Can the screenshot/GUI scores produced inside the loop serve as reliable step-level rewards to train 7B–8B open-weight engines (Step-GRPO), and which advantage/reward design matters?
+3. Is a small open VLM good enough as the judge, and can it replace the coding LLM?
+
+## Methodology
+Each step of <Term def="The proposed website-generation agent: an iterative loop of code edit → execute → screenshot feedback → GUI-agent testing, with backtracking and select-best">WebGen-Agent</Term> is *edit → execute → gather feedback*. Running example (Fig.9): the user asks for a multi-company financial dashboard, mint-cream background, teal components. The coding LLM (a Bolt.diy-style system prompt inside WebContainer) writes the Vite+React files; dependencies install and the dev server starts. A screenshot of the landing page goes to Qwen2.5-VL-32B, which returns a description, an appearance grade, and suggestions ("add drill-down options…"). If the agent judges the look satisfactory it emits `screenshot_validated` and writes an instruction for a <Term def="A VLM-driven browser agent that clicks/types/scrolls through the site following a natural-language test instruction; here it is also used as the functional evaluator">GUI agent</Term> to exercise every requirement; the trajectory of clicks is graded 1–5 with fix suggestions. Here the first pass scores `shot=4, gui=2` (comparison hidden behind repetitive clicks); the agent adds a compare mode and export, the next pass scores `shot=4, gui=5`, and the loop emits `finish`. If five consecutive steps error out, the agent backtracks to the best earlier snapshot; at the end the best step (max GUI score, tie-break max screenshot score, then latest) is restored (§2.1, Alg.1–2).
+
+<Term def="The paper's RL method: GRPO where each step's tokens get their own advantage from that step's screenshot+GUI score, rather than one trajectory-level advantage">Step-GRPO</Term> then trains a small engine: SFT warm start on ~700 DeepSeek-V3 trajectories (1 epoch), then GRPO on 500 WebGen-Instruct prompts, 5 rollouts each, 1 epoch, no KL term (§2.2, §3.1).
+
+<Pass title="Method details">
+**Trajectory.** <M tex="T=[I,\Delta C_1,O_1,F_1,\dots,\Delta C_K,O_K,F_K]" /> where <M tex="\Delta C_k" /> is the edit, <M tex="O_k" /> stdout/stderr, <M tex="F_k=[F_{shot,k},F_{gui,k}]" /> with <M tex="F_{shot}=(\text{Description},\text{Score}_{shot},\text{Suggestions}_{shot})" /> (Eq.1) and <M tex="F_{gui}=(\text{Score}_{gui},\text{Suggestions}_{gui})" /> (Eq.2). Max 20 iterations, temperature 0.5. The GUI-agent instruction is generated by the coding LLM from a one-shot prompt (Fig.6); the GUI trajectory is judged by the same VLM using Fig.7's prompt (grade 1–5, JSON). Screenshot grading uses Fig.4 (error detection) and Fig.5 (appearance grade 0–5).
+
+**Backtracking / select-best (Alg.1, Alg.2).** Every step that reaches GUI testing stores `(t, C, score_shot, score_gui)`. After 5 consecutive execution errors, the codebase and trajectory are truncated back to the best stored step. At termination the same selector picks the final codebase, guarding against "later edits made it worse".
+
+**Step-GRPO objective (Eq.3–4).** Standard clipped GRPO ratio over tokens, loss applied only to the model's edit tokens <M tex="\Delta C_1..\Delta C_K" />, KL removed (following Qian et al. 2025). Per-step reward <M tex="r^{(i)}_j=\text{Score}^{(i)}_{shot,j}+\text{Score}^{(i)}_{gui,j}" />; the advantage for every token of step `j` is
+
+<MathBlock>{`\\hat A^{(i)}_j = \\frac{r^{(i)}_j - \\mathrm{mean}(R)}{\\mathrm{std}(R)}`}</MathBlock>
+
+where <M tex="R" /> pools all step rewards of all <M tex="G" /> rollouts of the prompt. No accumulation of future-step rewards (unlike Shao et al. 2024), because the score already measures the current codebase.
+
+**Training details (§3.1).** SFT: lr 4e-5, batch 32, 1 epoch, on ~700 DeepSeek-V3 trajectories. Step-GRPO: lr 1e-6, batch 16, G=5, 500 manually filtered WebGen-Instruct prompts, 1 epoch. Step-GRPO takes over 24 h on 16 A800s (App.A). More prompts "did not yield noticeable gains" (no numbers given).
+
+<Stepper steps={[
+  { title: "Edit", body: "Coding LLM emits file edits (Bolt-style artifacts) given the trajectory so far." },
+  { title: "Execute", body: "Install deps, start dev server; on error append stderr and retry; 5 consecutive errors → backtrack to best snapshot." },
+  { title: "Screenshot feedback", body: "VLM describes landing page, grades 0–5, suggests fixes; agent decides whether to iterate on looks or proceed." },
+  { title: "GUI-agent testing", body: "Coding LLM writes a test instruction; GUI agent browses; VLM grades 1–5 with fix suggestions; pass → stop." },
+  { title: "Select best", body: "Restore the step with max GUI score, then max screenshot score, then latest." },
+]} />
+</Pass>
+
+## Main result
+Same engine, different scaffold: <Finding src="Tab.1">Claude-3.5-Sonnet goes from 26.4% / 3.0 (Bolt.diy) to 51.9% / 3.9 in WebGen-Agent; DeepSeek-V3 from 20.8% / 2.0 to 52.6% / 3.8; DeepSeek-R1 from 27.8% / 2.5 to 46.4% / 3.8</Finding>. The best open engine, Qwen3-Coder-480B-A35B, reaches 58.2% / 4.3; Qwen3-Coder-30B-A3B reaches 52.8% / 4.0, i.e. on par with proprietary engines. For small models, <Finding src="Tab.1">Qwen2.5-Coder-7B-Instruct: 12.4% raw → 38.9% after SFT → 45.4% after Step-GRPO (appearance 1.6 → 3.4 → 3.7); Qwen3-8B: 34.1% → 38.6% → 43.4% (3.2 → 3.4 → 3.6)</Finding>.
+
+<SortableTable columns={["Scaffold / Engine", "Yes %", "Partial %", "No %", "Start failed %", "Accuracy %", "Appearance"]} rows={[
+  ["Bolt.diy / Claude-3.5-Sonnet", 22.6, 7.6, 64.1, 5.7, 26.4, 3.0],
+  ["Bolt.diy / DeepSeek-V3", 18.5, 4.5, 73.9, 3.1, 20.8, 2.0],
+  ["Bolt.diy / WebGen-LM-32B", 34.2, 8.0, 57.8, 0.0, 38.2, 2.8],
+  ["WebGen-Agent / Claude-3.5-Sonnet", 45.6, 12.7, 40.6, 1.1, 51.9, 3.9],
+  ["WebGen-Agent / DeepSeek-V3", 46.1, 13.1, 40.6, 0.2, 52.6, 3.8],
+  ["WebGen-Agent / Claude-4-Sonnet", 48.8, 15.3, 33.4, 2.5, 56.5, 4.1],
+  ["WebGen-Agent / Qwen3-Coder-480B-A35B", 50.5, 15.3, 34.2, 0.0, 58.2, 4.3],
+  ["WebGen-Agent / Qwen3-Coder-30B-A3B", 45.7, 14.1, 40.2, 0.0, 52.8, 4.0],
+  ["WebGen-Agent / Qwen2.5-Coder-7B raw", 10.0, 4.8, 60.9, 24.3, 12.4, 1.6],
+  ["WebGen-Agent / WebGenAgent-LM-7B-SFT", 33.8, 10.2, 56.0, 0.0, 38.9, 3.4],
+  ["WebGen-Agent / WebGenAgent-LM-7B-Step-GRPO", 40.2, 10.5, 49.3, 0.0, 45.4, 3.7],
+  ["WebGen-Agent / WebGenAgent-LM-8B-Step-GRPO", 37.4, 12.1, 50.5, 0.0, 43.4, 3.6],
+]} />
+
+Accuracy is a single run per configuration; no variance is reported (Unclear how stable the 1–3 point differences between variants are).
+
+## Key findings
+- <Finding src="Tab.2">Each workflow piece adds something, but they pull in different directions: execution-only 45.9% / 3.0 → +screenshot 46.6% / 3.6 → +GUI-agent 49.9% / 3.4 → +backtrack 51.2% / 3.7 → +select-best 52.6% / 3.8 (DeepSeek-V3)</Finding>. Screenshot feedback is almost purely an appearance lever (+0.6); GUI testing is the largest accuracy lever (+3.3) but *lowers* appearance by 0.2, because functional edits break layout or introduce errors; backtracking/select-best recover that loss.
+- <Finding src="Tab.3">Advantage design matters more than reward content: with the identical reward, naive outcome GRPO (max step reward as trajectory reward) reaches 42.5% and cumulative-advantage Step-GRPO only 38.7% — below the SFT baseline (38.9%) — versus 45.4% for per-step, non-accumulated advantages</Finding>. Discounting future steps into the current step injects noise because the score is already a state measurement.
+- <Finding src="Tab.3">Both reward components are necessary: screenshot-only 40.2%, GUI-only 40.4%, sum 45.4%</Finding>. Interestingly GUI-only reward does not improve appearance (3.4) while screenshot-only does not improve accuracy much; the sum improves both.
+- <Finding src="Tab.3">A second SFT epoch is flat (38.9% → 39.3%)</Finding>, and 500 RL prompts suffice; the authors attribute sample-efficiency to the reliability of the step reward (no ablation on prompt count is shown).
+- <Finding src="Tab.4">The judge can be small, the coder cannot: swapping Qwen2.5-VL-32B for GPT-4o as feedback VLM changes 52.6% / 3.8 to 52.1% / 3.6; using Qwen2.5-VL-32B as the *coding* LLM collapses to 5.6% / 1.3</Finding>.
+- <Finding src="Tab.5, Tab.6">Human audit: screenshot scores agree with annotators 93.6–95.6%, GUI-agent scores 89.6–92.2% (std. err. 0.20–0.44); 98.3% of generated GUI test instructions cover ≥75% of the requirements, 77.2% cover ~100%</Finding>. So the reward is trustworthy but the functional half has roughly a 10% error rate that RL can exploit.
+- <Finding src="Tab.8">Iteration budget saturates: accuracy 42.4% at 2 iterations, 52.0% at 10, 52.6% at 20, while the fraction of tasks hitting the limit drops from 100% to 7.9%</Finding>; beyond ~14 iterations the budget stops mattering.
+- <Finding src="Fig.3">Both SFT and Step-GRPO increase the average file count and line count of generated projects for both 7B and 8B models</Finding> — the trained models build bigger sites; qualitative analysis (App.I) says SFT mostly removes malformed sites and Step-GRPO refines aesthetics and harmony.
+
+## Implications
+The paper is a working proof that <Related>the WebGen-Bench line (Lu et al. 2025b) and Bolt.diy-style scaffolds</Related> can be closed into an RL loop without human labels, and it sits between execution-reward RL for code (<Related>RLEF, SWE-RL-style outcome rewards</Related>) and process-reward methods that need ground-truth steps. For interactive component synthesis with open-weight models, the transferable lessons are: (1) separate the appearance judge from the behaviour judge and sum them; (2) make the advantage per-step and non-cumulative when the reward is a state measurement; (3) always keep a select-best snapshot because repair edits regress. <FollowUp>Whether the same recipe holds for a single stateful component (a colour picker, a sortable table) where the "GUI agent" would need to check state transitions rather than page-level requirements</FollowUp>. <FollowUp>Whether the ~10% GUI-score error becomes reward hacking at larger RL budgets — the paper trains only one epoch on 500 prompts</FollowUp>. <FollowUp>Replacing the VLM GUI agent with deterministic Playwright checks derived from the instruction, which would remove judge noise entirely</FollowUp>.
+
+## Limitations
+- <Caveat>The evaluator and the in-loop judge are the same model family: WebGen-Bench uses Qwen2.5-VL-32B for functional testing and the agent uses Qwen2.5-VL-32B as its GUI agent/judge, so the loop optimises against the benchmark's own grader (§3.1)</Caveat>. Appearance evaluation uses GPT-4o, which is at least a different judge.
+- <Caveat>Single-run numbers, no seeds or confidence intervals; many ablation deltas (0.7–1.5 points on 647 test cases) are within plausible noise</Caveat>.
+- <Caveat>Only 7B/8B models are trained (compute: over 24 h on 16 A800s per Step-GRPO run, App.A); the claim that the recipe scales to 30B–72B is future work</Caveat>.
+- <Caveat>Only the landing-page screenshot is graded; multi-page appearance, responsiveness, load speed, and network conditions are out of scope (App.A)</Caveat>.
+- <Caveat>The SFT data comes from DeepSeek-V3 trajectories, so the Step-GRPO gains are on top of distillation from a strong proprietary-class engine; the raw-model → Step-GRPO path without SFT is not reported</Caveat>.
+- Cost per task (VLM calls, GUI-agent steps, wall-clock) is Not reported.
+
+## Critiques and Questions
+1. The advantage normalises every step reward against the pool of *all* steps of all rollouts. A step early in a long trajectory that scores 4+2 gets the same advantage as a final step with 4+2, regardless of whether it led anywhere; this is defensible because the reward is a state measurement, but it also means the model gets no credit for *improving* a site, only for being in a good state. Is a delta reward (score gain over the previous step) better? Not tested.
+2. The GUI test instruction is written by the coding LLM itself (Fig.6). During RL the policy therefore partly controls its own test — coverage was audited only on untrained engines (Tab.6), not on the Step-GRPO models.
+3. The "Start failed" column is a big part of the gain for weak engines (Qwen2.5-Coder-7B raw: 24.3% start failures). Some of the SFT jump is just learning the Bolt artifact format.
+4. WebGen-Bench accuracy is judged by a GUI agent that can miss subtle state bugs; the 10% judge error rate (Tab.5) bounds how much of the 45.4% is real.
+
+<SelfCheck q="Why does the paper refuse to accumulate future-step rewards into the current step's advantage, and what happens when you do?" a="Because the screenshot and GUI scores at step j directly measure the codebase at step j, so future rewards add noise rather than information. Cumulative-advantage Step-GRPO drops to 38.7% accuracy, below the SFT baseline, versus 45.4% with per-step advantages (Tab.3)." />
+
+<SelfCheck q="Which single workflow component gives the largest accuracy gain, and what side effect does it have?" a="GUI-agent testing (+3.3 points, 46.6% → 49.9%), but it lowers the appearance score from 3.6 to 3.4 because functional edits damage layout; backtracking and select-best recover it (Tab.2)." />
+
+## Glossary
+- <Term def="Group Relative Policy Optimization: policy-gradient RL where advantages are computed by normalising rewards within a group of rollouts for the same prompt, no value network">GRPO</Term>
+- <Term def="A VLM grade (0–5) of the landing-page screenshot for integrity and aesthetics, produced by Qwen2.5-VL-32B in the loop">screenshot score</Term>
+- <Term def="A VLM grade (1–5) of a GUI-agent test trajectory, measuring how many required functions work">GUI-agent score</Term>
+- <Term def="Restoring the codebase and trajectory to the best earlier snapshot after 5 consecutive execution errors">backtracking</Term>
+- <Term def="At termination, returning the stored step with the highest GUI score (tie-break: screenshot score, then latest) instead of the last step">select-best</Term>
+- <Term def="Open-source chat-based website builder running in WebContainer; the previous state of the art on WebGen-Bench and the source of the system prompt used here">Bolt.diy</Term>
+- <Term def="The instruction set that WebGen-Bench draws from; 500 of its prompts are used for RL">WebGen-Instruct</Term>
+- <Term def="The family of trained 7B/8B engines: Qwen2.5-Coder-7B-Instruct and Qwen3-8B after SFT and Step-GRPO">WebGenAgent-LM</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

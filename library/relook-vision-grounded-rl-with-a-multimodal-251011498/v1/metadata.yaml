@@ -1,0 +1,95 @@
+canonical_key: arxiv-2510.11498
+version_key: v1
+title: 'ReLook: Vision-Grounded RL with a Multimodal LLM Critic for Agentic Web Coding'
+authors:
+- Yuhang Li
+- Chenchen Zhang
+- Ruilin Lv
+- Ao Liu
+- Ken Deng
+- Yuanxing Zhang
+- Jiaheng Liu
+- Wiggin Zhou
+- Bo Zhou
+abstract: While Large Language Models (LLMs) excel at algorithmic code generation, they struggle with
+  front-end development, where correctness is judged on rendered pixels and interaction. We present ReLook,
+  an agentic, vision-grounded reinforcement learning framework that empowers an agent to close a robust
+  generate--diagnose--refine loop by invoking a multimodal LLM (MLLM) as a tool. During training, the
+  agent uses the MLLM-in-the-loop both as a visual critic--scoring code with screenshots--and as a source
+  of actionable, vision-grounded feedback; a strict zero-reward rule for invalid renders anchors renderability
+  and prevents reward hacking. To prevent behavioral collapse, we introduce Forced Optimization, a strict
+  acceptance rule that admits only improving revisions, yielding monotonically better trajectories. At
+  inference, we decouple the critic and run a lightweight, critic-free self-edit cycle, keeping latency
+  comparable to base decoding while retaining most of the gains. Across three widely used benchmarks,
+  ReLook consistently outperforms strong baselines in vision-grounded front-end code generation, highlighting
+  the benefits of agentic perception, visual rewards, and training-inference decoupling.
+venue: arXiv
+year: 2025
+source: arxiv
+source_url: https://arxiv.org/abs/2510.11498v1
+pdf_url: https://arxiv.org/pdf/2510.11498v1
+pdf_sha256: 61a63322b856be24887a83d7f8acf130e4572769c8418f729e458f6adb7232a7
+fetched_at: '2026-08-25T12:48:50Z'
+source_updated_at: '2025-10-13T15:05:50Z'
+ids:
+  doi: null
+  arxiv_id: 2510.11498v1
+  arxiv_base_id: '2510.11498'
+  arxiv_version: v1
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+- feedback-run
+- feedback-visual
+- output-interactive
+- training-rl
+- model-open
+- interactive-component-survey
+topic_groups:
+- interactive_component_synthesis
+- llm
+- rl
+- vlm
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: interest_fit(0.91), novelty(0.80), recency(0.43) | interests:
+    llm:large language model, llm:group:llm, vlm:multimodal LLM, vlm:group:vlm | milestone/foundational
+    floor applied'
+  matched_interests:
+  - llm:large language model
+  - llm:group:llm
+  - vlm:multimodal LLM
+  - vlm:group:vlm
+  - rl:reinforcement learning
+  - rl:group:rl
+  - interactive_component_synthesis:visual critic
+  - interactive_component_synthesis:group:interactive_component_synthesis
+  negative_signals: []
+  subscores:
+    interest_fit: 0.91
+    recency: 0.426
+    venue_quality: 0.4
+    harness_relevance: 0.36
+    novelty: 0.8
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/relook-vision-grounded-rl-with-a-multimodal-251011498/v1/paper.pdf
+  extraction: library/relook-vision-grounded-rl-with-a-multimodal-251011498/v1/extraction.txt
+  summary: library/relook-vision-grounded-rl-with-a-multimodal-251011498/v1/summary.mdx
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread
+  summary_format: mdx

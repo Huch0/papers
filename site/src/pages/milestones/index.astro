@@ -88,21 +88,34 @@ function lanes(rows: Row[]) {
   <h1 class="title">Milestone Paths</h1>
   <p class="count">
     {total} landmark papers across {fields.length} fields, from each field's emergence to today.
-    Follow a path top-to-bottom to build the foundations; ✓ marks what you've read.
+    Pick a field, then follow its path top-to-bottom to build the foundations; ✓ marks what you've read.
   </p>
 
-  <nav class="path-nav" aria-label="fields">
-    {fields.map((f) => (
-      <a href={`#${f}`}>{displayName(f)} <span class="n">{byField.get(f)!.length}</span></a>
+  <div class="tabs" role="tablist" aria-label="fields">
+    {fields.map((f, i) => (
+      <button
+        class:list={["tab", { active: i === 0 }]}
+        role="tab"
+        aria-selected={i === 0 ? "true" : "false"}
+        data-tab={f}
+      >
+        {displayName(f)} <span class="n">{byField.get(f)!.length}</span>
+      </button>
     ))}
-  </nav>
+  </div>
 
-  {fields.map((f) => {
+  {fields.map((f, i) => {
     const rows = byField.get(f)!;
     const withSummary = rows.filter((r) => r.hasSummary).length;
     const fieldLanes = lanes(rows);
     return (
-      <section class="path" id={f} data-field={f}>
+      <section
+        class:list={["path", { active: i === 0 }]}
+        id={f}
+        data-field={f}
+        role="tabpanel"
+        aria-label={displayName(f)}
+      >
         <header class="path-head">
           <h2>{displayName(f)}</h2>
           <p class="desc">{meta[f]?.description}</p>
@@ -181,6 +194,32 @@ function lanes(rows: Row[]) {
     if (bar) bar.style.width = c.summarized ? `${(100 * c.read) / c.summarized}%` : "0";
   }
 
+  // Horizontal field tabs: one path visible at a time. Deep-link via #hash;
+  // the last choice is remembered per browser.
+  const bar = document.querySelector<HTMLElement>(".tabs");
+  const tabs = Array.from(document.querySelectorAll<HTMLButtonElement>(".tab"));
+  const panels = Array.from(document.querySelectorAll<HTMLElement>(".path"));
+  const barTop = bar ? bar.getBoundingClientRect().top + window.scrollY : 0;
+  const hasField = (f: string) => panels.some((p) => p.dataset.field === f);
+  function activate(field: string, scroll: boolean) {
+    if (!hasField(field)) return;
+    tabs.forEach((t) => {
+      const on = t.dataset.tab === field;
+      t.classList.toggle("active", on);
+      t.setAttribute("aria-selected", on ? "true" : "false");
+    });
+    panels.forEach((p) => p.classList.toggle("active", p.dataset.field === field));
+    history.replaceState(null, "", `#${field}`);
+    try { localStorage.setItem("milestone-tab", field); } catch { /* ignore */ }
+    if (scroll && window.scrollY > barTop) window.scrollTo({ top: barTop });
+  }
+  tabs.forEach((t) => t.addEventListener("click", () => activate(t.dataset.tab || "", true)));
+  let initial = location.hash.slice(1);
+  if (!hasField(initial)) {
+    try { initial = localStorage.getItem("milestone-tab") || ""; } catch { initial = ""; }
+  }
+  if (hasField(initial)) activate(initial, false);
+
   // Sub-area filter chips: show only the selected lane's steps; hide eras left empty.
   document.querySelectorAll<HTMLElement>(".path").forEach((section) => {
     const chips = section.querySelectorAll<HTMLButtonElement>(".lane-chip");
@@ -204,16 +243,22 @@ function lanes(rows: Row[]) {
 </script>
 
 <style>
-  .path-nav { display: flex; flex-wrap: wrap; gap: .5rem; margin: 1.2rem 0 2rem; }
-  .path-nav a {
-    font-family: var(--font-body); font-size: .82rem; text-decoration: none;
-    color: var(--ink); background: var(--soft); border: 1px solid var(--line);
-    border-radius: 999px; padding: .22rem .7rem;
+  .tabs {
+    position: sticky; top: 0; z-index: 5; background: var(--bg);
+    display: flex; gap: .1rem; overflow-x: auto; margin: 1.1rem 0 1.6rem;
+    border-bottom: 1px solid var(--line);
   }
-  .path-nav a:hover { border-color: var(--accent); }
-  .path-nav .n { color: var(--mut); font-size: .75rem; margin-left: .15rem; }
+  .tab {
+    font-family: var(--font-body); font-size: .84rem; color: var(--mut);
+    background: none; border: none; border-bottom: 2px solid transparent;
+    padding: .5rem .8rem; cursor: pointer; white-space: nowrap;
+  }
+  .tab:hover { color: var(--ink); }
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }
+  .tab .n { color: var(--mut); font-size: .72rem; margin-left: .1rem; font-weight: 400; }
 
-  .path { margin: 0 0 3rem; scroll-margin-top: 1rem; }
+  .path { display: none; margin: 0 0 3rem; }
+  .path.active { display: block; }
   .path-head h2 { font-family: var(--font-display); font-weight: 600; margin: 0 0 .3rem; }
   .path-head .desc { color: var(--mut); font-size: .9rem; margin: 0 0 .35rem; max-width: 60ch; }
   .path-head .stats { font-size: .8rem; color: var(--mut); margin: 0 0 .3rem;

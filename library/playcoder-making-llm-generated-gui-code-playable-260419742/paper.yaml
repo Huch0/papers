@@ -1,0 +1,71 @@
+canonical_key: arxiv-2604.19742
+slug: playcoder-making-llm-generated-gui-code-playable-260419742
+title: 'PlayCoder: Making LLM-Generated GUI Code Playable'
+authors:
+- Zhiyuan Peng
+- Wei Tao
+- Xin Yin
+- Chenhao Ying
+- Yuan Luo
+- Yiwen Guo
+year: 2026
+primary_ids:
+  doi: null
+  arxiv_base_id: '2604.19742'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2604.19742v1
+- https://arxiv.org/pdf/2604.19742v1
+topic_groups:
+- interactive_component_synthesis
+- llm
+tags:
+- foundational
+- interactive-component-survey
+- feedback-run
+- feedback-visual
+- feedback-behavioral
+- output-interactive
+- training-prompt
+- model-open
+- model-closed
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2026
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: interactive_component_synthesis
+  era: recent
+  significance: Active GUI probing + execution-trace repair of silent state/event bugs (prompted).
+  subarea: interactive_ui
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v1
+  source: arxiv
+  source_url: https://arxiv.org/abs/2604.19742v1
+  pdf_path: library/playcoder-making-llm-generated-gui-code-playable-260419742/v1/paper.pdf
+  summary_path: library/playcoder-making-llm-generated-gui-code-playable-260419742/v1/summary.mdx
+  metadata_path: library/playcoder-making-llm-generated-gui-code-playable-260419742/v1/metadata.yaml
+  fetched_at: '2026-08-25T12:48:55Z'
+  source_updated_at: '2026-04-21T17:59:16Z'
+  arxiv_version: v1
+  pdf_sha256: f73bd9afc8487a837d07903d8dea867073a9fb3858e1b641b77c1ba0380ce45a
+  pdf_bytes: 3336800
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-08-25T12:48:55Z'
+  updated_at: '2026-08-25T12:54:46Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

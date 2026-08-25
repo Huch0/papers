@@ -1,0 +1,77 @@
+canonical_key: arxiv-2406.07739
+version_key: v1
+title: 'UICoder: Finetuning Large Language Models to Generate User Interface Code through Automated Feedback'
+authors:
+- Jason Wu
+- Eldon Schoop
+- Alan Leung
+- Titus Barik
+- Jeffrey P. Bigham
+- Jeffrey Nichols
+abstract: Large language models (LLMs) struggle to consistently generate UI code that compiles and produces
+  visually relevant designs. Existing approaches to improve generation rely on expensive human feedback
+  or distilling a proprietary model. In this paper, we explore the use of automated feedback (compilers
+  and multi-modal models) to guide LLMs to generate high-quality UI code. Our method starts with an existing
+  LLM and iteratively produces improved models by self-generating a large synthetic dataset using an original
+  model, applying automated tools to aggressively filter, score, and de-duplicate the data into a refined
+  higher quality dataset. The original LLM is improved by finetuning on this refined dataset. We applied
+  our approach to several open-source LLMs and compared the resulting performance to baseline models with
+  both automated metrics and human preferences. Our evaluation shows the resulting models outperform all
+  other downloadable baselines and approach the performance of larger proprietary models.
+venue: arXiv
+year: 2024
+source: arxiv
+source_url: https://arxiv.org/abs/2406.07739v1
+pdf_url: https://arxiv.org/pdf/2406.07739v1
+pdf_sha256: 4f9341d9282b46206d36fffa798cb01aa25b309302e1c17dadd765f947632acb
+fetched_at: '2026-08-25T12:48:20Z'
+source_updated_at: '2024-06-11T21:53:46Z'
+ids:
+  doi: null
+  arxiv_id: 2406.07739v1
+  arxiv_base_id: '2406.07739'
+  arxiv_version: v1
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+- interactive-component-survey
+topic_groups:
+- interactive_component_synthesis
+- llm
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: interest_fit(0.73), artifact_availability(0.55), harness_relevance(0.52)
+    | interests: llm:large language model, llm:group:llm, interactive_component_synthesis:group:interactive_component_synthesis
+    | milestone/foundational floor applied'
+  matched_interests:
+  - llm:large language model
+  - llm:group:llm
+  - interactive_component_synthesis:group:interactive_component_synthesis
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.52
+    novelty: 0.0
+    artifact_availability: 0.55
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/uicoder-finetuning-large-language-models-to-generate-240607739/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

@@ -1,0 +1,94 @@
+canonical_key: arxiv-2411.03292
+version_key: v1
+title: 'Interaction2Code: Benchmarking MLLM-based Interactive Webpage Code Generation from Interactive
+  Prototyping'
+authors:
+- Jingyu Xiao
+- Yuxuan Wan
+- Yintong Huo
+- Zixin Wang
+- Xinyi Xu
+- Wenxuan Wang
+- Zhiyao Xu
+- Yuhang Wang
+- Michael R. Lyu
+abstract: 'Multimodal Large Language Models (MLLMs) have demonstrated remarkable performance on the design-to-code
+  task, i.e., generating UI code from UI mock-ups. However, existing benchmarks only contain static web
+  pages for evaluation and ignore the dynamic interaction, limiting the practicality, usability and user
+  engagement of the generated webpages. To bridge these gaps, we present the first systematic investigation
+  of MLLMs in generating interactive webpages. Specifically, we formulate the Interaction-to-Code task
+  and establish the Interaction2Code benchmark, encompassing 127 unique webpages and 374 distinct interactions
+  across 15 webpage types and 31 interaction categories. Through comprehensive experiments utilizing state-of-the-art
+  (SOTA) MLLMs, evaluated via both automatic metrics and human assessments, we identify four critical
+  limitations of MLLM on Interaction-to-Code task: (1) inadequate generation of interaction compared with
+  full page, (2) prone to ten types of failure, (3) poor performance on visually subtle interactions,
+  and (4) insufficient undestanding on interaction when limited to single-modality visual descriptions.
+  To address these limitations, we propose four enhancement strategies: Interactive Element Highlighting,
+  Failureaware Prompting (FAP), Visual Saliency Enhancement, and Visual-Textual Descriptions Combination,
+  all aiming at improving MLLMs'' performance on the Interaction-toCode task. The Interaction2Code benchmark
+  and code are available in https://github. com/WebPAI/Interaction2Code.'
+venue: arXiv
+year: 2024
+source: arxiv
+source_url: https://arxiv.org/abs/2411.03292v3
+pdf_url: https://arxiv.org/pdf/2411.03292v3
+pdf_sha256: cb649e62865e20ad4afe699839aaef40b6306bfe980ce60d842b493bda95ae44
+fetched_at: '2026-08-25T12:48:33Z'
+source_updated_at: '2026-03-01T04:44:05Z'
+ids:
+  doi: 10.1109/ASE63991.2025.00028
+  arxiv_id: 2411.03292v3
+  arxiv_base_id: '2411.03292'
+  arxiv_version: v3
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+- benchmark
+- interactive-component-survey
+- feedback-none
+- output-interactive
+- training-prompt
+- model-open
+- model-closed
+topic_groups:
+- interactive_component_synthesis
+- llm
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: interest_fit(0.91), novelty(0.80), recency(0.69) | interests:
+    llm:large language model, llm:group:llm, interactive_component_synthesis:interaction-to-code, interactive_component_synthesis:group:interactive_component_synthesis
+    | milestone/foundational floor applied'
+  matched_interests:
+  - llm:large language model
+  - llm:group:llm
+  - interactive_component_synthesis:interaction-to-code
+  - interactive_component_synthesis:group:interactive_component_synthesis
+  negative_signals: []
+  subscores:
+    interest_fit: 0.91
+    recency: 0.689
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 0.8
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/interaction2code-benchmarking-mllm-based-interactive-webpage-code-241103292/v1/paper.pdf
+  extraction: library/interaction2code-benchmarking-mllm-based-interactive-webpage-code-241103292/v1/extraction.txt
+  summary: library/interaction2code-benchmarking-mllm-based-interactive-webpage-code-241103292/v1/summary.mdx
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread
+  summary_format: mdx

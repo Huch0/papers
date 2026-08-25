@@ -1,0 +1,58 @@
+canonical_key: arxiv-1705.07962
+slug: pix2code-generating-code-from-a-graphical-user-170507962
+title: 'pix2code: Generating Code from a Graphical User Interface Screenshot'
+authors:
+- Tony Beltramelli
+year: 2017
+primary_ids:
+  doi: null
+  arxiv_base_id: '1705.07962'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/1705.07962v2
+- https://arxiv.org/pdf/1705.07962v2
+topic_groups:
+- interactive_component_synthesis
+tags:
+- foundational
+- interactive-component-survey
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2017
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: interactive_component_synthesis
+  era: emergence
+  significance: Origin of screenshot-to-UI-code.
+  subarea: ui_from_image
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v2
+  source: arxiv
+  source_url: https://arxiv.org/abs/1705.07962v2
+  pdf_path: library/pix2code-generating-code-from-a-graphical-user-170507962/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/pix2code-generating-code-from-a-graphical-user-170507962/v1/metadata.yaml
+  fetched_at: '2026-08-25T12:48:05Z'
+  source_updated_at: '2017-09-19T11:27:47Z'
+  arxiv_version: v2
+  pdf_sha256: bed68bf0c339f8fc4fe4bd17887213defa0aa4a71325d2ae8eb9d1b27d38713f
+  pdf_bytes: 1109645
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-25T12:48:05Z'
+  updated_at: '2026-08-25T12:48:05Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

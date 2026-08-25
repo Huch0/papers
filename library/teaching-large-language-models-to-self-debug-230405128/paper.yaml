@@ -20,7 +20,9 @@ topic_groups:
 - software_engineering_agents
 tags:
 - execution-based-eval
+- foundational
 - tde-related-work
+- interactive-component-survey
 venue:
   name: ICLR
   tier: A_star
@@ -28,10 +30,14 @@ venue:
   year: 2024
 user:
   read_status: unread
-  triage_label: SKIP
+  triage_label: READ_SOON
   triage_confidence: high
   notes: null
-milestone: null
+milestone:
+  field: interactive_component_synthesis
+  era: emergence
+  significance: Prompted self-debugging from execution results and explanations.
+  subarea: exec_feedback_codegen
 knowledge_concepts: []
 versions:
 - version_key: v1

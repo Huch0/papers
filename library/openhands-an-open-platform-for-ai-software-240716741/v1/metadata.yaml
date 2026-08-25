@@ -1,0 +1,101 @@
+canonical_key: arxiv-2407.16741
+version_key: v1
+title: 'OpenHands: An Open Platform for AI Software Developers as Generalist Agents'
+authors:
+- Xingyao Wang
+- Boxuan Li
+- Yufan Song
+- Frank F. Xu
+- Xiangru Tang
+- Mingchen Zhuge
+- Jiayi Pan
+- Yueqi Song
+- Bowen Li
+- Jaskirat Singh
+- Hoang H. Tran
+- Fuqiang Li
+- Ren Ma
+- Mingzhang Zheng
+- Bill Qian
+- Yanjun Shao
+- Niklas Muennighoff
+- Yizhe Zhang
+- Binyuan Hui
+- Junyang Lin
+- Robert Brennan
+- Hao Peng
+- Heng Ji
+- Graham Neubig
+abstract: 'Software is one of the most powerful tools that we humans have at our disposal; it allows a
+  skilled programmer to interact with the world in complex and profound ways. At the same time, thanks
+  to improvements in large language models (LLMs), there has also been a rapid development in AI agents
+  that interact with and affect change in their surrounding environments. In this paper, we introduce
+  OpenHands (f.k.a. OpenDevin), a platform for the development of powerful and flexible AI agents that
+  interact with the world in similar ways to those of a human developer: by writing code, interacting
+  with a command line, and browsing the web. We describe how the platform allows for the implementation
+  of new agents, safe interaction with sandboxed environments for code execution, coordination between
+  multiple agents, and incorporation of evaluation benchmarks. Based on our currently incorporated benchmarks,
+  we perform an evaluation of agents over 15 challenging tasks, including software engineering (e.g.,
+  SWE-BENCH) and web browsing (e.g., WEBARENA), among others. Released under the permissive MIT license,
+  OpenHands is a community project spanning academia and industry with more than 2.1K contributions from
+  over 188 contributors.'
+venue: arXiv
+year: 2024
+source: arxiv
+source_url: https://arxiv.org/abs/2407.16741v3
+pdf_url: https://arxiv.org/pdf/2407.16741v3
+pdf_sha256: 5d802255c4a58104a06147ba736fee09569faf3c26f251e5e9b7eff5d7662c14
+fetched_at: '2026-08-25T12:47:53Z'
+source_updated_at: '2025-04-18T18:14:31Z'
+ids:
+  doi: null
+  arxiv_id: 2407.16741v3
+  arxiv_base_id: '2407.16741'
+  arxiv_version: v3
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+- interactive-component-survey
+topic_groups:
+- interactive_component_synthesis
+- llm
+- software_engineering_agents
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: trend_signal(1.00), interest_fit(0.91), novelty(0.55) |
+    interests: software_engineering_agents:SWE-bench, software_engineering_agents:group:software_engineering_agents,
+    llm:large language model, llm:group:llm | milestone/foundational floor applied'
+  matched_interests:
+  - software_engineering_agents:SWE-bench
+  - software_engineering_agents:group:software_engineering_agents
+  - llm:large language model
+  - llm:group:llm
+  - interactive_component_synthesis:group:interactive_component_synthesis
+  negative_signals: []
+  subscores:
+    interest_fit: 0.91
+    recency: 0.088
+    venue_quality: 0.4
+    harness_relevance: 0.52
+    novelty: 0.55
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 1.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/openhands-an-open-platform-for-ai-software-240716741/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

@@ -65,6 +65,23 @@ tags:
     - icml2026-picks
     # Related-work corpus for the user's "Test-Driven Execution" (TDE) research.
     - tde-related-work
+    # Survey corpus for the interactive-component synthesis/repair thesis (directions 5+6).
+    - interactive-component-survey
+  # Survey axes for the interactive-component thesis: one tag per axis so the gap table
+  # (feedback x output x training x model) can be derived from BY_TAG.md.
+  survey_axes:
+    - feedback-none
+    - feedback-compile
+    - feedback-run
+    - feedback-visual
+    - feedback-behavioral
+    - output-static
+    - output-interactive
+    - training-prompt
+    - training-sft
+    - training-rl
+    - model-open
+    - model-closed
 
 # Tags that signal a paper should be kept even if score is borderline.
 keep_signals:

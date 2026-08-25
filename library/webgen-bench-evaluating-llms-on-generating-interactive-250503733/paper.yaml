@@ -1,0 +1,68 @@
+canonical_key: arxiv-2505.03733
+slug: webgen-bench-evaluating-llms-on-generating-interactive-250503733
+title: 'WebGen-Bench: Evaluating LLMs on Generating Interactive and Functional Websites from Scratch'
+authors:
+- Zimu Lu
+- Yunqiao Yang
+- Houxing Ren
+- Haotian Hou
+- Han Xiao
+- Ke Wang
+- Weikang Shi
+- Aojun Zhou
+- Mingjie Zhan
+- Hongsheng Li
+year: 2025
+primary_ids:
+  doi: null
+  arxiv_base_id: '2505.03733'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2505.03733v2
+- https://arxiv.org/pdf/2505.03733v2
+topic_groups:
+- general_agent_methods
+- interactive_component_synthesis
+tags:
+- foundational
+- interactive-component-survey
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2025
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: interactive_component_synthesis
+  era: expansion
+  significance: Operation -> expected-outcome behavioral evaluation of generated websites.
+  subarea: interactive_ui
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v2
+  source: arxiv
+  source_url: https://arxiv.org/abs/2505.03733v2
+  pdf_path: library/webgen-bench-evaluating-llms-on-generating-interactive-250503733/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/webgen-bench-evaluating-llms-on-generating-interactive-250503733/v1/metadata.yaml
+  fetched_at: '2026-08-25T12:48:40Z'
+  source_updated_at: '2025-08-11T07:13:00Z'
+  arxiv_version: v2
+  pdf_sha256: ad17a42f8ac7f2e04c312528a61cd25c362fbd34f934a420fafa1ab54df29956
+  pdf_bytes: 8804661
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-25T12:48:40Z'
+  updated_at: '2026-08-25T12:48:40Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

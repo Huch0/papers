@@ -1,0 +1,83 @@
+canonical_key: arxiv-2312.13010
+version_key: v1
+title: 'AgentCoder: Multi-Agent-based Code Generation with Iterative Testing and Optimisation'
+authors:
+- Dong Huang
+- Jie M. Zhang
+- Michael Luck
+- Qingwen Bu
+- Yuhao Qing
+- Heming Cui
+abstract: 'The advancement of natural language processing (NLP) has been significantly boosted by the
+  development of transformer-based large language models (LLMs). These models have revolutionized NLP
+  tasks, particularly in code generation, aiding developers in creating software with enhanced efficiency.
+  Despite their advancements, challenges in balancing code snippet generation with effective test case
+  generation and execution persist. To address these issues, this paper introduces Multi-Agent Assistant
+  Code Generation (AgentCoder), a novel solution comprising a multi-agent framework with specialized agents:
+  the programmer agent, the test designer agent, and the test executor agent. During the coding procedure,
+  the programmer agent will focus on the code generation and refinement based on the test executor agent''s
+  feedback. The test designer agent will generate test cases for the generated code, and the test executor
+  agent will run the code with the test cases and write the feedback to the programmer. This collaborative
+  system ensures robust code generation, surpassing the limitations of single-agent models and traditional
+  methodologies. Our extensive experiments on 9 code generation models and 12 enhancement approaches showcase
+  AgentCoder''s superior performance over existing code generation models and prompt engineering techniques
+  across various benchmarks. For example, AgentCoder (GPT-4) achieves 96.3\% and 91.8\% pass@1 in HumanEval
+  and MBPP datasets with an overall token overhead of 56.9K and 66.3K, while state-of-the-art obtains
+  only 90.2\% and 78.9\% pass@1 with an overall token overhead of 138.2K and 206.5K.'
+venue: arXiv
+year: 2023
+source: arxiv
+source_url: https://arxiv.org/abs/2312.13010v3
+pdf_url: https://arxiv.org/pdf/2312.13010v3
+pdf_sha256: ebe4476de1eebf33cc045962d03cc90d701fb4a8c2689353d34e146102acf443
+fetched_at: '2026-08-25T12:47:50Z'
+source_updated_at: '2024-05-24T11:47:24Z'
+ids:
+  doi: null
+  arxiv_id: 2312.13010v3
+  arxiv_base_id: '2312.13010'
+  arxiv_version: v3
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+- interactive-component-survey
+topic_groups:
+- interactive_component_synthesis
+- llm
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: novelty(0.80), interest_fit(0.73), venue_quality(0.40) |
+    interests: llm:large language model, llm:group:llm, interactive_component_synthesis:group:interactive_component_synthesis
+    | milestone/foundational floor applied'
+  matched_interests:
+  - llm:large language model
+  - llm:group:llm
+  - interactive_component_synthesis:group:interactive_component_synthesis
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.36
+    novelty: 0.8
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/agentcoder-multi-agent-based-code-generation-with-231213010/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

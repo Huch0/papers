@@ -1,0 +1,64 @@
+canonical_key: arxiv-2207.01780
+slug: coderl-mastering-code-generation-through-pretrained-models-220701780
+title: 'CodeRL: Mastering Code Generation through Pretrained Models and Deep Reinforcement Learning'
+authors:
+- Hung Le
+- Yue Wang
+- Akhilesh Deepak Gotmare
+- Silvio Savarese
+- Steven C. H. Hoi
+year: 2022
+primary_ids:
+  doi: null
+  arxiv_base_id: '2207.01780'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2207.01780v3
+- https://arxiv.org/pdf/2207.01780v3
+topic_groups:
+- interactive_component_synthesis
+- llm
+- rl
+tags:
+- foundational
+- interactive-component-survey
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2022
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: interactive_component_synthesis
+  era: emergence
+  significance: First RL-from-unit-test training of a code LM; origin of execution-verified rewards.
+  subarea: exec_feedback_codegen
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v3
+  source: arxiv
+  source_url: https://arxiv.org/abs/2207.01780v3
+  pdf_path: library/coderl-mastering-code-generation-through-pretrained-models-220701780/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/coderl-mastering-code-generation-through-pretrained-models-220701780/v1/metadata.yaml
+  fetched_at: '2026-08-25T12:47:47Z'
+  source_updated_at: '2022-11-03T08:32:59Z'
+  arxiv_version: v3
+  pdf_sha256: baac51d227441123433533e5ce3a40b32bd3affd09af4286acc607818d15c599
+  pdf_bytes: 3779063
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-25T12:47:47Z'
+  updated_at: '2026-08-25T12:47:47Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

@@ -1,0 +1,67 @@
+canonical_key: arxiv-2502.14382
+slug: s-test-time-scaling-for-code-generation-250214382
+title: 'S*: Test Time Scaling for Code Generation'
+authors:
+- Dacheng Li
+- Shiyi Cao
+- Chengkun Cao
+- Xiuyu Li
+- Shangyin Tan
+- Kurt Keutzer
+- Jiarong Xing
+- Joseph E. Gonzalez
+- Ion Stoica
+year: 2025
+primary_ids:
+  doi: null
+  arxiv_base_id: '2502.14382'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2502.14382v1
+- https://arxiv.org/pdf/2502.14382v1
+topic_groups:
+- interactive_component_synthesis
+- llm
+tags:
+- foundational
+- interactive-component-survey
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2025
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: interactive_component_synthesis
+  era: expansion
+  significance: Test-time scaling with execution-based selection.
+  subarea: exec_feedback_codegen
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v1
+  source: arxiv
+  source_url: https://arxiv.org/abs/2502.14382v1
+  pdf_path: library/s-test-time-scaling-for-code-generation-250214382/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/s-test-time-scaling-for-code-generation-250214382/v1/metadata.yaml
+  fetched_at: '2026-08-25T12:47:59Z'
+  source_updated_at: '2025-02-20T09:18:53Z'
+  arxiv_version: v1
+  pdf_sha256: ac013b36a81b42a2e89e4122328f620949d4989703a8be5bd6a7c552a02356d8
+  pdf_bytes: 595047
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-25T12:47:59Z'
+  updated_at: '2026-08-25T12:47:59Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

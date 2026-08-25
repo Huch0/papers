@@ -1,0 +1,128 @@
+---
+canonical_key: arxiv-2510.11498
+version_key: v1
+title: 'ReLook: Vision-Grounded RL with a Multimodal LLM Critic for Agentic Web Coding'
+authors:
+- Yuhang Li
+- Chenchen Zhang
+- Ruilin Lv
+- Ao Liu
+- Ken Deng
+- Yuanxing Zhang
+- Jiaheng Liu
+- Wiggin Zhou
+- Bo Zhou
+venue: arXiv
+year: 2025
+tags:
+- foundational
+topic_groups:
+- interactive_component_synthesis
+- llm
+- rl
+- vlm
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2510.11498v1
+summary_date: '2026-08-25'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>ReLook trains a 7B/8B open coding policy with GRPO where the reward is a frozen multimodal LLM scoring temporal screenshots of the rendered page, the policy learns to call that critic as a tool inside a generate–diagnose–refine loop, a strict "accept only strictly improving revisions" rule (Forced Optimization) stops revisions from getting worse, and at inference the critic is dropped so the policy self-edits alone.</TLDR>
+
+<WhyItMatters>This is the closest published blueprint to my thesis setting: an open-weight model, execution (rendering) in the loop, a visual judge as the training signal, and a repair loop that must be learned rather than prompted. Its failure modes (behavioral collapse, reward hacking via reflection avoidance, weak gains on multi-file projects) are exactly the ones I need to design around.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "21.59 → 27.88", label: "ArtifactsBench-Lite VisualScore", sub: "Qwen2.5-7B-Instruct base → ReLook (Tab.1)" },
+  { value: "+2.0", label: "largest ablation delta", sub: "Forced Optimization on A-Lite (Tab.2)" },
+  { value: "6.8×", label: "inference speedup without critic", sub: "123.04 s → 18.03 s per query (§3.5)" },
+  { value: "3,000", label: "training tasks", sub: "front-end only, deduped vs. test sets (§3.1)" },
+]} />
+
+## Motivation
+Front-end code has no unit tests that matter: correctness is what the browser shows and how the page reacts. <Problem>A text-only policy is blind to the pixel consequences of its own code, so it drifts layouts, breaks interactions (missing event listeners), and produces incoherent aesthetics</Problem> (§1, §3.7). Two prior families each miss half the loop: <Problem>one-shot vision-to-code systems (pix2code, Design2Code, UICoder) generate but never refine</Problem>, and <Problem>self-refinement frameworks (Self-Refine, Reflexion, CRITIC, CodeRL) iterate but only over pixel-blind signals such as unit tests or linters</Problem> (§1). On top of that, when I do give a model rich visual feedback, I observe <Problem>behavioral collapse: the revision after good feedback often scores *lower* than the draft it was meant to fix</Problem> (§2.6, Fig.4). So the problem is not "add a critic"; it is "make a small model actually improve under a critic without regressing or gaming the reward".
+
+## Contribution (what's new)
+The core insight is that <Novelty>the perceptual judge belongs *inside the RL loop twice*: once as the reward (a frozen <Term def="Qwen2.5-VL-72B-Instruct, a multimodal LLM that scores the prompt + code + three screenshots taken post-load, +1s, +2s">MLLM critic</Term> scores rendered screenshots), and once as a tool the policy learns to invoke mid-trajectory for textual, vision-grounded repair hints</Novelty> (§2.2–2.5). Two safeguards are forced by what breaks without them. <Novelty>Zero reward for any invalid render</Novelty> is needed because a plausible-looking but unrenderable page would otherwise be scored by a judge reading the code (§2.5). <Novelty>Forced Optimization — a revision enters the trajectory only if its critic score strictly exceeds the best-so-far, with up to 10 resamples per round</Novelty> — is needed because the obvious alternative, a negative reward for regressions, taught the agent to stop reflecting altogether (§2.6, App. E). Finally, because the critic's tokens are masked from the policy gradient and optionally distilled with a small loss, <Novelty>the policy internalises the reflection so the critic can be removed at inference</Novelty> (§2.4, §2.7).
+
+## Research questions
+1. Does a screenshot-based MLLM reward beat text-only signals for training a small open coding model on front-end tasks?
+2. Does letting the agent *call* the critic during rollouts (agentic reflection) add value over the same reward without reflection (Web-RL)?
+3. Can the learned reflection survive removing the critic at inference, and at what latency cost?
+
+## Methodology
+Running example: the prompt "create a classical chessboard in HTML that runs directly". Round 1: the policy writes a plan `t1` and code `c1`, then emits `<get feedback>`. The sandbox renders `c1`, grabs three screenshots, and the critic returns a score plus text `m1` ("squares misaligned; missing alternating colours"). Round 2: the policy conditions on `q, t1, c1, m1` and proposes `c2`. If the critic score of `c2` is not strictly higher than `c1`, `c2` is discarded and a new `c2` is sampled (≤ 10 tries); if none improves, reflection stops and `c1` is the final answer. The trajectory reward is the mean of accepted round scores, multiplied by a length penalty, and zero if any screenshot failed. <Term def="Group Relative Policy Optimization: sample G outputs per prompt and use the group-mean reward as the baseline for a clipped PPO-style policy-gradient update, no learned value net">GRPO</Term> updates only the `t`/`c` tokens; the critic's `m` tokens get zero advantage.
+
+<Pass title="Method details">
+<Stepper steps={[
+  { title: "Rollout format", body: "Output o = t1 ⊕ c1 ⊕ m1 ⊕ … ⊕ tR ⊕ cR (Eq.1). R is capped at 3 reflection rounds in both training and inference (§3.3). The prompt template tells the model to emit <get feedback> unless it believes the answer is flawless (App. I, Fig.7)." },
+  { title: "Sandbox", body: "Headless Chromium, filesystem/network off, dangerous APIs blocked (window.open, eval, clipboard, non-local fetch), local font/image fixtures, seeded timers, strict CSP, per-sample timeout, full-page screenshots at T=3 time points (§3.1)." },
+  { title: "Reward", body: "R_MLLM = VisualScore if all screenshots valid else 0 (Eq.3); R_len is 1 below 12k tokens, linear to 0 at 14k (Eq.4); R_ReLook = R_MLLM · R_len (Eq.5). Three screenshots per round are scored in one call; round scores are averaged over the trajectory (§2.5, App. D). The critic score is normalised to [0,1] for training and reported on [0,100] offline." },
+  { title: "Forced Optimization", body: "Accept (t_{r+1}, c_{r+1}) only if score strictly exceeds best-so-far, no margin, no re-scoring; max K=10 resamples per round; on failure terminate reflection and keep best-so-far (§2.6, Alg.1, App. G)." },
+  { title: "Optimisation", body: "GRPO with G=8, ε=0.2, KL β swept in [0.01,0.05], advantages standardised and clipped to [−2,2], lr 1e-6, batch 256, at most 40 steps, 64 GPUs (32 policy + 32 MLLM), ~80 min/step (§3.1, App. G). Optional distillation on critic tokens: L = −J_GRPO^{t,c} + γ L_distill^m with γ=0.1 (Eq.8)." },
+  { title: "Inference", body: "Drop screenshots and MLLM calls; the policy runs up to three critic-free self-edit rounds ('ReLook-w/o-MLLM'). 'ReLook' keeps the critic for the highest accuracy (§2.7, Tab.1 caption)." },
+]} />
+
+<MathBlock>{`R_{\\text{ReLook}}(o) = R_{\\text{MLLM}}(o)\\cdot R_{\\text{len}}(o),\\qquad R_{\\text{MLLM}}(o)=\\begin{cases}\\text{VisualScore}(o) & \\text{screenshots valid}\\\\ 0 & \\text{otherwise}\\end{cases}`}</MathBlock>
+
+Training data: 3,000 front-end-only tasks, near-duplicates removed against ArtifactsBench, FullStack-Bench-Html and Web-Bench with lexical (char 3-gram TF-IDF cosine > 0.85), DOM (tag-bigram Jaccard > 0.90) and code (token-set Jaccard > 0.90) filters (§3.1). Evaluation follows <Term def="A 1,825-task benchmark of dynamic/interactive visual artifacts (SVG, mini-games, web pages) scored 0–100 by an MLLM judge on spec adherence, layout, typography/colour, and interactive integrity">ArtifactsBench</Term> with Gemini-2.5-Pro as offline judge, deliberately different from the training critic; six subsets are used (A-Lite 300, A-Easy 305, A-Game 413, A-SVG 123, A-Web 447, A-Si 75). <Term def="Front-end tasks validated by predefined unit tests; metric is pass rate">FullStack-Bench-Html</Term> and <Term def="50 realistic web projects of 20 sequential tasks each, scored by end-to-end tests; reported as pass@2">Web-Bench</Term> provide execution-based checks. All numbers are means over 3 seeds at temperature 1.0, top-p 0.7 (§3.2).
+</Pass>
+
+## Main result
+On the Qwen2.5-7B-Instruct backbone, <Finding src="Tab.1">ReLook lifts ArtifactsBench-Lite from 21.59 (base) to 27.88, beating Web-RL (24.89), and the critic-free variant still reaches 25.44</Finding>; the ordering ReLook > Web-RL > Base holds on every ArtifactsBench subset for both backbones (Fig.2, Fig.3). ReLook-7B overtakes Qwen2.5-32B-Instruct on A-Lite (27.88 vs 25.73) but stays below GPT-4o (33.25).
+
+<SortableTable columns={["Model (Qwen2.5-7B backbone)", "A-Lite", "A-Game", "A-SVG", "A-Web", "A-Si", "FullStack-Html", "Web-Bench pass@2"]} rows={[
+  ["Qwen2.5-7B-Instruct (base)", 21.59, 20.62, 17.70, 25.69, 18.61, 65.00, 3.00],
+  ["Web-RL (reward, no reflection)", 24.89, 22.14, 18.87, 26.73, 18.82, 63.25, 3.48],
+  ["ReLook-w/o-MLLM (critic-free inference)", 25.44, 23.05, 18.92, 27.11, 22.15, 67.50, 4.20],
+  ["ReLook (critic at inference)", 27.88, 26.72, 20.92, 28.31, 26.36, 67.50, 4.20],
+  ["Qwen2.5-32B-Instruct (reference)", 25.73, 24.36, 26.36, 27.34, 25.30, 70.00, 10.90],
+  ["GPT-4o (reference)", 33.25, 33.04, 33.74, 34.31, 31.44, 71.25, 23.80],
+]} />
+
+Llama-3.1-8B-Instruct shows the same pattern at a smaller magnitude: A-Lite 21.04 → 21.67 (Web-RL) → 22.32 (w/o-MLLM) → 23.08 (ReLook); FullStack-Html 57.50 → 63.75 (Tab.1). A double-blind study on 100 tasks with five annotators gives <Finding src="§3.1 (GSB)">G:S:B = 50:30:20 for ReLook-7B vs the base model</Finding>.
+
+## Key findings
+- <Finding src="Tab.2">Every component matters, and Forced Optimization is the single largest piece</Finding>: on A-Lite, MLLM reward alone 21.59 → 24.89 (+3.3), adding the invalid-render zero reward → 25.84 (+1.0), adding Forced Optimization → 27.88 (+2.0).
+- <Finding src="Fig.4">Behavioral collapse is real for the base model: with the same MLLM feedback, Qwen2.5-7B-Instruct degrades after 2–3 reflection rounds, while ReLook improves monotonically across eight forced rounds</Finding> (scores from the training judge, so not independent).
+- <Finding src="§2.6, App. E">Penalising regressions with negative reward backfires</Finding>: the agent learns to stop requesting feedback (reward hacking by reflection avoidance), collapsing ReLook into plain RL. A hard acceptance filter fixes it without suppressing reflection: reflection frequency rises and stabilises at ~2 rounds during training (Fig.5).
+- <Finding src="§2.5, App. G">Valid Render Rate climbs from ~40% at initialisation to ~80% at convergence</Finding>; a prompt-level "write executable HTML/CSS/JS/SVG" constraint is needed to avoid the zero-reward rule making early training too sparse.
+- <Finding src="Tab.1, §3.5">Internalised reflection retains most of the benefit at base-decoding latency</Finding>: w/o-MLLM beats Web-RL on every subset, and per-query time falls from 123.04 s to 18.03 s (Qwen2.5-7B on 4 H20s, critic on 8 H20s, 100 queries).
+- <Finding src="§3.6">Gains concentrate on visual-centric subsets and stay small on multi-file projects</Finding>: Web-Bench improves 3.00 → 4.20 pass@2 (40% relative) but remains far below GPT-4o (23.80); single-artifact refinement does not address long-horizon cross-file work.
+- <Finding src="Tab.1">Web-RL slightly *hurts* FullStack-Html on Qwen (65.00 → 63.25) while ReLook recovers it (67.50)</Finding>: pure visual reward without reflection can trade functional correctness for looks; the paper does not discuss this.
+
+## Implications
+For my thesis, ReLook shows that <Related>a visual MLLM-as-judge in the ArtifactsBench lineage can serve as a *training* reward rather than only an evaluator</Related>, and that the hard part is trajectory hygiene (monotonic acceptance, invalid-render zeroing), not the judge itself. It sits between <Related>one-shot vision-to-code (Design2Code, UICoder, Web2Code, DesignCoder)</Related> and <Related>tool-critique self-refinement (CRITIC, Reflexion, Self-Refine)</Related>, and its Forced Optimization is an online, in-trajectory analogue of best-of-N selection (§4.2). Threads to chase: <FollowUp>replacing the three fixed-time screenshots with scripted interaction traces so the reward can see stateful behaviour (clicks, form state), which the current critic only observes through passive timing</FollowUp>; <FollowUp>whether a much smaller or open critic (the paper's stated future work) keeps the gains, since 32 GPUs for the critic dominates training cost</FollowUp>; <FollowUp>using execution/test signals and the visual judge jointly, given the FullStack-Html regression under visual-only Web-RL</FollowUp>.
+
+## Limitations
+- <Caveat>The training critic (Qwen2.5-VL-72B) and evaluator (Gemini-2.5-Pro) are both MLLM judges; human validation is inherited from ArtifactsBench, not re-run, except a 100-task GSB study with no inter-annotator statistics</Caveat> (§1, App. A–B).
+- <Caveat>Only 7B/8B backbones, 40 RL steps, front-end only; scaling and broader stacks are untested</Caveat> (App. A).
+- <Caveat>"Interaction" is judged from three passive screenshots (post-load, +1s, +2s); no user actions are executed, so interactive integrity is inferred by the judge rather than observed</Caveat> (§2.5, §3.2).
+- <Caveat>Means over 3 seeds are reported without variance or significance tests; several deltas (e.g. Llama A-Lite +0.63 for Web-RL) are within plausible seed noise</Caveat> (Tab.1).
+- <Caveat>Forced Optimization may reduce exploration on hard cases, and the sandbox's determinism may under-represent real device/locale variability</Caveat> (App. A).
+- <Caveat>Code is "planned for release upon publication"; no artifacts are available</Caveat> (App. A).
+
+## Critiques and Questions
+1. The text summary of §3.6 does not match Table 1 everywhere: the "3.2–6.1 point" range for visual subsets excludes Qwen A-Web (+2.62), and "2.4–3.4 on A-Easy" excludes Llama (+4.75). The largest Qwen gain is actually A-Si (+7.75), which the text does not mention. Treat the prose ranges as approximate.
+2. Web-RL vs ReLook conflates two changes: agentic reflection *and* Forced Optimization. Table 2's "MLLM reward + format constraint" row (25.84) has no reflection either, so the marginal value of reflection alone without acceptance filtering is never isolated.
+3. Because the critic score is also the acceptance criterion, Forced Optimization is effectively rejection sampling against the reward model during rollout; how much of the gain is "learned self-improvement" versus "better training targets from filtered search"? The w/o-MLLM numbers suggest some transfer, but the distillation loss ablation (γ) is described as a sweep and never reported.
+4. Reflection count converging to ~2 while the cap is 3 could mean tasks saturate, or that the 10-resample budget often fails on hard tasks; the rejection rate is not reported.
+5. Why does the critic-at-inference variant score identically to w/o-MLLM on FullStack and Web-Bench (Tab.1 caption says both use critic-free inference there)? Then "ReLook" on unit-test benchmarks is not the full method, so the headline claim of consistent gains "across three benchmarks" rests on critic-free inference for two of them.
+
+<SelfCheck q="Why did the authors abandon a negative reward for regressions in favour of a hard acceptance rule?" a="The penalty made the agent avoid requesting feedback altogether (fewer reflections means fewer chances to be penalised), i.e. reward hacking that turned ReLook back into plain RL. A strict accept-only-if-better filter keeps regressions out of the trajectory without discouraging reflection; reflection frequency rose and stabilised at about two rounds (§2.6, App. E, Fig.5)." />
+
+## Glossary
+- <Term def="A rollout in which the policy alternates generation with a tool call to an external multimodal critic, then revises">generate–diagnose–refine loop</Term>
+- <Term def="The paper's term for a revision after feedback scoring lower than the draft it revised">behavioral collapse</Term>
+- <Term def="Accept a revision into the trajectory only if its critic score strictly exceeds the best so far; resample up to 10 times, else stop">Forced Optimization</Term>
+- <Term def="Ablation baseline: same MLLM screenshot reward and GRPO, but no in-rollout critic call or reflection">Web-RL</Term>
+- <Term def="The 0–100 rubric score from the MLLM judge covering spec adherence, layout, typography/colour, and interactive integrity">VisualScore</Term>
+- <Term def="Fraction of rollouts whose screenshots all render successfully; rises ~40% to ~80% during training">Valid Render Rate</Term>
+- <Term def="Good:Same:Bad counts from pairwise human preference under majority vote">GSB</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

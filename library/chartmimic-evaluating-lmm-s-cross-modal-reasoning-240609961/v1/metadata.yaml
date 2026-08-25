@@ -1,0 +1,87 @@
+canonical_key: arxiv-2406.09961
+version_key: v1
+title: 'ChartMimic: Evaluating LMM''s Cross-Modal Reasoning Capability via Chart-to-Code Generation'
+authors:
+- Cheng Yang
+- Chufan Shi
+- Yaxin Liu
+- Bo Nian Shui
+- Junjie Wang
+- Mohan Jing
+- Linran Xu
+- Xinyu Zhu
+- Siheng Li
+- Yuxiang Zhang
+- Gongye Liu
+- Xiaomei Nie
+- Deng Cai
+- Yujiu Yang
+abstract: We introduce a new benchmark, ChartMimic, aimed at assessing the visually-grounded code generation
+  capabilities of large multimodal models (LMMs). ChartMimic utilizes information-intensive visual charts
+  and textual instructions as inputs, requiring LMMs to generate the corresponding code for chart rendering.
+  ChartMimic includes 4,800 human-curated (figure, instruction, code) triplets, which represent the authentic
+  chart use cases found in scientific papers across various domains (e.g., Physics, Computer Science,
+  Economics, etc). These charts span 18 regular types and 4 advanced types, diversifying into 201 subcategories.
+  Furthermore, we propose multi-level evaluation metrics to provide an automatic and thorough assessment
+  of the output code and the rendered charts. Unlike existing code generation benchmarks, ChartMimic places
+  emphasis on evaluating LMMs' capacity to harmonize a blend of cognitive capabilities, encompassing visual
+  understanding, code generation, and cross-modal reasoning. The evaluation of $3$ proprietary models
+  and 14 open-weight models highlights the substantial challenges posed by ChartMimic. Even the advanced
+  GPT-4o, InternVL2-Llama3-76B only achieved an average score across Direct Mimic and Customized Mimic
+  tasks of 82.2 and 61.6, respectively, indicating significant room for improvement. We anticipate that
+  ChartMimic will inspire the development of LMMs, advancing the pursuit of artificial general intelligence.
+venue: arXiv (Cornell University)
+year: 2024
+source: openalex
+source_url: https://openalex.org/W4399759273
+pdf_url: https://arxiv.org/pdf/2406.09961
+pdf_sha256: 7b0f53a88692c3827ca73b64405d50d489a1dff9eec686154ee5cac446fb6ea6
+fetched_at: '2026-08-25T12:49:24Z'
+source_updated_at: '2024-06-14'
+ids:
+  doi: 10.48550/arxiv.2406.09961
+  arxiv_id: null
+  arxiv_base_id: '2406.09961'
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: https://openalex.org/W4399759273
+tags:
+- foundational
+- interactive-component-survey
+topic_groups:
+- interactive_component_synthesis
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: interest_fit(0.91), novelty(0.80), venue_quality(0.40) |
+    interests: interactive_component_synthesis:chart-to-code, interactive_component_synthesis:group:interactive_component_synthesis
+    | milestone/foundational floor applied'
+  matched_interests:
+  - interactive_component_synthesis:chart-to-code
+  - interactive_component_synthesis:group:interactive_component_synthesis
+  negative_signals: []
+  subscores:
+    interest_fit: 0.91
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 0.8
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/chartmimic-evaluating-lmm-s-cross-modal-reasoning-240609961/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

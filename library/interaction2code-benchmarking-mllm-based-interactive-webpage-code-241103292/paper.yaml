@@ -1,0 +1,74 @@
+canonical_key: arxiv-2411.03292
+slug: interaction2code-benchmarking-mllm-based-interactive-webpage-code-241103292
+title: 'Interaction2Code: Benchmarking MLLM-based Interactive Webpage Code Generation from Interactive
+  Prototyping'
+authors:
+- Jingyu Xiao
+- Yuxuan Wan
+- Yintong Huo
+- Zixin Wang
+- Xinyi Xu
+- Wenxuan Wang
+- Zhiyao Xu
+- Yuhang Wang
+- Michael R. Lyu
+year: 2024
+primary_ids:
+  doi: 10.1109/ASE63991.2025.00028
+  arxiv_base_id: '2411.03292'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2411.03292v3
+- https://arxiv.org/pdf/2411.03292v3
+topic_groups:
+- interactive_component_synthesis
+- llm
+tags:
+- foundational
+- benchmark
+- interactive-component-survey
+- feedback-none
+- output-interactive
+- training-prompt
+- model-open
+- model-closed
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2024
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: interactive_component_synthesis
+  era: foundational
+  significance: Defines interaction-to-code; shows static screenshots are insufficient.
+  subarea: interactive_ui
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v3
+  source: arxiv
+  source_url: https://arxiv.org/abs/2411.03292v3
+  pdf_path: library/interaction2code-benchmarking-mllm-based-interactive-webpage-code-241103292/v1/paper.pdf
+  summary_path: library/interaction2code-benchmarking-mllm-based-interactive-webpage-code-241103292/v1/summary.mdx
+  metadata_path: library/interaction2code-benchmarking-mllm-based-interactive-webpage-code-241103292/v1/metadata.yaml
+  fetched_at: '2026-08-25T12:48:35Z'
+  source_updated_at: '2026-03-01T04:44:05Z'
+  arxiv_version: v3
+  pdf_sha256: cb649e62865e20ad4afe699839aaef40b6306bfe980ce60d842b493bda95ae44
+  pdf_bytes: 5802481
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-08-25T12:48:35Z'
+  updated_at: '2026-08-25T12:54:33Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

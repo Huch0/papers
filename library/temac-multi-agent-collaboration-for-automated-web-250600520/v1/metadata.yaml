@@ -1,0 +1,88 @@
+canonical_key: arxiv-2506.00520
+version_key: v1
+title: 'Temac: Multi-Agent Collaboration for Automated Web GUI Testing'
+authors:
+- Chenxu Liu
+- Zhiyu Gu
+- Guoquan Wu
+- Ying Zhang
+- Jun Wei
+- Tao Xie
+abstract: Quality assurance of web applications is critical, as web applications play an essential role
+  in people's daily lives. To reduce labor costs, automated web GUI testing (AWGT) is widely adopted,
+  exploring web applications via GUI actions such as clicks and text inputs. However, these approaches
+  face limitations in generating continuous and meaningful action sequences capable of covering complex
+  functionalities. Recent work incorporates large language models (LLMs) for GUI testing. However, these
+  approaches face various challenges, including low efficiency of LLMs, high complexity of rich web application
+  contexts, and a low success rate of LLMs in executing GUI tasks. To address these challenges, in this
+  paper, we propose Temac, an approach that enhances AWGT using LLM-based multi-agent collaboration to
+  increase code coverage. Temac is motivated by our insight that LLMs can enhance AWGT in executing complex
+  functionalities, while the information discovered during AWGT can, in turn, be provided as the domain
+  knowledge to improve the LLM-based task execution. Specifically, given a web application, Temac initially
+  runs an existing approach to broadly explore application states. When the testing coverage stagnates,
+  Temac then employs LLM-based agents to summarize the collected information to form a knowledge base
+  and to infer not-covered functionalities. Guided by this knowledge base, Temac finally uses specialized
+  LLM-based agents to target and execute the not-covered functionalities, reaching deeper states beyond
+  those explored by the existing approach. Our evaluation results show that Temac exceeds state-of-the-art
+  approaches from 12.5% to 60.3% on average code coverage on six complex open-source web applications,
+  while revealing 445 unique failures in the top 20 real-world web applications. These results strongly
+  demonstrate the effectiveness and the general applicability of Temac.
+venue: arXiv
+year: 2025
+source: arxiv
+source_url: https://arxiv.org/abs/2506.00520v1
+pdf_url: https://arxiv.org/pdf/2506.00520v1
+pdf_sha256: 2d35858ddb2d8d0068772aee883a0d2452349c54e5ea1e4d892e88a182af9768
+fetched_at: '2026-08-25T12:50:02Z'
+source_updated_at: '2025-05-31T11:43:37Z'
+ids:
+  doi: null
+  arxiv_id: 2506.00520v1
+  arxiv_base_id: '2506.00520'
+  arxiv_version: v1
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+- interactive-component-survey
+topic_groups:
+- interactive_component_synthesis
+- llm
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: interest_fit(0.91), novelty(0.55), artifact_availability(0.55)
+    | interests: llm:large language model, llm:group:llm, interactive_component_synthesis:GUI testing,
+    interactive_component_synthesis:group:interactive_component_synthesis | milestone/foundational floor
+    applied'
+  matched_interests:
+  - llm:large language model
+  - llm:group:llm
+  - interactive_component_synthesis:GUI testing
+  - interactive_component_synthesis:group:interactive_component_synthesis
+  negative_signals: []
+  subscores:
+    interest_fit: 0.91
+    recency: 0.35
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 0.55
+    artifact_availability: 0.55
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/temac-multi-agent-collaboration-for-automated-web-250600520/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

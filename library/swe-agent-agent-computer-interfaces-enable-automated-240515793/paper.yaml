@@ -24,6 +24,7 @@ topic_groups:
 - software_engineering_agents
 tags:
 - foundational
+- interactive-component-survey
 venue:
   name: NeurIPS
   tier: A_star

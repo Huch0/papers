@@ -1,0 +1,69 @@
+canonical_key: arxiv-2603.13224
+slug: visual-erm-reward-modeling-for-visual-equivalence-260313224
+title: 'Visual-ERM: Reward Modeling for Visual Equivalence'
+authors:
+- Ziyu Liu
+- Shengyuan Ding
+- Xinyu Fang
+- Xuanlang Dai
+- Penghui Yang
+- Jianze Liang
+- Jiaqi Wang
+- Kai Chen
+- Dahua Lin
+- Yuhang Zang
+year: 2026
+primary_ids:
+  doi: null
+  arxiv_base_id: '2603.13224'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2603.13224v2
+- https://arxiv.org/pdf/2603.13224v2
+topic_groups:
+- general_agent_methods
+- interactive_component_synthesis
+- rl
+tags:
+- foundational
+- interactive-component-survey
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2026
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: interactive_component_synthesis
+  era: recent
+  significance: Trains a compact visual critic instead of CLIP or a huge generic VLM.
+  subarea: vlm_critic_probing
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v2
+  source: arxiv
+  source_url: https://arxiv.org/abs/2603.13224v2
+  pdf_path: library/visual-erm-reward-modeling-for-visual-equivalence-260313224/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/visual-erm-reward-modeling-for-visual-equivalence-260313224/v1/metadata.yaml
+  fetched_at: '2026-08-25T12:50:07Z'
+  source_updated_at: '2026-05-09T03:24:22Z'
+  arxiv_version: v2
+  pdf_sha256: bc898705e80c4787cbe4e945731a016bcf5788e2c64fea604e2f703f6f1aa5e2
+  pdf_bytes: 5831225
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-25T12:50:07Z'
+  updated_at: '2026-08-25T12:50:07Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

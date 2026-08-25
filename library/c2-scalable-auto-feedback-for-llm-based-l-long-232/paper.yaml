@@ -1,0 +1,67 @@
+canonical_key: doi-10-18653-v1-2025-naacl-long-232
+slug: c2-scalable-auto-feedback-for-llm-based-l-long-232
+title: 'C2: Scalable Auto-Feedback for LLM-based Chart Generation'
+authors:
+- W.J. Koh
+- Janghan Yoon
+- M. Lee
+- Y.‐K. Song
+- Jaegwan Cho
+- Ju Yeon Kang
+- Taehyeon Kim
+- Se-Young Yun
+- Youngjae Yu
+- Bongshin Lee
+year: 2025
+primary_ids:
+  doi: 10.18653/v1/2025.naacl-long.232
+  arxiv_base_id: null
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: https://openalex.org/W4411119316
+canonical_urls:
+- https://openalex.org/W4411119316
+- https://aclanthology.org/2025.naacl-long.232.pdf
+topic_groups:
+- interactive_component_synthesis
+tags:
+- foundational
+- interactive-component-survey
+venue:
+  name: Not reported
+  tier: unknown
+  status: unknown
+  year: 2025
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: interactive_component_synthesis
+  era: expansion
+  significance: Automatic visual feedback for chart generation at scale.
+  subarea: text_to_vis
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: openalex
+  source: openalex
+  source_url: https://openalex.org/W4411119316
+  pdf_path: library/c2-scalable-auto-feedback-for-llm-based-l-long-232/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/c2-scalable-auto-feedback-for-llm-based-l-long-232/v1/metadata.yaml
+  fetched_at: '2026-08-25T12:49:43Z'
+  source_updated_at: '2025-01-01'
+  arxiv_version: null
+  pdf_sha256: dfe27006d35606ebef3a634a710fc2090ea91a8820fb5feac8a3abbbba5b973a
+  pdf_bytes: 6979629
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-25T12:49:43Z'
+  updated_at: '2026-08-25T12:49:43Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

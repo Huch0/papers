@@ -1,0 +1,89 @@
+canonical_key: arxiv-2505.03733
+version_key: v1
+title: 'WebGen-Bench: Evaluating LLMs on Generating Interactive and Functional Websites from Scratch'
+authors:
+- Zimu Lu
+- Yunqiao Yang
+- Houxing Ren
+- Haotian Hou
+- Han Xiao
+- Ke Wang
+- Weikang Shi
+- Aojun Zhou
+- Mingjie Zhan
+- Hongsheng Li
+abstract: LLM-based agents have demonstrated great potential in generating and managing code within complex
+  codebases. In this paper, we introduce WebGen-Bench, a novel benchmark designed to measure an LLM-based
+  agent's ability to create multi-file website codebases from scratch. It contains diverse instructions
+  for website generation, created through the combined efforts of human annotators and GPT-4o. These instructions
+  span three major categories and thirteen minor categories, encompassing nearly all important types of
+  web applications. To assess the quality of the generated websites, we use GPT-4o to generate test cases
+  targeting each functionality described in the instructions, and then manually filter, adjust, and organize
+  them to ensure accuracy, resulting in 647 test cases. Each test case specifies an operation to be performed
+  on the website and the expected result after the operation. To automate testing and improve reproducibility,
+  we employ a powerful web-navigation agent to execute tests on the generated websites and determine whether
+  the observed responses align with the expected results. We evaluate three high-performance code-agent
+  frameworks, Bolt.diy, OpenHands, and Aider, using multiple proprietary and open-source LLMs as engines.
+  The best-performing combination, Bolt.diy powered by DeepSeek-R1, achieves only 27.8\% accuracy on the
+  test cases, highlighting the challenging nature of our benchmark. Additionally, we construct WebGen-Instruct,
+  a training set consisting of 6,667 website-generation instructions. Training Qwen2.5-Coder-32B-Instruct
+  on Bolt.diy trajectories generated from a subset of this training set achieves an accuracy of 38.2\%,
+  surpassing the performance of the best proprietary model.
+venue: arXiv
+year: 2025
+source: arxiv
+source_url: https://arxiv.org/abs/2505.03733v2
+pdf_url: https://arxiv.org/pdf/2505.03733v2
+pdf_sha256: ad17a42f8ac7f2e04c312528a61cd25c362fbd34f934a420fafa1ab54df29956
+fetched_at: '2026-08-25T12:48:38Z'
+source_updated_at: '2025-08-11T07:13:00Z'
+ids:
+  doi: null
+  arxiv_id: 2505.03733v2
+  arxiv_base_id: '2505.03733'
+  arxiv_version: v2
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+- interactive-component-survey
+topic_groups:
+- general_agent_methods
+- interactive_component_synthesis
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: novelty(0.80), interest_fit(0.73), artifact_availability(0.55)
+    | interests: general_agent_methods:benchmark design, general_agent_methods:group:general_agent_methods,
+    interactive_component_synthesis:group:interactive_component_synthesis | milestone/foundational floor
+    applied'
+  matched_interests:
+  - general_agent_methods:benchmark design
+  - general_agent_methods:group:general_agent_methods
+  - interactive_component_synthesis:group:interactive_component_synthesis
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 0.35
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 0.8
+    artifact_availability: 0.55
+    evaluation_quality: 0.55
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/webgen-bench-evaluating-llms-on-generating-interactive-250503733/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

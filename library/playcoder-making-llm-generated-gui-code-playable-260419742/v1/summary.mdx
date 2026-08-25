@@ -1,0 +1,153 @@
+---
+canonical_key: arxiv-2604.19742
+version_key: v1
+title: 'PlayCoder: Making LLM-Generated GUI Code Playable'
+authors:
+- Zhiyuan Peng
+- Wei Tao
+- Xin Yin
+- Chenhao Ying
+- Yuan Luo
+- Yiwen Guo
+venue: arXiv
+year: 2026
+tags:
+- foundational
+- interactive-component-survey
+- feedback-run
+- feedback-visual
+- feedback-behavioral
+- output-interactive
+- training-prompt
+- model-open
+- model-closed
+topic_groups:
+- interactive_component_synthesis
+- llm
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2604.19742v1
+summary_date: '2026-08-25'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>A GUI program that compiles and passes its unit tests can still be unplayable; we make a vision-language agent (PlayTester) actually play the generated app, turn its verdict into a metric (Play@k) and a benchmark (PlayEval, 43 desktop/web GUI repos in Python/JS/TS), and then close the loop by feeding its screenshots-plus-actions diagnostics into a repair agent (PlayCoder), lifting Play@3 from single digits to 9.8–22.4% depending on backbone.</TLDR>
+
+<WhyItMatters>This is the closest published instance of my thesis loop: execution-grounded, behavioral feedback on interactive, stateful programs used to *repair* them, with an open-weight backbone (Qwen3-Coder) being the best performer. The ablation (Tab.5) isolates exactly the question I care about: how much does play-based feedback add over compile/run/unit-test feedback?</WhyItMatters>
+
+<KeyStats items={[
+  { value: "9.9%", label: "best base-LLM Play@3 (Python)", sub: "Claude-Sonnet-4, vs 18.6% Exec@3 — Tab.2" },
+  { value: "18.9%", label: "PlayCoder Play@3 (Python)", sub: "Qwen3-Coder; 38.1% Exec@3 — Tab.3" },
+  { value: "22.4%", label: "PlayCoder Play@3 (JavaScript)", sub: "Qwen3-Coder; 44.0% Exec@3 — Tab.3/6" },
+  { value: "43", label: "GUI repositories, 3 languages", sub: "188K LOC, 4,497 functions, 2,104 tests — Tab.1" },
+  { value: "16% / 5%", label: "PlayTester FN / FP rate", sub: "vs 3 human experts, 200 samples — §3.5" },
+]} />
+
+## Motivation
+Start with the bug that motivated everything (Fig.1): GPT-4o-mini writes a Flappy Bird that runs without a single exception, but the bird flies straight through pipes and the game never ends. <Problem>Compilation success and unit tests cannot see this class of "silent" logic failure</Problem>, because the failing property is a temporal, stateful one ("a collision must end the game") over randomly generated obstacles, so there is no fixed input–output pair to assert on. The real-world repos we drew from make the point on their own: their existing tests cover only 47.2% of lines and 32.1% of branches (§3.1.3).
+
+Two further gaps. <Problem>Existing code benchmarks (HumanEval, CoderEval, SWE-bench) underrepresent event-driven GUI programs and score them with pass/fail tests only</Problem> (§2.1, Challenge 2). And <Problem>existing GUI testers (Selenium/Playwright, GPTDroid, LLMDroid, VETL) need a DOM or accessibility tree, which canvas-rendered desktop apps such as PyGame games do not expose</Problem> — so they cannot be transplanted to desktop (§2.1, Challenge 3). The consequence we measured first: even the best model, Claude-Sonnet-4, drops from 18.6% <Term def="at least one of k samples runs without syntax/import/runtime errors">Exec@3</Term> to 9.9% <Term def="at least one of k samples both passes unit tests and survives an end-to-end interactive playthrough with no logic violations">Play@3</Term> on Python (Tab.2); GPT-5 drops from 17.5% to 6.9%.
+
+## Contribution (what's new)
+The insight that survives deleting "we propose": <Novelty>the only oracle that can detect a stateful, visually manifested logic bug in a pixel-rendered app is something that *plays* it — so make a vision-language agent the oracle, and then use the same agent as the feedback source for repair</Novelty>. Three concrete deltas follow from that:
+
+1. <Novelty>PlayEval + Play@k: a repository-aware benchmark (43 apps, 6 categories, Python/JS/TS) with a strictly nested metric pipeline Exec@k → Pass@k → Play@k</Novelty>, so Play@k is by construction at most Pass@k and exposes the syntactic-vs-behavioral gap directly (§3.1.4, Eq.1).
+2. <Novelty>PlayTester: a screenshot-only tester (VisualObserver + Test Manager + ActionExecutor) with two strategy regimes — goal-driven for games with terminal states, coverage-driven for tool-like apps</Novelty>. The two regimes are forced: a game tester that does not try to win never reaches the end-state logic, and a text-editor tester that "tries to win" has nothing to aim at (§3.3.3).
+3. <Novelty>PlayCoder: PlayDeveloper (retrieval-augmented generation) + PlayRefiner (APR) driven by PlayTester's screenshots/actions/violations rather than by a static test suite</Novelty>, up to T=6 iterations. This is what differs from Self-Refine-style loops: visual instead of textual signal, and active exploration instead of a fixed test set (§1).
+
+## Research questions
+- Does play-based behavioral correctness differ materially from executability/unit-test correctness on real GUI repos? (§3.6, preliminary study)
+- Is an LLM tester reliable enough to serve as an oracle? (§3.5)
+- RQ-1: Does closed-loop repair from visual/behavioral feedback beat prompting and multi-agent baselines? RQ-2: At what token cost? RQ-3: Which component (APR, GUI feedback, context retrieval) carries the gain, and does it hold across backbones? (§5)
+
+## Methodology
+Each PlayEval instance is a function to (re)implement inside a checked-out repository: signature + LLM-generated requirement docstring + repository context (Fig.2). Generated code is scored in three nested stages; only survivors of a stage proceed to the next. PlayTester then launches the app, screenshots it (one second after each action, last three frames cached to tell animation from stillness), asks a VLM to describe state and formulate a test plan, and issues `click/type/hotkey/press/scroll/wait/finish` actions until it can declare success or a violation (§3.3). PlayCoder wraps this: generate → test → diagnose → patch → re-test, terminating on pass or at 6 rounds (§4.1.1).
+
+<Pass title="Method details">
+**Benchmark construction (§3.1).** Repos: active in the last 12 months or ≥6 months sustained history; mostly >100 stars; framework diversity (PyQt, PySide, Tkinter, Pygame); functions with ≥28 non-docstring lines to select game loops and event handlers rather than helpers. Categories (Tab.1): Game Emulation (1 repo, PyBoy, 26.7K LOC), Classic Games (6: 2048, Snake, Flappy Bird, Sudoku, Chrome Dragon, Solitaire, Chess variants), Game Engine (1, Jupylet), Standalone Applications (24, 123K LOC), Desktop Widgets (9), MMORPG (2 TypeScript games with >1000 stars). Requirements written by GPT-4o-mini, ~10% manually verified by 3 experts, >95.6% judged high quality. Unit tests: original repo tests plus an LLM-generated suite. <Caveat>Fig.2 says "4,159 instances / 35 repositories / 2,072 test cases" while Tab.1 says 43 projects and 2,104 tests — the instance count per language is otherwise Not reported</Caveat>. Tab.4 mentions "164K tokens for 30 functions", which suggests the efficiency study used a 30-function subset (Unclear).
+
+**Metrics (§3.4).** Unbiased pass@k-style estimator with n=3 samples, k≤3, 5 repetitions with distinct seeds and temperature 0.3:
+
+<MathBlock>{`[\\mathrm{Exec},\\mathrm{Pass},\\mathrm{Play}]@k := \\mathbb{E}_{\\text{problems}}\\left[1 - \\frac{\\binom{n-c_{\\text{succeed}}}{k}}{\\binom{n}{k}}\\right], \\qquad \\mathrm{Efficiency}@k := \\frac{\\mathrm{Play}@k}{AT_k},\; AT_k = \\frac{\\mathrm{Token}_k}{N\\cdot 10^3}`}</MathBlock>
+
+Play@k additionally enforces hard constraints ("did the game crash?") checked against logs and final screenshots.
+
+**PlayTester (§3.3).** VisualObserver: pyautogui + PIL screenshots, window detection via AppleScript/Win32; Windows, macOS, X11 Linux only (Wayland blocks cross-window capture and input injection). Test Manager: one prompt template per phase (GUI analysis, strategy, action decision), except two strategy templates (game vs non-game). ActionExecutor: coordinate bounds checks, failsafe cursor, action history. Running example (Fig.3, 2048): the observer reads tiles `r3c1=2, r3c4=2, r4c4=4, score=8`; the planner picks a rightward swipe because it both advances a corner strategy (merging into a 4 at r3c4) and exercises swipe responsiveness, merge logic and score update in one move; it simultaneously watches for invalid moves, freezes, and wrong termination.
+
+**PlayCoder agents (§4.2–4.3).**
+<Stepper steps={[
+  { title: "PlayDeveloper: context-aware generation", body: "Tool-based agent with ContextSearchTool (grep-based retrieval of code examples and import patterns), FileReadTool, BashTool, ConversationTool; few-shot requirement→code prompting." },
+  { title: "Behavioral testing", body: "PlayTester runs the app, records screenshots/actions/violations plus compiler and runtime logs into an AgentTrajectory log; execution is sandboxed with deterministic seeding and controlled timing." },
+  { title: "PlayRefiner: diagnosis and repair", body: "Aggregates compiler output, runtime logs and the behavioral report into a failure summary; routes by failure type — compile errors → Validator (syntax/AST, fast compile gate), API misuse/undefined symbols → ContextSearcher, behavioral failures (e.g. wrong physics) → logic edits; applies minimal patches atomically; re-validates." },
+  { title: "Iterate", body: "Repeat until all per-sample behavioral checks pass or T=6 iterations are exhausted." },
+]} />
+</Pass>
+
+## Main result
+With the same backbone, the closed loop roughly doubles behavioral correctness over the strongest baseline: <Finding src="Tab.3">GPT-5-mini: PlayCoder 26.8% Exec@3 / 9.8% Play@3 (Python) vs DeepCode 17.9% / 6.4%</Finding>; <Finding src="Tab.3">Qwen3-Coder: 38.1% Exec@3 / 18.9% Play@3 vs DeepCode 37.6% / 9.8%</Finding> — note DeepCode already matches PlayCoder on executability with Qwen3-Coder, so the entire gain there is behavioral. <Finding src="Tab.6">The best overall configuration is Claude-Sonnet-4: 36.8% Exec@3 / 20.3% Play@3 on Python and 44.5% / 24.6% on JavaScript</Finding>. The abstract's "38.1% Exec@3" is Qwen3-Coder-Python and "20.3% Play@3" is Claude-Sonnet-4-Python; they are not the same run.
+
+<SortableTable columns={["Method", "Backbone", "Py Exec@3", "Py Play@3", "JS Play@3", "TS Play@3"]} rows={[
+  ["Base LLM (few-shot)", "Claude-Sonnet-4", 18.6, 9.9, 10.4, 7.9],
+  ["Base LLM (few-shot)", "GPT-5", 17.5, 6.9, 8.9, 5.2],
+  ["Base LLM (few-shot)", "Qwen3-Coder 480B", 18.8, 6.1, 6.4, 4.9],
+  ["HCPCoder", "GPT-5-mini", 12.8, 0.3, 0.3, 0.2],
+  ["SCoT", "GPT-5-mini", 15.2, 6.0, 6.1, 4.6],
+  ["MetaGPT", "GPT-5-mini", 13.0, 4.4, 4.9, 3.7],
+  ["OpenManus", "GPT-5-mini", 15.4, 5.6, 5.9, 4.5],
+  ["DeepCode", "GPT-5-mini", 17.9, 6.4, 6.7, 6.0],
+  ["PlayCoder", "GPT-5-mini", 26.8, 9.8, 11.6, 7.8],
+  ["DeepCode", "Claude-Sonnet-3.7", 32.3, 10.1, 11.9, 8.1],
+  ["PlayCoder", "Claude-Sonnet-3.7", 35.6, 17.4, 20.6, 13.9],
+  ["DeepCode", "Qwen3-Coder 480B", 37.6, 9.8, 11.6, 7.8],
+  ["PlayCoder", "Qwen3-Coder 480B", 38.1, 18.9, 22.4, 15.1],
+  ["PlayCoder", "Claude-Sonnet-4", 36.8, 20.3, 24.6, 16.6],
+]} />
+
+All numbers are means over 5 runs with 95% t-CIs (Tab.2/3/6); Exec@3 CIs for PlayCoder are wide (e.g. ±4.9 for Qwen3-Coder Python, ±7.1 for Claude-Sonnet-4), so <Caveat>Exec@3 comparisons against DeepCode overlap; the Play@3 gaps (roughly 2× with CIs of ±1–4) are the robust part</Caveat>.
+
+## Key findings
+- <Finding src="Tab.5, §5.3">GUI feedback is what buys behavioral correctness; APR is what buys executability</Finding>: removing GUI feedback (keeping APR) leaves GPT-5-mini's Exec@3 at 24.1% but drops Play@3 from 9.8% to 5.3% (Python; −4.5pp, −4.7pp JS, −4.2pp TS) — i.e. a repair loop fed only compile/run/unit-test signals fixes crashes but *not* silent logic bugs. Removing APR (keeping GUI feedback) drops Exec@3 from 26.8% to 18.3% (−8.5pp) while Play@3 falls less (9.8% → 7.9%). The APR-only Play@3 (5.3%) is at or below the no-agent baseline (4.9%), so testing without visual feedback adds nothing behavioral.
+- <Finding src="Tab.5">Stronger backbones lose *more* without APR</Finding>: Claude-Sonnet-3.7 loses 14.1pp Python Exec@3 (35.6% → 21.5%), 16.4pp JS, 11.5pp TS. The loop amplifies model capability rather than substituting for it.
+- <Finding src="Tab.5">Context retrieval alone is worthless here</Finding>: the "context only" row equals the "nothing" row within CI (GPT-5-mini Python 14.3% vs 14.3% Exec@3; 4.9% vs 4.9% Play@3). Consistent with HCPCoder's near-zero Play@k (0.3%) despite the highest token spend (373K, Tab.4): retrieval fixes imports, not interaction semantics.
+- <Finding src="Tab.2, Tab.6, §5.3">Language ordering is stable across every model and method: JavaScript ≥ Python > TypeScript</Finding>. TypeScript Exec@3 is roughly 20% lower than Python (Qwen3-Coder 31.0% vs 38.1%), which we attribute to the two large MMORPG repos being TypeScript; the execution-to-behavior gap is widest on TypeScript (§3.6.2).
+- <Finding src="Tab.6">The open-weight Qwen3-Coder (480B) is the best PlayCoder backbone on Python Exec@3 (38.1%) and second on Play@3 (18.9%, vs Claude-Sonnet-4's 20.3%)</Finding>, ahead of GPT-5 (29.5% / 12.4%). Every one of 10 backbones improves under PlayCoder (e.g. GPT-4o-mini Play@3 2.6% → 7.8%).
+- <Finding src="Tab.4">Efficiency: PlayCoder uses 164K tokens (5,480/function) vs 128K for the bare model, and its Efficiency@1 of 1.51 is the highest; testing is ~22% of tokens, generation+patching ~78%</Finding>. DeepCode spends 252K for 6.0% Play@1 (Efficiency@1 0.72). <Caveat>The text also says SCoT's efficiency is "0.98 vs 1.22" and elsewhere "reduced efficiency" against a 1.01 base figure — the prose mixes @1 and @3 columns; trust the table</Caveat>.
+- <Finding src="§3.5">PlayTester vs 3 senior GUI engineers on 100 successes + 100 failures: 16% false-negative rate, 5% false-positive rate, Krippendorff's α = 0.790, Kendall's τ-b = 0.795</Finding>. The asymmetry matters: the oracle is more likely to *reject* a playable app than to accept a broken one, so Play@k is a conservative lower bound.
+- <Finding src="§5.4">Failure mode: any bug needing high-frequency or long-duration observation (a >60 FPS-only glitch, a crash after 2 minutes of Flappy Bird) defeats every method including PlayCoder; this affects 4 of 43 projects (~9%), concentrated in fast arcade games and real-time physics</Finding>. Screenshot polling at ~1 Hz plus VLM latency cannot see it.
+- <Finding src="§5.4">Success case: MetaGPT's 2048 rendered white tile digits on a white background — unit tests passed, game unplayable; PlayTester flagged the absence of visible change and the rendering was repaired</Finding>. This is precisely the class of bug a textual oracle cannot express.
+- <Finding src="§5.1">Swapping the evaluator VLM to Claude-Sonnet-3.7 moved Play@3 by 0.9–3.7% with "minimal ranking impact"</Finding> — a partial answer to the LLM-judge-bias worry, though the default evaluator backbone is Not reported.
+
+## Implications
+For my thesis this paper is the ablation I would otherwise have to run myself: with compile/run/unit-test feedback alone, a repair loop gains executability but essentially zero behavioral correctness on interactive programs; the visual, interaction-driven oracle is the ingredient that moves Play@k (Tab.5). It also shows an open-weight backbone (Qwen3-Coder) matching closed models once the loop exists. <Related>The lineage is Self-Refine / Self-Debug style iterative repair (textual feedback) crossed with LLM GUI testers for mobile/web (GPTDroid, LLMDroid, VETL) and multi-agent coders (MetaGPT, OpenManus, DeepCode)</Related>; the closest sibling is <Related>"You Don't Know Until You Click" (Bian et al. 2025), cited as the source of the "tests cannot capture GUI behavior" argument</Related>. <FollowUp>Play@k as a training signal: the paper is prompt-only (training-prompt); PlayTester verdicts are an obvious reward for RL or rejection-sampling SFT, and the 16% FN rate suggests reward noise would be tolerable</FollowUp>. <FollowUp>Component-scale variant: PlayEval's Desktop Widgets category (color pickers, sliders — 9 repos) is the closest thing to my interactive-component setting; the per-category breakdown is Not reported and worth extracting from the release</FollowUp>. <FollowUp>Higher-frequency observation (video/frame-diff oracles, instrumented state dumps) to recover the ~9% of fast-paced projects no one solves</FollowUp>.
+
+## Limitations
+- <Caveat>Play@k rests on a VLM judge with a 16% false-negative rate; all Play numbers are lower bounds with evaluator noise, and the evaluator's own backbone is Not reported</Caveat> (§3.5, §7).
+- <Caveat>Discrete ~1 Hz screenshot polling cannot see frame-rate or long-horizon bugs; ~9% of projects are unsolvable by construction</Caveat> (§5.4, §7).
+- <Caveat>Function-level task granularity: each instance regenerates one ≥28-line function inside a checked-out repo, not a whole app, so "playable" means the app still plays after the replacement — easier than end-to-end app synthesis</Caveat> (§3.1.3).
+- <Caveat>Benchmark size and skew: 43 repos, 24 of them Standalone Applications, one emulator supplying 26.7K LOC; per-category results are Not reported; instance counts differ between Fig.2 (4,159 / 35 repos) and Tab.1 (43 repos)</Caveat>.
+- <Caveat>Requirements and the extra unit tests are LLM-generated (GPT-4o-mini), with only ~10% human-verified; Pass@k is partly LLM-judged too</Caveat> (§3.1.3–3.1.4).
+- <Caveat>No Wayland support; Windows/macOS/X11 only</Caveat> (§3.3.1). <Caveat>Repair iterations capped at 6; no analysis of gain per iteration or of what fraction of fixes are behavioral vs compile fixes</Caveat> (Not reported).
+- <Caveat>Wide CIs on Exec@3 mean some "PlayCoder > DeepCode" executability claims are comparable rather than decisive, as the authors themselves concede in §5</Caveat>.
+
+## Critiques and Questions
+1. The same agent family (VLM tester) is both the oracle in Play@k and the feedback in the repair loop. Optimizing against your own evaluator is a classic way to overfit to its blind spots; the Claude-Sonnet-3.7 evaluator swap (0.9–3.7% shift) is reassuring but was done on a single alternate model and does not report the direction of the shift.
+2. Efficiency@k is Play@k divided by tokens per function, but Tab.4 says PlayCoder's 164K tokens cover "30 functions" while base numbers seem to be over the full set — the normalization basis is Unclear.
+3. What does the repair loop actually change? The paper gives two anecdotes (invisible text, collision) but no taxonomy of detected violations or of patch types; the "APR-only" ablation suggests most edits are compile/runtime fixes.
+4. The "JavaScript ≥ Python > TypeScript" trend is attributed to MMORPG repos being in TypeScript, i.e. a dataset-composition effect, not a language effect; the claim that this "reflects code generation difficulty rather than model biases" (§5.1) conflates the two.
+5. Fig.2's stats (4,159 instances, 35 repos, 578 classes, 2,072 tests) disagree with Tab.1 (43 repos, 595 classes, 2,104 tests) — probably a stale figure, but the actual number of evaluated instances never appears in the text.
+
+<SelfCheck q="Why does removing GUI feedback barely hurt Exec@3 but roughly halve Play@3, while removing APR does the opposite?" a="Exec@3 measures crash-free execution, which compile/runtime logs already expose, so PlayRefiner can fix those without screenshots; Play@3 measures stateful logic (collisions, visible rendering, state transitions) that only shows up when the app is driven and observed visually — without PlayTester's screenshots/actions the refiner has no signal about such bugs. Tab.5 (GPT-5-mini, Python): no-GUI keeps Exec@3 at 24.1% but Play@3 falls 9.8% → 5.3%; no-APR drops Exec@3 26.8% → 18.3% while Play@3 only goes 9.8% → 7.9%." />
+
+## Glossary
+- <Term def="At least one of k sampled solutions compiles and runs without syntax, import, or runtime errors">Exec@k</Term>; <Term def="At least one of k samples passes all unit tests (original repo tests plus LLM-generated ones)">Pass@k</Term>; <Term def="At least one of k samples passes unit tests and then survives an interactive playthrough by PlayTester with no logic violations; strictly nested inside Pass@k">Play@k</Term>; <Term def="Play@k divided by average tokens per problem in thousands">Efficiency@k</Term>.
+- <Term def="The benchmark: 43 GUI repos in Python/JS/TS, six categories, function-level regeneration tasks with signature + requirement + repository context">PlayEval</Term>; <Term def="Screenshot-driven VLM testing agent: VisualObserver + Test Manager + ActionExecutor">PlayTester</Term>; <Term def="Retrieval-augmented generation agent with grep/file/bash tools">PlayDeveloper</Term>; <Term def="Automated program repair agent that patches code from compiler, runtime, and PlayTester feedback">PlayRefiner</Term>.
+- <Term def="Automated program repair: automatically generating a patch given a failure signal">APR</Term>; <Term def="Generating code with the surrounding repository (imports, classes, sibling functions) as context, as opposed to a standalone function">repository-aware</Term>; <Term def="A model that generates syntactically valid, API-correct code whose runtime behavior violates the requirement">behavioral / repository hallucination</Term>.
+- <Term def="Inter-rater agreement coefficient; ~0.8 is conventionally 'substantial'">Krippendorff's α</Term>; <Term def="Rank-correlation statistic robust to ties">Kendall's τ-b</Term>.
+- Baselines: <Term def="Structured chain-of-thought prompting with an 8-step reasoning pipeline (Li et al. 2025)">SCoT</Term>, <Term def="Hierarchical Context Pruning: repository-aware prompt construction that prunes non-essential context (Zhang et al., AAAI 2025)">HCPCoder</Term>, <Term def="Role-based multi-agent software company simulation (Hong et al., ICLR 2024)">MetaGPT</Term>, <Term def="Open-source general multi-agent execution framework">OpenManus</Term>, <Term def="HKUDS open agentic coding platform">DeepCode</Term>.
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

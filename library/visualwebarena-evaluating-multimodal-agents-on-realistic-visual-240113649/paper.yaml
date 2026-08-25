@@ -27,6 +27,7 @@ topic_groups:
 - general_agent_methods
 tags:
 - foundational
+- interactive-component-survey
 venue:
   name: arXiv
   tier: workshop_or_minor

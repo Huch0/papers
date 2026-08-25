@@ -1,0 +1,72 @@
+canonical_key: doi-10-18653-v1-2025-naacl-long-232
+version_key: v1
+title: 'C2: Scalable Auto-Feedback for LLM-based Chart Generation'
+authors:
+- W.J. Koh
+- Janghan Yoon
+- M. Lee
+- Y.‐K. Song
+- Jaegwan Cho
+- Ju Yeon Kang
+- Taehyeon Kim
+- Se-Young Yun
+- Youngjae Yu
+- Bongshin Lee
+abstract: 'Woosung Koh, Janghan Yoon, MinHyung Lee, Youngjin Song, Jaegwan Cho, Jaehyun Kang, Taehyeon
+  Kim, Se-Young Yun, Youngjae Yu, Bongshin Lee. Proceedings of the 2025 Conference of the Nations of the
+  Americas Chapter of the Association for Computational Linguistics: Human Language Technologies (Volume
+  1: Long Papers). 2025.'
+venue: Not reported
+year: 2025
+source: openalex
+source_url: https://openalex.org/W4411119316
+pdf_url: https://aclanthology.org/2025.naacl-long.232.pdf
+pdf_sha256: dfe27006d35606ebef3a634a710fc2090ea91a8820fb5feac8a3abbbba5b973a
+fetched_at: '2026-08-25T12:49:34Z'
+source_updated_at: '2025-01-01'
+ids:
+  doi: 10.18653/v1/2025.naacl-long.232
+  arxiv_id: null
+  arxiv_base_id: null
+  arxiv_version: null
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: https://openalex.org/W4411119316
+tags:
+- foundational
+- interactive-component-survey
+topic_groups:
+- interactive_component_synthesis
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: interest_fit(0.73), recency(0.35), venue_quality(0.30) |
+    interests: interactive_component_synthesis:group:interactive_component_synthesis | milestone/foundational
+    floor applied'
+  matched_interests:
+  - interactive_component_synthesis:group:interactive_component_synthesis
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 0.35
+    venue_quality: 0.3
+    harness_relevance: 0.0
+    novelty: 0.0
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/c2-scalable-auto-feedback-for-llm-based-l-long-232/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

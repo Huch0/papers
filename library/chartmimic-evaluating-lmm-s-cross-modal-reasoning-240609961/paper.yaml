@@ -1,0 +1,71 @@
+canonical_key: arxiv-2406.09961
+slug: chartmimic-evaluating-lmm-s-cross-modal-reasoning-240609961
+title: 'ChartMimic: Evaluating LMM''s Cross-Modal Reasoning Capability via Chart-to-Code Generation'
+authors:
+- Cheng Yang
+- Chufan Shi
+- Yaxin Liu
+- Bo Nian Shui
+- Junjie Wang
+- Mohan Jing
+- Linran Xu
+- Xinyu Zhu
+- Siheng Li
+- Yuxiang Zhang
+- Gongye Liu
+- Xiaomei Nie
+- Deng Cai
+- Yujiu Yang
+year: 2024
+primary_ids:
+  doi: 10.48550/arxiv.2406.09961
+  arxiv_base_id: '2406.09961'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: https://openalex.org/W4399759273
+canonical_urls:
+- https://openalex.org/W4399759273
+- https://arxiv.org/pdf/2406.09961
+topic_groups:
+- interactive_component_synthesis
+tags:
+- foundational
+- interactive-component-survey
+venue:
+  name: arXiv (Cornell University)
+  tier: workshop_or_minor
+  status: unknown
+  year: 2024
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: interactive_component_synthesis
+  era: foundational
+  significance: Chart-to-code with visual scoring.
+  subarea: text_to_vis
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: openalex
+  source: openalex
+  source_url: https://openalex.org/W4399759273
+  pdf_path: library/chartmimic-evaluating-lmm-s-cross-modal-reasoning-240609961/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/chartmimic-evaluating-lmm-s-cross-modal-reasoning-240609961/v1/metadata.yaml
+  fetched_at: '2026-08-25T12:49:27Z'
+  source_updated_at: '2024-06-14'
+  arxiv_version: null
+  pdf_sha256: 7b0f53a88692c3827ca73b64405d50d489a1dff9eec686154ee5cac446fb6ea6
+  pdf_bytes: 15847248
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-25T12:49:27Z'
+  updated_at: '2026-08-25T12:49:27Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

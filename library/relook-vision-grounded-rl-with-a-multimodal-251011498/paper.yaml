@@ -1,0 +1,74 @@
+canonical_key: arxiv-2510.11498
+slug: relook-vision-grounded-rl-with-a-multimodal-251011498
+title: 'ReLook: Vision-Grounded RL with a Multimodal LLM Critic for Agentic Web Coding'
+authors:
+- Yuhang Li
+- Chenchen Zhang
+- Ruilin Lv
+- Ao Liu
+- Ken Deng
+- Yuanxing Zhang
+- Jiaheng Liu
+- Wiggin Zhou
+- Bo Zhou
+year: 2025
+primary_ids:
+  doi: null
+  arxiv_base_id: '2510.11498'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2510.11498v1
+- https://arxiv.org/pdf/2510.11498v1
+topic_groups:
+- interactive_component_synthesis
+- llm
+- rl
+- vlm
+tags:
+- foundational
+- feedback-run
+- feedback-visual
+- output-interactive
+- training-rl
+- model-open
+- interactive-component-survey
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2025
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: interactive_component_synthesis
+  era: expansion
+  significance: Trains a small open coding policy from an external visual critic.
+  subarea: interactive_ui
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v1
+  source: arxiv
+  source_url: https://arxiv.org/abs/2510.11498v1
+  pdf_path: library/relook-vision-grounded-rl-with-a-multimodal-251011498/v1/paper.pdf
+  summary_path: library/relook-vision-grounded-rl-with-a-multimodal-251011498/v1/summary.mdx
+  metadata_path: library/relook-vision-grounded-rl-with-a-multimodal-251011498/v1/metadata.yaml
+  fetched_at: '2026-08-25T12:48:51Z'
+  source_updated_at: '2025-10-13T15:05:50Z'
+  arxiv_version: v1
+  pdf_sha256: 61a63322b856be24887a83d7f8acf130e4572769c8418f729e458f6adb7232a7
+  pdf_bytes: 2823889
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-08-25T12:48:51Z'
+  updated_at: '2026-08-25T12:54:36Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

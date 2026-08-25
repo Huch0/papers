@@ -1522,6 +1522,267 @@ fields:
       subarea: rlhf
       significance: Introduced GRPO, the critic-free PPO variant that became the de facto algorithm for RL
         with verifiable rewards on LLMs.
+  interactive_component_synthesis:
+    topic_group: interactive_component_synthesis
+    display_name: Interactive Component Synthesis & Repair
+    path_order: 8
+    emergence_year: 2017
+    description: 'Thesis survey (directions 5+6): execution-grounded synthesis and repair of interactive, stateful
+      visual components (simulators, live plots, widgets) with open-weight models. Sub-areas: exec_feedback_codegen,
+      ui_from_image, interactive_ui, text_to_vis, vlm_critic_probing. Reading order follows the 2026-08-25 deep-research
+      report: WebGrader -> WebGen-Agent -> PlayCoder -> WebRISE -> Interaction2Code -> ReLook.'
+    seeds:
+    - title: 'CodeRL: Mastering Code Generation through Pretrained Models and Deep Reinforcement Learning'
+      year: 2022
+      era: emergence
+      arxiv: '2207.01780'
+      subarea: exec_feedback_codegen
+      significance: 'First RL-from-unit-test training of a code LM; origin of execution-verified rewards.'
+    - title: 'LEVER: Learning to Verify Language-to-Code Generation with Execution'
+      year: 2023
+      era: emergence
+      arxiv: '2302.08468'
+      subarea: exec_feedback_codegen
+      significance: 'Execution-conditioned verifier/reranker; conceptual base for execution critics.'
+    - title: 'Reflexion: Language Agents with Verbal Reinforcement Learning'
+      year: 2023
+      era: emergence
+      arxiv: '2303.11366'
+      subarea: exec_feedback_codegen
+      significance: 'Verbal self-reflection from environment feedback; prompted repair baseline.'
+    - title: 'Teaching Large Language Models to Self-Debug'
+      year: 2023
+      era: emergence
+      arxiv: '2304.05128'
+      subarea: exec_feedback_codegen
+      significance: 'Prompted self-debugging from execution results and explanations.'
+    - title: 'AgentCoder: Multi-Agent-based Code Generation with Iterative Testing and Optimisation'
+      year: 2023
+      era: foundational
+      arxiv: '2312.13010'
+      subarea: exec_feedback_codegen
+      significance: 'Separate test-designer agent supplies the feedback loop.'
+    - title: 'SWE-agent: Agent-Computer Interfaces Enable Automated Software Engineering'
+      year: 2024
+      era: foundational
+      arxiv: '2405.15793'
+      subarea: exec_feedback_codegen
+      significance: 'Agent scaffold with execution feedback on real repositories; ACI design.'
+    - title: 'OpenHands: An Open Platform for AI Software Developers as Generalist Agents'
+      year: 2024
+      era: foundational
+      arxiv: '2407.16741'
+      subarea: exec_feedback_codegen
+      significance: 'Open harness (sandbox + browser) reusable for interactive-artifact experiments.'
+    - title: 'RLEF: Grounding Code LLMs in Execution Feedback with Reinforcement Learning'
+      year: 2024
+      era: foundational
+      arxiv: '2410.02089'
+      subarea: exec_feedback_codegen
+      significance: 'Trains an open model to exploit multi-turn execution feedback with RL; key precedent.'
+    - title: 'S*: Test Time Scaling for Code Generation'
+      year: 2025
+      era: expansion
+      arxiv: '2502.14382'
+      subarea: exec_feedback_codegen
+      significance: 'Test-time scaling with execution-based selection.'
+    - title: 'ReVeal: Self-Evolving Code Agents via Iterative Generation-Verification'
+      year: 2025
+      era: expansion
+      arxiv: '2506.11442'
+      subarea: exec_feedback_codegen
+      significance: 'Generation-verification self-evolution with RL; trained repair loop.'
+    - title: 'pix2code: Generating Code from a Graphical User Interface Screenshot'
+      year: 2017
+      era: emergence
+      arxiv: '1705.07962'
+      subarea: ui_from_image
+      significance: 'Origin of screenshot-to-UI-code.'
+    - title: 'Sketch2Code: Generating a Website from a Paper Mockup'
+      year: 2019
+      era: emergence
+      arxiv: '1910.08930'
+      subarea: ui_from_image
+      significance: 'Hand-drawn mockup to website; sketch input modality.'
+    - title: 'Design2Code: Benchmarking Multimodal Code Generation for Automated Front-End Engineering'
+      year: 2024
+      era: foundational
+      arxiv: '2403.03163'
+      subarea: ui_from_image
+      significance: 'Static screenshot-to-HTML benchmark with visual/DOM metrics and VLM judging.'
+    - title: 'Unlocking the conversion of Web Screenshots into HTML Code with the WebSight Dataset'
+      year: 2024
+      era: foundational
+      arxiv: '2403.09029'
+      subarea: ui_from_image
+      significance: 'Synthetic screenshot-HTML pairs for training open models.'
+    - title: 'UICoder: Finetuning Large Language Models to Generate User Interface Code through Automated Feedback'
+      year: 2024
+      era: foundational
+      arxiv: '2406.07739'
+      subarea: ui_from_image
+      significance: 'Compiler + visual feedback bootstraps an open UI-code model without human UI data.'
+    - title: 'Web2Code: A Large-scale Webpage-to-Code Dataset and Evaluation Framework for Multimodal LLMs'
+      year: 2024
+      era: foundational
+      arxiv: '2406.20098'
+      subarea: ui_from_image
+      significance: 'Large webpage-to-code dataset + evaluation framework.'
+    - title: 'DeclarUI: Bridging Design and Development with Automated Declarative UI Code Generation'
+      year: 2024
+      era: expansion
+      arxiv: '2409.11667'
+      subarea: ui_from_image
+      significance: 'Design-to-declarative-UI with component/navigation structure.'
+    - title: 'Interaction2Code: Benchmarking MLLM-based Interactive Webpage Code Generation from Interactive Prototyping'
+      year: 2024
+      era: foundational
+      arxiv: '2411.03292'
+      subarea: interactive_ui
+      significance: 'Defines interaction-to-code; shows static screenshots are insufficient.'
+    - title: 'WebGen-Bench: Evaluating LLMs on Generating Interactive and Functional Websites from Scratch'
+      year: 2025
+      era: expansion
+      arxiv: '2505.03733'
+      subarea: interactive_ui
+      significance: 'Operation -> expected-outcome behavioral evaluation of generated websites.'
+    - title: 'ArtifactsBench: Bridging the Visual-Interactive Gap in LLM Code Generation Evaluation'
+      year: 2025
+      era: expansion
+      arxiv: '2507.04952'
+      subarea: interactive_ui
+      significance: 'Visual-interactive artifact tasks with a validated MLLM-judge protocol.'
+    - title: 'WebGen-Agent: Enhancing Interactive Website Generation with Multi-Level Feedback and Step-Level Reinforcement Learning'
+      year: 2025
+      era: expansion
+      arxiv: '2509.22644'
+      subarea: interactive_ui
+      significance: 'Step-GRPO on a 7B open code model with screenshot + GUI-agent functional feedback.'
+    - title: 'ReLook: Vision-Grounded RL with a Multimodal LLM Critic for Agentic Web Coding'
+      year: 2025
+      era: expansion
+      arxiv: '2510.11498'
+      subarea: interactive_ui
+      significance: 'Trains a small open coding policy from an external visual critic.'
+    - title: 'PlayCoder: Making LLM-Generated GUI Code Playable'
+      year: 2026
+      era: recent
+      arxiv: '2604.19742'
+      subarea: interactive_ui
+      significance: 'Active GUI probing + execution-trace repair of silent state/event bugs (prompted).'
+    - title: 'Coding with Eyes: Visual Feedback Unlocks Reliable GUI Code Generating and Debugging'
+      year: 2026
+      era: recent
+      arxiv: '2604.19750'
+      subarea: interactive_ui
+      significance: 'VF-Coder: visual feedback for GUI code generation and debugging.'
+    - title: 'Play2Code: GUI Agents for Continual Game Generation'
+      year: 2026
+      era: recent
+      arxiv: '2605.28258'
+      subarea: interactive_ui
+      significance: 'GUI agent plays generated interactive artifacts to drive repair.'
+    - title: 'WebRISE: Requirement-Induced State Evaluation for MLLM-Generated Web Artifacts'
+      year: 2026
+      era: recent
+      arxiv: '2606.03220'
+      subarea: interactive_ui
+      significance: 'Interaction-contract graph (states, transitions, assertions); visual fidelity != behavioral correctness.'
+    - title: 'WebGrader: Training LLMs for Web Development with Self-Evolving Programmatic Grader'
+      year: 2026
+      era: recent
+      arxiv: '2608.06474'
+      subarea: interactive_ui
+      significance: 'Nearest prior: 8B policy, SFT+GRPO from requirement-conditioned browser interactions incl. persistent state.'
+    - title: 'nvBench: A Large-Scale Synthesized Dataset for Cross-Domain Natural Language to Visualization Task'
+      year: 2021
+      era: emergence
+      arxiv: '2112.12926'
+      subarea: text_to_vis
+      significance: 'NL-to-visualization benchmark; static charts.'
+    - title: 'MatPlotAgent: Method and Evaluation for LLM-Based Agentic Scientific Data Visualization'
+      year: 2024
+      era: foundational
+      arxiv: '2402.11453'
+      subarea: text_to_vis
+      significance: 'Canonical visual-feedback repair loop for plotting code.'
+    - title: 'Plot2Code: A Comprehensive Benchmark for Evaluating Multi-modal Large Language Models in Code Generation from Scientific Plots'
+      year: 2024
+      era: foundational
+      arxiv: '2405.07990'
+      subarea: text_to_vis
+      significance: 'Plot image -> code benchmark.'
+    - title: 'ChartMimic: Evaluating LMM''s Cross-Modal Reasoning Capability via Chart-to-Code Generation'
+      year: 2024
+      era: foundational
+      arxiv: '2406.09961'
+      subarea: text_to_vis
+      significance: 'Chart-to-code with visual scoring.'
+    - title: 'VisEval: A Benchmark for Data Visualization in the Era of Large Language Models'
+      year: 2024
+      era: foundational
+      subarea: text_to_vis
+      significance: 'NL2VIS evaluation with validity/legality/readability checks.'
+    - title: 'C2: Scalable Auto-Feedback for LLM-based Chart Generation'
+      year: 2024
+      era: expansion
+      arxiv: '2410.18652'
+      subarea: text_to_vis
+      significance: 'Automatic visual feedback for chart generation at scale.'
+    - title: 'ChartCoder: Advancing Multimodal Large Language Model for Chart-to-Code Generation'
+      year: 2025
+      era: expansion
+      arxiv: '2501.06598'
+      subarea: text_to_vis
+      significance: 'Open chart-to-code model trained on synthetic data.'
+    - title: 'ChartMaster: Advancing Chart-to-Code Generation with Real-World Charts and Chart Similarity Reinforcement Learning'
+      year: 2025
+      era: expansion
+      arxiv: '2508.17608'
+      subarea: text_to_vis
+      significance: '7B GRPO recipe with rendered visual-code rewards (static).'
+    - title: 'UniCoder: Unified Chart-to-Code Generation via Symbolic Rewards and Reference-Guided Code Optimization'
+      year: 2026
+      era: recent
+      arxiv: '2606.31732'
+      subarea: text_to_vis
+      significance: 'Dense symbolic rewards; explicitly static-only - articulates the gap.'
+    - title: 'MLLM-as-a-Judge: Assessing Multimodal LLM-as-a-Judge with Vision-Language Benchmark'
+      year: 2024
+      era: foundational
+      arxiv: '2402.04788'
+      subarea: vlm_critic_probing
+      significance: 'Reliability limits of multimodal judges.'
+    - title: 'VisualWebArena: Evaluating Multimodal Agents on Realistic Visual Web Tasks'
+      year: 2024
+      era: foundational
+      arxiv: '2401.13649'
+      subarea: vlm_critic_probing
+      significance: 'Probing machinery: multimodal agents operating running web UIs.'
+    - title: 'OSWorld: Benchmarking Multimodal Agents for Open-Ended Tasks in Real Computer Environments'
+      year: 2024
+      era: foundational
+      arxiv: '2404.07972'
+      subarea: vlm_critic_probing
+      significance: 'Real-computer environments with execution-based checks.'
+    - title: 'Multi-Agent Collaboration for Automated Web GUI Testing'
+      year: 2025
+      era: expansion
+      arxiv: '2506.00520'
+      subarea: vlm_critic_probing
+      significance: 'Software-testing source of probe strategies for running GUIs.'
+    - title: 'Visual-ERM: Reward Modeling for Visual Equivalence'
+      year: 2026
+      era: recent
+      arxiv: '2603.13224'
+      subarea: vlm_critic_probing
+      significance: 'Trains a compact visual critic instead of CLIP or a huge generic VLM.'
+    - title: 'DiagEval: Grounded Diagnosis for Reliable GUI-Agent Evaluation of Interactive Software'
+      year: 2026
+      era: recent
+      arxiv: '2605.17439'
+      subarea: vlm_critic_probing
+      significance: 'Grounded diagnosis for GUI-agent evaluation of interactive software.'
 discovery:
   per_field_suggestions: 15
   min_influential_citations: 25

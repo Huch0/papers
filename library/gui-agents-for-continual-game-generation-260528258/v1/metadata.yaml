@@ -1,0 +1,86 @@
+canonical_key: arxiv-2605.28258
+version_key: v1
+title: GUI Agents for Continual Game Generation
+authors:
+- Yixu Huang
+- Bo Li
+- Na Li
+- Zhe Wang
+- Kaijie Chen
+- Haonan Ge
+- Qingyi Si
+- Yuanzhe Shen
+- Ruihan Yang
+- Guangjing Wang
+- Hongcheng Guo
+abstract: 'Generating a game is not the same as making one that can be played. Despite advances in code
+  generation, existing approaches treat game generation as one-shot translation from prompt to artifact,
+  leaving interaction-level failures undetected. We argue that evaluating and improving game generation
+  requires a player, and study two roles for graphical user interface (GUI) agents in this process: (1)
+  as an objective evaluator, for which we introduce PlaytestArena, a new evaluation environment that pairs
+  200 browser-based game generation tasks across eight genres with rubrics of expected in-play behaviors,
+  adjudicated by a GUI agent that loads each build in a browser and plays it; and (2) as a subjective
+  playtester, for which we propose Play2Code, where a game agent and a GUI agent operate in a sustained
+  loop with shared memory, turning game generation into a dialogue between coding and playing. Our experiments
+  show that even frontier models struggle to generate playable games directly, while Play2Code achieves
+  a 66.8\% rubric pass-rate, improving over single-pass and agentic-coding baselines by 37.1 and 14.6
+  points respectively. Further analysis shows that GUI playtester feedback is more traceable than a human
+  report, yet idiosyncratic in ways reminiscent of human testers, establishing game playtesting as a critical
+  testbed for interactive code generation. Our project website is available at https://continual-game-generation.vercel.app/.'
+venue: arXiv
+year: 2026
+source: arxiv
+source_url: https://arxiv.org/abs/2605.28258v1
+pdf_url: https://arxiv.org/pdf/2605.28258v1
+pdf_sha256: 8e3f708dd4cc272f1f67bc3c95601660ea28aa36e9a45a2965d7324b75020ced
+fetched_at: '2026-08-25T12:49:02Z'
+source_updated_at: '2026-05-27T10:08:48Z'
+ids:
+  doi: null
+  arxiv_id: 2605.28258v1
+  arxiv_base_id: '2605.28258'
+  arxiv_version: v1
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+- interactive-component-survey
+topic_groups:
+- computer_use_agents
+- interactive_component_synthesis
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: interest_fit(0.91), recency(0.86), novelty(0.55) | interests:
+    computer_use_agents:GUI agent, computer_use_agents:group:computer_use_agents, interactive_component_synthesis:group:interactive_component_synthesis
+    | milestone/foundational floor applied'
+  matched_interests:
+  - computer_use_agents:GUI agent
+  - computer_use_agents:group:computer_use_agents
+  - interactive_component_synthesis:group:interactive_component_synthesis
+  negative_signals: []
+  subscores:
+    interest_fit: 0.91
+    recency: 0.855
+    venue_quality: 0.4
+    harness_relevance: 0.52
+    novelty: 0.55
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/gui-agents-for-continual-game-generation-260528258/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

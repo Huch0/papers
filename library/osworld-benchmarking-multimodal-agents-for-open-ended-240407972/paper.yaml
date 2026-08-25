@@ -34,6 +34,7 @@ topic_groups:
 - computer_use_agents
 tags:
 - foundational
+- interactive-component-survey
 venue:
   name: NeurIPS
   tier: A_star

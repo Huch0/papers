@@ -45,6 +45,7 @@ ids:
   openalex_id: null
 tags:
 - foundational
+- interactive-component-survey
 topic_groups:
 - computer_use_agents
 - general_agent_methods

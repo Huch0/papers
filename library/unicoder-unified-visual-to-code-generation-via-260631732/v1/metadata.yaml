@@ -1,0 +1,89 @@
+canonical_key: arxiv-2606.31732
+version_key: v1
+title: 'UniCoder: Unified Visual-to-Code Generation via Symbolic Rewards and Reference-Guided Code Optimization'
+authors:
+- Yaozhi Zheng
+- Yilei Jiang
+- Manyuan Zhang
+- Yuxuan Wan
+- Kaituo Feng
+- Tianshuo Peng
+- Bo Zhang
+- Xiangyu Yue
+abstract: 'Visual-to-Code generation, which transforms scientific plots, vector graphics, and webpages
+  into executable scripts, demands a level of pixel-precise alignment that standard Multimodal Large Language
+  Models (MLLMs) fail to achieve through Supervised Fine-Tuning (SFT) alone. While Reinforcement Learning
+  (RL) offers a theoretical pathway to bridge this gap, its application is hindered by two fundamental
+  obstacles: (1) \textit{Reward Coarseness}, where semantic metrics like CLIP scores fail to penalize
+  fine-grained element deviations, and (2) \textit{Exploration Stagnation}, where the sparse, heterogeneous
+  code search space prevents the policy from bootstrapping valid trajectories. To overcome these limitations,
+  we introduce UniCoder, a unified RL framework that integrates two novel mechanisms. First, we propose
+  \textbf{Symbolic Attribute Alignment}, which employs a lightweight auxiliary LLM to parse generated
+  code into discrete visual attributes (e.g., hex colors, coordinate limits), enabling dense, element-wise
+  reward computation. Second, to escape local optima, we devise \textbf{Reference-Guided Code Optimization},
+  a strategy that dynamically injects ground-truth trajectories into low-performing rollout groups, transforming
+  blind exploration into guided policy improvement. Extensive experiments on ChartMimic, UniSVG, Design2Code
+  and ScreenBench benchmarks demonstrate that our 8B-parameter model not only surpasses all open-source
+  baselines but also achieves state-of-the-art performance comparable to proprietary models, establishing
+  a new paradigm for generalized visual-to-code synthesis.'
+venue: arXiv
+year: 2026
+source: arxiv
+source_url: https://arxiv.org/abs/2606.31732v1
+pdf_url: https://arxiv.org/pdf/2606.31732v1
+pdf_sha256: bf66e200cc3097cc11611168f24b2a65d133171c436aca26a942d46ecf192fc8
+fetched_at: '2026-08-25T12:49:55Z'
+source_updated_at: '2026-06-30T14:29:48Z'
+ids:
+  doi: null
+  arxiv_id: 2606.31732v1
+  arxiv_base_id: '2606.31732'
+  arxiv_version: v1
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+- interactive-component-survey
+topic_groups:
+- interactive_component_synthesis
+- llm
+- rl
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: novelty(1.00), recency(0.92), interest_fit(0.73) | interests:
+    llm:large language model, llm:group:llm, rl:reinforcement learning, rl:exploration | milestone/foundational
+    floor applied'
+  matched_interests:
+  - llm:large language model
+  - llm:group:llm
+  - rl:reinforcement learning
+  - rl:exploration
+  - rl:group:rl
+  - interactive_component_synthesis:group:interactive_component_synthesis
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 0.92
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 1.0
+    artifact_availability: 0.55
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/unicoder-unified-visual-to-code-generation-via-260631732/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

@@ -1,0 +1,97 @@
+canonical_key: arxiv-2406.20098
+version_key: v1
+title: 'Web2Code: A Large-scale Webpage-to-Code Dataset and Evaluation Framework for Multimodal LLMs'
+authors:
+- Sukmin Yun
+- Haokun Lin
+- Rusiru Thushara
+- Mohammad Qazim Bhat
+- Yongxin Wang
+- Zutao Jiang
+- Mingkai Deng
+- Jinhong Wang
+- Tianhua Tao
+- Junbo Li
+- Haonan Li
+- Preslav Nakov
+- Timothy Baldwin
+- Zhengzhong Liu
+- Eric P. Xing
+- Xiaodan Liang
+- Zhiqiang Shen
+abstract: Multimodal large language models (MLLMs) have shown impressive success across modalities such
+  as image, video, and audio in a variety of understanding and generation tasks. However, current MLLMs
+  are surprisingly poor at understanding webpage screenshots and generating their corresponding HTML code.
+  To address this problem, we propose $\texttt{Web2Code}$, a benchmark consisting of a new large-scale
+  webpage-to-code dataset for instruction tuning and an evaluation framework for the webpage understanding
+  and HTML code translation abilities of MLLMs. For dataset construction, we leverage pretrained LLMs
+  to enhance existing webpage-to-code datasets as well as generate a diverse pool of new webpages rendered
+  into images. Specifically, the inputs are webpage images and instructions, while the responses are the
+  webpage's HTML code. We further include diverse natural language QA pairs about the webpage content
+  in the responses to enable a more comprehensive understanding of the web content. To evaluate model
+  performance in these tasks, we develop an evaluation framework for testing MLLMs' abilities in webpage
+  understanding and web-to-code generation. Extensive experiments show that our proposed dataset is beneficial
+  not only to our proposed tasks but also in the general visual domain. We hope our work will contribute
+  to the development of general MLLMs suitable for web-based content generation and task automation. Our
+  data and code are available at https://github.com/MBZUAI-LLM/web2code.
+venue: arXiv
+year: 2024
+source: arxiv
+source_url: https://arxiv.org/abs/2406.20098v2
+pdf_url: https://arxiv.org/pdf/2406.20098v2
+pdf_sha256: 8e9364dce090832565c8d1640c13cd1b6cdf2bb1290707f19b541449f686d830
+fetched_at: '2026-08-25T12:48:24Z'
+source_updated_at: '2024-11-17T16:11:00Z'
+ids:
+  doi: null
+  arxiv_id: 2406.20098v2
+  arxiv_base_id: '2406.20098'
+  arxiv_version: v2
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+- interactive-component-survey
+topic_groups:
+- interactive_component_synthesis
+- llm
+- vlm
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: interest_fit(0.73), artifact_availability(0.55), venue_quality(0.40)
+    | interests: llm:large language model, llm:instruction tuning, llm:group:llm, vlm:multimodal LLM |
+    milestone/foundational floor applied'
+  matched_interests:
+  - llm:large language model
+  - llm:instruction tuning
+  - llm:group:llm
+  - vlm:multimodal LLM
+  - vlm:group:vlm
+  - interactive_component_synthesis:group:interactive_component_synthesis
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 0.0
+    artifact_availability: 0.55
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/web2code-a-large-scale-webpage-to-code-240620098/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

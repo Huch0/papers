@@ -1,0 +1,64 @@
+canonical_key: arxiv-2506.00520
+slug: temac-multi-agent-collaboration-for-automated-web-250600520
+title: 'Temac: Multi-Agent Collaboration for Automated Web GUI Testing'
+authors:
+- Chenxu Liu
+- Zhiyu Gu
+- Guoquan Wu
+- Ying Zhang
+- Jun Wei
+- Tao Xie
+year: 2025
+primary_ids:
+  doi: null
+  arxiv_base_id: '2506.00520'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2506.00520v1
+- https://arxiv.org/pdf/2506.00520v1
+topic_groups:
+- interactive_component_synthesis
+- llm
+tags:
+- foundational
+- interactive-component-survey
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2025
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: interactive_component_synthesis
+  era: expansion
+  significance: Software-testing source of probe strategies for running GUIs.
+  subarea: vlm_critic_probing
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v1
+  source: arxiv
+  source_url: https://arxiv.org/abs/2506.00520v1
+  pdf_path: library/temac-multi-agent-collaboration-for-automated-web-250600520/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/temac-multi-agent-collaboration-for-automated-web-250600520/v1/metadata.yaml
+  fetched_at: '2026-08-25T12:50:02Z'
+  source_updated_at: '2025-05-31T11:43:37Z'
+  arxiv_version: v1
+  pdf_sha256: 2d35858ddb2d8d0068772aee883a0d2452349c54e5ea1e4d892e88a182af9768
+  pdf_bytes: 853191
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-25T12:50:02Z'
+  updated_at: '2026-08-25T12:50:02Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

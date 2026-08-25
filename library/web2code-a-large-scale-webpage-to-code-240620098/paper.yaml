@@ -1,0 +1,76 @@
+canonical_key: arxiv-2406.20098
+slug: web2code-a-large-scale-webpage-to-code-240620098
+title: 'Web2Code: A Large-scale Webpage-to-Code Dataset and Evaluation Framework for Multimodal LLMs'
+authors:
+- Sukmin Yun
+- Haokun Lin
+- Rusiru Thushara
+- Mohammad Qazim Bhat
+- Yongxin Wang
+- Zutao Jiang
+- Mingkai Deng
+- Jinhong Wang
+- Tianhua Tao
+- Junbo Li
+- Haonan Li
+- Preslav Nakov
+- Timothy Baldwin
+- Zhengzhong Liu
+- Eric P. Xing
+- Xiaodan Liang
+- Zhiqiang Shen
+year: 2024
+primary_ids:
+  doi: null
+  arxiv_base_id: '2406.20098'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2406.20098v2
+- https://arxiv.org/pdf/2406.20098v2
+topic_groups:
+- interactive_component_synthesis
+- llm
+- vlm
+tags:
+- foundational
+- interactive-component-survey
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2024
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: interactive_component_synthesis
+  era: foundational
+  significance: Large webpage-to-code dataset + evaluation framework.
+  subarea: ui_from_image
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v2
+  source: arxiv
+  source_url: https://arxiv.org/abs/2406.20098v2
+  pdf_path: library/web2code-a-large-scale-webpage-to-code-240620098/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/web2code-a-large-scale-webpage-to-code-240620098/v1/metadata.yaml
+  fetched_at: '2026-08-25T12:48:25Z'
+  source_updated_at: '2024-11-17T16:11:00Z'
+  arxiv_version: v2
+  pdf_sha256: 8e9364dce090832565c8d1640c13cd1b6cdf2bb1290707f19b541449f686d830
+  pdf_bytes: 8170973
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-25T12:48:25Z'
+  updated_at: '2026-08-25T12:48:25Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

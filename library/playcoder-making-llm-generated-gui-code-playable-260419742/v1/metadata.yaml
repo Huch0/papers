@@ -1,0 +1,94 @@
+canonical_key: arxiv-2604.19742
+version_key: v1
+title: 'PlayCoder: Making LLM-Generated GUI Code Playable'
+authors:
+- Zhiyuan Peng
+- Wei Tao
+- Xin Yin
+- Chenhao Ying
+- Yuan Luo
+- Yiwen Guo
+abstract: Large language models (LLMs) have achieved strong results in code generation, but their ability
+  to generate GUI applications, especially games, remains insufficiently studied. Existing benchmarks
+  mainly evaluate correctness through test cases, which are inadequate for GUI applications because these
+  systems are interactive, event-driven, and require correct state transitions across sequences of user
+  actions. Their evaluation therefore should consider interaction flows and UI logic rather than only
+  pass/fail outcomes. To study this problem, we introduce PlayEval, a repository-aware benchmark built
+  from 43 multilingual GUI applications in Python, TypeScript, and JavaScript. Unlike prior GUI benchmarks
+  that are difficult to adapt to desktop environments, PlayEval covers six major GUI application categories
+  and directly supports code-generation evaluation. We further propose Play@k, a metric that measures
+  whether at least one of *k* generated candidates can be played end-to-end without logical errors. To
+  support reliable evaluation, we develop PlayTester, an LLM-based agent that performs task-oriented GUI
+  playthroughs and detects logic violations automatically. Experiments on 10 state-of-the-art code LLMs
+  show that, despite high compilation rates, they achieve near-zero Play@3, revealing major weaknesses
+  in generating logically correct GUI applications. To address this limitation, we present PlayCoder,
+  a multi-agent, repository-aware framework that generates, evaluates, and iteratively repairs GUI application
+  code in a closed loop. PlayCoder substantially improves both functional correctness and semantic alignment
+  for open-source and closed-source models, reaching up to 38.1% Exec@3 and 20.3% Play@3. Case studies
+  further show that it can uncover silent logic bugs missed by traditional metrics and fix them through
+  targeted edits.
+venue: arXiv
+year: 2026
+source: arxiv
+source_url: https://arxiv.org/abs/2604.19742v1
+pdf_url: https://arxiv.org/pdf/2604.19742v1
+pdf_sha256: f73bd9afc8487a837d07903d8dea867073a9fb3858e1b641b77c1ba0380ce45a
+fetched_at: '2026-08-25T12:48:54Z'
+source_updated_at: '2026-04-21T17:59:16Z'
+ids:
+  doi: null
+  arxiv_id: 2604.19742v1
+  arxiv_base_id: '2604.19742'
+  arxiv_version: v1
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+- interactive-component-survey
+- feedback-run
+- feedback-visual
+- feedback-behavioral
+- output-interactive
+- training-prompt
+- model-open
+- model-closed
+topic_groups:
+- interactive_component_synthesis
+- llm
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: novelty(0.80), recency(0.79), interest_fit(0.73) | interests:
+    llm:large language model, llm:group:llm, interactive_component_synthesis:group:interactive_component_synthesis
+    | milestone/foundational floor applied'
+  matched_interests:
+  - llm:large language model
+  - llm:group:llm
+  - interactive_component_synthesis:group:interactive_component_synthesis
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 0.787
+    venue_quality: 0.4
+    harness_relevance: 0.36
+    novelty: 0.8
+    artifact_availability: 0.55
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/playcoder-making-llm-generated-gui-code-playable-260419742/v1/paper.pdf
+  extraction: library/playcoder-making-llm-generated-gui-code-playable-260419742/v1/extraction.txt
+  summary: library/playcoder-making-llm-generated-gui-code-playable-260419742/v1/summary.mdx
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread
+  summary_format: mdx

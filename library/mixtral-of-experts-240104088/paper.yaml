@@ -65,17 +65,17 @@ versions:
   source: arxiv
   source_url: https://arxiv.org/abs/2401.04088v1
   pdf_path: library/mixtral-of-experts-240104088/v1/paper.pdf
-  summary_path: null
+  summary_path: library/mixtral-of-experts-240104088/v1/summary.mdx
   metadata_path: library/mixtral-of-experts-240104088/v1/metadata.yaml
   fetched_at: '2026-08-24T03:21:27Z'
   source_updated_at: '2024-01-08T18:47:34Z'
   arxiv_version: v1
   pdf_sha256: f8bbf0e9d979b7a8ce7be65119266545a229a85b57e077d8bd048e458bb642da
   pdf_bytes: 2475990
-  summary_status: none
-  extraction_status: none
+  summary_status: full
+  extraction_status: full
   created_at: '2026-08-24T03:21:27Z'
-  updated_at: '2026-08-24T03:21:27Z'
+  updated_at: '2026-08-25T06:36:15Z'
 relations:
   duplicate_candidates: []
   related_papers: []

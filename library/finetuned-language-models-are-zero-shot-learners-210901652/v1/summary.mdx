@@ -1,0 +1,127 @@
+---
+canonical_key: arxiv-2109.01652
+version_key: v1
+title: Finetuned Language Models Are Zero-Shot Learners
+authors:
+- Jason Wei
+- Maarten Bosma
+- Vincent Y. Zhao
+- Kelvin Guu
+- Adams Wei Yu
+- Brian Lester
+- Nan Du
+- Andrew M. Dai
+- Quoc V. Le
+venue: arXiv
+year: 2021
+tags:
+- foundational
+topic_groups:
+- llm
+triage_label: READ_SOON
+triage_confidence: medium
+source_link: https://arxiv.org/abs/2109.01652v5
+summary_date: '2026-08-25'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>Finetuning a 137B LM on 62 existing NLP datasets rewritten as natural-language instructions ("instruction tuning") teaches it the *interface* of following instructions, so it performs task types it never saw in tuning — zero-shot FLAN beats zero-shot GPT-3 175B on 20 of 25 datasets — but the effect only appears above tens of billions of parameters and actively hurts smaller models.</TLDR>
+
+<WhyItMatters>This is the paper that turned "prompt engineering around a raw LM" into "align the LM to instructions once, then just ask" — the supervised half of the recipe that InstructGPT completes with RLHF. On the LLM milestone path it is the bridge from GPT-3's in-context learning to modern chat models, and the source of the instruction-tuning scaling threshold every later FLAN/T0-style work builds on.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "20/25", label: "datasets where zero-shot FLAN beats zero-shot GPT-3 175B", sub: "best-dev template; beats few-shot GPT-3 on 10 (§3)" },
+  { value: "62", label: "datasets in 12 task clusters", sub: "10 manual instruction templates each (§2.1)" },
+  { value: "137B", label: "base model (LaMDA-PT)", sub: "decoder-only, 2.49T pretraining tokens (§2.4)" },
+  { value: "≥68B", label: "scale where tuning helps", sub: "at 8B and below it hurts unseen-task performance (Fig.7)" },
+  { value: "~2%", label: "extra compute vs pretraining", sub: "30k steps, ~60h on 128 TPUv3 cores (§2.4)" },
+]} />
+
+## Motivation
+GPT-3 made few-shot prompting work, but <Problem>its zero-shot performance lags far behind few-shot on reading comprehension, QA, and NLI</Problem> (§1). The suspected mechanism: <Problem>a raw LM only completes text, so a zero-shot prompt must masquerade as pretraining-like data; formats that never occur naturally on the web — "Premise: ... Hypothesis: ... true, false, or neither?" — are awkward continuations the model has never practiced</Problem> (§1, App.E). That keeps large LMs in the hands of prompt engineers: <Problem>asking in plain language, the way you would instruct a person, mostly fails on an untuned model</Problem> — given "'The dog runs.' Translate this sentence to French.", LaMDA-PT continues "The dog runs after the cat" instead of translating (App.E).
+
+## Contribution (what's new)
+The delta is not a model or an objective — it is the demonstration that <Novelty>a small amount of supervised multi-task finetuning, with every task *verbalized as a natural-language instruction*, installs a general instruction-following interface that transfers to task types held out entirely from tuning</Novelty> (§2). The design is forced end to end: transfer must be measured on genuinely unseen *task types*, so datasets are grouped into 12 clusters and the evaluated cluster is fully held out (evaluating NLI means tuning on no NLI dataset at all, §2.2); and the instructions must be the load-bearing part, which the ablations confirm — <Novelty>finetuning on the same data without instructions (inputs/outputs only, or dataset-name tags) loses 8–18 points, so multi-task finetuning alone is not the mechanism</Novelty> (Fig.8, Tab.3). Two lasting empirical laws come out: benefits grow with the number of tuning clusters without saturating, and they *invert* below a scale threshold (§4.1–4.2).
+
+## Research questions
+1. Does instruction tuning improve zero-shot performance on task types never seen in finetuning? (§3)
+2. What drives it — task diversity, model scale, or the instructions themselves? (§4.1–4.3)
+3. Does it compose with the other adaptation tools — few-shot exemplars and prompt tuning? (§4.4–4.5)
+
+## Methodology
+Take LaMDA-PT (137B dense decoder-only, pretrained on 2.49T tokens of web text, code, dialog, Wikipedia; ~10% non-English) and finetune 30k steps (batch 8,192 tokens, Adafactor, lr 3e-5) on a mixture of 62 TFDS datasets, capped at 30k examples each — about 2% of pretraining compute (§2.4). Each dataset gets ten hand-written templates (up to three "turn the task around", e.g. generate a movie review from a label) and each training example is rendered through a random one (§2.1). The running example: the same CB item that GPT-3 sees as a continuation puzzle becomes, for FLAN, "Premise: ... Hypothesis: ... Does the premise entail the hypothesis? OPTIONS: yes / it is not possible to tell / no" (Fig.1, App.E). Classification tasks append that <Term def="a suffix listing the legal answer strings, so free-text generation lands on a valid class instead of splitting probability across paraphrases of the answer">OPTIONS suffix</Term> (§2.3). Evaluation reports the mean over all templates (the honest "typical instruction" number) plus the best-dev-template number (the prompt-engineered comparison to GPT-3) (§3).
+
+<Pass title="Method details (clusters, splits, evaluation mechanics)">
+**Clusters** (Fig.3): NLI (7 datasets), reading comprehension (5), closed-book QA (3), commonsense (4), coreference (3), sentiment (4), paraphrase (4), struct-to-text (4), translation (8 pairs), summarization (11), reading-comp-with-commonsense (2), miscellaneous (7).
+
+**Unseen definition** (§2.2): dataset D is unseen only if *no dataset from any of D's clusters* was tuned on; evaluating c clusters therefore requires c separately tuned checkpoints. Overlapping clusters are co-dropped (paraphrase dropped when evaluating NLI and vice versa; both reading comprehension and commonsense dropped when evaluating their hybrid cluster).
+
+**Mixing**: examples-proportional with a 3k mixing-rate cap; inputs 1024 / targets 256 tokens, packed with EOS separators. Summarization is tuned on but never evaluated — most summarization inputs exceed the 1024-token context (App.A).
+
+**Baselines**: untuned LaMDA-PT is prompted with GPT-3's published prompts (its own instructions fail without tuning) — this is the direct ablation for instruction tuning; GPT-3 175B and GLaM 64B/64E numbers are copied from their papers, so those are cross-model comparisons. Generation uses greedy decoding (GPT-3 used beam search). GPT-3's "zero-shot" DROP/SQuADv2 actually used same-passage exemplars, so those two are non-comparable (App.A).
+</Pass>
+
+## Main result
+With the best dev template, <Finding src="§3">zero-shot FLAN beats zero-shot GPT-3 on 20 of 25 datasets, beats few-shot GPT-3 on 10, and beats zero-shot GLaM 64B/64E on 13 of 19</Finding>. Aggregated over the clusters where instructions matter (Fig.1): NLI 56.2 vs GPT-3's 42.9 zero / 53.2 few; reading comprehension 77.4 vs 63.7 / 72.6; closed-book QA 56.6 vs 49.8 / 55.7. Per dataset (FLAN numbers are the average-template ones — the harder, honest setting):
+
+<SortableTable columns={["Dataset", "FLAN 137B zero-shot", "GPT-3 zero-shot", "GPT-3 few-shot", "Reading"]} rows={[
+  ["ANLI R1", 47.7, 34.6, 36.8, "beats even few-shot (Tab.2)"],
+  ["RTE", 78.3, 63.5, 72.9, "beats few-shot"],
+  ["BoolQ", 80.2, 60.5, 77.5, "beats few-shot"],
+  ["OpenbookQA", 77.4, 57.6, 65.4, "beats few-shot by 12"],
+  ["ARC-challenge", 61.7, 51.4, 51.5, "beats few-shot"],
+  ["StoryCloze", 92.2, 83.2, 87.7, "beats few-shot"],
+  ["TriviaQA (wiki)", 66.5, 64.3, 71.2, "beats zero, not few"],
+  ["Natural Questions", 18.6, 14.6, 29.9, "few-shot GPT-3 far ahead"],
+  ["Winogrande", 67.3, 70.2, 77.7, "FLAN loses"],
+  ["HellaSwag", 56.4, 78.9, 79.3, "FLAN loses badly"],
+  ["ReCoRD", 67.8, 90.2, 89.0, "FLAN loses badly (contam. asterisk)"],
+]} />
+
+The pattern in the losses is the paper's own diagnosis: <Finding src="§3">instruction tuning helps where an instruction adds information (NLI, QA, translation, struct-to-text) and does not help — FLAN beats untuned LaMDA-PT on only 3 of 7 — where the task is already pure language modeling (sentence-completion commonsense, coreference), because there the instruction is redundant</Finding>.
+
+## Key findings
+- <Finding src="Fig.7, §4.2">Instruction tuning has a scale threshold: it *hurts* unseen-task performance for 422M–8B models and only helps at 68B and 137B</Finding>. Proposed mechanism: small models spend all capacity learning the ~40 tuning tasks; large models learn the instruction-following skill with capacity to spare. This is the paper's most consequential finding for the field.
+- <Finding src="Fig.6, §4.1">More task clusters → better unseen-task performance, with no saturation at 7 clusters</Finding> (average 49.9 → 63.5 from 1 to 7 clusters); sentiment adds almost nothing. Diversity of *tasks*, not prompts, is the lever: 1 → 4 datasets per cluster adds ~10 points, while 1 vs 4 vs 10 templates per dataset is nearly irrelevant (Fig.11, App.B.1) — a surprise given the ten-template design was meant to prevent template overfitting.
+- <Finding src="Fig.8, Tab.3">The instructions themselves are causal</Finding>: same multi-task tuning with input/output only scores 37.3, with dataset-name tags 46.6–47.0, with natural instructions 55.2 (4-cluster average) — so cross-task generalization does not come from multi-task finetuning per se.
+- <Finding src="Fig.9, §4.4">Instruction tuning and in-context exemplars compose</Finding>: adding up to 16 exemplars improves every cluster (largest for complex output spaces, e.g. struct-to-text 39.2 → 49.4) and shrinks the across-template standard deviation — instruction-tuned models are less prompt-sensitive.
+- <Finding src="Fig.10, §4.5">Instruction tuning produces a better checkpoint for parameter-efficient adaptation</Finding>: prompt tuning on FLAN reaches 78.1 vs 63.8 SuperGLUE dev average with only 32 examples (87.4 vs 79.1 with full data).
+- <Finding src="App.C, Tab.5">Contamination does not explain the gains</Finding>: with GPT-3's own 13-gram procedure, clean-subset performance shows no downward correlation; ANLI R1/R2 and DROP/SQuADv2 are almost fully "dirty" but overlaps are context-only (97–99.6%); only ReCoRD and PIQA (language-modeling-shaped, where a seen sentence *can* leak the answer) drop over 1% on clean data and get asterisks.
+- <Finding src="App.E">Untuned zero-shot performance does not reliably improve with scale</Finding> (LaMDA-PT gets worse with size on some reading-comprehension and sentiment tasks, matching GPT-3's own BoolQ/DROP curves) — quietly undermining "just scale it" as a zero-shot strategy and strengthening the case for tuning.
+
+## Implications
+The paper reframes zero-shot failure as an interface problem, solvable with a sliver of supervised compute — after FLAN, labeled data's role shifts from "train a specialist" to "align a generalist". It sits in a tight lineage: <Related>T0 (Sanh et al.) is the concurrent encoder-decoder/11B version, Natural Instructions and MetaICL the smaller-scale relatives, and InstructGPT extends the idea from instruction *format* to human *preference* via RLHF</Related> (§5, App.D). The negative spaces it maps became research programs: <FollowUp>why instruction tuning inverts below ~68B (later work ties this to task-count/model-capacity trade-offs and emergence debates)</FollowUp>; <FollowUp>the redundant-instruction failure mode — tasks shaped like pure LM continuation gain nothing, which predicts where instruction tuning keeps failing (HellaSwag-style completion)</FollowUp>; <FollowUp>scaling the cluster count, which Flan-T5/Flan-PaLM later push to 1.8k tasks</FollowUp>.
+
+## Limitations
+- <Caveat>Comparisons to GPT-3/GLaM are cross-model: different pretraining data, tokenizers, and decoding; only the LaMDA-PT-vs-FLAN pair isolates instruction tuning</Caveat> (§3).
+- <Caveat>Instructions are short single sentences, task-cluster assignment is subjective, and the 1024-token context bars summarization evaluation entirely</Caveat> (§6, App.A).
+- <Caveat>The headline 20/25 uses the best dev-set template — mild prompt engineering; average-template numbers are lower (e.g. CB 64.1 average vs 83.9 best-dev, with a ±14.7 template std)</Caveat> (§3, Tab.2).
+- <Caveat>FLAN fails simple instructions like "return the second word of this sentence" and answers "in Danish" by translating the question; it remains mostly English-centric</Caveat> (Fig.22, App.E).
+- <Caveat>Serving a 137B model is costly; each held-out-cluster evaluation needs its own tuned checkpoint (c models for c clusters)</Caveat> (§2.2, §6).
+- <Caveat>Few-shot GPT-3 still wins where output-format demonstrations carry real information (NQ, TriviaQA, WMT translation into non-English)</Caveat> (Tab.1–2).
+
+## Critiques and Questions
+1. Template variance is the quiet confounder: reporting the mean over templates is honest, but with stds like ±14.7 (CB) and ±10.6 (WNLI), single-template comparisons in the headline claims inherit large uncertainty; no significance testing is reported.
+2. The cluster-holdout definition of "unseen task" is conservative for datasets, but the *instruction format* (OPTIONS suffix, question-style phrasing) is shared across training and evaluation — some gain plausibly comes from learning this house format, not task-general instruction following. The dataset-name ablation partially, not fully, controls for this.
+3. The scale-threshold plot (Fig.7) rests on a single cluster split and single runs; the authors themselves note cross-validation would have smoothed artifacts (App.E) — yet the "emergence at 68B" reading of this figure spread widely.
+4. FLAN is never compared against the obvious alternative use of the same 62 datasets: conventional multi-task finetuning evaluated *on seen tasks* — so the cost of the generalist trade (how much seen-task performance the instruction format sacrifices) is Not reported.
+5. The choice to evaluate the final 30k-step checkpoint (no early stopping or dev-based selection at the checkpoint level) is clean, but interacts unknowably with the per-dataset 30k cap and mixing rates; sensitivity to the mixture is unexplored.
+
+<SelfCheck q="Why does instruction tuning help FLAN on ANLI but not on HellaSwag?" a="ANLI is naturally phrased as an instruction (does the premise entail the hypothesis?) that never appears as web-text continuation — a raw LM has no practiced format for it, so learning the instruction interface adds real information. HellaSwag is already a language-modeling task: pick the most probable continuation. The instruction is redundant with the pretraining objective, so instruction tuning adds nothing and FLAN (56.4) stays far below GPT-3's raw LM score (78.9)." />
+
+## Glossary
+- <Term def="finetuning an LM on many tasks verbalized as natural-language instructions so it follows instructions on unseen tasks">instruction tuning</Term>
+- <Term def="the 137B decoder-only LM underlying FLAN, with language-model pretraining only (no dialog finetuning, unlike LaMDA)">LaMDA-PT</Term>
+- <Term def="a group of datasets sharing one task type (e.g. all NLI datasets); the unit held out to define unseen tasks">task cluster</Term>
+- <Term def="a manually written natural-language phrasing of a dataset's task; FLAN uses ten per dataset">instruction template</Term>
+- <Term def="answering with weights alone, no retrieval or provided context">closed-book QA</Term>
+- <Term def="given premise and hypothesis, classify entailment / contradiction / neutral; ANLI is the adversarially collected version">NLI / ANLI</Term>
+- <Term def="learning only a soft continuous prompt vector (weights frozen) for a downstream task">prompt tuning</Term>
+- <Term def="generating text from structured data records (e.g. WebNLG, E2E)">struct-to-text</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

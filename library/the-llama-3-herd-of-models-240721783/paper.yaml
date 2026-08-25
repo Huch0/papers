@@ -600,17 +600,17 @@ versions:
   source: arxiv
   source_url: https://arxiv.org/abs/2407.21783v3
   pdf_path: library/the-llama-3-herd-of-models-240721783/v1/paper.pdf
-  summary_path: null
+  summary_path: library/the-llama-3-herd-of-models-240721783/v1/summary.mdx
   metadata_path: library/the-llama-3-herd-of-models-240721783/v1/metadata.yaml
   fetched_at: '2026-08-24T03:21:32Z'
   source_updated_at: '2024-11-23T23:27:33Z'
   arxiv_version: v3
   pdf_sha256: 481f1599468f95a07d05e97fafe55bbe786dc1624c6f881bcb4c7d14c933d083
   pdf_bytes: 9833173
-  summary_status: none
-  extraction_status: none
+  summary_status: full
+  extraction_status: full
   created_at: '2026-08-24T03:21:32Z'
-  updated_at: '2026-08-24T03:21:32Z'
+  updated_at: '2026-08-25T06:41:14Z'
 relations:
   duplicate_candidates: []
   related_papers: []

@@ -1,0 +1,130 @@
+---
+canonical_key: arxiv-2304.07327
+version_key: v1
+title: OpenAssistant Conversations -- Democratizing Large Language Model Alignment
+authors:
+- Andreas Köpf
+- Yannic Kilcher
+- Dimitri von Rütte
+- Sotiris Anagnostidis
+- Zhi-Rui Tam
+- Keith Stevens
+- Abdullah Barhoum
+- Nguyen Minh Duc
+- Oliver Stanley
+- Richárd Nagyfi
+- Shahul ES
+- Sameer Suri
+- David Glushkov
+- Arnav Dantuluri
+- Andrew Maguire
+- Christoph Schuhmann
+- Huu Nguyen
+- Alexander Mattick
+venue: arXiv
+year: 2023
+tags:
+- foundational
+topic_groups:
+- llm
+- rl
+triage_label: READ_SOON
+triage_confidence: medium
+source_link: https://arxiv.org/abs/2304.07327v2
+summary_date: '2026-08-25'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>OpenAssistant Conversations (OASST1) is a fully open, human-written *and* human-ranked assistant-conversation corpus — 161k messages in 35 languages with 461k quality ratings across 10k+ complete conversation trees — produced by 13,500+ volunteers through a gamified, peer-reviewed crowd pipeline, making the whole InstructGPT recipe (SFT → RM → RLHF) replicable outside corporate labs.</TLDR>
+
+<WhyItMatters>This is the open-source counterpart to Llama 2's proprietary 1.4M preference comparisons: the first at-scale proof that volunteers can produce alignment data, and a staple ingredient of the 2023 open chat wave (Guanaco, the Falcon instruct mixes, countless SFT recipes). Its off-policy-reward-model lesson is a foundation for understanding why on-policy preference data matters.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "161,443", label: "messages, 35 languages", sub: "91,829 prompter / 69,614 assistant; 461,292 ratings (§4)" },
+  { value: "13,500+", label: "volunteers", sub: "625k+ tasks; no financial incentives (§3, App.K)" },
+  { value: "10,968", label: "complete conversation trees", sub: "of 66,497 started; 92,365 messages (§4)" },
+  { value: "68.03 vs 67.24", label: "LLaMA-30B SFT beats LLaMA-65B base", sub: "lm-eval-harness average (Tab.1)" },
+]} />
+
+## Motivation
+
+The alignment step is what turned LLMs into products (ChatGPT), yet <Problem>the human feedback data that powers SFT and RLHF is expensive to create and remains proprietary — the decisive ingredient is exactly the one the open community cannot get</Problem> (§1). The open substitutes are inadequate: <Problem>synthetic instruction sets (self-instruct, Alpaca, GPT4All) are bounded in complexity, creativity, and quality by their template lists and by the model that generated them, and even Vicuna pairs human prompts with model-written responses</Problem> (§1). The result is a monopoly: alignment research — arguably the field's most consequential problem — confined to a few labs with annotation budgets.
+
+## Contribution (what's new)
+
+The dataset, and just as importantly the machinery that made it possible: <Novelty>a crowd-sourcing design that atomizes conversation-building into single-step tasks (write a prompt, reply as assistant, reply as prompter, label, rank) over *conversation trees*, so thousands of anonymous volunteers can jointly author both sides of multi-turn dialogues without attrition destroying partial work</Novelty> (§2–3). Quality control is structural, not aspirational: every message passes peer review (3 reviewers, acceptance threshold 0.6), rankings come from 3 independent rankers fused by <Novelty>Tideman's ranked-pairs voting, turning noisy individual preferences into consensus ranks usable for reward modeling</Novelty> (App.B, App.G), and a points/leaderboard economy plus a "Trollboard" concentrates scarce moderator attention on likely abusers (§3.4). Because trees carry multiple *ranked* assistant replies per prompt, one corpus serves SFT, reward modeling, and RLHF at once. Everything — data, collection platform, trained SFT/RM/RLHF models — ships under permissive licenses.
+
+## Research questions
+
+1. Can unpaid, worldwide crowd-sourcing produce assistant-conversation and preference data of sufficient quality and scale to substitute for proprietary vendor annotation? (§1, §3)
+2. Do models fine-tuned on this data measurably improve over their base models — and how close do they get to ChatGPT? (§6.1)
+3. Does community moderation plus peer review actually keep spam and toxicity out? (§3.4, §6.2)
+
+## Methodology
+
+A web platform advances thousands of conversation trees one step at a time through a state machine (initial-prompt review → growing → end; spam-aborted or moderator-halted otherwise), with a prompt lottery throttling the most popular task and target shapes of depth ≤ 5, ≤ 2 children per node, ~9 messages per tree (§3.2, App.G). Guidelines steer contributors toward informed-consent-style safety — warn and contextualize rather than blanket-refuse — and explicitly ban copy-pasting from ChatGPT (§3.3, App.A). Validation trains Pythia/LLaMA/Falcon SFT models, reward models, and PPO-based RLHF models on the corpus (§6.1, App.H).
+
+<Pass title="Method details — task types, preference fusion, training setup">
+**Task decomposition (§3.1):** five task types, assigned by choice or weighted sampling. Labels: binary flags (spam, language mismatch, PII, hate speech, sexual content, not appropriate) route to moderators; five-point Likert scales (quality, creativity, humor, politeness/rudeness, harmlessness/violence, helpfulness) are stored as metadata. Points are partly *deferred* — an assistant reply earns more if others later rank it highly — aligning contributor incentives with downstream quality.
+
+**Preference fusion (App.B):** each ranking task collects K independent rankers; pairwise preference counts are sorted by strength and added as edges to a directed graph, skipping any edge that would create a cycle (ranked pairs / Tideman); peeling source nodes off the resulting DAG yields the consensus rank stored per assistant message.
+
+**Filtering ChatGPT leakage (App.D):** guideline bans, user bans with contribution deletion, automatic phrase searches ("as a large language model", "knowledge cutoff…"), and community down-votes — acknowledged as incomplete.
+
+**Training (App.H):** threads serialized with `<prompter_token>`/`<assistant_token>` markers; SFT loss masked to assistant tokens only. RM replaces the LM head with a scalar head and trains on all <M tex="\binom{K}{2}" /> pairwise comparisons with the InstructGPT sigmoid ranking loss. PPO (trlx) adds a per-token KL penalty against the SFT policy. The `sft-mix` variant blends OASST with Vicuna, code_alpaca, Dolly-15k, GSM instructions, and wiki-QA data.
+</Pass>
+
+## Main result
+
+<Finding src="Tab.1, §6.1">Models fine-tuned on OASST1 consistently beat their base models on the lm-eval-harness NLU average — Falcon-40B rises from 72.29 to 74.40, and an OASST SFT of LLaMA-*30B* (68.03) outscores the LLaMA-*65B* base (67.24)</Finding> — while instruction-style evaluations tell a split story: competitive with ChatGPT on LLM-judged Elo, far behind on OpenAI Evals and code.
+
+<SortableTable columns={["Model", "LMEH avg", "Vicuna Elo", "OpenAI Evals", "HumanEval"]} rows={[
+  ["gpt-3.5-turbo (ChatGPT)", "—", 1110, 0.87, 0.72],
+  ["pythia-12b-sft", 60.28, 997, 0.10, 0.10],
+  ["falcon-40b-sft-top1", 74.04, 1192, 0.26, 0.09],
+  ["falcon-40b-sft-mix", 74.40, 1053, 0.44, 0.13],
+  ["oasst-sft-llama-30b", 68.03, 979, 0.52, 0.20],
+  ["oasst-rlhf-llama-30b", 68.51, 1068, 0.51, 0.15],
+]} />
+
+## Key findings
+
+- <Finding src="Tab.1, §6.1">Benchmark rankings are mutually inconsistent — the OASST Falcon-40B outranks ChatGPT on Vicuna Elo (1192 vs 1110) yet scores 0.26 vs 0.87 on OpenAI Evals</Finding>; the paper reads this as evidence that automatic chat evaluation was unreliable, and that data mixture choice (top-ranked-only vs mixed) visibly steers what kind of model you get.
+- <Finding src="§7">RLHF does *not* uniformly beat SFT (68.51 vs 68.03 LMEH; Elo 1068 vs 979 but OAIE 0.51 vs 0.52), and the authors' hypothesis is precise: their reward model was trained on rankings of human-written replies, not of the SFT model's own samples as in InstructGPT</Finding> — an early, honest articulation of the off-policy preference-data problem.
+- <Finding src="Tab.2, §6.2">Community moderation demonstrably filters toxicity: deleted messages score 4.7x higher on Detoxify (4.625% vs 0.988% avg toxicity), yet absolute toxicity is low in both groups</Finding> — most deletions target factual errors, grammar, or cascade from deleted parents, so automated toxicity scoring alone could not replace the human pipeline.
+- <Finding src="Fig.2, §4, §7">The corpus has documented skews: English 42.8% + Spanish 31.4% dominate; a small set of power users contributes an outsized share; survey respondents are 89.1% male with median age 26</Finding> — the values encoded in the data come from a specific, self-selected population.
+- <Finding src="App.J, Fig.12">Preliminary political-compass probes show the OASST-trained model more balanced and varied in its leanings than ChatGPT</Finding> — weak evidence, flagged as such, that decentralized data collection diversifies model values.
+- <Finding src="§4, App.G">The tree economics are lopsided: of 66,497 trees, 52,159 never left the single-prompt lottery; the 10,968 completed trees carry 92,365 of the messages</Finding> — prompt-writing enthusiasm vastly outstrips the labor-intensive assistant-reply supply.
+
+## Implications
+
+OASST1 turned alignment from a budget question into a coordination question: it fed Guanaco and the era's open SFT mixes, its ranked sibling replies became free reward-model and (later) DPO training pairs, and its conversation-tree format is now a standard shape for dialogue corpora. <Related>It is the community answer to InstructGPT's recipe and Anthropic's HH data, the human-authored alternative to the self-instruct/Alpaca/Vicuna synthetic line, and the open twin of Llama 2's contemporaneous closed 1.4M-comparison effort — which independently confirmed the on-distribution preference-data lesson OASST learned the hard way</Related>. <FollowUp>Collecting rankings over the SFT model's own outputs (the authors' stated plan), and whether volunteer pipelines can sustain the data refresh cadence that iterative RLHF demands</FollowUp>.
+
+## Limitations
+
+- <Caveat>Reward models were trained on rankings of human-written messages rather than model samples, which the authors blame for RLHF's non-uniform gains over SFT</Caveat> (§7).
+- <Caveat>Demographic and contribution-frequency biases are acknowledged and only partially measurable: 89.1% male respondents, median age 26, power-user over-representation, and a 270-response Discord-recruited survey that oversamples engaged contributors</Caveat> (§5, §7).
+- <Caveat>Residual unsafe content and ChatGPT-generated text may survive the filters; the authors recommend the released models for academic research only and note susceptibility to prompt injection</Caveat> (§7, App.D).
+- <Caveat>No human evaluation of the trained models is performed by the paper itself — assistant quality claims beyond Table 1 rest on anecdotal user reports</Caveat> (§6.1).
+- <Caveat>Language coverage is nominally 35 but effectively two: English + Spanish are ~74% of messages</Caveat> (§4).
+
+## Critiques and Questions
+
+1. "Consistent improvements on standard benchmarks" is the weakest possible headline for an alignment dataset: LMEH is an NLU suite, not an assistant-quality measure, and the instruction-side evidence (Elo vs OpenAI Evals) is contradictory. For a paper about human data, the absence of a controlled human evaluation is a real gap.
+2. The Vicuna Elo win over ChatGPT (1192 vs 1110) is reported without interrogating LLM-judge bias (style, verbosity, format preferences) — later work showed these judges are gameable, so this number should not be quoted as a capability claim.
+3. "Human-generated" is an approximation: keyword filters catch verbatim ChatGPT boilerplate, not paraphrased machine text, and the paper concedes some automated contributions likely slipped through — an early instance of the AI-contamination problem now endemic to crowd data.
+4. Quality control measures adherence to guidelines, not correctness: three volunteer reviewers at threshold 0.6 filter spam well (Tab.2) but cannot verify factual accuracy at scale, and the guideline "rank don't-know above wrong" depends on reviewers detecting wrongness in the first place.
+5. Aging: as on-policy preference collection and DPO-style pipelines became standard, static off-policy human rankings lost centrality — the dataset's durable contributions are the SFT conversations and the collection playbook, more than the preference data it was named for.
+
+<SelfCheck q="Why did the authors' RLHF models fail to show the uniform gains over SFT that InstructGPT reported, by their own diagnosis?" a="Their reward model was trained on rankings of human-written replies collected for general quality control, whereas InstructGPT ranked samples drawn from its own SFT model. The RM therefore judged a distribution different from the policy's actual outputs — off-policy preference data — so PPO optimized a misaligned reward signal (§7). Their stated fix: collect rankings over their own SFT models' outputs." />
+
+## Glossary
+
+Key terms defined inline. Remaining: <Term def="fit a scalar-output model to human pairwise preferences, then optimize the LLM against it with RL (PPO)">RLHF</Term>, <Term def="fine-tuning on demonstration conversations with loss only on assistant tokens">SFT</Term>, <Term def="a rooted tree of alternating prompter/assistant messages; any root-to-node path is a valid conversation">conversation tree</Term>, <Term def="ranked-pairs voting: add pairwise preferences as graph edges strongest-first, skipping cycle-creating ones, to get a consensus ranking">Tideman's method</Term>, <Term def="open multilingual toxicity classifier used to score messages across six categories">Detoxify</Term>, <Term def="EleutherAI lm-evaluation-harness average over BoolQ, PIQA, HellaSwag, WinoGrande, ARC-e/c, OBQA">LMEH</Term>.
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

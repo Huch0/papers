@@ -1,0 +1,184 @@
+---
+canonical_key: arxiv-2201.08239
+version_key: v1
+title: 'LaMDA: Language Models for Dialog Applications'
+authors:
+- Romal Thoppilan
+- Daniel De Freitas
+- Jamie Hall
+- Noam Shazeer
+- Apoorv Kulshreshtha
+- Heng-Tze Cheng
+- Alicia Jin
+- Taylor Bos
+- Leslie Baker
+- Yu Du
+- YaGuang Li
+- Hongrae Lee
+- Huaixiu Steven Zheng
+- Amin Ghafouri
+- Marcelo Menegali
+- Yanping Huang
+- Maxim Krikun
+- Dmitry Lepikhin
+- James Qin
+- Dehao Chen
+- Yuanzhong Xu
+- Zhifeng Chen
+- Adam Roberts
+- Maarten Bosma
+- Vincent Zhao
+- Yanqi Zhou
+- Chung-Ching Chang
+- Igor Krivokon
+- Will Rusch
+- Marc Pickett
+- Pranesh Srinivasan
+- Laichee Man
+- Kathleen Meier-Hellstern
+- Meredith Ringel Morris
+- Tulsee Doshi
+- Renelito Delos Santos
+- Toju Duke
+- Johnny Soraker
+- Ben Zevenbergen
+- Vinodkumar Prabhakaran
+- Mark Diaz
+- Ben Hutchinson
+- Kristen Olson
+- Alejandra Molina
+- Erin Hoffman-John
+- Josh Lee
+- Lora Aroyo
+- Ravi Rajakumar
+- Alena Butryna
+- Matthew Lamm
+- Viktoriya Kuzmina
+- Joe Fenton
+- Aaron Cohen
+- Rachel Bernstein
+- Ray Kurzweil
+- Blaise Aguera-Arcas
+- Claire Cui
+- Marian Croak
+- Ed Chi
+- Quoc Le
+venue: arXiv
+year: 2022
+tags:
+- foundational
+topic_groups:
+- llm
+triage_label: READ_SOON
+triage_confidence: medium
+source_link: https://arxiv.org/abs/2201.08239v3
+summary_date: '2026-08-25'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>Scaling a dialog LLM to 137B improves conversational quality but barely moves safety or factual grounding — LaMDA closes those gaps with two mechanisms: discriminator fine-tuning on a tiny amount of crowd-annotated data (under 0.001% of pretraining data), and fine-tuned *tool calls* to a retrieval system / calculator / translator that let the model ground and cite its claims.</TLDR>
+
+<WhyItMatters>LaMDA is the pre-RLHF blueprint for aligned chat assistants (it became Bard): it established the quality/safety/groundedness metric decomposition, filtered-candidate serving, and — most influentially — the learned Base→Research tool-use loop that anticipates Toolformer/ReAct-style agents and retrieval-grounded chat.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "95.2%", label: "safety after fine-tuning", sub: "vs 88.0% for pretrained 137B — scale alone gave +3.2 over 2B (Tab.28)" },
+  { value: "73.2%", label: "groundedness (LaMDA 137B)", sub: "vs 57.9% PT; 65% of claims carry URL citations (§7)" },
+  { value: "137B / 1.56T", label: "params / pretraining words", sub: "50% of data is public-forum dialog (App.E)" },
+  { value: "<0.001%", label: "annotated fine-tuning data vs pretraining", sub: "6.4K + 8K + 4K dialogs (§9, Tab.1)" },
+]} />
+
+## Motivation
+
+Dialog is the application where large LMs meet people, and Meena showed dialog quality tracks model scale. But two failure modes do not yield to scale. <Problem>A language model imitates its corpus, and the corpus contains unsafe text — so pretraining alone leaves harmful, biased responses in the sampling distribution no matter the size</Problem>. And <Problem>models generalize rather than memorize: they produce fluent, *plausible* claims that contradict authoritative sources — and even perfect memorization cannot fix facts that change over time ("How old is Rafael Nadal?", the temporal generalization problem)</Problem> (§6.2). Prior dialog work also lacked instruments to see this: <Problem>sensibleness+specificity (SSA) rewards playing it safe — a bot answering every question "I don't know" scores 70% sensibleness</Problem> (§4.1).
+
+## Contribution (what's new)
+
+Three moves, each forced by a failure above. <Novelty>A metric decomposition — quality (sensibleness/specificity/interestingness), safety, and groundedness measured separately by crowdworkers — that makes the "scale doesn't fix safety" finding visible and debuggable</Novelty> (§4). <Novelty>One model serving as both generator and discriminator: candidates are generated, *filtered* by the model's own fine-tuned safety score, and re-ranked by its quality scores — and the same discriminators filter 2.5M pretraining dialog turns down to 800K clean ones to fine-tune the generator on</Novelty> (§6.1). <Novelty>Groundedness as learned tool use: a "Research" task that emits queries to an external toolset (retrieval, calculator, translator) and rewrites the draft response around returned snippets, with citations — looping until the model addresses the user</Novelty> (§6.2). The design is forced: facts that live outside the weights (or change under them) must be fetched at inference, not memorized.
+
+## Research questions
+
+1. What does model scaling alone (2B → 8B → 137B) buy on quality, safety, and groundedness? (§7)
+2. Can small amounts of crowd-annotated data, applied via discriminators, fix what scaling cannot? (§6.1)
+3. Can a dialog model *learn* to consult external tools so its claims become attributable to sources? (§6.2)
+4. Does prompting-style preconditioning suffice to specialize the agent into application roles? (§8)
+
+## Methodology
+
+Pretrain a decoder-only Transformer family (2B/8B/137B; the largest: 64 layers, <M tex="d_{model}=8192" />, 128 heads, T5-style relative attention, gated-GELU) on 1.56T words / 2.81T BPE tokens — 50% public-forum dialog, plus C4, code docs, Wikipedia, and web text (App.E) — then layer two fine-tunings on top. Serving uses sample-and-rank: 16 candidates via top-k=40 sampling, safety-filtered, then ranked by 3·P(sensible) + P(specific) + P(interesting) (§3, §6.1).
+
+<Pass title="The two fine-tuning stages and the tool loop">
+<Stepper steps={[
+  { title: "FT quality-safety (§6.1)", body: "Crowdworkers converse with LaMDA (6.4K dialogs for SSI; 8K dialogs for safety across natural / sensitive-topic / adversarial modes) and label each response. All tasks live in one sequence format: generative examples are 'context SENTINEL response'; discriminative ones append 'attribute rating' — so scoring a generated candidate costs only a few extra tokens. Unsafe candidates are filtered at a threshold; survivors are re-ranked by quality. The discriminators then filter pretraining dialogs (2.5M turns to 800K) for a second round of generative fine-tuning." },
+  { title: "FT groundedness (§6.2)", body: "Crowdworkers research the model's factual claims with the same toolset the model will use, rewriting responses to be source-supported with URLs (4K dialogs, 40K turns). LaMDA learns two tasks: (1) context + draft response gives 'TS, query'; (2) context + draft + query + returned snippet gives either another 'TS, ...' query or 'User, grounded response'. At inference the loop runs until output is addressed to the user (capped, e.g. at 4 calls)." },
+]} />
+
+The toolset (TS) takes one string and returns strings from calculator, translator, and an information-retrieval system (snippets with URLs), in that order; tools that cannot parse the input return nothing. Worked example (§6.2): the Base model claims Rosalie Gascoigne inspired Miró (chronologically impossible); Research queries TS, finds she practiced ikebana before sculpture, and rewrites the reply around that sourced fact with the citation.
+
+Evaluation: crowd-labeled responses on fixed benchmarks — 1477 Mini-Turing-Benchmark contexts for SSI, 1458 adversarial holdout turns for safety, 784 Wizard-of-Wikipedia contexts for groundedness — against human baselines collected both **with** and **without** retrieval-tool access (§5).
+</Pass>
+
+## Main result
+
+Fine-tuning dominates scaling on every metric, and closes most of the gap to crowdworkers on quality:
+
+<SortableTable columns={["Metric", "PT 2B", "PT 137B", "LaMDA 137B", "Anchor"]} rows={[
+  ["Sensibleness", 76.6, 80.2, 92.3, "Tab.28"],
+  ["Specificity", 46.5, 49.8, 79.0, "Tab.28"],
+  ["Interestingness", 10.8, 15.8, 25.7, "Tab.28"],
+  ["Safety", 84.8, 88.0, 95.2, "Tab.28"],
+  ["Groundedness", 45.0, 57.9, 73.2, "Tab.28"],
+  ["Informativeness", 29.2, 41.3, 62.3, "Tab.28"],
+]} />
+
+<Finding src="§7, Fig.4">73.2% of responses making external-world claims are attributable to known sources, and 65% carry URL citations when required</Finding>; safety and groundedness remain below tool-equipped human level, while <Finding src="§7">fine-tuned interestingness *exceeds* the crowdworker baseline — which the authors themselves flag as a weak, under-incentivized baseline</Finding>.
+
+## Key findings
+
+- <Finding src="Fig.4, Tab.28">Scaling alone barely improves safety: 84.8 → 88.0 across a 68× parameter increase, versus 95.2 with fine-tuning</Finding> — expected, since pretraining only fits the (partly unsafe) corpus distribution; groundedness does grow with scale (45.0 → 57.9, larger models memorize more) but plateaus far below the tool-using fine-tuned model.
+- <Finding src="Tab.28">The fine-tuned 2B model beats the pretrained 137B on every quality and safety metric (e.g., specificity 74.8 vs 49.8; safety 93.8 vs 88.0)</Finding> — annotated data substitutes for well over an order of magnitude of parameters; the authors estimate matching LaMDA's 92.3% sensibleness by pure scaling would take a dense model "multiple orders of magnitude" beyond 137B (§7).
+- <Finding src="§7, Fig.4">The human ceiling itself is tool-dependent: crowdworkers make well-supported claims at a much higher rate with retrieval access, and LaMDA surpasses humans-without-IR on informativeness while trailing humans-with-IR on groundedness</Finding> — grounding is an *interface* problem, not purely a knowledge problem.
+- <Finding src="Tab.5, §8">Preconditioning alone specializes the agent: with a single role-setting greeting, LaMDA "Mount Everest" is helpful in 65% of turns vs 18% for the pretrained model (music recommendation: 57% vs 31%), with role consistency ~90% for both</Finding> — but ~30% of Everest's factual replies were still unattributable, the dominant helpfulness loss.
+- <Finding src="§9, Tab.1">All of this comes from less than 0.001% of the pretraining data volume in annotations (roughly 18K dialogs total), of which only ~6.5K turns carry unsafe labels (5,570 harm / 2,560 bias / 1,260 misinformation; Tab.10)</Finding> — the leverage of small, targeted human data is the paper's headline lesson.
+- <Finding src="Tab.12">Safety fine-tuning generalizes beyond its distribution: on PALMS weakness-targeting prompts, mean toxicity drops from 0.19 (PT) to 0.14</Finding>.
+
+## Implications
+
+LaMDA is the supervised-era alignment recipe — discriminator filtering + annotation instead of RLHF — and the direct ancestor of Google's Bard. Its Research/Base loop, where the model *generates queries as first-class output tokens* routed to tools, prefigures <Related>Toolformer, ReAct, and retrieval-grounded assistants generally; WebGPT (cited in §2) is the contemporaneous OpenAI variant with human feedback</Related>. The metric split (quality vs safety vs groundedness, each debuggable separately) became standard practice for dialog evals, and the AIS attribution framework it cites matured into today's attribution evals. The anthropomorphization warning in §9.6 proved prophetic — LaMDA itself became the subject of the 2022 "sentience" controversy. Worth chasing: <FollowUp>whether preference-based RL (InstructGPT/Sparrow) dominates discriminator filtering at equal annotation budget</FollowUp>, <FollowUp>granular, culturally-situated safety objectives instead of a single aggregate score (§9.3)</FollowUp>, and <FollowUp>groundedness beyond single-fact lookups — multi-hop research loops</FollowUp>.
+
+## Limitations
+
+- <Caveat>Safety is one aggregated, binary, US-centric metric: it cannot weight objectives, capture degrees of harm, or transfer across cultural norms — all author-acknowledged (§9.3, §9.5)</Caveat>.
+- <Caveat>Groundedness measures attributability, not truth ("grounding in known sources does not guarantee factual accuracy", §1), and progress is limited to simple factual questions — complex reasoning remains open, and the model still fabricates (e.g., the Alexander McQueen / "The Queen" confusion in Tab.13, and arithmetic slips in Tab.15)</Caveat>.
+- <Caveat>Crowdworkers are the sole measurement instrument: US-only, 25–34-skewed, with no inter-rater disagreement analysis and admittedly weak incentives for "interesting" responses (§9)</Caveat>.
+- <Caveat>Adversarial data collection surfaces common failure modes, not the rare, severe long tail (§9.2)</Caveat>.
+- <Caveat>The domain-grounding transcripts (Tab.3–4) are "real, albeit cherry-picked" (§8)</Caveat>.
+- Trained-token count is not reported directly (dataset size in words/tokens and step counts are; Tab.27) — later papers (Chinchilla Tab.1) cite LaMDA at 168B training tokens, illustrating how under-specified this was.
+
+## Critiques and Questions
+
+1. **Internal inconsistency**: §5 says the quality dataset is "6400 dialogs with 121K turns", Tab.1 says "6.4K dialogs (61k turns)" — factor-of-two disagreement, unexplained.
+2. **No external head-to-head.** All numbers are self-defined metrics judged by the authors' own crowd pipeline; there is no comparison to Meena or BlenderBot on a shared benchmark, so "better dialog model" is not directly established — only "better on our instruments."
+3. The candidate-filtering pipeline's costs are unreported: how often do all 16 candidates fail the safety threshold, and what does filtering do to response diversity? A safety classifier with over-triggering behavior would look identical in these tables.
+4. Groundedness fine-tuning teaches the model to *imitate* crowdworker research behavior; there is no signal that the cited page actually supports the claim (attribution is judged post-hoc by other crowdworkers) — citation-shaped outputs could inflate perceived reliability, the exact risk the AIS framework (§2) formalizes.
+5. Safety and quality gains are entangled: FT quality-safety already moves groundedness (57.9 → 67.9, Tab.28) before any tool use — how much of the tool loop's 73.2% is retrieval vs just better-behaved generation? The ablation splits it (+5.3 from tools) but only on one eval set of 784 turns.
+
+<SelfCheck q="Why does scaling from 2B to 137B fail to improve safety while clearly improving groundedness, and how does LaMDA fix each?" a="Pretraining minimizes next-token loss on a corpus containing unsafe text, so a bigger model just fits that mixed distribution better — safety moves only 84.8 to 88.0. Groundedness rises with scale (45.0 to 57.9) because larger models memorize more facts, but memorization cannot track changing facts. LaMDA fixes safety with a fine-tuned discriminator that filters candidates at serving time (95.2), and groundedness with a fine-tuned Research task that queries an external toolset and rewrites responses around retrieved, citable snippets (73.2, 65% citation accuracy)." />
+
+## Glossary
+
+- <Term def="Sensibleness, Specificity, Interestingness — three binary crowd-judged components averaged into LaMDA's quality score">SSI</Term>
+- <Term def="Share of responses containing external-world claims whose claims are supported by authoritative sources">groundedness</Term>
+- <Term def="Share of ALL responses carrying source-supported external-world information — same numerator as groundedness, larger denominator">informativeness</Term>
+- <Term def="Generate N candidate responses by sampling (here 16, top-k=40), then output the best under a scoring function">sample-and-rank</Term>
+- <Term def="LaMDA's pretraining corpus: 2.97B documents + 1.12B dialogs (1.56T words), 50% public-forum dialog">Infiniset</Term>
+- <Term def="The external tool interface — calculator, translator, information retrieval — taking one string and returning result strings with URLs">toolset (TS)</Term>
+- <Term def="Adapting the model to an application role purely by seeding the dialog with role-specific turns (e.g., one greeting message)">preconditioning / domain grounding</Term>
+- <Term def="The 2020 Meena metric (sensibleness+specificity average) that SSI extends with interestingness">SSA</Term>
+- <Term def="Attributable to Identified Sources — a two-stage framework for judging whether generated claims can be attributed to sources">AIS</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

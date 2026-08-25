@@ -48,17 +48,17 @@ versions:
   source: arxiv
   source_url: https://arxiv.org/abs/2109.01652v5
   pdf_path: library/finetuned-language-models-are-zero-shot-learners-210901652/v1/paper.pdf
-  summary_path: null
+  summary_path: library/finetuned-language-models-are-zero-shot-learners-210901652/v1/summary.mdx
   metadata_path: library/finetuned-language-models-are-zero-shot-learners-210901652/v1/metadata.yaml
   fetched_at: '2026-08-24T03:20:34Z'
   source_updated_at: '2022-02-08T20:26:45Z'
   arxiv_version: v5
   pdf_sha256: 7126b83c5590b9eb4b6e6027446cb88c0aeff132e47d88e9407982b1f7fad044
   pdf_bytes: 1626775
-  summary_status: none
-  extraction_status: none
+  summary_status: full
+  extraction_status: full
   created_at: '2026-08-24T03:20:34Z'
-  updated_at: '2026-08-24T03:20:34Z'
+  updated_at: '2026-08-25T06:40:03Z'
 relations:
   duplicate_candidates: []
   related_papers: []

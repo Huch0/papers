@@ -1,0 +1,126 @@
+---
+canonical_key: arxiv-2310.06825
+version_key: v1
+title: Mistral 7B
+authors:
+- Albert Q. Jiang
+- Alexandre Sablayrolles
+- Arthur Mensch
+- Chris Bamford
+- Devendra Singh Chaplot
+- Diego de las Casas
+- Florian Bressand
+- Gianna Lengyel
+- Guillaume Lample
+- Lucile Saulnier
+- Lélio Renard Lavaud
+- Marie-Anne Lachaux
+- Pierre Stock
+- Teven Le Scao
+- Thibaut Lavril
+- Thomas Wang
+- Timothée Lacroix
+- William El Sayed
+venue: arXiv
+year: 2023
+tags:
+- foundational
+topic_groups:
+- llm
+triage_label: READ_SOON
+triage_confidence: medium
+source_link: https://arxiv.org/abs/2310.06825v1
+summary_date: '2026-08-25'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>A 7B model that beats Llama 2 13B on every evaluated benchmark — packaged with sliding-window attention, a rolling KV cache, and GQA so it is also cheaper to serve — released under Apache 2.0, arguing that scaling is a 3-D trade (capability, training cost, inference cost), not 2-D.</TLDR>
+
+<WhyItMatters>Mistral 7B reset the open-model efficiency frontier: it proved a well-trained small model can leapfrog the next size tier, spawned the Zephyr/Mixtral lineage and the local-LLM ecosystem, and its permissive license (vs Llama's custom terms) made it the default base for fine-tuning.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "60.1%", label: "MMLU 5-shot", sub: "vs 55.6 Llama 2 13B, 44.4 Llama 2 7B (Tab.2)" },
+  { value: "52.2%", label: "GSM8K maj@8", sub: "vs 34.3 Llama 2 13B (Tab.2)" },
+  { value: "3x+", label: "equivalent Llama 2 size", sub: "on reasoning/MMLU; only 1.9x on knowledge (Fig.5)" },
+  { value: "8x", label: "KV-cache memory saved", sub: "rolling buffer at 32k tokens, no quality loss (§2)" },
+]} />
+
+## Motivation
+
+The race for capability has been a race for size, and <Problem>size is exactly what makes models expensive to deploy: compute cost and inference latency rise with parameters, pricing real-world applications out</Problem> (§1). Chinchilla-style scaling laws frame the problem as two-dimensional — capability vs training compute — but <Problem>a model that is cheap to train and expensive to serve is the wrong optimum for anyone who has to run it; the inference axis is missing from the analysis</Problem> (§6). What was missing empirically: proof that a 7B model can genuinely cover the ground of the 13B tier, rather than merely approximating it.
+
+## Contribution (what's new)
+
+Two deltas, one empirical and one architectural. Empirically, <Novelty>a 7B model that dominates Llama 2 13B on all 12 reported benchmarks and rivals Llama 1 34B on reasoning, math, and code — evidence that "models compress knowledge more than previously thought" and that the capability-per-parameter frontier was far from tight</Novelty> (§1, §6, Tab.2). Architecturally, <Novelty>an attention stack built for serving: sliding-window attention (SWA) bounds each layer's attention span to W=4096 so long-sequence cost stops growing, a rolling buffer caps the KV cache at W entries, and prompt pre-fill is chunked at W</Novelty> (§2). The design is forced by the deployment goal: with full attention, cache memory grows linearly with sequence length and kills batch size (hence throughput); once the span is fixed at W, the cache can be a ring buffer — and depth restores reach, since stacking k layers lets information travel <M tex="k \times W" /> tokens.
+
+## Research questions
+
+1. How much capability fits in 7B parameters when the model is engineered for the full 3-D trade-off (capability, training cost, inference cost)? (§1, §6)
+2. Can attention-level changes (SWA, rolling cache, GQA) cut serving cost on long sequences without measurable quality loss? (§2)
+3. Do guardrails have to cost utility — can a system prompt plus self-reflection moderation replace heavyweight safety tuning for front-facing use? (§5)
+
+## Methodology
+
+A Llama-shaped transformer (RoPE/SwiGLU lineage) re-tuned for inference: 32 layers, dim 4096, 8 KV heads (<Term def="grouped-query attention — several query heads share one key/value head, shrinking KV-cache size and speeding decoding">GQA</Term>) against 32 query heads, hidden dim 14336, 8192 context, 32k vocab (Tab.1). The distinctive piece is <Term def="each token attends only to the previous W tokens of the layer below; stacked layers extend effective reach by W per layer">sliding-window attention</Term> with the serving machinery it unlocks. Pretraining corpus, token count, and compute: Not reported.
+
+<Pass title="Method details — SWA, rolling buffer, pre-fill/chunking">
+**SWA (§2, Fig.1):** hidden state at position i in layer k attends to positions i−W…i of layer k−1. Information still propagates beyond W: each layer moves it forward up to W tokens, so after 32 layers the theoretical span is ~131K tokens at W=4096. With kernel changes contributed to FlashAttention and xFormers, SWA gives a 2x speedup over vanilla attention at 16K sequence length.
+
+**Rolling buffer cache (§2, Fig.2):** because no query ever looks back further than W, keys/values for timestep i live at slot `i mod W`; beyond W tokens the cache overwrites itself and stops growing — an 8x cache-memory reduction at 32k tokens "without impacting the model quality" (no supporting table shown).
+
+**Pre-fill and chunking (§2, Fig.3):** the prompt is known upfront, so its KV entries are pre-filled in W-sized chunks; each chunk attends causally to itself and through the sliding window to the cache — memory stays bounded even for long prompts.
+
+**Instruct variant (§4):** plain SFT on public Hugging Face instruction datasets — "no proprietary data or training tricks" — explicitly a floor, not a ceiling, for what the base model supports.
+</Pass>
+
+## Main result
+
+<Finding src="Tab.2, Fig.4">Mistral 7B outperforms Llama 2 13B on every evaluated benchmark and Llama 1 34B on most, with the largest gaps in math, code, and reasoning; it approaches Code-Llama 7B on code (HumanEval 30.5 vs 31.1) while staying strong everywhere else</Finding> — all models re-run through one internal evaluation pipeline for comparability (§3).
+
+<SortableTable columns={["Model", "MMLU 5-shot", "GSM8K maj@8", "HumanEval 0-shot", "MBPP 3-shot", "HellaSwag 0-shot"]} rows={[
+  ["Llama 2 7B", 44.4, 16.0, 11.6, 26.1, 77.1],
+  ["Llama 2 13B", 55.6, 34.3, 18.9, 35.4, 80.7],
+  ["Code-Llama 7B", 36.9, 20.8, 31.1, 52.5, 62.9],
+  ["Mistral 7B", 60.1, 52.2, 30.5, 47.5, 81.3],
+]} />
+
+## Key findings
+
+- <Finding src="Fig.5, §3">On reasoning, comprehension, and MMLU, Mistral 7B performs like a Llama 2 model of more than 3x its size — but on knowledge benchmarks the "equivalent size" drops to 1.9x</Finding>: parameter count appears to bound how many facts a model can store, even when reasoning ability compresses well. This is the paper's sharpest scientific observation.
+- <Finding src="Tab.3, §4">A deliberately plain public-data SFT (Mistral 7B-Instruct) beats Llama 2 13B-Chat on MT-Bench (6.84 vs 6.65) and Chatbot Arena Elo (1031 vs 1012), and wins the llmboxing human vote 5020 to 4143</Finding> — the chat gap comes from base-model quality, not alignment sophistication (WizardLM 13B v1.2 still leads at 7.2 / 1047).
+- <Finding src="Tab.4–5, §5.1">A one-paragraph system prompt yields 100% refusal on a 175-prompt unsafe set while still answering "How to kill a Linux process" — a prompt Llama 2 13B-Chat falsely refuses</Finding>; the utility cost of guardrails is measurable and smaller than Llama 2's (MT-Bench 6.84 no prompt → 6.58 Mistral prompt vs 6.38 with Llama 2's prompt).
+- <Finding src="§5.2">Used as its own content moderator via a self-reflection prompt, Mistral 7B-Instruct classifies prompts/answers into acceptable vs three risk categories at 99.4% precision / 95.6% recall</Finding> on an internally curated balanced set.
+- <Finding src="§2">The serving stack is the quiet contribution: 2x attention speedup at 16K context and 8x KV-cache memory reduction at 32k, upstreamed into FlashAttention/xFormers and shipped with vLLM integration</Finding> — efficiency claims, though, come without an accompanying quality-ablation table.
+
+## Implications
+
+The 13B tier lost its reason to exist: after this release, "small" stopped meaning "weak," and the open ecosystem consolidated on 7B-class bases for fine-tuning and local deployment. <Related>It extends LLaMA's inference-first stance to an explicit 3-D scaling framing (capability / training cost / inference cost) against Chinchilla's 2-D laws; borrows GQA (Ainslie et al.) and windowed attention (Sparse Transformers, Longformer); and became the substrate for Zephyr-style DPO fine-tunes and Mistral's own Mixtral MoE line</Related>. The Apache 2.0 license — no acceptable-use policy, unlike Llama 2 — did as much as the benchmarks for adoption. <FollowUp>How much of the quality jump is training data vs architecture (unanswerable from the paper), and whether the theoretical 131K SWA span translates into usable long-context ability — later long-context evals suggest the effective span is much shorter</FollowUp>.
+
+## Limitations
+
+- <Caveat>Pretraining data, token count, tokenizer training, and compute are entirely undisclosed</Caveat> — the single biggest gap; the reproducible artifact is weights, not a recipe.
+- <Caveat>No base-model safety, bias, or toxicity evaluation (no TruthfulQA/ToxiGen/BOLD); the safety story rests on a 175-prompt refusal test and a non-public moderation dataset, with no red teaming</Caveat> (§5).
+- <Caveat>Evaluation deltas vs the Llama 2 paper are acknowledged (hand-verified MBPP subset; TriviaQA without Wikipedia contexts), so cross-paper numbers are not directly comparable</Caveat> (§3).
+- <Caveat>SWA/rolling-cache "no quality impact" and the ~131K theoretical span are asserted without long-context benchmarks</Caveat> (§2).
+- <Caveat>Single-run benchmark numbers throughout; only the MT-Bench guardrail scores carry a standard deviation</Caveat> (Tab.4).
+
+## Critiques and Questions
+
+1. The attribution problem: GQA and SWA are *efficiency* mechanisms — they explain why Mistral is cheap, not why it is smart. The quality leap over Llama 2 13B must come from data and training recipe, about which the paper says nothing; the architecture implicitly absorbs credit it cannot have earned.
+2. With undisclosed data there is no contamination analysis possible, and none is attempted — a benchmark-dominance paper without an overlap audit invites skepticism (contrast Llama 2's App.A.6).
+3. The "beats Llama 2 13B on all benchmarks" claim depends on the authors' own re-evaluation pipeline whose protocol deviates from the original on at least two benchmarks; deltas of a few points on NQ (28.8 vs 29.0 reported here) show it is not a uniform sweep on every raw number.
+4. The guardrails section reads as product positioning: 175 prompts and one cherry-picked Linux-process example demonstrate a real Llama 2 weakness (false refusal) but do not establish safety.
+5. Is the knowledge-vs-reasoning compression asymmetry (3x vs 1.9x) a fundamental capacity result or an artifact of the (unknown) data mix? The paper's most interesting claim is also its least examinable.
+
+<SelfCheck q="With attention limited to a 4096-token window, how can Mistral 7B use information from 100K tokens back — and what does the window buy at serving time?" a="Reach comes from depth: each layer lets a position attend 4096 tokens back into the layer below, so information relays forward by W per layer — 32 layers × 4096 ≈ 131K theoretical span (§2, Fig.1). The fixed span means the KV cache never needs more than W entries, enabling a rolling buffer (8x memory saving at 32k) and W-sized prompt pre-fill chunks — bigger batches and higher serving throughput." />
+
+## Glossary
+
+Key terms defined inline. Remaining: <Term def="80-question multi-turn chat benchmark scored 1–10 by GPT-4; the standard automatic chat-quality metric of 2023">MT-Bench</Term>, <Term def="crowdsourced head-to-head chat leaderboard; Elo is computed from human pairwise votes">Chatbot Arena Elo</Term>, <Term def="sample 8 answers and take the majority final answer">maj@8</Term>, <Term def="fraction of coding problems solved by the first sampled program, judged by unit tests">pass@1 (HumanEval/MBPP)</Term>.
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

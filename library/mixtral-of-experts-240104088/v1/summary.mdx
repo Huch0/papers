@@ -1,0 +1,144 @@
+---
+canonical_key: arxiv-2401.04088
+version_key: v1
+title: Mixtral of Experts
+authors:
+- Albert Q. Jiang
+- Alexandre Sablayrolles
+- Antoine Roux
+- Arthur Mensch
+- Blanche Savary
+- Chris Bamford
+- Devendra Singh Chaplot
+- Diego de las Casas
+- Emma Bou Hanna
+- Florian Bressand
+- Gianna Lengyel
+- Guillaume Bour
+- Guillaume Lample
+- Lélio Renard Lavaud
+- Lucile Saulnier
+- Marie-Anne Lachaux
+- Pierre Stock
+- Sandeep Subramanian
+- Sophia Yang
+- Szymon Antoniak
+- Teven Le Scao
+- Théophile Gervet
+- Thibaut Lavril
+- Thomas Wang
+- Timothée Lacroix
+- William El Sayed
+venue: arXiv
+year: 2024
+tags:
+- foundational
+topic_groups:
+- llm
+triage_label: READ_SOON
+triage_confidence: medium
+source_link: https://arxiv.org/abs/2401.04088v1
+summary_date: '2026-08-25'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>Mixtral 8x7B swaps every feed-forward block of a Mistral-7B-shaped Transformer for a router plus 8 experts (top-2 active), so each token touches only 13B of 47B parameters — matching or beating Llama 2 70B and GPT-3.5 across benchmarks at 5x fewer active parameters, released open-weights under Apache 2.0.</TLDR>
+
+<WhyItMatters>This is the paper that made sparse Mixture-of-Experts the default recipe for open frontier models (DBRX, DeepSeek-MoE, Qwen-MoE all follow): it demonstrated, with weights anyone can verify, that decoupling parameter count from per-token compute actually cashes out at the quality frontier — and its routing analysis is still the standard citation for "experts specialize by syntax, not by topic".</WhyItMatters>
+
+<KeyStats items={[
+  { value: "13B / 47B", label: "active vs total parameters", sub: "top-2 of 8 experts per layer" },
+  { value: "70.6%", label: "MMLU vs 69.9% for Llama 2 70B", sub: "5x fewer active params (Tab.2)" },
+  { value: "40.2%", label: "HumanEval vs 29.3% (Llama 2 70B)", sub: "math/code gaps are the widest" },
+  { value: "8.30", label: "MT-Bench (Instruct)", sub: "Arena Elo 1121 — best open-weights, Dec 2023" },
+  { value: "100%", label: "passkey retrieval across 32k context", sub: "any position, any length" },
+]} />
+
+## Motivation
+A dense Transformer has one dial: every extra parameter costs you at inference, on every token. <Problem>To match Llama 2 70B quality with a dense model, you pay 70B parameters of compute for every single token — even the trivial ones — which sets a hard floor on latency and serving cost</Problem>. Sparse Mixture-of-Experts (<Related>Shazeer et al. 2017; GShard; the Fedus-Dean-Zoph line</Related>) promises to break that coupling, but <Problem>as of late 2023 no open-weights MoE had demonstrated frontier-level quality, and MoE inference was widely seen as an infrastructure headache (load balancing, expert parallelism, kernel support)</Problem>. We wanted the community to have a model where the capacity/compute trade actually pays off, with the weights and the serving stack (vLLM + Megablocks kernels) to run it (§1).
+
+## Contribution (what's new)
+<Novelty>The demonstration — with open Apache-2.0 weights — that a top-2-of-8 SMoE at 13B active parameters sits at or above the Llama 2 70B / GPT-3.5 quality point</Novelty>, i.e. the sparse-parameter dial is real headroom, not a training curiosity. The design is minimal on purpose: take Mistral 7B's architecture unchanged and replace *every* FFN sub-block with a routed set of 8 SwiGLU experts (GShard replaced only every other block and used a more elaborate second-expert gating; we keep plain softmax-over-top-2) (§2.1). A second contribution is diagnostic: <Novelty>routing analysis showing experts do NOT specialize by domain — selection tracks syntax and position, with strong consecutive-token locality at deeper layers</Novelty> (§5), which reframes what "experts" in trained SMoEs actually are.
+
+## Research questions
+1. Does sparse expert capacity (47B total, 13B active) buy dense-70B quality at 13B-dense cost? (§3)
+2. Where does the extra capacity go — which task families gain most? (§3, §3.1)
+3. Do the 8 experts specialize by topic/domain, as the name suggests? (§5)
+
+## Methodology
+Mixtral is a 32-layer decoder-only Transformer with Mistral 7B's modifications — <Term def="grouped-query attention: 32 query heads share 8 key/value heads, shrinking the KV cache">8 KV heads</Term>, SwiGLU — trained with a fully dense 32k-token context (Tab.1). The only architectural change: each FFN becomes a <Term def="layer holding n expert networks plus a learned router; only the top-K scored experts run per token">Sparse Mixture-of-Experts layer</Term>. The router is a single linear map <M tex="W_g" />; per token it keeps the top-2 logits, softmaxes them, and mixes the two experts' outputs:
+
+<MathBlock>{`y \\;=\\; \\sum_{i=0}^{7} \\mathrm{Softmax}\\big(\\mathrm{Top2}(x \\cdot W_g)\\big)_i \\cdot \\mathrm{SwiGLU}_i(x)`}</MathBlock>
+
+Because the routing decision is per token *and per layer*, a token's 13B active parameters are a different slice of the 47B at every step — that is where the capacity comes from. Mixtral-Instruct is produced by SFT on an instruction dataset followed by <Term def="Direct Preference Optimization — aligns a model on paired preference data directly, without training a separate reward model or running RL">DPO</Term> (§4).
+
+<Pass title="Method details: systems view and what is NOT reported">
+- **Compute vs memory.** Active parameter count (13B) is proportional to inference FLOPs, but serving memory scales with the sparse count (47B — still below Llama 2 70B). Routing adds overhead and loading 2 experts raises memory traffic, so SMoE shines in batched, high-arithmetic-intensity workloads (§3 "Size and Efficiency").
+- **Kernels and parallelism.** Megablocks casts the MoE FFN as block-sparse matmul, natively handling variable tokens-per-expert; Expert Parallelism shards experts across GPUs and routes tokens to them — with load-balancing risk when routing is skewed (§2.1). We upstreamed vLLM support for a fully open serving stack (§1).
+- **Not reported.** Training data composition and token count (only "multilingual data significantly upsampled" vs Mistral 7B, §3.1), training compute, any auxiliary load-balancing loss, and the SFT/DPO datasets. Treat the recipe as closed even though the weights are open.
+</Pass>
+
+## Main result
+<Finding src="Tab.2, p.4">Re-evaluated under one pipeline, Mixtral outperforms or matches Llama 2 70B on almost all benchmarks with 5x fewer active parameters — and the wins concentrate exactly where reasoning-per-FLOP matters: MATH 28.4% vs 13.8%, HumanEval 40.2% vs 29.3%, GSM8K 74.4% vs 69.6%</Finding>. Against GPT-3.5 it is at parity or better on most metrics (Tab.3), and <Finding src="Fig.6, p.6">Mixtral-Instruct (SFT+DPO) reaches MT-Bench 8.30 and Arena Elo 1121 — above Claude-2.1 (1117), GPT-3.5-Turbo (1117), Gemini Pro (1111), and Llama-2-70b-chat (1077) — the best open-weights model as of Dec 2023</Finding>.
+
+<SortableTable columns={["Benchmark", "Mixtral 8x7B (13B active)", "Llama 2 70B", "GPT-3.5"]} rows={[
+  ["MMLU (5-shot)", "70.6", "69.9", "70.0"],
+  ["GSM8K (maj@8 / 5-shot col.)", "74.4", "69.6", "57.1"],
+  ["MATH (maj@4)", "28.4", "13.8", "—"],
+  ["HumanEval (0-shot)", "40.2", "29.3", "—"],
+  ["MBPP (pass@1)", "60.7", "49.8", "52.2"],
+  ["ARC-Challenge", "59.7", "56.5", "—"],
+  ["NaturalQuestions (5-shot)", "30.6", "25.4", "—"],
+  ["TriviaQA (5-shot)", "71.5", "73.0", "—"],
+  ["HellaSwag (0-shot)", "84.4", "85.4", "—"],
+  ["WinoGrande (0-shot)", "77.2", "80.4", "—"],
+  ["French MMLU", "70.9", "64.3", "—"],
+  ["MT-Bench (Instruct)", "8.30", "6.86", "8.32"],
+]} />
+
+GSM8K appears twice in the paper under different protocols (74.4% maj@8 in Tab.2; 58.4% 5-shot in Tab.3 vs GPT-3.5's 57.1%); the GPT-3.5 column above follows Tab.3.
+
+## Key findings
+- <Finding src="Fig.7, p.7">Experts do not specialize by domain</Finding>: expert-selection distributions on The Pile are nearly identical for ArXiv, PubMed abstracts, and philosophy papers at layers 0, 15, and 31. Only DM Mathematics deviates marginally — plausibly its synthetic, non-natural-language surface form, most visible at the first/last layers where hidden states hug the input/output embeddings.
+- <Finding src="Fig.8, Tab.5, p.8">Routing is syntactic and temporally local instead</Finding>: multi-token words like `self` in Python or `Question` in prose route to one expert, indentation tokens consistently share experts, and consecutive tokens repeat the same first-choice expert 23–28% of the time at layers 15/31 versus the 12.5% random baseline (62–67% vs ~46% counting either choice). Layer 0 is near-random.
+- <Finding src="Tab.5, p.8">That locality is an engineering double-edged sword</Finding>: it threatens Expert-Parallel load balance (bursts over-subscribe one expert's GPU) but enables expert caching for fast inference — a direct bridge from the routing analysis to systems design.
+- <Finding src="Tab.2, Fig.3, p.4">The sparse capacity does not lift all boats equally</Finding>: Mixtral still trails Llama 2 70B on WinoGrande (77.2 vs 80.4), HellaSwag (84.4 vs 85.4), TriviaQA (71.5 vs 73.0) and reading comprehension — knowledge/commonsense tasks appear to reward *active* (or dense) parameters, while math/code/multilingual reward total capacity.
+- <Finding src="Tab.4, p.5">Upsampling multilingual data plus extra expert capacity avoids the English tax</Finding>: Mixtral beats Llama 2 70B by 5–8 points on French/German/Spanish/Italian Arc-c/HellaSwag/MMLU while keeping English accuracy — the stated hypothesis is that the extra parameters absorb the multilingual load.
+- <Finding src="Fig.4, p.5">The dense 32k context is fully usable</Finding>: 100% passkey retrieval at every insertion depth and length, and proof-pile perplexity decreases monotonically as context grows.
+- <Finding src="Fig.5, p.6">The base model measures as less biased than Llama 2 70B</Finding>: BBQ accuracy 56.0% vs 51.5%; higher average BOLD sentiment with similar within-group variance.
+
+## Implications
+Mixtral turned SMoE from an exotic scaling trick into the open-model default: <Related>it inherits the Shazeer-2017 / GShard / Switch-Transformer lineage and Megablocks kernels</Related>, and directly precedes the wave of open MoEs (DBRX, DeepSeek-MoE/V2, Qwen-MoE) plus MoE-by-default frontier training. The routing analysis matters beyond this model: if experts are syntax/position-specialized rather than semantic, then <FollowUp>interpretability framings of "domain experts" need revision, and routing-aware serving (caching consecutive-token expert reuse, speculative expert prefetch) is the exploitable structure</FollowUp>. The active-vs-total parameter split also sharpened evaluation discourse — <FollowUp>which benchmark families track active compute versus total capacity (their WinoGrande/TriviaQA losses vs MATH wins are an early data point)</FollowUp>. The open question the paper conspicuously does not answer: <FollowUp>the training recipe (data mixture, balancing losses, token budget) that made this work where earlier open MoEs underperformed</FollowUp>.
+
+## Limitations
+- <Caveat>Training is a black box: no data composition, token count, compute budget, or load-balancing objective is reported — the result is reproducible to *run*, not to *rebuild*</Caveat> (§3.1 is the only data hint).
+- <Caveat>The efficiency claim is scoped to active-parameter FLOPs; the authors themselves note memory scales with 47B and routing/memory-load overhead means gains materialize mainly in batched serving, not single-stream latency on small hardware</Caveat> (§3).
+- <Caveat>Long-context evidence is a synthetic passkey task plus perplexity — no long-document reasoning benchmark</Caveat> (§3.2).
+- <Caveat>Instruct evaluation leans on LLM/human preference (MT-Bench, a Dec-22-2023 Arena screenshot) with known judge and popularity biases; no safety evaluation beyond BBQ/BOLD bias scores</Caveat> (§4, Fig.5-6).
+- <Caveat>Routing analysis covers 3 of 32 layers on The Pile validation only, and is purely descriptive — no intervention (e.g. expert ablation) tests whether the syntactic clustering is causal for capability</Caveat> (§5).
+
+## Critiques and Questions
+1. "Outperforms or matches Llama 2 70B on all benchmarks" (Fig.2 caption) is gently oversold — Tab.2 shows real losses on WinoGrande (-3.2) and HellaSwag (-1.0), and the Fig.3 caption itself excepts reading comprehension. The honest headline is "wins where it matters at 5x less active compute, loses slightly where raw capacity stores knowledge".
+2. The 8x7B name implies 56B, the paper says 47B total / 13B active (embeddings and attention are shared, only FFNs are replicated) — worth internalizing, since active-parameter accounting became a marketing battleground after this paper.
+3. GPT-3.5 comparison provenance is thin: Tab.3 mixes shot settings per row and does not state how the GPT-3.5 numbers were obtained (own pipeline vs reported), unlike the carefully re-run Llama numbers.
+4. The non-specialization finding may be a property of *this* recipe (no aux-loss details, top-2 softmax gating) rather than of SMoEs; DeepSeek-style fine-grained/shared-expert designs later argued specialization is achievable by construction. Is Fig.7 measuring the architecture or the training objective?
+5. Bias improvements are reported for the base model, but the deployed artifact is Instruct after SFT+DPO on undisclosed data; nothing verifies the bias profile survives alignment.
+
+<SelfCheck q="Why does Mixtral use 13B active parameters per token if it contains 47B, and why can each token still effectively draw on far more than 13B across a sequence?" a="Each MoE layer routes a token to only 2 of 8 SwiGLU experts (softmax over the top-2 router logits), so per token per layer only 2 expert FFNs plus shared attention/embedding weights run — 13B parameters of compute. But routing is decided independently at every layer and every timestep, so different tokens (and the same token at different layers) activate different slices of the full 47B, giving the sequence access to the total capacity while per-token cost stays fixed." />
+
+## Glossary
+- <Term def="mixture-of-experts layer where the gating vector is mostly zeros, so only the selected experts are computed">Sparse Mixture of Experts (SMoE)</Term>
+- <Term def="parameters actually used to process one token (grows with K); proportional to per-token inference FLOPs">active parameters</Term> vs <Term def="total stored parameters including all experts (grows with n); sets memory footprint">sparse parameters</Term>
+- <Term def="gated FFN variant (Swish-gated linear unit) used as the expert function; standard in Llama/Mistral models">SwiGLU</Term>
+- <Term def="sharding strategy placing different experts on different GPUs and routing tokens to them at runtime">Expert Parallelism</Term>
+- <Term def="CUDA kernels casting MoE FFN computation as block-sparse matrix multiplication, tolerating uneven tokens-per-expert">Megablocks</Term>
+- <Term def="multi-turn LLM-judged chat benchmark scored 1-10 by GPT-4">MT-Bench</Term>; <Term def="crowdsourced head-to-head chatbot ranking converted to an Elo scale (LMSys Chatbot Arena)">Arena Elo</Term>
+- <Term def="majority vote over k sampled answers">maj@k</Term>
+- <Term def="hand-written QA sets probing stereotyped answers across nine social categories">BBQ</Term>; <Term def="23,679 prompts measuring sentiment/bias in open-ended generation across five domains">BOLD</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

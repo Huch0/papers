@@ -1,0 +1,130 @@
+---
+canonical_key: arxiv-2205.14135
+version_key: v1
+title: 'FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness'
+authors:
+- Tri Dao
+- Daniel Y. Fu
+- Stefano Ermon
+- Atri Rudra
+- Christopher Ré
+venue: arXiv
+year: 2022
+tags:
+- foundational
+topic_groups:
+- llm
+triage_label: READ_SOON
+triage_confidence: medium
+source_link: https://arxiv.org/abs/2205.14135v2
+summary_date: '2026-08-25'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>FlashAttention computes *exact* attention with tiling and on-chip recomputation so the N×N attention matrix never touches GPU main memory — provably Θ(N²d²/M) HBM accesses instead of Θ(Nd+N²) — turning a FLOP-neutral algorithm into 3–7.6× wall-clock speedups, linear memory, and the first Transformers to crack Path-X.</TLDR>
+
+<WhyItMatters>The paper that made "IO-aware" part of the LLM vocabulary: it explains why a decade of approximate-attention papers didn't speed anything up, and its kernel became the default attention implementation underlying long-context training everywhere.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "7.6×", label: "attention speedup on GPT-2", sub: "vs PyTorch implementation (Fig.1)" },
+  { value: "9×", label: "fewer HBM accesses (up to)", sub: "4.4 vs 40.3 GB per fwd+bwd, GPT-2 medium (Fig.2)" },
+  { value: "15%", label: "faster than the MLPerf 1.1 BERT record", sub: "17.4 vs 20.0 min on 8×A100 (Tab.1)" },
+  { value: "61.4%", label: "first better-than-chance Path-X", sub: "seq. length 16K; Path-256 at 64K: 63.1% (Tab.6)" },
+  { value: "O(N)", label: "attention memory", sub: "up to 20× less than exact baselines (Fig.3)" },
+]} />
+
+## Motivation
+
+Attention is quadratic in sequence length, so the field spent years approximating it — sparse, low-rank, hashed. Almost none of it got adopted, and here is the uncomfortable reason: <Problem>approximate-attention methods optimize FLOPs, but attention is not compute-bound — on modern GPUs most of its operations are bottlenecked by memory traffic, so reducing FLOPs often buys no wall-clock time</Problem> (§1). Concretely, an A100 moves data from <Term def="high-bandwidth memory: the GPU's large main memory (40–80GB at 1.5–2.0 TB/s on A100)">HBM</Term> at ~1.5–2 TB/s but from <Term def="small on-chip memory next to the compute units (192KB per streaming multiprocessor, ~19 TB/s on A100)">SRAM</Term> an order of magnitude faster (§2.1), and the standard implementation writes the N×N matrices S = QKᵀ and P = softmax(S) out to HBM and reads them back — for GPT-2, N = 1024 against head dimension d = 64, so this traffic dwarfs the inputs. <Problem>Deep-learning frameworks expose no fine-grained control over memory movement, and naive kernel fusion doesn't help training because intermediates still get written to HBM for the backward pass</Problem> (§1, §2.1).
+
+## Contribution (what's new)
+
+<Novelty>Treat attention as an IO problem: the object to minimize is reads/writes between HBM and SRAM, not FLOPs</Novelty>. Two classical techniques make exact attention sub-quadratic *in HBM accesses*: tiling with an online softmax (the softmax couples whole rows, so you carry running max/normalizer statistics and rescale partial outputs block by block), and backward-pass recomputation from those saved statistics instead of storing S and P. The counterintuitive punchline is forced by the memory-bound regime: <Novelty>recomputation *adds* FLOPs yet *speeds up* the backward pass, because regenerating the attention matrix on-chip is cheaper than reading it from HBM</Novelty> (§3.1, Fig.2). The paper also proves this is essentially the end of the line: <Novelty>no exact-attention algorithm can asymptotically beat Θ(N²d²/M) HBM accesses across all SRAM sizes M</Novelty> (Prop.3).
+
+## Research questions
+
+1. Is HBM traffic — not FLOPs — the controlling variable for attention runtime, and can exact attention be computed with asymptotically fewer HBM accesses (§3.1–3.2)?
+2. What does the IO saving buy end-to-end: training wall-clock, feasible context length, and downstream quality (§4.1–4.2)?
+3. Can IO-awareness rescue approximate attention — does block-sparsity on top of the same kernel finally beat dense speed (§3.3)?
+
+## Methodology
+
+Never materialize the N×N matrix. The kernel loops over blocks of K and V (outer loop), loads them into SRAM, then streams blocks of Q (inner loop); each Q-block/K-block pair produces a small score tile entirely on-chip, and the numerically-stable softmax is assembled incrementally by tracking, per row, the running maximum <M tex="m(x)" /> and normalizer <M tex="\ell(x)" /> and rescaling the partial output before accumulation (§3.1, Alg.1). All of attention — matmul, masking, softmax, dropout, matmul — is fused into one CUDA kernel. For the backward pass, only O and the statistics <M tex="(m, \ell)" /> (plus the RNG state for dropout) are saved; S and P are recomputed on-chip per block — selective gradient checkpointing that is faster, not slower (§3.1, App.B). Block-sparse FlashAttention is the identical kernel that skips zero blocks of a fixed block mask (butterfly pattern in the experiments) (§3.3).
+
+<Pass title="The online softmax, IO theorems, and implementation details">
+
+The softmax of a concatenation decomposes with rescaling — this is the whole trick. For <M tex="x = [x^{(1)}\; x^{(2)}]" />:
+
+<MathBlock>{`m(x) = \\max(m(x^{(1)}), m(x^{(2)})), \\qquad \\ell(x) = e^{m(x^{(1)})-m(x)}\\,\\ell(x^{(1)}) + e^{m(x^{(2)})-m(x)}\\,\\ell(x^{(2)})`}</MathBlock>
+
+so keeping <M tex="(m, \ell)" /> per row lets you fold in one block at a time and still end with exact softmax (§3.1). Block sizes are set to fill SRAM: <M tex="B_c = \lceil M/4d \rceil" />, <M tex="B_r = \min(\lceil M/4d \rceil, d)" /> (Alg.1).
+
+- **Theorem 1**: Alg.1 returns exact <M tex="\mathrm{softmax}(QK^\top)V" /> in <M tex="O(N^2 d)" /> FLOPs with <M tex="O(N)" /> extra memory.
+- **Theorem 2**: standard attention needs <M tex="\Theta(Nd + N^2)" /> HBM accesses; FlashAttention needs <M tex="\Theta(N^2 d^2 M^{-1})" />. With d = 64–128 and M ≈ 100KB, <M tex="d^2/M \ll 1" /> — many-fold fewer accesses. Same statement holds for the backward pass (Thm.5, App.B).
+- **Proposition 3** (lower bound): no exact algorithm achieves <M tex="o(N^2 d^2 M^{-1})" /> HBM accesses for all <M tex="M \in [d, Nd]" /> — at <M tex="M = \Theta(Nd)" /> any algorithm must touch <M tex="\Omega(Nd)" /> memory.
+- **Proposition 4**: block-sparsity with nonzero-block fraction s gives <M tex="\Theta(Nd + N^2 d^2 M^{-1} s)" /> — the dominant term shrinks by exactly the sparsity, so <M tex="s = N^{-1}\log N" /> yields near-linear IO.
+- Validation of the premise (Fig.2 left, GPT-2 medium, N=1024): FlashAttention does *more* FLOPs (75.2 vs 66.6 GFLOPs) but 9× less HBM traffic (4.4 vs 40.3 GB) and runs 5.7× faster (7.3 vs 41.7 ms). Block-size ablation (Fig.2 middle): runtime falls as block size grows until ~256, then arithmetic becomes the bottleneck.
+- Numerics: identical perplexity and training curves to baselines (Tab.2, Fig.4 App.E) — it is the same function, computed in a different order.
+</Pass>
+
+## Main result
+
+The IO analysis cashes out at every level of the stack. <Finding src="Tab.1">BERT-large trains 15% faster than Nvidia's MLPerf 1.1 record submission (17.4 ± 1.4 vs 20.0 ± 1.5 min to target accuracy)</Finding>; <Finding src="Tab.2">GPT-2 small trains 3.5× faster than HuggingFace and 1.7× faster than Megatron-LM at identical perplexity (18.2)</Finding>; <Finding src="Tab.3">on Long-Range Arena, 2.4× speedup over standard attention at equal-or-better accuracy, and block-sparse FlashAttention (2.8×) is faster than every approximate-attention baseline tested</Finding>.
+
+<SortableTable columns={["Setting", "Baseline", "FlashAttention", "Anchor"]} rows={[
+  ["BERT-large training (min)", "20.0 (MLPerf 1.1 record)", "17.4", "Tab.1"],
+  ["GPT-2 small training (days)", "9.5 (HF) / 4.7 (Megatron)", "2.7", "Tab.2"],
+  ["GPT-2 small, 4K context (ppl / days)", "18.2 / 4.7 @1K (Megatron)", "17.5 / 3.6 @4K", "Tab.4"],
+  ["LRA average accuracy (speedup)", "59.3 (1.0×)", "59.8 (2.4×)", "Tab.3"],
+  ["Path-X 16K accuracy", "all prior: chance/OOM", "61.4", "Tab.6"],
+]} />
+
+## Key findings
+
+- <Finding src="Fig.2, §3.2">HBM access volume, not FLOPs, determines attention runtime</Finding> — the paper's central empirical claim, demonstrated by winning on wall-clock while losing on FLOP count. This is the diagnosis of why approximate attention failed to deliver speedups.
+- <Finding src="Tab.4, §4.2">Longer context is now a *free* quality lever</Finding>: GPT-2 small with a 4× longer context (4K) still trains 30% faster than Megatron at 1K and reaches 0.7 better perplexity (17.5 vs 18.2).
+- <Finding src="Tab.5–6, §4.2">Long context converts into capability, not just perplexity</Finding>: +4.3 micro-F1 on MIMIC-III (16K vs 512) and +8.5 on ECtHR (8K vs 512) document classification, and the first better-than-chance Transformer on Path-X (61.4% at 16K) and, via block-sparsity, Path-256 (63.1% at 64K) — tasks where every prior Transformer OOMed or sat at random.
+- <Finding src="Fig.3, §4.3">Crossover map vs approximate attention</Finding>: FlashAttention beats even approximate methods below sequence length ~512–1024 (fewer memory accesses win outright); beyond that some (e.g. Linformer) get faster — but block-sparse FlashAttention stays fastest at *all* lengths, and memory is linear (20× less than exact baselines; everything but Linformer OOMs before 64K).
+- <Finding src="App.E.5">Speedup is a function of the memory hierarchy, as the theory predicts</Finding>: 2–4× on A100 (more with dropout/masking fused in), 2.5–4.5× on RTX 3090 (lower HBM bandwidth → bigger win), less on T4 (smaller SRAM → smaller blocks), and reduced at head dimension 128 (blocks must shrink to fit SRAM) though a causal mask restores ~3×.
+- <Finding src="§3.2">Exactness costs nothing asymptotic</Finding>: the matching lower bound (Prop.3) says the algorithm is IO-optimal for exact attention over the SRAM-size range — further gains must come from approximation (block-sparsity) or hardware.
+
+## Implications
+
+The paper relocates the attention-efficiency question from "which approximation?" to "which memory hierarchy?", importing <Related>the IO-complexity tradition (Aggarwal & Vitter 1988), the roofline model, and Halide-style separation of algorithm from schedule</Related> into deep learning. It is the reason later long-context training exists at practical cost, and its stated limitations are a roadmap that the field then followed: <FollowUp>compiling high-level attention variants to IO-aware kernels instead of hand-writing CUDA (the Triton/torch.compile direction)</FollowUp>, <FollowUp>IO-aware treatment of the rest of the network beyond attention</FollowUp>, and <FollowUp>multi-GPU IO analysis where inter-GPU transfer joins the hierarchy (the direction sequence parallelism took)</FollowUp> (§5). Block-sparse FlashAttention also repositions <Related>sparse/structured-matrix methods (butterfly patterns, the "hardware lottery" critique)</Related>: approximation finally pays off once the dense baseline is IO-optimal. It also competes with <Related>the S4/state-space line, which was winning Path-X by replacing attention</Related> — FlashAttention shows a plain Transformer can get there too.
+
+## Limitations
+
+- <Caveat>Every new attention variant requires hand-writing a new CUDA kernel — low-level, engineering-heavy, and not portable across GPU generations</Caveat> (§5).
+- <Caveat>IO-optimality is single-GPU; the analysis ignores inter-GPU transfer, which matters exactly in the large-scale regime the method targets</Caveat> (§5).
+- <Caveat>Speedup degrades where the analysis says it must: small SRAM (T4) and large head dimension (128) force smaller blocks</Caveat> (App.E.5).
+- <Caveat>Beyond ~1K tokens some approximate methods are faster than dense FlashAttention</Caveat>; the all-lengths win requires the block-sparse (approximate) variant (§4.3).
+- <Caveat>Path-X is solved only via transfer (pretrain on Path-64, interpolate positional embeddings), and 61.4% is modest</Caveat> — S4-class models later exceeded it (Tab.6, §4.2).
+
+## Critiques and Questions
+
+1. The quality gains from long context (Tab.5) are a claim about *context*, but the paper itself flags an alternative reading — MIMIC's dip at 1K–2K suggests length-distribution shift effects, and no controlled study separates "more tokens seen per document" from "better length generalization".
+2. The lower bound is over a *range* of SRAM sizes; a parameterized bound for fixed M is explicitly left open (§3.2) — "IO-optimal" is slightly weaker than it sounds.
+3. Speedups are reported against reference implementations (PyTorch, HuggingFace, Megatron, and reference approximate-attention code); against Nvidia's hand-tuned FMHA fused kernel the margin is thin (−4% to +8% across 128–512, App.E.4) — the asymptotic story matters most at lengths those fused kernels didn't support.
+4. Adoption pressure cuts the other way too: baking dense attention this deep into hardware-efficient kernels raises the bar any *architectural* alternative (S4, linear attention) must clear — the hardware-lottery effect the authors cite (App.A).
+
+<SelfCheck q="Why does the backward pass get faster even though FlashAttention recomputes the attention matrix, doing strictly more FLOPs?" a="Because the backward pass is memory-bound. The standard approach reads the stored N-by-N matrices S and P from HBM at Θ(Nd + N²) accesses; FlashAttention instead stores only O and the per-row softmax statistics (m, ℓ) and regenerates S and P block-by-block in SRAM, cutting HBM accesses to Θ(N²d²/M). Since HBM traffic, not arithmetic, determines runtime (Fig.2: more GFLOPs, 9× less traffic, 5.7× faster), trading FLOPs for IO is a net win." />
+
+## Glossary
+
+- <Term def="analysis counting reads/writes between fast and slow memory levels, from the sorting literature (Aggarwal & Vitter 1988)">IO complexity</Term>
+- <Term def="an operation whose runtime is set by memory traffic rather than arithmetic; softmax, dropout, and most elementwise ops qualify">memory-bound</Term>
+- <Term def="arithmetic operations per byte of memory accessed; low intensity means memory-bound">arithmetic intensity</Term>
+- <Term def="executing several consecutive operations in one GPU kernel so intermediates stay in registers/SRAM instead of round-tripping to HBM">kernel fusion</Term>
+- <Term def="computing a large operation block-by-block so each block's working set fits in fast memory">tiling</Term>
+- <Term def="discarding intermediates in the forward pass and regenerating them during backward; here selective — only S and P are recomputed, from saved softmax statistics">recomputation</Term>
+- <Term def="Long-Range Arena: benchmark suite for efficient Transformers with sequence lengths 1K–4K (Tay et al. 2020)">LRA</Term>
+- <Term def="LRA task: classify whether two points in a 128×128 image, fed pixel-by-pixel (16K tokens), are connected by a path; Path-256 is the 256×256 (64K) version">Path-X</Term>
+- <Term def="fixed structured sparsity pattern whose products can express any structured matrix near-optimally; used as the block mask here">butterfly sparsity</Term>
+- <Term def="industry-standard ML training benchmark; v1.1's BERT entry is the speed record referenced">MLPerf</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

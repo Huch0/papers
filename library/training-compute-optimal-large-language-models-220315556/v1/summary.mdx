@@ -1,0 +1,159 @@
+---
+canonical_key: arxiv-2203.15556
+version_key: v1
+title: Training Compute-Optimal Large Language Models
+authors:
+- Jordan Hoffmann
+- Sebastian Borgeaud
+- Arthur Mensch
+- Elena Buchatskaya
+- Trevor Cai
+- Eliza Rutherford
+- Diego de Las Casas
+- Lisa Anne Hendricks
+- Johannes Welbl
+- Aidan Clark
+- Tom Hennigan
+- Eric Noland
+- Katie Millican
+- George van den Driessche
+- Bogdan Damoc
+- Aurelia Guy
+- Simon Osindero
+- Karen Simonyan
+- Erich Elsen
+- Jack W. Rae
+- Oriol Vinyals
+- Laurent Sifre
+venue: arXiv
+year: 2022
+tags:
+- foundational
+topic_groups:
+- llm
+triage_label: READ_SOON
+triage_confidence: medium
+source_link: https://arxiv.org/abs/2203.15556v1
+summary_date: '2026-08-25'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>For a fixed training-compute budget, model size and training tokens should scale in **equal proportion** (double the model ⇒ double the data) — validated by Chinchilla, a 70B model trained on 1.4T tokens with Gopher's exact compute budget that beats the 4×-larger Gopher on essentially every benchmark.</TLDR>
+
+<WhyItMatters>This is the paper that reset how the field sizes language models: "Chinchilla-optimal" replaced Kaplan scaling as the default sizing rule, and it reframed *data*, not parameters, as the binding constraint on LLM progress. Essential foundation for reading any later pretraining or scaling paper.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "≈0.5 / ≈0.5", label: "scaling exponents for params & tokens", sub: "vs Kaplan's 0.73 / 0.27 (Tab.2)" },
+  { value: "67.6%", label: "MMLU 5-shot", sub: "Chinchilla 70B vs Gopher 280B at 60.0% (Tab.6)" },
+  { value: "400+", label: "models trained for the fit", sub: "70M–16B params, 5B–500B tokens" },
+  { value: "1.4T", label: "Chinchilla's training tokens", sub: "4× Gopher's data, same 5.76e23 FLOPs" },
+]} />
+
+## Motivation
+
+You typically get **one shot** at training a frontier model: the budget — how many accelerators, for how long — is fixed before you start. So the allocation question "given <M tex="C" /> FLOPs, how big a model on how many tokens?" must be answered *in advance*, and <Problem>if the allocation rule is wrong, every flagship run wastes its budget</Problem>.
+
+The rule the field was using came from <Related>Kaplan et al. (2020)</Related>: per 10× more compute, grow the model 5.5× and the data only 1.8× (§1). The field obeyed — GPT-3 (175B), Jurassic-1 (178B), Gopher (280B), MT-NLG (530B) were all trained on roughly 300B tokens regardless of size (Tab.1). We saw two structural flaws in that estimate: <Problem>Kaplan et al. reused one fixed ~130B-token learning-rate schedule for every run, so every intermediate loss overestimates what a properly-scheduled shorter run achieves — systematically undervaluing training on more data</Problem> (§2); and <Problem>their fits were dominated by very small models (mostly under 100M params), while the frontier shows curvature at scale</Problem> (§2, App.E).
+
+## Contribution (what's new)
+
+<Novelty>The compute-optimal frontier is symmetric: <M tex="N_{opt}\propto C^{0.5}" /> and <M tex="D_{opt}\propto C^{0.5}" /> — every doubling of model size demands a doubling of training tokens</Novelty>, which means the 2022 generation of LLMs was drastically oversized and undertrained. The measurement *has* to differ from Kaplan et al.'s: <Novelty>the cosine learning-rate schedule length must be matched to each run's token horizon</Novelty>, otherwise the schedule artifact above re-enters and biases you toward "params matter more". We estimate the frontier three independent ways, and then make the result falsifiable with one decisive bet: <Novelty>Chinchilla — the same 5.76e23 FLOPs as Gopher, spent as 70B params × 1.4T tokens instead of 280B × 300B</Novelty> (§4).
+
+## Research questions
+
+1. Given a fixed FLOPs budget <M tex="C" />, what <M tex="(N, D)" /> minimizes final pretraining loss <M tex="L(N, D)" /> subject to <M tex="\mathrm{FLOPs}(N,D)=C" />? (Eq.1)
+2. Are current large models correctly sized for their budgets — and if not, by how much?
+3. Does the loss-optimal reallocation actually win *downstream* (few-shot benchmarks), not just in training loss?
+
+## Methodology
+
+Train over 400 models (70M–16B params, 5B–500B tokens), then estimate the frontier three ways that share no fitting machinery. Carry one example through everything: **Gopher's budget, 5.76e23 FLOPs** — Kaplan's rule spent it as 280B params on 300B tokens; each of our estimators answers what it *should* have bought.
+
+<Pass title="The three estimation approaches">
+<Stepper steps={[
+  { title: "Approach 1 — minimum over training curves (§3.1)", body: "Fix a family of model sizes (70M to 10B+); train each for 4 token horizons spanning 16×, each with its cosine schedule decaying 10× over that horizon. Smooth and interpolate every loss curve, take the lower envelope of loss vs FLOPs, and at 1500 log-spaced FLOP values read off which size wins. Power-law fit: a = 0.50, b = 0.50. Projects 67B / 1.5T tokens at the Gopher budget (Tab.3)." },
+  { title: "Approach 2 — IsoFLOP profiles (§3.2)", body: "Fix 9 total budgets from 6e18 to 3e21 FLOPs; at each budget vary model size (up to 16B) with tokens set so total FLOPs is constant. Final loss vs size shows a clear valley; fit a parabola per budget to locate the minimum. Power-law fit through the valley points: a = 0.49, b = 0.51. Projects 63B / 1.4T at the Gopher budget (Fig.3)." },
+  { title: "Approach 3 — parametric loss surface (§3.3)", body: "Fit a closed-form loss to all final losses from Approaches 1 and 2 (Huber loss, δ=1e-3, L-BFGS from a grid of inits), then minimize it under FLOPs ≈ 6ND. Gives a = 0.46, b = 0.54, and projects an even smaller 40B model at the Gopher budget (Fig.4)." },
+]} />
+
+The parametric form is a classical risk decomposition (App.D.2):
+
+<MathBlock>{`\\hat{L}(N, D) = E + \\frac{A}{N^{\\alpha}} + \\frac{B}{D^{\\beta}}`}</MathBlock>
+
+<M tex="E" /> is the irreducible entropy of text, the <M tex="A/N^{\alpha}" /> term is finite-capacity error, and <M tex="B/D^{\beta}" /> is the cost of a single finite pass over the data. Fitted values: <M tex="E=1.69" />, <M tex="A=406.4" />, <M tex="B=410.7" />, <M tex="\alpha=0.34" />, <M tex="\beta=0.28" /> (Eq.10). The frontier exponents fall out in closed form as <M tex="a=\beta/(\alpha+\beta)" />, <M tex="b=\alpha/(\alpha+\beta)" /> (Eq.4). All analysis uses smoothed *training* loss as an unbiased test-loss estimate — valid only because every run sees less than one epoch (§1 fn.2).
+</Pass>
+
+<Pass title="Chinchilla training setup (§4.1)">
+Same architecture and data (<Term def="DeepMind's 10TB-scale curated text corpus: MassiveWeb 45%, Books 30%, C4 10%, News 10%, GitHub 4%, Wikipedia 1% for Chinchilla">MassiveText</Term>) as Gopher, so the comparison isolates the allocation. Differences: 80 layers but d_model 8,192 vs 16,384 and 64 vs 128 heads; 4× higher max LR (1e-4); batch 1.5M→3M tokens (Tab.4); AdamW instead of Adam; a SentencePiece tokenizer without NFKC normalization (94.15% token overlap with Gopher's — helps math/chemistry text); bfloat16 compute with a float32 master copy of weights in the optimizer state. Trained on TPUv3/v4 with JAX. Data reweighted for 1.4T tokens — Wikipedia is repeated 3.40 epochs, MassiveWeb 1.24 (Tab.A1).
+</Pass>
+
+## Main result
+
+At identical training compute, the smaller-but-longer-trained model wins nearly everywhere: <Finding src="Tab.6, p.11">MMLU 5-shot 67.6% vs Gopher's 60.0% (+7.6), beating GPT-3 (43.9%) and even the expert-forecast SOTA for June **2023** (63.4%)</Finding>, with more than 90% accuracy on 4 of 57 subjects — the first model to do so on any subject.
+
+<SortableTable columns={["Benchmark (metric)", "Chinchilla 70B", "Gopher 280B", "Anchor"]} rows={[
+  ["MMLU 5-shot (avg %)", 67.6, 60.0, "Tab.6"],
+  ["BIG-bench (avg % over 62 tasks)", 65.1, 54.4, "§4.2.4"],
+  ["LAMBADA 0-shot (%)", 77.4, 74.5, "Tab.7"],
+  ["RACE-h few-shot (%)", 82.3, 71.6, "Tab.7"],
+  ["RACE-m few-shot (%)", 86.8, 75.1, "Tab.7"],
+  ["Natural Questions 5-shot (%)", 31.5, 24.5, "Tab.9"],
+  ["TriviaQA unfiltered 0-shot (%)", 67.0, 52.8, "Tab.9"],
+  ["TruthfulQA 0-shot (%)", 43.6, 29.5, "§4.2.5"],
+  ["Winogrande 0-shot (%)", 74.9, 70.1, "Tab.8"],
+  ["BoolQ 0-shot (%)", 83.7, 79.3, "Tab.8"],
+  ["Wikitext103 perplexity (lower better)", 7.16, 7.75, "§4.2.1"],
+]} />
+
+It also beats GPT-3, Jurassic-1, and the 7.5×-larger MT-NLG 530B on nearly every comparison (Tab.7–9), and being 4× smaller, it is strictly cheaper to fine-tune and serve.
+
+## Key findings
+
+- <Finding src="Tab.2">Three independent estimators converge on equal scaling: a/b = 0.50/0.50, 0.49/0.51, 0.46/0.54 — versus Kaplan et al.'s 0.73/0.27</Finding>: the conclusion is not an artifact of one fitting method.
+- <Finding src="Fig.A1, App.B">The schedule artifact is real and large: a cosine cycle that overshoots the training horizon by more than ~25% visibly degrades final loss</Finding> — this is the mechanism by which Kaplan et al.'s fixed-length schedule inflated intermediate losses and undervalued data.
+- <Finding src="Tab.3">The implied undertraining is enormous: a 175B (GPT-3-sized) model is compute-optimal only with ~3.85e24 FLOPs and 3.7T tokens; a 1T-param model is not optimal below ~1e26 FLOPs (220+ Gopher budgets)</Finding> — so data collection, not model engineering, becomes the bottleneck for further scaling.
+- <Finding src="Tab.A2">The equal-scaling law replicates on C4 (0.50/0.50) and GitHub code (0.53/0.47)</Finding>: within the single-epoch regime the allocation rule is dataset-independent.
+- <Finding src="Fig.A4, App.D.4">A direct small-scale duel at 1e21 FLOPs confirms the fit: our predicted-optimal 2.80B model ends at lower loss than the Kaplan-predicted 4.74B model</Finding> — the same experiment that Chinchilla-vs-Gopher runs at 5.76e23.
+- <Finding src="§4.2.5">TruthfulQA improves 14.1% 0-shot (43.6% vs 29.5%) purely from better pretraining</Finding> — contradicting the prior narrative that better language models are necessarily more prone to imitative falsehoods.
+- <Finding src="App.E, §3.4">The FLOP-loss frontier shows concavity at high compute, and Approach 3 (which downweights small runs) predicts the smallest optimal models</Finding> — meaning even this paper likely *over*estimates optimal model size at large budgets.
+- <Finding src="Fig.A6–A7, App.G">The optimizer choices matter independently: AdamW beats Adam and a float32 master-weight copy helps at every scale tested</Finding> — though AdamW's advantage only materializes in the last ~20% of the cosine cycle (fn.8).
+
+## Implications
+
+The sizing rule for the field changed overnight: <Related>Gopher and GPT-3-era models</Related> were retroactively revealed as ~4× oversized, and subsequent models (the LLaMA line most explicitly) trained smaller models on far more tokens — often deliberately *past* Chinchilla-optimal, since inference cost amortizes over a model's lifetime, a trade-off this paper motivates but does not formalize. The result also elevates <Related>data-side approaches like retrieval augmentation (RETRO), which effectively multiply tokens seen</Related>. Threads worth chasing: <FollowUp>what replaces the law when data runs out — the multi-epoch / data-constrained regime the paper explicitly excludes</FollowUp>, <FollowUp>inference-aware "overtraining" as an explicit objective</FollowUp>, and <FollowUp>whether the fitted exponents (α=0.34, β=0.28 — both below the theoretical 1/2) can be raised by better architectures or data quality</FollowUp>.
+
+## Limitations
+
+- <Caveat>Only two comparable runs exist at frontier scale (Chinchilla and Gopher) with nothing at intermediate scales</Caveat> — the extrapolation spans two orders of magnitude on faith in power laws (§5).
+- <Caveat>The power-law form is assumed despite observed concavity at high budgets (App.E), so optimal sizes at large C may be overestimated</Caveat> (§5).
+- <Caveat>Everything is single-epoch; the analysis is silent about repeating data</Caveat> — yet its own projections (e.g. 3.7T+ tokens for 175B, Tab.3) exceed the curated data available at the time, making the multi-epoch regime unavoidable (§5).
+- <Caveat>Chinchilla is trained once (no variance estimate, model card Tab.A8) and differs from Gopher in optimizer, tokenizer, LR, and batch size — App.G shows the optimizer change alone improves loss</Caveat>, so the headline gap is allocation *plus* tuning, not allocation alone.
+- <Caveat>Language-modelling comparisons (Pile, Wikitext103) are confounded by 4× more training data raising leakage risk — the paper itself redirects emphasis to MMLU/BIG-bench for this reason</Caveat> (§4.2.1).
+
+## Critiques and Questions
+
+1. **Internal number inconsistencies.** The abstract says MMLU 67.5% but Tab.6 says 67.6%; §3.4 prose says a 175B model needs 4.41e24 FLOPs / 4.2T tokens while Tab.3 (Approach 1) says 3.85e24 / 3.7T; §4.2.6 prose quotes Gopher NQ at 21%/28% while Tab.9 says 24.5%/28.2%. All minor, but they suggest prose written against a different fit or model revision than the tables.
+2. **"Compute-optimal" optimizes the wrong objective for practice.** The frontier minimizes *pretraining loss per training FLOP*; total lifetime cost (training + inference) would push optima to even smaller models trained longer. The paper argues this qualitatively (§1, §4) but never re-derives the frontier under it.
+3. How much of Chinchilla's downstream win comes from lower loss vs from *seeing 4× more facts*? Closed-book QA (Tab.9) plausibly rewards data coverage directly, independent of the loss argument — the paper does not separate the two.
+4. The three approaches disagree exactly where it matters most (40B vs 63B vs 67B at the Gopher budget); choosing 70B — outside all three point estimates — was justified by "dataset and computational efficiency considerations" (§4), i.e., partially pragmatic.
+
+<SelfCheck q="Why did Kaplan et al. (2020) conclude that model size should scale much faster than data (0.73 vs 0.27), and what did this paper change to overturn it?" a="They trained every model with one fixed ~130B-token cosine LR schedule, so runs evaluated mid-schedule show inflated losses relative to a model properly scheduled for that shorter horizon — making extra data look less valuable; their fits were also dominated by sub-100M-param models. This paper matches the cosine cycle length to each run's actual token horizon (overshooting by >25% measurably hurts, Fig.A1) and uses mostly 500M+ models, after which all three estimation approaches yield equal ~C^0.5 scaling for both parameters and tokens." />
+
+## Glossary
+
+- <Term def="Choosing model size N and training tokens D to minimize final loss subject to a fixed total training FLOPs budget C">compute-optimal</Term>
+- <Term def="The approximation FLOPs ≈ 6·N·D for training a transformer with N params on D tokens (2 for forward, 4 for backward); this paper's exact accounting stays within 1.10× of it (Tab.A4)">6ND approximation</Term>
+- <Term def="A curve of final loss vs model size at one fixed total-FLOP budget; its valley locates the optimal size for that budget">IsoFLOP profile</Term>
+- <Term def="Learning-rate schedule following a cosine decay (here by 10×) over a set token horizon; its length must match the horizon or final loss suffers">cosine cycle</Term>
+- <Term def="57-subject exam-style multiple-choice benchmark (Massive Multitask Language Understanding); human expert ceiling ~89.8%">MMLU</Term>
+- <Term def="Collaborative suite of 200+ diverse language tasks (Beyond the Imitation Game); this paper evaluates 62 of them">BIG-bench</Term>
+- <Term def="DeepMind's 280B-parameter LLM (Rae et al., 2021), trained on 300B MassiveText tokens — the compute-matched baseline throughout">Gopher</Term>
+- <Term def="Bits-per-byte: language-modelling loss normalized per byte of raw text, comparable across tokenizers">bpb</Term>
+- <Term def="Robust regression loss, quadratic near zero and linear in the tails, which prevents small-compute outlier runs from dominating the parametric fit">Huber loss</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

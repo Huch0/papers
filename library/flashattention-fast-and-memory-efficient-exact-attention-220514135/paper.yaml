@@ -44,17 +44,17 @@ versions:
   source: arxiv
   source_url: https://arxiv.org/abs/2205.14135v2
   pdf_path: library/flashattention-fast-and-memory-efficient-exact-attention-220514135/v1/paper.pdf
-  summary_path: null
+  summary_path: library/flashattention-fast-and-memory-efficient-exact-attention-220514135/v1/summary.mdx
   metadata_path: library/flashattention-fast-and-memory-efficient-exact-attention-220514135/v1/metadata.yaml
   fetched_at: '2026-08-24T03:20:48Z'
   source_updated_at: '2022-06-23T17:53:32Z'
   arxiv_version: v2
   pdf_sha256: ca7f9fda10b90fc05dd291a3accc85e9c1a4a860b99b31928dab03ed3fcb14e4
   pdf_bytes: 2630825
-  summary_status: none
-  extraction_status: none
+  summary_status: full
+  extraction_status: full
   created_at: '2026-08-24T03:20:48Z'
-  updated_at: '2026-08-24T03:20:48Z'
+  updated_at: '2026-08-25T06:44:56Z'
 relations:
   duplicate_candidates: []
   related_papers: []

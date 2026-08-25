@@ -1,0 +1,128 @@
+---
+canonical_key: arxiv-1706.03762
+version_key: v1
+title: Attention Is All You Need
+authors:
+- Ashish Vaswani
+- Noam Shazeer
+- Niki Parmar
+- Jakob Uszkoreit
+- Llion Jones
+- Aidan N. Gomez
+- Lukasz Kaiser
+- Illia Polosukhin
+venue: arXiv
+year: 2017
+tags:
+- foundational
+topic_groups:
+- llm
+triage_label: READ_SOON
+triage_confidence: medium
+source_link: https://arxiv.org/abs/1706.03762v7
+summary_date: '2026-08-25'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>The Transformer is the first sequence-transduction model built entirely from attention — no recurrence, no convolution — and it beats every prior WMT 2014 translation result (28.4 BLEU EN→DE, 41.8 EN→FR) at a fraction of the training cost because every position is processed in parallel.</TLDR>
+
+<WhyItMatters>This is the root of the LLM milestone path: BERT is this paper's encoder stack, GPT is its decoder stack, and essentially every modern LLM is these same blocks scaled up. Understanding why each piece here is *forced* explains most architecture decisions of the following decade.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "28.4", label: "BLEU, WMT14 EN→DE", sub: "Transformer (big) — over 2 BLEU above best prior, ensembles included (Tab.2)" },
+  { value: "41.8", label: "BLEU, WMT14 EN→FR", sub: "single-model SOTA (Tab.2; §6.1 text says 41.0 — see Critiques)" },
+  { value: "12 h", label: "base-model training", sub: "8×P100; already surpasses all published models on EN→DE (§5.2, §6.1)" },
+  { value: "65M / 213M", label: "parameters", sub: "base / big (Tab.3)" },
+]} />
+
+## Motivation
+The dominant <Term def="mapping one symbol sequence to another, e.g. translation — usually with an encoder that reads the source and a decoder that generates the target">sequence transduction</Term> models are recurrent: they compute hidden state <M tex="h_t" /> from <M tex="h_{t-1}" />, so <Problem>computation inside one training example is inherently sequential — positions cannot be processed in parallel, and at long sequence lengths memory limits how many examples can be batched</Problem> (§1). Convolutional escapes (ByteNet, ConvS2S) do parallelize, but <Problem>the number of operations needed to relate two positions grows with their distance — linearly for ConvS2S, logarithmically for ByteNet — which makes long-range dependencies harder to learn</Problem> (§2). Attention already connected arbitrary positions regardless of distance, but <Problem>in all but a few cases it was bolted onto a recurrent network</Problem>, so the sequential bottleneck survived (§1).
+
+## Contribution (what's new)
+The bet that survives deleting "we propose": <Novelty>self-attention alone suffices for state-of-the-art transduction — the first model to compute all its representations without sequence-aligned recurrence or convolution</Novelty> (§2). Three sub-designs are each forced by a specific failure mode:
+- <Novelty>Scaled dot-product attention</Novelty>: for large key dimension <M tex="d_k" /> the dot products grow (variance <M tex="d_k" /> for random unit-variance vectors), pushing softmax into regions of vanishing gradient — so scores are divided by <M tex="\sqrt{d_k}" /> (§3.2.1, fn.4).
+- <Novelty>Multi-head attention</Novelty>: a single softmax average blurs distinct relations ("averaging inhibits" attending to different representation subspaces), the price the Background section calls reduced effective resolution — so run <M tex="h=8" /> small attentions in parallel and concatenate (§2, §3.2.2).
+- <Novelty>Sinusoidal positional encodings added to the embeddings</Novelty>: with recurrence and convolution gone, nothing else tells the model token order (§3.5).
+
+## Research questions
+1. Can attention fully replace recurrence and convolution in encoder–decoder transduction without losing quality (§1–2)?
+2. What is gained structurally — per-layer complexity, minimum sequential operations, and the maximum path length between any two positions (§4, Tab.1)?
+3. Which components actually matter: number of heads, key size, model size, dropout, choice of positional encoding (§6.2)?
+
+## Methodology
+Both encoder and decoder are stacks of <M tex="N=6" /> identical layers made of two repeating pieces — multi-head self-attention and a position-wise feed-forward network — each wrapped in a <Term def="adding a sub-layer's input to its output, x + Sublayer(x), so gradients flow through identity paths">residual connection</Term> followed by <Term def="normalizing each position's activation vector to stabilize training">layer normalization</Term> (§3.1). Carry one example through: in "The Law will never be perfect, but its application should be just", every token emits a query, a key, and a value vector; the token "its" compares its query against all keys, softmax turns the scores into weights, and its new representation is the weighted sum of all values — and a trained head really does sharply pick out "Law" and "application" for "its" (Fig.4, encoder layer 5). Every position does this simultaneously as one matrix multiply — that is where the parallelism comes from. The decoder generates <Term def="producing outputs one token at a time, each conditioned on previously generated tokens">autoregressively</Term>, with its self-attention masked (illegal positions set to <M tex="-\infty" /> before softmax) so position <M tex="i" /> only sees outputs before <M tex="i" />, plus a third sub-layer attending over the encoder output (§3.1–3.2.3).
+
+<Pass title="Method details (architecture, training regime)">
+**Attention.** Queries/keys of dimension <M tex="d_k" />, values of dimension <M tex="d_v" />:
+
+<MathBlock>{`\\mathrm{Attention}(Q,K,V) = \\mathrm{softmax}\\!\\left(\\frac{QK^{\\top}}{\\sqrt{d_k}}\\right)V`}</MathBlock>
+
+Multi-head: project <M tex="Q,K,V" /> down <M tex="h" /> times with learned matrices, attend in parallel, concatenate, project back with <M tex="W^O" />. Base uses <M tex="h=8" />, <M tex="d_k=d_v=d_{\mathrm{model}}/h=64" /> — total cost similar to one full-dimension head (§3.2.2). Attention appears three ways: encoder self-attention, masked decoder self-attention, and encoder–decoder attention where queries come from the decoder and keys/values from the encoder (§3.2.3).
+
+**The rest of a layer.** Position-wise FFN <M tex="\mathrm{FFN}(x)=\max(0,\,xW_1+b_1)W_2+b_2" /> with <M tex="d_{\mathrm{model}}=512" />, <M tex="d_{ff}=2048" /> — same weights across positions, different per layer (§3.3). Input/output embeddings and the pre-softmax projection share one weight matrix, scaled by <M tex="\sqrt{d_{\mathrm{model}}}" /> in the embedding (§3.4). Positional encoding, summed onto embeddings:
+
+<MathBlock>{`PE_{(pos,2i)}=\\sin\\!\\big(pos/10000^{2i/d_{\\mathrm{model}}}\\big),\\qquad PE_{(pos,2i+1)}=\\cos\\!\\big(pos/10000^{2i/d_{\\mathrm{model}}}\\big)`}</MathBlock>
+
+Sinusoids were chosen hoping the model can attend by relative offset (each <M tex="PE_{pos+k}" /> is a linear function of <M tex="PE_{pos}" />) and extrapolate beyond training lengths (§3.5).
+
+**Training** (§5). WMT14 EN–DE: ~4.5M sentence pairs, shared <Term def="subword tokenization that merges frequent character pairs, keeping the vocabulary small while covering rare words">byte-pair encoding</Term> vocabulary of ~37k tokens; EN–FR: 36M sentences, 32k <Term def="Google's subword vocabulary scheme, similar in spirit to BPE">word-piece</Term> vocabulary. Batches of ~25k source + 25k target tokens. Adam (<M tex="\beta_1=0.9,\ \beta_2=0.98,\ \epsilon=10^{-9}" />) with warmup:
+
+<MathBlock>{`\\mathit{lrate} = d_{\\mathrm{model}}^{-0.5}\\cdot \\min\\!\\big(\\mathit{step}^{-0.5},\\ \\mathit{step}\\cdot \\mathit{warmup}^{-1.5}\\big),\\quad \\mathit{warmup}=4000`}</MathBlock>
+
+Regularization: residual dropout 0.1 (0.3 for big EN–DE; the EN–FR big model kept 0.1) and <Term def="training against softened targets (here 0.1 mass off the true label) so the model is less over-confident">label smoothing</Term> 0.1. Base: 100k steps ≈ 12 h at 0.4 s/step on 8×P100; big: 300k steps ≈ 3.5 days at 1.0 s/step (§5.2, §6.1). Inference: <Term def="keeping the k best partial outputs at each generation step instead of only the single best">beam search</Term> with beam 4, length penalty <M tex="\alpha=0.6" />, output capped at input length + 50; base averages the last 5 checkpoints, big the last 20 (§6.1).
+</Pass>
+
+## Main result
+<Finding src="Tab.2, §6.1">Transformer (big) reaches 28.4 BLEU on WMT14 EN→DE — more than 2.0 BLEU above every prior result including ensembles — and the base model alone (27.3) already beats all previously published models and ensembles at a fraction of their training FLOPs</Finding>. <Term def="n-gram overlap score against reference translations; the standard MT quality metric">BLEU</Term> on newstest2014:
+
+<SortableTable columns={["Model", "BLEU EN→DE", "BLEU EN→FR", "Training FLOPs"]} rows={[
+  ["ByteNet", 23.75, "—", "—"],
+  ["GNMT + RL", 24.6, 39.92, "2.3e19 / 1.4e20"],
+  ["ConvS2S", 25.16, 40.46, "9.6e18 / 1.5e20"],
+  ["MoE", 26.03, 40.56, "2.0e19 / 1.2e20"],
+  ["GNMT + RL (ensemble)", 26.3, 41.16, "1.8e20 / 1.1e21"],
+  ["ConvS2S (ensemble)", 26.36, 41.29, "7.7e19 / 1.2e21"],
+  ["Transformer (base)", 27.3, 38.1, "3.3e18"],
+  ["Transformer (big)", 28.4, 41.8, "2.3e19"],
+]} />
+
+On EN→FR the big model is single-model state of the art at less than one quarter of the previous SOTA's training cost (§6.1; but note the 41.0-vs-41.8 discrepancy under Critiques).
+
+## Key findings
+- <Finding src="Tab.1, §4">Self-attention gives O(1) sequential operations and O(1) maximum path length between any two positions, versus O(n) for recurrence</Finding> — the mechanistic reason both training parallelizes and long-range dependencies get easier; per-layer cost <M tex="O(n^2\cdot d)" /> is cheaper than recurrent <M tex="O(n\cdot d^2)" /> whenever sequence length n is below representation size d, the common case with subword vocabularies.
+- <Finding src="Tab.3(A), §6.2">Heads follow an inverted U: single-head is 0.9 BLEU below the best setting, but 32 heads is also worse than 8</Finding> — more heads is not monotonically better.
+- <Finding src="Tab.3(B), §6.2">Shrinking the key size d_k hurts quality</Finding> — determining compatibility is not easy, and a smarter compatibility function than dot product may be beneficial (author-stated).
+- <Finding src="Tab.3(C,D), §6.2">Bigger models are better (d_model 1024 → 26.0 dev BLEU; d_ff 4096 → 26.2) and dropout is critical: removing it drops the base model from 25.8 to 24.6</Finding>.
+- <Finding src="Tab.3(E), §6.2">Learned positional embeddings perform nearly identically to sinusoids</Finding> (25.7 vs 25.8 dev BLEU) — sinusoids were kept only for hoped-for length extrapolation, which is not tested.
+- <Finding src="§5.4">Label smoothing hurts perplexity (the model becomes less sure) yet improves accuracy and BLEU</Finding> — <Term def="exponentiated average negative log-likelihood; lower means the model predicts the corpus more confidently">perplexity</Term> and task quality can move in opposite directions.
+- <Finding src="Tab.4, §6.3">With almost no task tuning, a 4-layer Transformer generalizes to English constituency parsing: 91.3 F1 training on 40k WSJ sentences alone — beating the BerkeleyParser in the small-data regime where RNN seq2seq had failed — and 92.7 F1 semi-supervised</Finding>.
+- <Finding src="Figs.3–5, §4">Individual attention heads specialize into interpretable roles</Finding> — completing the long-distance phrase "making…more difficult", and resolving "its" to "Law"/"application" (anaphora) — qualitative evidence, no quantitative analysis.
+
+## Implications
+Removing recurrence turns sequence modeling into large matrix multiplies, which is exactly what accelerators scale — this is the enabling step for the pretraining era. <Related>BERT reuses this encoder stack; GPT reuses this decoder stack; tensor2tensor released the reference code</Related>. Author-stated next steps: other modalities (images, audio, video), <FollowUp>local/restricted attention for very long inputs (Tab.1's O(r·n·d) row is proposed but never evaluated here)</FollowUp>, and making generation less sequential (§7). Two threads the ablations open: <FollowUp>why head count has an optimum rather than more-is-better</FollowUp>, and <FollowUp>whether a learned compatibility function beats scaled dot product at small d_k</FollowUp> (§6.2).
+
+## Limitations
+- <Caveat>Per-layer cost is quadratic in sequence length, O(n²·d)</Caveat> — fine for sentence-length n under d=512, a real cost for long sequences; the restricted-attention fix is future work (§4).
+- <Caveat>Attention's constant path length is bought by averaging, i.e. reduced effective resolution</Caveat>; multi-head counteracts but does not provably eliminate this (§2).
+- <Caveat>Autoregressive decoding remains sequential at inference</Caveat> — the parallelism win is in training/encoding; "making generation less sequential" is explicitly still a goal (§7).
+- <Caveat>Evaluated only on two translation pairs plus one parsing task</Caveat>; claims about generality beyond text are speculation in the conclusion (§6, §7).
+- <Caveat>The vanishing-gradient explanation for the √d_k scaling is stated as suspicion, not demonstrated</Caveat> (§3.2.1).
+
+## Critiques and Questions
+1. Internal inconsistency: §6.1's text reports 41.0 BLEU for big EN→FR while the abstract and Tab.2 report 41.8 (this v7 extraction contains both) — the headline number depends on which you trust.
+2. Tab.3 ablations are single runs on the dev set (newstest2013) without checkpoint averaging and without variance estimates; several conclusions (head count, d_k) rest on 0.3–0.9 BLEU deltas.
+3. Training-cost comparisons use FLOPs estimated as time × GPUs × an assumed sustained TFLOPS per GPU type (fn.5, p.8) — a rough instrument for the "fraction of the cost" claim.
+4. The interpretability evidence is a handful of hand-picked attention visualizations (Figs.3–5); nothing quantifies how typical those heads are.
+5. Sinusoids are justified by an extrapolation hypothesis that is never tested — and Tab.3(E) shows the choice does not matter on the actual benchmark.
+
+<SelfCheck q="Why are the attention logits divided by the square root of d_k before the softmax?" a="For random queries/keys with unit-variance components, the dot product has variance d_k, so its magnitude grows with the key dimension; large logits push the softmax into saturated regions with extremely small gradients. Dividing by sqrt(d_k) keeps the logits at unit scale so gradients flow (§3.2.1, fn.4)." />
+
+## Glossary
+Key terms are defined inline above. Remaining: <Term def="the WMT development (2013) and test (2014) news translation sets used for ablations and headline results">newstest2013/2014</Term>, <Term def="averaging the weights of the last k saved checkpoints into one model before evaluation">checkpoint averaging</Term>, <Term def="total floating-point operations used in training; here estimated, not measured">training FLOPs</Term>, <Term def="predicting the syntactic phrase-structure tree of a sentence; output is a long bracketed sequence">constituency parsing</Term>.
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

@@ -1,0 +1,131 @@
+---
+canonical_key: arxiv-2302.13971
+version_key: v1
+title: 'LLaMA: Open and Efficient Foundation Language Models'
+authors:
+- Hugo Touvron
+- Thibaut Lavril
+- Gautier Izacard
+- Xavier Martinet
+- Marie-Anne Lachaux
+- Timothée Lacroix
+- Baptiste Rozière
+- Naman Goyal
+- Eric Hambro
+- Faisal Azhar
+- Aurelien Rodriguez
+- Armand Joulin
+- Edouard Grave
+- Guillaume Lample
+venue: arXiv
+year: 2023
+tags:
+- foundational
+topic_groups:
+- llm
+triage_label: READ_SOON
+triage_confidence: medium
+source_link: https://arxiv.org/abs/2302.13971v1
+summary_date: '2026-08-25'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>Train small models on far more public tokens than the compute-optimal prescription and you get open models that beat much bigger closed ones — LLaMA-13B outperforms GPT-3 (175B) on most benchmarks, and LLaMA-65B rivals Chinchilla-70B and PaLM-540B.</TLDR>
+
+<WhyItMatters>This is the paper that opened the open-weight LLM era: its inference-first scaling stance, public-data recipe, and RMSNorm+SwiGLU+RoPE architecture became the default template for Llama 2, Mistral, and essentially every competitive open model after it.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "13B vs 175B", label: "LLaMA-13B beats GPT-3", sub: "on most of 20 benchmarks, 10× smaller (§1, Tab.3)" },
+  { value: "1.4T", label: "training tokens, all public", sub: "7 sources, 67% CommonCrawl (Tab.1)" },
+  { value: "63.4%", label: "MMLU 5-shot, 65B", sub: "vs 67.5 Chinchilla-70B, 69.3 PaLM-540B (Tab.9)" },
+  { value: "21 days", label: "65B training run", sub: "2048 A100-80GB at 380 tok/s/GPU (§2.4)" },
+]} />
+
+## Motivation
+
+Two problems, one about scaling and one about access.
+
+First, the field has been optimizing the wrong budget. The GPT-3 → Gopher → PaLM race assumed <Problem>more parameters means better performance</Problem>. Chinchilla corrected that: for a fixed *training* compute budget, a smaller model on more data wins. But <Problem>the <Term def="Hoffmann et al. 2022: rules for the best model/data size split for a fixed training compute budget">Chinchilla scaling laws</Term> disregard the inference budget</Problem> — the budget that actually dominates when you serve a model at scale. If what you care about is a target quality level at the lowest serving cost, the preferred model is not the cheapest to train but the cheapest to run, and Chinchilla tells you to stop training too early. Concretely: it recommends training a 10B model on 200B tokens, yet we find a 7B model is still improving after 1T tokens (§1).
+
+Second, <Problem>every model at the frontier trains on data that is proprietary or undocumented</Problem> ("Books – 2TB", "Social media conversations"), and the genuinely open models — OPT, GPT-NeoX, BLOOM, GLM — are not competitive with PaLM-62B or Chinchilla (§1). Nobody outside a few labs can study, reproduce, or fix these systems.
+
+## Contribution (what's new)
+
+The insight is a change of objective, not a new architecture: <Novelty>optimize for the inference budget by deliberately over-training small models far past the compute-optimal point</Novelty> — the loss curve is still going down there, so paying more training compute once buys a permanently cheaper model at every deployment. The design is forced by the objective: fix the parameter count (that is what you pay per query), then push tokens until returns vanish — which they do not, up to at least 1T–1.4T tokens (§1, Fig.1).
+
+Second, <Novelty>a demonstration that exclusively public data suffices for state-of-the-art quality</Novelty>: a documented 1.4T-token mixture (Tab.1), making the whole pipeline open-sourceable. Third, the released 7B–65B model family itself, with the now-canonical bundle of architecture tweaks (pre-norm RMSNorm, SwiGLU, RoPE — §2.2). LLaMA-13B runs on a single GPU at inference (§1, §3.2).
+
+## Research questions
+
+1. For a fixed inference budget (model size), how much performance can be bought by training on many more tokens than the training-compute-optimal count? (§1)
+2. Can publicly available data alone match models trained on proprietary corpora? (§1)
+3. Secondary: what do standard bias, toxicity, and truthfulness benchmarks say about models trained on this web-heavy mixture? (§5)
+
+## Methodology
+
+Nothing exotic — a standard causal <Term def="decoder-only transformer trained with next-token prediction">autoregressive transformer</Term>, a standard AdamW optimizer, and a huge, carefully filtered public corpus. The bets are placed on data quantity/quality and training efficiency, not architecture novelty. We borrow three proven modifications (each credited to its source): <Term def="normalize each sub-layer's input rather than output, using root-mean-square normalization — improves training stability">pre-normalization with RMSNorm</Term> [GPT-3], <Term def="a gated activation (Swish-gated linear unit) replacing ReLU in the FFN">SwiGLU</Term> with dimension <M tex="\tfrac{2}{3}\cdot 4d" /> [PaLM], and <Term def="rotary position embeddings — encode positions by rotating query/key vectors at each layer instead of adding absolute position vectors">RoPE</Term> [GPT-Neo] (§2.2).
+
+<Pass title="Method details — data mixture, hyper-parameters, systems">
+**Data (Tab.1, ~1.4T tokens):** CommonCrawl 67% (5 dumps 2017–2020, CCNet pipeline: line-level dedup, fastText language ID, n-gram quality filter, plus a classifier keeping pages that look like Wikipedia references), C4 15% (adds heuristic-filtered diversity — mixing differently-preprocessed CommonCrawl helps, §2.1), GitHub 4.5% (Apache/BSD/MIT only), Wikipedia 4.5% (20 languages, ~2.45 epochs), Gutenberg+Books3 4.5%, arXiv 2.5% (LaTeX, macros inline-expanded), StackExchange 2%. Most tokens are seen once; only Wikipedia/Books get ~2 epochs. Tokenizer: SentencePiece BPE, digits split into single characters, byte fallback for unknown UTF-8 (§2.1).
+
+**Models (Tab.2):** 6.7B (dim 4096, 32 heads/layers, 1.0T tokens), 13.0B (5120, 40/40, 1.0T), 32.5B (6656, 52 heads, 60 layers, 1.4T), 65.2B (8192, 64 heads, 80 layers, 1.4T). AdamW with <M tex="\beta_1{=}0.9,\ \beta_2{=}0.95" />, cosine schedule to 10% of peak LR (3.0e−4 small / 1.5e−4 large), weight decay 0.1, gradient clip 1.0, 2000 warmup steps, batch 4M tokens (§2.3).
+
+**Systems (§2.4):** memory-efficient causal attention from xformers (no stored attention weights, masked scores never computed; backward from Dao et al. — the FlashAttention backward), selective activation checkpointing via manually written backward for transformer layers, model+sequence parallelism, and overlapping activation compute with inter-GPU `all_reduce` communication. Net: 380 tokens/sec/GPU on 2048 A100-80GB — 21 days for 1.4T tokens.
+</Pass>
+
+## Main result
+
+Across 20 zero-/few-shot benchmarks, <Finding src="§3.1, Tab.3">LLaMA-65B beats Chinchilla-70B on every reported common-sense benchmark except BoolQ, and beats PaLM-540B everywhere except BoolQ and WinoGrande</Finding>; <Finding src="Tab.4–5">it sets state of the art on closed-book NaturalQuestions (39.9 EM, 64-shot) and TriviaQA (73.0, 64-shot)</Finding>. Meanwhile <Finding src="§3.1, Tab.3">LLaMA-13B outperforms GPT-3 (175B) on most benchmarks despite being 10× smaller</Finding>.
+
+<SortableTable columns={["Model", "Params", "HellaSwag 0-shot", "NQ 64-shot", "TriviaQA 0-shot", "MMLU 5-shot"]} rows={[
+  ["GPT-3", "175B", 78.9, 29.9, "—", 43.9],
+  ["Gopher", "280B", 79.2, 28.2, 43.5, 60.0],
+  ["Chinchilla", "70B", 80.8, 35.5, 55.4, 67.5],
+  ["PaLM", "540B", 83.4, 39.6, "—", 69.3],
+  ["LLaMA", "13B", 79.2, 31.9, 56.6, 46.9],
+  ["LLaMA", "65B", 84.2, 39.9, 68.2, 63.4],
+]} />
+
+Code is the same story without code-specific finetuning: <Finding src="Tab.8">LLaMA-65B reaches 23.7 <Term def="probability that at least one of k sampled programs passes the unit tests">pass@1</Term> / 79.3 pass@100 on HumanEval — above PaLM-62B and near PaLM-540B (26.2 / 76.2)</Finding>.
+
+## Key findings
+
+- <Finding src="§3.7, Fig.1–2">Benchmark performance improves steadily with tokens and tracks training perplexity</Finding> — the empirical backbone of the over-training thesis: the curves have not flattened at 1T–1.4T tokens. Exceptions: SIQA (high variance — probably an unreliable benchmark) and WinoGrande (33B ≈ 65B throughout training, decoupled from perplexity).
+- <Finding src="§3.6, Tab.9">MMLU is the one clear loss (65B: 63.4 vs Chinchilla 67.5, PaLM-540B 69.3), and we trace it to data</Finding>: our books+academic sources total 177GB where those models used up to 2TB of books — a data-mixture effect, not a scale effect (it also explains Gopher beating GPT-3 only on MMLU).
+- <Finding src="§4, Tab.10">A brief, protocol-standard instruction finetune (LLaMA-I) lifts MMLU from 63.4 to 68.9</Finding>, past Flan-PaLM-cont-62B (66.1) though far from code-davinci-002 (77.4) — instruction-following is cheap to add on top of a strong base.
+- <Finding src="Tab.7">On GSM8k, LLaMA-65B roughly matches Minerva-62B — a PaLM finetuned on 38.5B math tokens — with no math finetuning at all</Finding> (50.9 vs 52.4 greedy; 69.7 vs 68.5 with <Term def="sample k answers, take the majority vote (k=100 for GSM8k here)">maj1@k</Term>).
+- <Finding src="§5.1, Tab.11">Toxicity increases with model size</Finding>, most visibly for "respectful"-prefixed prompts (65B: 0.141 respectful vs 0.128 basic); and <Finding src="§5.3, Tab.13">WinoGender "gotcha" cases show the model resolves coreference by occupation-majority gender rather than sentence evidence</Finding> (65B: 63.3% on his/him gotchas vs 72.1% overall).
+- <Finding src="§5.4, Tab.14">Truthfulness scales positively (0.57 truthful at 65B vs 0.33 at 7B), unlike GPT-3's flat-to-negative trend — yet remains low enough that hallucination is expected</Finding>.
+
+## Implications
+
+The economics changed: once inference cost is the objective, small-and-overtrained dominates big-and-compute-optimal, and that framing — plus the released weights — is what made a competitive research ecosystem outside big labs possible (13B on one GPU). <Related>The lineage runs from Chinchilla (whose laws this paper deliberately "violates") into Llama 2, Alpaca/Vicuna-style instruction finetunes seeded by the LLaMA-I observation, and the Mistral/open-model wave that copied the RMSNorm+SwiGLU+RoPE recipe wholesale</Related>. The carbon accounting (§6, Tab.15: ~2,638 MWh, 1,015 tCO2eq for the project) doubles as an argument for release: training paid once, reused everywhere. <FollowUp>Formal inference-aware scaling laws (how many tokens per parameter is "enough"), and how far the public-data recipe stretches before books/academic-heavy mixtures are needed for MMLU-style knowledge</FollowUp>.
+
+## Limitations
+
+- <Caveat>The knowledge-benchmark gap is real: 65B trails Chinchilla/PaLM on MMLU, attributed to the thin 177GB books+academic slice</Caveat> (§3.6).
+- <Caveat>Bias/toxicity/truthfulness evaluations are acknowledged as insufficient to characterize risk, and RealToxicityPrompts scores depend on a third-party PerspectiveAPI pipeline the authors do not control — cross-paper comparability is weak</Caveat> (§5, §5.1).
+- <Caveat>Instruction finetuning is a single experiment (one protocol, MMLU-centric); there is no RLHF or safety tuning anywhere in the release</Caveat> (§4).
+- <Caveat>The corpus is heavily English (multilingual only via 20-language Wikipedia), so cross-lingual claims are unsupported</Caveat> (§2.1).
+- <Caveat>Baseline numbers are copied from other papers under differing eval protocols (e.g., NQ/TriviaQA splits differ from GPT-3/PaLM's, App.A), so small margins should not be over-read</Caveat>.
+
+## Critiques and Questions
+
+1. The architecture recipe is a bundle adopted from PaLM/GPT-Neo with no per-component ablation — the paper validates RMSNorm+SwiGLU+RoPE only end-to-end, so it establishes the recipe by authority of the final numbers, not by analysis.
+2. "Publicly available" is not "cleanly licensed": Books3 in particular later became a copyright flashpoint. The openness claim is about reproducibility and documentation, not rights.
+3. No contamination analysis: 20 benchmarks are scored against a 1.4T-token web-scale corpus with no overlap audit.
+4. The central scaling claim — small models keep improving past compute-optimal — is presented as loss/benchmark curves, not a fitted law; how the trade curve bends beyond 1.4T tokens is left open (and the conclusion promises larger corpora next).
+5. The toxicity-grows-with-size result (Tab.11) is a single greedy-decoding configuration; the paper itself notes the within-family caveat when contrasting with Chinchilla/Gopher.
+
+<SelfCheck q="Why does LLaMA deliberately train 'past' the Chinchilla-optimal token count, and what evidence supports the choice?" a="Chinchilla's laws minimize training compute for a target loss, but serving cost depends on model size, not training cost. For a fixed inference budget you fix the parameter count and keep training as long as loss improves — and Fig.1–2 show loss and benchmark scores still improving at 1T tokens for 7B (vs the ~200B tokens Chinchilla would prescribe for a 10B model), which is why 13B can beat the 10×-larger GPT-3." />
+
+## Glossary
+
+Most terms are defined inline. Remaining: <Term def="evaluating with only a task description (zero-shot) or a handful of in-context examples (few-shot), no gradient updates">zero-/few-shot evaluation</Term>, <Term def="answering from parametric memory only, no retrieved documents; scored by exact string match after normalization">closed-book QA (exact match)</Term>, <Term def="57-subject multiple-choice exam benchmark spanning humanities/STEM/social science; the standard broad-knowledge probe">MMLU</Term>, <Term def="Meta's 100k-prompt benchmark scoring completions for toxicity via Google's Perspective API">RealToxicityPrompts</Term>.
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

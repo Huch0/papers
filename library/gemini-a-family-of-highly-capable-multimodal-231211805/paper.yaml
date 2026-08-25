@@ -1390,17 +1390,17 @@ versions:
   source: arxiv
   source_url: https://arxiv.org/abs/2312.11805v5
   pdf_path: library/gemini-a-family-of-highly-capable-multimodal-231211805/v1/paper.pdf
-  summary_path: null
+  summary_path: library/gemini-a-family-of-highly-capable-multimodal-231211805/v1/summary.mdx
   metadata_path: library/gemini-a-family-of-highly-capable-multimodal-231211805/v1/metadata.yaml
   fetched_at: '2026-08-24T03:21:25Z'
   source_updated_at: '2025-05-09T21:04:06Z'
   arxiv_version: v5
   pdf_sha256: 8ca95b27851b09c335fa2abe9b84cec5848195a5914eec7fb0b635ba2d8fe4fe
   pdf_bytes: 27484659
-  summary_status: none
-  extraction_status: none
+  summary_status: full
+  extraction_status: full
   created_at: '2026-08-24T03:21:25Z'
-  updated_at: '2026-08-24T03:21:25Z'
+  updated_at: '2026-08-25T06:33:44Z'
 relations:
   duplicate_candidates: []
   related_papers: []

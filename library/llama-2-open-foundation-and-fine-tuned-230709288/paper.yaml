@@ -107,17 +107,17 @@ versions:
   source: arxiv
   source_url: https://arxiv.org/abs/2307.09288v2
   pdf_path: library/llama-2-open-foundation-and-fine-tuned-230709288/v1/paper.pdf
-  summary_path: null
+  summary_path: library/llama-2-open-foundation-and-fine-tuned-230709288/v1/summary.mdx
   metadata_path: library/llama-2-open-foundation-and-fine-tuned-230709288/v1/metadata.yaml
   fetched_at: '2026-08-24T03:21:06Z'
   source_updated_at: '2023-07-19T17:08:59Z'
   arxiv_version: v2
   pdf_sha256: 1df284ce95f783002074bfe8f21d47c646b396ceb1736ea3ec0ea212fc070d91
   pdf_bytes: 13661300
-  summary_status: none
-  extraction_status: none
+  summary_status: full
+  extraction_status: full
   created_at: '2026-08-24T03:21:06Z'
-  updated_at: '2026-08-24T03:21:06Z'
+  updated_at: '2026-08-25T06:37:17Z'
 relations:
   duplicate_candidates: []
   related_papers: []

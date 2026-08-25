@@ -1,0 +1,337 @@
+---
+canonical_key: arxiv-2507.20534
+version_key: v1
+title: 'Kimi K2: Open Agentic Intelligence'
+authors:
+- Kimi Team
+- Yifan Bai
+- Yiping Bao
+- Y. Charles
+- Cheng Chen
+- Guanduo Chen
+- Haiting Chen
+- Huarong Chen
+- Jiahao Chen
+- Ningxin Chen
+- Ruijue Chen
+- Yanru Chen
+- Yuankun Chen
+- Yutian Chen
+- Zhuofu Chen
+- Jialei Cui
+- Hao Ding
+- Mengnan Dong
+- Angang Du
+- Chenzhuang Du
+- Dikang Du
+- Yulun Du
+- Yu Fan
+- Yichen Feng
+- Kelin Fu
+- Bofei Gao
+- Chenxiao Gao
+- Hongcheng Gao
+- Peizhong Gao
+- Tong Gao
+- Yuyao Ge
+- Shangyi Geng
+- Qizheng Gu
+- Xinran Gu
+- Longyu Guan
+- Haiqing Guo
+- Jianhang Guo
+- Xiaoru Hao
+- Tianhong He
+- Weiran He
+- Wenyang He
+- Yunjia He
+- Chao Hong
+- Hao Hu
+- Yangyang Hu
+- Zhenxing Hu
+- Weixiao Huang
+- Zhiqi Huang
+- Zihao Huang
+- Tao Jiang
+- Zhejun Jiang
+- Xinyi Jin
+- Yongsheng Kang
+- Guokun Lai
+- Cheng Li
+- Fang Li
+- Haoyang Li
+- Ming Li
+- Wentao Li
+- Yang Li
+- Yanhao Li
+- Yiwei Li
+- Zhaowei Li
+- Zheming Li
+- Hongzhan Lin
+- Xiaohan Lin
+- Zongyu Lin
+- Chengyin Liu
+- Chenyu Liu
+- Hongzhang Liu
+- Jingyuan Liu
+- Junqi Liu
+- Liang Liu
+- Shaowei Liu
+- T. Y. Liu
+- Tianwei Liu
+- Weizhou Liu
+- Yangyang Liu
+- Yibo Liu
+- Yiping Liu
+- Yue Liu
+- Zhengying Liu
+- Enzhe Lu
+- Haoyu Lu
+- Lijun Lu
+- Yashuo Luo
+- Shengling Ma
+- Xinyu Ma
+- Yingwei Ma
+- Shaoguang Mao
+- Jie Mei
+- Xin Men
+- Yibo Miao
+- Siyuan Pan
+- Yebo Peng
+- Ruoyu Qin
+- Zeyu Qin
+- Bowen Qu
+- Zeyu Shang
+- Lidong Shi
+- Shengyuan Shi
+- Feifan Song
+- Jianlin Su
+- Zhengyuan Su
+- Lin Sui
+- Xinjie Sun
+- Flood Sung
+- Yunpeng Tai
+- Heyi Tang
+- Jiawen Tao
+- Qifeng Teng
+- Chaoran Tian
+- Chensi Wang
+- Dinglu Wang
+- Feng Wang
+- Hailong Wang
+- Haiming Wang
+- Jianzhou Wang
+- Jiaxing Wang
+- Jinhong Wang
+- Shengjie Wang
+- Shuyi Wang
+- Si Wang
+- Xinyuan Wang
+- Yao Wang
+- Yejie Wang
+- Yiqin Wang
+- Yuxin Wang
+- Yuzhi Wang
+- Zhaoji Wang
+- Zhengtao Wang
+- Zhengtao Wang
+- Zhexu Wang
+- Chu Wei
+- Qianqian Wei
+- Haoning Wu
+- Wenhao Wu
+- Xingzhe Wu
+- Yuxin Wu
+- Chenjun Xiao
+- Jin Xie
+- Xiaotong Xie
+- Weimin Xiong
+- Boyu Xu
+- Jinjing Xu
+- L. H. Xu
+- Lin Xu
+- Suting Xu
+- Weixin Xu
+- Xinran Xu
+- Yangchuan Xu
+- Ziyao Xu
+- Jing Xu
+- Jing Xu
+- Junjie Yan
+- Yuzi Yan
+- Hao Yang
+- Xiaofei Yang
+- Yi Yang
+- Ying Yang
+- Zhen Yang
+- Zhilin Yang
+- Zonghan Yang
+- Haotian Yao
+- Xingcheng Yao
+- Wenjie Ye
+- Zhuorui Ye
+- Bohong Yin
+- Longhui Yu
+- Enming Yuan
+- Hongbang Yuan
+- Mengjie Yuan
+- Siyu Yuan
+- Haobing Zhan
+- Dehao Zhang
+- Hao Zhang
+- Wanlu Zhang
+- Xiaobin Zhang
+- Yadong Zhang
+- Yangkun Zhang
+- Yichi Zhang
+- Yizhi Zhang
+- Yongting Zhang
+- Yu Zhang
+- Yutao Zhang
+- Yutong Zhang
+- Zheng Zhang
+- Haotian Zhao
+- Yikai Zhao
+- Zijia Zhao
+- Huabin Zheng
+- Shaojie Zheng
+- Longguang Zhong
+- Jianren Zhou
+- Xinyu Zhou
+- Zaida Zhou
+- Jinguo Zhu
+- Zhen Zhu
+- Weiyu Zhuang
+- Xinxing Zu
+venue: arXiv
+year: 2025
+tags:
+- foundational
+topic_groups:
+- llm
+- rl
+- software_engineering_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2507.20534v2
+summary_date: '2026-08-25'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>Kimi K2 is a 1.04T-parameter MoE (32B active) built on the bet that data, not compute, is the binding constraint: the MuonClip optimizer (Muon + per-head QK-Clip) pre-trains 15.5T tokens with zero loss spikes for maximum token efficiency, a 20,000-tool synthetic-environment pipeline manufactures the agentic trajectories natural data lacks, and joint RL mixes verifiable rewards with a self-critique rubric critic — yielding the strongest open non-thinking model, especially on software engineering (SWE-bench Verified 65.8) and tool use (Tau2-Bench 66.1).</TLDR>
+
+<WhyItMatters>K2 marks the milestone where open-weights competition moved from benchmark reasoning to *agentic* capability — acting in environments, calling tools, fixing real repos — and it popularized both the Muon optimizer at frontier scale and the recipe of synthesizing agentic training worlds. It reads as the agentic-era counterpart to DeepSeek-V3's systems paper and R1's RL paper.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "65.8", label: "SWE-bench Verified (agentic, 1 attempt)", sub: "71.6 multi-attempt; Claude Sonnet 4: 72.7 (Tab.3)" },
+  { value: "1.04T / 32B", label: "total / activated params", sub: "384 experts, sparsity 48, MLA, 64 heads (Tab.2)" },
+  { value: "15.5T", label: "pre-training tokens, zero loss spikes", sub: "MuonClip, tau = 100 (Fig.3)" },
+  { value: "66.1", label: "Tau2-Bench micro-avg", sub: "vs 48.8 DeepSeek-V3-0324, 37.3 Qwen3 (Tab.3)" },
+]} />
+
+## Motivation
+
+Agentic intelligence — perceiving, planning, and acting in environments — is the declared target, and it stresses both ends of the pipeline. In pre-training, <Problem>high-quality human data is running out, so the learning signal extracted per token ("token efficiency") becomes the binding scaling coefficient — yet the most token-efficient optimizer available, Muon, destabilizes at scale through exploding attention logits, and existing fixes fail: logit soft-capping clips after the dangerous product is computed, and QK-Norm cannot be applied to MLA because its key matrices are never fully materialized (§2.1)</Problem>. In post-training, <Problem>multi-step tool use, planning, and error recovery are rare in natural data and expensive to collect from real environments at scale (cost, privacy, accessibility) (§3.1.1)</Problem>, and <Problem>RL beyond verifiable domains lacks a trustworthy reward: learned preference models drift and get hacked (§3.2.2)</Problem>.
+
+## Contribution (what's new)
+
+- <Novelty>MuonClip = Muon + QK-Clip: after each optimizer step, any attention head whose max logit exceeded a threshold has its query/key projection weights directly rescaled — per head, leaving well-behaved heads untouched</Novelty>. The form is forced: the instability lives in the product of the QK weight spectra, so the *weights* are the only place a bound can act before the logits exist; and it must be per-head because only a small subset of heads explodes (§2.1).
+- <Novelty>Token utility via rephrasing instead of repetition: knowledge text is rewritten in diverse styles with chunk-wise autoregressive rewriting plus fidelity checks, and math is recast into learning-note style — trading epochs for diversity (§2.2)</Novelty>.
+- <Novelty>A three-stage agentic data factory: a tool repository (3,000+ real MCP tools + 20,000+ evolved synthetic tools), thousands of generated agents and rubric-bearing tasks, then multi-turn trajectories produced by an LLM user simulator against a stateful tool simulator, filtered by a rubric judge — with real sandboxes (executing code against test suites) wherever fidelity actually matters (§3.1.1, Fig.8)</Novelty>. This is rejection sampling at industrial scale over manufactured worlds.
+- <Novelty>A joint RL stage combining a verifiable-rewards gym (math/logic, instruction following with an anti-deception "hack-check", faithfulness judging, a Kubernetes sandbox running 10,000+ concurrent SWE instances) with a self-critique rubric reward, where K2 ranks its own outputs pairwise against explicit rubrics and the critic is continuously re-grounded on verifiable-task rollouts (§3.2)</Novelty>.
+- Architecture chosen by scaling law and inference economics: sparsity raised to 48 (384 experts) because iso-loss FLOPs fall 1.69x vs sparsity 8, and attention heads halved to 64 because doubling them buys only 0.5–1.2% validation loss at +83% inference FLOPs at 128K context (§2.3, Fig.5–6).
+
+## Research questions
+
+1. Can Muon's token efficiency be kept at trillion-parameter scale without its training instability?
+2. Can agentic capability be manufactured — synthetic tools, agents, tasks, and simulated environments standing in for scarce real interaction data?
+3. Can RL extend past verifiable tasks by making the model its own judge, without collapsing into reward hacking or sycophancy?
+
+## Methodology
+
+Pre-train a DeepSeek-V3-shaped MoE (61 layers, MLA, 1 shared + 8-of-384 routed experts) on 15.5T tokens at 4K context with MuonClip (tau = 100), then anneal (400B tokens) and extend context to 32K then 128K via YaRN (§2.5). Post-training: SFT (with Muon) on diverse pipelines including the agentic factory's filtered trajectories, then joint RL using the K1.5 policy-optimization objective — a squared-error surrogate with a mean-reward baseline — plus three scaling controls: a per-task token budget with truncation penalties, a PTX auxiliary loss on curated data against forgetting, and temperature decay from exploration to exploitation (§3.2.3).
+
+<Pass title="Method details">
+**QK-Clip.** With per-head max logit <M tex="S^h_{\max} = \tfrac{1}{\sqrt{d}}\max_{X,i,j} Q_i^h K_j^{h\top}" />, each step applies
+
+<MathBlock>{`\\gamma_h = \\min(1, \\tau / S^h_{\\max}), \\qquad W^h_{qc} \\leftarrow W^h_{qc}\\sqrt{\\gamma_h},\\quad W^h_{kc} \\leftarrow W^h_{kc}\\sqrt{\\gamma_h},\\quad W^h_{qr} \\leftarrow W^h_{qr}\\gamma_h`}</MathBlock>
+
+leaving the head-shared rotary key untouched to avoid cross-head effects (§2.1, Alg.1). Appendix E's hypothesis for why Muon needs this: Muon's msign-based updates are effectively full-rank (all singular values equal), so update directions align with existing weight singular vectors more often than Adam's low-rank updates, additively inflating spectral norms — which the bilinear QK product then squares.
+
+**RL objective** (§3.2.3): for K sampled responses per prompt,
+
+<MathBlock>{`L_{RL}(\\theta) = \\mathbb{E}\\Big[\\tfrac{1}{K}\\sum_{i=1}^{K}\\big(r(x,y_i) - \\bar r(x) - \\tau \\log\\tfrac{\\pi_\\theta(y_i|x)}{\\pi_{old}(y_i|x)}\\big)^2\\Big]`}</MathBlock>
+
+**Self-critique rubrics** (§3.2.2, App.F): core rubrics demand clarity, conversational fluency, and "objective and grounded interaction" — explicitly banning flattery; prescriptive rubrics forbid opening compliments ("Good question!") and self-justifying sentences. The critic is refined in a closed loop on RLVR rollouts so its subjective judgments stay anchored to objective outcomes.
+
+**Infrastructure** (§2.4, §3.3): H800 cluster with RoCE; 16-way virtual-stage pipeline + 16-way expert parallelism + ZeRO-1; DualPipe rejected (doubles parameter memory — prohibitive at 1T); instead interleaved 1F1B with EP communication overlapped, selective recomputation, FP8 storage (not compute) for insensitive activations, and activation offload to CPU. RL runs colocated train/inference engines; a distributed checkpoint engine broadcasts the full 1T parameter set to inference workers in under 30 seconds per update; long-tail agentic rollouts are paused and resumed via partial rollout. Tool calls use TypeScript-format declarations and an "enforcer" constrained-decoding module guaranteeing schema-valid calls (App.B).
+</Pass>
+
+## Main result
+
+<Finding src="Tab.3, Fig.1">Among non-thinking models, K2 is the strongest open model and beats several proprietary flagships on agentic work: SWE-bench Verified 65.8 (71.6 multi-attempt) vs GPT-4.1's 54.6, closing most of the gap to Claude Sonnet 4 (72.7/80.2); Tau2-Bench 66.1 vs 48.8 (DeepSeek-V3-0324); and outright leads on LiveCodeBench v6 (53.7) and OJBench (27.1) over Claude 4 Opus</Finding>. <Finding src="§4.1.2">On the LMSYS Arena (July 17, 2025) it ranked first among open models and fifth overall on 3,000+ blind votes</Finding>.
+
+<SortableTable columns={["Benchmark", "Kimi K2", "DeepSeek-V3-0324", "Qwen3-235B (no-think)", "Claude Sonnet 4", "GPT-4.1"]} rows={[
+  ["SWE-bench Verified (agentic, 1-shot)", 65.8, 38.8, 34.4, 72.7, 54.6],
+  ["SWE-bench Multilingual", 47.3, 25.8, 20.9, 51.0, 31.5],
+  ["LiveCodeBench v6", 53.7, 46.9, 37.0, 48.5, 44.7],
+  ["Tau2-bench (micro-avg)", 66.1, 48.8, 37.3, "—", "—"],
+  ["ACEBench (En)", 76.5, 72.7, 70.5, 76.2, 80.1],
+  ["AIME 2025 (Avg@64)", 49.5, 46.7, 24.7, 33.1, 37.0],
+  ["GPQA-Diamond (Avg@8)", 75.1, 68.4, 62.9, 70.0, 66.3],
+  ["IFEval (strict)", 89.8, 81.1, 83.2, 87.6, 88.0],
+  ["FACTS Grounding", 88.5, 68.3, 68.5, 83.6, 79.2],
+]} />
+
+## Key findings
+
+- <Finding src="App.D">QK-Clip is a scaffold, not a crutch: during K2's run only 12.7% of heads ever triggered it in the first 70,000 steps, and past that point every head stayed below threshold — it self-deactivates</Finding>. Even an aggressive threshold (tau = 30) leaves small-scale loss curves and downstream scores unchanged, so the intervention costs essentially nothing.
+- <Finding src="Tab.1">Rephrasing beats repetition for squeezing scarce data: on SimpleQA, 10 rephrasings seen once score 28.94 vs 23.76 for the raw text seen 10 times</Finding> — diversity of surface form extracts more knowledge per unit of source text than re-exposure, directly validating the token-utility thesis.
+- <Finding src="Fig.5, Fig.6">Architecture followed measured economics: sparsity 48 gives 1.69x iso-loss FLOP savings over sparsity 8, while halving attention heads to 64 sacrifices only 0.5–1.2% validation loss and avoids an 83% inference-FLOP increase at 128K</Finding> — K2 diverges from DeepSeek-V3 (more experts, half the heads) exactly where the agentic use case (long-context serving) changes the cost function.
+- <Finding src="Tab.3">Budget-controlled RL yields "reasoning without thinking": AIME 2024 69.6 and GPQA-Diamond 75.1 in non-thinking mode beat every non-thinking baseline including Claude 4 Opus (48.2 / 74.9)</Finding> — token-budget penalties during RL taught concise but genuine reasoning rather than long CoT.
+- <Finding src="Tab.3, App.C">The anti-sycophancy rubric machinery shows up in factuality: FACTS Grounding 88.5 and HHEM 98.9 lead all compared models</Finding> — while <Caveat>the authors admit in App.F.3 that the same rubrics (banning hedging and self-qualification) can push the model toward overconfident, unqualified answers where uncertainty would be appropriate</Caveat>.
+- <Finding src="Tab.3, Tab.6">The report is candid about the gaps: long-context retrieval trails badly (MRCR 55.0 vs Gemini 2.5 Flash 81.7), Humanity's Last Exam is below all peers (4.7), base-model GPQA is below DeepSeek-V3-Base, and red-teaming shows weak spots under multi-turn escalation attacks (Crescendo: 64.7 pass on harmful content; iterative jailbreak on security: 43.9)</Finding>.
+
+## Implications
+
+K2 operationalizes the "era of experience" thesis: when natural data is exhausted, capability comes from manufactured interaction — synthetic tools and simulated users for breadth, real sandboxes for ground truth, RL to convert both into behavior. <Related>It stands on DeepSeek-V3's architecture (MLA, fine-grained MoE) while betting differently on the optimizer (Muon/Moonlight lineage instead of AdamW) and the pipeline schedule (interleaved 1F1B over DualPipe); its RL objective and partial-rollout infrastructure come from Kimi K1.5; the self-critique loop echoes constitutional AI and DeepSeek-V3's self-rewarding</Related>. Threads to chase: <FollowUp>whether QK-Clip becomes standard kit for any high-effective-rank optimizer at scale (the App.E rank-alignment hypothesis is testable)</FollowUp>, <FollowUp>how far simulator-trained tool use transfers to messy real APIs — the report itself hedges by using real sandboxes for coding</FollowUp>, and <FollowUp>whether self-critique alignment stays honest as the critic and policy co-evolve beyond the verifiable anchor</FollowUp>.
+
+## Limitations
+
+- <Caveat>Author-stated: K2 over-generates tokens on hard reasoning or vaguely-defined tools (sometimes truncating output or tool calls), degrades when tool use is enabled unnecessarily, and one-shot whole-project coding underperforms K2 inside an agentic framework (§5)</Caveat>.
+- <Caveat>No training cost, GPU count, or wall-clock disclosure anywhere — the token-efficiency thesis is never priced in dollars or GPU hours</Caveat>.
+- <Caveat>All headline comparisons are restricted to non-thinking mode; thinking models (DeepSeek-R1, Qwen3-thinking, o-series) are excluded by design, so "state-of-the-art open-source" is mode-scoped, not absolute (§4.1.1)</Caveat>.
+- <Caveat>Several proprietary baselines' strongest numbers (Claude SWE-bench results) are taken from vendor reports rather than reproduced (Tab.3, starred)</Caveat>.
+- <Caveat>The tool simulator, user simulator, and trajectory judge are all LLMs — simulation-fidelity errors can compound, and only coding/SWE domains get real-execution grounding (§3.1.1)</Caveat>.
+- <Caveat>Safety evaluation is a Promptfoo red-teaming pass with 3 prompts per plugin-strategy cell and acknowledged reviewer subjectivity — far thinner than the o1-style system-card standard (§4.3)</Caveat>.
+
+## Critiques and Questions
+
+1. The self-critique reward is elegant but structurally circular: the policy is graded by a critic sharing its weights and biases. The closed-loop RLVR grounding is the proposed fix, yet no experiment isolates how much the critic drifts without it, and no external reward-model audit is reported.
+2. "Zero loss spikes" is presented as validation of MuonClip, but there is no controlled comparison showing an equivalent AdamW run (with or without spikes) at this scale — the counterfactual is a mid-scale Muon run (Fig.2), so token-efficiency gains at 1T are extrapolated from Moonlight-scale evidence.
+3. The agentic-benchmark story mixes scaffolds: SWE-bench "multiple attempts" uses an internal verifier for best-of-N, and TerminalBench jumps 25.0 to 30.0 when swapping in Moonshot's in-house framework (App.C) — capability and harness are entangled, the same lesson METR drew for o1.
+4. Rephrasing at scale invites subtle contamination: paraphrased web text is harder to catch with n-gram decontamination, and unlike DeepSeek-R1, no decontamination protocol is described for the 15.5T corpus (only Aider-Polyglot gets an explicit mention).
+5. HLE at 4.7 and MRCR at 55.0 suggest the frontier-knowledge and long-context ceilings are set by the non-thinking constraint and retrieval training respectively — how much of the agentic win survives once thinking-mode competitors run under the same latency budget?
+
+<SelfCheck q="Why does QK-Clip rescale the query/key projection weights instead of clipping the attention logits directly, and why per head?" a="Clipping logits (soft-capping) acts after the dangerous quantity exists — the QK dot products can still grow without bound underneath the cap, and QK-Norm is impossible in MLA since keys are never materialized. The growth lives in the spectral norms of Wq and Wk, so bounding must act on the weights themselves. It is per-head because only a small fraction of heads (12.7% in K2) ever explode; clipping all heads for the sins of a few would over-regularize the rest (§2.1, App.D)." />
+
+## Glossary
+
+- <Term def="a matrix-orthogonalizing optimizer (via Newton-Schulz iterations / msign) that is markedly more token-efficient than AdamW but produces full-effective-rank updates">Muon</Term>
+- <Term def="per-head post-step rescaling of query/key projection weights whenever that head's max attention logit exceeds a threshold">QK-Clip</Term>
+- <Term def="learning signal extracted per training token; the paper's proposed binding scaling coefficient in a data-limited regime">token efficiency</Term>
+- <Term def="Multi-head Latent Attention: KV compressed into a small cached latent (from DeepSeek-V2/V3)">MLA</Term>
+- <Term def="ratio of total to activated experts in an MoE; K2 uses 384/8 = 48">sparsity</Term>
+- <Term def="Model Context Protocol: an open standard for exposing tools to LLM agents; K2 harvests 3,000+ real MCP tool specs">MCP</Term>
+- <Term def="reinforcement learning from verifiable rewards — graders are rules, tests, or verifiable facts rather than learned preference models">RLVR</Term>
+- <Term def="auxiliary supervised loss on curated data mixed into the RL objective to prevent forgetting (from InstructGPT)">PTX loss</Term>
+- <Term def="dual-control tool-agent benchmark where both agent and simulated user act on shared state (airline/retail/telecom domains)">Tau2-Bench</Term>
+- <Term def="pausing unfinished long-horizon rollouts and resuming them in the next RL iteration so long-tail trajectories don't stall training">partial rollout</Term>
+- <Term def="warmup-stable-decay learning-rate schedule">WSD</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

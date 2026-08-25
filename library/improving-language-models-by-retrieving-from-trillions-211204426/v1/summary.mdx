@@ -1,0 +1,147 @@
+---
+canonical_key: arxiv-2112.04426
+version_key: v1
+title: Improving language models by retrieving from trillions of tokens
+authors:
+- Sebastian Borgeaud
+- Arthur Mensch
+- Jordan Hoffmann
+- Trevor Cai
+- Eliza Rutherford
+- Katie Millican
+- George van den Driessche
+- Jean-Baptiste Lespiau
+- Bogdan Damoc
+- Aidan Clark
+- Diego de Las Casas
+- Aurelia Guy
+- Jacob Menick
+- Roman Ring
+- Tom Hennigan
+- Saffron Huang
+- Loren Maggiore
+- Chris Jones
+- Albin Cassirer
+- Andy Brock
+- Michela Paganini
+- Geoffrey Irving
+- Oriol Vinyals
+- Simon Osindero
+- Karen Simonyan
+- Jack W. Rae
+- Erich Elsen
+- Laurent Sifre
+venue: arXiv
+year: 2021
+tags:
+- foundational
+topic_groups:
+- llm
+triage_label: READ_SOON
+triage_confidence: medium
+source_link: https://arxiv.org/abs/2112.04426v3
+summary_date: '2026-08-25'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>RETRO shows that a language model can outsource memorization: retrieving 64-token chunks from a 2-trillion-token database with a frozen BERT retriever and injecting them through chunked cross-attention lets a 7.5B model match 175–178B GPT-3/Jurassic-1 on most of the Pile — a ~10x effective parameter multiplier, at under 10% parameter overhead.</TLDR>
+
+<WhyItMatters>This is the milestone that made retrieval a first-class scaling axis for LLMs, decoupling "computation" from "memorized knowledge" — the semi-parametric counterpoint to GPT-3 (dense scale) and Switch (sparse parameters). Its leakage-aware evaluation and its Retrofit recipe (bolt retrieval onto a frozen pretrained LM) prefigure today's RAG-era practice.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "25x", label: "fewer parameters than GPT-3/Jurassic-1", sub: "7.5B RETRO comparable on the Pile (abstract, Fig.4)" },
+  { value: "2T", label: "token retrieval database", sub: "MassiveText; 10 ms SCaNN queries (§2.3)" },
+  { value: "~10x", label: "effective param multiplier", sub: "constant bpb gain from 150M to 7B (Fig.1)" },
+  { value: "0.66 vs 0.78", label: "C4 eval bits-per-byte", sub: "RETRO 7.5B vs size-matched baseline (Tab.14)" },
+  { value: "3%", label: "of pretraining tokens to Retrofit", sub: "frozen base + new CCA/encoder weights only (§4.2)" },
+]} />
+
+## Motivation
+Scaling parameters buys two different things at once: <Problem>more computation per token *and* more memorized training data — entangled in one bill that GPT-3-scale models pay in full at every inference</Problem> (§1). Retrieval could supply the memory half explicitly, but <Problem>prior retrieval LMs operated at toy scale — 100M-parameter models over databases of at most a few billion tokens</Problem> (§1, Tab.3), for structural reasons: <Problem>token-level retrieval (kNN-LM) needs an embedding per token — 15 TB for just 4B tokens — and trainable retrievers (REALM) must re-embed the whole database every update, capping database size</Problem> (§4.1, §3.1). Nothing had tested whether retrieval still helps a *large* LM reading from a *web-scale* memory.
+
+## Contribution (what's new)
+Every design choice is dictated by the trillion-token target. <Novelty>Retrieve at 64-token *chunk* granularity, not tokens — dividing index size by the chunk length and making a 2T-token database indexable (215 GB for Wikipedia vs kNN-LM's 15 TB)</Novelty> (§2, §4.1). <Novelty>Use a *frozen* BERT as retriever — so all neighbours can be precomputed offline once, removing REALM's re-embedding bottleneck entirely</Novelty> (§2.3). <Novelty>Inject neighbours through *chunked cross-attention* (CCA): each chunk attends only to the encoded neighbours of the *previous* chunk, preserving autoregressivity and keeping cost linear in retrieved tokens</Novelty> (§2.4). And because the retrieval database is the training set, the paper adds the methodology its own claims need: <Novelty>leakage-filtered evaluation — bits-per-byte as a function of maximum allowed eval/train chunk overlap — separating "copying leaked text" from genuine generalization</Novelty> (§2.6).
+
+## Research questions
+1. Does retrieval still help as model scale grows to 7B and database scale grows to trillions of tokens? (§4.1)
+2. How much of the gain is test-set leakage exploitation versus real prediction improvement? (§2.6, §4.4)
+3. Can retrieval be added post-hoc to a pretrained transformer ("Retrofit") instead of training from scratch? (§4.2)
+4. Does the LM gain transfer to knowledge-intensive downstream tasks (open-domain QA)? (§4.3)
+
+## Methodology
+Follow one training sequence through: 2048 tokens are split into 32 chunks of <M tex="m=64" />. Each chunk is embedded by frozen BERT (time-averaged) and its k approximate nearest neighbours are fetched from the database by L2 distance using <Term def="an approximate nearest-neighbour library; queries a 2T-token index in about 10 ms">SCaNN</Term> — precomputed for training, on-the-fly at each chunk boundary when sampling. Each retrieved value is a pair [N, F]: the neighbour chunk *and its continuation in its source document* (64+64 tokens) — the continuation matters, because what helps predict your future is the neighbour's future. A 2-layer bidirectional encoder (conditioned on the current chunk's activations) encodes neighbours; in the decoder, every third block applies CCA: the tokens of chunk <M tex="C_{u+1}" /> (shifted by one, so the last token of <M tex="C_u" /> is first to see them) cross-attend to the encoded neighbours of <M tex="C_u" />. Attending to the *previous* chunk's neighbours is what keeps the model autoregressive — you cannot retrieve with text you have not generated yet — and self-attention propagates neighbour information forward, so later chunks implicitly see all earlier retrievals without quadratic cost (§2.4).
+
+<Pass title="Method details (database, likelihood, architecture, leakage metric)">
+**Database** (§2.1, Tab.8): multilingual MassiveText (web, books, news, Wikipedia, GitHub; 5T tokens total; SentencePiece, 128k vocab). Training retrieves from 600B tokens matching the training-sampling mix; evaluation retrieves from 1.75T tokens (books subsampled to 4%). Train/test dedup: MinHash 13-gram Jaccard, removing training documents with similarity ≥ 0.8 to any eval document; Wikitext103 val/test articles removed from training Wikipedia.
+
+**Likelihood** (Eq.1): the standard autoregressive factorization, with the probability of token i in chunk u conditioned on all previous tokens plus the retrieved neighbours of all *previous* chunks; the first chunk uses no retrieval. Neighbours from the same source document as the training sequence are filtered out to avoid trivial leakage of the chunk's own continuation.
+
+**Architecture** (§2.5, Tab.2, Tab.10): GPT-2-style decoder with RMSNorm and relative positions; baselines of 132M/368M/1.3B/7.0B non-embedding parameters; the RETRO versions add +30%/+15%/+11%/+8% (encoder fixed at width 896, 2 layers, ~19M params; CCA every 3rd layer from layer 6, or 9 for the larger models). Trained on 419B tokens, AdamW, ZeRO sharding. Relative positional encodings in CCA assume chunk and neighbour are roughly aligned in time.
+
+**Leakage-filtered bpb** (§2.6): for each 64-token eval chunk, find its 10 closest training chunks, compute the longest common substring ratio <M tex="r(C) \in [0,1]" />, and report bits-per-byte over only the chunks with <M tex="r(C) \le \alpha" />. bpb(12.5%) — at most 8 contiguous shared tokens — is treated as leak-free performance.
+
+**QA fine-tuning** (§4.3, C.4): all weights fine-tuned on Natural Questions with the top-20 DPR-retrieved Wikipedia passages fed through the retrieval encoder; the prompt is left-padded so "answer:" lands exactly at the first chunk boundary, aligning generation with the first retrieval slot.
+</Pass>
+
+## Main result
+On C4, <Finding src="Fig.1, Tab.14">RETRO beats its size-matched baseline at every scale from 172M to 7.5B with a roughly constant bits-per-byte gap (7.5B: 0.66 vs 0.78) — worth about a 10x parameter multiplier — and the gain grows monotonically with database size (4B → 1.7T tokens) and with retrieved neighbours (up to 40 for the 7.5B model)</Finding>. On the Pile, the 7.5B RETRO beats the 178B Jurassic-1 on a majority of test sets:
+
+<SortableTable columns={["Pile subset (bpb)", "7B baseline", "Jurassic-1 178B", "Gopher 280B", "RETRO 7.5B"]} rows={[
+  ["github", 0.420, 0.358, 0.367, 0.199],
+  ["gutenberg_pg_19", 0.803, 0.890, 0.652, 0.400],
+  ["books3", 0.792, 0.835, 0.706, 0.653],
+  ["pile_cc", 0.771, 0.669, 0.688, 0.626],
+  ["pubmed_central", 0.588, 0.579, 0.512, 0.419],
+  ["dm_mathematics", 1.177, 1.037, 1.135, 1.164],
+  ["ubuntu_irc", 1.200, 0.857, 1.081, 1.178],
+]} />
+
+Wikitext103 collapses from 21.53 to 3.21 valid perplexity when retrieving from full MassiveText (Tab.4) — a number the paper itself immediately deflates as partly leakage. With retrieval from Wikipedia only, RETRO ties the authors' kNN-LM re-implementation (18.46 vs 18.52) while needing a ~70x smaller index (§4.1).
+
+## Key findings
+- <Finding src="Fig.6, §4.4">The gains survive leakage filtering: at α = 12.5% overlap (≤ 8 contiguous shared tokens), RETRO still beats the baseline at every model size</Finding> — retrieval helps genuinely novel text, not just near-duplicates. But RETRO's filtered-bpb slope is steeper than the baseline's: it *does* exploit leakage harder when leakage exists, by copy-pasting training chunks. Both behaviors are real and now separable.
+- <Finding src="Tab.13, App.D">The neighbour's continuation carries most of the signal</Finding>: on the 247M ablation, retrieval moves C4 bpb from 0.987 to 0.822; neighbours alone recover only 22% of that gain, continuations alone 56% — evidence the mechanism is "find a document that went the same way and read what came next", not keyword lookup.
+- <Finding src="Fig.5, §4.2, B.2">Retrofitting works: freeze a pretrained baseline, train only CCA + encoder (under 10% of weights) on 3% of the pretraining tokens, and performance approaches from-scratch RETRO</Finding> — while retrieval-off behavior stays *exactly* the original model (unfreezing everything degrades it).
+- <Finding src="Tab.5, §4.3">On Natural Questions, RETRO 7.5B + DPR passages reaches 45.5 EM — above REALM (40.4), DPR (41.5), RAG (44.5), below FiD (51.4) and Emdr2 (52.5)</Finding>; unlike FiD, adding neighbours beyond 20 does not help, which the authors attribute to RETRO's decoder leaning on the encoder output less than T5-based readers do.
+- <Finding src="Fig.1, §4.1">Database size and neighbour count are *evaluation-time* dials</Finding>: a model trained with 2 neighbours on 600B tokens improves when evaluated with 10–40 neighbours over 1.75T tokens; larger models exploit more neighbours (172M saturates at 10, 7.5B at 40; beyond 40 degrades).
+- <Finding src="Tab.13">Cross-attention placement is non-monotone: CCA in *every* layer is worse (0.860) than every 3rd layer (0.822)</Finding>; sharing encoder/decoder embeddings is free; a 3x deeper encoder buys 0.15% loss for +20% time — the shallow-encoder, sparse-CCA design is compute-optimal.
+- <Finding src="Tab.6–7, §4.5">Sampling with retrieval visibly reduces hallucination</Finding>: the model continues Act 1 Scene 1 of Hamlet nearly verbatim with retrieval on and confabulates with it off; retrieved neighbours make the provenance of generated facts inspectable.
+- <Finding src="Fig.9, App.E.3">Retrieved neighbours are semantically local: within Wikipedia they sit 2–3 hyperlinks from the source article (random pairs: over 5)</Finding>, and neighbour rank correlates with link distance — the frozen-BERT retriever is doing real semantic work.
+
+## Implications
+RETRO establishes the third scaling axis of the milestone path: after dense compute (GPT-3) and sparse parameters (Switch), explicit memory — with the added properties weights cannot offer: the database can be updated without retraining, offending or private data can be deleted retroactively, and outputs become more interpretable via visible neighbours (§3.2). It descends from <Related>kNN-LM, REALM, DPR/RAG/FiD</Related> but is the first to pretrain retrieval into a multi-billion-parameter LM over trillions of tokens (Tab.3), and its leakage-filtered evaluation answers <Related>the deduplication/memorization concerns of Lee et al. and Carlini et al.</Related> head-on. Threads worth chasing: <FollowUp>why the RETRO decoder under-uses its encoder relative to T5-based FiD on QA — the stated blocker to SOTA on knowledge tasks (§4.3)</FollowUp>, <FollowUp>trained-vs-frozen retrievers at scale (RETRO's frozen BERT vs REALM's end-to-end trade-off)</FollowUp>, and <FollowUp>the Retrofit recipe as the cheap path to retrofitting today's pretrained LLMs with memory</FollowUp>.
+
+## Limitations
+- <Caveat>Headline Wikitext103 and parts of the C4/Pile gains are partly leakage-driven — the paper quantifies this honestly (steeper filtered-bpb slope) but cross-paper comparisons (e.g. vs Jurassic-1) cannot be leakage-equalized, since those baselines saw different data</Caveat> (§4.1, §4.4).
+- <Caveat>Downstream QA does not reach SOTA (45.5 vs FiD's 51.4+); RETRO's advantage is concentrated in language modelling</Caveat> (Tab.5).
+- <Caveat>Retrieval fails on some distributions — dm_mathematics and ubuntu_irc see no gain, plausibly because no helpful neighbours exist or the retriever misses them</Caveat> (§4.1).
+- <Caveat>Scale stops at 7.5B parameters and 419B training tokens; whether the constant gain persists at 70B+ is untested here</Caveat> (§4.1).
+- <Caveat>The retriever is frozen BERT with L2 distance — never trained for the LM objective; retrieval quality is a fixed ceiling, and the 10 ms/chunk query cost plus a 93 TB MassiveText index are real infrastructure burdens</Caveat> (§2.3, §4.1).
+- <Caveat>Retrieving from the training corpus at inference sharpens privacy/copyright exposure: the model can emit training chunks verbatim by design</Caveat> (§3.2).
+
+## Critiques and Questions
+1. The "25x fewer parameters than GPT-3" framing hides the non-parametric side of the ledger: a 1.75T-token database plus a 93 TB index *is* stored knowledge — the fair claim is that memory is moved off the compute path and made editable, not that it is eliminated.
+2. Baselines and RETRO were trained on 419B tokens of MassiveText while Jurassic-1/GPT-3/Gopher used different corpora — Pile deltas mix architecture effects with training-data effects (the paper concedes this for books, where its baseline already beats Jurassic-1).
+3. The evaluation database (1.75T) is a superset of the training-retrieval database (600B); gains from evaluation-time database growth partially conflate "more knowledge" with "more chances of near-duplicates" — the filtered curves mitigate but do not fully close this for the database-scaling plot (Fig.1 middle is unfiltered).
+4. The 10 ms retrieval latency is quoted per chunk amortized, but end-to-end sampling throughput vs a plain transformer is Not reported.
+5. The frozen-BERT choice is justified by systems constraints, not by evidence it retrieves the *best* neighbours; no ablation compares retriever qualities (e.g. BM25 vs BERT vs trained DPR) at fixed architecture — the retriever remains the least examined component of the system.
+
+<SelfCheck q="Why does RETRO make each chunk attend to the neighbours of the previous chunk rather than its own?" a="Causality. Retrieval keys are computed from a full chunk, so a chunk's own neighbours are only known once the chunk is complete — using them to predict its tokens would leak the future (and make sampling impossible, since you retrieve with text you have not yet generated). Attending to the previous chunk's neighbours keeps the likelihood autoregressive (Eq.1); the one-token shift in the attending chunks lets the last token of each chunk be the first to use fresh retrievals, and self-attention carries the information forward." />
+
+## Glossary
+- <Term def="a model combining learned parameters with an external non-parametric memory queried at inference">semi-parametric LM</Term>
+- <Term def="RETRO's mechanism: tokens of a chunk cross-attend to the encoded retrieved neighbours of the preceding chunk; linear cost in retrieved tokens">chunked cross-attention (CCA)</Term>
+- <Term def="a retrieved 64-token database chunk N together with its 64-token continuation F from the same source document">neighbour [N, F]</Term>
+- <Term def="DeepMind's 5T-token multilingual corpus (web, books, news, Wikipedia, GitHub) used for both training and the retrieval database">MassiveText</Term>
+- <Term def="tokenizer-agnostic LM metric: total bits of negative log-likelihood divided by bytes of text; lower is better">bits-per-byte (bpb)</Term>
+- <Term def="turning a pretrained non-retrieval transformer into a RETRO model by training only new cross-attention and encoder weights on a frozen base">Retrofit</Term>
+- <Term def="interpolates an LM's token distribution with a distribution over nearest-neighbour tokens from a datastore holding one embedding per token">kNN-LM</Term>
+- <Term def="dense passage retriever trained contrastively for QA; supplies RETRO's passages in the Natural Questions experiments">DPR</Term>
+- <Term def="evaluation-set text that also occurs in the training data; RETRO quantifies it per chunk via longest-common-substring overlap">leakage</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

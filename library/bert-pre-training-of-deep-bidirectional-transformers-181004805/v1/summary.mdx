@@ -1,0 +1,110 @@
+---
+canonical_key: arxiv-1810.04805
+version_key: v1
+title: 'BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding'
+authors:
+- Jacob Devlin
+- Ming-Wei Chang
+- Kenton Lee
+- Kristina Toutanova
+venue: arXiv
+year: 2018
+tags:
+- foundational
+topic_groups:
+- llm
+triage_label: READ_SOON
+triage_confidence: medium
+source_link: https://arxiv.org/abs/1810.04805v2
+summary_date: '2026-08-25'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>BERT pre-trains a deep bidirectional Transformer encoder with a masked-word (Cloze) objective — sidestepping the fact that a bidirectional language model would let each word see itself — and then fine-tunes the whole model with one tiny output layer, setting new state of the art on eleven NLP tasks at once (GLUE 80.5, SQuAD v1.1 F1 93.2).</TLDR>
+
+<WhyItMatters>On the LLM milestone path this is the paper that made "pre-train once, fine-tune everywhere" the default NLP paradigm, and its ablations are the cleanest early evidence that bidirectionality and sheer model size — not task architecture — carry the performance.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "80.5", label: "GLUE leaderboard score", sub: "+7.7 absolute over prior SOTA; GPT scored 72.8 (§4.1)" },
+  { value: "93.2", label: "SQuAD v1.1 Test F1", sub: "+1.5 over #1 leaderboard system (ensemble + TriviaQA; Tab.2)" },
+  { value: "11", label: "tasks at new SOTA", sub: "8 GLUE + SQuAD 1.1/2.0 + SWAG (abstract, §4)" },
+  { value: "110M / 340M", label: "parameters", sub: "BERT-BASE / BERT-LARGE; pre-trained on 3.3B words (§3, A.2)" },
+]} />
+
+## Motivation
+By 2018, pre-training a language model and transferring it worked in two flavors: feature-based (<Term def="ELMo: bidirectional-LSTM language models whose frozen hidden states are fed as extra features into a task-specific architecture">ELMo</Term>) and fine-tuning (<Term def="OpenAI's Generative Pre-trained Transformer: a left-to-right Transformer language model fine-tuned on each downstream task">GPT</Term>). Both share one restriction: <Problem>the pre-training objective is a standard language model, which is necessarily unidirectional — GPT's every token attends only leftward</Problem> (§1). That is <Problem>sub-optimal for sentence-level tasks and potentially very harmful for token-level tasks like question answering, where the representation of a token must incorporate context from both sides</Problem> (§1). ELMo is bidirectional only in a shallow sense — <Problem>a concatenation of two independently trained one-directional LMs, not a network that conditions on both sides at every layer</Problem> (§1, §5.1). The obstacle is structural: <Problem>a genuinely bidirectional conditional LM is untrainable as-is, because with multiple layers each word can indirectly "see itself" and prediction becomes trivial</Problem> (§3.1).
+
+## Contribution (what's new)
+The insight that survives deleting "we propose": <Novelty>you do not need a left-to-right factorization to pre-train on raw text — mask ~15% of the input tokens and predict only those from full two-sided context (a "masked LM", the Cloze task), and a deep bidirectional Transformer encoder becomes trainable</Novelty> (§3.1). The form is forced: any per-token prediction without masking leaks the target through the layers, and reconstructing everything (denoising autoencoders) wastes the objective on unmasked tokens. Two supporting moves complete the recipe: <Novelty>a mixed 80/10/10 masking strategy (replace with `[MASK]` / random token / keep) so the fine-tuning distribution — which never contains `[MASK]` — is not too alien, and the encoder must keep a full contextual representation of every token since it cannot know which will be queried</Novelty> (§3.1, A.1); and <Novelty>a single input format (`[CLS]` + sentence A + `[SEP]` + sentence B, with learned segment embeddings) plus next-sentence prediction (NSP), so one architecture serves single sentences and pairs and learns cross-sentence relationships that pure language modeling never supervises</Novelty> (§3, §3.1). The result is the first fine-tuning-based model to beat heavily task-engineered architectures across both sentence-level and token-level tasks (§1).
+
+## Research questions
+1. Does deep bidirectional pre-training beat unidirectional (GPT-style) and shallowly bidirectional (ELMo-style) pre-training, holding data and fine-tuning fixed (§5.1)?
+2. Can one pre-trained encoder + a minimal output layer replace task-specific architectures across eleven tasks (§4)?
+3. Does scaling the model keep paying off even on tiny downstream datasets (§5.2)? Do the representations also work frozen, feature-based (§5.3)?
+
+## Methodology
+Two steps: pre-train on unlabeled text, then fine-tune *all* parameters per task with one added output layer (§3, Fig.1). Carry the paper's own example through pre-training: given "my dog is hairy", the data generator picks 15% of positions, say "hairy"; 80% of the time the input becomes "my dog is `[MASK]`", 10% "my dog is apple" (random), 10% unchanged — and the model must predict "hairy" from both directions in every case (A.1). Simultaneously, the `[CLS]` vector classifies whether sentence B actually follows sentence A (50% real next, 50% random; NSP). Fine-tuning reuses the same network: sentence pairs map onto the A/B slots (premise–hypothesis, question–passage), `[CLS]` feeds classification heads, token vectors feed tagging/span heads — and it is cheap, at most 1 hour on a single Cloud TPU per result (§3.2).
+
+<Pass title="Method details (architecture, pre-training, task heads)">
+**Architecture.** A multi-layer bidirectional Transformer encoder (Vaswani et al., 2017). BERT-BASE: L=12 layers, H=768 hidden, A=12 heads, 110M parameters — deliberately sized to match GPT for comparison; BERT-LARGE: L=24, H=1024, A=16, 340M; feed-forward size 4H (§3, fn.3). Input embedding = token (<Term def="Google's subword vocabulary; here 30,000 tokens">WordPiece</Term>) + segment (A/B) + position (Fig.2). <Term def="Gaussian Error Linear Unit, a smooth ReLU variant">GELU</Term> activations (A.2).
+
+**Pre-training** (§3.1, A.2). Data: BooksCorpus (800M words) + English Wikipedia (2,500M words); a document-level corpus is deliberate — shuffled-sentence corpora cannot supply the long contiguous sequences NSP and long contexts need. Batch 256 sequences × 512 tokens (128k tokens/batch), 1M steps ≈ 40 epochs over 3.3B words. Adam lr 1e-4, warmup 10k steps then linear decay, weight decay 0.01, dropout 0.1. Loss = mean MLM likelihood + mean NSP likelihood. Cost saver: 90% of steps at sequence length 128, final 10% at 512 to learn positional embeddings (attention is quadratic in length). BASE trained on 16 TPU chips, LARGE on 64; 4 days each.
+
+**Fine-tuning heads** (§4, A.3). GLUE: single new matrix W, loss <M tex="\log(\mathrm{softmax}(CW^{\top}))" />; 3 epochs, batch 32, lr picked from {5e-5, 4e-5, 3e-5, 2e-5} on dev. SQuAD: only a start vector S and end vector E; span score <M tex="S\cdot T_i + E\cdot T_j" />, start probability
+
+<MathBlock>{`P_i = \\frac{e^{S\\cdot T_i}}{\\sum_j e^{S\\cdot T_j}}`}</MathBlock>
+
+SQuAD v2.0 treats "no answer" as a span at `[CLS]` and predicts non-null only when the best span beats the null score by a dev-tuned threshold. SWAG: one vector scoring each `[CLS]` of four (sentence, continuation) concatenations. Large datasets are far less sensitive to fine-tuning hyperparameters than small ones (A.3).
+</Pass>
+
+## Main result
+<Finding src="Tab.1, §4.1">BERT-LARGE lifts the GLUE average to 82.1 versus 75.1 for OpenAI GPT — 7.0 points over prior SOTA — with BERT-BASE, architecturally near-identical to GPT except for bidirectional attention, already at 79.6</Finding>. <Term def="General Language Understanding Evaluation: a suite of 8-9 sentence/sentence-pair tasks (inference, paraphrase, sentiment, acceptability) scored by a leaderboard server">GLUE</Term> test averages (WNLI excluded as broken):
+
+<SortableTable columns={["System", "GLUE avg", "MNLI m/mm", "SQuAD 1.1 Dev F1"]} rows={[
+  ["Pre-OpenAI SOTA", 74.0, "80.6/80.1", "—"],
+  ["BiLSTM+ELMo+Attn", 71.0, "76.4/76.1", "85.6 (BiDAF+ELMo)"],
+  ["OpenAI GPT", 75.1, "82.1/81.4", "—"],
+  ["BERT-BASE", 79.6, "84.6/83.4", 88.5],
+  ["BERT-LARGE", 82.1, "86.7/85.9", 90.9],
+]} />
+
+The same encoder also takes <Term def="Stanford Question Answering Dataset: extract the answer span for a question from a Wikipedia passage">SQuAD</Term> v1.1 to 93.2 Test F1 (ensemble of 7 + TriviaQA fine-tuning; +1.5 over the top leaderboard ensemble, and the single model beats that ensemble too, Tab.2), SQuAD v2.0 to 83.1 F1 (+5.1, Tab.3), and <Term def="Situations With Adversarial Generations: pick the most plausible continuation of a sentence among four choices">SWAG</Term> to 86.3 — above the 85.0 expert-human sample and +8.3 over GPT (Tab.4).
+
+## Key findings
+- <Finding src="Tab.5, §5.1">Deep bidirectionality is the main driver: a left-to-right model with identical data/architecture drops SQuAD Dev F1 from 88.5 to 77.8 and MRPC from 86.7 to 77.5</Finding>; adding a BiLSTM on top recovers SQuAD only to 84.9 and *hurts* GLUE — shallow bidirectionality cannot substitute for conditioning on both sides at every layer.
+- <Finding src="Tab.5, §5.1">Removing NSP hurts QNLI (88.4 → 84.9), MNLI (84.4 → 83.9) and SQuAD (88.5 → 87.9)</Finding> — evidence that some pair-level supervision matters, though the final model's 97–98% NSP accuracy (fn.5) shows the task itself is nearly saturated.
+- <Finding src="Tab.6, §5.2">Bigger is strictly better on every task tried — even MRPC with 3,600 training examples (L=3 → L=24 takes MNLI Dev 77.9 → 86.6)</Finding>; claimed as the first convincing demonstration that extreme model size helps *very small* tasks, provided the model is pre-trained and fully fine-tuned rather than used as frozen features.
+- <Finding src="Fig.5, C.1">Pre-training length matters: 1M steps beats 500k by ~1.0% MNLI accuracy, and although MLM converges slightly slower than left-to-right (it predicts only 15% of tokens), it overtakes in absolute accuracy almost immediately</Finding>.
+- <Finding src="Tab.8, C.2">Fine-tuning is surprisingly robust to the 80/10/10 masking recipe (MNLI Dev spans only 83.6–84.4 across strategies), but the mismatch bites in the feature-based regime: masking with `[MASK]` 100% of the time drops feature-based NER from 94.9 to 94.0, and random-only replacement is worst overall</Finding>.
+- <Finding src="Tab.7, §5.3">Frozen BERT features nearly match fine-tuning: concatenating the last four hidden layers reaches 96.1 Dev F1 on CoNLL <Term def="Named Entity Recognition: tag tokens as person/location/organization etc.">NER</Term>, only 0.3 behind fine-tuning the whole model</Finding> — the representations, not the adaptation procedure, carry most of the value. (On the NER *test* set, though, CSE's 93.1 still edges BERT-LARGE's 92.8.)
+- <Finding src="§4.1">BERT-LARGE fine-tuning is unstable on small datasets</Finding> — several random restarts with best-on-dev selection were needed, an early sighting of a now-familiar pathology.
+
+## Implications
+This paper settles the 2018 architecture-vs-representation debate: one generic pre-trained encoder plus a linear head beats <Related>task-specific architectures (BiDAF, ESIM, decomposable attention)</Related> across the board, so effort migrates from architecture design to pre-training. It sits between <Related>ELMo (feature-based, shallow bidirectional) and GPT (fine-tuned but unidirectional)</Related> and takes fine-tuning's side while fixing its directionality; the A.4 comparison is deliberately controlled (BERT-BASE sized to GPT). Threads to chase: <FollowUp>whether NSP is genuinely necessary — the gains in Tab.5 are modest, and later work (e.g. RoBERTa) dropped it and trained longer instead</FollowUp>; <FollowUp>the MLM efficiency question — only 15% of positions produce gradient signal per pass</FollowUp>; and <FollowUp>an encoder cannot generate text, which is exactly the capability the GPT line keeps and scales</FollowUp>.
+
+## Limitations
+- <Caveat>The pre-train/fine-tune mismatch from `[MASK]` is mitigated by 80/10/10, not eliminated</Caveat> (§3.1); C.2 shows it resurfaces whenever the model is used without fine-tuning.
+- <Caveat>MLM extracts learning signal from only 15% of tokens per batch, so more pre-training steps are needed to converge</Caveat> (A.1, C.1) — the paper argues the gains outweigh the cost but does not quantify compute-matched comparisons.
+- <Caveat>Sequences are capped at 512 tokens, and 90% of pre-training used length 128</Caveat> (A.2) — long-document behavior is untested.
+- <Caveat>The GPT comparison in Tab.1 confounds objective with data and batch size: BERT saw Books+Wikipedia at 128k words/batch versus GPT's Books-only at 32k</Caveat> (A.4); only the internal LTR ablation (Tab.5) is clean.
+- <Caveat>Headline SQuAD 93.2 relies on a 7-model ensemble plus TriviaQA transfer</Caveat>; single-model without TriviaQA gives up 0.1–0.4 F1 (§4.2).
+- <Caveat>Fine-tuning creates a separate full-size model per task</Caveat> (§3) — nothing is shared at deployment time.
+
+## Critiques and Questions
+1. The NSP evidence is thinner than the framing suggests: 97–98% accuracy means the model saturates the task, the "No NSP" drops are a few tenths outside QNLI, and the ablation changes the objective while keeping pair-packed inputs — it cannot separate "sentence-relation supervision" from "any second objective".
+2. Random restarts with best-dev selection for BERT-LARGE on small GLUE tasks inflates those entries relative to single-run baselines; variance across restarts is not reported.
+3. "Eleven SOTA tasks" is accurate but curated — on CoNLL NER (the twelfth task, in §5.3) BERT does *not* take SOTA (92.8 vs CSE 93.1 test F1).
+4. Bidirectionality's advantage is demonstrated on understanding tasks only; the framing "strictly more powerful than left-to-right" (§3.1) is an intuition, and it quietly trades away generation.
+5. Is the deep-bidirectionality win partly a span-task artifact? SQuAD and MRPC show the largest LTR drops (Tab.5), exactly where right-side context is mechanically necessary; the CoLA/SST-style single-sentence deltas are not broken out in the ablation.
+
+<SelfCheck q="Why can't you pre-train a deep bidirectional Transformer with an ordinary language-modeling objective, and how does BERT get around it?" a="With bidirectional self-attention, each position's representation at layer 2+ already mixes in the target word itself (from the other direction), so predicting every next word becomes trivial leakage. BERT instead masks ~15% of tokens and predicts only those from the surrounding context (masked LM / Cloze), replacing the chosen tokens with [MASK] 80% / random 10% / unchanged 10% so the encoder must maintain honest contextual representations of every token (§3.1, A.1)." />
+
+## Glossary
+Most terms are defined inline above. Remaining: <Term def="Multi-Genre Natural Language Inference: classify a sentence pair as entailment/contradiction/neutral; GLUE's largest task (393k examples)">MNLI</Term>, <Term def="QA-derived binary task: does the sentence contain the answer to the question?">QNLI</Term>, <Term def="Microsoft Research Paraphrase Corpus: are two sentences semantically equivalent? Only 3.5k training examples">MRPC</Term>, <Term def="fill-in-the-blank testing procedure from 1953 readability research; the ancestor of masked LM">Cloze task</Term>, <Term def="predicting whether segment B is the true continuation of segment A (binary; 50/50 sampled)">next sentence prediction (NSP)</Term>, <Term def="exact-match / token-overlap F1, the two SQuAD metrics">EM / F1</Term>.
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

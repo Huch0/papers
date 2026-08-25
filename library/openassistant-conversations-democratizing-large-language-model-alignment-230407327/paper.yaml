@@ -58,17 +58,17 @@ versions:
   source: arxiv
   source_url: https://arxiv.org/abs/2304.07327v2
   pdf_path: library/openassistant-conversations-democratizing-large-language-model-alignment-230407327/v1/paper.pdf
-  summary_path: null
+  summary_path: library/openassistant-conversations-democratizing-large-language-model-alignment-230407327/v1/summary.mdx
   metadata_path: library/openassistant-conversations-democratizing-large-language-model-alignment-230407327/v1/metadata.yaml
   fetched_at: '2026-08-24T03:20:58Z'
   source_updated_at: '2023-10-31T11:38:07Z'
   arxiv_version: v2
   pdf_sha256: 5ab012e9839b32efacd7eb1bca89ca7c6d29e49d9a6b8d23d23ea97a6916d62f
   pdf_bytes: 2199088
-  summary_status: none
-  extraction_status: none
+  summary_status: full
+  extraction_status: full
   created_at: '2026-08-24T03:20:58Z'
-  updated_at: '2026-08-24T03:20:58Z'
+  updated_at: '2026-08-25T06:45:20Z'
 relations:
   duplicate_candidates: []
   related_papers: []

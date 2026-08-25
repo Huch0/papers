@@ -1,0 +1,333 @@
+---
+canonical_key: arxiv-2501.12948
+version_key: v1
+title: 'DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning'
+authors:
+- DeepSeek-AI
+- Daya Guo
+- Dejian Yang
+- Haowei Zhang
+- Junxiao Song
+- Peiyi Wang
+- Qihao Zhu
+- Runxin Xu
+- Ruoyu Zhang
+- Shirong Ma
+- Xiao Bi
+- Xiaokang Zhang
+- Xingkai Yu
+- Yu Wu
+- Z. F. Wu
+- Zhibin Gou
+- Zhihong Shao
+- Zhuoshu Li
+- Ziyi Gao
+- Aixin Liu
+- Bing Xue
+- Bingxuan Wang
+- Bochao Wu
+- Bei Feng
+- Chengda Lu
+- Chenggang Zhao
+- Chengqi Deng
+- Chenyu Zhang
+- Chong Ruan
+- Damai Dai
+- Deli Chen
+- Dongjie Ji
+- Erhang Li
+- Fangyun Lin
+- Fucong Dai
+- Fuli Luo
+- Guangbo Hao
+- Guanting Chen
+- Guowei Li
+- H. Zhang
+- Han Bao
+- Hanwei Xu
+- Haocheng Wang
+- Honghui Ding
+- Huajian Xin
+- Huazuo Gao
+- Hui Qu
+- Hui Li
+- Jianzhong Guo
+- Jiashi Li
+- Jiawei Wang
+- Jingchang Chen
+- Jingyang Yuan
+- Junjie Qiu
+- Junlong Li
+- J. L. Cai
+- Jiaqi Ni
+- Jian Liang
+- Jin Chen
+- Kai Dong
+- Kai Hu
+- Kaige Gao
+- Kang Guan
+- Kexin Huang
+- Kuai Yu
+- Lean Wang
+- Lecong Zhang
+- Liang Zhao
+- Litong Wang
+- Liyue Zhang
+- Lei Xu
+- Leyi Xia
+- Mingchuan Zhang
+- Minghua Zhang
+- Minghui Tang
+- Meng Li
+- Miaojun Wang
+- Mingming Li
+- Ning Tian
+- Panpan Huang
+- Peng Zhang
+- Qiancheng Wang
+- Qinyu Chen
+- Qiushi Du
+- Ruiqi Ge
+- Ruisong Zhang
+- Ruizhe Pan
+- Runji Wang
+- R. J. Chen
+- R. L. Jin
+- Ruyi Chen
+- Shanghao Lu
+- Shangyan Zhou
+- Shanhuang Chen
+- Shengfeng Ye
+- Shiyu Wang
+- Shuiping Yu
+- Shunfeng Zhou
+- Shuting Pan
+- S. S. Li
+- Shuang Zhou
+- Shaoqing Wu
+- Shengfeng Ye
+- Tao Yun
+- Tian Pei
+- Tianyu Sun
+- T. Wang
+- Wangding Zeng
+- Wanjia Zhao
+- Wen Liu
+- Wenfeng Liang
+- Wenjun Gao
+- Wenqin Yu
+- Wentao Zhang
+- W. L. Xiao
+- Wei An
+- Xiaodong Liu
+- Xiaohan Wang
+- Xiaokang Chen
+- Xiaotao Nie
+- Xin Cheng
+- Xin Liu
+- Xin Xie
+- Xingchao Liu
+- Xinyu Yang
+- Xinyuan Li
+- Xuecheng Su
+- Xuheng Lin
+- X. Q. Li
+- Xiangyue Jin
+- Xiaojin Shen
+- Xiaosha Chen
+- Xiaowen Sun
+- Xiaoxiang Wang
+- Xinnan Song
+- Xinyi Zhou
+- Xianzu Wang
+- Xinxia Shan
+- Y. K. Li
+- Y. Q. Wang
+- Y. X. Wei
+- Yang Zhang
+- Yanhong Xu
+- Yao Li
+- Yao Zhao
+- Yaofeng Sun
+- Yaohui Wang
+- Yi Yu
+- Yichao Zhang
+- Yifan Shi
+- Yiliang Xiong
+- Ying He
+- Yishi Piao
+- Yisong Wang
+- Yixuan Tan
+- Yiyang Ma
+- Yiyuan Liu
+- Yongqiang Guo
+- Yuan Ou
+- Yuduan Wang
+- Yue Gong
+- Yuheng Zou
+- Yujia He
+- Yunfan Xiong
+- Yuxiang Luo
+- Yuxiang You
+- Yuxuan Liu
+- Yuyang Zhou
+- Y. X. Zhu
+- Yanhong Xu
+- Yanping Huang
+- Yaohui Li
+- Yi Zheng
+- Yuchen Zhu
+- Yunxian Ma
+- Ying Tang
+- Yukun Zha
+- Yuting Yan
+- Z. Z. Ren
+- Zehui Ren
+- Zhangli Sha
+- Zhe Fu
+- Zhean Xu
+- Zhenda Xie
+- Zhengyan Zhang
+- Zhewen Hao
+- Zhicheng Ma
+- Zhigang Yan
+- Zhiyu Wu
+- Zihui Gu
+- Zijia Zhu
+- Zijun Liu
+- Zilin Li
+- Ziwei Xie
+- Ziyang Song
+- Zizheng Pan
+- Zhen Huang
+- Zhipeng Xu
+- Zhongyu Zhang
+- Zhen Zhang
+venue: Nature volume 645, pages 633-638 (2025)
+year: 2025
+tags:
+- foundational
+topic_groups:
+- general_agent_methods
+- llm
+- rl
+triage_label: READ_SOON
+triage_confidence: medium
+source_link: https://arxiv.org/abs/2501.12948v2
+summary_date: '2026-08-25'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>DeepSeek-R1 shows that long-chain reasoning can be *incentivized* rather than taught: pure outcome-rewarded RL on DeepSeek-V3-Base (no SFT, no reasoning demonstrations) drives AIME pass@1 from 15.6% to 77.9% while reflection and verification behaviors emerge on their own; a four-stage pipeline then turns that raw reasoner into an o1-1217-class open-weights assistant, and 800K distilled samples transfer the reasoning to models as small as 1.5B.</TLDR>
+
+<WhyItMatters>This is the paper that demystified the o1 recipe and set off the open reasoning-model wave: it proved the missing ingredient was not secret data or architecture but hard questions, a reliable verifier, and enough RL compute — and it published the failures (PRM, MCTS) everyone else was quietly trying. Read it together with DeepSeek-V3: same base model, two post-training philosophies.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "15.6% → 77.9%", label: "AIME 2024 pass@1, R1-Zero", sub: "pure RL, no SFT; 86.7% with cons@16 (Fig.1)" },
+  { value: "79.8", label: "AIME 2024 pass@1, final R1", sub: "vs 79.2 for OpenAI o1-1217 (Tab.8)" },
+  { value: "$294K", label: "RL training cost", sub: "147K H800 hours on top of V3-Base (Tab.7)" },
+  { value: "6", label: "distilled models released", sub: "1.5B–70B, from 800K R1 samples (Tab.15)" },
+]} />
+
+## Motivation
+
+Every capable chat model before this one learned to reason by imitating people. <Problem>Post-training on human-annotated reasoning traces caps the model at human-provided patterns — it cannot discover non-human reasoning strategies it was never shown — and the annotation itself does not scale</Problem> (§1). The obvious alternative, RL, had two blockers. <Problem>Learned reward models — outcome- or process-based — get hacked at large scale: the policy finds outputs the grader loves and humans do not</Problem> (§2.2, G.2). And <Problem>the standard PPO machinery is hostile to long chains of thought: the value model must predict final reward from partial responses that the model may later revise or contradict, and PPO's per-token KL penalty implicitly punishes length — the very thing reasoning needs to grow</Problem> (A.3).
+
+## Contribution (what's new)
+
+- <Novelty>R1-Zero: large-scale RL applied directly to a base model with only two rule-based rewards — final-answer correctness and a `<think>`/`<answer>` format check — and no SFT stage at all; reflection, verification, alternative-strategy search, and growing "thinking time" emerge without ever being demonstrated (§2)</Novelty>. The form is forced by the motivation: human traces cap exploration and learned rewards get hacked, so the only trustworthy signal left is a verifiable outcome — and GRPO (group-normalized advantages, no value model, KL as a loss term rather than a per-token penalty) is what makes outcome-only RL stable for responses that grow to tens of thousands of tokens.
+- <Novelty>A four-stage pipeline (cold-start SFT → reasoning RL with a language-consistency reward → 800K-sample rejection-sampling SFT → mixed RL with rule-based plus helpful/safety reward models) that converts the unreadable, language-mixing R1-Zero into an aligned assistant without losing the reasoning (§3, Fig.2)</Novelty>.
+- <Novelty>Evidence that emergent reasoning transfers by distillation: 800K R1-generated samples fine-tune Qwen/Llama models (1.5B–70B) past GPT-4o/Claude-3.5 on math, and distillation beats large-scale direct RL at 32B scale (Tab.15, Tab.16)</Novelty>.
+- Published negative results: process reward models and MCTS both failed at scale (G.2) — unusually valuable disclosure.
+
+## Research questions
+
+1. Can advanced reasoning emerge from outcome-only RL, with no human reasoning demonstrations to imitate?
+2. What does it cost — in capability and in extra machinery — to make a pure-RL reasoner readable, monolingual, and generally helpful?
+3. For small models, is it better to run the RL recipe directly or to distill from a large reasoner?
+
+## Methodology
+
+R1-Zero: take DeepSeek-V3-Base (671B MoE, 37B active), prompt it with a minimal template that demands thinking inside `<think>` tags, and run <Term def="Group Relative Policy Optimization: PPO-style policy gradient that samples a group of responses per question and uses the group-normalized reward as advantage, eliminating the value model">GRPO</Term> with reward = accuracy (answer matches ground truth / passes test cases) + format. The advantage for response i is its reward standardized within the group:
+
+<MathBlock>{`A_i = \\frac{r_i - \\mathrm{mean}(\\{r_1,\\dots,r_G\\})}{\\mathrm{std}(\\{r_1,\\dots,r_G\\})}`}</MathBlock>
+
+Training data is 80K verifiable prompts — 26K math, 17K+8K code (competition + bug fixing), 22K STEM multiple-choice, 15K logic (Tab.4). R1 then wraps this core in the four-stage pipeline; evaluation uses temperature-0.6 sampling with pass@1 averaged over 4–64 samples because greedy decoding is unreliable for long-output models (D.1).
+
+<Pass title="Training details worth remembering">
+- **R1-Zero hyper-parameters** (§2.1): lr 3e-6, KL coefficient 0.001, temperature 1.0; 16 outputs per question, batch 512 (32 questions); max length 32,768 tokens, raised to 65,536 at step 8.2K — performance and length jump at exactly that point; 10,400 steps ≈ 1.6 epochs; reference model refreshed every 400 steps. The GRPO clip ratio is set to 10 (§3.2.1) — far above the textbook 0.2 — because a low ratio truncates gradients for many tokens while too high destabilizes training; the author-contribution list credits this "large clipping" strategy as significant.
+- **Stage 1 — cold start** (B.3.2): thousands of long-CoT samples made by filtering R1-Zero generations (correct answer, readable format, no language mixing, verified with sympy for math), rewriting them into first-person conversational style via human annotators + DeepSeek-V3. Explicitly product-driven: the "vivid" thinking style is an engineered heuristic, not evidence of human-like cognition.
+- **Stage 2 — reasoning RL**: rule-based rewards plus a language-consistency reward (fraction of target-language words in the CoT). The ablation (B.6, Fig.7) shows it slightly hurts code performance but stabilizes readability.
+- **Stage 3 — 800K SFT** (B.3.3, Tab.5): 600K reasoning samples rejection-sampled from the stage-2 checkpoint (adding a DeepSeek-V3 generative judge for non-rule-checkable answers) + 200K non-reasoning samples reusing the V3 pipeline; applied to V3-Base, not to the RL checkpoint.
+- **Stage 4 — mixed RL**: rule-based rewards for reasoning prompts; a helpful reward model (66K V3-judged preference pairs, scored on the final summary only) and a point-wise safety reward model (106K annotated prompts, scored on the whole response) for general prompts; temperature lowered to 0.7; 1,700 steps with preference rewards only in the last 400 — more invites reward hacking (B.5).
+- **Cost** (Tab.7): R1-Zero 101K + SFT data 5K + R1 41K = 147K H800 GPU hours ≈ $294K on 512 GPUs — on top of the $5.6M V3-Base.
+- **Decontamination** (D.1): 10-gram filtering (≈6M math pre-training texts removed); post-training math restricted to pre-2023 competitions; paraphrase contamination acknowledged as unpreventable.
+</Pass>
+
+## Main result
+
+<Finding src="Tab.8, Fig.11">DeepSeek-R1 matches OpenAI o1-1217 on reasoning: AIME 79.8 vs 79.2, MATH-500 97.3 vs 96.4, Codeforces percentile 96.3 vs 96.6, SWE-bench Verified 49.2 vs 48.9 — and one week after release it shared first place with o1 and Gemini-Exp-1206 on ChatbotArena under style control, as an MIT-licensed open-weights model</Finding>. The pure-RL ancestor is the scientific result: <Finding src="Fig.1, §2.3">R1-Zero climbs from 15.6% to 77.9% AIME pass@1 (86.7% with self-consistency) with no supervised reasoning data whatsoever, surpassing the average human competitor</Finding>.
+
+<SortableTable columns={["Benchmark", "DeepSeek-V3", "R1-Zero", "R1", "o1-1217"]} rows={[
+  ["AIME 2024 (pass@1)", 39.2, 77.9, 79.8, 79.2],
+  ["MATH-500 (pass@1)", 90.2, 95.9, 97.3, 96.4],
+  ["Codeforces (percentile)", 58.7, 80.4, 96.3, 96.6],
+  ["GPQA Diamond (pass@1)", 59.1, 75.8, 71.5, 75.7],
+  ["LiveCodeBench (pass@1-CoT)", 36.2, 50.0, 65.9, 63.4],
+  ["SWE-bench Verified (resolved)", 42.0, 43.2, 49.2, 48.9],
+  ["AlpacaEval 2.0 (LC winrate)", 70.0, 24.7, 87.6, "—"],
+  ["SimpleQA (correct)", 24.9, 30.3, 30.1, 47.0],
+]} />
+
+## Key findings
+
+- <Finding src="Fig.1b, Fig.9, Tab.2">Thinking time is learned, not scheduled: response length grows steadily through training, reflective words rise 5–7x, and the word "wait" is nearly absent until ~step 8000, then spikes — the "aha moment" where the model audibly interrupts its own derivation to re-evaluate</Finding>. Emergent behaviors appear at specific points in training, not gradually everywhere.
+- <Finding src="Tab.3">Alignment initially taxes reasoning, then pays it back: cold-start SFT (Dev1) lifts IF-Eval 46.6 to 71.7 but drops AIME from 77.9 to 59.0; reasoning RL (Dev2) recovers it to 74.0; the final mixed-RL stage adds +25 AlpacaEval and +17 ArenaHard while nudging AIME to 79.8</Finding>. Some tax never refunds: GPQA falls from R1-Zero's 75.8 to R1's 71.5, CNMO from 88.1 to 78.8.
+- <Finding src="Fig.18, §E.4">Test-time compute is allocated adaptively: under 7,000 thinking tokens for easy contest problems, over 18,000 for the hardest, 61.8% solve rate at an average 8,793 tokens — while GPT-4o with majority voting over 64 samples only moves 9.3% to 13.4% on AIME</Finding>. Independent sampling cannot substitute for in-context backtracking; yet sampling still helps R1 itself (pass@64 = 90.0, cons@64 = 86.7 vs pass@1 79.8).
+- <Finding src="Tab.16, G.1">Distillation dominates direct RL at small scale: DeepSeek-R1-Distill-Qwen-32B hits AIME 72.6, while the same base given 10K+ steps of the full RL recipe (Qwen2.5-32B-Zero) reaches only 47.0; below ~32B (7B dense, 16B MoE) pure RL fails outright — responses lengthen into repetition instead of reasoning</Finding>. Emergence has a capacity threshold; small models should inherit reasoning, not discover it.
+- <Finding src="B.5, Fig.6, G.2">Reward hacking is the binding constraint everywhere a rule-based verifier is missing: preference-model RL degrades Codeforces accuracy even as measured reward climbs, which is why preference rewards run only 400 steps — and process reward models and MCTS both failed for the same family of reasons</Finding>.
+- <Finding src="Tab.11, Tab.10, D.3">The open weights are only moderately safe: R1's intrinsic unsafe rate (25.2%) exceeds V3, Claude-3.7, and o1, and under jailbreak templates it explodes to 85.9% unsafe — versus 4.3% with DeepSeek's external V3-based risk-control layer</Finding>. Safety here is a system property, not a model property; anyone self-hosting R1 inherits the gap.
+- <Finding src="Tab.13, §E.2">The capability generalizes past the training cutoff: 75% on AIME 2025 (released after training), 143.7/150 on AMC 12 2024, and a USAMO qualification index of 256.7 against a 251.5 threshold</Finding> — evidence the math gains are not memorization.
+
+## Implications
+
+The paper converts "reasoning model" from a proprietary mystery into a recipe: hard questions + reliable verifier + RL compute on a strong base. It launched the open <Term def="reinforcement learning from verifiable rewards — outcome-checked RL without a learned reward model">RLVR</Term> wave the authors themselves cite (Open-R1, Logic-RL, TinyZero; §H.3), and its frontier claim is sharp: any task with a trustworthy verifier is now in reach of trial-and-error self-improvement, and tasks without one are the open problem (§6). <Related>GRPO comes from DeepSeekMath; the base, GRPO objective, and the distillation loop back into V3's own post-training tie this paper inseparably to the DeepSeek-V3 report; the o1 system card is the closed counterpart it is measured against</Related>. Threads worth chasing: <FollowUp>tool-augmented reasoning RL (compilers, search engines) which the authors name as the next version's focus</FollowUp>, <FollowUp>token-efficiency — explicit budget modeling to curb overthinking</FollowUp>, and <FollowUp>robust reward models for open-ended domains, the declared frontier beyond verifiable tasks</FollowUp>.
+
+## Limitations
+
+- <Caveat>No tool use and weak structured output; software-engineering RL was limited because long evaluation loops throttle rollout throughput — SWE-bench gains over V3 are modest (49.2 vs 42.0) (§6)</Caveat>.
+- <Caveat>Overthinking persists on easy queries, and the model is prompt-fragile: few-shot prompting consistently degrades performance, so zero-shot is recommended (§6)</Caveat>.
+- <Caveat>Optimized only for Chinese and English; other-language queries can get English CoT or mixed-language output (§6)</Caveat>.
+- <Caveat>The "no human reasoning data" claim has an asterisk the authors themselves supply: V3-Base's corpus is deliberately rich in math/code and contains OpenAI-model-generated web text, so indirect exposure to reasoning traces cannot be excluded (A.1)</Caveat> — the Qwen2-Math-7B-Zero control (base predating o1, AIME 7.9 to 22.3 under RL) mitigates but does not eliminate this.
+- <Caveat>n-gram decontamination cannot catch paraphrased test questions; pre-2024 benchmarks may be contaminated (D.1)</Caveat>.
+- <Caveat>Mathematical proofs are excluded from RL data because they cannot be auto-verified (B.3.1)</Caveat> — the method's scope is exactly the verifier's scope, and geometry/combinatorics remain weak (Fig.17: combinatorial geometry 14.5).
+
+## Critiques and Questions
+
+1. "Incentivized, not taught" is partly a claim about the base model: RL here elicits and amplifies latent competence from a reasoning-heavy pre-training corpus. The honest framing is that emergence needs both the incentive *and* a base above a capacity threshold (G.1) — which is also why the result was so hard to reproduce on small models.
+2. The headline $294K invites the same misreading as V3's $5.6M: it excludes the base model it stands on and all failed experiments (A100 prototyping, 7B/16B failures are mentioned but not costed).
+3. The open-ended wins (AlpacaEval 87.6, ArenaHard 92.3) are LLM-judged with only the final summary shown to the judge — a reasonable length-bias control, but reasoning models may still produce summaries optimized for judge taste; ChatbotArena style-control ranking is the more convincing evidence.
+4. The GPQA and C-SimpleQA regressions from R1-Zero/V3 to R1 are visible in the tables but barely discussed — what exactly does the alignment pipeline trade away, and is it recoverable?
+5. Reported pass@1 uses up to 64 samples at temperature 0.6 with the checkpoint variance argument (D.1); fair, but numbers are then not directly comparable to single-shot greedy evaluations elsewhere.
+
+<SelfCheck q="Why does R1-Zero use only rule-based accuracy and format rewards, refusing both outcome and process neural reward models?" a="Neural reward models get exploited during large-scale RL — the policy learns outputs that score high without being right (reward hacking), and retraining the RM adds cost and pipeline complexity (§2.2). Rules (answer matching, compilers, format checks) cannot be gamed the same way, which is exactly why the method's scope is limited to verifiable tasks." />
+
+## Glossary
+
+- <Term def="Group Relative Policy Optimization: critic-free PPO variant using group-normalized rewards as advantages, with KL to a periodically-refreshed reference policy added to the loss">GRPO</Term>
+- <Term def="a policy exploiting flaws in the reward signal to score high without truly satisfying the intent">reward hacking</Term>
+- <Term def="process reward model: grades each intermediate reasoning step rather than only the outcome">PRM</Term>
+- <Term def="Monte Carlo Tree Search: value-model-guided tree exploration of the solution space, as in AlphaGo">MCTS</Term>
+- <Term def="a small curated SFT dataset used to initialize the RL actor with the desired style before RL begins">cold start</Term>
+- <Term def="generating many candidates and keeping only those passing a filter (correctness, format) as training data">rejection sampling</Term>
+- <Term def="expected single-sample accuracy, here estimated by averaging correctness over n sampled responses">pass@1</Term>
+- <Term def="majority-vote accuracy over n samples (self-consistency)">cons@64</Term>
+- <Term def="American Invitational Mathematics Examination: 15-question high-school olympiad qualifier; answers are integers, enabling rule-based verification">AIME</Term>
+- <Term def="crowdsourced pairwise-preference LLM leaderboard with Elo ratings; style control separates content quality from length/formatting effects">ChatbotArena</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Free-form notes for later.
+{/* NOTES_END */}

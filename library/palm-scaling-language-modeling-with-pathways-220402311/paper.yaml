@@ -106,17 +106,17 @@ versions:
   source: arxiv
   source_url: https://arxiv.org/abs/2204.02311v5
   pdf_path: library/palm-scaling-language-modeling-with-pathways-220402311/v1/paper.pdf
-  summary_path: null
+  summary_path: library/palm-scaling-language-modeling-with-pathways-220402311/v1/summary.mdx
   metadata_path: library/palm-scaling-language-modeling-with-pathways-220402311/v1/metadata.yaml
   fetched_at: '2026-08-24T03:20:45Z'
   source_updated_at: '2022-10-05T06:02:24Z'
   arxiv_version: v5
   pdf_sha256: 1e88f1f3027cd1abecb1713c1c08a89137c7730582549ec7ca78ca329f3f975d
   pdf_bytes: 2711295
-  summary_status: none
-  extraction_status: none
+  summary_status: full
+  extraction_status: full
   created_at: '2026-08-24T03:20:45Z'
-  updated_at: '2026-08-24T03:20:45Z'
+  updated_at: '2026-08-25T06:37:05Z'
 relations:
   duplicate_candidates: []
   related_papers: []

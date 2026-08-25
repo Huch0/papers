@@ -334,3 +334,15 @@ Each entry: date, trigger, change, files touched, migration status.
   foundational -> expansion -> recent) with subarea lanes, significance lines,
   per-field read progress from the local reading tracker; Milestones link in
   the header nav.
+
+## 2026-08-25 — Summary voice: Feynman technique, as the author (durable)
+
+- User request: "Explain this paper to me using the Feynman technique,
+  considering yourself as the author" is now the standing voice for ALL
+  summaries, surviving /compact. Added as the first preference in
+  .claude/skills/summarize-paper/SKILL.md and as hard rule 3 in
+  config/summary_template.mdx: author-as-teacher stance, problem-upward
+  plain-language build, design choices shown as forced moves, one concrete
+  running example, honest admission of fragile/unexplained parts. The
+  concise/core-first section structure is unchanged — the principle governs
+  voice and reasoning, not layout.

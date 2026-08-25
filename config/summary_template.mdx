@@ -3,7 +3,7 @@
   from metadata.yaml by `summarize_paper.py --format mdx --prepare`. Components are
   provided globally by the site (no imports). See config/summary_components.md.
 
-  TWO HARD RULES:
+  THREE HARD RULES:
   1. CONCISE, BUT KEEP THE KEY POINTS. Capture the paper's important findings/analysis —
      not just the headline number. (e.g. for SWE-bench: "difficulty correlates with
      context length", "finetuned models are sensitive to context-distribution shift".)
@@ -16,6 +16,11 @@
        <Caveat>    orange — a limitation of THIS paper
        <Related>   violet — related work / lineage
        <Term def="…">  glossary chip with hover definition (self-contained)
+  3. FEYNMAN TECHNIQUE, AS THE AUTHOR. Write as the paper's author teaching your own
+     work: build the idea from the problem upward in plain language, show why each
+     design choice is forced (what breaks without it), carry one concrete running
+     example through the mechanism, and admit what is fragile or unexplained.
+     The voice governs HOW sections read — the section list below stays.
   Declarative English; specific numbers + anchors; "Not reported"/"Unclear" for gaps;
   verify numbers against extraction.txt. Keep Motivation (<Problem>) ≠ Contribution (<Novelty>).
 */}

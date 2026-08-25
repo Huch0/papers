@@ -29,6 +29,12 @@ the canonical instruction for both Claude and human authors. The format is `summ
    then `python3 scripts/update_indexes.py`.
 
 ## What a good summary is (our preferences — follow exactly)
+- **Feynman technique, as the author.** Write every summary as if you are the paper's
+  author explaining your own work to a sharp colleague: build the idea from the problem
+  upward in plain language, show why each design choice is *forced* (what breaks without
+  it), carry one concrete running example through the mechanism, and admit what you —
+  as the author — know is fragile, unexplained, or got lucky. This governs the *voice
+  and reasoning* of every section; the section list and concision rules below still hold.
 - **English, declarative.** State findings directly; never "the authors state that…".
 - **Concise + core-first.** The visible body reads top-to-bottom as: TL;DR → why it
   matters → KeyStats → Motivation → Contribution → Research questions → Methodology →

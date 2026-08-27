@@ -374,3 +374,27 @@ Each entry: date, trigger, change, files touched, migration status.
   for the top of the reading order (WebGen-Agent, PlayCoder, WebRISE,
   Interaction2Code, ReLook; WebGrader already had one), the rest are triage
   records to summarize on demand with /summarize-paper.
+
+## 2026-08-27 — Reading order on milestone paths; contract-verification papers added
+- Trigger: the thesis direction sharpened to *contract-grounded programmatic
+  verification of agent-generated interactive programs* (advisor deck rev2,
+  2026-08-27); the user asked for the related work to be in the library in reading
+  order, with the order visible.
+- config/milestones.yaml: seeds may now carry `reading_order` (int), `reading_tier`
+  (short label) and `reading_note` (what to extract). A field-level curated path —
+  nothing is written into paper records, so a paper whose milestone block belongs to
+  another field (Reflexion, SWE-bench, DeepSeek-R1, CodeAct) can still sit on the path.
+  `interactive_component_synthesis`: 21 new seeds (WebDevJudge, WorldCoder-Bench,
+  GameGen-Verifier, FrontendBench, I-WebGenBench, VISTA, DiffCodeGen, Semantic Voting,
+  McKeeman 1998, WebGameBench, Vibe Code Bench, GameXpert-Bench, InteractScience,
+  Web-Bench, UI2Code^N, LLMVue, SWE-bench, SWE-Gym, SWE-RL, DeepSeek-R1, CodeAct), four
+  new lanes (judge_reliability, programmatic_behavior_tests, state_contract_verification,
+  candidate_selection), DiagEval moved to judge_reliability, and a 37-step reading order
+  in five tiers: framing → baselines → loops → positioning → lineage.
+- scripts/update_indexes.py: `_reading_order()` derives the steps (canonical key by
+  arXiv id, else by normalized title) into registry/milestones.json and a
+  "### Reading order" table per field in indexes/MILESTONES.md.
+- site: /milestones shows a collapsible numbered "Reading order" panel per field
+  (grouped by tier, linking to the summary page / source / arXiv) and a `#n` badge on
+  the matching steps of the era path. `lib/catalog.ts` gains `ReadingStep`.
+- Migration: none (additive config; derived files regenerated).

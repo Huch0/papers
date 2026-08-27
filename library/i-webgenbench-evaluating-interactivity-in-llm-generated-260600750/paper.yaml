@@ -1,0 +1,63 @@
+canonical_key: arxiv-2606.00750
+slug: i-webgenbench-evaluating-interactivity-in-llm-generated-260600750
+title: 'I-WebGenBench : Evaluating Interactivity in LLM-Generated Scientific Web Applications'
+authors:
+- Dasen Dai
+- Biao Wu
+- Meng Fang
+- Shuoqi Li
+- Wenhao Wang
+year: 2026
+primary_ids:
+  doi: null
+  arxiv_base_id: '2606.00750'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2606.00750v1
+- https://arxiv.org/pdf/2606.00750v1
+topic_groups:
+- agent_harness
+- interactive_component_synthesis
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2026
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: interactive_component_synthesis
+  era: recent
+  significance: 201 scientific web apps (sliders, simulations, data-linked charts); a Playwright Interaction
+    Probe (Interaction Rate) plus a VLM rubric. The arXiv abstract differs from the full text.
+  subarea: programmatic_behavior_tests
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v1
+  source: arxiv
+  source_url: https://arxiv.org/abs/2606.00750v1
+  pdf_path: library/i-webgenbench-evaluating-interactivity-in-llm-generated-260600750/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/i-webgenbench-evaluating-interactivity-in-llm-generated-260600750/v1/metadata.yaml
+  fetched_at: '2026-08-27T04:51:39Z'
+  source_updated_at: '2026-05-30T14:34:02Z'
+  arxiv_version: v1
+  pdf_sha256: 6343950b6984f3ab5b3a89fe31c480926c634e7fac61ee1f0963ff8d63f93b89
+  pdf_bytes: 1953076
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-27T04:51:39Z'
+  updated_at: '2026-08-27T04:51:39Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

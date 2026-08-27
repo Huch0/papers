@@ -209,6 +209,8 @@ def build(write: bool = True) -> dict:
              f"_{len(ms)} milestone paper(s) across {len(by_field)} field(s)._", "",
              "Landmark papers per field from emergence to recent. Curated in "
              "`config/milestones.yaml`; add more via /milestone-papers.", ""]
+    by_key = {f.get("canonical_key"): f for f in flats}
+    ms_fields = pl.milestones_cfg().get("fields", {}) or {}
     for field in sorted(by_field):
         items = sorted(by_field[field], key=lambda f: (
             era_order.get(f["milestone"].get("era"), 9), f.get("year") or 0))
@@ -220,6 +222,15 @@ def build(write: bool = True) -> dict:
             sig = (m.get("significance") or "").replace("|", "\\|")
             ms_md.append(f"| {m.get('era','—')} | {f.get('year') or '—'} | {_link(f)} "
                          f"| {f.get('venue') or '—'} | {sig} |")
+        steps = _reading_order(ms_fields.get(field) or {})
+        if steps:
+            ms_md += ["", f"### Reading order ({len(steps)})", "",
+                      "| # | Tier | Title | What to extract |", "|---|---|---|---|"]
+            for r in steps:
+                f2 = by_key.get(r["canonical_key"]) if r["canonical_key"] else None
+                t = _link(f2) if f2 else (r["title"] or "—").replace("|", "\\|")
+                note = (r.get("note") or "").replace("|", "\\|")
+                ms_md.append(f"| {r['n']} | {r.get('tier') or '—'} | {t} | {note} |")
         ms_md.append("")
 
     outputs = {
@@ -242,6 +253,30 @@ def build(write: bool = True) -> dict:
     return {"papers": len(flats), "counts": dict(counts)}
 
 
+def _reading_order(fcfg: dict) -> list[dict]:
+    """A field's curated reading order: seeds carrying `reading_order` (config only —
+    nothing is written into paper records). Each step resolves to a canonical key by
+    arXiv id, else by normalized title against the library, else null. Deterministic."""
+    steps = []
+    by_title = None
+    for sd in (fcfg.get("seeds") or []):
+        n = sd.get("reading_order")
+        if n is None:
+            continue
+        arx = str(sd.get("arxiv") or "").strip()
+        if arx:
+            ck = f"arxiv-{arx}"
+        else:
+            if by_title is None:
+                by_title = {pl.normalize_title(p.get("title", "")): p.get("canonical_key")
+                            for p in pl.iter_papers()}
+            ck = by_title.get(pl.normalize_title(sd.get("title") or ""))
+        steps.append({"n": int(n), "tier": sd.get("reading_tier"), "title": sd.get("title"),
+                      "arxiv": arx or None, "canonical_key": ck, "note": sd.get("reading_note")})
+    steps.sort(key=lambda r: r["n"])
+    return steps
+
+
 def _emit_milestones_meta() -> None:
     """Derive registry/milestones.json: field key -> display metadata for the site's
     /milestones/ paths page. Source of truth is config/milestones.yaml; papers
@@ -258,6 +293,7 @@ def _emit_milestones_meta() -> None:
             "display_name": fcfg.get("display_name") or key.replace("_", " ").title(),
             "path_order": fcfg.get("path_order"),
             "seed_count": len(fcfg.get("seeds") or []),
+            "reading_order": _reading_order(fcfg),
         }
     (pl.REGISTRY / "milestones.json").write_text(
         __import__("json").dumps(out, indent=2, ensure_ascii=False, sort_keys=True) + "\n",

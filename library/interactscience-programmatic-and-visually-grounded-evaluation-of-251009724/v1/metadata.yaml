@@ -1,0 +1,85 @@
+canonical_key: arxiv-2510.09724
+version_key: v1
+title: 'InteractScience: Programmatic and Visually-Grounded Evaluation of Interactive Scientific Demonstration
+  Code Generation'
+authors:
+- Qiaosheng Chen
+- Yang Liu
+- Lei Li
+- Kai Chen
+- Qipeng Guo
+- Gong Cheng
+- Fei Yuan
+abstract: Large Language Models (LLMs) are increasingly capable of generating complete applications from
+  natural language instructions, creating new opportunities in science and education. In these domains,
+  interactive scientific demonstrations are particularly valuable for explaining concepts, supporting
+  new teaching methods, and presenting research findings. Generating such demonstrations requires models
+  to combine accurate scientific knowledge with the ability to implement interactive front-end code that
+  behaves correctly and responds to user actions. This capability goes beyond the scope of existing benchmarks,
+  which typically evaluate either knowledge question answering without grounding in code or static web
+  code generation without scientific interactivity. To evaluate this integrated ability, we design a hybrid
+  framework that combines programmatic functional testing to rigorously verify interaction logic with
+  visually-grounded qualitative testing to assess rendered outputs against reference snapshots. Building
+  on this framework, we present InteractScience, a benchmark consisting of a substantial set of carefully
+  designed questions across five scientific domains, each paired with unit tests, reference snapshots,
+  and checklists. We evaluate 30 leading open- and closed-source LLMs and report results that highlight
+  ongoing weaknesses in integrating domain knowledge with interactive front-end coding. Our work positions
+  InteractScience as the first benchmark to automatically measure this combined capability with realistic
+  interactive operations, providing a foundation for advancing reliable and educationally useful scientific
+  demonstration code generation. All code and data are publicly available at https://github.com/open-compass/InteractScience.
+venue: arXiv
+year: 2025
+source: arxiv
+source_url: https://arxiv.org/abs/2510.09724v2
+pdf_url: https://arxiv.org/pdf/2510.09724v2
+pdf_sha256: 3297f9217b0b4065c20c866fdb256b7371e3a0381e88a3f3e6a733fd2bb2fe5e
+fetched_at: '2026-08-27T04:53:27Z'
+source_updated_at: '2026-05-20T11:39:06Z'
+ids:
+  doi: null
+  arxiv_id: 2510.09724v2
+  arxiv_base_id: '2510.09724'
+  arxiv_version: v2
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- interactive_component_synthesis
+- llm
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: recency(0.84), interest_fit(0.73), novelty(0.55) | interests:
+    llm:large language model, llm:group:llm, interactive_component_synthesis:group:interactive_component_synthesis
+    | milestone/foundational floor applied'
+  matched_interests:
+  - llm:large language model
+  - llm:group:llm
+  - interactive_component_synthesis:group:interactive_component_synthesis
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 0.839
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 0.55
+    artifact_availability: 0.55
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/interactscience-programmatic-and-visually-grounded-evaluation-of-251009724/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

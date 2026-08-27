@@ -1,7 +1,7 @@
 ---
 import Base from "../../layouts/Base.astro";
 import { getCollection } from "astro:content";
-import { loadCatalog, loadMilestoneFields, summaryEntryId } from "../../lib/catalog";
+import { loadCatalog, loadMilestoneFields, summaryEntryId, type ReadingStep } from "../../lib/catalog";
 
 // The milestone paths: every library paper carrying a milestone block, grouped by
 // field (config/milestones.yaml via registry/milestones.json), ordered era -> year.
@@ -19,7 +19,19 @@ type Row = {
   key: string; title: string; year: number | null; venue: string | null;
   era: string; subarea: string | null; significance: string;
   href: string | null; external: boolean; hasSummary: boolean; marker: string;
+  order: number | null;
 };
+
+// Curated reading order per field (config/milestones.yaml seeds with `reading_order`,
+// derived into registry/milestones.json). A field-level path: it may include papers
+// whose milestone block belongs to another field, so it is joined by canonical key.
+const orderByField = new Map<string, Map<string, number>>();
+for (const [f, m] of Object.entries(meta)) {
+  const idx = new Map<string, number>();
+  for (const s of m.reading_order ?? []) if (s.canonical_key) idx.set(s.canonical_key, s.n);
+  orderByField.set(f, idx);
+}
+const catByKey = new Map(cat.map((p) => [p.canonical_key, p]));
 
 const byField = new Map<string, Row[]>();
 for (const p of cat) {
@@ -42,6 +54,7 @@ for (const p of cat) {
     external: !hasSummary,
     hasSummary,
     marker: `${p.latest_version ?? "v?"}__${summaryDate ?? ""}`,
+    order: orderByField.get(m.field)?.get(p.canonical_key) ?? null,
   };
   if (!byField.has(m.field)) byField.set(m.field, []);
   byField.get(m.field)!.push(row);
@@ -73,6 +86,30 @@ function eraGroups(rows: Row[]) {
 }
 
 const displayName = (f: string) => meta[f]?.display_name ?? f.replace(/_/g, " ");
+
+function readingOrder(f: string): ReadingStep[] {
+  return meta[f]?.reading_order ?? [];
+}
+// Group consecutive steps by tier, preserving the order tiers first appear in.
+function tiers(steps: ReadingStep[]) {
+  const seen: string[] = [];
+  for (const s of steps) {
+    const t = s.tier ?? "reading order";
+    if (!seen.includes(t)) seen.push(t);
+  }
+  return seen.map((tier) => ({ tier, items: steps.filter((s) => (s.tier ?? "reading order") === tier) }));
+}
+// Where a reading step links: the summary page when one exists, else the paper's source,
+// else arXiv (a seed not yet ingested).
+function stepLink(s: ReadingStep): { href: string | null; external: boolean; title: string; inLibrary: boolean } {
+  const p = s.canonical_key ? catByKey.get(s.canonical_key) : undefined;
+  if (!p) return { href: s.arxiv ? `https://arxiv.org/abs/${s.arxiv}` : null, external: true, title: s.title, inLibrary: false };
+  const id = summaryEntryId(p.summary_path);
+  const hasSummary = !!p.summary_path && id !== null && (dateById.get(id) ?? null) !== null;
+  return hasSummary
+    ? { href: `${base}papers/${p.canonical_key}/`.replace(/\/+/g, "/"), external: false, title: p.title, inLibrary: true }
+    : { href: p.source_link ?? null, external: true, title: p.title, inLibrary: true };
+}
 const total = fields.reduce((n, f) => n + byField.get(f)!.length, 0);
 
 // Subarea lanes per field (for the filter chips); only shown when a field has >= 2 lanes.
@@ -136,6 +173,36 @@ function lanes(rows: Row[]) {
               ))}
             </div>
           )}
+          {readingOrder(f).length > 0 && (
+            <details class="rorder" open>
+              <summary>
+                Reading order <span class="n">{readingOrder(f).length}</span>
+                <span class="hint">curated sequence — each step is also numbered #n on the path below</span>
+              </summary>
+              {tiers(readingOrder(f)).map((t) => (
+                <div class="tier">
+                  <h4>{t.tier}</h4>
+                  <ol>
+                    {t.items.map((s) => {
+                      const l = stepLink(s);
+                      return (
+                        <li value={s.n} data-key={s.canonical_key ?? ""}>
+                          <span class="num" aria-hidden="true">#{s.n}</span>
+                          {l.href ? (
+                            <a href={l.href} rel={l.external ? "noopener" : undefined}>{l.title}</a>
+                          ) : (
+                            <span class="t">{l.title}</span>
+                          )}
+                          {l.external && <span class="ext" title={l.inLibrary ? "summary pending — opens the source" : "not in the library yet — opens arXiv"}>↗</span>}
+                          {s.note && <span class="sig">{s.note}</span>}
+                        </li>
+                      );
+                    })}
+                  </ol>
+                </div>
+              ))}
+            </details>
+          )}
         </header>
         {eraGroups(rows).map((g) => (
           <div class="era">
@@ -157,6 +224,7 @@ function lanes(rows: Row[]) {
                   <span class="dot" aria-hidden="true"></span>
                   <span class="yr">{r.year ?? "—"}</span>
                   <span class="body">
+                    {r.order != null && <span class="ord" title="reading order">#{r.order}</span>}
                     {r.href ? (
                       <a href={r.href} rel={r.external ? "noopener" : undefined}>{r.title}</a>
                     ) : (
@@ -364,5 +432,35 @@ function lanes(rows: Row[]) {
   .sig {
     display: block; color: var(--mut); font-size: .92rem; line-height: 1.5;
     max-width: 72ch; margin-top: .12rem;
+  }
+
+  /* --- curated reading order (field-level; config/milestones.yaml) ------------- */
+  .rorder {
+    margin: .4rem 0 1.4rem; border: 1px solid var(--line); border-radius: 10px;
+    padding: .55rem 1.1rem .5rem; background: var(--paper);
+  }
+  .rorder > summary { cursor: pointer; font-family: var(--font-display); font-weight: 600; font-size: 1.05rem; }
+  .rorder > summary .n { font-size: .78rem; font-weight: 400; opacity: .7; margin-left: .25rem; }
+  .rorder > summary .hint { font-family: var(--font-body); font-size: .8rem; font-weight: 400; color: var(--mut); margin-left: .6rem; }
+  .rorder .tier h4 {
+    margin: .95rem 0 .25rem; font-size: .78rem; font-weight: 600;
+    font-variant: all-small-caps; letter-spacing: .14em; color: var(--accent);
+  }
+  .rorder ol { margin: 0; padding: 0; list-style: none; }
+  .rorder li { display: grid; grid-template-columns: 2.6rem 1fr; column-gap: .4rem; padding: .22rem 0; font-size: .98rem; line-height: 1.45; }
+  .rorder li .num {
+    font-family: var(--font-body); font-size: .78rem; font-weight: 600; color: var(--accent);
+    font-variant-numeric: tabular-nums; padding-top: .28em; text-align: right;
+  }
+  .rorder li .sig { grid-column: 2; }
+  .rorder li a, .rorder li .t { font-family: var(--font-display); font-weight: 500; text-decoration: none; color: var(--ink); }
+  .rorder li a:hover { text-decoration: underline; }
+  .rorder .ext { font-size: .78em; opacity: .7; margin-left: .25em; }
+  .rorder .sig { font-size: .88rem; }
+  .ord {
+    display: inline-block; font-family: var(--font-body); font-size: .72rem; font-weight: 600;
+    color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, transparent);
+    border-radius: 6px; padding: .05em .45em; margin-right: .5em; vertical-align: .18em;
+    font-variant-numeric: tabular-nums;
   }
 </style>

@@ -1,0 +1,68 @@
+canonical_key: arxiv-2502.18449
+slug: swe-rl-advancing-llm-reasoning-via-reinforcement-250218449
+title: 'SWE-RL: Advancing LLM Reasoning via Reinforcement Learning on Open Software Evolution'
+authors:
+- Yuxiang Wei
+- Olivier Duchenne
+- Jade Copet
+- Quentin Carbonneaux
+- Lingming Zhang
+- Daniel Fried
+- Gabriel Synnaeve
+- Rishabh Singh
+- Sida I. Wang
+year: 2025
+primary_ids:
+  doi: null
+  arxiv_base_id: '2502.18449'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2502.18449v2
+- https://arxiv.org/pdf/2502.18449v2
+topic_groups:
+- interactive_component_synthesis
+- llm
+- rl
+- software_engineering_agents
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2025
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: interactive_component_synthesis
+  era: expansion
+  significance: 'NeurIPS 2025: RL on open software-evolution data with rule-based rewards.'
+  subarea: exec_feedback_codegen
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v2
+  source: arxiv
+  source_url: https://arxiv.org/abs/2502.18449v2
+  pdf_path: library/swe-rl-advancing-llm-reasoning-via-reinforcement-250218449/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/swe-rl-advancing-llm-reasoning-via-reinforcement-250218449/v1/metadata.yaml
+  fetched_at: '2026-08-27T04:54:27Z'
+  source_updated_at: '2025-12-01T00:16:59Z'
+  arxiv_version: v2
+  pdf_sha256: c649093be6913c6b64705bfa96fafa57938f1414e66663c45f750fea0704e8dc
+  pdf_bytes: 1941290
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-27T04:54:27Z'
+  updated_at: '2026-08-27T04:54:27Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

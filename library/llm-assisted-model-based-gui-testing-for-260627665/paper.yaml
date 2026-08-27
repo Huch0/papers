@@ -1,0 +1,65 @@
+canonical_key: arxiv-2606.27665
+slug: llm-assisted-model-based-gui-testing-for-260627665
+title: LLM-Assisted Model-Based GUI Testing for Vue.js Web Applications
+authors:
+- Tao Li
+- Chenhui Cui
+- Rubing Huang
+- Dave Towey
+- Shikai Guo
+- Lei Ma
+year: 2026
+primary_ids:
+  doi: null
+  arxiv_base_id: '2606.27665'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2606.27665v1
+- https://arxiv.org/pdf/2606.27665v1
+topic_groups:
+- interactive_component_synthesis
+- llm
+- rl
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2026
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: interactive_component_synthesis
+  era: recent
+  significance: 'LLMVue: model-based GUI testing (page-transition graph) with LLM help - for existing
+    Vue.js apps, not generated code.'
+  subarea: programmatic_behavior_tests
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v1
+  source: arxiv
+  source_url: https://arxiv.org/abs/2606.27665v1
+  pdf_path: library/llm-assisted-model-based-gui-testing-for-260627665/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/llm-assisted-model-based-gui-testing-for-260627665/v1/metadata.yaml
+  fetched_at: '2026-08-27T04:54:04Z'
+  source_updated_at: '2026-06-26T02:51:59Z'
+  arxiv_version: v1
+  pdf_sha256: 9e086d8bfb4ba98af500709dd280b4fbe0572be573db367ba30da8c039f14b0c
+  pdf_bytes: 988268
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-27T04:54:04Z'
+  updated_at: '2026-08-27T04:54:04Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

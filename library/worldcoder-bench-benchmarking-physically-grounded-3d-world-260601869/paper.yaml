@@ -1,0 +1,70 @@
+canonical_key: arxiv-2606.01869
+slug: worldcoder-bench-benchmarking-physically-grounded-3d-world-260601869
+title: 'WorldCoder-Bench: Benchmarking Physically Grounded 3D World Synthesis'
+authors:
+- Shuo Lu
+- Yinuo Xu
+- Kecheng Yu
+- Siru Jiang
+- Yongcan Yu
+- Yubin Wang
+- Haitao Yang
+- Yuxiang Zhang
+- Bin Wang
+- Ran He
+- Jian Liang
+year: 2026
+primary_ids:
+  doi: null
+  arxiv_base_id: '2606.01869'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2606.01869v2
+- https://arxiv.org/pdf/2606.01869v2
+topic_groups:
+- interactive_component_synthesis
+- llm
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2026
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: interactive_component_synthesis
+  era: recent
+  significance: Generated 3D programs must expose a standardized runtime state object (window.__3D_STATE__);
+    fixed timestep, scripted actions, hidden mutation-hardened state contracts. Nearest neighbor to the
+    contract idea.
+  subarea: state_contract_verification
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v2
+  source: arxiv
+  source_url: https://arxiv.org/abs/2606.01869v2
+  pdf_path: library/worldcoder-bench-benchmarking-physically-grounded-3d-world-260601869/v1/paper.pdf
+  summary_path: library/worldcoder-bench-benchmarking-physically-grounded-3d-world-260601869/v1/summary.mdx
+  metadata_path: library/worldcoder-bench-benchmarking-physically-grounded-3d-world-260601869/v1/metadata.yaml
+  fetched_at: '2026-08-27T04:51:03Z'
+  source_updated_at: '2026-06-08T11:47:41Z'
+  arxiv_version: v2
+  pdf_sha256: d598c5ba30e3e4e1ed0e7c2570bc518912be5da6b2ac846ec8fe33728738b893
+  pdf_bytes: 6656687
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-08-27T04:51:03Z'
+  updated_at: '2026-08-27T05:01:15Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

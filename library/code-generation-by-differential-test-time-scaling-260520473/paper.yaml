@@ -1,0 +1,63 @@
+canonical_key: arxiv-2605.20473
+slug: code-generation-by-differential-test-time-scaling-260520473
+title: Code Generation by Differential Test Time Scaling
+authors:
+- Yifeng He
+- Ethan Wang
+- Jicheng Wang
+- Xuanxin Ouyang
+- Hao Chen
+year: 2026
+primary_ids:
+  doi: null
+  arxiv_base_id: '2605.20473'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2605.20473v1
+- https://arxiv.org/pdf/2605.20473v1
+topic_groups:
+- interactive_component_synthesis
+- llm
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2026
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: interactive_component_synthesis
+  era: recent
+  significance: Executes all N candidates on fuzzed inputs, clusters them by behavior and picks the medoid
+    of the largest cluster (algorithmic code).
+  subarea: candidate_selection
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v1
+  source: arxiv
+  source_url: https://arxiv.org/abs/2605.20473v1
+  pdf_path: library/code-generation-by-differential-test-time-scaling-260520473/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/code-generation-by-differential-test-time-scaling-260520473/v1/metadata.yaml
+  fetched_at: '2026-08-27T04:52:01Z'
+  source_updated_at: '2026-05-19T20:39:14Z'
+  arxiv_version: v1
+  pdf_sha256: 9308992a86464c21ea7a5ad8439b43775d831ad653e72e15435830a93d237a04
+  pdf_bytes: 613761
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-27T04:52:01Z'
+  updated_at: '2026-08-27T04:52:01Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

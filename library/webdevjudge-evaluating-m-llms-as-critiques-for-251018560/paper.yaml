@@ -1,0 +1,66 @@
+canonical_key: arxiv-2510.18560
+slug: webdevjudge-evaluating-m-llms-as-critiques-for-251018560
+title: 'WebDevJudge: Evaluating (M)LLMs as Critiques for Web Development Quality'
+authors:
+- Chunyang Li
+- Yilun Zheng
+- Xinting Huang
+- Tianqing Fang
+- Jiahao Xu
+- Lihui Chen
+- Yangqiu Song
+- Han Hu
+year: 2025
+primary_ids:
+  doi: null
+  arxiv_base_id: '2510.18560'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2510.18560v3
+- https://arxiv.org/pdf/2510.18560v3
+topic_groups:
+- interactive_component_synthesis
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2025
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: interactive_component_synthesis
+  era: expansion
+  significance: 'ICLR 2026 oral. 654 running web apps: human-human agreement 84.6% vs best LLM judge 70.3%;
+    screenshots, rubrics and an interactive browser agent do not close the gap (the agent does worse,
+    60.6%).'
+  subarea: judge_reliability
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v3
+  source: arxiv
+  source_url: https://arxiv.org/abs/2510.18560v3
+  pdf_path: library/webdevjudge-evaluating-m-llms-as-critiques-for-251018560/v1/paper.pdf
+  summary_path: library/webdevjudge-evaluating-m-llms-as-critiques-for-251018560/v1/summary.mdx
+  metadata_path: library/webdevjudge-evaluating-m-llms-as-critiques-for-251018560/v1/metadata.yaml
+  fetched_at: '2026-08-27T04:50:52Z'
+  source_updated_at: '2026-03-03T02:58:16Z'
+  arxiv_version: v3
+  pdf_sha256: 941ecd8ea64ae9e5fd1f8d28b08e3cfc479149936d79cbf59a42b73fe2f9e849
+  pdf_bytes: 2015944
+  summary_status: full
+  extraction_status: full
+  created_at: '2026-08-27T04:50:52Z'
+  updated_at: '2026-08-27T05:00:13Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

@@ -38,8 +38,9 @@ user:
 milestone:
   field: interactive_component_synthesis
   era: recent
-  significance: Grounded diagnosis for GUI-agent evaluation of interactive software.
-  subarea: vlm_critic_probing
+  significance: GUI-agent evaluators misattribute their own execution failures to software defects; grounded
+    diagnosis recovers 46-62% of false negatives.
+  subarea: judge_reliability
 knowledge_concepts: []
 versions:
 - version_key: v1

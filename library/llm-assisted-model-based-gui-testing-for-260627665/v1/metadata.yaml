@@ -1,0 +1,84 @@
+canonical_key: arxiv-2606.27665
+version_key: v1
+title: LLM-Assisted Model-Based GUI Testing for Vue.js Web Applications
+authors:
+- Tao Li
+- Chenhui Cui
+- Rubing Huang
+- Dave Towey
+- Shikai Guo
+- Lei Ma
+abstract: 'Vue.js is a popular framework for building modern web applications. As Vue.js functionality
+  and tooling support grow, ensuring its reliability (through automated testing) is becoming increasingly
+  important. Although model-based testing has been successfully used to automate graphical user interface
+  (GUI) testing on other platforms, its application to Vue.js remains challenging: Transition candidates,
+  which are spread across router configurations and single-file components (SFCs), must be concretized
+  and normalized into an executable page transition graph (PTG) for testing. To address this, we propose
+  the LLMVue framework, which uses a large language model (LLM) to generate a PTG from Vue.js source code.
+  LLMVue infers component hierarchies and route transitions, merging them into a unified PTG across multiple
+  SFCs. We evaluated LLMVue on a collection of ten open-source Vue.js projects from GitHub, using GPT-4o
+  as the LLM backbone. The constructed graphs demonstrate high precision and recall, with low graph edit
+  distance. LLMVue -guided testing also significantly improves the coverage and exploration efficiency,
+  compared to a random exploration baseline (with the same time constraints). To the best of our knowledge,
+  this is the first use of LLMs for model-based GUI testing of Vue.js applications using source-level
+  PTG extraction.'
+venue: arXiv
+year: 2026
+source: arxiv
+source_url: https://arxiv.org/abs/2606.27665v1
+pdf_url: https://arxiv.org/pdf/2606.27665v1
+pdf_sha256: 9e086d8bfb4ba98af500709dd280b4fbe0572be573db367ba30da8c039f14b0c
+fetched_at: '2026-08-27T04:54:03Z'
+source_updated_at: '2026-06-26T02:51:59Z'
+ids:
+  doi: null
+  arxiv_id: 2606.27665v1
+  arxiv_base_id: '2606.27665'
+  arxiv_version: v1
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- interactive_component_synthesis
+- llm
+- rl
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: interest_fit(0.91), recency(0.91), novelty(0.55) | interests:
+    llm:large language model, llm:group:llm, rl:exploration, rl:group:rl | milestone/foundational floor
+    applied'
+  matched_interests:
+  - llm:large language model
+  - llm:group:llm
+  - rl:exploration
+  - rl:group:rl
+  - interactive_component_synthesis:GUI testing
+  - interactive_component_synthesis:group:interactive_component_synthesis
+  negative_signals: []
+  subscores:
+    interest_fit: 0.91
+    recency: 0.909
+    venue_quality: 0.4
+    harness_relevance: 0.52
+    novelty: 0.55
+    artifact_availability: 0.55
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/llm-assisted-model-based-gui-testing-for-260627665/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

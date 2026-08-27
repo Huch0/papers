@@ -1,0 +1,63 @@
+canonical_key: arxiv-2605.26144
+slug: vista-an-end-to-end-benchmark-for-260526144
+title: 'VISTA: An End-to-End Benchmark for Visual Spec-to-Web-App Coding Agents'
+authors:
+- JunJia Guo
+- Yuhang Yao
+- Jiawei
+- Zhou
+- Jingdi Chen
+year: 2026
+primary_ids:
+  doi: null
+  arxiv_base_id: '2605.26144'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2605.26144v3
+- https://arxiv.org/pdf/2605.26144v3
+topic_groups:
+- interactive_component_synthesis
+- software_engineering_agents
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2026
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: interactive_component_synthesis
+  era: recent
+  significance: 128 pages / 3,253 interactive-element annotations; DOM elements matched to a reference
+    layout by IoU and text to dodge selector brittleness, then behavior checks.
+  subarea: programmatic_behavior_tests
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v3
+  source: arxiv
+  source_url: https://arxiv.org/abs/2605.26144v3
+  pdf_path: library/vista-an-end-to-end-benchmark-for-260526144/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/vista-an-end-to-end-benchmark-for-260526144/v1/metadata.yaml
+  fetched_at: '2026-08-27T04:51:50Z'
+  source_updated_at: '2026-06-22T18:12:46Z'
+  arxiv_version: v3
+  pdf_sha256: 5099c810c775818ce32de287f320298b52205f29b77a237f65b38c9b6d588182
+  pdf_bytes: 3229870
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-27T04:51:50Z'
+  updated_at: '2026-08-27T04:51:50Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

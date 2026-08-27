@@ -29,6 +29,15 @@ export interface PaperEntry {
 
 // Field-level metadata for the /milestones/ paths page (registry/milestones.json,
 // derived from config/milestones.yaml by update_indexes.py).
+export interface ReadingStep {
+  n: number;
+  tier: string | null;
+  title: string;
+  arxiv: string | null;
+  canonical_key: string | null;
+  note: string | null;
+}
+
 export interface MilestoneField {
   description: string;
   emergence_year: number | null;
@@ -36,6 +45,7 @@ export interface MilestoneField {
   display_name: string;
   path_order: number | null;
   seed_count: number;
+  reading_order?: ReadingStep[];
 }
 
 const MILESTONES_META = path.resolve(process.cwd(), "..", "registry", "milestones.json");

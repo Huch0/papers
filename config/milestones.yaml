@@ -6,6 +6,9 @@
 # A blank/uncertain arxiv id is resolved by search, so it never produces a wrong record.
 #
 # era: emergence | foundational | expansion | recent
+# Optional per-seed reading keys (a field-level curated path, derived into
+# registry/milestones.json and shown as the numbered 'Reading order' panel on /milestones):
+#   reading_order: <int>   reading_tier: <short label>   reading_note: <what to extract>
 # The computer_use_agents field was expanded by an exhaustive multi-source search
 # (web / gui_grounding / os_desktop / mobile / enabler_benchmark_survey sub-areas).
 
@@ -1527,33 +1530,47 @@ fields:
     display_name: Interactive Component Synthesis & Repair
     path_order: 8
     emergence_year: 2017
-    description: 'Thesis survey (directions 5+6): execution-grounded synthesis and repair of interactive, stateful
-      visual components (simulators, live plots, widgets) with open-weight models. Sub-areas: exec_feedback_codegen,
-      ui_from_image, interactive_ui, text_to_vis, vlm_critic_probing. Reading order follows the 2026-08-25 deep-research
-      report: WebGrader -> WebGen-Agent -> PlayCoder -> WebRISE -> Interaction2Code -> ReLook.'
+    description: 'Thesis survey: contract-grounded, programmatic verification of agent-generated interactive
+      programs (sliders/plots, games, web UIs) and the agent such a cheap checker enables. Sub-areas: exec_feedback_codegen,
+      ui_from_image, interactive_ui, text_to_vis, vlm_critic_probing, judge_reliability, programmatic_behavior_tests,
+      state_contract_verification, candidate_selection. Reading order (2026-08-27; numbered panel below): framing (WebRISE,
+      WebDevJudge, WorldCoder-Bench, GameGen-Verifier) -> baselines (WebGrader, PlayCoder, FrontendBench, I-WebGenBench)
+      -> loops (Self-Debugging, MatPlotAgent, WebGen-Agent, ReLook) -> positioning -> lineage (intro citations).'
     seeds:
     - title: 'CodeRL: Mastering Code Generation through Pretrained Models and Deep Reinforcement Learning'
       year: 2022
       era: emergence
       arxiv: '2207.01780'
+      reading_order: 31
+      reading_tier: lineage
+      reading_note: 'Intro citation: RL from unit-test rewards.'
       subarea: exec_feedback_codegen
       significance: 'First RL-from-unit-test training of a code LM; origin of execution-verified rewards.'
     - title: 'LEVER: Learning to Verify Language-to-Code Generation with Execution'
       year: 2023
       era: emergence
       arxiv: '2302.08468'
+      reading_order: 30
+      reading_tier: lineage
+      reading_note: 'Intro citation: learned execution-conditioned verifier.'
       subarea: exec_feedback_codegen
       significance: 'Execution-conditioned verifier/reranker; conceptual base for execution critics.'
     - title: 'Reflexion: Language Agents with Verbal Reinforcement Learning'
       year: 2023
       era: emergence
       arxiv: '2303.11366'
+      reading_order: 29
+      reading_tier: lineage
+      reading_note: 'Intro citation: verbal self-reflection from environment feedback (4.9k citations).'
       subarea: exec_feedback_codegen
       significance: 'Verbal self-reflection from environment feedback; prompted repair baseline.'
     - title: 'Teaching Large Language Models to Self-Debug'
       year: 2023
       era: emergence
       arxiv: '2304.05128'
+      reading_order: 9
+      reading_tier: loops
+      reading_note: 'The canonical error-feedback loop; design the equal-budget comparison against it.'
       subarea: exec_feedback_codegen
       significance: 'Prompted self-debugging from execution results and explanations.'
     - title: 'AgentCoder: Multi-Agent-based Code Generation with Iterative Testing and Optimisation'
@@ -1578,6 +1595,9 @@ fields:
       year: 2024
       era: foundational
       arxiv: '2410.02089'
+      reading_order: 32
+      reading_tier: lineage
+      reading_note: 'Intro citation: RL from multi-turn execution feedback.'
       subarea: exec_feedback_codegen
       significance: 'Trains an open model to exploit multi-turn execution feedback with RL; key precedent.'
     - title: 'S*: Test Time Scaling for Code Generation'
@@ -1638,36 +1658,54 @@ fields:
       year: 2024
       era: foundational
       arxiv: '2411.03292'
+      reading_order: 14
+      reading_tier: positioning
+      reading_note: 'The identical-screenshot, different-behavior argument; how before/after screenshots were compared.'
       subarea: interactive_ui
       significance: 'Defines interaction-to-code; shows static screenshots are insufficient.'
     - title: 'WebGen-Bench: Evaluating LLMs on Generating Interactive and Functional Websites from Scratch'
       year: 2025
       era: expansion
       arxiv: '2505.03733'
+      reading_order: 20
+      reading_tier: positioning
+      reading_note: 'Skim the evaluation section: 647 test cases executed by a web-navigation agent.'
       subarea: interactive_ui
       significance: 'Operation -> expected-outcome behavioral evaluation of generated websites.'
     - title: 'ArtifactsBench: Bridging the Visual-Interactive Gap in LLM Code Generation Evaluation'
       year: 2025
       era: expansion
       arxiv: '2507.04952'
+      reading_order: 21
+      reading_tier: positioning
+      reading_note: 'Skim the evaluation section: MLLM judge on temporal screenshots with a per-task checklist.'
       subarea: interactive_ui
       significance: 'Visual-interactive artifact tasks with a validated MLLM-judge protocol.'
     - title: 'WebGen-Agent: Enhancing Interactive Website Generation with Multi-Level Feedback and Step-Level Reinforcement Learning'
       year: 2025
       era: expansion
       arxiv: '2509.22644'
+      reading_order: 11
+      reading_tier: loops
+      reading_note: 'Screenshot + GUI-agent-testing loop; read the inference part, skip Step-GRPO.'
       subarea: interactive_ui
       significance: 'Step-GRPO on a 7B open code model with screenshot + GUI-agent functional feedback.'
     - title: 'ReLook: Vision-Grounded RL with a Multimodal LLM Critic for Agentic Web Coding'
       year: 2025
       era: expansion
       arxiv: '2510.11498'
+      reading_order: 12
+      reading_tier: loops
+      reading_note: 'VLM critic as reward, best-of-N selection; the test-time-compute framing for NAACL.'
       subarea: interactive_ui
       significance: 'Trains a small open coding policy from an external visual critic.'
     - title: 'PlayCoder: Making LLM-Generated GUI Code Playable'
       year: 2026
       era: recent
       arxiv: '2604.19742'
+      reading_order: 6
+      reading_tier: baselines
+      reading_note: 'AI play-tester baseline: Play@k, the FN/FP numbers (Sec. 3.5), PlayEval tasks.'
       subarea: interactive_ui
       significance: 'Active GUI probing + execution-trace repair of silent state/event bugs (prompted).'
     - title: 'Coding with Eyes: Visual Feedback Unlocks Reliable GUI Code Generating and Debugging'
@@ -1680,18 +1718,27 @@ fields:
       year: 2026
       era: recent
       arxiv: '2605.28258'
+      reading_order: 16
+      reading_tier: positioning
+      reading_note: 'Judge agreement kappa 0.64 (human-human 0.66); rubric evaluation of generated games.'
       subarea: interactive_ui
       significance: 'GUI agent plays generated interactive artifacts to drive repair.'
     - title: 'WebRISE: Requirement-Induced State Evaluation for MLLM-Generated Web Artifacts'
       year: 2026
       era: recent
       arxiv: '2606.03220'
+      reading_order: 1
+      reading_tier: framing
+      reading_note: 'The formulation we adopt: ICG schema, transition assertions, explicit/implicit split, T/R/V metrics, Tab. 4 defect injection. Read the released code and ICG JSON, not just the paper.'
       subarea: interactive_ui
       significance: 'Interaction-contract graph (states, transitions, assertions); visual fidelity != behavioral correctness.'
     - title: 'WebGrader: Training LLMs for Web Development with Self-Evolving Programmatic Grader'
       year: 2026
       era: recent
       arxiv: '2608.06474'
+      reading_order: 5
+      reading_tier: baselines
+      reading_note: 'Selector-script baseline for RQ1: how flow contracts are grounded on a live DOM; the programmatic + LLM-judge hybrid and its use as a GRPO reward.'
       subarea: interactive_ui
       significance: 'Nearest prior: 8B policy, SFT+GRPO from requirement-conditioned browser interactions incl. persistent state.'
     - title: 'nvBench: A Large-Scale Synthesized Dataset for Cross-Domain Natural Language to Visualization Task'
@@ -1704,6 +1751,9 @@ fields:
       year: 2024
       era: foundational
       arxiv: '2402.11453'
+      reading_order: 10
+      reading_tier: loops
+      reading_note: 'Screenshot-feedback loop in the visualization domain (our continuous-state case).'
       subarea: text_to_vis
       significance: 'Canonical visual-feedback repair loop for plotting code.'
     - title: 'Plot2Code: A Comprehensive Benchmark for Evaluating Multi-modal Large Language Models in Code Generation from Scientific Plots'
@@ -1781,8 +1831,201 @@ fields:
       year: 2026
       era: recent
       arxiv: '2605.17439'
-      subarea: vlm_critic_probing
-      significance: 'Grounded diagnosis for GUI-agent evaluation of interactive software.'
+      reading_order: 15
+      reading_tier: positioning
+      reading_note: 'Why agent judges fail: they blame their own execution failures on the program. Supports the RQ2 discussion.'
+      subarea: judge_reliability
+      significance: 'GUI-agent evaluators misattribute their own execution failures to software defects; grounded diagnosis recovers 46-62% of false negatives.'
+    - title: 'WebDevJudge: Evaluating (M)LLMs as Critiques for Web Development Quality'
+      year: 2025
+      era: expansion
+      arxiv: '2510.18560'
+      subarea: judge_reliability
+      significance: 'ICLR 2026 oral. 654 running web apps: human-human agreement 84.6% vs best LLM judge 70.3%; screenshots, rubrics and an interactive browser agent do not close the gap (the agent does worse, 60.6%).'
+      reading_order: 2
+      reading_tier: framing
+      reading_note: 'The protocol for measuring a checker against humans (pairwise vs single-answer; why the agentic judge lost) - the template for RQ2.'
+    - title: 'WorldCoder-Bench: Benchmarking Physically Grounded 3D World Synthesis'
+      year: 2026
+      era: recent
+      arxiv: '2606.01869'
+      subarea: state_contract_verification
+      significance: 'Generated 3D programs must expose a standardized runtime state object (window.__3D_STATE__); fixed timestep, scripted actions, hidden mutation-hardened state contracts. Nearest neighbor to the contract idea.'
+      reading_order: 3
+      reading_tier: framing
+      reading_note: 'Extract the state-interface schema (task.json), how contracts are mutation-hardened and how time is controlled; list precisely what it lacks (actions API, host randomness, generation-time checks, repair).'
+    - title: 'GameGen-Verifier: Verifying LLM-Generated Games via Runtime State'
+      year: 2026
+      era: recent
+      arxiv: '2605.07442'
+      subarea: state_contract_verification
+      significance: 'Verifies generated games by injecting and observing runtime state with Hoare-style keypoints (P, a, Q): accuracy 0.92 vs 0.59 for an agent-as-verifier, 16.6x faster.'
+      reading_order: 4
+      reading_tier: framing
+      reading_note: 'Learn the keypoint format and the state-patching mechanism; this is the early-evidence result on the deck.'
+    - title: 'FrontendBench: A Benchmark for Evaluating LLMs on Front-End Development via Automatic Evaluation'
+      year: 2025
+      era: expansion
+      arxiv: '2506.13832'
+      subarea: programmatic_behavior_tests
+      significance: '148 prompt-test pairs with sandboxed, human-vetted test scripts; 90.5% agreement with expert humans. Programmatic ground truth.'
+      reading_order: 7
+      reading_tier: baselines
+      reading_note: 'How the tests were written and validated; reuse as ground truth for RQ2.'
+    - title: 'I-WebGenBench: Evaluating Interactivity in LLM-Generated Scientific Web Applications'
+      year: 2026
+      era: recent
+      arxiv: '2606.00750'
+      subarea: programmatic_behavior_tests
+      significance: '201 scientific web apps (sliders, simulations, data-linked charts); a Playwright Interaction Probe (Interaction Rate) plus a VLM rubric. The arXiv abstract differs from the full text.'
+      reading_order: 8
+      reading_tier: baselines
+      reading_note: 'Our domain: task format, and the generic probe as the uncoupled-but-weak middle baseline. Cite the full text, not the abstract.'
+    - title: 'VISTA: An End-to-End Benchmark for Visual Spec-to-Web-App Coding Agents'
+      year: 2026
+      era: recent
+      arxiv: '2605.26144'
+      subarea: programmatic_behavior_tests
+      significance: '128 pages / 3,253 interactive-element annotations; DOM elements matched to a reference layout by IoU and text to dodge selector brittleness, then behavior checks.'
+      reading_order: 13
+      reading_tier: positioning
+      reading_note: 'The other answer to selector brittleness (reference-layout matching) - must be contrasted with the contract.'
+    - title: 'DiffCodeGen: Differential Testing for Selecting LLM-Generated Code Candidates'
+      year: 2026
+      era: recent
+      arxiv: '2605.20473'
+      subarea: candidate_selection
+      significance: 'Executes all N candidates on fuzzed inputs, clusters them by behavior and picks the medoid of the largest cluster (algorithmic code).'
+      reading_order: 17
+      reading_tier: positioning
+      reading_note: 'Precedent for comparing candidates by execution behavior (our Gap 2 component).'
+    - title: 'Semantic Voting: Execution-Fingerprint Clustering for LLM Code Generation'
+      year: 2026
+      era: recent
+      arxiv: '2605.08680'
+      subarea: candidate_selection
+      significance: 'Execution-fingerprint clustering of candidates beats textual majority voting by 19-52 pp (algorithmic code).'
+      reading_order: 18
+      reading_tier: positioning
+      reading_note: 'Same component as our differential testing; quote the margin over majority voting.'
+    - title: 'Differential Testing for Software'
+      year: 1998
+      era: emergence
+      arxiv: ''
+      subarea: candidate_selection
+      significance: 'McKeeman 1998 (Digital Technical Journal): run independent implementations on the same inputs and treat disagreement as the signal - the origin of differential testing.'
+      reading_order: 19
+      reading_tier: positioning
+      reading_note: 'Five pages; the citation for Gap 2.'
+    - title: 'WebGameBench: Requirement-to-Application Evaluation for Coding Agents on Browser Games'
+      year: 2026
+      era: recent
+      arxiv: '2605.17637'
+      subarea: interactive_ui
+      significance: 'A Codex agent drives Playwright and judges playability (85% human agreement) - another AI-played checker.'
+      reading_order: 22
+      reading_tier: positioning
+      reading_note: 'Skim the evaluation section only.'
+    - title: 'Vibe Code Bench: Evaluating Autonomous Web Application Generation'
+      year: 2026
+      era: recent
+      arxiv: '2603.04601'
+      subarea: interactive_ui
+      significance: 'Vals AI (ACM CAIS 2026): 100 specs, 964 browser workflows / 10,131 substeps checked by an autonomous browser agent; best model 61.8%.'
+      reading_order: 23
+      reading_tier: positioning
+      reading_note: 'Skim: the AI-judged checker productized as a live leaderboard.'
+    - title: 'GameXpert-Bench: Benchmarking Coding Agents on Game Generation and Repair'
+      year: 2026
+      era: recent
+      arxiv: '2608.21833'
+      subarea: state_contract_verification
+      significance: 'GameFix track: virtual clock advanced in fixed steps, synthetic inputs, read-only JSON state snapshots as the oracle; no required test API.'
+      reading_order: 24
+      reading_tier: positioning
+      reading_note: 'Skim: virtual clock + state snapshots as oracle; compare with our host-provided clock.'
+    - title: 'InteractScience: Programmatic and Visually-Grounded Evaluation of Interactive Scientific Demonstration Code Generation'
+      year: 2025
+      era: expansion
+      arxiv: '2510.09724'
+      subarea: programmatic_behavior_tests
+      significance: '150 scientific tasks, 779 Playwright functional tests + 590 visual tests; the implementation plan assigns element IDs that generated code must follow so tests can target them.'
+      reading_order: 25
+      reading_tier: positioning
+      reading_note: 'An element-ID contract - the weakest form of ours; tests are hand-written.'
+    - title: 'Web-Bench: A LLM Code Benchmark Based on Web Standards and Frameworks'
+      year: 2025
+      era: expansion
+      arxiv: '2505.07473'
+      subarea: programmatic_behavior_tests
+      significance: 'ByteDance: 50 projects x 20 sequential tasks with Playwright tests; Claude 3.7 Sonnet 25.1% Pass@1.'
+      reading_order: 26
+      reading_tier: positioning
+      reading_note: 'Skim: per-task programmatic tests, selector-bound.'
+    - title: 'UI2Code^N: A Visual Language Model for Test-Time Scalable Interactive UI-to-Code Generation'
+      year: 2025
+      era: expansion
+      arxiv: '2511.08195'
+      subarea: ui_from_image
+      significance: 'ICML 2026: UI-to-code as interactive visual optimization with a VLM in the loop; test-time scaling.'
+      reading_order: 27
+      reading_tier: positioning
+      reading_note: 'Skim for the test-time-compute framing used in RQ3.'
+    - title: 'LLM-Assisted Model-Based GUI Testing for Vue.js Web Applications'
+      year: 2026
+      era: recent
+      arxiv: '2606.27665'
+      subarea: programmatic_behavior_tests
+      significance: 'LLMVue: model-based GUI testing (page-transition graph) with LLM help - for existing Vue.js apps, not generated code.'
+      reading_order: 28
+      reading_tier: positioning
+      reading_note: 'Skim: model-based testing on existing apps; the statechart idea applied elsewhere.'
+    - title: 'SWE-bench: Can Language Models Resolve Real-World GitHub Issues?'
+      year: 2023
+      era: foundational
+      arxiv: '2310.06770'
+      subarea: exec_feedback_codegen
+      significance: 'The programmatic verifier that turned GitHub-issue resolution into a training ground (3.5k citations).'
+      reading_order: 33
+      reading_tier: lineage
+      reading_note: 'Intro citation: the example of a domain becoming verifiable and therefore trainable.'
+    - title: 'Training Software Engineering Agents and Verifiers with SWE-Gym'
+      year: 2024
+      era: foundational
+      arxiv: '2412.21139'
+      subarea: exec_feedback_codegen
+      significance: 'ICML 2025: trains SWE agents and verifiers on executable environments - the verifier-training precedent.'
+      reading_order: 34
+      reading_tier: lineage
+      reading_note: 'Intro citation: verifiers are trained, and cited.'
+    - title: 'SWE-RL: Advancing LLM Reasoning via Reinforcement Learning on Open Software Evolution'
+      year: 2025
+      era: expansion
+      arxiv: '2502.18449'
+      subarea: exec_feedback_codegen
+      significance: 'NeurIPS 2025: RL on open software-evolution data with rule-based rewards.'
+      reading_order: 35
+      reading_tier: lineage
+      reading_note: 'Intro citation.'
+    - title: 'DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning'
+      year: 2025
+      era: expansion
+      arxiv: '2501.12948'
+      subarea: exec_feedback_codegen
+      significance: 'RL with verifiable rewards at scale (Nature 2025); made "make the domain verifiable" the central question.'
+      reading_order: 36
+      reading_tier: lineage
+      reading_note: 'Intro citation.'
+    - title: 'Executable Code Actions Elicit Better LLM Agents'
+      year: 2024
+      era: foundational
+      arxiv: '2402.01030'
+      subarea: exec_feedback_codegen
+      significance: 'ICML 2024 (CodeAct): executable code as the agent action space.'
+      reading_order: 37
+      reading_tier: lineage
+      reading_note: 'Intro citation.'
+
 discovery:
   per_field_suggestions: 15
   min_influential_citations: 25

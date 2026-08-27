@@ -1,0 +1,110 @@
+---
+canonical_key: arxiv-2606.01869
+version_key: v1
+title: 'WorldCoder-Bench: Benchmarking Physically Grounded 3D World Synthesis'
+authors:
+- Shuo Lu
+- Yinuo Xu
+- Kecheng Yu
+- Siru Jiang
+- Yongcan Yu
+- Yubin Wang
+- Haitao Yang
+- Yuxiang Zhang
+- Bin Wang
+- Ran He
+- Jian Liang
+venue: arXiv
+year: 2026
+tags:
+- foundational
+topic_groups:
+- interactive_component_synthesis
+- llm
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2606.01869v2
+summary_date: '2026-08-27'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>2,026 expert-curated Three.js world-synthesis tasks scored by StateProbe: the generated program must expose a `window.__3D_STATE__` runtime interface, and hidden, <Term def="a contract is accepted only if it rejects programs with deliberately injected defects">mutation-hardened</Term> contracts are checked over state deltas under scripted actions; the best model passes 27.8% of assertions, and DOM, screenshot+VLM, and agent judges fail to recover the ranking.</TLDR>
+
+<WhyItMatters>The nearest neighbor to a state/action contract for generated interactive programs: a required state interface, deterministic actions, programmatic assertions, and mutation testing of the checks — plus hard numbers on how badly external judges do (DOM scoring is uncorrelated with correctness; an agent at ~400× the cost passes 45.6% of broken worlds).</WhyItMatters>
+
+<KeyStats items={[
+  { value: "27.8%", label: "best verification coverage", sub: "GPT-5.4 on WorldCoder-Core (205 tasks), Tab.1" },
+  { value: "19.9%", label: "under perturbed constants and assets", sub: "WorldCoder-Robust, Tab.3" },
+  { value: "τb −0.02", label: "DOM scoring vs true correctness", sub: "1,434 pairs; agent judge FPR 45.6%, Tab.2" },
+  { value: "83.6%", label: "of failures are schema drift + broken interaction chains", sub: "596 zero-T-Cov records, §4.5" },
+]} />
+
+## Motivation
+When a model writes a web page, you can at least read the DOM. When it writes a Three.js world, everything that matters — positions, velocities, collision flags, the phase of a game — lives inside a JavaScript runtime and is painted into one opaque `<canvas>`. <Problem>Screenshots, DOM walkers, and even an external agent all observe the world from the outside, so "looks right" stops being a proxy for "works right": a ball can pass through the hoop on screen while the score never increments.</Problem> Prior web-generation benchmarks under-test exactly the three things a world needs: physical correctness, asset integration, and state synchronization between engine and HUD (Fig.2). We measured the cost of that blind spot before building anything else: <Problem>DOM-based scoring has a per-pair Kendall τb of −0.02 with hidden state-level correctness, and an 8-turn inspection agent still grants passing marks to 45.6% of severely defective outputs</Problem> (§1, Tab.2).
+
+## Contribution (what's new)
+The mechanism that survives deleting "we propose": <Novelty>make the program's own state observable by requiring a small runtime interface (`window.__3D_STATE__` with task-specified fields), then verify behavior by scripting actions and asserting on before/after state deltas against a contract the model never sees</Novelty> (§3.3). This is forced by the canvas: there is no other channel to read velocities or phases from. The second mechanism is what keeps the checks honest: <Novelty>every contract is admitted only after it rejects a battery of injected defects — stale state updates, scaled physical constants, broken asset loading, swapped event targets, HUD mismatches — so a pass reflects behavior, not slack thresholds</Novelty> (§3.2). Around that we built the benchmark itself (three macro-categories, 15 domains, difficulty D1–D6, asset tiers), a robustness split with rewritten contracts under randomized constants, and two utility metrics — <Term def="quality-adjusted dollars of developer labor replaced per dollar of API cost">Return on Automation</Term> and <Term def="quality-adjusted human hours saved per hour of model generation">Time Efficiency Multiplier</Term> — that discount cheap-but-wrong outputs (Eq.1).
+
+## Research questions
+Can frontier models synthesize behaviorally correct 3D worlds from a brief? Do external evaluators reproduce a state-level ranking? Where exactly do generated worlds fail? And what is a partially correct world worth in labor terms?
+
+## Methodology
+A task is a directory `(task.json, assets/)`; the model returns one self-contained HTML file. StateProbe loads it in headless Chromium via Playwright with a version-locked Three.js, checks executability (a live WebGL context, a render loop, no early exceptions → otherwise `RUNTIME_CRASH`), then runs deterministic action probes — clicks, key presses, drags, physics-step commands — snapshotting state before and after each and checking the hidden assertions (§3.3). Coverage is reported at four levels: Affordance (expected objects and controls exist), State (required states reachable), Transition (action-triggered postconditions hold), and Verification (share of all hidden assertions passing, the leaderboard metric) (§3.4).
+
+<Stepper steps={[
+  { title: "Curate", body: "Five PhD researchers hand-craft peer-reviewed seed tasks over two months; LLM-assisted expansion to >10,000 candidates; annotators discard ambiguous, trivial, or non-operationalizable ones (§2.2)." },
+  { title: "Verify and contract", body: "Survivors are run in a headless browser; experts author affordances, reachable states, action-driven transitions, and assertions with numeric tolerances; unstable tasks are discarded." },
+  { title: "Harden", body: "Inject defects into validated implementations; keep a contract only if it rejects every mutant (§3.2)." },
+  { title: "Split", body: "Core 205 hidden hard tasks (80% at D5–D6); Extended 1,621; Robust 615 variants (3 per Core task, constants/counts/assets/phrasing randomized, contracts rewritten); Dev 200 public with contracts (Tab.6)." },
+  { title: "Probe", body: "Scripted actions, before/after snapshots, assertions on deltas; label Crash / Fail / Pass with an auditable trace (§3.3)." },
+]} />
+
+<Pass title="What the model is told, and a worked task">
+The model sees the brief and the required interface schema, never the action sequence, thresholds, or assertion scripts (§2.1). Listing 1 (P253, basketball free throw) asks for gravity −9.81 with a fixed 1/60 s timestep, hoop/backboard/floor collision rules, particle effects, keyboard controls, HUD element ids, and a `window.__3D_STATE__` with `phase`, `power`, `angle`, `aimX`, `score`, `shots`, `ballPosition`, `ballVelocity`, `fishCelebrating`, and more. The contract checks that `phase` advances idle → charging → flying → scored/missed on the right keys, that `ballVelocity` follows the projectile trajectory, and that `score`, `shots`, `lastShotResult` stay synchronized (App.D.2). Five models failed this one task in five different ways, including Qwen3.6-Plus integrating physics with `clock.getDelta()` instead of the fixed step, which makes the hoop test fire at the wrong moment — invisible to any screenshot.
+</Pass>
+
+## Main result
+<Finding src="Tab.1">On WorldCoder-Core the best system, GPT-5.4, reaches 27.8% verification coverage; the top four cluster at 23.0–27.8%, and the open-weights gap is only 2.5 points (Qwen3.6-Plus 25.3%).</Finding> Coverage halves at each layer — objects exist (A-Cov 40.6–67.4%), states are reachable (S-Cov 30.7–46.1%), but transitions rarely satisfy their postconditions (T-Cov 15.8–26.3%).
+
+<SortableTable columns={["Model", "V-Cov", "A-Cov", "S-Cov", "T-Cov", "RoA ($/$)", "TEM (h/h)"]} rows={[
+  ["GPT-5.4", 27.8, 66.2, 46.1, 26.3, 1264.6, 68.87],
+  ["Gemini 3.1 Pro Preview", 26.5, 67.4, 45.9, 25.1, 1551.2, 56.81],
+  ["Qwen3.6-Plus", 25.3, 65.3, 43.6, 23.7, 4343.9, 37.10],
+  ["MiniMax-M2.7", 23.0, 57.6, 39.9, 21.7, 12322.2, 48.36],
+  ["DeepSeek-V3.2", 21.9, 60.5, 37.4, 20.7, 14538.8, 22.49],
+  ["Claude Sonnet 4.6", 18.7, 56.5, 33.4, 17.0, 1020.7, 48.34],
+  ["Kimi-K2.5", 18.2, 50.9, 34.4, 17.1, 4062.7, 38.26],
+  ["Claude Opus 4.6", 17.5, 58.6, 38.3, 15.8, 562.3, 44.19],
+  ["DeepSeek-V4-Flash", 16.5, 40.6, 30.7, 15.9, 19150.4, 23.23],
+]} />
+
+## Key findings
+- <Finding src="Tab.2">External judges do not work here: DOM-only inspection has τb −0.021 with V-Cov and a 33.7% false-pass rate at unit cost; screenshot+VLM (GPT-5.4) has τb −0.068 at ~50× cost; an 8-step inspection agent is the only one with positive correlation (+0.111) but passes 45.6% of worlds whose true coverage is below 30, at ~400× cost.</Finding> Per model, DOM scoring inverts the ranking (τb −0.238; DeepSeek-V3.2 scores 54.7 vs GPT-5.4's 50.0, Tab.13).
+- <Finding src="§4.5, Tab.14">Two failure modes explain 83.6% of zero-transition records: State Schema Drift (42.8%; the exposed interface deviates from the specified schema) and Broken Interaction Chain (40.8%; handlers do not update the exposed state). Physics violations are rare (0.4%); models understand the intent.</Finding>
+- <Finding src="Tab.3">Perturbing constants, counts, and asset names (Robust split) drops GPT-5.4 to 19.9% and Qwen3.6-Plus from 25.3% to 13.5% — a signature of template recall over mechanism understanding — and widens the proprietary–open gap from 2.5 to 6 points.</Finding>
+- <Finding src="Tab.12">Rendering is easiest (materials, shaders, post-processing lean on idiomatic Three.js APIs; shaders up to 60.5% for Gemini) and Application hardest (game 5.0–12.8%); the creative domain scores 0.0% for every model.</Finding>
+- <Finding src="Tab.11">System-level failures differ more than behavioral ones: DeepSeek-V4-Flash crashes on 42.4% of tasks; Kimi-K2.5 omits the required state object on 10.2%; per-task tokens range 5,418–15,843.</Finding>
+- <Finding src="Tab.1, Fig.6">Utility inverts capability: DeepSeek-V4-Flash tops RoA at $19,150 of labor per API dollar (30× any proprietary model) while GPT-5.4 wins TEM at 68.9× by pairing the highest coverage with the lowest latency (88 s/task); value concentrates in materials, shaders, and post-processing.</Finding>
+
+## Implications
+The paper is convergent evidence that, for interactive programs, the checker must read state from inside the program — and that once it does, screenshot, DOM, and agent judges are not merely noisy but rank-inverting. <Related>It generalizes the requirement-side contracts of WebRISE (interaction graphs judged by an agent) into program-side state contracts, and shares its mutation-testing calibration with WebRISE's defect injection and GameGen-Verifier's state injection.</Related> <FollowUp>WorldCoder-Dev's 200 public tasks with released contracts are a second programmatic ground truth; the dominant "schema drift" failure is an argument for one small, fixed contract rather than per-task schemas; and their probes have no action API of the program's own — actions are DOM events and key presses — which is exactly the gap a dispatch-by-name contract fills.</FollowUp>
+
+## Limitations
+<Caveat>Hidden contracts mean Core/Extended/Robust results cannot be independently re-verified; only the Dev split is public, and the repository is anonymous at preprint time.</Caveat> <Caveat>"State Schema Drift" conflates interface non-compliance with behavioral error: a world can be correct yet fail because its exposed field names differ, so V-Cov is partly a measure of instruction following.</Caveat> <Caveat>Human-effort estimates behind RoA/TEM rest on seven expert-annotated tasks plus a difficulty fallback (App.C.1); failure modes are classified by an LLM grader (App.D.1); external-paradigm comparisons cover seven of nine models.</Caveat>
+
+## Critiques and Questions
+1. No human agreement is reported for the contracts themselves — mutation-hardening guards against slack contracts, not against over-strict ones; a correct-but-different world could still fail an assertion written against one reference behavior.
+2. Since drift and chain failures dominate, a repair loop that reads the contract failure (which the model never sees here) would likely lift coverage substantially; the benchmark measures single-shot generation only.
+3. Cost is normalized to DOM inspection (~2× for StateProbe) without absolute numbers, and the ~400× agent figure depends on the agent's turn budget.
+
+<SelfCheck q="Why does an 8-step inspection agent, at ~400× the cost of DOM scoring, still fail as an evaluator?" a="It is the only external paradigm with positive rank correlation (τb +0.111), but it passes 45.6% of outputs whose true verification coverage is below 30 (Tab.2): it can only see rendered frames and page structure, so a world that looks and reacts plausibly passes even when its internal state is wrong." />
+
+## Glossary
+<Term def="the browser 3D library that renders WebGL into a single canvas element">Three.js</Term> · <Term def="an expected object, control, or interaction the task requires to exist">affordance</Term> · <Term def="rank correlation between two orderings; 0 means unrelated, 1 identical">Kendall τb</Term> · <Term def="share of hidden assertions a generated world passes; the leaderboard metric">V-Cov</Term> · <Term def="StateProbe's execution-based verification protocol: interface, sandbox, scripted probes, hidden contracts">StateProbe</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Reading order #3 (framing). Nearest neighbor to the contract idea. Extract: interface schema, mutation-hardening, timing control; note what is missing (actions API, host randomness, generation-time checks, repair).
+{/* NOTES_END */}

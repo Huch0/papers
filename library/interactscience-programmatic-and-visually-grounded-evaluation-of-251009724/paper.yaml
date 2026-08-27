@@ -1,0 +1,66 @@
+canonical_key: arxiv-2510.09724
+slug: interactscience-programmatic-and-visually-grounded-evaluation-of-251009724
+title: 'InteractScience: Programmatic and Visually-Grounded Evaluation of Interactive Scientific Demonstration
+  Code Generation'
+authors:
+- Qiaosheng Chen
+- Yang Liu
+- Lei Li
+- Kai Chen
+- Qipeng Guo
+- Gong Cheng
+- Fei Yuan
+year: 2025
+primary_ids:
+  doi: null
+  arxiv_base_id: '2510.09724'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2510.09724v2
+- https://arxiv.org/pdf/2510.09724v2
+topic_groups:
+- interactive_component_synthesis
+- llm
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2025
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: interactive_component_synthesis
+  era: expansion
+  significance: 150 scientific tasks, 779 Playwright functional tests + 590 visual tests; the implementation
+    plan assigns element IDs that generated code must follow so tests can target them.
+  subarea: programmatic_behavior_tests
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v2
+  source: arxiv
+  source_url: https://arxiv.org/abs/2510.09724v2
+  pdf_path: library/interactscience-programmatic-and-visually-grounded-evaluation-of-251009724/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/interactscience-programmatic-and-visually-grounded-evaluation-of-251009724/v1/metadata.yaml
+  fetched_at: '2026-08-27T04:53:28Z'
+  source_updated_at: '2026-05-20T11:39:06Z'
+  arxiv_version: v2
+  pdf_sha256: 3297f9217b0b4065c20c866fdb256b7371e3a0381e88a3f3e6a733fd2bb2fe5e
+  pdf_bytes: 5891321
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-27T04:53:28Z'
+  updated_at: '2026-08-27T04:53:28Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

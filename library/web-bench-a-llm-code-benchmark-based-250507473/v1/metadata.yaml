@@ -1,0 +1,85 @@
+canonical_key: arxiv-2505.07473
+version_key: v1
+title: 'Web-Bench: A LLM Code Benchmark Based on Web Standards and Frameworks'
+authors:
+- Kai Xu
+- YiWei Mao
+- XinYi Guan
+- ZiLong Feng
+abstract: 'The application of large language models (LLMs) in the field of coding is evolving rapidly:
+  from code assistants, to autonomous coding agents, and then to generating complete projects through
+  natural language. Early LLM code benchmarks primarily focused on code generation accuracy, but these
+  benchmarks have gradually become saturated. Benchmark saturation weakens their guiding role for LLMs.
+  For example, HumanEval Pass@1 has reached 99.4% and MBPP 94.2%. Among various attempts to address benchmark
+  saturation, approaches based on software engineering have stood out, but the saturation of existing
+  software engineering benchmarks is rapidly increasing. To address this, we propose a new benchmark,
+  Web-Bench, which contains 50 projects, each consisting of 20 tasks with sequential dependencies. The
+  tasks implement project features in sequence, simulating real-world human development workflows. When
+  designing Web-Bench, we aim to cover the foundational elements of Web development: Web Standards and
+  Web Frameworks. Given the scale and complexity of these projects, which were designed by engineers with
+  5 to 10 years of experience, each presents a significant challenge. On average, a single project takes
+  4 to 8 hours for a senior engineer to complete. On our given benchmark agent (Web-Agent), SOTA (Claude
+  3.7 Sonnet) achieves only 25.1% Pass@1, significantly lower (better) than SWE-Bench''s Verified (65.4%)
+  and Full (33.8%) scores. Finally, we discuss that in any development field, Standards and Frameworks
+  represent foundational knowledge and efficiency tools, respectively, and LLMs require optimization tailored
+  to them.'
+venue: arXiv
+year: 2025
+source: arxiv
+source_url: https://arxiv.org/abs/2505.07473v1
+pdf_url: https://arxiv.org/pdf/2505.07473v1
+pdf_sha256: 6abe4bc1a97bbab7ff8519a2497e6d5c80f3e2f585e9746036ddaa581208adf1
+fetched_at: '2026-08-27T04:53:39Z'
+source_updated_at: '2025-05-12T12:06:23Z'
+ids:
+  doi: null
+  arxiv_id: 2505.07473v1
+  arxiv_base_id: '2505.07473'
+  arxiv_version: v1
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- interactive_component_synthesis
+- llm
+- software_engineering_agents
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: interest_fit(1.00), trend_signal(0.70), novelty(0.55) |
+    interests: software_engineering_agents:coding agent, software_engineering_agents:SWE-bench, software_engineering_agents:group:software_engineering_agents,
+    llm:large language model | milestone/foundational floor applied'
+  matched_interests:
+  - software_engineering_agents:coding agent
+  - software_engineering_agents:SWE-bench
+  - software_engineering_agents:group:software_engineering_agents
+  - llm:large language model
+  - llm:group:llm
+  - interactive_component_synthesis:group:interactive_component_synthesis
+  negative_signals: []
+  subscores:
+    interest_fit: 1.0
+    recency: 0.35
+    venue_quality: 0.4
+    harness_relevance: 0.36
+    novelty: 0.55
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.7
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/web-bench-a-llm-code-benchmark-based-250507473/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

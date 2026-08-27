@@ -1,0 +1,87 @@
+canonical_key: arxiv-2605.07442
+version_key: v1
+title: 'GameGen-Verifier: Parallel Keypoint-Based Verification for LLM-Generated Games via Runtime State
+  Injection'
+authors:
+- Chaobo Jia
+- Ruipeng Wan
+- Ting Sun
+- Weihao Tan
+- Borui Wan
+- Yuxuan Tong
+- Guangming Sheng
+- Hong Xu
+abstract: 'LLM-based game generation promises to turn natural-language specifications into executable
+  games, but progress is limited by the lack of reliable automated verification. Unlike conventional code
+  generation, game correctness is defined over long-horizon interaction: a game may appear correct while
+  violating core mechanics such as state updates, interaction rules, and phase transitions. Existing Agent-as-a-Verifier
+  approaches collapse verification into open-ended gameplay, making verdicts reachability-bound, time-consuming,
+  coverage-limited, and sensitive to the agent''s gameplay ability. We present GameGen-Verifier, an automated
+  verification paradigm for LLM-generated games that decomposes a specification into verifiable keypoints
+  and grounds them into independent verification units. Each unit patches the game runtime into a concrete
+  target state, executes a bounded interaction, and judges the outcome against the keypoint assertion.
+  We implement GGV-Harness, a scalable agentic harness providing concurrency management, runtime isolation,
+  and fault recovery. On VeriGame, our dataset of 100 games across seven genres, GameGen-Verifier achieves
+  up to 92.2% accuracy against human judgments versus 58.8% for the coverage-enforced Agent-as-a-Verifier
+  baseline, while reducing wall-clock time by up to 16.6x.'
+venue: arXiv
+year: 2026
+source: arxiv
+source_url: https://arxiv.org/abs/2605.07442v1
+pdf_url: https://arxiv.org/pdf/2605.07442v1
+pdf_sha256: 4476836cf4da09dd27f2883e1dee31b948ebebccaf3df68034578cfe443fbe5e
+fetched_at: '2026-08-27T04:51:14Z'
+source_updated_at: '2026-05-08T08:46:59Z'
+ids:
+  doi: null
+  arxiv_id: 2605.07442v1
+  arxiv_base_id: '2605.07442'
+  arxiv_version: v1
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- general_agent_methods
+- interactive_component_synthesis
+- software_engineering_agents
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: interest_fit(0.91), recency(0.82), harness_relevance(0.52)
+    | interests: software_engineering_agents:verifier, software_engineering_agents:group:software_engineering_agents,
+    general_agent_methods:verifier, general_agent_methods:group:general_agent_methods | milestone/foundational
+    floor applied'
+  matched_interests:
+  - software_engineering_agents:verifier
+  - software_engineering_agents:group:software_engineering_agents
+  - general_agent_methods:verifier
+  - general_agent_methods:group:general_agent_methods
+  - interactive_component_synthesis:group:interactive_component_synthesis
+  negative_signals: []
+  subscores:
+    interest_fit: 0.91
+    recency: 0.816
+    venue_quality: 0.4
+    harness_relevance: 0.52
+    novelty: 0.0
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/gamegen-verifier-parallel-keypoint-based-verification-for-260507442/v1/paper.pdf
+  extraction: library/gamegen-verifier-parallel-keypoint-based-verification-for-260507442/v1/extraction.txt
+  summary: library/gamegen-verifier-parallel-keypoint-based-verification-for-260507442/v1/summary.mdx
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread
+  summary_format: mdx

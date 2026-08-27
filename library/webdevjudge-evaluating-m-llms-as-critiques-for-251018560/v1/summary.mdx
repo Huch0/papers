@@ -1,0 +1,106 @@
+---
+canonical_key: arxiv-2510.18560
+version_key: v1
+title: 'WebDevJudge: Evaluating (M)LLMs as Critiques for Web Development Quality'
+authors:
+- Chunyang Li
+- Yilun Zheng
+- Xinting Huang
+- Tianqing Fang
+- Jiahao Xu
+- Lihui Chen
+- Yangqiu Song
+- Han Hu
+venue: arXiv
+year: 2025
+tags:
+- foundational
+topic_groups:
+- interactive_component_synthesis
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2510.18560v3
+summary_date: '2026-08-27'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>A meta-evaluation benchmark of 654 rubric-annotated human preference pairs over <Term def="web apps that are deployed and can be operated, not just read as code">running web apps</Term>: the best LLM judge agrees with experts 70.3% of the time versus 84.6% between experts, and neither screenshots, rubrics, nor an interactive GUI agent closes the gap.</TLDR>
+
+<WhyItMatters>The cleanest measurement so far of how far an AI judge sits from a human on interactive web artifacts — the "the checker, not the generator, is the bottleneck" evidence — and its protocol (pairwise vs single-answer, a feasibility-verification unit set) is the template for scoring any new checker, including a programmatic one, against ground truth.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "84.6%", label: "human–human pairwise agreement", sub: "expert annotators, Tab.3" },
+  { value: "70.3%", label: "best LLM judge vs humans", sub: "GPT-4.1, pairwise, Tab.3" },
+  { value: "60.6%", label: "agentic judge (UI-TARS-1.5 executor)", sub: "combined rubrics, Tab.3" },
+  { value: "654", label: "annotated pairs", sub: "269 A / 276 B / 109 tie; inter-annotator 89.7%" },
+]} />
+
+## Motivation
+We built this because everyone now uses a model to grade models, and that habit has only been validated where the grader looks at a finished, static thing. <Problem>A web app is not static: its quality is defined by what happens when you click, type, and submit, and the task is open-ended — there is no single reference answer.</Problem> Existing judge benchmarks either grade text (MT-Bench, JudgeBench) or pre-scripted trajectories (AgentRewardBench); ArtifactsBench watches screenshots but never drives the page (§2). Worse, the raw preference labels we started from were not trustworthy ground truth: <Problem>two experts re-annotating 100 pairs without guidance agreed only 65.0% of the time (with ties), and agreed with the original crowd labels 53.0% of the time</Problem> (Tab.1). Any judge scored against such labels would be scored against noise.
+
+## Contribution (what's new)
+The insight that survives deleting "we propose" is that <Novelty>a query-grounded <Term def="a hierarchy of binary, verifiable criteria derived from the user request: intention → static elements → dynamic behavior">rubric tree</Term> turns a subjective preference into something two people can agree on</Novelty>: with rubrics, inter-annotator agreement jumps to 92.0% (human-written) and 90.0% (LLM-generated) (Tab.1), and the final set reaches 89.7% (§3.2). Because LLM-generated rubrics are almost as good as hand-written ones, we could annotate at scale — the trees average 29.9 verifiable leaf nodes (Tab.10). The second novelty is the environment: <Novelty>every pair is deployed, so a judge can be given the code, a screenshot, or a live page to operate — which is what lets us test agentic judges at all</Novelty>. The third is <Novelty>WebDevJudge-Unit, 502 task-feasibility questions that isolate one skill — "can this page actually do X?" — from the holistic preference</Novelty> (App.D).
+
+## Research questions
+Can an LLM-as-a-judge replace human preference on an open-ended, interactive task? And which levers — comparison paradigm, guidance format, observation modality, agency — move agreement (§4)?
+
+## Methodology
+Start from webdev-arena-preference-10k (10,501 pairs), remove duplicates (6,730), filter queries for safety, clarity, and interaction requirements (2,460), deploy every implementation in a Next.js sandbox and drop failures (1,713), sample 700, and annotate with rubric trees by two software-engineering annotators (654 after manual filtering) (Tab.8). Then run 17 (M)LLMs under two paradigms — <Term def="the judge sees both implementations and picks A, B, or tie">pairwise comparison</Term> and <Term def="the judge scores each implementation alone on a 1–5 Likert scale; the higher total wins">single-answer grading</Term> — plus an agentic pipeline: a planner turns the rubric into test cases, a GUI agent (UI-TARS-1.5, up to 15 steps) executes them on the live page, and a summarizer decides (Eq.1, Tab.11).
+
+<Pass title="Controlled variables">
+- Guidance: direct judgment vs Likert dimensions (functionality, UI, code, interactivity; App.C.2) vs the rubric tree with weighted leaf pass rates (intention 1 : static 3 : dynamic 2).
+- Observation: screenshot only, code only, both (Tab.4).
+- Bias: single-pass by design; swap-debiasing reported separately (Tab.13).
+- Feasibility: WebDevJudge-Unit — 279 feasible / 223 infeasible tasks; code-only LLMs vs the trajectory-driven agent (Tab.6, Tab.12).
+</Pass>
+
+## Main result
+<Finding src="Tab.3">No judge reaches human reliability: GPT-4.1 tops out at 70.34% pairwise agreement against 84.56% human–human, and larger models plateau around 70% rather than scaling toward it.</Finding> The agentic workflow, which was supposed to be the natural fit for an interactive task, lands at 60.55% — below a plain code-reading model.
+
+<SortableTable columns={["Judge", "Paradigm", "Agreement (%)"]} rows={[
+  ["Human experts", "pairwise", 84.56],
+  ["GPT-4.1", "pairwise", 70.34],
+  ["Claude-4-Sonnet", "pairwise", 70.18],
+  ["Claude-3.7-Sonnet", "pairwise", 68.96],
+  ["GLM-4.5", "pairwise", 68.65],
+  ["GPT-4o", "pairwise", 67.74],
+  ["DeepSeek-V3-0324", "pairwise", 67.13],
+  ["Claude-3.7-Sonnet", "single-answer", 63.91],
+  ["GPT-4.1", "single-answer", 60.86],
+  ["Agentic (combined rubrics)", "single-answer", 60.55],
+  ["Agentic (dynamic rubrics only)", "single-answer", 55.66],
+  ["Qwen2.5-14B-Inst.", "pairwise", 54.74],
+]} />
+
+## Key findings
+- <Finding src="§4.1, Fig.5–6">Pairwise beats single-answer by more than 8 points on average, and it is also more stable: inter-model consistency exceeds 75–80% pairwise but sits at 50–65% under single-answer grading.</Finding> Relative judgment removes the need for a calibrated absolute scale, which models do not have.
+- <Finding src="Fig.3">In the pairwise setting, guidance barely matters: direct judgment, Likert, and rubric all land near 70%, and reasoning models do slightly better with no rubric at all.</Finding> In single-answer grading a binary rubric clearly beats a Likert scale (without ties: GPT-4.1 74.5 vs 69.7, Tab.14).
+- <Finding src="Tab.4">Code is the modality that carries the judgment: withholding it costs Claude-4-Sonnet 10.7 points pairwise (59.48 vs 70.18), while withholding the screenshot costs at most 2.6.</Finding>
+- <Finding src="§4.1">The agentic pipeline loses to vanilla models because errors compound: plans are too generic or too specific for ambiguous queries, and the executor misreads pages or fails to reach states.</Finding>
+- <Finding src="Tab.6">Feasibility checking splits into complementary failures: code-only LLMs have high recall and low precision (GPT-4.1 P 72.1 / R 90.0), the interactive agent the opposite (UI-TARS-1.5 P 82.4 / R 70.3) — it labels feasible tasks infeasible because of its own operational failures (Fig.11).</Finding> A gated ensemble (agent OR LLM on dynamic leaves) adds only 1.2–1.3 points (Tab.7).
+- <Finding src="Tab.5, Tab.13">Positional bias survives explicit instructions (GPT-4.1 prefers the second position 15.8% of the time under direct judgment) and is not an artifact of ambiguous ties; swap-debiasing does not raise agreement.</Finding>
+- <Finding src="Fig.4, Fig.10">Judges miss functional equivalence — a "Presentation" grading row is rejected because the rubric said "Organization" — even when instructed to accept equivalents.</Finding>
+- <Finding src="Tab.14">Dropping tie cases lifts every judge (GPT-4.1 pairwise 83.49%), so ambiguous comparisons are the primary error source.</Finding>
+
+## Implications
+For anyone using an AI judge as a reward or a gate on generated interactive programs, this paper fixes the instrument's error bar at roughly 15 points below a human, and shows that giving the judge hands (an agent) makes it worse rather than better. <Related>It sits with ArtifactsBench, AgentRewardBench, and JudgeBench as meta-evaluation, and with WebRISE and PlayCoder as the AI-judged behavioral checkers it calls into question.</Related> <FollowUp>WebDevJudge-Unit is a ready-made ground truth for measuring a programmatic checker's precision and recall on the same feasibility questions; and the functional-equivalence failure is exactly what a check over exposed state (rather than labels or selectors) sidesteps.</FollowUp>
+
+## Limitations
+<Caveat>The annotators are two of the authors, so the 89.7% agreement is within-team, and the benchmark is 654 pairs of React/Next.js apps from one arena.</Caveat> <Caveat>The agentic workflow is a straightforward planner–executor–summarizer with 5–15 step budgets and was deliberately not optimized (§5, Tab.11).</Caveat> <Caveat>Preference labels remain subjective by construction (App.A); "human 84.56%" is inter-annotator agreement, not accuracy against a ground truth.</Caveat>
+
+## Critiques and Questions
+1. Rubric trees were generated by gemini-2.5-pro and can be over-specific for general queries (Fig.9, right); some of the functional-equivalence failures are arguably rubric failures, which flatters the humans who were told to read past the wording.
+2. The best models' 70% is close to the annotator-vs-crowd agreement of 77.4% without ties (Tab.1) — how much of the residual gap is model error versus the irreducible subjectivity the authors acknowledge?
+3. Agreement is measured on 3-way labels dominated by ties as the error source; a benchmark restricted to clearly-decidable pairs would isolate judge competence better.
+
+<SelfCheck q="Why did the interactive agentic judge score below a plain code-reading LLM?" a="Errors compound across planner → executor → summarizer: plans are too generic or too specific for ambiguous queries, and UI-TARS-1.5 misreads pages or fails to reach states, so it marks feasible tasks infeasible (recall 70.3%, Tab.6). Its combined-rubric agreement is 60.55% versus GPT-4.1's 70.34% (Tab.3)." />
+
+## Glossary
+<Term def="using a language model to grade or rank model outputs in place of humans">LLM-as-a-judge</Term> · <Term def="evaluating an evaluator by its agreement with human labels">meta-evaluation</Term> · <Term def="share of instances where the judge's A/B/tie label matches the human label">agreement rate</Term> · <Term def="whether two implementations satisfy the same requirement despite different labels or structure">functional equivalence</Term> · <Term def="deciding whether a specified interaction can actually be performed on the deployed page">feasibility verification</Term> · <Term def="ByteDance's end-to-end GUI agent that acts from screenshots via a ReAct-style loop">UI-TARS-1.5</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Reading order #2 (framing). Use: the human-agreement protocol and WebDevJudge-Unit as ground truth for RQ2.
+{/* NOTES_END */}

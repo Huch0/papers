@@ -1,0 +1,67 @@
+canonical_key: arxiv-2511.08195
+slug: ui2code-n-ui-to-code-generation-as-251108195
+title: 'UI2Code^N: UI-to-Code Generation as Interactive Visual Optimization'
+authors:
+- Zhen Yang
+- Wenyi Hong
+- Mingde Xu
+- Xinyue Fan
+- Weihan Wang
+- Jiale Cheng
+- Xiaotao Gu
+- Jie Tang
+year: 2025
+primary_ids:
+  doi: null
+  arxiv_base_id: '2511.08195'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2511.08195v4
+- https://arxiv.org/pdf/2511.08195v4
+topic_groups:
+- interactive_component_synthesis
+- rl
+- vlm
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2025
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: interactive_component_synthesis
+  era: expansion
+  significance: 'ICML 2026: UI-to-code as interactive visual optimization with a VLM in the loop; test-time
+    scaling.'
+  subarea: ui_from_image
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v4
+  source: arxiv
+  source_url: https://arxiv.org/abs/2511.08195v4
+  pdf_path: library/ui2code-n-ui-to-code-generation-as-251108195/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/ui2code-n-ui-to-code-generation-as-251108195/v1/metadata.yaml
+  fetched_at: '2026-08-27T04:53:52Z'
+  source_updated_at: '2026-06-10T16:57:17Z'
+  arxiv_version: v4
+  pdf_sha256: 8d02dda5fdcae3d9d80be1b343f80250175eb06109795451435242822b7b60db
+  pdf_bytes: 10742049
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-27T04:53:52Z'
+  updated_at: '2026-08-27T04:53:52Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

@@ -1,0 +1,60 @@
+canonical_key: arxiv-2605.08680
+slug: semantic-voting-execution-grounded-consensus-for-llm-260508680
+title: 'Semantic Voting: Execution-Grounded Consensus for LLM Code Generation'
+authors:
+- Shan Jiang
+- Zijian Yi
+- Chenguang Zhu
+year: 2026
+primary_ids:
+  doi: null
+  arxiv_base_id: '2605.08680'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2605.08680v1
+- https://arxiv.org/pdf/2605.08680v1
+topic_groups:
+- interactive_component_synthesis
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2026
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: interactive_component_synthesis
+  era: recent
+  significance: Execution-fingerprint clustering of candidates beats textual majority voting by 19-52
+    pp (algorithmic code).
+  subarea: candidate_selection
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v1
+  source: arxiv
+  source_url: https://arxiv.org/abs/2605.08680v1
+  pdf_path: library/semantic-voting-execution-grounded-consensus-for-llm-260508680/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/semantic-voting-execution-grounded-consensus-for-llm-260508680/v1/metadata.yaml
+  fetched_at: '2026-08-27T04:52:13Z'
+  source_updated_at: '2026-05-09T04:33:39Z'
+  arxiv_version: v1
+  pdf_sha256: d28efea053be4f0f4eda5abef7615954cdf8d710875d66313b374e8df541dc65
+  pdf_bytes: 281642
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-27T04:52:13Z'
+  updated_at: '2026-08-27T04:52:13Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

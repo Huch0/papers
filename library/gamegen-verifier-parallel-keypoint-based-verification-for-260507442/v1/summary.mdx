@@ -1,0 +1,106 @@
+---
+canonical_key: arxiv-2605.07442
+version_key: v1
+title: 'GameGen-Verifier: Parallel Keypoint-Based Verification for LLM-Generated Games via Runtime State
+  Injection'
+authors:
+- Chaobo Jia
+- Ruipeng Wan
+- Ting Sun
+- Weihao Tan
+- Borui Wan
+- Yuxuan Tong
+- Guangming Sheng
+- Hong Xu
+venue: arXiv
+year: 2026
+tags:
+- foundational
+topic_groups:
+- general_agent_methods
+- interactive_component_synthesis
+- software_engineering_agents
+triage_label: READ_SOON
+triage_confidence: high
+source_link: https://arxiv.org/abs/2605.07442v1
+summary_date: '2026-08-27'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>Verify an LLM-generated game not by playing it but by decomposing its specification into <Term def="a Hoare-style triple (P, a, Q): a constructible precondition state, a short bounded interaction, and an unambiguous expected outcome">keypoints</Term>, injecting each precondition state directly into the running game, executing the bounded interaction, and judging the outcome; on 100 generated games this agrees with human verdicts 92.2% of the time versus 58.8% for a coverage-enforced agent-as-a-verifier, in 16.6× less wall-clock time.</TLDR>
+
+<WhyItMatters>The first head-to-head showing that state-grounded verification beats AI play-testing on both accuracy and cost for generated interactive software — the empirical bet behind a contract-based checker — together with the engineering it takes (a real orchestration harness) and the limits (a VLM still judges most outcomes; white-box access is required).</WhyItMatters>
+
+<KeyStats items={[
+  { value: "0.922", label: "accuracy vs human judgment", sub: "Acc@5, Codex backend, Tab.1" },
+  { value: "0.588", label: "coverage-enforced agent-as-a-verifier", sub: "same backend, Tab.1" },
+  { value: "16.6×", label: "less wall-clock time", sub: "443 s vs 7,356 s, Tab.1" },
+  { value: "100", label: "games, 7 genres", sub: "VeriGame; 3 expert raters, majority vote" },
+]} />
+
+## Motivation
+Code generation got its flywheel from tests: a benchmark, a data filter, and an RL reward all fall out of a reliable pass/fail signal. <Problem>Games have no such signal — correctness is defined over long-horizon interaction, and a game can build, render, and look right while violating its core mechanics (state updates, interaction rules, phase transitions).</Problem> The closest existing answer, <Term def="an autonomous agent plays the artifact and judges what it observes against the spec">Agent-as-a-Verifier</Term>, collapses verification into open-ended gameplay: <Problem>before checking a mechanic the agent must reach a state that exercises it, so verdicts are reachability-bound, coverage-limited, slow, and hostage to the agent's own skill at playing</Problem> (Fig.2). Our own baseline makes this concrete: an agent told to verify the spec directly stops after an easy subset and scores 0.011 accuracy; forcing it to cover every element takes over two hours per game and still reaches only 0.588 (Tab.1).
+
+## Contribution (what's new)
+Two observations carry the design. First, <Novelty>most specification failures surface at a sparse set of localized behaviors — collisions, reward settlement, state updates, rule triggers, phase transitions — so correctness can be cast as a finite set of local, bounded assertions rather than a global trajectory property</Novelty> (§4.1). Second, and this is the part that removes the reachability problem, <Novelty>a game is a data-driven state machine and the verifier has the generated source: it can read the parameter structure and construct the precondition state directly — spawn the boss, place the player, set the quest flag — by patching runtime state, instead of playing its way there</Novelty> (§4.2). Each keypoint becomes an independent <Term def="the executable grounding of a keypoint: an injectable state, an interaction script, and an expected outcome">verification unit</Term>, which is what makes the whole thing parallel. Verdicts are aggregated falsification-first: a failed keypoint is a witness against its specification element and propagates to dependent elements; what remains is marked PASS in the sense that no executed check exposed a violation. GGV-Harness supplies what a coding-agent session cannot — an explicit scheduler with concurrency limits, per-unit runtime isolation, retries, and checkpoints (§4.3).
+
+## Research questions
+Does keypoint verification agree with human judgment better than agent play-testing, and at what cost? And does the harness itself matter for scalable, repeatable verification (§5)?
+
+## Methodology
+<Stepper steps={[
+  { title: "Extract keypoints", body: "An LLM agent reads the specification and proposes triples (P, a, Q) under three constraints: P is directly constructible, a is a short finite action sequence, Q admits an operational PASS/FAIL (§4.1). A review-and-refine loop rejects ill-formed units (App.D)." },
+  { title: "Ground into units", body: "Using the generated source, the worker instantiates P as a concrete state patch (entities that exist, values they hold), a as an executable script, Q as an expected outcome; one keypoint may yield several units for boundary conditions." },
+  { title: "Build, inject, interact", body: "Each unit launches an isolated game instance, injects the state through the JavaScript runtime, and runs the bounded interaction; build failures, failed injection after retries, and incomplete interactions all count as FAIL." },
+  { title: "Judge and aggregate", body: "A vision-language model judges screenshots, logs, and exposed state against Q, supplemented by programmatic assertions when Q is a predicate over exposed state; FAILs propagate through the dependency structure to specification-level verdicts." },
+]} />
+
+<Pass title="Dataset and setup">
+VeriGame: 100 popular App Store / Steam titles across seven genres, filtered by an LLM judge on textual reconstructability, rule determinism, mechanic diversity, and bounded complexity, then rewritten by GPT-5.4 with deep search into anonymized natural-language specifications and refined by humans (App.E). Games are generated by Claude Code (Opus 4.6, high effort). Verifiers run under three backends — Codex CLI (GPT-5.4 xhigh), Claude Code (Opus 4.6), Claude Code (Kimi 2.6 Coding) — five runs each. Baselines: AaaV-Direct (prompted to play and verify the whole spec) and AaaV-CE (the same agent inside a todo-list harness that forces a verdict for every specification element). Human reference: three expert evaluators play each game and mark violated elements; majority vote. Metrics at the specification-element level with PASS as the positive class; an agent's UNVERIFIED counts as a non-agreement (App.A).
+</Pass>
+
+## Main result
+<Finding src="Tab.1">Under the Codex backend GameGen-Verifier reaches Acc@5 0.922 and F1@5 0.954 in 443 s per game, against 0.588 / 0.645 in 7,356 s for the coverage-enforced agent and 0.011 / 0.018 for the direct agent.</Finding> The pattern holds across backends.
+
+<SortableTable columns={["Backend", "Method", "Acc@5", "Prec@5", "Rec@5", "F1@5", "Time@5 (s)"]} rows={[
+  ["Codex (GPT-5.4)", "AaaV-Direct", 0.011, 0.667, 0.009, 0.018, 387],
+  ["Codex (GPT-5.4)", "AaaV-CE", 0.588, 0.968, 0.484, 0.645, 7356],
+  ["Codex (GPT-5.4)", "GameGen-Verifier", 0.922, 0.912, 1.000, 0.954, 443],
+  ["Claude Code (Opus 4.6)", "AaaV-Direct", 0.013, 0.714, 0.011, 0.022, 552],
+  ["Claude Code (Opus 4.6)", "AaaV-CE", 0.576, 0.935, 0.475, 0.630, 8245],
+  ["Claude Code (Opus 4.6)", "GameGen-Verifier", 0.902, 0.892, 1.000, 0.943, 513],
+  ["Claude Code (Kimi 2.6)", "AaaV-Direct", 0.033, 0.812, 0.021, 0.040, 537],
+  ["Claude Code (Kimi 2.6)", "AaaV-CE", 0.510, 0.923, 0.522, 0.667, 9072],
+  ["Claude Code (Kimi 2.6)", "GameGen-Verifier", 0.866, 0.893, 0.962, 0.926, 614],
+]} />
+
+## Key findings
+- <Finding src="Tab.1, §5.3">The agent baselines fail for two different reasons: AaaV-Direct stops after checking a small, easy subset (near-zero recall), while AaaV-CE, forced to cover everything, still cannot verify elements that need sustained gameplay, precise state reachability, or multi-step causal attribution — high precision (0.968), recall under 0.5.</Finding>
+- <Finding src="Tab.1">GameGen-Verifier's recall is 1.000 under Codex and Opus with precision 0.89–0.91: the falsification-oriented design means keypoint extraction may lose coverage, but an observed violation is strong evidence of a real failure.</Finding>
+- <Finding src="§5.3">Time drops by up to 16.6× because units are local and bounded, so they run in parallel instead of as one long play session.</Finding>
+- <Finding src="Tab.2">The harness is not optional: the same workflow inside a coding-agent session with subagents takes 1,293 s (Codex) and 1,594 s (Claude Code) versus 457 s and 536 s under GGV-Harness — a 66.4% reduction — and only the latter guarantees concurrency control, runtime isolation, and fault recovery.</Finding>
+- <Finding src="§4.2, App.B">Web-stack games are the easy case for injection because their state is mutable JavaScript reachable through the browser runtime; Godot, Unity, and Unreal expose equivalent primitives (scene tree, GameObject/Component, Actor/Component) but their generation pipelines are too immature to evaluate.</Finding>
+
+## Implications
+If a checker can construct the state a rule needs, it never has to play; every rule becomes a cheap, parallel, deterministic unit — and this paper shows that trade wins on accuracy as well as cost. <Related>It sits beside the agent-as-a-verifier line (WebCompass, WebGen-Bench, UXAgent) it replaces, the runtime-monitoring tradition of game testing, and WorldCoder-Bench's required state interface.</Related> <FollowUp>Their injection contract — control what entities exist and what values they hold — is what a program-side `setState` / `dispatch` contract provides by construction, which would remove the white-box parameter-discovery step and let programmatic assertions replace the VLM judge for most outcomes; and their keypoint triples are a ready format for an agent-written checklist, with the same coverage gap (extraction is not guaranteed complete) that differential testing across candidates is meant to expose.</FollowUp>
+
+## Limitations
+<Caveat>Web-stack games only; keypoint extraction is not guaranteed complete; state construction needs white-box access to the implementation's parameter structure; a PASS means no executed keypoint exposed a violation, not proven correctness (§6).</Caveat> <Caveat>Most verdicts are still produced by a vision-language judge over screenshots and logs; programmatic assertions are used only when the outcome is expressible over exposed state.</Caveat> <Caveat>All 100 games come from one generator (Claude Code, Opus 4.6); only wall-clock time is reported, not tokens or dollars; human raters judge from gameplay and could miss the same deep mechanics an agent misses.</Caveat>
+
+## Critiques and Questions
+1. The 16.6× speedup is against a baseline that is expensive by construction (it loops until every element has a verdict); the more honest cost comparison is against AaaV-Direct, which is faster but useless.
+2. AaaV-Direct's near-zero accuracy is largely a coverage artifact of counting UNVERIFIED as disagreement (App.A); the interesting question — how often the agent is wrong when it does answer — is its precision, 0.67–0.81.
+3. The keypoints come from an LLM reading the spec, so the checklist can be silently incomplete in exactly the way the generated game can be; recall of 1.000 against human labels says humans and the extractor missed the same things, not that nothing was missed.
+4. Class balance of PASS/FAIL at the element level is not reported, so accuracy is hard to interpret on its own; F1 is the safer number.
+
+<SelfCheck q="Why does injecting the precondition state, rather than playing to it, change the complexity of verification?" a="Reaching a state through gameplay is a reachability search in an exponentially growing state space and depends on the agent's playing skill (Fig.2). Constructing it from the implementation's parameters is a configuration step, so each keypoint becomes an independent, bounded unit that can run in parallel and be retried in isolation (§4.2, §4.3)." />
+
+## Glossary
+<Term def="{P} C {Q}: if P holds before C runs and C terminates, Q holds afterward">Hoare triple</Term> · <Term def="programmatic modification of a running game's internal state without replaying its history">runtime state patching</Term> · <Term def="agreement with the human label, averaged over five repeated runs">Acc@5</Term> · <Term def="an agent verdict that neither passes nor fails an element; scored as a non-agreement">UNVERIFIED</Term> · <Term def="the two-layer orchestration harness: Python scheduler plus short-lived per-unit LLM workers">GGV-Harness</Term>
+
+{/* NOTES_START */}
+### Personal notes
+Reading order #4 (framing). The early-evidence result on the deck (0.92 vs 0.59, 16.6×). Reuse the (P, a, Q) keypoint format for checklist rules.
+{/* NOTES_END */}

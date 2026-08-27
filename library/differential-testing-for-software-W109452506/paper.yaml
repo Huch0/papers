@@ -1,0 +1,57 @@
+canonical_key: openalex-W109452506
+slug: differential-testing-for-software-W109452506
+title: Differential Testing for Software.
+authors:
+- W. M. McKeeman
+year: 1998
+primary_ids:
+  doi: null
+  arxiv_base_id: null
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: https://openalex.org/W109452506
+canonical_urls:
+- https://openalex.org/W109452506
+topic_groups:
+- interactive_component_synthesis
+tags:
+- foundational
+venue:
+  name: Not reported
+  tier: unknown
+  status: unknown
+  year: 1998
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: interactive_component_synthesis
+  era: emergence
+  significance: 'McKeeman 1998 (Digital Technical Journal): run independent implementations on the same
+    inputs and treat disagreement as the signal - the origin of differential testing.'
+  subarea: candidate_selection
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: openalex
+  source: openalex
+  source_url: https://openalex.org/W109452506
+  pdf_path: null
+  summary_path: null
+  metadata_path: library/differential-testing-for-software-W109452506/v1/metadata.yaml
+  fetched_at: '2026-08-27T04:52:41Z'
+  source_updated_at: '1998-01-01'
+  arxiv_version: null
+  pdf_sha256: null
+  pdf_bytes: null
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-27T04:52:41Z'
+  updated_at: '2026-08-27T04:52:41Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

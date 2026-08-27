@@ -1,0 +1,63 @@
+canonical_key: arxiv-2603.04601
+slug: vibe-code-bench-evaluating-ai-models-on-260304601
+title: 'Vibe Code Bench: Evaluating AI Models on End-to-End Web Application Development'
+authors:
+- Hung Tran
+- Langston Nashold
+- Rayan Krishnan
+- Antoine Bigeard
+- Alex Gu
+year: 2026
+primary_ids:
+  doi: 10.1145/3786335.3813180
+  arxiv_base_id: '2603.04601'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2603.04601v3
+- https://arxiv.org/pdf/2603.04601v3
+topic_groups:
+- computer_use_agents
+- interactive_component_synthesis
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2026
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: interactive_component_synthesis
+  era: recent
+  significance: 'Vals AI (ACM CAIS 2026): 100 specs, 964 browser workflows / 10,131 substeps checked by
+    an autonomous browser agent; best model 61.8%.'
+  subarea: interactive_ui
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v3
+  source: arxiv
+  source_url: https://arxiv.org/abs/2603.04601v3
+  pdf_path: library/vibe-code-bench-evaluating-ai-models-on-260304601/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/vibe-code-bench-evaluating-ai-models-on-260304601/v1/metadata.yaml
+  fetched_at: '2026-08-27T04:53:05Z'
+  source_updated_at: '2026-05-13T23:00:10Z'
+  arxiv_version: v3
+  pdf_sha256: 1933eb3da0f6f6b6905903c1c6952238d0347ec6c2f5526f02e5346cac0fbf5f
+  pdf_bytes: 2556686
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-27T04:53:05Z'
+  updated_at: '2026-08-27T04:53:05Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

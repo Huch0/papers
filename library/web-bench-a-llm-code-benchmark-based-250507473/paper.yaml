@@ -1,0 +1,63 @@
+canonical_key: arxiv-2505.07473
+slug: web-bench-a-llm-code-benchmark-based-250507473
+title: 'Web-Bench: A LLM Code Benchmark Based on Web Standards and Frameworks'
+authors:
+- Kai Xu
+- YiWei Mao
+- XinYi Guan
+- ZiLong Feng
+year: 2025
+primary_ids:
+  doi: null
+  arxiv_base_id: '2505.07473'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2505.07473v1
+- https://arxiv.org/pdf/2505.07473v1
+topic_groups:
+- interactive_component_synthesis
+- llm
+- software_engineering_agents
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2025
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: interactive_component_synthesis
+  era: expansion
+  significance: 'ByteDance: 50 projects x 20 sequential tasks with Playwright tests; Claude 3.7 Sonnet
+    25.1% Pass@1.'
+  subarea: programmatic_behavior_tests
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v1
+  source: arxiv
+  source_url: https://arxiv.org/abs/2505.07473v1
+  pdf_path: library/web-bench-a-llm-code-benchmark-based-250507473/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/web-bench-a-llm-code-benchmark-based-250507473/v1/metadata.yaml
+  fetched_at: '2026-08-27T04:53:40Z'
+  source_updated_at: '2025-05-12T12:06:23Z'
+  arxiv_version: v1
+  pdf_sha256: 6abe4bc1a97bbab7ff8519a2497e6d5c80f3e2f585e9746036ddaa581208adf1
+  pdf_bytes: 2834129
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-27T04:53:40Z'
+  updated_at: '2026-08-27T04:53:40Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

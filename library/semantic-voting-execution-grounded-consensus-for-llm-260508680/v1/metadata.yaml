@@ -1,0 +1,75 @@
+canonical_key: arxiv-2605.08680
+version_key: v1
+title: 'Semantic Voting: Execution-Grounded Consensus for LLM Code Generation'
+authors:
+- Shan Jiang
+- Zijian Yi
+- Chenguang Zhu
+abstract: 'LLM code-generation pipelines often sample multiple candidates and select one final answer
+  without access to a complete oracle. Existing pipelines mix textual voting, ranking, and execution-based
+  agreement, but the relative contribution of each component remains unclear. We study 18 configurations
+  across different models, thinking levels, and benchmarks, comparing output-pattern majority voting,
+  weighted voting, MBR-Exec, and SemanticVote - a method that clusters candidates by execution fingerprints
+  on LLM-generated inputs. Three findings emerge. (1) The best execution-based selector exceeds output-pattern
+  majority voting by 19-52 percentage points on every configuration, with every execution-based selector
+  exceeding it by at least 18 points. (2) Once candidates are executed on diverse inputs, aggregation
+  rule has limited effect: SemanticVote, weighted voting, and MBR-Exec are statistically indistinguishable
+  across all 18 configurations. The largest factor is input quality: sketch-based input generation consistently
+  outperforms direct LLM generation by 0.6-2.1 pp and random fuzzing by up to 11.3 pp. (3) Thinking level
+  interacts differently with selection families: deeper thinking improves majority voting by 12 pp but
+  execution-based methods stay flat or degrade as candidate diversity falls. These results frame inference-time
+  code selection as a signal-quality problem rather than an aggregation-rule problem: when oracles are
+  unavailable, the behavioral evidence matters more than the aggregation rule.'
+venue: arXiv
+year: 2026
+source: arxiv
+source_url: https://arxiv.org/abs/2605.08680v1
+pdf_url: https://arxiv.org/pdf/2605.08680v1
+pdf_sha256: d28efea053be4f0f4eda5abef7615954cdf8d710875d66313b374e8df541dc65
+fetched_at: '2026-08-27T04:52:12Z'
+source_updated_at: '2026-05-09T04:33:39Z'
+ids:
+  doi: null
+  arxiv_id: 2605.08680v1
+  arxiv_base_id: '2605.08680'
+  arxiv_version: v1
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- interactive_component_synthesis
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: recency(0.82), interest_fit(0.73), novelty(0.55) | interests:
+    interactive_component_synthesis:group:interactive_component_synthesis | milestone/foundational floor
+    applied'
+  matched_interests:
+  - interactive_component_synthesis:group:interactive_component_synthesis
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 0.817
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 0.55
+    artifact_availability: 0.0
+    evaluation_quality: 0.55
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/semantic-voting-execution-grounded-consensus-for-llm-260508680/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

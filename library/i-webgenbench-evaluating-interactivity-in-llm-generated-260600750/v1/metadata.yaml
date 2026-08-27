@@ -1,0 +1,77 @@
+canonical_key: arxiv-2606.00750
+version_key: v1
+title: 'I-WebGenBench : Evaluating Interactivity in LLM-Generated Scientific Web Applications'
+authors:
+- Dasen Dai
+- Biao Wu
+- Meng Fang
+- Shuoqi Li
+- Wenhao Wang
+abstract: Recent advances in visual language models have enabled autonomous agents for complex reasoning,
+  tool use, and document understanding. However, existing document agents mainly transform papers into
+  static artifacts such as summaries, webpages, or slides, which are insufficient for technical papers
+  involving dynamic mechanisms and state transitions. In this work, we propose a Paper-to-Interactive-System
+  Agent that converts research papers into executable interactive web systems. Given a PDF paper, the
+  agent performs end-to-end processing without human intervention, including paper understanding, system
+  modeling, and interactive webpage synthesis, enabling users to manipulate inputs and observe dynamic
+  behaviors. To evaluate this task, we introduce a benchmark of 19 research papers paired with expert-built
+  interactive systems as ground truth. We further propose PaperVoyager, a structured generation framework
+  that explicitly models mechanisms and interaction logic during synthesis. Experiments show that PaperVoyager
+  significantly improves the quality of generated interactive systems, offering a new paradigm for interactive
+  scientific paper understanding.
+venue: arXiv
+year: 2026
+source: arxiv
+source_url: https://arxiv.org/abs/2606.00750v1
+pdf_url: https://arxiv.org/pdf/2606.00750v1
+pdf_sha256: 6343950b6984f3ab5b3a89fe31c480926c634e7fac61ee1f0963ff8d63f93b89
+fetched_at: '2026-08-27T04:51:38Z'
+source_updated_at: '2026-05-30T14:34:02Z'
+ids:
+  doi: null
+  arxiv_id: 2606.00750v1
+  arxiv_base_id: '2606.00750'
+  arxiv_version: v1
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- agent_harness
+- interactive_component_synthesis
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: interest_fit(0.91), recency(0.86), novelty(0.55) | interests:
+    agent_harness:tool use, agent_harness:group:agent_harness, interactive_component_synthesis:group:interactive_component_synthesis
+    | milestone/foundational floor applied'
+  matched_interests:
+  - agent_harness:tool use
+  - agent_harness:group:agent_harness
+  - interactive_component_synthesis:group:interactive_component_synthesis
+  negative_signals: []
+  subscores:
+    interest_fit: 0.91
+    recency: 0.858
+    venue_quality: 0.4
+    harness_relevance: 0.52
+    novelty: 0.55
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/i-webgenbench-evaluating-interactivity-in-llm-generated-260600750/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

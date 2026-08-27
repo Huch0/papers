@@ -1,0 +1,77 @@
+canonical_key: arxiv-2603.04601
+version_key: v1
+title: 'Vibe Code Bench: Evaluating AI Models on End-to-End Web Application Development'
+authors:
+- Hung Tran
+- Langston Nashold
+- Rayan Krishnan
+- Antoine Bigeard
+- Alex Gu
+abstract: Code generation has emerged as one of AI's highest-impact use cases, yet existing benchmarks
+  measure isolated tasks rather than the complete "zero-to-one" process of building a working application
+  from scratch. We introduce Vibe Code Bench, a benchmark of 100 web application specifications (50 private
+  validation, 50 held-out test) with 964 browser-based workflows comprising 10,131 substeps, evaluated
+  against deployed applications by an autonomous browser agent. Across 16 frontier models, the best achieves
+  61.8% accuracy on the test split, revealing that reliable end-to-end application development remains
+  a frontier challenge. We identify self-testing during generation as a strong performance predictor (Pearson
+  r=0.72), and show through a completed human alignment study that evaluator selection materially affects
+  outcomes (31.8-93.6% pairwise step-level agreement). Our contributions include (1) a novel benchmark
+  dataset and browser-based evaluation pipeline for end-to-end web application development, (2) a comprehensive
+  evaluation of 16 frontier models with cost, latency, and error analysis, and (3) an evaluator alignment
+  protocol with both cross-model and human annotation results.
+venue: arXiv
+year: 2026
+source: arxiv
+source_url: https://arxiv.org/abs/2603.04601v3
+pdf_url: https://arxiv.org/pdf/2603.04601v3
+pdf_sha256: 1933eb3da0f6f6b6905903c1c6952238d0347ec6c2f5526f02e5346cac0fbf5f
+fetched_at: '2026-08-27T04:53:04Z'
+source_updated_at: '2026-05-13T23:00:10Z'
+ids:
+  doi: 10.1145/3786335.3813180
+  arxiv_id: 2603.04601v3
+  arxiv_base_id: '2603.04601'
+  arxiv_version: v3
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- computer_use_agents
+- interactive_component_synthesis
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: interest_fit(0.91), recency(0.83), novelty(0.80) | interests:
+    computer_use_agents:browser agent, computer_use_agents:group:computer_use_agents, interactive_component_synthesis:group:interactive_component_synthesis
+    | milestone/foundational floor applied'
+  matched_interests:
+  - computer_use_agents:browser agent
+  - computer_use_agents:group:computer_use_agents
+  - interactive_component_synthesis:group:interactive_component_synthesis
+  negative_signals: []
+  subscores:
+    interest_fit: 0.91
+    recency: 0.827
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 0.8
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/vibe-code-bench-evaluating-ai-models-on-260304601/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

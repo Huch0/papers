@@ -1,0 +1,80 @@
+canonical_key: arxiv-2510.18560
+version_key: v1
+title: 'WebDevJudge: Evaluating (M)LLMs as Critiques for Web Development Quality'
+authors:
+- Chunyang Li
+- Yilun Zheng
+- Xinting Huang
+- Tianqing Fang
+- Jiahao Xu
+- Lihui Chen
+- Yangqiu Song
+- Han Hu
+abstract: The paradigm of LLM-as-a-judge is emerging as a scalable and efficient alternative to human
+  evaluation, demonstrating strong performance on well-defined tasks. However, its reliability in open-ended
+  tasks with dynamic environments and complex interactions remains unexplored. To bridge the gap, we introduce
+  WebDevJudge, a systematic benchmark for assessing LLM-as-a-judge performance in web development, with
+  support for both non-interactive evaluation based on static observations and continuous interactive
+  evaluation with a dynamic web environment. WebDevJudge comprises human preference labels over paired
+  web implementations, annotated with structured and query-grounded rubrics to ensure high-quality ground
+  truth. Using this benchmark, we comprehensively evaluate various evaluators, including LLMs, MLLMs,
+  and agentic workflows. We systematically investigate the impact of different paradigms and guidance
+  mechanisms. Our experiments reveal a significant gap between LLM judges and human experts. In-depth
+  analysis indicates this gap stems from fundamental model limitations, including failures in recognizing
+  functional equivalence, verifying task feasibility, and mitigating bias. Overall, WebDevJudge presents
+  a challenge to LLM-as-a-judge, offering insights to guide future research toward developing more reliable
+  and capable automated evaluators for complicated scenarios. Code and data are available at https://github.com/lcy2723/WebDevJudge.
+venue: arXiv
+year: 2025
+source: arxiv
+source_url: https://arxiv.org/abs/2510.18560v3
+pdf_url: https://arxiv.org/pdf/2510.18560v3
+pdf_sha256: 941ecd8ea64ae9e5fd1f8d28b08e3cfc479149936d79cbf59a42b73fe2f9e849
+fetched_at: '2026-08-27T04:50:51Z'
+source_updated_at: '2026-03-03T02:58:16Z'
+ids:
+  doi: null
+  arxiv_id: 2510.18560v3
+  arxiv_base_id: '2510.18560'
+  arxiv_version: v3
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- interactive_component_synthesis
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: interest_fit(0.73), recency(0.69), novelty(0.55) | interests:
+    interactive_component_synthesis:group:interactive_component_synthesis | milestone/foundational floor
+    applied'
+  matched_interests:
+  - interactive_component_synthesis:group:interactive_component_synthesis
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 0.69
+    venue_quality: 0.4
+    harness_relevance: 0.36
+    novelty: 0.55
+    artifact_availability: 0.55
+    evaluation_quality: 0.55
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/webdevjudge-evaluating-m-llms-as-critiques-for-251018560/v1/paper.pdf
+  extraction: library/webdevjudge-evaluating-m-llms-as-critiques-for-251018560/v1/extraction.txt
+  summary: library/webdevjudge-evaluating-m-llms-as-critiques-for-251018560/v1/summary.mdx
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: true
+  triaged: true
+  user_read_status: unread
+  summary_format: mdx

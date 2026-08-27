@@ -1,0 +1,88 @@
+canonical_key: arxiv-2605.17637
+version_key: v1
+title: 'WebGameBench: Requirement-to-Application Evaluation for Coding Agents via Browser-Native Games'
+authors:
+- Wenyu Zhang
+- Guoliang You
+- Tianlun
+- Haotian Zhao
+- Tianshu Zhu
+- Haoran Wang
+- Xiaoxuan Tang
+- Mingyang Dai
+- Jingnan Gu
+- Daxiang Dong
+- Jianmin Wu
+abstract: 'Coding agents are increasingly used as application builders, yet many evaluations still focus
+  on source code, repository-level tests, or intermediate traces rather than the delivered application.
+  We introduce WebGameBench, a requirement-to-application benchmark that evaluates whether coding agents
+  can turn a frozen Structured WebGame Specification into a browser-accessible game. Browser-native games
+  provide a compact but behavior-dense testbed: even simple games require coordinated input handling,
+  spatial mapping, rule execution, state transitions, terminal conditions, restart behavior, and visible
+  feedback. In WebGameBench, each generated artifact is built, served, and exposed as a browser-accessible
+  application under a unified deployment protocol. A runtime evaluator then interacts with the delivered
+  game in a real browser and assigns a three-way label: EXCELLENT, USABLE, or UNUSABLE. On a human-reviewed
+  subset, the runtime label is broadly aligned with human gameplay review under the Usable-rate criterion.
+  Across 111 tasks, 12 coding agents, and 14 evaluation configurations, WebGameBench separates current
+  systems: the best configuration reaches a 76.9% usable rate but only a 20.2% excellent rate. This gap
+  shows that crossing the minimum playable-delivery threshold is still far from complete requirement satisfaction.
+  To our knowledge, WebGameBench is the first requirement-to-application benchmark for browser-native
+  game delivery that validates delivered-application runtime labels against independent human gameplay
+  review under the Usable-rate criterion.'
+venue: arXiv
+year: 2026
+source: arxiv
+source_url: https://arxiv.org/abs/2605.17637v2
+pdf_url: https://arxiv.org/pdf/2605.17637v2
+pdf_sha256: 83310a78a7bec62229d8c49e14fcbe684a6e0680e578f0afd2c0fc14280ca268
+fetched_at: '2026-08-27T04:52:52Z'
+source_updated_at: '2026-05-21T20:02:32Z'
+ids:
+  doi: null
+  arxiv_id: 2605.17637v2
+  arxiv_base_id: '2605.17637'
+  arxiv_version: v2
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- interactive_component_synthesis
+- software_engineering_agents
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: interest_fit(0.91), recency(0.84), novelty(0.80) | interests:
+    software_engineering_agents:coding agent, software_engineering_agents:group:software_engineering_agents,
+    interactive_component_synthesis:group:interactive_component_synthesis | milestone/foundational floor
+    applied'
+  matched_interests:
+  - software_engineering_agents:coding agent
+  - software_engineering_agents:group:software_engineering_agents
+  - interactive_component_synthesis:group:interactive_component_synthesis
+  negative_signals: []
+  subscores:
+    interest_fit: 0.91
+    recency: 0.842
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 0.8
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/webgamebench-requirement-to-application-evaluation-for-coding-260517637/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

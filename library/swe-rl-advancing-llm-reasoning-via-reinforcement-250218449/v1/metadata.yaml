@@ -1,0 +1,93 @@
+canonical_key: arxiv-2502.18449
+version_key: v1
+title: 'SWE-RL: Advancing LLM Reasoning via Reinforcement Learning on Open Software Evolution'
+authors:
+- Yuxiang Wei
+- Olivier Duchenne
+- Jade Copet
+- Quentin Carbonneaux
+- Lingming Zhang
+- Daniel Fried
+- Gabriel Synnaeve
+- Rishabh Singh
+- Sida I. Wang
+abstract: The recent DeepSeek-R1 release has demonstrated the immense potential of reinforcement learning
+  (RL) in enhancing the general reasoning capabilities of large language models (LLMs). While DeepSeek-R1
+  and other follow-up work primarily focus on applying RL to competitive coding and math problems, this
+  paper introduces SWE-RL, the first approach to scale RL-based LLM reasoning for real-world software
+  engineering. Leveraging a lightweight rule-based reward (e.g., the similarity score between ground-truth
+  and LLM-generated solutions), SWE-RL enables LLMs to autonomously recover a developer's reasoning processes
+  and solutions by learning from extensive open-source software evolution data -- the record of a software's
+  entire lifecycle, including its code snapshots, code changes, and events such as issues and pull requests.
+  Trained on top of Llama 3, our resulting reasoning model, Llama3-SWE-RL-70B, achieves a 41.0% solve
+  rate on SWE-bench Verified -- a human-verified collection of real-world GitHub issues. To our knowledge,
+  this is the best performance reported for medium-sized (<100B) LLMs to date, even comparable to leading
+  proprietary LLMs like GPT-4o. Surprisingly, despite performing RL solely on software evolution data,
+  Llama3-SWE-RL has even emerged with generalized reasoning skills. For example, it shows improved results
+  on five out-of-domain tasks, namely, function coding, library use, code reasoning, mathematics, and
+  general language understanding, whereas a supervised-finetuning baseline even leads to performance degradation
+  on average. Overall, SWE-RL opens up a new direction to improve the reasoning capabilities of LLMs through
+  reinforcement learning on massive software engineering data.
+venue: arXiv
+year: 2025
+source: arxiv
+source_url: https://arxiv.org/abs/2502.18449v2
+pdf_url: https://arxiv.org/pdf/2502.18449v2
+pdf_sha256: c649093be6913c6b64705bfa96fafa57938f1414e66663c45f750fea0704e8dc
+fetched_at: '2026-08-27T04:54:27Z'
+source_updated_at: '2025-12-01T00:16:59Z'
+ids:
+  doi: null
+  arxiv_id: 2502.18449v2
+  arxiv_base_id: '2502.18449'
+  arxiv_version: v2
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- interactive_component_synthesis
+- llm
+- rl
+- software_engineering_agents
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: interest_fit(0.91), trend_signal(0.70), novelty(0.55) |
+    interests: software_engineering_agents:SWE-bench, software_engineering_agents:group:software_engineering_agents,
+    llm:large language model, llm:reasoning model | milestone/foundational floor applied'
+  matched_interests:
+  - software_engineering_agents:SWE-bench
+  - software_engineering_agents:group:software_engineering_agents
+  - llm:large language model
+  - llm:reasoning model
+  - llm:group:llm
+  - rl:reinforcement learning
+  - rl:group:rl
+  - interactive_component_synthesis:group:interactive_component_synthesis
+  negative_signals: []
+  subscores:
+    interest_fit: 0.91
+    recency: 0.515
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 0.55
+    artifact_availability: 0.55
+    evaluation_quality: 0.0
+    trend_signal: 0.7
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/swe-rl-advancing-llm-reasoning-via-reinforcement-250218449/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

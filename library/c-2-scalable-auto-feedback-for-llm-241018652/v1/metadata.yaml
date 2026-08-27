@@ -1,0 +1,83 @@
+canonical_key: arxiv-2410.18652
+version_key: v1
+title: '$C^2$: Scalable Auto-Feedback for LLM-based Chart Generation'
+authors:
+- Woosung Koh
+- Jang Han Yoon
+- MinHyung Lee
+- Youngjin Song
+- Jaegwan Cho
+- Jaehyun Kang
+- Taehyeon Kim
+- Se-Young Yun
+- Youngjae Yu
+- Bongshin Lee
+abstract: 'Generating high-quality charts with Large Language Models (LLMs) presents significant challenges
+  due to limited data and the high cost of scaling through human curation. $\langle \text{instruction},
+  \text{data}, \text{code} \rangle$ triplets are scarce and expensive to manually curate as their creation
+  demands technical expertise. To address this scalability challenge, we introduce a reference-free automatic
+  feedback generator, which eliminates the need for costly human intervention. Our novel framework, C$^2$,
+  consists of (1) an automatic feedback provider (ChartAF) and (2) a diverse, reference-free dataset (ChartUIE-8K).
+  The results are compelling: in our first experiment, 74% of respondents strongly preferred, and 10%
+  preferred, the results after feedback. The second post-feedback experiment demonstrates that ChartAF
+  outperform nine baselines. Moreover, ChartUIE-8K significantly improves data diversity by increasing
+  queries, datasets, and chart types by 5982%, 1936%, and 91%, respectively, over benchmarks. Finally,
+  a study of LLM users revealed that 94% of participants preferred ChartUIE-8K''s queries, with 93% deeming
+  them aligned with real-world use cases. Core contributions are available as open-source at chartsquared.github.io,
+  with ample qualitative examples.'
+venue: arXiv
+year: 2024
+source: arxiv
+source_url: https://arxiv.org/abs/2410.18652v7
+pdf_url: https://arxiv.org/pdf/2410.18652v7
+pdf_sha256: 60cc42bb72544f69a7e824bc0c48042f4f2d2deffa7612071f0e9e8b6fd50716
+fetched_at: '2026-08-27T04:50:29Z'
+source_updated_at: '2025-02-12T12:49:36Z'
+ids:
+  doi: null
+  arxiv_id: 2410.18652v7
+  arxiv_base_id: '2410.18652'
+  arxiv_version: v7
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags:
+- foundational
+topic_groups:
+- interactive_component_synthesis
+- llm
+scoring:
+  score: 65
+  label: READ_SOON
+  confidence: high
+  rationale: 'score=65 -> READ_SOON | strong: novelty(1.00), interest_fit(0.73), artifact_availability(0.55)
+    | interests: llm:large language model, llm:group:llm, interactive_component_synthesis:group:interactive_component_synthesis
+    | milestone/foundational floor applied'
+  matched_interests:
+  - llm:large language model
+  - llm:group:llm
+  - interactive_component_synthesis:group:interactive_component_synthesis
+  negative_signals: []
+  subscores:
+    interest_fit: 0.73
+    recency: 0.0
+    venue_quality: 0.4
+    harness_relevance: 0.0
+    novelty: 1.0
+    artifact_availability: 0.55
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/c-2-scalable-auto-feedback-for-llm-241018652/v1/paper.pdf
+  extraction: null
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: false
+  summarized: false
+  triaged: true
+  user_read_status: unread

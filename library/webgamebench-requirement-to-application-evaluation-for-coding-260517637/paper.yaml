@@ -1,0 +1,69 @@
+canonical_key: arxiv-2605.17637
+slug: webgamebench-requirement-to-application-evaluation-for-coding-260517637
+title: 'WebGameBench: Requirement-to-Application Evaluation for Coding Agents via Browser-Native Games'
+authors:
+- Wenyu Zhang
+- Guoliang You
+- Tianlun
+- Haotian Zhao
+- Tianshu Zhu
+- Haoran Wang
+- Xiaoxuan Tang
+- Mingyang Dai
+- Jingnan Gu
+- Daxiang Dong
+- Jianmin Wu
+year: 2026
+primary_ids:
+  doi: null
+  arxiv_base_id: '2605.17637'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2605.17637v2
+- https://arxiv.org/pdf/2605.17637v2
+topic_groups:
+- interactive_component_synthesis
+- software_engineering_agents
+tags:
+- foundational
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2026
+user:
+  read_status: unread
+  triage_label: READ_SOON
+  triage_confidence: high
+  notes: null
+milestone:
+  field: interactive_component_synthesis
+  era: recent
+  significance: A Codex agent drives Playwright and judges playability (85% human agreement) - another
+    AI-played checker.
+  subarea: interactive_ui
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v2
+  source: arxiv
+  source_url: https://arxiv.org/abs/2605.17637v2
+  pdf_path: library/webgamebench-requirement-to-application-evaluation-for-coding-260517637/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/webgamebench-requirement-to-application-evaluation-for-coding-260517637/v1/metadata.yaml
+  fetched_at: '2026-08-27T04:52:53Z'
+  source_updated_at: '2026-05-21T20:02:32Z'
+  arxiv_version: v2
+  pdf_sha256: 83310a78a7bec62229d8c49e14fcbe684a6e0680e578f0afd2c0fc14280ca268
+  pdf_bytes: 1442042
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-27T04:52:53Z'
+  updated_at: '2026-08-27T04:52:53Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

@@ -39,6 +39,13 @@ Map the user's phrase to a field key in `config/milestones.yaml`
    ```
    Then, for each line that is resolved and `_already_known == false`, ingest it
    (downloading the PDF when a `pdf_url` is present):
+
+   **Venue policy (CLAUDE.md rule 11):** seeds come from arXiv, so each resolved candidate
+   carries `venue: arXiv`. Before ingesting, enrich it (`fetch_semantic_scholar.py --enrich`,
+   `fetch_openalex.py --enrich`) and, for known published papers, set `venue` to the real
+   conference/journal (verified outside arXiv). Never ingest a milestone seed with
+   `venue: arXiv` when its acceptance is known.
+
    ```
    python3 scripts/ingest.py --candidate '<one candidate json line>' --pdf '<pdf_url>'
    ```

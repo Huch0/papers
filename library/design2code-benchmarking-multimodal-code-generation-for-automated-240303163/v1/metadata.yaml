@@ -20,7 +20,7 @@ abstract: Generative AI has made rapid advancements in recent years, achieving u
   and Claude. Our fine-grained break-down metrics indicate that models mostly lag in recalling visual
   elements from the input webpages and generating correct layout designs.
 venue: NAACL
-year: 2024
+year: 2025
 source: arxiv
 source_url: https://arxiv.org/abs/2403.03163v3
 pdf_url: https://arxiv.org/pdf/2403.03163v3

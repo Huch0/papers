@@ -31,7 +31,7 @@ abstract: We introduce a new benchmark, ChartMimic, aimed at assessing the visua
   tasks of 82.2 and 61.6, respectively, indicating significant room for improvement. We anticipate that
   ChartMimic will inspire the development of LMMs, advancing the pursuit of artificial general intelligence.
 venue: ICLR
-year: 2024
+year: 2025
 source: openalex
 source_url: https://openalex.org/W4399759273
 pdf_url: https://arxiv.org/pdf/2406.09961

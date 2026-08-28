@@ -40,8 +40,13 @@ was fetched from. Concretely:
   `FSE`, `Nature`). Put `arXiv` there **only** when, after checking, no acceptance or
   publication is known. "The candidate came from arXiv" is never a reason to write `arXiv`.
 - `venue.status` = `accepted` / `under_review` / `preprint` / `unknown` to match; `venue.year`
-  = the venue year (may differ from the arXiv year). `tier` is derived by `ingest.py` from
-  `venues.yaml`.
+  = the venue year. `tier` is derived by `ingest.py` from `venues.yaml`.
+- **Top-level `year` is the publication year.** Once a paper is accepted, set `year` (in
+  `paper.yaml`, every `vN/metadata.yaml`, and the summary frontmatter that mirrors it) to the
+  venue year — the site card ("Venue · Year"), indexes, milestone ordering and recency scoring
+  all read that field. The arXiv posting year stays recoverable from the arXiv id and
+  `source_updated_at`; it is not the paper's year once the paper is published. ("ICLR · 2025"
+  for an ICLR 2026 paper is exactly the bug this rule prevents — 2026-08-28.)
 - Version-level `metadata.yaml.venue` (a string) follows the same rule for that version.
 - **Correction vs. new version.** If the paper's status *changes after ingest* (a preprint
   gets accepted, a camera-ready appears), that is the versioning rule above: `ingest.py`

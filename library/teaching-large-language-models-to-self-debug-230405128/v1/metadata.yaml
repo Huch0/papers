@@ -23,7 +23,7 @@ abstract: Large language models (LLMs) have achieved impressive performance on c
   Self-Debugging notably improves sample efficiency, and can match or outperform baseline models that
   generate more than 10x candidate programs.
 venue: ICLR
-year: 2023
+year: 2024
 source: arxiv
 source_url: https://arxiv.org/abs/2304.05128v2
 pdf_url: https://arxiv.org/pdf/2304.05128v2

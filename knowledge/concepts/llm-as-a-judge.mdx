@@ -1,0 +1,77 @@
+---
+name: llm-as-a-judge
+title: LLM-as-a-Judge
+aliases:
+- LLM judge
+- MLLM-as-a-judge
+tags:
+- evaluation
+- llm-judge
+related_papers:
+- arxiv-2510.18560
+- arxiv-2606.03220
+- arxiv-2510.11498
+- arxiv-2402.04788
+related_concepts:
+- agent-as-a-verifier
+- mutation-hardened-checks
+created: '2026-08-28T08:33:31Z'
+updated: '2026-08-28T08:52:38Z'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+## Intuition
+An LLM-as-a-judge replaces the human rater, or the unit test you do not have, with a language model that reads an output and grades it. You hand the model the task, one or two candidate outputs, perhaps a rubric, and ask for a score or a preference. For a request like "build a book-review page" there is no single correct answer, so a test suite cannot decide; a judge model can at least say which of two pages serves the request better. The question is whether its verdicts track expert humans, and how much they drift once the artifact is interactive rather than static text.
+
+## Details
+Two protocols dominate. <Term def="the judge scores one candidate in isolation (Likert value, or pass/fail per rubric item); preferences are derived afterwards by comparing scores">Single-answer grading</Term> asks for an absolute score. <Term def="the judge sees two candidates side by side and returns win / lose / tie">Pairwise comparison</Term> asks for a relative one. Guidance ranges from a direct question to a <Term def="an ordinal rating scale, e.g. 1 to 5, applied per criterion">Likert scale</Term> to a <Term def="a query-specific hierarchy of binary checks whose leaf pass rates roll up into a score">rubric tree</Term>. The observation can be source code, a screenshot, both, or an interaction trajectory produced by a browser agent (that variant is its own concept: [agent-as-a-verifier](../agent-as-a-verifier/)). When the judge also reads images it is often called an <Term def="multimodal LLM: a model that accepts images (screenshots, video frames) alongside text">MLLM</Term>-as-a-judge.
+
+A judge is only as good as its <Term def="evaluating the evaluator: measuring how often the judge agrees with trusted human labels">meta-evaluation</Term>. The reference point is <Term def="how often two independent human annotators give the same label; the practical ceiling for any automatic judge">inter-annotator agreement</Term>.
+
+<Definition term="Agreement rate and Cohen's kappa">
+For items <M tex="i = 1,\dots,N" /> with judge label <M tex="j_i" /> and reference label <M tex="h_i" />,
+<MathBlock>{`\\mathrm{AR} = \\frac{1}{N}\\sum_{i=1}^{N} \\mathbb{1}[\\,j_i = h_i\\,], \\qquad \\kappa = \\frac{p_o - p_e}{1 - p_e},`}</MathBlock>
+where <M tex="p_o = \mathrm{AR}" /> and <M tex="p_e" /> is the agreement expected if both labelers drew labels independently from their own marginal frequencies. Kappa discounts chance agreement; a raw agreement rate does not.
+</Definition>
+
+Where it breaks, roughly by severity for UI code:
+- No execution grounding. A judge reading code cannot tell whether the code runs; it credits code that looks relevant (high recall, low precision).
+- <Term def="treating two implementations that satisfy the same requirement differently because their wording or structure differs">Functional-equivalence blindness</Term>: literal matching against the requirement text instead of its intent.
+- <Term def="the verdict changes when the two candidates are shown in the opposite order">Positional bias</Term>, which survives explicit instructions to ignore order.
+- Calibration: absolute scores need a stable internal standard, which varies model to model; pairwise judgments need only discrimination.
+- <Term def="a policy under RL learns to raise the judge's score without improving the property the judge is meant to measure">Reward hacking</Term> when the judge doubles as a training reward.
+
+## In the papers
+<Problem>[WebDevJudge](../../papers/arxiv-2510.18560/) shows how far judges are from humans on interactive web artifacts.</Problem> Even the human labels needed help: inter-annotator agreement was 65.0% with ties until a rubric tree lifted it to 92.0% (Tab. 1); final annotation reached 89.7% (§3.2). <Finding src="Tab. 3">The best judge, GPT-4.1 under pairwise comparison, reaches 70.34% agreement against a human reference row of 84.56%, and pairwise beats single-answer grading by more than 8 points on average.</Finding> <Finding src="Tab. 4">Code is the dominant modality: for GPT-4.1 pairwise, image-only drops to 60.55% while code-only keeps 69.57% of the 70.34% obtained with both.</Finding> <Finding src="Tab. 5">Positional bias persists despite instructions; GPT-4.1 in the Direct setting is order-consistent on 83.3% of pairs and, when inconsistent, favors the second position (15.8%) far more than the first (0.9%).</Finding> Swap-and-require-consistency debiasing barely moves the aggregate (Tab. 13). Fig. 4 is the canonical functional-equivalence failure: a "Presentation" rating row rejected by LLM and agentic judges when the rubric said "Demonstration". On the feasibility subset, a code-only LLM has precision 72.1 / recall 90.0 while an interactive agent has 82.4 / 70.3 (Tab. 6): the two fail in opposite directions.
+
+[WebRISE](../../papers/arxiv-2606.03220/) uses a judge for a much narrower question: GPT-5-mini decides whether a recorded DOM event log satisfies one transition's assertions, and Gemini-3-Flash-Preview scores auxiliary visual quality (App. C.1). <Finding src="Tab. 7">The agent-based functional evaluator reaches Cohen's kappa 0.74 (accuracy 0.84) against the human majority, close to the human–human 0.81.</Finding> <Finding src="Tab. 10">On 100 ground-truth / defect-injected pairs GPT-5-mini flags 95 versus 97 for GPT-5.4</Finding>, which is the [mutation-hardened-checks](../mutation-hardened-checks/) way to validate a judge.
+
+[ReLook](../../papers/arxiv-2510.11498/) makes the judge the reward. <Novelty>A frozen Qwen2.5-VL-72B critic scores the prompt, the code, and three screenshots taken post-load, +1 s, and +2 s (§2.5), and any invalid screenshot forces reward zero (Eq. 3) to block reward hacking.</Novelty> Revisions are accepted only if they strictly beat the best-so-far ("forced optimization", §2.6), after a penalty-based variant taught the policy to stop reflecting. <Finding src="Tab. 2">Ablations: vision reward +3.3, render-validity constraint +1.0, forced optimization +2.0.</Finding> The training critic differs from the offline evaluator (Gemini-2.5-Pro) to limit judge overfitting.
+
+<Related>[MLLM-as-a-Judge](../../papers/arxiv-2402.04788/) is the earlier general benchmark; its finding that pair comparison tracks humans better than scoring or batch ranking (Abstract) is the same pattern WebDevJudge sees for web code.</Related>
+
+## Pitfalls / open questions
+- Report kappa or a human–human baseline with any agreement number; 70% means little without the 85% ceiling.
+- A judge used as an RL reward will be exploited; pair it with a hard gate (render validity, execution) and evaluate with a different judge.
+- For interactive artifacts the static judge's blind spot is behavior. <FollowUp>Hybrids that OR an agent's execution evidence with an LLM's code reading gain only about a point (WebDevJudge Tab. 7); the larger gains come from replacing judgment with exposed state, see [state-contract-verification](../state-contract-verification/).</FollowUp>
+- <Caveat>Numbers above are single-pass and prompt-specific; WebRISE asks that its scores be read as rank orderings.</Caveat>
+
+## Glossary
+- **Single-answer grading** — the judge scores one candidate in isolation; preferences are derived by comparing scores.
+- **Pairwise comparison** — the judge sees two candidates and returns win / lose / tie.
+- **Likert scale** — an ordinal rating scale (e.g. 1 to 5) applied per criterion.
+- **Rubric tree** — a query-specific hierarchy of binary checks whose leaf pass rates roll up into a score.
+- **MLLM** — a multimodal LLM that accepts images alongside text.
+- **Meta-evaluation** — measuring how often the judge agrees with trusted human labels.
+- **Inter-annotator agreement** — how often two independent humans give the same label; the ceiling for automatic judges.
+- **Functional-equivalence blindness** — rejecting an implementation that meets the requirement because its wording or structure differs.
+- **Positional bias** — the verdict changes when candidate order is swapped.
+- **Reward hacking** — a policy raises the judge's score without improving the intended property.
+
+
+
+
+
+

@@ -16,11 +16,62 @@ Concepts grouped by the paper(s) they were learned from / linked to.
 ## SWE-bench: Can Language Models Resolve Real-World GitHub Issues?  (`arxiv-2310.06770`)
 - [Agent-Computer Interface (ACI)](concepts/agent-computer-interface-aci.md)
 
+## MLLM-as-a-Judge: Assessing Multimodal LLM-as-a-Judge with Vision-Language Benchmark  (`arxiv-2402.04788`)
+- [LLM-as-a-Judge](concepts/llm-as-a-judge.md)
+
 ## SWE-agent: Agent-Computer Interfaces Enable Automated Software Engineering  (`arxiv-2405.15793`)
 - [Agent-Computer Interface (ACI)](concepts/agent-computer-interface-aci.md)
 - [Planner–Executor–Verifier](concepts/planner-executor-verifier.md)
 
+## WebGen-Bench: Evaluating LLMs on Generating Interactive and Functional Websites from Scratch  (`arxiv-2505.03733`)
+- [Agent-as-a-Verifier](concepts/agent-as-a-verifier.md)
+
+## WebGen-Agent: Enhancing Interactive Website Generation with Multi-Level Feedback and Step-Level Reinforcement Learning  (`arxiv-2509.22644`)
+- [Agent-as-a-Verifier](concepts/agent-as-a-verifier.md)
+
+## ReLook: Vision-Grounded RL with a Multimodal LLM Critic for Agentic Web Coding  (`arxiv-2510.11498`)
+- [LLM-as-a-Judge](concepts/llm-as-a-judge.md)
+
+## WebDevJudge: Evaluating (M)LLMs as Critiques for Web Development Quality  (`arxiv-2510.18560`)
+- [Agent-as-a-Verifier](concepts/agent-as-a-verifier.md)
+- [LLM-as-a-Judge](concepts/llm-as-a-judge.md)
+
 ## World Action Models are Zero-shot Policies  (`arxiv-2602.15922`)
 - [Causal DiT](concepts/causal-dit.md)
 - [Flow Matching](concepts/flow-matching.md)
+
+## PlayCoder: Making LLM-Generated GUI Code Playable  (`arxiv-2604.19742`)
+- [Agent-as-a-Verifier](concepts/agent-as-a-verifier.md)
+
+## GameGen-Verifier: Parallel Keypoint-Based Verification for LLM-Generated Games via Runtime State Injection  (`arxiv-2605.07442`)
+- [Agent-as-a-Verifier](concepts/agent-as-a-verifier.md)
+- [Model-Based GUI Testing](concepts/model-based-gui-testing.md)
+- [Mutation-Hardened Checks](concepts/mutation-hardened-checks.md)
+- [State-Contract Verification](concepts/state-contract-verification.md)
+
+## Semantic Voting: Execution-Grounded Consensus for LLM Code Generation  (`arxiv-2605.08680`)
+- [Differential Testing](concepts/differential-testing.md)
+
+## Code Generation by Differential Test Time Scaling  (`arxiv-2605.20473`)
+- [Differential Testing](concepts/differential-testing.md)
+
+## WorldCoder-Bench: Benchmarking Physically Grounded 3D World Synthesis  (`arxiv-2606.01869`)
+- [Agent-as-a-Verifier](concepts/agent-as-a-verifier.md)
+- [Mutation-Hardened Checks](concepts/mutation-hardened-checks.md)
+- [State-Contract Verification](concepts/state-contract-verification.md)
+
+## WebRISE: Requirement-Induced State Evaluation for MLLM-Generated Web Artifacts  (`arxiv-2606.03220`)
+- [LLM-as-a-Judge](concepts/llm-as-a-judge.md)
+- [Model-Based GUI Testing](concepts/model-based-gui-testing.md)
+- [Mutation-Hardened Checks](concepts/mutation-hardened-checks.md)
+- [State-Contract Verification](concepts/state-contract-verification.md)
+
+## LLM-Assisted Model-Based GUI Testing for Vue.js Web Applications  (`arxiv-2606.27665`)
+- [Model-Based GUI Testing](concepts/model-based-gui-testing.md)
+
+## WebGrader: Training LLMs for Web Development with Self-Evolving Programmatic Grader  (`arxiv-2608.06474`)
+- [State-Contract Verification](concepts/state-contract-verification.md)
+
+## Differential Testing for Software.  (`openalex-W109452506`)
+- [Differential Testing](concepts/differential-testing.md)
 

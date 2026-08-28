@@ -1,0 +1,71 @@
+---
+name: mutation-hardened-checks
+title: Mutation-Hardened Checks
+aliases:
+- mutation testing of oracles
+- defect injection
+tags:
+- verification
+- testing
+related_papers:
+- arxiv-2605.07442
+- arxiv-2606.01869
+- arxiv-2606.03220
+related_concepts:
+- llm-as-a-judge
+- state-contract-verification
+- differential-testing
+created: '2026-08-28T08:33:50Z'
+updated: '2026-08-28T08:52:51Z'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+## Intuition
+A mutation-hardened check is an automatic checker that has been proven to fail when it should, by running it against deliberately broken versions of a known-good program. Classic mutation testing seeds small bugs into a program to ask whether its test suite is any good. Here the target flips: the thing under scrutiny is the check itself, whether a contract, a test, or a judge model. Take a contract for a basketball mini-game. Scale gravity to zero in a reference implementation, delete the score update, swap the launch key for the reset key. If the contract still says CHECK_PASS on any of those, it is too permissive and gets fixed or thrown out. A check that survives this is one whose PASS means something.
+
+## Details
+The procedure is mechanical once you have a reference implementation that legitimately passes:
+1. Define <Term def="a systematic edit that introduces one plausible defect, e.g. delete a state update, scale a constant, swap an event target">mutation operators</Term> for the domain and generate <Term def="a copy of the reference program with exactly one injected defect">mutants</Term>.
+2. Run the check on each mutant. A mutant is <Term def="the check reports failure on the mutant">killed</Term> if the check rejects it and survives otherwise.
+3. Score the check and admit it only if the score clears a threshold; otherwise revise the check or drop the task.
+
+<Definition term="Mutation score of a check">
+For a check <M tex="c" /> and a mutant set <M tex="\mathcal{M}" /> with equivalent mutants <M tex="\mathcal{E} \subseteq \mathcal{M}" /> (mutants whose behavior is indistinguishable from the reference and therefore cannot be killed),
+<MathBlock>{`\\mathrm{MS}(c) = \\frac{|\\{\\, m \\in \\mathcal{M} \\setminus \\mathcal{E} : c(m) = \\mathrm{FAIL} \\,\\}|}{|\\mathcal{M} \\setminus \\mathcal{E}|}.`}</MathBlock>
+An admission rule keeps <M tex="c" /> iff <M tex="\mathrm{MS}(c) \ge \theta" />; WorldCoder-Bench uses <M tex="\theta = 1" /> (every mutant must be rejected). The same score can be computed for a judge model instead of a contract by counting how many ground-truth / mutant pairs it separates.
+</Definition>
+
+Read the score as "sensitivity to the defects you thought of". It says nothing about defects outside the operator set, and the operator set is the whole design decision. Good operators for interactive artifacts target state rather than syntax: stale or deleted state updates, corrupted constants, swapped event targets, broken asset loading, HUD-versus-state mismatches, lost history, cross-feature interference. Where it breaks: unrealistic mutants (the check is hardened against bugs generators never make), equivalent mutants that inflate the denominator, and cost, since every check runs once per mutant.
+
+## In the papers
+<Novelty>[WorldCoder-Bench](../../papers/arxiv-2606.01869/) makes admission-by-mutation part of benchmark construction.</Novelty> Each task's hidden behavioral contract is authored by domain experts (§3.2); starting from validated internal implementations, common failures are injected into the HTML, named as stale state updates, corrupted physical constants, broken asset loading, swapped event targets, and HUD mismatches (§3.2), or deleted state updates, scaled physical constants, and swapped event targets in the introduction (§1). <Finding src="§3.2">A contract is admitted only if it rejects every mutated variant; otherwise it is revised or the task is discarded, so a CHECK_PASS reflects behavior rather than loose surface compliance.</Finding> The appendix frames this as converting evaluator reliability into task-level confidence in a self-diagnosing loop (App. A). <Caveat>The paper reports the rule, not a mutation-score distribution or how many candidate contracts were discarded.</Caveat>
+
+[WebRISE](../../papers/arxiv-2606.03220/) uses injection to compare evaluators rather than to admit contracts. <Finding src="Tab. 4">On 25 state-related defects injected into ground-truth-validated pages, graph-based scoring (any transition below 100%) detects 16/25 (64.0%), a broad checkpoint-style WebGen signal (any non-YES) detects 8/25 (32.0%), and a strict one (at least one NO) detects 1/25 (4.0%).</Finding> <Finding src="App. C.5, Tab. 14">The 13 defects only the graph catches involve accumulated-history preservation, cross-feature non-interference, navigation-time state retention, action gating, and pre/post state consistency, which local checkpoints do not follow.</Finding> <Finding src="Tab. 10">The same trick validates the judge model: on 100 ground-truth / defect-injected pairs GPT-5.4 separates 97 and GPT-5-mini 95, justifying the cheaper judge.</Finding> The paper is explicit that 9/25 missed defects mean the evaluation is "not yet exhaustive" (§5.3.4).
+
+<Related>[GameGen-Verifier](../../papers/arxiv-2605.07442/) has the matching epistemics: its scoring is falsification-oriented, a PASS means no executed keypoint exposed a violation, not that correctness was proven (§4.1, §6).</Related> That is exactly the claim a mutation score licenses: bounded sensitivity, not completeness.
+
+## Pitfalls / open questions
+- Match mutants to real failure modes. WorldCoder's own error analysis finds state-schema drift and broken interaction chains dominate (§4.5); an operator set should be revised against observed generator failures, not fixed once.
+- Do not report "mutation-hardened" without the operator list and the threshold; the phrase is otherwise unfalsifiable.
+- Hardening is per task. A contract admitted for one task variant needs re-checking when constants or assets are randomized.
+- <FollowUp>Candidates from sampling are free mutants: the disagreeing members of a [differential-testing](../differential-testing/) cluster are realistic defects to harden a check against.</FollowUp>
+- <FollowUp>Mutation-scoring an [LLM-as-a-judge](../llm-as-a-judge/) (WebRISE Tab. 10) is cheap and rarely done; it should accompany any agreement-rate claim.</FollowUp>
+
+## Glossary
+- **Mutation testing** — seeding small defects into a program to measure whether a test suite (or here, a check) detects them.
+- **Mutation operator** — a systematic edit that introduces one plausible defect.
+- **Mutant** — a copy of the reference program with exactly one injected defect.
+- **Killed / surviving mutant** — a mutant the check rejects / fails to reject.
+- **Equivalent mutant** — a mutant behaviorally indistinguishable from the reference, which no check can kill.
+- **Mutation score** — the fraction of non-equivalent mutants the check kills.
+- **Oracle** — whatever decides pass or fail: a contract, a test, or a judge model.
+- **Admission rule** — the threshold on mutation score a check must clear to be used.
+- **Defect injection** — the same idea applied to an evaluator: introducing known faults to measure detection rate.
+
+
+
+
+
+

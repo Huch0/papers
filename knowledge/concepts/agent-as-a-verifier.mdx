@@ -1,0 +1,79 @@
+---
+name: agent-as-a-verifier
+title: Agent-as-a-Verifier
+aliases:
+- AaaV
+- play-testing evaluator
+- agentic judge
+tags:
+- evaluation
+- interactive-ui
+related_papers:
+- arxiv-2605.07442
+- arxiv-2604.19742
+- arxiv-2509.22644
+- arxiv-2510.18560
+- arxiv-2505.03733
+- arxiv-2606.01869
+related_concepts:
+- llm-as-a-judge
+- state-contract-verification
+- model-based-gui-testing
+created: '2026-08-28T08:33:40Z'
+updated: '2026-08-28T08:52:42Z'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+## Intuition
+Agent-as-a-Verifier (AaaV) means letting an autonomous agent open the generated application, use it the way a QA tester would, and report which requirements hold. Instead of reading source or one screenshot, the verifier clicks "Add", types "milk", presses Enter, and checks that the list grew and the counter reads 1. Execution replaces guessing: a static reader cannot know whether a button is wired up; an agent can find out. The catch is that the agent now has to reach every state it wants to check, and its own mistakes are indistinguishable from the application's.
+
+## Details
+An AaaV pipeline has four parts: a test plan (requirement checkpoints, or a rubric), an executor (a <Term def="a model that perceives a screen or DOM and emits UI actions such as click, type, scroll">GUI agent</Term> such as UI-TARS or a browser-use loop), an observation channel (screenshots, the <Term def="Document Object Model: the browser's live tree of page elements, readable and mutable by scripts">DOM</Term>, an accessibility tree, logs), and a judge that turns the trajectory into a verdict, typically an [LLM-as-a-judge](../llm-as-a-judge/) reading the trace.
+
+<Definition term="Agent-as-a-Verifier and reachability-bound coverage">
+Let the artifact be a state machine with initial state <M tex="s_0" /> and let each specification element <M tex="e" /> carry a precondition <M tex="P_e" /> (the situation in which it can be exercised) and a postcondition <M tex="Q_e" />. An AaaV verifier is a triple <M tex="(\pi, \mathcal{O}, J)" />: an agent policy <M tex="\pi" /> that emits actions, an observation channel <M tex="\mathcal{O}" />, and a judge <M tex="J" /> mapping the observed trajectory to a label in <M tex="\{\mathrm{PASS}, \mathrm{FAIL}, \mathrm{UNVERIFIED}\}" />. Element <M tex="e" /> can be verified only if <M tex="\pi" /> finds, within its step budget, an action sequence <M tex="a_{1:k}" /> with <M tex="s_0 \xrightarrow{a_{1:k}} s" /> and <M tex="s \models P_e" />. Coverage is therefore bounded by what the agent can reach; an unreached element yields UNVERIFIED or a spurious FAIL.
+</Definition>
+
+Recurring consequences:
+- Precision beats recall. A completed plan gives grounded evidence, so PASS is trustworthy; a stalled agent (bad selector, mis-read state) reports a failure that belongs to itself.
+- Cost and nondeterminism: each verdict is a model-driven browser session, and repeated runs differ.
+- Reachability. Long-horizon artifacts (games, multi-step flows) push required states beyond what open-ended play reaches.
+- Early verdicts. An agent may judge before the decisive state is observed.
+
+## In the papers
+<Related>[WebGen-Bench](../../papers/arxiv-2505.03733/) is the canonical checkpoint-style instance: 647 test cases, each "perform this operation, expect this result", executed by a web-navigation agent that also judges the outcome (Abstract).</Related>
+
+[WebGen-Agent](../../papers/arxiv-2509.22644/) puts the same idea inside the generation loop. After the screenshot passes, the coding LLM writes an instruction for a GUI agent to exercise every requirement, and the trajectory is graded 1 to 5 with improvement suggestions (§2.1, prompt in Fig. 7). <Finding src="Tab. 2">Adding GUI-agent testing is the single largest accuracy gain in the ablation, 46.6 to 49.9, at a small cost in appearance that backtracking recovers.</Finding> <Finding src="Tab. 5">Human re-checks put GUI-agent score accuracy at 89 to 93%, below the 93 to 96% for screenshot scores.</Finding>
+
+[PlayCoder](../../papers/arxiv-2604.19742/) builds PlayTester for desktop games and apps: a screenshot observer, an action executor (click, type, hotkey, scroll), and a VLM test manager that plays goal-driven for games and coverage-driven for apps (§3.3). <Finding src="§3.5">On 100 PlayTester successes and 100 failures re-judged by three engineers it shows a 16% false-negative and 5% false-positive rate, Krippendorff's alpha 0.790, Kendall tau-b 0.795.</Finding> The asymmetry is the precision-over-recall signature.
+
+<Problem>[WebDevJudge](../../papers/arxiv-2510.18560/) shows the ceiling.</Problem> Its agentic judge (planner, UI-TARS-1.5 executor, summarizer; Eq. 1) reaches only 60.55% agreement with humans on combined rubrics (Tab. 3), below plain GPT-4.1 pairwise at 70.34%, because errors compound: brittle plans from ambiguous queries and faulty execution (§4.1). <Finding src="Tab. 6">On the feasibility subset the agent has precision 82.4 / recall 70.3 while a code-only LLM has 72.1 / 90.0.</Finding>
+
+<Problem>[GameGen-Verifier](../../papers/arxiv-2605.07442/) names the reachability problem and measures it.</Problem> Its baselines are AaaV-Direct (play, then judge against the full spec) and AaaV-CE (the same agent in a todo-list harness that will not stop until every element has a verdict) (§5.2). <Finding src="Tab. 1">AaaV-Direct scores Acc@5 of 0.011 to 0.033 because it quits after an easy subset; AaaV-CE reaches at most 0.588 but takes 7,356 to 9,072 s per game; keypoint verification with state injection reaches 0.866 to 0.922 in 443 to 614 s.</Finding> The fix is to construct the precondition state directly rather than play to it, see [state-contract-verification](../state-contract-verification/).
+
+<Finding src="WorldCoder-Bench Tab. 2">On 3D worlds an 8-step inspection agent is the only external paradigm with positive correlation to hidden-state truth (Kendall tau-b +0.111), yet it passes 45.6% of severely defective outputs at roughly 400 times the cost of a DOM check.</Finding>
+
+## Pitfalls / open questions
+- Separate "the agent failed" from "the app failed". Log UNVERIFIED distinctly; never fold it into FAIL when scoring a generator.
+- Coverage enforcement fixes early quitting but multiplies cost by an order of magnitude; the better lever is shrinking what must be reached.
+- <Caveat>An agent that generates the artifact and then verifies it shares the generator's blind spots; use a different model or a different modality for the check.</Caveat>
+- <FollowUp>WebGrader's "issue Pass only after observing the requested transition" rule is a direct answer to early verdicts; whether it generalizes beyond web flows is open.</FollowUp>
+
+## Glossary
+- **Agent-as-a-Verifier (AaaV)** — an autonomous agent drives the generated artifact at runtime and reports which requirements it observed to hold.
+- **GUI agent** — a model that perceives a screen or DOM and emits UI actions (click, type, scroll).
+- **DOM** — the browser's live element tree, readable and mutable by scripts.
+- **Reachability-bound** — a check can run only if the agent can drive the system into the check's precondition state within budget.
+- **UNVERIFIED** — a verdict meaning the agent produced no evidence either way, distinct from FAIL.
+- **Coverage-enforced AaaV** — an AaaV loop wrapped in a checklist harness that forces the agent to continue until every specification element has a verdict.
+
+
+
+
+
+
+
+
+

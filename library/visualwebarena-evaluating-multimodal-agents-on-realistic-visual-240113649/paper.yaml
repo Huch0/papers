@@ -26,8 +26,12 @@ topic_groups:
 - computer_use_agents
 - general_agent_methods
 tags:
+- feedback-run
 - foundational
 - interactive-component-survey
+- model-closed
+- model-open
+- training-prompt
 venue:
   name: ACL
   tier: A_star
@@ -59,9 +63,9 @@ versions:
   pdf_sha256: 8674b4ae17290bb797e5988706f765c75a3310a4e9d14cbd32497e40235ff795
   pdf_bytes: 4564902
   summary_status: full
-  extraction_status: full
+  extraction_status: none
   created_at: '2026-06-06T07:57:32Z'
-  updated_at: '2026-06-07T03:54:47Z'
+  updated_at: '2026-08-28T08:56:53Z'
 relations:
   duplicate_candidates: []
   related_papers: []

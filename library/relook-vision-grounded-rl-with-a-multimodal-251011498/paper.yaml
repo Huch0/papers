@@ -49,7 +49,8 @@ milestone:
   era: expansion
   significance: Trains a small open coding policy from an external visual critic.
   subarea: interactive_ui
-knowledge_concepts: []
+knowledge_concepts:
+- llm-as-a-judge
 versions:
 - version_key: v1
   version_label: arXiv v1
@@ -66,7 +67,7 @@ versions:
   summary_status: full
   extraction_status: full
   created_at: '2026-08-25T12:48:51Z'
-  updated_at: '2026-08-25T12:54:36Z'
+  updated_at: '2026-08-28T08:56:52Z'
 relations:
   duplicate_candidates: []
   related_papers: []

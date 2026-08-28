@@ -84,6 +84,9 @@ At submission, <Finding src="Tab.3, p.8">the best agent, GPT-4V with Set-of-Mark
 ## Implications
 Establishes a reusable reference design for multimodal web agents — element-ID action spaces (avoiding pixel coordinates for models not trained to ground them), SoM-as-observation injected via JS, and visual reward primitives (VQA/SSIM) extending functional evaluation to open-ended visual goals. It builds directly on <Related>WebArena</Related> and operationalizes <Related>Set-of-Marks prompting (Yang et al., 2023a)</Related> on live interactive pages for the first time. <FollowUp>Track later VWA leaderboard entries and stronger native multimodal models</FollowUp>, and <FollowUp>whether trajectory fine-tuning or an explicit planner/memory module closes the human gap</FollowUp>.
 
+
+<FollowUp>Working notes (moved from the reader's notes block, 2026-08-28): The most transferable harness ideas: element-ID action space (avoid pixel coords for non-grounding models), SoM-as-observation injected via JS, and visual reward primitives (VQA/SSIM) for open-ended functional evaluation. Watch the evaluator-fidelity risk if reusing eval_vqa/fuzzy_match.</FollowUp>
+
 ## Limitations
 - <Caveat>All Tab.3 / Tab.5 numbers appear single-run with no variance, seeds, or significance reported.</Caveat>
 - <Caveat>Reward fidelity depends on model-based evaluators (BLIP-2-T5XL VQA, GPT-4-Turbo fuzzy match, SSIM) that are not independently validated against human labels in the main text.</Caveat>
@@ -105,6 +108,5 @@ Establishes a reusable reference design for multimodal web agents — element-ID
 
 {/* NOTES_START */}
 ### Personal notes
-The most transferable harness ideas: element-ID action space (avoid pixel coords for non-grounding models), SoM-as-observation injected via JS, and visual reward primitives (VQA/SSIM) for open-ended functional evaluation. Watch the evaluator-fidelity risk if reusing eval_vqa/fuzzy_match.
 {/* NOTES_END */}
 

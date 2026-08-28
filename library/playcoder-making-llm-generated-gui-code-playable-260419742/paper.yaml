@@ -46,7 +46,8 @@ milestone:
   era: recent
   significance: Active GUI probing + execution-trace repair of silent state/event bugs (prompted).
   subarea: interactive_ui
-knowledge_concepts: []
+knowledge_concepts:
+- agent-as-a-verifier
 versions:
 - version_key: v1
   version_label: arXiv v1
@@ -63,7 +64,7 @@ versions:
   summary_status: full
   extraction_status: full
   created_at: '2026-08-25T12:48:55Z'
-  updated_at: '2026-08-25T12:54:46Z'
+  updated_at: '2026-08-28T08:56:52Z'
 relations:
   duplicate_candidates: []
   related_papers: []

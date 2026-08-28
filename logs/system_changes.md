@@ -462,3 +462,37 @@ Each entry: date, trigger, change, files touched, migration status.
 - scripts/migrations/2026-08-28-venue-fix.py extended (idempotent) to set `year` and to
   patch the `venue:`/`year:` frontmatter lines of existing summaries (prose untouched);
   re-run on the same table. Scoring recomputed (recency now uses the publication year).
+
+## 2026-08-28 — Summary-policy compliance pass on the interactive_component_synthesis path
+- Trigger: the user asked whether the path's summaries followed the summary policy
+  (`.claude/skills/summarize-paper/SKILL.md`, `config/summary_template.mdx`,
+  `config/summary_components.md`). Audit of all 17: structure compliant, substance not —
+  third-person "the authors" voice instead of Feynman-as-author (10/17), no running example,
+  no `<Definition>` blocks (0/17), Contribution/Key-findings over the template limits, benchmark
+  contamination/aging checks absent, agent notes written into the reader's Personal-notes
+  block (9/17), survey-axis tags missing (12/17), no knowledge-base links (15/17), and today's
+  venue fix had hand-synced summary frontmatter instead of regenerating it.
+- Rewrote the 8 thesis-path summaries authored 2026-08-25/27 (WebRISE, WebDevJudge,
+  WorldCoder-Bench, GameGen-Verifier, PlayCoder, WebGen-Agent, ReLook, Interaction2Code):
+  author voice, one running example from the paper carried through Motivation → SelfCheck,
+  forced design choices, author-voice Limitations, Contribution ≤ ~90 words, Key findings 5–6
+  anchored bullets, 4 Caveats, 3–4 Critiques, 2–6 `<Definition>` blocks each, explicit
+  contamination / aging / evaluator-reliability / variance paragraphs, every `<Finding>` and
+  `<KeyStats>` number verified verbatim against extraction.txt (derived or unanchored values
+  such as "6.8×", "94% / 90%", "0.72 → 0.57", "~30 actions" replaced or removed; two factual
+  slips corrected: WebRISE "Commerce 16.97%" → "Social Interaction 16.97%", Interaction2Code
+  "more than 50% in every topic" → "50% (code) to 96% (music)").
+- The other 9 path summaries: agent notes moved out of the reader's block into Implications as
+  a `<FollowUp>` (or the template placeholder removed); block left empty for the reader.
+- knowledge/: six new concept pages (llm-as-a-judge, agent-as-a-verifier,
+  state-contract-verification, differential-testing, model-based-gui-testing,
+  mutation-hardened-checks) with reciprocal links to 13 papers; summaries link them instead
+  of re-teaching the background.
+- Survey-axis tags (feedback/output/training/model) + `interactive-component-survey` set on all
+  17 path papers with a summary (12 were untagged).
+- Frontmatter of all 17 regenerated with `summarize_paper.py --finalize` (run with
+  /usr/bin/python3.12 — the default `python3` here is 3.7 and the script's `unlink(missing_ok)`
+  needs 3.8). Gates: check-mdx OK on 23 MDX files, knowledge validate OK, validate_registry
+  only the pre-existing PDF-missing errors, site build OK.
+- Lesson for later agents: re-read SKILL.md before every batch; the three hard rules are
+  requirements, not tone.

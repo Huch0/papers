@@ -1,0 +1,63 @@
+---
+name: model-based-gui-testing
+title: Model-Based GUI Testing
+aliases:
+- statechart testing
+- interaction contract graph
+tags:
+- testing
+- interactive-ui
+related_papers:
+- arxiv-2606.03220
+- arxiv-2606.27665
+- arxiv-2605.07442
+related_concepts:
+- agent-as-a-verifier
+- state-contract-verification
+created: '2026-08-28T08:33:48Z'
+updated: '2026-08-28T08:52:47Z'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+## Intuition
+Model-based GUI testing draws the application as a map of screens and the actions that move between them, then generates tests by walking the map. A login form is a small example: states `idle`, `submitting`, `success`, `error`; events `SUBMIT`, `RESOLVE`, `REJECT`. Rather than hand-writing "type a bad password, click submit, expect an error banner", you write that model once, attach an assertion to each state and an action to each event, and let a tool enumerate paths that cover every transition. The map is the specification and the oracle at the same time: a test passes when the app's observable state after each step matches the state the model says it should be in.
+
+## Details
+<Definition term="Finite-state model of a UI">
+A UI model is a machine <M tex="M = (S, \Sigma, \delta, s_0, \Phi)" />: states <M tex="S" />, events <M tex="\Sigma" />, a transition relation <M tex="\delta \subseteq S \times \Sigma \times S" />, an initial state <M tex="s_0" />, and for each state a predicate <M tex="\Phi(s)" /> over what is observable (DOM, screenshot) that must hold whenever the app is "in" <M tex="s" />. A <Term def="a finite-state machine extended with nested states, parallel regions, and guards on transitions">statechart</Term> adds hierarchy and guards. Test generation chooses a set of paths <M tex="s_0 \xrightarrow{e_1} s_1 \xrightarrow{e_2} \cdots" /> satisfying a coverage criterion; each path becomes one test that binds every <M tex="e_i" /> to a concrete action and checks <M tex="\Phi(s_i)" /> after it.
+</Definition>
+
+Coverage criteria are the usual: every state, every transition, every transition pair, or shortest paths to each target. In `@xstate/test` this is literally a statechart plus a `meta.test` function per state and an `events` map per event; the library generates the paths and runs them. State-of-the-art variants let a model do two jobs a human used to do: derive the model from requirements or source, and execute an abstract transition on whatever concrete page appears instead of relying on precompiled selectors.
+
+Where it works: deterministic, enumerable interfaces with clear screens. Where it breaks: state explosion (each independent widget multiplies states), transient states (spinners, toasts, debounce), the gap between abstract states and a concrete DOM that differs per implementation, model maintenance as the app changes, and continuous state such as a game or 3D scene, where "screen" is not a natural unit; see [state-contract-verification](../state-contract-verification/) for that regime.
+
+## In the papers
+<Novelty>[WebRISE](../../papers/arxiv-2606.03220/) builds the model from requirements, not from an existing app, so it can grade many implementations against one model.</Novelty> Its <Term def="a requirement-derived graph of observable UI states, user-intent transitions, and DOM/visual assertions, plus a map back to requirements">Interaction Contract Graph</Term> is <M tex="G_\tau = (S_\tau, T_\tau, \Phi_\tau, M_\tau)" /> (Eq. 3): states are requirement-relevant observable configurations rather than DOM snapshots; transient effects are attached to transitions as process-level predicates to keep the state space finite (§3.2). A transition is <M tex="t_j = (s^{\text{from}}_j, s^{\text{to}}_j, g_j, P_j, A^{\text{dom}}_j, A^{\text{vis}}_j)" />: source, target, a natural-language goal, preconditions, DOM assertions, visual postconditions (Eq. 4). Execution (Alg. 1) restores the source state by replaying a cache of already-verified trajectories, checks preconditions, runs a contract-guided browser agent on the goal with a step budget, waits a settle delay, then scores DOM and visual evidence; a transition is PASS only if all three hold, and other outcomes are FAIL, BLOCKED, or SKIPPED (§4.1, §4.4). <Finding src="Tab. 5">Scale: 5,081 states, 5,495 transitions, 5,271 requirement checks over 442 tasks, 12.4 transitions per task.</Finding> <Finding src="Tab. 7">Automatic requirement-to-graph construction agrees with the human majority at Cohen's kappa 0.78 (accuracy 0.86), close to the human–human 0.81.</Finding> Model-derived metrics are state reachability S% and transition validity T% (Eqs. 5 and 6), which is coverage of the model, not of the code.
+
+<Related>[LLMVue](../../papers/arxiv-2606.27665/) goes the other direction: it derives a page transition graph from Vue.js source, using GPT-4o to infer component hierarchies and route transitions scattered across router configuration and single-file components and merge them into one graph; on ten open-source projects the graphs show high precision and recall against references with low graph edit distance, and graph-guided exploration beats random exploration in coverage under equal time (Abstract; extraction not in the library).</Related>
+
+The two are complementary. A requirement-derived model tests what was asked and can flag missing features; a source-derived model tests what was built and is cheaper to keep accurate. [GameGen-Verifier](../../papers/arxiv-2605.07442/) notes the limit of path generation for games: the state space grows exponentially and open-ended play has no oracle (Fig. 2), so it constructs precondition states by injection instead of walking to them (§4.2).
+
+## Pitfalls / open questions
+- A model is a hypothesis about the app. If the implementation legitimately exposes the same requirement through a different flow, a rigid model reports a false failure; WebRISE's natural-language transition goals and adaptive agent are the mitigation, at the cost of nondeterminism.
+- Coverage numbers are coverage of the model. A thin model gives 100% quickly.
+- Transient states are where flakiness lives; attach them to transitions, do not promote them to states.
+- <FollowUp>Whether a requirement-derived graph and a source-derived graph can be diffed automatically to localize missing or extra behavior is open.</FollowUp>
+- <Caveat>LLM-built models were validated on hundreds of sampled cases, not exhaustively; errors in the model become systematic errors in every score.</Caveat>
+
+## Glossary
+- **Model-based testing** — deriving tests from an explicit model of the system's behavior rather than writing each test by hand.
+- **Finite-state machine** — states, events, and a transition relation with an initial state.
+- **Statechart** — a finite-state machine extended with nested states, parallel regions, and guards.
+- **Coverage criterion** — the rule that decides which paths through the model must be tested (every state, every transition, etc.).
+- **Interaction Contract Graph** — WebRISE's requirement-derived graph of observable states, intent transitions, assertions, and a requirement map.
+- **Page transition graph** — a graph of pages/routes and the navigations between them, derived from source in LLMVue.
+- **Transient state** — a short-lived UI condition (loading, toast, debounce) that should be checked as evidence on a transition, not modeled as a state.
+- **Contract-guided agent** — a browser agent that executes an abstract transition goal on the live page instead of replaying fixed selectors.
+
+
+
+
+

@@ -20,9 +20,14 @@ topic_groups:
 - software_engineering_agents
 tags:
 - execution-based-eval
+- feedback-run
 - foundational
-- tde-related-work
 - interactive-component-survey
+- model-closed
+- model-open
+- output-static
+- tde-related-work
+- training-prompt
 venue:
   name: ICLR
   tier: A_star
@@ -53,9 +58,9 @@ versions:
   pdf_sha256: 020e06b1fb9e1d4b6c33016a9471e8bd31f8ecfd7a22335d85956c14efa39f75
   pdf_bytes: 1419448
   summary_status: full
-  extraction_status: full
+  extraction_status: none
   created_at: '2026-08-13T07:14:35Z'
-  updated_at: '2026-08-13T10:10:29Z'
+  updated_at: '2026-08-28T08:56:52Z'
 relations:
   duplicate_candidates: []
   related_papers: []

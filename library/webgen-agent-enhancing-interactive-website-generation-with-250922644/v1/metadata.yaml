@@ -30,7 +30,7 @@ abstract: Agent systems powered by large language models (LLMs) have demonstrate
   training approach increases the accuracy of Qwen2.5-Coder-7B-Instruct from 38.9% to 45.4% and raises
   the appearance score from 3.4 to 3.7.
 venue: ICLR
-year: 2025
+year: 2026
 source: arxiv
 source_url: https://arxiv.org/abs/2509.22644v1
 pdf_url: https://arxiv.org/pdf/2509.22644v1

@@ -28,7 +28,7 @@ abstract: 'Multimodal Large Language Models (MLLMs) have demonstrated remarkable
   all aiming at improving MLLMs'' performance on the Interaction-toCode task. The Interaction2Code benchmark
   and code are available in https://github. com/WebPAI/Interaction2Code.'
 venue: ASE
-year: 2024
+year: 2025
 source: arxiv
 source_url: https://arxiv.org/abs/2411.03292v3
 pdf_url: https://arxiv.org/pdf/2411.03292v3

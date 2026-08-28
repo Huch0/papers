@@ -23,7 +23,7 @@ abstract: UI-to-code aims to translate UI screenshots into executable front-end 
   polishing, and UI editing benchmarks, even outperforming larger models, with performance consistently
   improving through iterative visual optimization. Our code and models are available at https://github.com/zai-org/UI2Code_N.
 venue: ICML
-year: 2025
+year: 2026
 source: arxiv
 source_url: https://arxiv.org/abs/2511.08195v4
 pdf_url: https://arxiv.org/pdf/2511.08195v4

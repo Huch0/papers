@@ -452,3 +452,13 @@ Each entry: date, trigger, change, files touched, migration status.
   Indexes regenerated; validate_registry: only the pre-existing PDF-missing errors.
 - Follow-up: DBLP lags ~1 year for new conferences — re-check the 2026 preprints on the path
   after each ICLR/ICML/NeurIPS decision cycle.
+
+## 2026-08-28 — Follow-up: publication year on the corrected path papers
+- Trigger: after the venue fix the site card still read "ICLR · 2025" for WebDevJudge (ICLR
+  2026). The card renders the top-level `year` (arXiv posting year), and `venue.year` is not
+  surfaced anywhere. 14 of the 34 corrected papers had the mismatch.
+- Rule (config/metadata_schema.md, Venue policy): top-level `year` = publication year once
+  accepted, in paper.yaml, every vN/metadata.yaml, and the summary frontmatter mirror.
+- scripts/migrations/2026-08-28-venue-fix.py extended (idempotent) to set `year` and to
+  patch the `venue:`/`year:` frontmatter lines of existing summaries (prose untouched);
+  re-run on the same table. Scoring recomputed (recency now uses the publication year).

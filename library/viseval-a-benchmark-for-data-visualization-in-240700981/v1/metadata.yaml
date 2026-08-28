@@ -21,7 +21,7 @@ abstract: Translating natural language to visualization (NL2VIS) has shown great
   of state-of-the-art LLMs. Our evaluation reveals prevalent challenges and delivers essential insights
   for future advancements.
 venue: IEEE TVCG
-year: 2024
+year: 2025
 source: semantic_scholar
 source_url: https://www.semanticscholar.org/paper/57b657524721da25c4f6591f063249888d619220
 pdf_url: http://arxiv.org/pdf/2407.00981

@@ -19,7 +19,7 @@ abstract: Large language models (LLMs) deployed as agents solve user-specified t
   by an order of magnitude. Our analysis of inference-time behavior demonstrates that our method produces
   LLMs that effectively leverage automatic feedback over multiple steps.
 venue: ICML
-year: 2024
+year: 2025
 source: arxiv
 source_url: https://arxiv.org/abs/2410.02089v2
 pdf_url: https://arxiv.org/pdf/2410.02089v2

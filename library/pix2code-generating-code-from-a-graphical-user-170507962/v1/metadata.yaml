@@ -9,7 +9,7 @@ abstract: Transforming a graphical user interface screenshot created by a design
   to automatically generate code from a single input image with over 77% of accuracy for three different
   platforms (i.e. iOS, Android and web-based technologies).
 venue: EICS
-year: 2017
+year: 2018
 source: arxiv
 source_url: https://arxiv.org/abs/1705.07962v2
 pdf_url: https://arxiv.org/pdf/1705.07962v2

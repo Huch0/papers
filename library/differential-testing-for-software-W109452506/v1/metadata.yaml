@@ -13,7 +13,7 @@ abstract: Differential testing, a form of random testing, is a component of a ma
   social challenge. This paper is derived from experience in differential testing of compilers and run-time
   systems at DIGITAL over the last few years and recently at Compaq. A working prototype for testing C
   compilers is available on the web.
-venue: Not reported
+venue: Digital Technical Journal
 year: 1998
 source: openalex
 source_url: https://openalex.org/W109452506

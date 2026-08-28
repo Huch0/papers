@@ -27,7 +27,7 @@ abstract: Large language models (LLMs) have achieved strong results in code gene
   for open-source and closed-source models, reaching up to 38.1% Exec@3 and 20.3% Play@3. Case studies
   further show that it can uncover silent logic bugs missed by traditional metrics and fix them through
   targeted edits.
-venue: arXiv
+venue: FSE
 year: 2026
 source: arxiv
 source_url: https://arxiv.org/abs/2604.19742v1

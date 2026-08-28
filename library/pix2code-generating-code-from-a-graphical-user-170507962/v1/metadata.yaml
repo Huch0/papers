@@ -8,7 +8,7 @@ abstract: Transforming a graphical user interface screenshot created by a design
   applications. In this paper, we show that deep learning methods can be leveraged to train a model end-to-end
   to automatically generate code from a single input image with over 77% of accuracy for three different
   platforms (i.e. iOS, Android and web-based technologies).
-venue: arXiv
+venue: EICS
 year: 2017
 source: arxiv
 source_url: https://arxiv.org/abs/1705.07962v2

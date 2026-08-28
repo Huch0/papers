@@ -22,7 +22,7 @@ abstract: Large language models (LLMs) have achieved impressive performance on c
   the baseline accuracy by up to 12%. Meanwhile, by leveraging feedback messages and reusing failed predictions,
   Self-Debugging notably improves sample efficiency, and can match or outperform baseline models that
   generate more than 10x candidate programs.
-venue: arXiv
+venue: ICLR
 year: 2023
 source: arxiv
 source_url: https://arxiv.org/abs/2304.05128v2

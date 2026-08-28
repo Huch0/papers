@@ -26,9 +26,9 @@ tags:
 - foundational
 - interactive-component-survey
 venue:
-  name: arXiv
-  tier: workshop_or_minor
-  status: preprint
+  name: ACL
+  tier: A_star
+  status: accepted
   year: 2025
 user:
   read_status: unread

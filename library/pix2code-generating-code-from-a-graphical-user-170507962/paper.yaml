@@ -19,10 +19,10 @@ tags:
 - foundational
 - interactive-component-survey
 venue:
-  name: arXiv
-  tier: workshop_or_minor
-  status: preprint
-  year: 2017
+  name: EICS
+  tier: unknown
+  status: accepted
+  year: 2018
 user:
   read_status: unread
   triage_label: READ_SOON

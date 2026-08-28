@@ -37,10 +37,10 @@ tags:
 - model-open
 - model-closed
 venue:
-  name: arXiv
-  tier: workshop_or_minor
-  status: preprint
-  year: 2025
+  name: ICLR
+  tier: A_star
+  status: accepted
+  year: 2026
 user:
   read_status: unread
   triage_label: READ_SOON

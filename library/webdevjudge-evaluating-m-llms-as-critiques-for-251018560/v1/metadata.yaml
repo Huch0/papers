@@ -24,7 +24,7 @@ abstract: The paradigm of LLM-as-a-judge is emerging as a scalable and efficient
   functional equivalence, verifying task feasibility, and mitigating bias. Overall, WebDevJudge presents
   a challenge to LLM-as-a-judge, offering insights to guide future research toward developing more reliable
   and capable automated evaluators for complicated scenarios. Code and data are available at https://github.com/lcy2723/WebDevJudge.
-venue: arXiv
+venue: ICLR
 year: 2025
 source: arxiv
 source_url: https://arxiv.org/abs/2510.18560v3

@@ -23,7 +23,7 @@ abstract: While Large Language Models (LLMs) excel at algorithmic code generatio
   comparable to base decoding while retaining most of the gains. Across three widely used benchmarks,
   ReLook consistently outperforms strong baselines in vision-grounded front-end code generation, highlighting
   the benefits of agentic perception, visual rewards, and training-inference decoupling.
-venue: arXiv
+venue: ACL
 year: 2025
 source: arxiv
 source_url: https://arxiv.org/abs/2510.11498v1

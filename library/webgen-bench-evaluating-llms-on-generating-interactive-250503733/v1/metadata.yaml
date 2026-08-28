@@ -29,7 +29,7 @@ abstract: LLM-based agents have demonstrated great potential in generating and m
   a training set consisting of 6,667 website-generation instructions. Training Qwen2.5-Coder-32B-Instruct
   on Bolt.diy trajectories generated from a subset of this training set achieves an accuracy of 38.2\%,
   surpassing the performance of the best proprietary model.
-venue: arXiv
+venue: NeurIPS
 year: 2025
 source: arxiv
 source_url: https://arxiv.org/abs/2505.03733v2

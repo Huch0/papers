@@ -27,7 +27,7 @@ abstract: Autonomous agents capable of planning, reasoning, and executing action
   capabilities of state-of-the-art multimodal language agents. VisualWebArena provides a framework for
   evaluating multimodal autonomous language agents, and offers insights towards building stronger autonomous
   agents for the web. Our code, baseline models, and data is publicly available at https://jykoh.com/vwa.
-venue: arXiv
+venue: ACL
 year: 2024
 source: arxiv
 source_url: https://arxiv.org/abs/2401.13649

@@ -29,7 +29,7 @@ abstract: Agent systems powered by large language models (LLMs) have demonstrate
   score from 3.0 to 3.9, outperforming the previous state-of-the-art agent system. Additionally, our Step-GRPO
   training approach increases the accuracy of Qwen2.5-Coder-7B-Instruct from 38.9% to 45.4% and raises
   the appearance score from 3.4 to 3.7.
-venue: arXiv
+venue: ICLR
 year: 2025
 source: arxiv
 source_url: https://arxiv.org/abs/2509.22644v1

@@ -18,7 +18,7 @@ abstract: We present SWE-Gym, the first environment for training real-world soft
   agents, we achieve 32.0% and 26.0% on SWE-Bench Verified and Lite, respectively, reflecting a new state-of-the-art
   for open-weight SWE agents. To facilitate further research, we publicly release SWE-Gym, models, and
   agent trajectories.
-venue: arXiv
+venue: ICML
 year: 2024
 source: arxiv
 source_url: https://arxiv.org/abs/2412.21139v2

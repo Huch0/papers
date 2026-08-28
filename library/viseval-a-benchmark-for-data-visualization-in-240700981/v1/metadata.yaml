@@ -20,7 +20,7 @@ abstract: Translating natural language to visualization (NL2VIS) has shown great
   checkers, VisEval provides reliable and trustworthy evaluation outcomes. We run VisEval on a series
   of state-of-the-art LLMs. Our evaluation reveals prevalent challenges and delivers essential insights
   for future advancements.
-venue: IEEE Transactions on Visualization and Computer Graphics
+venue: IEEE TVCG
 year: 2024
 source: semantic_scholar
 source_url: https://www.semanticscholar.org/paper/57b657524721da25c4f6591f063249888d619220

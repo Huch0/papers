@@ -25,7 +25,7 @@ abstract: Large Language Model (LLM) agents, capable of performing a broad range
   compromising their general capability. CodeActAgent, finetuned from Llama2 and Mistral, is integrated
   with Python interpreter and uniquely tailored to perform sophisticated tasks (e.g., model training)
   using existing libraries and autonomously self-debug.
-venue: arXiv
+venue: ICML
 year: 2024
 source: arxiv
 source_url: https://arxiv.org/abs/2402.01030v4
@@ -54,11 +54,13 @@ scoring:
   confidence: high
   rationale: 'score=65 -> READ_SOON | strong: interest_fit(0.73), novelty(0.55), artifact_availability(0.55)
     | interests: agent_harness:group:agent_harness, general_agent_methods:group:general_agent_methods,
-    llm:large language model | milestone/foundational floor applied'
+    llm:large language model, interactive_component_synthesis:self-debug | milestone/foundational floor
+    applied'
   matched_interests:
   - agent_harness:group:agent_harness
   - general_agent_methods:group:general_agent_methods
   - llm:large language model
+  - interactive_component_synthesis:self-debug
   negative_signals: []
   subscores:
     interest_fit: 0.73

@@ -1,0 +1,206 @@
+date: 2026-08-28
+papers:
+- slug: interaction2code-benchmarking-mllm-based-interactive-webpage-code-241103292
+  venue: ASE
+  status: accepted
+  year: 2025
+  evidence: ASE 2025 (sweep 2026-08-27); DBLP ASE 2025
+- slug: webgen-bench-evaluating-llms-on-generating-interactive-250503733
+  venue: NeurIPS
+  status: accepted
+  year: 2025
+  evidence: NeurIPS 2025 Datasets & Benchmarks, oral (neurips.cc Oral 5D, poster 1505); DBLP NeurIPS 2025
+- slug: webgen-agent-enhancing-interactive-website-generation-with-250922644
+  venue: ICLR
+  status: accepted
+  year: 2026
+  evidence: ICLR 2026 (OpenReview forum fE14yWa68Z; camera-ready header)
+- slug: relook-vision-grounded-rl-with-a-multimodal-251011498
+  venue: ACL
+  status: accepted
+  year: 2026
+  evidence: ACL 2026 long (aclanthology 2026.acl-long.1167); DBLP ACL 2026
+- slug: webdevjudge-evaluating-m-llms-as-critiques-for-251018560
+  venue: ICLR
+  status: accepted
+  year: 2026
+  evidence: ICLR 2026 oral (iclr.cc/virtual/2026/oral/10010880); DBLP not yet indexed
+- slug: ui2code-n-ui-to-code-generation-as-251108195
+  venue: ICML
+  status: accepted
+  year: 2026
+  evidence: ICML 2026 (sweep 2026-08-27)
+- slug: playcoder-making-llm-generated-gui-code-playable-260419742
+  venue: FSE
+  status: accepted
+  year: 2026
+  evidence: FSE 2026; DBLP Proc. ACM Softw. Eng. 2026
+- slug: vibe-code-bench-evaluating-ai-models-on-260304601
+  venue: ACM CAIS
+  status: accepted
+  year: 2026
+  evidence: ACM CAIS 2026; DBLP CAIS 2026
+- slug: matplotagent-method-and-evaluation-for-llm-based-240211453
+  venue: ACL Findings
+  status: accepted
+  year: 2024
+  evidence: Findings of ACL 2024; DBLP ACL 2024
+- slug: design2code-benchmarking-multimodal-code-generation-for-automated-240303163
+  venue: NAACL
+  status: accepted
+  year: 2025
+  evidence: NAACL 2025 (sweep 2026-08-27); DBLP NAACL 2025
+- slug: chartmimic-evaluating-lmm-s-cross-modal-reasoning-240609961
+  venue: ICLR
+  status: accepted
+  year: 2025
+  evidence: ICLR 2025 (sweep 2026-08-27)
+- slug: teaching-large-language-models-to-self-debug-230405128
+  venue: ICLR
+  status: accepted
+  year: 2024
+  evidence: ICLR 2024; DBLP ICLR 2024
+- slug: reflexion-language-agents-with-verbal-reinforcement-learning-230311366
+  venue: NeurIPS
+  status: accepted
+  year: 2023
+  evidence: NeurIPS 2023; DBLP NeurIPS 2023
+- slug: executable-code-actions-elicit-better-llm-agents-240201030
+  venue: ICML
+  status: accepted
+  year: 2024
+  evidence: ICML 2024 (sweep 2026-08-27); DBLP ICML 2024
+- slug: coderl-mastering-code-generation-through-pretrained-models-220701780
+  venue: NeurIPS
+  status: accepted
+  year: 2022
+  evidence: NeurIPS 2022; DBLP NeurIPS 2022
+- slug: lever-learning-to-verify-language-to-code-230208468
+  venue: ICML
+  status: accepted
+  year: 2023
+  evidence: ICML 2023 (sweep 2026-08-27); DBLP ICML 2023
+- slug: rlef-grounding-code-llms-in-execution-feedback-241002089
+  venue: ICML
+  status: accepted
+  year: 2025
+  evidence: ICML 2025; DBLP ICML 2025
+- slug: swe-bench-can-language-models-resolve-real-231006770
+  venue: ICLR
+  status: accepted
+  year: 2024
+  evidence: ICLR 2024 oral; DBLP ICLR 2024
+- slug: training-software-engineering-agents-and-verifiers-with-241221139
+  venue: ICML
+  status: accepted
+  year: 2025
+  evidence: ICML 2025 (SWE-Gym); DBLP ICML 2025
+- slug: swe-rl-advancing-llm-reasoning-via-reinforcement-250218449
+  venue: NeurIPS
+  status: accepted
+  year: 2025
+  evidence: NeurIPS 2025; DBLP NeurIPS 2025
+- slug: deepseek-r1-incentivizing-reasoning-capability-in-llms-250112948
+  venue: Nature
+  status: accepted
+  year: 2025
+  evidence: Nature 645, 633-638 (2025) — name normalized from the journal-ref string
+- slug: viseval-a-benchmark-for-data-visualization-in-240700981
+  venue: IEEE TVCG
+  status: accepted
+  year: 2025
+  evidence: DBLP IEEE Trans. Vis. Comput. Graph. 2025 (arXiv 2024); was recorded with status unknown
+- slug: differential-testing-for-software-W109452506
+  venue: Digital Technical Journal
+  status: accepted
+  year: 1998
+  evidence: McKeeman, Digital Technical Journal 10(1), 1998 (was "Not reported"); DBLP Digit. Tech. J. 1998
+- slug: mllm-as-a-judge-assessing-multimodal-llm-240204788
+  venue: ICML
+  status: accepted
+  year: 2024
+  evidence: DBLP ICML 2024
+- slug: osworld-benchmarking-multimodal-agents-for-open-ended-240407972
+  venue: NeurIPS
+  status: accepted
+  year: 2024
+  evidence: DBLP NeurIPS 2024 (Datasets & Benchmarks)
+- slug: openhands-an-open-platform-for-ai-software-240716741
+  venue: ICLR
+  status: accepted
+  year: 2025
+  evidence: DBLP ICLR 2025
+- slug: visualwebarena-evaluating-multimodal-agents-on-realistic-visual-240113649
+  venue: ACL
+  status: accepted
+  year: 2024
+  evidence: DBLP ACL 2024
+- slug: web2code-a-large-scale-webpage-to-code-240620098
+  venue: NeurIPS
+  status: accepted
+  year: 2024
+  evidence: DBLP NeurIPS 2024 (Datasets & Benchmarks)
+- slug: chartcoder-advancing-multimodal-large-language-model-for-250106598
+  venue: ACL
+  status: accepted
+  year: 2025
+  evidence: DBLP ACL 2025
+- slug: pix2code-generating-code-from-a-graphical-user-170507962
+  venue: EICS
+  status: accepted
+  year: 2018
+  evidence: DBLP EICS 2018 (ACM SIGCHI Symposium on Engineering Interactive Computing Systems)
+- slug: plot2code-a-comprehensive-benchmark-for-evaluating-multi-240507990
+  venue: NAACL
+  status: accepted
+  year: 2025
+  evidence: DBLP NAACL 2025
+- slug: s-test-time-scaling-for-code-generation-250214382
+  venue: EMNLP
+  status: accepted
+  year: 2025
+  evidence: DBLP EMNLP 2025
+- slug: swe-agent-agent-computer-interfaces-enable-automated-240515793
+  venue: NeurIPS
+  status: accepted
+  year: 2024
+  evidence: DBLP NeurIPS 2024
+- slug: uicoder-finetuning-large-language-models-to-generate-240607739
+  venue: NAACL
+  status: accepted
+  year: 2024
+  evidence: DBLP NAACL-HLT 2024
+still_preprint:
+- webrise-requirement-induced-state-evaluation-for-mllm-260603220
+- worldcoder-bench-benchmarking-physically-grounded-3d-world-260601869
+- gamegen-verifier-parallel-keypoint-based-verification-for-260507442
+- webgrader-training-llms-for-web-development-with-260806474
+- frontendbench-a-benchmark-for-evaluating-llms-on-250613832
+- i-webgenbench-evaluating-interactivity-in-llm-generated-260600750
+- vista-an-end-to-end-benchmark-for-260526144
+- diageval-trajectory-conditioned-diagnosis-for-reliable-software-260517439
+- gui-agents-for-continual-game-generation-260528258
+- code-generation-by-differential-test-time-scaling-260520473
+- semantic-voting-execution-grounded-consensus-for-llm-260508680
+- artifactsbench-bridging-the-visual-interactive-gap-in-250704952
+- webgamebench-requirement-to-application-evaluation-for-coding-260517637
+- gamexpert-bench-how-far-are-coding-agents-260821833
+- interactscience-programmatic-and-visually-grounded-evaluation-of-251009724
+- web-bench-a-llm-code-benchmark-based-250507473
+- llm-assisted-model-based-gui-testing-for-260627665
+- unicoder-unified-visual-to-code-generation-via-260631732
+- visual-erm-reward-modeling-for-visual-equivalence-260313224
+- coding-with-eyes-visual-feedback-unlocks-reliable-260419750
+- agentcoder-multi-agent-based-code-generation-with-231213010
+- chartmaster-advancing-chart-to-code-generation-with-250817608
+- bridging-design-and-development-with-automated-declarative-240911667
+- temac-multi-agent-collaboration-for-automated-web-250600520
+- reveal-self-evolving-code-agents-via-reliable-250611442
+- sketch2code-transformation-of-sketches-to-ui-in-191008930
+- unlocking-the-conversion-of-web-screenshots-into-240309029
+- c-2-scalable-auto-feedback-for-llm-241018652
+- nvbench-a-large-scale-synthesized-dataset-for-211212926
+still_preprint_note: 'DBLP 2026-08-28: CoRR-only for all of the above. Notes: C2 had no DBLP hit at all; nvBench
+  — the arXiv dataset paper is CoRR-only, the SIGMOD 2021 paper is a differently titled work (“Synthesizing Natural
+  Language to Visualization (NL2VIS) Benchmarks from NL2SQL Benchmarks”), so the record stays arXiv; UniCoder /
+  Visual-ERM / VF-Coder / 2026 benchmarks: no acceptance found in the 2026-08-27 sweep or DBLP.'

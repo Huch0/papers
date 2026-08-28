@@ -19,7 +19,7 @@ abstract: Generative AI has made rapid advancements in recent years, achieving u
   MLLMs, we test various multimodal prompting methods on frontier models such as GPT-4o, GPT-4V, Gemini,
   and Claude. Our fine-grained break-down metrics indicate that models mostly lag in recalling visual
   elements from the input webpages and generating correct layout designs.
-venue: arXiv
+venue: NAACL
 year: 2024
 source: arxiv
 source_url: https://arxiv.org/abs/2403.03163v3

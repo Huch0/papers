@@ -22,7 +22,7 @@ abstract: UI-to-code aims to translate UI screenshots into executable front-end 
   and reinforcement learning. Experiments demonstrate state-of-the-art performance on UI drafting, UI
   polishing, and UI editing benchmarks, even outperforming larger models, with performance consistently
   improving through iterative visual optimization. Our code and models are available at https://github.com/zai-org/UI2Code_N.
-venue: arXiv
+venue: ICML
 year: 2025
 source: arxiv
 source_url: https://arxiv.org/abs/2511.08195v4

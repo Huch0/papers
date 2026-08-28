@@ -23,9 +23,9 @@ topic_groups:
 tags:
 - foundational
 venue:
-  name: arXiv
-  tier: workshop_or_minor
-  status: preprint
+  name: ACM CAIS
+  tier: unknown
+  status: accepted
   year: 2026
 user:
   read_status: unread

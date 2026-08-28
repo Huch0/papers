@@ -28,7 +28,7 @@ abstract: The recent DeepSeek-R1 release has demonstrated the immense potential 
   general language understanding, whereas a supervised-finetuning baseline even leads to performance degradation
   on average. Overall, SWE-RL opens up a new direction to improve the reasoning capabilities of LLMs through
   reinforcement learning on massive software engineering data.
-venue: arXiv
+venue: NeurIPS
 year: 2025
 source: arxiv
 source_url: https://arxiv.org/abs/2502.18449v2

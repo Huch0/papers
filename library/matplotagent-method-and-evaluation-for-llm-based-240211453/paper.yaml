@@ -32,9 +32,9 @@ tags:
 - foundational
 - interactive-component-survey
 venue:
-  name: arXiv
-  tier: workshop_or_minor
-  status: preprint
+  name: ACL Findings
+  tier: A_star
+  status: accepted
   year: 2024
 user:
   read_status: unread

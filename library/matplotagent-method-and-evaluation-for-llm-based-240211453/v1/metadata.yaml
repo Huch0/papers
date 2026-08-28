@@ -27,7 +27,7 @@ abstract: 'Scientific data visualization plays a crucial role in research by ena
   Experimental results demonstrate that MatPlotAgent can improve the performance of various LLMs, including
   both commercial and open-source models. Furthermore, the proposed evaluation method shows a strong correlation
   with human-annotated scores.'
-venue: arXiv
+venue: ACL Findings
 year: 2024
 source: arxiv
 source_url: https://arxiv.org/abs/2402.11453v3

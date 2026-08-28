@@ -35,10 +35,10 @@ tags:
 - model-open
 - model-closed
 venue:
-  name: arXiv
-  tier: workshop_or_minor
-  status: preprint
-  year: 2024
+  name: ASE
+  tier: unknown
+  status: accepted
+  year: 2025
 user:
   read_status: unread
   triage_label: READ_SOON

@@ -43,8 +43,13 @@ was fetched from. Concretely:
   = the venue year (may differ from the arXiv year). `tier` is derived by `ingest.py` from
   `venues.yaml`.
 - Version-level `metadata.yaml.venue` (a string) follows the same rule for that version.
-  Per the versioning rule above, `arXiv → <real venue>` is a *material* change and
-  `ingest.py` opens a new version dir for it — that is expected, not a duplicate.
+- **Correction vs. new version.** If the paper's status *changes after ingest* (a preprint
+  gets accepted, a camera-ready appears), that is the versioning rule above: `ingest.py`
+  opens a new version dir for the `arXiv → <venue>` change. If the record was simply
+  *wrong at ingest time* (the acceptance already existed but was not looked up), fix it
+  **in place** with a dated migration under `scripts/migrations/` (table of slug → venue/
+  status/year/evidence; re-score; never touch `user`), so summaries and PDFs stay in their
+  version dir. Precedent: `scripts/migrations/2026-08-28-venue-fix.{py,yaml}`.
 - Sources of truth for a venue, in order: publisher/proceedings page or DOI, ACL Anthology,
   OpenReview decision, Semantic Scholar / OpenAlex `venue`, the paper's own header
   ("Published as a conference paper at …"). arXiv `journal_ref` counts; an arXiv comment

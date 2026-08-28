@@ -214,7 +214,7 @@ abstract: General reasoning represents a long-standing and formidable challenge 
   trained via conventional supervised learning on human demonstrations. Moreover, the emergent reasoning
   patterns exhibited by these large-scale models can be systematically harnessed to guide and enhance
   the reasoning capabilities of smaller models.
-venue: Nature volume 645, pages 633-638 (2025)
+venue: Nature
 year: 2025
 source: arxiv
 source_url: https://arxiv.org/abs/2501.12948v2

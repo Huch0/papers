@@ -30,7 +30,7 @@ abstract: We introduce a new benchmark, ChartMimic, aimed at assessing the visua
   GPT-4o, InternVL2-Llama3-76B only achieved an average score across Direct Mimic and Customized Mimic
   tasks of 82.2 and 61.6, respectively, indicating significant room for improvement. We anticipate that
   ChartMimic will inspire the development of LMMs, advancing the pursuit of artificial general intelligence.
-venue: arXiv (Cornell University)
+venue: ICLR
 year: 2024
 source: openalex
 source_url: https://openalex.org/W4399759273

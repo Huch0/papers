@@ -18,7 +18,7 @@ abstract: Large language models (LLMs) struggle to consistently generate UI code
   our approach to several open-source LLMs and compared the resulting performance to baseline models with
   both automated metrics and human preferences. Our evaluation shows the resulting models outperform all
   other downloadable baselines and approach the performance of larger proprietary models.
-venue: arXiv
+venue: NAACL
 year: 2024
 source: arxiv
 source_url: https://arxiv.org/abs/2406.07739v1

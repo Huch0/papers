@@ -23,7 +23,7 @@ abstract: Program synthesis or code generation aims to generate a program that s
   learning objectives, larger model sizes, and better pretraining data. Our method not only achieves new
   SOTA results on the challenging APPS benchmark, but also shows strong zero-shot transfer capability
   with new SOTA results on the simpler MBPP benchmark.
-venue: arXiv
+venue: NeurIPS
 year: 2022
 source: arxiv
 source_url: https://arxiv.org/abs/2207.01780v3

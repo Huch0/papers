@@ -18,7 +18,7 @@ abstract: Large language models (LLMs) deployed as agents solve user-specified t
   with both small (8B parameters) and large (70B) models while reducing the amount of samples required
   by an order of magnitude. Our analysis of inference-time behavior demonstrates that our method produces
   LLMs that effectively leverage automatic feedback over multiple steps.
-venue: arXiv
+venue: ICML
 year: 2024
 source: arxiv
 source_url: https://arxiv.org/abs/2410.02089v2

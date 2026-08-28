@@ -23,7 +23,7 @@ abstract: 'Multimodal Large Language Models (MLLMs) have demonstrated remarkable
   data into step-by-step generation. Experiments demonstrate that ChartCoder, with only 7B parameters,
   surpasses existing open-source MLLMs on chart-to-code benchmarks, achieving superior chart restoration
   and code excitability. Our code is available at https://github.com/thunlp/ChartCoder.'
-venue: arXiv
+venue: ACL
 year: 2025
 source: arxiv
 source_url: https://arxiv.org/abs/2501.06598v3

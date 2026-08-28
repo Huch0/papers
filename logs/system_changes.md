@@ -428,3 +428,27 @@ Each entry: date, trigger, change, files touched, migration status.
   ChartMaster, C2, MLLM-as-a-Judge, VisualWebArena, OSWorld, SWE-agent, OpenHands,
   AgentCoder, S*, ReVeal, Multi-Agent Web GUI, McKeeman 1998) need their venue looked up
   before re-ingest.
+
+## 2026-08-28 — Venue data fix for the interactive_component_synthesis path
+- Trigger: the user found WebDevJudge (ICLR 2026 oral) still recorded as `arXiv` after the
+  venue policy landed, and asked for every paper on the path to be revised.
+- Method: Semantic Scholar returned HTTP 429 for every call and OpenAlex reports `arXiv`
+  even for accepted ML papers, so venues were resolved from **DBLP** (search API, title
+  match) cross-checked with the 2026-08-27 advisor-deck sweep (OpenReview / ACL Anthology /
+  proceedings pages) for 2026 venues DBLP has not indexed yet (ICLR/ICML 2026).
+- Result: `scripts/migrations/2026-08-28-venue-fix.yaml` — **34 corrections** (e.g.
+  WebDevJudge ICLR 2026, WebGen-Agent ICLR 2026, UI2Code^N ICML 2026, PlayCoder FSE 2026,
+  ReLook ACL 2026, WebGen-Bench NeurIPS 2025, Interaction2Code ASE 2025, OpenHands ICLR
+  2025, OSWorld / Web2Code / SWE-agent NeurIPS 2024, VisualWebArena ACL 2024, MLLM-as-a-Judge
+  / CodeAct ICML 2024, UICoder NAACL 2024, Plot2Code / Design2Code NAACL 2025, ChartCoder ACL
+  2025, S* EMNLP 2025, pix2code EICS 2018, VisEval IEEE TVCG, McKeeman Digital Technical
+  Journal 1998; DeepSeek-R1 and VisEval names normalized) and **29 confirmed preprints** left
+  as `arXiv` (all 2026 benchmarks/verifiers, ArtifactsBench, AgentCoder, ChartMaster,
+  DeclarUI, TEMAC, ReVeal, Sketch2Code 2019, WebSight, C2, nvBench — see the table's note).
+- Applied in place by `scripts/migrations/2026-08-28-venue-fix.py` (paper.yaml venue block +
+  every vN/metadata.yaml venue string; scoring re-computed; `user` untouched) — an
+  ingest-time error, not a status change, so no new version dirs (policy text updated in
+  config/metadata_schema.md to say so). config/venues.yaml: `IEEE TVCG` added to A_star.
+  Indexes regenerated; validate_registry: only the pre-existing PDF-missing errors.
+- Follow-up: DBLP lags ~1 year for new conferences — re-check the 2026 preprints on the path
+  after each ICLR/ICML/NeurIPS decision cycle.

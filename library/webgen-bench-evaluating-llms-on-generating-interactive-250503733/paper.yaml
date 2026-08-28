@@ -29,9 +29,9 @@ tags:
 - foundational
 - interactive-component-survey
 venue:
-  name: arXiv
-  tier: workshop_or_minor
-  status: preprint
+  name: NeurIPS
+  tier: A_star
+  status: accepted
   year: 2025
 user:
   read_status: unread

@@ -219,9 +219,9 @@ topic_groups:
 tags:
 - foundational
 venue:
-  name: Nature volume 645, pages 633-638 (2025)
+  name: Nature
   tier: unknown
-  status: unknown
+  status: accepted
   year: 2025
 user:
   read_status: unread

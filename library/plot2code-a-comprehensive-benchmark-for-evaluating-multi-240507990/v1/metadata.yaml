@@ -28,7 +28,7 @@ abstract: The remarkable progress of Multi-modal Large Language Models (MLLMs) h
   plots, heavily relying on textual instruction. We hope that the evaluation results from Plot2Code on
   visual coding will guide the future development of MLLMs. All data involved with Plot2Code are available
   at https://huggingface.co/datasets/TencentARC/Plot2Code.
-venue: arXiv
+venue: NAACL
 year: 2024
 source: arxiv
 source_url: https://arxiv.org/abs/2405.07990v1

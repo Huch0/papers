@@ -32,10 +32,10 @@ tags:
 - foundational
 - interactive-component-survey
 venue:
-  name: arXiv (Cornell University)
-  tier: workshop_or_minor
-  status: unknown
-  year: 2024
+  name: ICLR
+  tier: A_star
+  status: accepted
+  year: 2025
 user:
   read_status: unread
   triage_label: READ_SOON

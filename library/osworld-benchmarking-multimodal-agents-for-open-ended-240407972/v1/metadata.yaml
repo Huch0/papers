@@ -37,7 +37,7 @@ abstract: Autonomous agents that accomplish complex computer tasks with minimal 
   struggling with GUI grounding and operational knowledge. Comprehensive analysis using OSWorld provides
   valuable insights for developing multimodal generalist agents that were not possible with previous benchmarks.
   Our code, environment, baseline models, and data are publicly available at https://os-world.github.io.
-venue: arXiv
+venue: NeurIPS
 year: 2024
 source: arxiv
 source_url: https://arxiv.org/abs/2404.07972v2

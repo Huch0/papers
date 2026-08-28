@@ -40,6 +40,7 @@ tiers:
       - IROS
       - CAV
       - IEEE TSE
+      - IEEE TVCG
 
   strong_preprint_signal:
     # Not a fixed venue list; these are qualitative signals applied to preprints.

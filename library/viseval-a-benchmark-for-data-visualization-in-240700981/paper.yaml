@@ -24,10 +24,10 @@ tags:
 - foundational
 - interactive-component-survey
 venue:
-  name: IEEE Transactions on Visualization and Computer Graphics
-  tier: unknown
-  status: unknown
-  year: 2024
+  name: IEEE TVCG
+  tier: A_star
+  status: accepted
+  year: 2025
 user:
   read_status: unread
   triage_label: READ_SOON

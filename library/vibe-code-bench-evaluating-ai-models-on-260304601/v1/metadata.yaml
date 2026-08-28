@@ -19,7 +19,7 @@ abstract: Code generation has emerged as one of AI's highest-impact use cases, y
   dataset and browser-based evaluation pipeline for end-to-end web application development, (2) a comprehensive
   evaluation of 16 frontier models with cost, latency, and error analysis, and (3) an evaluator alignment
   protocol with both cross-model and human annotation results.
-venue: arXiv
+venue: ACM CAIS
 year: 2026
 source: arxiv
 source_url: https://arxiv.org/abs/2603.04601v3

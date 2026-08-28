@@ -24,9 +24,14 @@ Possible types: `arxiv`, `pdf_url`, `local_pdf`, `doi`, `openreview`,
   set `source=pdf_url`, `pdf_url=<url>`.
 - **local_pdf**: build a minimal candidate; you'll attach the file via `--pdf <path>`.
 - **manual metadata**: if the user supplied `title=...` etc., construct the candidate JSON by hand.
-- Optionally enrich any candidate:
+- **Always enrich the candidate before ingesting** (venue policy, CLAUDE.md rule 11 /
+  `config/metadata_schema.md` → "Venue policy"):
   `python3 scripts/fetch_openalex.py --enrich '<cand json>'` then
   `python3 scripts/fetch_semantic_scholar.py --enrich '<cand json>'`.
+  If `venue` is still `arXiv` afterwards, check OpenReview / ACL Anthology / the PDF header
+  ("Published as a conference paper at …") and set `venue: {name, status, year}` in the
+  candidate JSON by hand when the paper is accepted or published. `arXiv` stays only when
+  nothing is found.
 
 If you cannot resolve a title, still proceed — create the record with what's known
 and mark missing fields "Not reported".

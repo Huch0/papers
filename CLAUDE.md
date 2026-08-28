@@ -45,6 +45,16 @@ user's reading workflow. It is driven by slash-command skills (`/daily-papers`,
     reciprocal (use `scripts/knowledge.py`, don't hand-wire), preserve existing prose
     (append/refine, never overwrite the user's notes), and write knowledge in English.
     `knowledge/{INDEX,BY_TAG,BY_PAPER}.md` are derived — regenerate, don't hand-edit.
+11. **`venue` is where the paper was accepted/published, never where it was fetched from.**
+    `arXiv` is a *source*, not a venue: it is allowed in `venue.name` only when no
+    acceptance or publication is known after checking. Before ingesting or marking a paper
+    (`/add-paper`, `/milestone-papers`, `/daily-papers`), enrich the candidate
+    (`fetch_semantic_scholar.py --enrich`, `fetch_openalex.py --enrich`, OpenReview) and, for
+    seeds you curate by hand, verify the venue outside arXiv (ACL Anthology, OpenReview,
+    proceedings page, publisher DOI). Record `venue.status` (`accepted` / `under_review` /
+    `preprint`) and `venue.year` accordingly; use `"Not reported"` only when nothing is found.
+    Policy + procedure: `config/metadata_schema.md` → "Venue policy". Set 2026-08-28 by the
+    user after the interactive_component_synthesis path was ingested with `arXiv` throughout.
 
 ## How the pieces fit
 - `config/` — single source of truth for interests, sources, venues, scoring, tags,

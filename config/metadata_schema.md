@@ -30,6 +30,39 @@ metadata produces a **new version directory** (`v2`, `v3`, ...). PDFs and summar
 
 ---
 
+## Venue policy (user decision, 2026-08-28)
+
+`venue` records **where the paper was accepted or published**, prioritized over where it
+was fetched from. Concretely:
+
+- `venue.name` = the conference/journal/workshop that accepted or published the paper
+  (canonical names from `config/venues.yaml`, e.g. `ICLR`, `NeurIPS`, `ACL Findings`,
+  `FSE`, `Nature`). Put `arXiv` there **only** when, after checking, no acceptance or
+  publication is known. "The candidate came from arXiv" is never a reason to write `arXiv`.
+- `venue.status` = `accepted` / `under_review` / `preprint` / `unknown` to match; `venue.year`
+  = the venue year (may differ from the arXiv year). `tier` is derived by `ingest.py` from
+  `venues.yaml`.
+- Version-level `metadata.yaml.venue` (a string) follows the same rule for that version.
+  Per the versioning rule above, `arXiv → <real venue>` is a *material* change and
+  `ingest.py` opens a new version dir for it — that is expected, not a duplicate.
+- Sources of truth for a venue, in order: publisher/proceedings page or DOI, ACL Anthology,
+  OpenReview decision, Semantic Scholar / OpenAlex `venue`, the paper's own header
+  ("Published as a conference paper at …"). arXiv `journal_ref` counts; an arXiv comment
+  ("under review") does not make it accepted.
+- Procedure (agents): after `fetch_arxiv.py`, always run
+  `fetch_semantic_scholar.py --enrich` (and `fetch_openalex.py --enrich`) before
+  `ingest.py`; for hand-curated seeds (`config/milestones.yaml`, `/add-paper` manual
+  metadata) verify the venue outside arXiv and set `venue` in the candidate JSON. Do not
+  guess (rule 7): if unverifiable, `arXiv` + `status: preprint` is the honest value.
+- Known debt (2026-08-28): the `interactive_component_synthesis` path (63 seeds) was
+  ingested without enrichment, so 55 records say `arXiv` although many are published
+  (e.g. WebDevJudge ICLR 2026, PlayCoder FSE 2026, WebGen-Bench NeurIPS 2025, ReLook
+  ACL 2026, Interaction2Code ASE 2025, Reflexion NeurIPS 2023, CodeAct ICML 2024,
+  MatPlotAgent ACL 2024 Findings). Fix by re-ingesting enriched candidates; see
+  `logs/system_changes.md` (2026-08-28) for the verified list.
+
+---
+
 ## `paper.yaml` (paper-level, authoritative)
 
 ```yaml
@@ -47,11 +80,11 @@ primary_ids:
 canonical_urls: []    # list[str]
 topic_groups: []      # list[str], subset of config/interests.yaml topic_groups
 tags: []              # list[str], ideally from config/tag_taxonomy.yaml
-venue:
-  name:               # str | null
+venue:                # see "Venue policy" above: the ACCEPTED/PUBLISHED venue, not the source
+  name:               # str | null  — canonical venue name; "arXiv" only if nothing else is known
   tier:               # A_star | strong_preprint_signal | workshop_or_minor | unknown | null
   status:             # accepted | rejected | under_review | preprint | unknown | null
-  year:               # int | null
+  year:               # int | null  — venue year (may differ from arXiv year)
 user:
   read_status: unread # unread | reading | read | abandoned
   triage_label:       # MUST_READ | READ_SOON | SKIM | TRACK_ONLY | SKIP | null
@@ -98,7 +131,7 @@ version_key:
 title:
 authors: []
 abstract:               # str | "Not reported"
-venue:
+venue:                  # str — accepted/published venue for this version ("Venue policy" above)
 year:
 source:
 source_url:

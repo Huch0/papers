@@ -69,3 +69,9 @@ researchers who wrote the paper). Resolved from the git identity via
 The external URL to a paper's PDF or landing page (arXiv or published venue). The project
 links to Source links; it does not host or redistribute downloaded PDFs in the shared
 repo. (Downloaded PDFs remain local-only inputs to the Harness.)
+
+## Venue
+Where a paper was **accepted or published** (conference, journal, workshop), recorded in
+`venue` on the Authoritative record. Distinct from the *source* it was fetched from: arXiv
+is a source, and appears as a Venue only when no acceptance/publication is known
+(`config/metadata_schema.md` → "Venue policy").

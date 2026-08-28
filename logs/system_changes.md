@@ -398,3 +398,33 @@ Each entry: date, trigger, change, files touched, migration status.
   (grouped by tier, linking to the summary page / source / arXiv) and a `#n` badge on
   the matching steps of the era path. `lib/catalog.ts` gains `ReadingStep`.
 - Migration: none (additive config; derived files regenerated).
+
+## 2026-08-28 — Venue policy: accepted/published venue over arXiv
+- Trigger: the user noticed that every paper on the `interactive_component_synthesis`
+  reading path carries `venue: arXiv` (55 of 63 seeds; paper-level and version-level),
+  including papers with verified acceptances, because the milestone seeds were ingested
+  straight from `fetch_arxiv.py` without Semantic Scholar / OpenAlex enrichment. Decision:
+  `venue` must be the venue the paper was accepted to / published in; `arXiv` only when
+  nothing else is known after checking.
+- CLAUDE.md: new non-negotiable rule 11. config/metadata_schema.md: "Venue policy" section
+  + field comments. CONTEXT.md: `Venue` glossary term. .claude/skills/add-paper and
+  milestone-papers: enrichment before ingest is mandatory; hand-set `venue` for known
+  published papers.
+- Migration: none in this change (docs/config only). **Pending data fix** for the path —
+  re-ingest enriched candidates (arXiv → venue is a material change; ingest.py opens a new
+  version). Venues verified outside arXiv on 2026-08-27 (advisor-deck sweep):
+  Interaction2Code ASE 2025 · WebGen-Bench NeurIPS 2025 (D&B, oral) · WebGen-Agent ICLR
+  2026 · ReLook ACL 2026 · WebDevJudge ICLR 2026 (oral) · UI2Code^N ICML 2026 · PlayCoder
+  FSE 2026 (Proc. ACM Softw. Eng.) · Vibe Code Bench ACM CAIS 2026 · MatPlotAgent ACL 2024
+  Findings · Design2Code NAACL 2025 · ChartMimic ICLR 2025 · Self-Debugging ICLR 2024 ·
+  Reflexion NeurIPS 2023 · CodeAct ICML 2024 · CodeRL NeurIPS 2022 · LEVER ICML 2023 ·
+  RLEF ICML 2025 · SWE-bench ICLR 2024 (oral) · SWE-Gym ICML 2025 · SWE-RL NeurIPS 2025 ·
+  DeepSeek-R1 Nature 2025 (already recorded). Still preprints as of 2026-08-27 (keep
+  `arXiv`): ArtifactsBench (ICLR 2026 submission, decision not public), VF-Coder, Play2Code,
+  WebRISE, WebGrader, UniCoder, Visual-ERM, WorldCoder-Bench, GameGen-Verifier,
+  GameXpert-Bench, InteractScience, FrontendBench, Web-Bench, I-WebGenBench, VISTA,
+  DiagEval, DiffCodeGen, Semantic Voting, WebGameBench, LLMVue. The remaining seeds
+  (pix2code, Sketch2Code, Web2Code, UICoder, DeclarUI, nvBench, Plot2Code, ChartCoder,
+  ChartMaster, C2, MLLM-as-a-Judge, VisualWebArena, OSWorld, SWE-agent, OpenHands,
+  AgentCoder, S*, ReVeal, Multi-Agent Web GUI, McKeeman 1998) need their venue looked up
+  before re-ingest.

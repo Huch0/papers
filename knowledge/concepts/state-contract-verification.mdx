@@ -1,0 +1,73 @@
+---
+name: state-contract-verification
+title: State-Contract Verification
+aliases:
+- exposed-state verification
+- state interface
+- state injection
+tags:
+- verification
+- interactive-ui
+related_papers:
+- arxiv-2606.01869
+- arxiv-2605.07442
+- arxiv-2606.03220
+- arxiv-2608.06474
+related_concepts:
+- agent-as-a-verifier
+- model-based-gui-testing
+- mutation-hardened-checks
+- differential-testing
+created: '2026-08-28T08:33:42Z'
+updated: '2026-08-28T08:52:47Z'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+## Intuition
+State-contract verification checks a program by reading its internal state before and after each action, against an agreed interface, instead of judging pixels. Picture a generated basketball mini-game: the checker presses the launch key and does not ask a vision model whether the ball "looks like it flew". It reads `phase`, `ballVelocity`, and `score` from a global the program was told to expose, and asserts that the phase went idle to charging to flying to scored-or-missed, that the velocity matches the requested launch angle, and that the score and the on-screen counter agree. Correctness becomes a set of numeric assertions over state deltas, which are cheap, deterministic, and hard to fake with a pretty frame.
+
+## Details
+Why this is needed for canvas programs and not for ordinary pages: an HTML page keeps its state in the <Term def="Document Object Model: the browser's live tree of elements, attributes, and text, which any script or test tool can query">DOM</Term>, which the browser maintains and any test can query or subscribe to. A <Term def="a single HTML element the program paints pixels into; the browser knows nothing about what the pixels represent">canvas</Term> or <Term def="the browser's GPU rendering API; a Three.js scene ends up as a stream of triangles drawn into one canvas">WebGL</Term> program draws into one element and keeps every object, velocity, and phase inside JavaScript variables the browser never sees. The DOM shows only peripheral buttons and labels. So either you look at pixels, or you ask the program to publish its state through a contract.
+
+<Definition term="Behavioral state contract">
+A contract for task <M tex="\tau" /> is a tuple <M tex="C_\tau = (\Sigma, A, \Phi)" />: a state interface schema <M tex="\Sigma" /> (which variables must be readable, e.g. a global object), a scripted action sequence <M tex="A = (a_1, \dots, a_n)" />, and assertions <M tex="\Phi = \{\phi_i\}" /> over snapshots. The checker records <M tex="s_{\text{before}}" />, applies <M tex="a_i" />, records <M tex="s_{\text{after}}" />, and evaluates each <M tex="\phi_i(s_{\text{before}}, s_{\text{after}})" />. Each assertion is a <Term def="Hoare triple: if the precondition P holds and command a runs, the postcondition Q holds afterwards">Hoare triple</Term> <M tex="\{P\}\, a\, \{Q\}" /> with <M tex="P" /> and <M tex="Q" /> written over the exposed state. Only <M tex="\Sigma" /> is shown to the generator; <M tex="A" /> and <M tex="\Phi" /> stay hidden.
+</Definition>
+
+Three design points make it work. The schema is public but the assertions are hidden, so the generator cannot special-case the test. Actions include a "physics-step" command and the task demands a fixed timestep, so trajectories are reproducible frame by frame rather than tied to wall-clock timing. And the contract itself must be validated, otherwise a lax assertion passes anything; that is [mutation-hardened-checks](../mutation-hardened-checks/).
+
+Two variants bracket a spectrum. A requirement-side contract describes observable states and transitions without naming implementation details, so one contract applies to any implementation; an implementation-side contract requires the program to conform to a named interface. A third move, <Term def="writing a constructed state into the running program so a check can start from its precondition without playing to it">state injection</Term>, treats the interface as writable as well as readable.
+
+## In the papers
+<Novelty>[WorldCoder-Bench](../../papers/arxiv-2606.01869/) is the implementation-side instance for Three.js worlds.</Novelty> Each program must expose a global such as `window.__3D_STATE__` reporting coordinates, velocities, modes, counters, and interaction flags (§3.3); StateProbe runs the page in headless Chromium, checks that a WebGL context and render loop exist, then applies deterministic scripted actions, snapshotting state before and after each and checking hidden assertions over the delta (§3.3). The schema is visible, the contract hidden (Fig. 5); outcomes are RUNTIME_CRASH, CHECK_FAIL, or CHECK_PASS (§3.4). <Finding src="Tab. 2">Against this ground truth, DOM-only inspection correlates at Kendall tau-b of minus 0.021, screenshot plus VLM at minus 0.068, and an 8-step agent at +0.111 while passing 45.6% of low-coverage outputs.</Finding> <Finding src="§4.5">83.6% of transition failures are state-schema drift (42.8%) or broken interaction chains (40.8%), not missing scene elements.</Finding> The case study in App. D makes the timestep point concrete: a model advanced physics with `clock.getDelta()` instead of the prescribed fixed 1/60 s step, so the hoop-pass assertion fired at the wrong moment while the frame looked right (Fig. 10).
+
+<Novelty>[GameGen-Verifier](../../papers/arxiv-2605.07442/) adds injection.</Novelty> A keypoint is a natural-language Hoare-style triple <M tex="(P, a, Q)" /> that must be constructible, bounded, and verifiable (§4.1); it is grounded into a unit <M tex="(s_k, i_k, y_k)" /> whose state <M tex="s_k" /> is synthesized from the game's parameter structure and patched into the runtime, turning a reachability problem into a configuration problem (§4.2). The injection contract needs only two capabilities: control which entities exist and what values they hold. Verdicts come from a VLM judge plus programmatic assertions over exposed state and logs (§4.1).
+
+[WebRISE](../../papers/arxiv-2606.03220/) is the requirement-side instance: its Interaction Contract Graph <M tex="G_\tau = (S_\tau, T_\tau, \Phi_\tau, M_\tau)" /> (Eq. 3) defines states as requirement-relevant observable configurations, not DOM snapshots, and each transition carries preconditions, DOM assertions, and visual postconditions (Eq. 4); see [model-based-gui-testing](../model-based-gui-testing/). <Related>[WebGrader](../../papers/arxiv-2608.06474/) derives per-request executable Flow Contracts and collects DOM, visual, response, and persistent-state evidence along one browser trajectory, issuing Pass only after the requested transition is observed (Abstract).</Related>
+
+## Pitfalls / open questions
+- A readable interface is also forgeable: a program can write the expected values into the global without rendering them. WorldCoder pairs state probes with a live-WebGL check; stronger pairing with visual evidence is open.
+- "Schema drift" counts as failure: fair for a benchmark, but a repair loop should separate "wrong behavior" from "ignored the interface".
+- Hidden contracts cannot be handed to the generator for self-repair. <FollowUp>What a public, mutation-hardened subset of the contract would do to generation quality is untested.</FollowUp>
+- <Caveat>Injection needs white-box access and a parameter structure the verifier can read; obfuscated or engine-native state resists it (GameGen-Verifier §6).</Caveat>
+
+## Glossary
+- **DOM** — the browser's live element tree, queryable by scripts and test tools.
+- **Canvas** — a single element the program paints pixels into; its contents are opaque to the browser.
+- **WebGL** — the browser's GPU rendering API; Three.js scenes render through it into one canvas.
+- **State interface / schema** — the set of runtime variables a program must expose (e.g. a global object).
+- **Behavioral contract** — schema plus hidden action sequence plus assertions over before/after state.
+- **Hoare triple** — if precondition P holds and action a runs, postcondition Q holds afterwards.
+- **State delta** — the difference between the state snapshot before and after an action.
+- **Fixed timestep** — advancing simulation by a constant step per tick so trajectories do not depend on frame rate.
+- **State injection** — writing a constructed state into the running program so a check can start from its precondition.
+- **State-schema drift** — the program's exposed state deviates from the required schema.
+
+
+
+
+
+
+
+

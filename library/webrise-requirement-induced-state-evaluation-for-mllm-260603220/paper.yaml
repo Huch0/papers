@@ -51,7 +51,11 @@ milestone:
   significance: Interaction-contract graph (states, transitions, assertions); visual fidelity != behavioral
     correctness.
   subarea: interactive_ui
-knowledge_concepts: []
+knowledge_concepts:
+- llm-as-a-judge
+- state-contract-verification
+- model-based-gui-testing
+- mutation-hardened-checks
 versions:
 - version_key: v1
   version_label: arXiv v1
@@ -68,7 +72,7 @@ versions:
   summary_status: full
   extraction_status: full
   created_at: '2026-08-25T12:49:10Z'
-  updated_at: '2026-08-25T12:55:04Z'
+  updated_at: '2026-08-28T08:56:51Z'
 relations:
   duplicate_candidates: []
   related_papers: []

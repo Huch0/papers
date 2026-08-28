@@ -93,6 +93,9 @@ Tasks run inside real-OS VMs (Ubuntu 22.04 main set; Windows partial; macOS supp
 ## Implications
 OSWorld generalizes <Related>WebArena / VisualWebArena (web-only), InterCode (code), and AssistGUI (non-interactive desktop)</Related> into a single real full-desktop, cross-app, interactive harness, and it has become the de facto standard for evaluating computer-use agents. The execution-based per-example checker pattern is directly reusable for any GUI/CLI agent eval. <FollowUp>The grounding bottleneck argues for better GUI grounding or index-based action mapping</FollowUp>; <FollowUp>the empty planner/memory/reflection slot invites scaffolded agents to attack the gap the bare baselines leave open</FollowUp>. Worth chasing: later OSWorld-based agent systems, SeeClick (2401.10935), and GAIA (2311.12983).
 
+
+<FollowUp>Working notes (moved from the reader's notes block, 2026-08-28): The single most load-bearing result: human ~72.36% vs best model 12.24% overall success (Table 5, §4.2). The "strong planning, weak execution" finding (>75% of failures are mouse-click/grounding errors, §5.4) is the most actionable insight for harness/agent design — it argues for better GUI grounding and/or index-based (SoM-like) action mapping, though SoM did not help GPT-4V here at desktop resolution/element density.</FollowUp>
+
 ## Limitations
 - <Caveat>Single-run point estimates with no variance/CI/seeds</Caveat>: at temperature 1.0 over 369 tasks, gaps of a few percent (11.21% vs 12.24%) are within plausible noise.
 - <Caveat>Checkers retain residual false positives/negatives</Caveat>, explicitly acknowledged (§3.3); the infeasible-task score is inflated by spurious `FAIL` outputs, so absolute numbers carry an unmeasured error bar.
@@ -115,6 +118,5 @@ OSWorld generalizes <Related>WebArena / VisualWebArena (web-only), InterCode (co
 
 {/* NOTES_START */}
 ### Personal notes
-The single most load-bearing result: human ~72.36% vs best model 12.24% overall success (Table 5, §4.2). The "strong planning, weak execution" finding (>75% of failures are mouse-click/grounding errors, §5.4) is the most actionable insight for harness/agent design — it argues for better GUI grounding and/or index-based (SoM-like) action mapping, though SoM did not help GPT-4V here at desktop resolution/element density.
 {/* NOTES_END */}
 

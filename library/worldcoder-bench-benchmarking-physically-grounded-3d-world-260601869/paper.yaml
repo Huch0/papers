@@ -27,7 +27,13 @@ topic_groups:
 - interactive_component_synthesis
 - llm
 tags:
+- feedback-behavioral
 - foundational
+- interactive-component-survey
+- model-closed
+- model-open
+- output-interactive
+- training-prompt
 venue:
   name: arXiv
   tier: workshop_or_minor
@@ -45,7 +51,10 @@ milestone:
     fixed timestep, scripted actions, hidden mutation-hardened state contracts. Nearest neighbor to the
     contract idea.
   subarea: state_contract_verification
-knowledge_concepts: []
+knowledge_concepts:
+- agent-as-a-verifier
+- state-contract-verification
+- mutation-hardened-checks
 versions:
 - version_key: v1
   version_label: arXiv v2
@@ -62,7 +71,7 @@ versions:
   summary_status: full
   extraction_status: full
   created_at: '2026-08-27T04:51:03Z'
-  updated_at: '2026-08-27T05:01:15Z'
+  updated_at: '2026-08-28T08:56:51Z'
 relations:
   duplicate_candidates: []
   related_papers: []

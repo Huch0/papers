@@ -35,7 +35,8 @@ milestone:
   significance: Execution-fingerprint clustering of candidates beats textual majority voting by 19-52
     pp (algorithmic code).
   subarea: candidate_selection
-knowledge_concepts: []
+knowledge_concepts:
+- differential-testing
 versions:
 - version_key: v1
   version_label: arXiv v1

@@ -40,7 +40,8 @@ milestone:
   significance: 'LLMVue: model-based GUI testing (page-transition graph) with LLM help - for existing
     Vue.js apps, not generated code.'
   subarea: programmatic_behavior_tests
-knowledge_concepts: []
+knowledge_concepts:
+- model-based-gui-testing
 versions:
 - version_key: v1
   version_label: arXiv v1

@@ -26,7 +26,14 @@ topic_groups:
 - interactive_component_synthesis
 - software_engineering_agents
 tags:
+- feedback-behavioral
+- feedback-visual
 - foundational
+- interactive-component-survey
+- model-closed
+- model-open
+- output-interactive
+- training-prompt
 venue:
   name: arXiv
   tier: workshop_or_minor
@@ -43,7 +50,11 @@ milestone:
   significance: 'Verifies generated games by injecting and observing runtime state with Hoare-style keypoints
     (P, a, Q): accuracy 0.92 vs 0.59 for an agent-as-verifier, 16.6x faster.'
   subarea: state_contract_verification
-knowledge_concepts: []
+knowledge_concepts:
+- agent-as-a-verifier
+- state-contract-verification
+- mutation-hardened-checks
+- model-based-gui-testing
 versions:
 - version_key: v1
   version_label: arXiv v1
@@ -60,7 +71,7 @@ versions:
   summary_status: full
   extraction_status: full
   created_at: '2026-08-27T04:51:15Z'
-  updated_at: '2026-08-27T05:02:11Z'
+  updated_at: '2026-08-28T08:56:51Z'
 relations:
   duplicate_candidates: []
   related_papers: []

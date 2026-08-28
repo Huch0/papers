@@ -32,7 +32,8 @@ milestone:
   significance: 'McKeeman 1998 (Digital Technical Journal): run independent implementations on the same
     inputs and treat disagreement as the signal - the origin of differential testing.'
   subarea: candidate_selection
-knowledge_concepts: []
+knowledge_concepts:
+- differential-testing
 versions:
 - version_key: v1
   version_label: openalex

@@ -38,7 +38,8 @@ milestone:
   significance: Executes all N candidates on fuzzed inputs, clusters them by behavior and picks the medoid
     of the largest cluster (algorithmic code).
   subarea: candidate_selection
-knowledge_concepts: []
+knowledge_concepts:
+- differential-testing
 versions:
 - version_key: v1
   version_label: arXiv v1

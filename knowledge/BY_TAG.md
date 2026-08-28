@@ -9,11 +9,31 @@
 ## computer-use-agents (1)
 - [Web-Agent Generalization (cross-task / site / domain)](concepts/web-agent-generalization.md)
 
-## evaluation (1)
+## evaluation (3)
+- [Agent-as-a-Verifier](concepts/agent-as-a-verifier.md)
+- [LLM-as-a-Judge](concepts/llm-as-a-judge.md)
 - [Web-Agent Generalization (cross-task / site / domain)](concepts/web-agent-generalization.md)
+
+## interactive-ui (3)
+- [Agent-as-a-Verifier](concepts/agent-as-a-verifier.md)
+- [Model-Based GUI Testing](concepts/model-based-gui-testing.md)
+- [State-Contract Verification](concepts/state-contract-verification.md)
+
+## llm-judge (1)
+- [LLM-as-a-Judge](concepts/llm-as-a-judge.md)
 
 ## swe-agent (1)
 - [Agent-Computer Interface (ACI)](concepts/agent-computer-interface-aci.md)
+
+## testing (3)
+- [Differential Testing](concepts/differential-testing.md)
+- [Model-Based GUI Testing](concepts/model-based-gui-testing.md)
+- [Mutation-Hardened Checks](concepts/mutation-hardened-checks.md)
+
+## verification (3)
+- [Differential Testing](concepts/differential-testing.md)
+- [Mutation-Hardened Checks](concepts/mutation-hardened-checks.md)
+- [State-Contract Verification](concepts/state-contract-verification.md)
 
 ## verifier (1)
 - [Planner–Executor–Verifier](concepts/planner-executor-verifier.md)

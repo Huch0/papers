@@ -44,7 +44,8 @@ milestone:
   era: foundational
   significance: Reliability limits of multimodal judges.
   subarea: vlm_critic_probing
-knowledge_concepts: []
+knowledge_concepts:
+- llm-as-a-judge
 versions:
 - version_key: v1
   version_label: arXiv v3

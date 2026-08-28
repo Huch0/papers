@@ -51,7 +51,8 @@ milestone:
   era: expansion
   significance: Step-GRPO on a 7B open code model with screenshot + GUI-agent functional feedback.
   subarea: interactive_ui
-knowledge_concepts: []
+knowledge_concepts:
+- agent-as-a-verifier
 versions:
 - version_key: v1
   version_label: arXiv v1
@@ -68,7 +69,7 @@ versions:
   summary_status: full
   extraction_status: full
   created_at: '2026-08-25T12:48:47Z'
-  updated_at: '2026-08-25T12:54:42Z'
+  updated_at: '2026-08-28T08:56:52Z'
 relations:
   duplicate_candidates: []
   related_papers: []

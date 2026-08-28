@@ -23,7 +23,14 @@ canonical_urls:
 topic_groups:
 - interactive_component_synthesis
 tags:
+- feedback-behavioral
+- feedback-visual
 - foundational
+- interactive-component-survey
+- model-closed
+- model-open
+- output-interactive
+- training-prompt
 venue:
   name: ICLR
   tier: A_star
@@ -41,7 +48,9 @@ milestone:
     screenshots, rubrics and an interactive browser agent do not close the gap (the agent does worse,
     60.6%).'
   subarea: judge_reliability
-knowledge_concepts: []
+knowledge_concepts:
+- llm-as-a-judge
+- agent-as-a-verifier
 versions:
 - version_key: v1
   version_label: arXiv v3
@@ -58,7 +67,7 @@ versions:
   summary_status: full
   extraction_status: full
   created_at: '2026-08-27T04:50:52Z'
-  updated_at: '2026-08-27T05:00:13Z'
+  updated_at: '2026-08-28T08:56:51Z'
 relations:
   duplicate_candidates: []
   related_papers: []

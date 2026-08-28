@@ -24,10 +24,14 @@ topic_groups:
 - software_engineering_agents
 tags:
 - execution-based-eval
+- feedback-run
 - foundational
-- tde-related-work
-- verifier
 - interactive-component-survey
+- model-closed
+- output-static
+- tde-related-work
+- training-sft
+- verifier
 venue:
   name: ICML
   tier: A_star
@@ -58,9 +62,9 @@ versions:
   pdf_sha256: 9f7535fae850deaedbb0215e28f82c66cbca2305c3006ea42f3bdb41a52290ee
   pdf_bytes: 1891989
   summary_status: full
-  extraction_status: full
+  extraction_status: none
   created_at: '2026-08-13T07:14:30Z'
-  updated_at: '2026-08-13T10:10:29Z'
+  updated_at: '2026-08-28T08:56:52Z'
 relations:
   duplicate_candidates: []
   related_papers: []

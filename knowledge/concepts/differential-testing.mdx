@@ -1,0 +1,67 @@
+---
+name: differential-testing
+title: Differential Testing
+aliases:
+- N-version comparison
+- cross-candidate testing
+tags:
+- verification
+- testing
+related_papers:
+- openalex-W109452506
+- arxiv-2605.20473
+- arxiv-2605.08680
+related_concepts:
+- state-contract-verification
+- mutation-hardened-checks
+created: '2026-08-28T08:33:45Z'
+updated: '2026-08-28T08:52:51Z'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+## Intuition
+Differential testing finds bugs without knowing the right answer, by running several implementations of the same specification on the same inputs and treating disagreement as the signal. If three C compilers accept a program and two produce a binary that prints 7 while the third prints 8, you do not need to know the correct output to know something is wrong. The same trick applies to a language model that samples five solutions to one task: run all five on generated inputs, and the ones whose behavior matches each other are more likely right than the odd one out. The method is only as good as the inputs you feed it and as independent as the implementations are.
+
+## Details
+The underlying difficulty is the <Term def="for many programs there is no cheap, trusted way to decide whether an output is correct">oracle problem</Term>. Differential testing sidesteps it with a <Term def="a substitute for a correct-output oracle: another implementation of the same spec, whose output is compared rather than trusted">pseudo-oracle</Term>: another implementation.
+
+<Definition term="Differential test and behavioral fingerprint">
+Given implementations <M tex="I_1, \dots, I_n" /> of one specification and an input <M tex="x" />, a differential test flags <M tex="x" /> if <M tex="\exists\, i \ne j:\ I_i(x) \not\equiv I_j(x)" /> under a chosen output-equivalence relation <M tex="\equiv" /> (exact match, tolerance, or a normalized form). Over an input set <M tex="X = \{x_1, \dots, x_m\}" /> each implementation has a fingerprint <M tex="f(I) = (I(x_1), \dots, I(x_m))" />; candidates are grouped by fingerprint equality, and selection picks a representative of the largest group.
+</Definition>
+
+Four ingredients: (1) several implementations that were produced independently, or at least sampled with enough diversity; (2) shared inputs, from random generation, <Term def="random input generation, optionally guided by which code paths new inputs reach">fuzzing</Term>, or LLM-written inputs; (3) an equivalence relation on outputs; (4) a policy on disagreement, which is "report and minimize" in classic use and "cluster and vote" when selecting among LLM candidates.
+
+In its classic form (McKeeman, 1998, described here from general knowledge since no extraction of the paper is in the library) the implementations were independent C compilers, the inputs were randomly generated programs, and each disagreement was shrunk to a minimal reproducing case before a human triaged which compiler was at fault. Disagreement is evidence of a bug somewhere, never a verdict on which side is right; that judgment still needs a human or a spec.
+
+Where it breaks: correlated failures (all implementations wrong the same way, common when every candidate comes from one model with one prompt); inputs that never exercise the differing behavior; nondeterministic outputs; and interactive programs, where "output" must first be defined, typically as exposed state after a scripted action sequence, see [state-contract-verification](../state-contract-verification/).
+
+## In the papers
+<Related>[McKeeman, Differential Testing for Software](../../papers/openalex-W109452506/) (Digital Technical Journal, 1998) is the origin and gave the technique its name.</Related>
+
+<Novelty>[DiffCodeGen](../../papers/arxiv-2605.20473/) turns it into a test-time scaling selector.</Novelty> Candidates are drawn with varied sampling and prompting strategies; coverage-guided fuzzing synthesizes inputs with no existing tests and no extra LLM calls; every candidate runs on every input; candidates are clustered by behavioral similarity; the <Term def="the member of a cluster with the smallest total distance to the other members">medoid</Term> of the largest cluster is returned (Abstract). Selection costs almost no tokens, which is the point relative to LLM-judged reranking. <Finding src="Abstract">Consistent gains across four LLMs, competitive with state-of-the-art test-time scaling at a fraction of the time and tokens.</Finding> (Extraction not available in the library; grounded in the abstract only.)
+
+<Finding src="Semantic Voting, Abstract">[Semantic Voting](../../papers/arxiv-2605.08680/) compares output-pattern majority voting, weighted voting, MBR-Exec, and SemanticVote (clustering by execution fingerprints on LLM-generated inputs) across 18 configurations: the best execution-based selector beats textual majority voting by 19 to 52 points on every configuration, and every execution-based selector by at least 18.</Finding> <Finding src="Semantic Voting, Abstract">Once candidates are executed on diverse inputs, the aggregation rule barely matters (the three execution-based rules are statistically indistinguishable); input quality does, with sketch-based input generation beating direct LLM generation by 0.6 to 2.1 points and random fuzzing by up to 11.3.</Finding> <Finding src="Semantic Voting, Abstract">Deeper thinking helps majority voting by 12 points but leaves execution-based selection flat or worse, because candidate diversity falls.</Finding> The paper frames selection as a signal-quality problem, not an aggregation problem. (Also grounded in the abstract only.)
+
+## Pitfalls / open questions
+- The largest cluster is a heuristic, not a proof. When the model is systematically wrong the majority is wrong; the McKeeman use (report, do not vote) is the honest one when a human is available.
+- Diversity is load-bearing. Anything that collapses samples toward one behavior (low temperature, long reasoning, one prompt) removes the signal.
+- Input generation is where effort pays; a weak fuzzer produces fingerprints that agree trivially.
+- <FollowUp>For UI and canvas programs, differential testing needs a shared observable: a state contract makes candidates comparable, and the candidate set makes a cheap oracle for [mutation-hardened-checks](../mutation-hardened-checks/).</FollowUp>
+- <Caveat>Disagreement finds bugs in at least one implementation; agreement proves nothing.</Caveat>
+
+## Glossary
+- **Oracle problem** — there is often no cheap, trusted way to decide whether an output is correct.
+- **Pseudo-oracle** — another implementation of the same spec, used for comparison rather than trusted as truth.
+- **Differential test** — running multiple implementations on the same input and flagging any disagreement.
+- **Behavioral fingerprint** — the vector of a candidate's outputs over a shared input set; equal fingerprints define a cluster.
+- **Fuzzing** — random input generation, optionally guided by which code paths new inputs reach.
+- **Medoid** — the cluster member with the smallest total distance to the other members.
+- **MBR-Exec** — minimum-Bayes-risk selection where risk is measured by execution disagreement with the other candidates.
+- **Test-time scaling** — spending more compute at inference (more samples, more selection) to improve the final answer.
+
+
+
+
+

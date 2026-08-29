@@ -1,0 +1,362 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Deterministic verifier design for interactive artifacts</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Hanken+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet"><script>
+      (function () {
+        var d = document.documentElement, ls = window.localStorage;
+        try {
+          var t = ls.getItem("theme");
+          var prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+          if (t ? t === "dark" : prefersDark) d.classList.add("dark");
+          var p = ls.getItem("theme-preset"); if (p && p !== "readable") d.setAttribute("data-theme", p);
+          var f = ls.getItem("theme-font"); if (f) d.setAttribute("data-font", f);
+          var a = ls.getItem("theme-accent");
+          if (a) { d.style.setProperty("--accent", a); d.style.setProperty("--tldr-bd", a); }
+          var den = ls.getItem("theme-density");
+          if (den) {
+            d.setAttribute("data-density", den);
+            d.style.setProperty("--ui-scale", den === "compact" ? "94%" : den === "spacious" ? "112%" : "100%");
+          }
+        } catch (e) {}
+      })();
+    </script><link rel="stylesheet" href="/papers/_astro/index.CHY5Dznc.css"></head> <body> <header class="site"> <div class="wrap"> <h1><a href="/papers/">Paper Library</a></h1> <span class="masthead-tag">· a reading room for agent research</span> <nav><a href="/papers/">Papers</a> <a href="/papers/milestones/">Milestones</a> <a href="/papers/knowledge/">Knowledge</a> <style>astro-island,astro-slot,astro-static-slot{display:contents}</style><script>(()=>{var e=async t=>{await(await t())()};(self.Astro||(self.Astro={})).load=e;window.dispatchEvent(new Event("astro:load"));})();</script><script>(()=>{var A=Object.defineProperty;var g=(i,o,a)=>o in i?A(i,o,{enumerable:!0,configurable:!0,writable:!0,value:a}):i[o]=a;var d=(i,o,a)=>g(i,typeof o!="symbol"?o+"":o,a);{let i={0:t=>m(t),1:t=>a(t),2:t=>new RegExp(t),3:t=>new Date(t),4:t=>new Map(a(t)),5:t=>new Set(a(t)),6:t=>BigInt(t),7:t=>new URL(t),8:t=>new Uint8Array(t),9:t=>new Uint16Array(t),10:t=>new Uint32Array(t),11:t=>1/0*t},o=t=>{let[l,e]=t;return l in i?i[l](e):void 0},a=t=>t.map(o),m=t=>typeof t!="object"||t===null?t:Object.fromEntries(Object.entries(t).map(([l,e])=>[l,o(e)]));class y extends HTMLElement{constructor(){super(...arguments);d(this,"Component");d(this,"hydrator");d(this,"hydrate",async()=>{var b;if(!this.hydrator||!this.isConnected)return;let e=(b=this.parentElement)==null?void 0:b.closest("astro-island[ssr]");if(e){e.addEventListener("astro:hydrate",this.hydrate,{once:!0});return}let c=this.querySelectorAll("astro-slot"),n={},h=this.querySelectorAll("template[data-astro-template]");for(let r of h){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("data-astro-template")||"default"]=r.innerHTML,r.remove())}for(let r of c){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("name")||"default"]=r.innerHTML)}let p;try{p=this.hasAttribute("props")?m(JSON.parse(this.getAttribute("props"))):{}}catch(r){let s=this.getAttribute("component-url")||"<unknown>",v=this.getAttribute("component-export");throw v&&(s+=` (export ${v})`),console.error(`[hydrate] Error parsing props for component ${s}`,this.getAttribute("props"),r),r}let u;await this.hydrator(this)(this.Component,p,n,{client:this.getAttribute("client")}),this.removeAttribute("ssr"),this.dispatchEvent(new CustomEvent("astro:hydrate"))});d(this,"unmount",()=>{this.isConnected||this.dispatchEvent(new CustomEvent("astro:unmount"))})}disconnectedCallback(){document.removeEventListener("astro:after-swap",this.unmount),document.addEventListener("astro:after-swap",this.unmount,{once:!0})}connectedCallback(){if(!this.hasAttribute("await-children")||document.readyState==="interactive"||document.readyState==="complete")this.childrenConnectedCallback();else{let e=()=>{document.removeEventListener("DOMContentLoaded",e),c.disconnect(),this.childrenConnectedCallback()},c=new MutationObserver(()=>{var n;((n=this.lastChild)==null?void 0:n.nodeType)===Node.COMMENT_NODE&&this.lastChild.nodeValue==="astro:end"&&(this.lastChild.remove(),e())});c.observe(this,{childList:!0}),document.addEventListener("DOMContentLoaded",e)}}async childrenConnectedCallback(){let e=this.getAttribute("before-hydration-url");e&&await import(e),this.start()}async start(){let e=JSON.parse(this.getAttribute("opts")),c=this.getAttribute("client");if(Astro[c]===void 0){window.addEventListener(`astro:${c}`,()=>this.start(),{once:!0});return}try{await Astro[c](async()=>{let n=this.getAttribute("renderer-url"),[h,{default:p}]=await Promise.all([import(this.getAttribute("component-url")),n?import(n):()=>()=>{}]),u=this.getAttribute("component-export")||"default";if(!u.includes("."))this.Component=h[u];else{this.Component=h;for(let f of u.split("."))this.Component=this.Component[f]}return this.hydrator=p,this.hydrate},e,this)}catch(n){console.error(`[astro-island] Error hydrating ${this.getAttribute("component-url")}`,n)}}attributeChangedCallback(){this.hydrate()}}d(y,"observedAttributes",["props"]),customElements.get("astro-island")||customElements.define("astro-island",y)}})();</script><astro-island uid="Z1uFEQt" prefix="r3" component-url="/papers/_astro/SyncButton.Dh-l0K_d.js" component-export="default" renderer-url="/papers/_astro/client.CoywhCtL.js" props="{}" ssr client="load" opts="{&quot;name&quot;:&quot;SyncButton&quot;,&quot;value&quot;:true}" await-children><div class="relative inline-block align-middle"><button title="Read-state sync" class="border rounded px-2 py-1 leading-none text-xs hover:text-[var(--accent)]">⇅ Sync</button></div><!--astro:end--></astro-island> <astro-island uid="1yyPOK" prefix="r4" component-url="/papers/_astro/ThemePanel.ClF2RO0c.js" component-export="default" renderer-url="/papers/_astro/client.CoywhCtL.js" props="{}" ssr client="load" opts="{&quot;name&quot;:&quot;ThemePanel&quot;,&quot;value&quot;:true}" await-children><div class="relative inline-block align-middle"><button aria-label="Customize theme" title="Customize theme" class="border rounded px-2 py-1 leading-none text-sm hover:text-[var(--accent)]" style="font-family:var(--font-display)">Aa</button></div><!--astro:end--></astro-island> <astro-island uid="ZydoQf" prefix="r5" component-url="/papers/_astro/ThemeToggle.B8P56gw_.js" component-export="default" renderer-url="/papers/_astro/client.CoywhCtL.js" props="{}" ssr client="load" opts="{&quot;name&quot;:&quot;ThemeToggle&quot;,&quot;value&quot;:true}" await-children><button aria-label="Toggle dark mode" class="text-sm border rounded px-2 py-1">🌙</button><!--astro:end--></astro-island></nav> </div> </header> <main class="wrap"> <h1 class="title">Deterministic verifier design for interactive artifacts</h1> <div class="meta-card" data-pagefind-ignore> <dl> <dt>Aliases</dt><dd>interaction model for verification, verification contract design</dd> <dt>Tags</dt><dd>verification, interactive-component-survey, evaluation-harness</dd> <dt>Linked papers</dt><dd class="related"><a href="/papers/papers/arxiv-2608.06474/">WebGrader: Training LLMs for Web Development with Self-Evolving Programmatic Grader</a><a href="/papers/papers/arxiv-2601.04126/">InfiniteWeb: Scalable Web Environment Synthesis for GUI Agent Training</a><a href="/papers/papers/arxiv-2602.14296/">AutoWebWorld: Synthesizing Infinite Verifiable Web Environments via Finite State Machines</a><a href="/papers/papers/arxiv-2605.26807/">HTMLCure: Turning Browser Experience into State Guided Repair for Interactive HTML</a><a href="/papers/papers/arxiv-2606.01869/">WorldCoder-Bench: Benchmarking Physically Grounded 3D World Synthesis</a><a href="/papers/papers/arxiv-2605.07442/">GameGen-Verifier: Parallel Keypoint-Based Verification for LLM-Generated Games via Runtime State Injection</a><a href="/papers/papers/arxiv-2608.21833/">GameXpert-Bench: How Far Are Coding Agents from Expert Game Development?</a><a href="/papers/papers/arxiv-2606.03220/">WebRISE: Requirement-Induced State Evaluation for MLLM-Generated Web Artifacts</a><a href="/papers/papers/arxiv-2506.13832/">FrontendBench: A Benchmark for Evaluating LLMs on Front-End Development via Automatic Evaluation</a><a href="/papers/papers/arxiv-2505.07473/">Web-Bench: A LLM Code Benchmark Based on Web Standards and Frameworks</a><a href="/papers/papers/arxiv-2605.26144/">VISTA: An End-to-End Benchmark for Visual Spec-to-Web-App Coding Agents</a><a href="/papers/papers/arxiv-2510.09724/">InteractScience: Programmatic and Visually-Grounded Evaluation of Interactive Scientific Demonstration Code Generation</a><a href="/papers/papers/arxiv-2606.00750/">I-WebGenBench : Evaluating Interactivity in LLM-Generated Scientific Web Applications</a></dd> <dt>Related concepts</dt><dd class="related"><a href="/papers/knowledge/state-contract-verification/">State-Contract Verification</a><a href="/papers/knowledge/model-based-gui-testing/">Model-Based GUI Testing</a><a href="/papers/knowledge/mutation-hardened-checks/">Mutation-Hardened Checks</a><a href="/papers/knowledge/differential-testing/">Differential Testing</a><a href="/papers/knowledge/agent-as-a-verifier/">Agent-as-a-Verifier</a><a href="/papers/knowledge/llm-as-a-judge/">LLM-as-a-Judge</a></dd> </dl> <div style="margin-top:.5rem"><span class="author" title="Huch0"><span class="author-label">Curated by</span><a class="who" href="https://github.com/Huch0" target="_blank" rel="noopener"><img class="ava" src="https://github.com/Huch0.png?size=64" width="22" height="22" alt="Chiyeong Heo" loading="lazy"><span class="who-name">Chiyeong Heo</span></a></span></div> </div> <article data-pagefind-body data-pagefind-filter="type:concept"> <h2 id="intuition">Intuition</h2>
+<p>A deterministic verifier answers one question without asking a model for its opinion:
+<em>after this sequence of user actions and this much time, is the program in the state the
+request implies?</em> Thirteen recent papers build such verifiers for generated web pages, games
+and 3D scenes. Each reads the program through a different keyhole — pixels, the
+<span class="term" data-def="Document Object Model: the browser's live tree of elements that any script can query" tabindex="0" aria-label="Document Object Model: the browser's live tree of elements that any script can query">DOM</span>,
+a state object the program was told to expose — and each pays for its keyhole somewhere:
+brittle selectors, a model in the loop, or a spec the program must obey to the letter.</p>
+<p>The proposal here is to stop treating GUIs, games and simulations as different things. All
+three are the same object: a <span class="term" data-def="a process whose next state depends on its current state and an incoming event" tabindex="0" aria-label="a process whose next state depends on its current state and an incoming event">driven process</span>
+with <strong>state</strong>, a vocabulary of <strong>actions</strong>, a <strong>clock</strong>, a source of <strong>randomness</strong>, and a
+picture that is a pure function of state. Front-end engineering settled on exactly this shape
+years ago — Redux reducers, Elm’s <code>update</code>/<code>view</code>, React Testing Library’s “test like a user”
+queries, Playwright’s fake clock — and its test tools are the most mature deterministic
+verifiers of interactive behavior that exist. The verifier below borrows their interaction
+model and adds what generated code needs: a contract the checker can rely on, rules written
+from the request before any code exists, and a way to find rules nobody wrote.</p>
+<h2 id="1-what-makes-an-interactive-artifact-hard-to-verify">1. What makes an interactive artifact hard to verify</h2>
+<p>Four properties, each of which breaks a familiar tool.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Property</th><th>What it breaks</th><th>Example</th></tr></thead><tbody><tr><td><strong>It remembers.</strong> Correctness is a predicate over <em>sequences</em> of actions, not one input–output pair.</td><td>unit tests</td><td>after <code>setK(2)</code> then <code>reset()</code>, <code>k</code> must be 1 again</td></tr><tr><td><strong>It runs on its own.</strong> Time and randomness are inputs the tester did not choose.</td><td>golden outputs, screenshots</td><td>a Flappy Bird whose pipes spawn at random; a timer</td></tr><tr><td><strong>Its output is a picture.</strong> The observable surface is pixels, not data.</td><td>assertions</td><td>a canvas plot — nothing to query</td></tr><tr><td><strong>It may be built many ways.</strong> The same request admits many correct programs.</td><td>selector-bound scripts</td><td><code>#category-select-id</code> exists in one implementation of ten</td></tr></tbody></table>
+<p>Every existing verifier is a choice of which of these four to solve and which to pay for.</p>
+<h2 id="2-how-the-existing-verifiers-are-designed">2. How the existing verifiers are designed</h2>
+<p>Read along five axes — what the check <em>reads</em>, who <em>writes</em> it and when, what it <em>binds</em> to,
+who owns <em>time</em>, and whether a <em>model</em> still decides — the thirteen fall into five families.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Family</th><th>Papers</th><th>Reads / binds to</th><th>Who writes checks</th><th>Time</th><th>Model in verdict</th><th>Where it breaks</th></tr></thead><tbody><tr><td><strong>A · Hooks by fiat</strong></td><td>FrontendBench, Web-Bench, InteractScience</td><td>DOM via ids/classes the prompt dictates</td><td>humans or an LLM offline, hidden</td><td>none</td><td>none (InteractScience’s visual half: VLM)</td><td>coupling imposed and never measured; a correct page built differently fails</td></tr><tr><td><strong>B · Requirement contracts run on the live page</strong></td><td>WebRISE, <a href="../../papers/arxiv-2608.06474/">WebGrader</a></td><td>DOM re-grounded by role/text at run time</td><td>LLM from the requirement, <em>before</em> seeing the page (WebGrader); offline + human check (WebRISE)</td><td>settle delays, timeouts</td><td><strong>an LLM agent executes and an LLM judges</strong> every assertion</td><td>neutrality bought with a model: WebGrader judges at plan, ground and verdict; WebRISE misses 9 of 25 injected defects</td></tr><tr><td><strong>C · State interface required of the program</strong></td><td><a href="../../papers/arxiv-2606.01869/">WorldCoder-Bench</a>, GameXpert/GameFix, <a href="../../papers/arxiv-2601.04126/">InfiniteWeb</a>, <a href="../../papers/arxiv-2602.14296/">AutoWebWorld</a></td><td><code>window.__3D_STATE__</code>; JSON snapshots; <code>localStorage</code> keys; an FSM the site was generated from</td><td>experts, hidden (WorldCoder); the <em>same</em> LLM that wrote the site (InfiniteWeb); nobody checks site-vs-FSM (AutoWebWorld)</td><td><strong>fixed timestep</strong> in the prompt (WorldCoder); <strong>virtual clock</strong> + zero-flake gate (GameFix)</td><td>none</td><td>the interface is a new failure mode — schema drift is 42.8 % of WorldCoder failures; a benchmark can score that, a harness must repair it</td></tr><tr><td><strong>D · State injection</strong></td><td><a href="../../papers/arxiv-2605.07442/">GameGen-Verifier</a></td><td>game state patched in through the runtime, screenshots + logs out</td><td>LLM keypoints <code>(P, a, Q)</code> grounded on the source</td><td>isolated instance per check</td><td><strong>VLM primary</strong>, assertions when possible</td><td>reaching a precondition costs nothing, but the verdict is a picture read by a model; recall 1.0 / precision 0.91 = every error is a missed defect</td></tr><tr><td><strong>E · Task-agnostic probes</strong></td><td>I-WebGenBench, <a href="../../papers/arxiv-2605.26807/">HTMLCure</a>, VISTA</td><td>click every control, watch for any DOM mutation; geometry (IoU)</td><td>nobody per task</td><td>none</td><td>HTMLCure: VLM 20/100; I-WebGenBench: 95/100</td><td>nothing coupled, nothing <em>asserted</em> — HTMLCure’s interactivity score is ≈1.1/10 for every model</td></tr></tbody></table>
+<p>Two patterns cut across the families. <strong>Requirement-first authorship</strong> (WebGrader’s planner
+never sees the site; WorldCoder’s contracts are hidden) is what keeps a check honest; checks
+written <em>with</em> the implementation, by the same model (InfiniteWeb), have no independent
+oracle. And <strong>the verifier is rarely verified</strong>: only WorldCoder mutation-hardens its
+contracts, only WebRISE and WebGrader inject faults, only four papers report agreement with
+humans, and none reports all three.</p>
+<p>The gap: nobody writes checks <em>at generation time for an unseen request</em>, validates them,
+and keeps a model out of the verdict. That is the corner to occupy — but only with a design
+that beats each family on its own axis.</p>
+<h2 id="3-what-software-testing-already-solved">3. What software testing already solved</h2>
+<p>The deterministic-verification problem is old in one industry. Its answers:</p>
+<ul>
+<li><strong>Test like a user, query by meaning.</strong> Testing Library’s rule: “your test should resemble
+how users interact with your code,” and its query priority puts <code>getByRole</code> first and
+<code>getByTestId</code> last. A control is found by <em>role and accessible name</em> (“slider named k”),
+never by class or id — the anti-selector principle, made precise.</li>
+<li><strong>Interaction is an event <em>sequence</em>, not a call.</strong> <code>user-event</code> dispatches what a real
+click dispatches — pointer down, focus, pointer up, click — so wiring bugs surface.</li>
+<li><strong>Settle before you assert.</strong> React’s <code>act()</code> flushes pending updates and effects; Playwright
+locators auto-wait for actionability (attached, visible, stable, enabled) and its
+assertions retry. Flakiness is a missing settle step, not fate.</li>
+<li><strong>Own the clock.</strong> Playwright’s <code>page.clock</code> replaces <code>Date</code>, <code>setTimeout</code>, <code>setInterval</code>,
+<code>requestAnimationFrame</code> and <code>performance</code>, with <code>install</code>, <code>runFor</code>, <code>fastForward</code>,
+<code>pauseAt</code>, <code>setFixedTime</code>. Games learned the same lesson as <em>fix your timestep</em> and
+<em>deterministic replay</em>: seed plus input log reproduces the run byte for byte.</li>
+<li><strong>State changes only through actions.</strong> Redux (<code>reducer(state, action) → state&#39;</code>) and Elm
+(<code>update</code>, <code>view = f(model)</code>) make the program a driven process by construction; a test is
+“dispatch, then assert on state,” and the view is a pure function that can be snapshotted.</li>
+<li><strong>Generate the sequences from a model.</strong> XState’s test model walks a statechart and asserts
+per state; <code>fast-check</code> <code>commands</code> / Hypothesis rule-based state machines run <em>random</em>
+command sequences with preconditions against a model and the real system, then <strong>shrink</strong>
+a failure to the shortest sequence that reproduces it.</li>
+<li><strong>When there is no oracle, use relations.</strong>
+<span class="term" data-def="testing without an exact expected output: check relations between outputs of related inputs (Chen et al., 1998)" tabindex="0" aria-label="testing without an exact expected output: check relations between outputs of related inputs (Chen et al., 1998)">Metamorphic testing</span>
+— doubling the input doubles the peak; reversing the list reverses the result — is how
+numerical and simulation code is tested.</li>
+</ul>
+<p>None of these tools assumes the program was written by a model, so none asks the program to
+carry a contract or writes the tests from a request. That is the part we add.</p>
+<h2 id="4-one-interaction-model-for-gui-game-and-simulation">4. One interaction model for GUI, game and simulation</h2>
+<div class="definition"> <div class="def-head">Definition<span class="def-term"> — Interactive artifact as a driven process</span></div> <div class="def-body"><p>An artifact is <span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">⟨</mo><mi>S</mi><mo separator="true">,</mo><msub><mi>s</mi><mn>0</mn></msub><mo separator="true">,</mo><mi>A</mi><mo separator="true">,</mo><mrow><mi mathvariant="normal">s</mi><mi mathvariant="normal">t</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">p</mi></mrow><mo separator="true">,</mo><mrow><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">n</mi><mi mathvariant="normal">d</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">r</mi></mrow><mo stretchy="false">⟩</mo></mrow><annotation encoding="application/x-tex">\langle S, s_0, A, \mathrm{step}, \mathrm{render} \rangle</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">⟨</span><span class="mord mathnormal" style="margin-right:0.0576em;">S</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal">s</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="katex-sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">A</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathrm">step</span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathrm">render</span></span><span class="mclose">⟩</span></span></span></span></span>: a state space <span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi></mrow><annotation encoding="application/x-tex">S</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.0576em;">S</span></span></span></span></span> with initial state <span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>s</mi><mn>0</mn></msub></mrow><annotation encoding="application/x-tex">s_0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.5806em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">s</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="katex-sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span>; a finite vocabulary of named, typed <strong>actions</strong> <span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi></mrow><annotation encoding="application/x-tex">A</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.6833em;"></span><span class="mord mathnormal">A</span></span></span></span></span>; a transition function</p><div class="mathblock"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msup><mi>s</mi><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msup><mo>=</mo><mrow><mi mathvariant="normal">s</mi><mi mathvariant="normal">t</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">p</mi></mrow><mo stretchy="false">(</mo><mi>s</mi><mo separator="true">,</mo><mtext>  </mtext><mi>e</mi><mo separator="true">,</mo><mtext>  </mtext><mi>ω</mi><mo stretchy="false">)</mo><mo separator="true">,</mo><mspace width="2em"/><mi>e</mi><mo>∈</mo><mi>A</mi><mo>∪</mo><mo stretchy="false">{</mo><mrow><mi mathvariant="normal">t</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">c</mi><mi mathvariant="normal">k</mi></mrow><mo stretchy="false">(</mo><mi mathvariant="normal">Δ</mi><mi>t</mi><mo stretchy="false">)</mo><mo stretchy="false">}</mo><mo separator="true">,</mo><mtext>  </mtext><mi>ω</mi><mo>∼</mo><mrow><mi mathvariant="normal">h</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">s</mi><mi mathvariant="normal">t</mi></mrow></mrow><annotation encoding="application/x-tex">s&#x27; = \mathrm{step}(s,\; e,\; \omega), \qquad e \in A \cup \{\mathrm{tick}(\Delta t)\},\; \omega \sim \mathrm{host}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.8019em;"></span><span class="mord"><span class="mord mathnormal">s</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8019em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="katex-sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="katex-base"><span class="katex-strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathrm">step</span></span><span class="mopen">(</span><span class="mord mathnormal">s</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">e</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.0359em;">ω</span><span class="mclose">)</span><span class="mpunct">,</span><span class="mspace" style="margin-right:2em;"></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">e</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="katex-base"><span class="katex-strut" style="height:0.6833em;"></span><span class="mord mathnormal">A</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">∪</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="katex-base"><span class="katex-strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">{</span><span class="mord"><span class="mord mathrm">tick</span></span><span class="mopen">(</span><span class="mord">Δ</span><span class="mord mathnormal">t</span><span class="mclose">)}</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.0359em;">ω</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∼</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="katex-base"><span class="katex-strut" style="height:0.6944em;"></span><span class="mord"><span class="mord mathrm">host</span></span></span></span></span></span></div><p>driven by events from three sources — the <strong>user</strong> (<span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi><mo>∈</mo><mi>A</mi></mrow><annotation encoding="application/x-tex">a \in A</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.5782em;vertical-align:-0.0391em;"></span><span class="mord mathnormal">a</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="katex-base"><span class="katex-strut" style="height:0.6833em;"></span><span class="mord mathnormal">A</span></span></span></span></span>), the <strong>clock</strong> (<span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">t</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">c</mi><mi mathvariant="normal">k</mi></mrow><annotation encoding="application/x-tex">\mathrm{tick}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.6944em;"></span><span class="mord"><span class="mord mathrm">tick</span></span></span></span></span></span>), and the <strong>environment</strong> (random draws <span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ω</mi></mrow><annotation encoding="application/x-tex">\omega</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.0359em;">ω</span></span></span></span></span>, supplied by the host); and a pure <strong>render</strong> <span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">n</mi><mi mathvariant="normal">d</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">r</mi></mrow><mo>:</mo><mi>S</mi><mo>→</mo><mrow><mi mathvariant="normal">V</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">w</mi></mrow></mrow><annotation encoding="application/x-tex">\mathrm{render}: S \to \mathrm{View}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.6944em;"></span><span class="mord"><span class="mord mathrm">render</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">:</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="katex-base"><span class="katex-strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.0576em;">S</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="katex-base"><span class="katex-strut" style="height:0.6833em;"></span><span class="mord"><span class="mord mathrm" style="margin-right:0.0139em;">View</span></span></span></span></span></span>. A <strong>run</strong> is <span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>s</mi><mn>0</mn></msub><mover><mo stretchy="true" minsize="3.0em">→</mo><mpadded width="+0.6em" lspace="0.3em"><msub><mi>e</mi><mn>1</mn></msub></mpadded></mover><msub><mi>s</mi><mn>1</mn></msub><mover><mo stretchy="true" minsize="3.0em">→</mo><mpadded width="+0.6em" lspace="0.3em"><msub><mi>e</mi><mn>2</mn></msub></mpadded></mover><mo>⋯</mo></mrow><annotation encoding="application/x-tex">s_0 \xrightarrow{e_1} s_1 \xrightarrow{e_2} \cdots</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:1.0734em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">s</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="katex-sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel x-arrow"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.9234em;"><span style="top:-3.322em;"><span class="pstrut" style="height:2.7em;"></span><span class="katex-sizing reset-size6 size3 mtight x-arrow-pad"><span class="mord mtight"><span class="mord mtight"><span class="mord mathnormal mtight">e</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3173em;"><span style="top:-2.357em;margin-left:0em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="katex-sizing reset-size3 size1 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span></span></span></span><span class="svg-align" style="top:-2.689em;"><span class="pstrut" style="height:2.7em;"></span><span class="hide-tail" style="height:0.522em;min-width:1.469em;"><svg xmlns="http://www.w3.org/2000/svg" width="400em" height="0.522em" viewBox="0 0 400000 522" preserveAspectRatio="xMaxYMin slice"><path d="M0 241v40h399891c-47.3 35.3-84 78-110 128
+-16.7 32-27.7 63.7-33 95 0 1.3-.2 2.7-.5 4-.3 1.3-.5 2.3-.5 3 0 7.3 6.7 11 20
+ 11 8 0 13.2-.8 15.5-2.5 2.3-1.7 4.2-5.5 5.5-11.5 2-13.3 5.7-27 11-41 14.7-44.7
+ 39-84.5 73-119.5s73.7-60.2 119-75.5c6-2 9-5.7 9-11s-3-9-9-11c-45.3-15.3-85
+-40.5-119-75.5s-58.3-74.8-73-119.5c-4.7-14-8.3-27.3-11-40-1.3-6.7-3.2-10.8-5.5
+-12.5-2.3-1.7-7.5-2.5-15.5-2.5-14 0-21 3.7-21 11 0 2 2 10.3 6 25 20.7 83.3 67
+ 151.7 139 205zm0 0v40h399900v-40z"/></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.011em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="katex-base"><span class="katex-strut" style="height:1.0734em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">s</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="katex-sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel x-arrow"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.9234em;"><span style="top:-3.322em;"><span class="pstrut" style="height:2.7em;"></span><span class="katex-sizing reset-size6 size3 mtight x-arrow-pad"><span class="mord mtight"><span class="mord mtight"><span class="mord mathnormal mtight">e</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3173em;"><span style="top:-2.357em;margin-left:0em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="katex-sizing reset-size3 size1 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span></span></span></span><span class="svg-align" style="top:-2.689em;"><span class="pstrut" style="height:2.7em;"></span><span class="hide-tail" style="height:0.522em;min-width:1.469em;"><svg xmlns="http://www.w3.org/2000/svg" width="400em" height="0.522em" viewBox="0 0 400000 522" preserveAspectRatio="xMaxYMin slice"><path d="M0 241v40h399891c-47.3 35.3-84 78-110 128
+-16.7 32-27.7 63.7-33 95 0 1.3-.2 2.7-.5 4-.3 1.3-.5 2.3-.5 3 0 7.3 6.7 11 20
+ 11 8 0 13.2-.8 15.5-2.5 2.3-1.7 4.2-5.5 5.5-11.5 2-13.3 5.7-27 11-41 14.7-44.7
+ 39-84.5 73-119.5s73.7-60.2 119-75.5c6-2 9-5.7 9-11s-3-9-9-11c-45.3-15.3-85
+-40.5-119-75.5s-58.3-74.8-73-119.5c-4.7-14-8.3-27.3-11-40-1.3-6.7-3.2-10.8-5.5
+-12.5-2.3-1.7-7.5-2.5-15.5-2.5-14 0-21 3.7-21 11 0 2 2 10.3 6 25 20.7 83.3 67
+ 151.7 139 205zm0 0v40h399900v-40z"/></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.011em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="katex-base"><span class="katex-strut" style="height:0.313em;"></span><span class="minner">⋯</span></span></span></span></span>. Every “does it work?” question is a predicate over runs.</p></div> </div>
+<p>A slider-driven plot, a Flappy Bird and a pendulum simulator are all instances: the
+actions are <code>setK</code>/<code>reset</code>, <code>flap</code>, <code>setLength</code>/<code>pause</code>; the clock drives the plot not at all,
+the bird every frame, the pendulum every physics step; randomness enters only the game.</p>
+<p>The model gives three <strong>layers</strong> at which the verifier can interact, mirroring how a user,
+a framework and a device see the program:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Layer</th><th>What it is</th><th>Verifier uses it for</th><th>Precedent</th></tr></thead><tbody><tr><td><strong>L0 · semantic actions</strong></td><td><code>dispatch(&quot;setK&quot;, {k: 2})</code> — what the program <em>means</em> to do</td><td>rule checks: fast, exact, implementation-neutral by naming</td><td>Redux actions, GameGen keypoints, WorldCoder’s scripted actions</td></tr><tr><td><strong>L1 · user intents on the surface</strong></td><td>”move the slider named <em>k</em> to 2”, “press <em>Checkout</em>” — resolved by role and accessible name</td><td><strong>wiring</strong> checks: does the user-level path produce the same transition as the semantic action?</td><td>Testing Library <code>getByRole</code> + <code>user-event</code></td></tr><tr><td><strong>L2 · raw device events</strong></td><td>pointer at (x, y), key code</td><td>only where no surface exists (a canvas game), through a declared input map</td><td>Playwright, game input replay</td></tr></tbody></table>
+<p>The <strong>contract</strong> is the set of ports that make the three layers and the three event sources
+reachable from outside the program:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="plaintext"><code><span class="line"><span>getState() → data              // observable state, schema-declared</span></span>
+<span class="line"><span>setState(s)                    // injection and restore (preconditions, replay)</span></span>
+<span class="line"><span>actions = [{name, params}]     // the vocabulary; dispatch(name, params)</span></span>
+<span class="line"><span>tick(dt)                       // the host owns time</span></span>
+<span class="line"><span>random()                       // the host owns randomness (seeded)</span></span>
+<span class="line"><span>surface() → {role, name, value, …}   // the queryable rendered tree; on canvas, a declared overlay</span></span>
+<span class="line"><span>render = f(state)              // same state ⇒ same picture (checked by remount + snapshot)</span></span></code></pre>
+<p>This is <a href="../state-contract-verification/">state-contract verification</a> with two additions
+the existing contracts lack: <strong>actions by name</strong> (WorldCoder scripts raw events; InfiniteWeb
+reads storage after the fact) and a <strong>queryable surface</strong> (so wiring can be verified without
+pixels). Host-owned <code>tick</code> and <code>random</code> generalize WorldCoder’s prompt-prescribed timestep and
+GameFix’s virtual clock into something the checker controls rather than requests.</p>
+<h2 id="5-the-verifier-built-on-the-model">5. The verifier built on the model</h2>
+<p><strong>Rules.</strong> Six kinds, all predicates over runs, all written from the <em>request</em> before any
+candidate exists (WebGrader’s requirement-first principle):</p>
+<ol>
+<li><strong>Conformance</strong> — the contract is present and schema-valid; every declared action is
+dispatchable; <code>render</code> is deterministic (remount with the same state, identical snapshot);
+no wall-clock or <code>Math.random</code> reachable (host shims throw). This is the layer where
+WorldCoder’s 42.8 % schema drift lands — as a <em>repairable</em> verdict, not a score of zero.</li>
+<li><strong>Action rules</strong> <code>{P} a {Q}</code> — GameGen’s keypoints: <code>setK(2) ⇒ k = 2 ∧ peak = 2·base</code>.</li>
+<li><strong>Invariants</strong> over every state of every run — <code>total = Σ price · checked</code>.</li>
+<li><strong>Temporal rules</strong> over ticks — “after 30 ticks with no input the bird’s y decreases”;
+debounce and timer behavior become countable.</li>
+<li><strong>Metamorphic relations</strong> for continuous state, where no exact oracle exists —
+scaling, symmetry, monotonicity, conservation, idempotence, commutativity of independent
+actions. No verifier in §2 has these; WorldCoder and GameFix stop at tolerance bands.</li>
+<li><strong>Wiring and persistence</strong> — every L1 intent equals its L0 action; <code>reload</code> preserves
+state; <code>reset</code> returns to <span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>s</mi><mn>0</mn></msub></mrow><annotation encoding="application/x-tex">s_0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.5806em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">s</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="katex-sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span>.</li>
+</ol>
+<p><strong>Sequences.</strong> Three generators, budgeted together: (a) <strong>model-based</strong> — the rules induce a
+statechart; cover every transition (WebRISE’s ICG, XState); (b) <strong>property-based</strong> — seeded
+random walks over <code>A ∪ {tick}</code> with preconditions, <strong>shrunk</strong> to the minimal failing sequence
+(fast-check / Hypothesis); (c) <strong>replay</strong> — seed + input log reproduces any run exactly.</p>
+<p><strong>Rule admission.</strong> A rule set is trusted only after it rejects mutants of the first passing
+candidate — <a href="../mutation-hardened-checks/">mutation-hardened checks</a>, WorldCoder’s admission
+criterion turned into a pipeline step. Rules that never fail a mutant are flagged as vacuous.</p>
+<p><strong>Determinism.</strong> Host clock and seeded randomness; an <code>act()</code>-style settle after every event
+(flush microtasks, effects, animation frames); fresh instance or <code>setState</code> restore per check;
+an N-run identical-trajectory gate (GameFix’s zero-flake rule) before a verdict counts.</p>
+<p><strong>Verdict.</strong> Per rule: PASS · FAIL · SKIPPED (precondition unreachable — an upstream defect,
+counted once, as in WebRISE) · UNSUPPORTED (action not declared). A FAIL carries the shrunk
+sequence and the state diff, which names the action whose post-state first diverged — the
+handler to fix. A verdict is a <em>localizer</em>, not a score band.</p>
+<p><strong>Rules nobody wrote.</strong> Generate several candidates; where all pass the rules but diverge
+under the same sequence, the rules are silent — <a href="../differential-testing/">differential testing</a>
+adds the rule or asks the user. This is the only mechanism in the table that can extend an
+incomplete rule set; GameGen’s recall 1.0 against raters who share its blind spots shows why
+one is needed.</p>
+<h2 id="6-why-this-beats-each-family-on-its-own-axis">6. Why this beats each family on its own axis</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Family</th><th>Their axis</th><th>This design</th></tr></thead><tbody><tr><td>A · hooks by fiat</td><td>coupling by ids</td><td>binds to action <em>names</em> and role/name on the surface; coupling is measured, not assumed</td></tr><tr><td>B · live-page contracts</td><td>implementation-neutral but model-judged</td><td>L0 <code>dispatch</code> replaces the executing agent; data predicates replace the judge; zero model calls in a verdict</td></tr><tr><td>C · state interface</td><td>schema + fixed timestep, checks hidden and hand-written</td><td>adds actions, host clock/random, injection, wiring, metamorphic rules; checks written at generation time and mutation-admitted; conformance repaired rather than failed</td></tr><tr><td>D · injection</td><td>reachability solved, verdict by VLM</td><td><code>setState</code> is injection by contract; the outcome is read as data</td></tr><tr><td>E · probes</td><td>zero coupling, zero discrimination</td><td>probes become the conformance layer; the request-derived rules supply discrimination</td></tr></tbody></table>
+<h2 id="7-decisions-to-make-together">7. Decisions to make together</h2>
+<ol>
+<li><strong>Action granularity.</strong> Coarse semantic actions (<code>setK</code>) or fine ones (<code>dragStart</code>,
+<code>dragMove</code>)? Who fixes the vocabulary — the rule-writer from the request, or the generator?</li>
+<li><strong>Canvas surfaces.</strong> Require a declared semantic overlay (hit regions with roles) so L1
+wiring checks work on games and plots, or accept L2 + input map only? The former costs
+generation quality — WorldCoder’s schema-drift rate is the warning.</li>
+<li><strong>What stays outside.</strong> Aesthetics and layout taste are not rules; <code>render = f(state)</code> plus
+snapshot equality is all the verifier says about pictures. Agree, or keep a separate
+visual judge outside the loop?</li>
+<li><strong>How much host control a platform will accept.</strong> Shimming the clock and randomness is a
+runtime change; Artifacts-style platforms already dictate the framework, so it is realistic
+there — is it acceptable everywhere we want to evaluate?</li>
+<li><strong>Mutation operators</strong> for UI/game/sim code: stale-state, swapped handler, wrong sign,
+dropped redraw, off-by-one tick — which set makes admission meaningful without being
+tailored to our own bugs?</li>
+<li><strong>The metamorphic library.</strong> Which relations generalize across plots, games and
+simulations, and how does the rule-writer pick them from a request?</li>
+<li><strong>Budget split</strong> between model-based coverage and random walks, and the shrinking cost.</li>
+<li><strong>Accessibility as a requirement.</strong> L1 needs roles and names on controls. Requiring them of
+generated code is a constraint — and an accessibility win. Do we require or reward it?</li>
+<li><strong>Localization heuristic.</strong> “First action whose post-state violates a rule” versus delta
+debugging over the sequence.</li>
+<li><strong>The testbed.</strong> Computable Canvas components already expose <code>getState</code>/<code>setState</code>; the
+contract adds <code>actions</code>/<code>dispatch</code>, <code>tick</code>/<code>random</code>, and <code>surface</code>. Which come first?</li>
+</ol>
+<h2 id="in-the-papers">In the papers</h2>
+<p>WorldCoder-Bench supplies the state schema, the prescribed timestep and mutation-hardening;
+GameGen-Verifier the <code>(P, a, Q)</code> rule shape and state injection; GameFix the virtual clock,
+tolerance bands and the zero-flake gate; WebRISE the requirement-induced statechart and
+SKIPPED-vs-FAIL attribution; WebGrader requirement-first planning and the fault-set verifier
+benchmark; InfiniteWeb instrumentation variables and dense per-rule reward; AutoWebWorld the
+FSM-as-generator idea and its unclosed conformance gap; HTMLCure verdict-routed repair and
+regression-penalized acceptance; FrontendBench and InteractScience the cost of ids by fiat;
+VISTA partial credit by geometry and a principled refusal of LLM judges; I-WebGenBench the
+task-agnostic probe as a floor.</p>
+<h2 id="pitfalls--open-questions">Pitfalls / open questions</h2>
+<ul>
+<li>A contract shifts failure from “wrong behavior” to “wrong interface”; a verifier that only
+scores conformance has moved the problem, not solved it. The harness must repair conformance.</li>
+<li>Rules written from an ambiguous request are ambiguous rules; differential testing exposes
+the gap but cannot resolve it without the user.</li>
+<li>Metamorphic relations can be vacuously true (a plot that ignores <code>k</code> satisfies “doubling
+k doubles the peak” if the peak is 0). Mutation admission is the guard.</li>
+<li>Deterministic replay hides timing bugs that only wall-clock scheduling produces; report
+it as a scope limit, not a solved problem.</li>
+</ul>
+<h2 id="glossary">Glossary</h2>
+<p><span class="term" data-def="a Hoare-style rule: if precondition P holds and action a is taken, postcondition Q holds afterward" tabindex="0" aria-label="a Hoare-style rule: if precondition P holds and action a is taken, postcondition Q holds afterward">action rule <code>{P} a {Q}</code></span> ·
+<span class="term" data-def="a check that the user-level path to an action (click the control) produces the same state transition as dispatching the action directly" tabindex="0" aria-label="a check that the user-level path to an action (click the control) produces the same state transition as dispatching the action directly">wiring check</span> ·
+<span class="term" data-def="admitting a rule set only if it rejects deliberately corrupted variants of a passing program" tabindex="0" aria-label="admitting a rule set only if it rejects deliberately corrupted variants of a passing program">mutation admission</span> ·
+<span class="term" data-def="reducing a failing random action sequence to the shortest subsequence that still fails" tabindex="0" aria-label="reducing a failing random action sequence to the shortest subsequence that still fails">shrinking</span> ·
+<span class="term" data-def="the accessibility-tree-like view of the rendered program: each control's role, accessible name and value" tabindex="0" aria-label="the accessibility-tree-like view of the rendered program: each control's role, accessible name and value">surface</span> ·
+<span class="term" data-def="the fraction of correct-but-different implementations a check wrongly fails" tabindex="0" aria-label="the fraction of correct-but-different implementations a check wrongly fails">implementation coupling</span></p> </article> <section class="backlinks"> <h2>Referenced by</h2> <h3>Papers</h3><ul><li><a href="/papers/papers/arxiv-2506.13832/">FrontendBench: A Benchmark for Evaluating LLMs on Front-End Development via Automatic Evaluation</a></li><li><a href="/papers/papers/arxiv-2605.07442/">GameGen-Verifier: Parallel Keypoint-Based Verification for LLM-Generated Games via Runtime State Injection</a></li><li><a href="/papers/papers/arxiv-2608.21833/">GameXpert-Bench: How Far Are Coding Agents from Expert Game Development?</a></li><li><a href="/papers/papers/arxiv-2606.00750/">I-WebGenBench : Evaluating Interactivity in LLM-Generated Scientific Web Applications</a></li><li><a href="/papers/papers/arxiv-2510.09724/">InteractScience: Programmatic and Visually-Grounded Evaluation of Interactive Scientific Demonstration Code Generation</a></li><li><a href="/papers/papers/arxiv-2605.26144/">VISTA: An End-to-End Benchmark for Visual Spec-to-Web-App Coding Agents</a></li><li><a href="/papers/papers/arxiv-2505.07473/">Web-Bench: A LLM Code Benchmark Based on Web Standards and Frameworks</a></li><li><a href="/papers/papers/arxiv-2608.06474/">WebGrader: Training LLMs for Web Development with Self-Evolving Programmatic Grader</a></li><li><a href="/papers/papers/arxiv-2606.03220/">WebRISE: Requirement-Induced State Evaluation for MLLM-Generated Web Artifacts</a></li><li><a href="/papers/papers/arxiv-2606.01869/">WorldCoder-Bench: Benchmarking Physically Grounded 3D World Synthesis</a></li><li><a href="/papers/papers/arxiv-2601.04126/">InfiniteWeb: Scalable Web Environment Synthesis for GUI Agent Training</a></li><li><a href="/papers/papers/arxiv-2602.14296/">AutoWebWorld: Synthesizing Infinite Verifiable Web Environments via Finite State Machines</a></li><li><a href="/papers/papers/arxiv-2605.26807/">HTMLCure: Turning Browser Experience into State Guided Repair for Interactive HTML</a></li></ul> <h3>Concepts</h3><ul><li><a href="/papers/knowledge/agent-as-a-verifier/">Agent-as-a-Verifier</a></li><li><a href="/papers/knowledge/differential-testing/">Differential Testing</a></li><li><a href="/papers/knowledge/llm-as-a-judge/">LLM-as-a-Judge</a></li><li><a href="/papers/knowledge/model-based-gui-testing/">Model-Based GUI Testing</a></li><li><a href="/papers/knowledge/mutation-hardened-checks/">Mutation-Hardened Checks</a></li><li><a href="/papers/knowledge/state-contract-verification/">State-Contract Verification</a></li></ul> </section></main> </body></html>

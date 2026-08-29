@@ -47,6 +47,7 @@ milestone:
   subarea: interactive_ui
 knowledge_concepts:
 - state-contract-verification
+- deterministic-verifier-design
 versions:
 - version_key: v1
   version_label: arXiv v1

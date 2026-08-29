@@ -38,7 +38,8 @@ milestone:
   significance: 128 pages / 3,253 interactive-element annotations; DOM elements matched to a reference
     layout by IoU and text to dodge selector brittleness, then behavior checks.
   subarea: programmatic_behavior_tests
-knowledge_concepts: []
+knowledge_concepts:
+- deterministic-verifier-design
 versions:
 - version_key: v1
   version_label: arXiv v3

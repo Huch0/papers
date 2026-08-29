@@ -14,6 +14,12 @@
 - [LLM-as-a-Judge](concepts/llm-as-a-judge.md)
 - [Web-Agent Generalization (cross-task / site / domain)](concepts/web-agent-generalization.md)
 
+## evaluation-harness (1)
+- [Deterministic verifier design for interactive artifacts](concepts/deterministic-verifier-design.md)
+
+## interactive-component-survey (1)
+- [Deterministic verifier design for interactive artifacts](concepts/deterministic-verifier-design.md)
+
 ## interactive-ui (3)
 - [Agent-as-a-Verifier](concepts/agent-as-a-verifier.md)
 - [Model-Based GUI Testing](concepts/model-based-gui-testing.md)
@@ -30,7 +36,8 @@
 - [Model-Based GUI Testing](concepts/model-based-gui-testing.md)
 - [Mutation-Hardened Checks](concepts/mutation-hardened-checks.md)
 
-## verification (3)
+## verification (4)
+- [Deterministic verifier design for interactive artifacts](concepts/deterministic-verifier-design.md)
 - [Differential Testing](concepts/differential-testing.md)
 - [Mutation-Hardened Checks](concepts/mutation-hardened-checks.md)
 - [State-Contract Verification](concepts/state-contract-verification.md)

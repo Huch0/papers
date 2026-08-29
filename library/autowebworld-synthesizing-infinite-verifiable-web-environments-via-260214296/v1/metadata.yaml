@@ -84,13 +84,14 @@ scoring:
 artifacts:
   pdf: library/autowebworld-synthesizing-infinite-verifiable-web-environments-via-260214296/v1/paper.pdf
   extraction: library/autowebworld-synthesizing-infinite-verifiable-web-environments-via-260214296/v1/extraction.txt
-  summary: null
+  summary: library/autowebworld-synthesizing-infinite-verifiable-web-environments-via-260214296/v1/summary.mdx
   code_url: null
   project_url: null
   dataset_url: null
 status:
   downloaded: true
   extracted: true
-  summarized: false
+  summarized: true
   triaged: true
   user_read_status: unread
+  summary_format: mdx

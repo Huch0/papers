@@ -513,3 +513,20 @@ Each entry: date, trigger, change, files touched, migration status.
   design dimensions, five families, what to borrow, seven bars ours must clear).
 - Extractions also generated for FrontendBench, Web-Bench, VISTA, InteractScience,
   I-WebGenBench (PDFs were present, text was not).
+
+## 2026-08-29 — Design doc in the knowledge base + summaries for the three verifier papers
+- knowledge/concepts/deterministic-verifier-design.mdx (site /knowledge/deterministic-verifier-design/):
+  how the 13 existing deterministic verifiers are designed (five families, where each breaks),
+  what front-end test tooling already solved (Testing Library role queries + user-event, React
+  act(), Playwright clock, Redux/Elm, XState model-based tests, fast-check/Hypothesis command
+  sequences with shrinking, metamorphic testing, game replay), and a DRAFT of ours: one
+  interaction model for GUI / game / simulation (driven process: state · actions · tick ·
+  random · render = f(state)), three interaction layers (L0 semantic / L1 user intent by role
+  / L2 raw device), contract ports incl. `surface()`, six rule kinds, sequence generation,
+  mutation admission, localizing verdicts, differential testing, ten open decisions.
+  Linked to 13 papers and 6 sibling concepts. To be revised in discussion with the user.
+- Summaries (summary policy: author voice, running example, Definition blocks, limits,
+  contamination/aging, empty notes block) for InfiniteWeb (ACL 2026), AutoWebWorld, HTMLCure;
+  frontmatter via `--finalize` (python3.12). Survey-axis tags set; concept links added.
+- Gates: check-mdx OK on all four MDX files; knowledge validate OK; validate_registry only
+  the pre-existing PDF-missing errors; site build OK.

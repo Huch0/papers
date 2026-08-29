@@ -1,0 +1,183 @@
+---
+canonical_key: arxiv-2602.14296
+version_key: v1
+title: 'AutoWebWorld: Synthesizing Infinite Verifiable Web Environments via Finite State Machines'
+authors:
+- Yifan Wu
+- Yiran Peng
+- Yiyu Chen
+- Jianhao Ruan
+- Zijie Zhuang
+- Cheng Yang
+- Jiayi Zhang
+- Man Chen
+- Yenchi Tseng
+- Zhaoyang Yu
+- Liang Chen
+- Yuyao Zhai
+- Bang Liu
+- Chenglin Wu
+- Yuyu Luo
+venue: arXiv
+year: 2026
+tags: []
+topic_groups:
+- computer_use_agents
+- software_engineering_agents
+- general_agent_methods
+- llm
+triage_label: SKIM
+triage_confidence: high
+source_link: https://arxiv.org/abs/2602.14296v1
+summary_date: '2026-08-29'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>We make the environment its own verifier: a coding agent builds each website from an LLM-written finite-state machine whose signature-space preconditions and effects make every breadth-first path correct by construction, a strict Playwright replay keeps only executable paths, and 16k steps from the resulting 11,663 trajectories (29 sites, $0.04 each) lift a GRPO-trained Qwen2.5-VL-7B to 27.42% on a 9-site WebVoyager subset, with a monotone data-scaling curve.</TLDR>
+
+<WhyItMatters>[Model-based GUI testing](../../knowledge/model-based-gui-testing/) run in reverse — the model generates the app, so the state contract is intrinsic — and the clearest evidence yet that contract-certified synthetic trajectories transfer to live sites. For [state-contract verification](../../knowledge/state-contract-verification/): nothing compares site with FSM beyond selector executability; the contract never scores the policy online.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "27.42%", label: "WebVoyager success, Ours-7B", sub: "9 sites, 15-step cap, Gemini-3-Flash judge (Tab. 3)" },
+  { value: "11,663 / 29", label: "verified trajectories / synthesized sites", sub: "1,215 distinct trajectories used for training (Tab. 1, §5.1)" },
+  { value: "$0.04", label: "cost per trajectory", sub: "$447.37 total, $272.17 of it thinking traces (Tab. 2, Tab. 7)" },
+  { value: "21.94", label: "average steps per trajectory", sub: "vs 6.9–12.1 in real-world corpora (§4.5, Tab. 1)" },
+  { value: "3.92% → 27.42%", label: "WebVoyager across 8 → 16,253 samples", sub: "Online-Mind2Web 1.22% → 14.02% (Fig. 4)" },
+]} />
+
+## Motivation
+The task we carry through this summary: in a synthesized workspace site, accept the cookie banner, open the bases list, sort it by most recent, open the filtered base, and save an automation that emails whenever a record is created — the `bfs.json` path printed in App. A.2.6 (its vocabulary matches Tab. 7's Airtable theme). On the real product <Problem>only rendered UI feedback is observable; whether the trigger was actually stored is internal state neither agent nor verifier sees</Problem> (§1, p.1). So every real-site pipeline — exploration (Explorer, Fara), demonstration (Mind2Web), video mining — <Problem>ends in an external verifier, a human or an [LLM-as-a-judge](../../knowledge/llm-as-a-judge/), guessing internal state from screenshots: inconsistent across verifiers and $0.15–$1.00 per trajectory</Problem> (§2.1, §4.5, Tab. 1). Synthetic environments with built-in checks exist as evaluation benchmarks; <Problem>the few that also synthesize trajectories do not model a fully known transition structure</Problem> (§2.2, p.3).
+
+## Contribution (what's new)
+<Novelty>Derive both site and data from one explicit transition system</Novelty>: an FSM whose preconditions and effects live only in signature space is compiled into a website by a coding agent and into trajectories by breadth-first search over <M tex="(p,\mathrm{hash}(\sigma))" />, so paths are correct by construction and only executability remains to check. The form is forced: crawled sites hide transitions, so a judge must guess them; screenshot-level conditions would tie availability to rendering, so BFS could not enumerate; and with no judge to rescue partial paths, the executability filter must be strict.
+
+## Research questions
+1. Do trajectories certified only inside a synthetic FSM transfer to live-site navigation (WebVoyager, Online-Mind2Web) and to grounding (ScreenSpot-V2/Pro)?
+2. Does live-site success keep rising with synthetic volume at a fixed data mixture?
+3. Are the synthesized sites hard enough to serve as benchmarks?
+
+## Methodology
+Four steps (Fig. 2), each on the running task. **FSM.** From a theme name a GPT-5.1 proposer drafts `fsm.json` — pages with default <Term def="the structured, task-relevant variables of a page (query text, filters, sort key, pagination index, selected item, cart contents) that make otherwise implicit state explicit; BFS deduplicates on its hash">signatures</Term>, actions with `$.`-path preconditions and local-update effects, terminal pages — and a validator/improver loop re-checks reachability, `$.` paths and pagination resets (§4.1, App. A.1.6): an [agent-as-a-verifier](../../knowledge/agent-as-a-verifier/) loop whose realism criterion is the same model's judgment. In the A.3 schema our `ACT_BASES_SORT` assigns `$.sort_by` and resets `$.pagination.page_index` to 1, and `ACT_BASES_OPEN_FILTERED_BASE` is a navigation action that assigns `$.selected_item_id`. **Site.** Gemini3-Pro compiles the FSM into a Vue project and must implement every FSM <Term def="a CSS selector such as #cookie-accept naming one interactable element; the FSM assigns one per element and the generated DOM must implement it">selector</Term> in the DOM (§4.2–4.3). **Search.** <Term def="breadth-first search: expand states layer by layer, so the first path that reaches a goal state is shortest">BFS</Term> from the initial page expands only precondition-satisfied actions, deduplicates on the signature hash and returns the shortest path to any state with <M tex="G(s)=1" />; our task is an 11-action path from `ACT_HOME_ACCEPT_COOKIES` to `ACT_AUTOMATION_SAVE` (App. A.2). **Replay.** Each action's <Term def="the short sequence of atomic UI operations (click, hover, type_text, scroll) that realizes one FSM action on the rendered page; it says how to execute, never what the outcome is">`gui_procedure`</Term> expands the path into 15 atomic operations (my count from App. A.2.6): click `#cookie-accept`, hover `#topbar-workspace-menu` then click `.option-bases`, …, open `#bases-sort-dropdown`, pick `#bases-sort-recent-desc`, …, click `#save-automation-button`. <Term def="browser-automation library used here to resolve selectors, read bounding boxes, click, type and screenshot">Playwright</Term> resolves each selector to a bounding box, clicks its centre and screenshots; if any selector fails to render or respond, the whole trajectory is dropped (§4.4). Survivors get a query from DeepSeek-V3.2 and, afterwards, per-step `<think>` traces from Gemini2.5-Flash — search needs no reasoning, so rationales are written only for survivors, and they dominate cost. Each step becomes a (screenshot, history, action, box) sample; <Term def="group-relative policy optimization: 8 rollouts per prompt, each rollout's reward normalized by the group's mean and standard deviation, no critic">GRPO</Term> on Qwen2.5-VL rewards action type, coordinate-in-box and format (App. D.4).
+
+<Pass title="Method details">
+
+<Definition term="AutoWebWorld FSM (§3, Eq. 1–5; App. A.2.3)">
+The environment is an MDP <M tex="\mathcal{M}=\langle S,A,T,O\rangle" /> with deterministic <M tex="T" /> and an observation map <M tex="O" /> (screenshots). A state is a page id plus a page signature, <M tex="s_t=(p_t,\sigma_t)" />, the signature assigning the page's task-relevant variables
+<MathBlock>{`\\sigma_t=\\{\\,v^{(p_t)}_1,\\ v^{(p_t)}_2,\\ \\dots,\\ v^{(p_t)}_{K(p_t)}\\,\\},\\qquad v^{(p_t)}_k\\in D^{(p_t)}_k \\qquad (1)`}</MathBlock>
+(for the bases page: `$.query`, `$.filters`, `$.sort_by`, `$.pagination.page_index`). Transitions are <M tex="s_{t+1}=T(s_t,a_t)" /> (2), guarded by a precondition predicate <M tex="\mathrm{pre}(s,a)\in\{0,1\}" /> (3) evaluated on the signature only — e.g. `$.<sig_field_1> == <some_value>` in the A.3 skeleton — never on screenshot-level element existence. If <M tex="\mathrm{pre}(s,a)=0" /> the action is a no-op, <M tex="T(s,a)=s" /> (4); otherwise
+<MathBlock>{`T(s,a)=\\begin{cases}\\bigl(p,\\ \\mathrm{Apply}(\\sigma,\\mathrm{eff}(s,a))\\bigr) & \\text{in-page action}\\\\[2pt] \\bigl(p',\\ \\mathrm{Init}(p')\\oplus\\mathrm{Carry}(\\sigma')\\bigr) & \\text{navigation action}\\end{cases}\\qquad (5)`}</MathBlock>
+with <M tex="\mathrm{Init}" /> the target page's default signature, <M tex="\mathrm{Carry}" /> the same-named fields carried over and <M tex="\oplus" /> a deterministic merge. Effects touch only declared fields and only by assignment, counter increment/decrement, boolean toggle, enum switch or set insert/delete; any result-set change must reset pagination (App. A.1.3). A task is a goal predicate on states, in the simplest case
+<MathBlock>{`G(s)=\\mathbb{1}\\bigl[\\,p\\in\\mathrm{meta.terminal\\_pages}\\,\\bigr],`}</MathBlock>
+or a conjunction of signature constraints such as "a specific item is selected" (App. A.2.3). BFS deduplicates on <M tex="\mathrm{key}(s)=(p,\mathrm{hash}(\sigma))" /> and returns the shortest path to any state with <M tex="G(s)=1" />.
+</Definition>
+
+<Definition term="Trajectory filter (§4.4; App. A.2.4)">
+For a BFS path with actions <M tex="(a_1,\dots,a_T)" />, states <M tex="(s_0,\dots,s_T)" /> and atomic operations <M tex="(o_1,\dots,o_N)" /> obtained by concatenating each action's `gui_procedure`, the trajectory is kept iff
+<MathBlock>{`\\underbrace{\\prod_{t=1}^{T}\\mathbb{1}\\bigl[\\mathrm{pre}(s_{t-1},a_t)=1\\ \\wedge\\ T(s_{t-1},a_t)=s_t\\bigr]\\cdot\\mathbb{1}[G(s_T)=1]}_{\\text{FSM-level replay (App. A.2.4)}}\\ \\cdot\\ \\underbrace{\\prod_{j=1}^{N}\\mathbb{1}\\bigl[\\mathrm{locate}(\\mathrm{sel}_j)\\neq\\varnothing\\ \\wedge\\ \\mathrm{exec}(o_j)\\ \\text{succeeds}\\bigr]}_{\\text{Playwright replay (§4.4)}}=1`}</MathBlock>
+(my notation for the prose rule). The first factor is tautological for a BFS output; the second is the only check that touches the generated site, and it asserts executability, not that the rendered state equals <M tex="\sigma_t" />. The rule is deliberately strict: with no external judge, a selector mismatch means the FSM and the site disagree and we cannot tell which is right, so the path is discarded.
+</Definition>
+
+<Definition term="GRPO step reward (App. D.4, Eq. 6–10)">
+For a sampled completion <M tex="y" /> and the stored ground-truth step <M tex="y^\star" />,
+<MathBlock>{`R(y,y^\\star)=R_{\\mathrm{act}}(y,y^\\star)+R_{\\mathrm{coord}}(y,y^\\star)+R_{\\mathrm{fmt}}(y)\\qquad(6)`}</MathBlock>
+<MathBlock>{`R_{\\mathrm{act}}(y,y^\\star)=\\mathbb{1}[\\mathrm{act}(y)=\\mathrm{act}(y^\\star)]\\qquad(7)\\qquad\\qquad (\\tilde x,\\tilde y)=(\\lfloor s_x\\hat x\\rfloor,\\ \\lfloor s_y\\hat y\\rfloor)\\qquad(8)`}</MathBlock>
+<MathBlock>{`R_{\\mathrm{coord}}(y,y^\\star)=\\mathbb{1}[\\mathrm{act}(y)=\\mathrm{act}(y^\\star)]\\cdot\\begin{cases}\\mathbb{1}[x_1\\le\\tilde x\\le x_2\\ \\wedge\\ y_1\\le\\tilde y\\le y_2] & \\mathrm{act}(y)\\in\\{\\mathrm{click},\\mathrm{hover}\\}\\\\[2pt] 1 & \\text{otherwise}\\end{cases}\\qquad(9)`}</MathBlock>
+<MathBlock>{`R_{\\mathrm{fmt}}(y)=\\mathbb{1}[\\,y\\in F\\,]\\qquad(10)`}</MathBlock>
+where <M tex="(x_1,y_1,x_2,y_2)" /> is the ground-truth bounding box recorded during the Playwright replay, <M tex="(s_x,s_y)" /> rescale predicted coordinates from the resized image to original pixels, and <M tex="F" /> is the set of strings fully matching the `<think>...</think><action>...</action>` template. On the sort step of the running example a rollout that emits `click` at any point inside the box of `#bases-sort-recent-desc` in the right format scores 3. The reward compares against the stored step; the FSM's <M tex="G(s)" /> and preconditions are not evaluated during training.
+</Definition>
+
+The two printed artifacts that the running example is read from — the A.3 action schema and the A.2.6 path — abbreviated as printed:
+
+```json
+// fsm.json (App. A.3): the generic sort action of a list page
+"<ACT_ID_SORT>": {
+  "name": "select", "from": "<PAGE_ID_LIST>", "to": "<PAGE_ID_LIST>",
+  "is_navigation": false, "params": { "widget": "sort" },
+  "preconditions": [],
+  "effects": [
+    { "path": "$.sort_by", "op": "assign", "value": "<SORT_OPTION>" },
+    { "path": "$.pagination.page_index", "op": "assign", "value": 1 }
+  ],
+  "gui_procedure": [
+    { "op": "click", "selector": "<SORT_DROPDOWN_SELECTOR>" },
+    { "op": "click", "selector": "<SORT_OPTION_SELECTOR>",
+      "ui_elements": { "container": "<SORT_DROPDOWN_SELECTOR>", "options": [ "..." ] } }
+  ]
+}
+// bfs.json (App. A.2.6): steps 4 and 11 of the 11-action running example
+{ "id": "ACT_BASES_SORT", "gui_procedure": [
+    { "op": "click", "selector": "#bases-sort-dropdown" },
+    { "op": "click", "selector": "#bases-sort-recent-desc",
+      "ui_elements": { "container": "#bases-sort-dropdown", "options": [
+        { "value": "recent",       "selector": "#bases-sort-recent-desc" },
+        { "value": "alphabetical", "selector": "#bases-sort-alpha" },
+        { "value": "starred",      "selector": "#bases-sort-starred" } ] } } ] }
+{ "id": "ACT_AUTOMATION_SAVE", "gui_procedure": [ { "op": "click", "selector": "#save-automation-button" } ] }
+```
+
+<Stepper steps={[
+  { title: "1 · FSM generation (GPT-5.1 proposer, validator, improver; §4.1, App. A.1)", body: "fsm.json has four top-level blocks: meta (initial_page_id, terminal_pages, a complexity_profile used for generation statistics only), pages (per-page signature defaults and available actions), actions (preconditions, effects, is_navigation / to_page_id, gui_procedure) and nav_skeleton (a derived cross-page subgraph for reachability sanity checks, never a source of semantics). Signatures must be minimal (only variables that affect success or reachability) and stable (fixed names, defaults and serialization order, so hash(sigma) is reproducible). Every condition path starts with $. and must not depend on screenshot-level element existence. The validator's checks: (1) every terminal page reachable from the initial page; (2) preconditions reference only $. paths, no placeholders; (3) effects deterministic and local; (4) navigation targets well defined with same-name merge; (5) search/filter/sort actions reset pagination. The improver revises only the implicated pages/actions and the loop reruns until all checks pass. The A.3 skeleton's profile: 20-35 pages, 6-8 actions per page, 5 terminals, shortest paths of length 6-8, cookie and location interceptors switched on - the running example opens with accepting cookies and granting location." },
+  { title: "2 · Site generation (Gemini3-Pro coding agent; §4.2)", body: "Stage 1 writes guidelines: a style specification, a task checklist, an executable FSM runtime module and a mock data file (data.js is a Pinia store; App. B prints a health-app instance with providers, therapists, prescriptions, appointments, bills and plans, plus one feature-conditioned image per item). Stage 2 generates Vue page components in batches, pausing after a fixed number of pages to self-review the repository against the guidelines and update the to-do plan. Stage 3 builds and runs the project. Stage 4 feeds build logs and errors back to the agent until the build succeeds. The reference website name is only a style anchor, so several distinct sites can share a theme. Every selector assigned during FSM specification must appear in the rendered DOM; this shared selector namespace is the only bridge between FSM actions and pixels." },
+  { title: "3 · BFS over the FSM (§4.3, App. A.2)", body: "Start at s0 = (initial page, default signature). At each dequeued node enumerate the page's actions, keep those whose preconditions hold, apply effects (and Init/Carry for navigation) to obtain the unique successor, and dedupe on key(s) = (p, hash(sigma)); a node is expanded at most once per key. A depth cap L and optional per-page or per-goal node caps bound the enumeration. G(s) is checked on dequeue, so the first hit is the shortest path to that goal key. The paper's own illustration of ordering: Add to cart is expanded only after BFS has traversed and fixed the product's unit options (§1). Several distinct paths to the same goal (different queries, filters or navigation choices) may be kept for diversity, and negative trajectories can be minted by truncating before the goal or forcing a precondition-violating action, recorded as invalid (App. A.2.4)." },
+  { title: "4 · Playwright replay and strict filter (§4.3-4.4, App. A.1.4)", body: "The BFS action sequence is expanded into the concatenation of its gui_procedures (running example: 11 actions, 15 atomic operations - 14 clicks and one hover). For each operation Playwright locates the selector, reads its bounding box, performs the operation at the box centre and records a screenshot; procedures use a normalized [0,1]^2 coordinate system with frame-consistency checks. A trajectory is kept only if every step executes; a selector that never renders or a control that does not respond discards the whole path. Kept trajectories carry the GUI-level operations, screenshots and bounding boxes, and the aligned FSM state sequence. Not checked: that the DOM state after an operation equals the FSM signature." },
+  { title: "5 · Queries, thinking traces, grounding samples (§4.4, §5.1, App. B, Tab. 2)", body: "DeepSeek-V3.2 writes the natural-language query from the complete path (a printed example from the Tumblr clone: 'From the blogs sorted by followers from most to least, get the sixth one and follow it', Fig. 6). Three query families: BFS-driven (name-based targets), visual-grounded (targets described through the per-item image) and screenshot QA (feature questions kept only if a VLM visibility check finds the feature on the screenshot); five interaction modes: search, scroll, slider, sort, checkbox. Gemini2.5-Flash then writes step-level thinking traces ($272.17 of the $447.37 total). One trajectory is sampled per set of parallel trajectories for the same task (1,215 of 11,663; 12,585 steps); individual steps are rewritten into grounding examples; the mixture is held at 2:8 grounding to navigation, about 16k steps in total." },
+  { title: "6 · GRPO training and evaluation (App. D, §5.1)", body: "Qwen2.5-VL-7B (and 3B) initialization on 8x A800: torchrun with 8 processes, max prompt 1024 tokens, per-device batch 4 x 8 gradient-accumulation steps x 8 GPUs = 256 samples per optimizer step, BF16, gradient checkpointing, FlashAttention-2, at most 12,845,056 pixels per image, 1 epoch, 8 rollouts per prompt, DeepSpeed ZeRO-3. Action space (Tab. 8): click, hover, drag, type text, press enter, scroll, hotkey, wait, answer, each a JSON dictionary. Evaluation: the agent sees the full textual history of its thoughts and actions but only the current screenshot; 15 actions per task; Gemini-3-Flash judges success from the instruction and the trace; the 9 most stable WebVoyager sites are kept and Online-Mind2Web likewise drops sites with frequent access restrictions; ScreenSpot-V2/Pro follow their original protocols; a 25-trajectory AutoWebWorld suite from the cloned Quora and GitHub sites tests UI-TARS-1.5-7B and Claude-4-Sonnet." },
+]} />
+
+</Pass>
+
+## Main result
+<Finding src="Tab. 3, p.7">On the 9-site, 15-step WebVoyager subset Ours-7B reaches 27.42% overall, above UI-TARS-1.5-7B (26.51%), Claude-4.0-Sonnet (26.11%), GPT-5.1 (18.96%) and its own Qwen2.5-VL-7B base (5.62%)</Finding>; <Finding src="Tab. 3, §5.2.1">Ours-3B reaches 15.09% from 16K synthesized steps, above UI-Venus-7B (9.73%, roughly 1M SFT samples) and TongUI-7B (9.83%, about 350K RL samples)</Finding>. What transfers is the step mapping learnt on paths like our 15-operation automation task — screenshot plus history to an action type and a point in the target box — on sites we never synthesized.
+
+<SortableTable columns={["Method", "Apple", "Arxiv", "Coursera", "CD", "BBC", "GF", "GM", "HuggingFace", "WA", "Overall"]} rows={[
+  ["GPT-5.1", 28.12, 4.76, 50.0, 23.26, 12.50, 0.0, 0.0, 8.11, 39.13, 18.96],
+  ["Claude-4.0-Sonnet", 34.38, 26.19, 20.0, 39.53, 28.12, 0.0, 0.0, 35.14, 47.83, 26.11],
+  ["Gemini3-Pro", 9.38, 0.0, 7.5, 9.3, 6.25, 0.0, 10.0, 10.81, 2.17, 5.46],
+  ["Qwen2.5-VL-3B", 6.25, 4.76, 0.0, 11.63, 0.0, 0.0, 0.0, 0.0, 13.04, 3.96],
+  ["Ours-3B", 18.75, 11.90, 17.50, 41.86, 18.75, 2.44, 10.0, 8.11, 6.52, 15.09],
+  ["Qwen2.5-VL-7B", 15.62, 2.38, 2.5, 16.28, 6.25, 0.0, 0.0, 0.0, 4.35, 5.62],
+  ["Qwen2.5-VL-72B-Instruct", 12.50, 2.38, 15.00, 39.53, 3.12, 0.0, 7.5, 8.11, 17.39, 11.73],
+  ["UI-Venus-7B", 9.38, 7.14, 17.50, 16.28, 15.62, 0.0, 0.0, 10.81, 10.87, 9.73],
+  ["OpenCUA-7B", 15.62, 7.14, 17.5, 60.47, 3.12, 2.44, 10.0, 18.92, 10.87, 16.74],
+  ["TongUI-7B", 18.75, 7.14, 17.50, 6.98, 18.75, 0.0, 2.5, 8.11, 8.70, 9.83],
+  ["UI-TARS-1.5-7B", 34.38, 23.81, 27.50, 46.51, 31.25, 0.0, 10.0, 21.62, 43.48, 26.51],
+  ["Ours-7B", 25.00, 21.43, 30.00, 60.47, 31.25, 7.32, 15.00, 32.43, 23.91, 27.42],
+]} />
+
+## Key findings
+- <Finding src="Fig. 4, p.8">Success rises monotonically with synthetic volume at a fixed 2:8 grounding-to-navigation mixture</Finding>: 8 → 256 → 1,024 → 16,253 samples give 3.92% → 17.59% → 19.09% → 27.42% on WebVoyager and 1.22% → 7.32% → 7.93% → 14.02% on Online-Mind2Web — four points, no repeats reported; the "polynomial fitting" that predicts further gains is extrapolation.
+- <Finding src="Tab. 4, Tab. 5, p.7">Grounding supervision cut from the same trajectories transfers</Finding>: ScreenSpot-V2 61.87 → 65.88 (3B) and 84.83 → 86.16 (7B); ScreenSpot-Pro 13.3 → 18.0 and 23.2 → 27.5, driven by text targets (23.3 → 30.9; 39.8 → 46.1).
+- <Finding src="Fig. 5, §5.4">Grounding data is what makes the coordinate reward climb</Finding>: without it the total reward is briefly higher (harder instances removed) but after roughly 25 steps the with-grounding run climbs faster and plateaus higher.
+- <Finding src="Tab. 2, Tab. 7, App. C">Reasoning, not environments, dominates cost</Finding>: thinking traces cost $272.17 of $447.37, against $57.10 for FSMs, $52.26 for sites and $65.84 for queries; Skyscanner ($53.25) and Walmart ($37.92) carry the largest thinking bills.
+- <Finding src="Tab. 6, §5.5">The clones are not easier than the live web</Finding>: on 25 tasks from cloned Quora and GitHub, UI-TARS-1.5-7B scores 20.00 and Claude-4-Sonnet 16.00, against 26.51 and 26.11 on WebVoyager.
+- <Finding src="§5.1, Tab. 1, §4.5">Most of the 11,663 trajectories are parallel solutions of the same tasks</Finding>: one per task set leaves 1,215 distinct trajectories (12,585 steps), padded with grounding examples to about 16k steps; average horizon 21.94 steps against 6.9–12.1 in real-world corpora.
+
+## Implications
+<Related>WebArena/BrowserGym evaluators and WebShop/World-of-Bits sites</Related> put the checker inside the environment, for evaluation only; <Related>InfiniteWeb and WebFactory</Related> couple site generation with trajectory synthesis without an explicit transition model; <Related>Explorer, AgentTrek, Fara and Mind2Web</Related> are the external-verifier corpora we undercut on cost (§2, Tab. 1). In [state-contract verification](../../knowledge/state-contract-verification/) terms `fsm.json` is a contract — precondition, effect, goal — used only to mint data. <FollowUp>[Differential testing](../../knowledge/differential-testing/) of site against FSM: after each replayed operation read the DOM state and assert it equals <M tex="\sigma_t" />, turning executability into conformance.</FollowUp> <FollowUp>[Mutation-hardened checks](../../knowledge/mutation-hardened-checks/): break one effect or component on purpose and confirm the pipeline rejects the path.</FollowUp> <FollowUp>Use <M tex="G(s)" /> as the online GRPO reward instead of matching stored actions; the negative trajectories of App. A.2.4 are generated but unused.</FollowUp>
+
+## Limitations
+- <Caveat>We never verify that a site obeys its FSM beyond selector executability</Caveat>: App. A.2.4's "intrinsic verification" replays the FSM against itself, and the Playwright pass only asks that `#bases-sort-recent-desc` render and accept a click — a page that never re-sorts, or stores the wrong trigger, passes. We audited no FSM by hand; the validator's realism check is GPT-5.1's judgment.
+- <Caveat>The FSM reward is never used online</Caveat>: GRPO scores a rollout against the stored action and bounding box (Eq. 7–9); <M tex="G(s)" /> only gates dataset membership, and the environment never sees the policy.
+- <Caveat>Real-world evaluation is a 9-site, 15-step WebVoyager subset judged by Gemini-3-Flash, with no repeats, seeds or intervals reported</Caveat>; the 25-task check in Tab. 6 measures difficulty, not verifier validity.
+- <Caveat>Effective data is smaller and dearer than the headline</Caveat>: 1,215 distinct trajectories carry the signal, and we do not say where the $272.17 of `<think>` traces enter GRPO — Eq. 10 rewards only their format.
+
+## Critiques and Questions
+1. Contamination and aging. The FSMs are GPT-5.1's recollection of named real products (Facebook, Gmail, p.2; Tab. 7); Coursera is both a training theme (751 trajectories, Tab. 7) and a WebVoyager test site (30.00%, Tab. 3), and Skyscanner (1300) mirrors Google Flights. Real-world verdicts then come from Gemini-3-Flash — the external judge the method exists to remove — on 9 sites kept because the rest now throw access-denied pages or CAPTCHAs; the "state-of-the-art" claim is not comparable with full-suite WebVoyager results.
+2. Bookkeeping. Tab. 7 lists 27 sites whose trajectory counts sum to 11,638 by my addition, while its total row says 29 sites and 11,663 (the cost columns do sum exactly); Tumblr (Fig. 6) is absent. Per distinct trajectory, $447.37 over 1,215 is about $0.37 — inside the $0.15–$1.00 band it is compared against.
+3. Gemini3-Pro scores 5.46% overall (Tab. 3), below the untrained Qwen2.5-VL-7B (5.62%), unexplained — and it built the sites. A harness or output-format failure is the likelier reading, weakening the "beats frontier models" framing; one success moves a site score 2–3 points (GF 2.44% is one success by my arithmetic).
+4. What does "verified" certify? Path and site are two LLM renderings of one spec, and `#bases-grid .base-card-filtered` shows the site is built so the path executes; a sort effect has no site-side consequence anything reads. Executability is a weak witness.
+
+<SelfCheck q="In the running example the generated site renders #bases-sort-recent-desc and accepts the click but leaves the bases grid unsorted. Does the trajectory survive the filter, and what does the FSM record?" a="It survives. The execution filter (§4.4) only requires every selector to resolve and every atomic operation to execute; the FSM-level replay (App. A.2.4) re-applies preconditions and effects in signature space, so $.sort_by becomes the recent-desc option and $.pagination.page_index resets to 1 whatever the DOM shows. Nothing compares rendered state with the signature — site-to-FSM conformance is the unverified link." />
+
+## Glossary
+- <Term def="live-website web-agent benchmark (He et al., 2024) with natural-language tasks on real sites; used here on its 9 most stable sites with a 15-action cap and a Gemini-3-Flash success judge">WebVoyager</Term>
+- <Term def="live-website benchmark (Xue et al., 2025) built to audit inflated web-agent progress; used here with sites that throw frequent access restrictions removed">Online-Mind2Web</Term>
+- <Term def="GUI grounding benchmarks: given a screenshot and an instruction, predict the target element's location; Pro uses high-resolution professional applications">ScreenSpot-V2 / ScreenSpot-Pro</Term>
+- <Term def="cookie banners, permission prompts and similar overlays that an FSM's complexity profile can switch on; the first and third actions of the running example dismiss them">interceptors</Term>
+- <Term def="the real-website trajectory corpora of Tab. 1 (94K, 10,398, 145,603 and 2,350 trajectories) whose correctness is decided by external verifiers">Explorer, AgentTrek, Fara, Mind2Web</Term>
+
+{/* NOTES_START */}
+### Personal notes
+{/* NOTES_END */}

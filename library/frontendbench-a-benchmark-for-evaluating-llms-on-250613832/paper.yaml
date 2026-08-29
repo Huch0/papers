@@ -42,7 +42,8 @@ milestone:
   significance: 148 prompt-test pairs with sandboxed, human-vetted test scripts; 90.5% agreement with
     expert humans. Programmatic ground truth.
   subarea: programmatic_behavior_tests
-knowledge_concepts: []
+knowledge_concepts:
+- deterministic-verifier-design
 versions:
 - version_key: v1
   version_label: arXiv v2

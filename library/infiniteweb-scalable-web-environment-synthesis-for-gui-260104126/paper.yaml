@@ -23,7 +23,14 @@ topic_groups:
 - computer_use_agents
 - rl
 - software_engineering_agents
-tags: []
+tags:
+- environment
+- feedback-behavioral
+- interactive-component-survey
+- model-closed
+- model-open
+- output-interactive
+- training-rl
 venue:
   name: ACL
   tier: A_star
@@ -35,24 +42,26 @@ user:
   triage_confidence: high
   notes: null
 milestone: null
-knowledge_concepts: []
+knowledge_concepts:
+- deterministic-verifier-design
+- state-contract-verification
 versions:
 - version_key: v1
   version_label: arXiv v3
   source: arxiv
   source_url: https://arxiv.org/abs/2601.04126v3
   pdf_path: library/infiniteweb-scalable-web-environment-synthesis-for-gui-260104126/v1/paper.pdf
-  summary_path: null
+  summary_path: library/infiniteweb-scalable-web-environment-synthesis-for-gui-260104126/v1/summary.mdx
   metadata_path: library/infiniteweb-scalable-web-environment-synthesis-for-gui-260104126/v1/metadata.yaml
   fetched_at: '2026-08-29T10:08:46Z'
   source_updated_at: '2026-06-30T13:54:32Z'
   arxiv_version: v3
   pdf_sha256: e3e2082668f8fbf0daec808e20f81008a5f5200f8fca5413075ac3747349c76e
   pdf_bytes: 13608385
-  summary_status: none
-  extraction_status: none
+  summary_status: full
+  extraction_status: full
   created_at: '2026-08-29T10:08:46Z'
-  updated_at: '2026-08-29T10:08:46Z'
+  updated_at: '2026-08-29T11:02:48Z'
 relations:
   duplicate_candidates: []
   related_papers: []

@@ -41,7 +41,8 @@ milestone:
   significance: 150 scientific tasks, 779 Playwright functional tests + 590 visual tests; the implementation
     plan assigns element IDs that generated code must follow so tests can target them.
   subarea: programmatic_behavior_tests
-knowledge_concepts: []
+knowledge_concepts:
+- deterministic-verifier-design
 versions:
 - version_key: v1
   version_label: arXiv v2

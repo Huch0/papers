@@ -1,0 +1,198 @@
+---
+canonical_key: arxiv-2601.04126
+version_key: v1
+title: 'InfiniteWeb: Scalable Web Environment Synthesis for GUI Agent Training'
+authors:
+- Ziyun Zhang
+- Zezhou Wang
+- Xiaoyi Zhang
+- Zongyu Guo
+- Jiahao Li
+- Bin Li
+- Yan Lu
+venue: ACL
+year: 2026
+tags: []
+topic_groups:
+- computer_use_agents
+- software_engineering_agents
+- rl
+triage_label: SKIM
+triage_confidence: high
+source_link: https://arxiv.org/abs/2601.04126v3
+summary_date: '2026-08-29'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>We generate functional, task-verified websites at scale — tasks first, one shared specification, test-driven backend logic, localStorage-instrumented dense-reward evaluators — and GRPO on those tasks lifts UI-TARS-1.5-7B by +6.9 on OSWorld, +5.7 on Online-Mind2Web and +3.9 on MobileWorld.</TLDR>
+
+<WhyItMatters>One persistent state contract serving as both the correctness oracle for generated software and the reward for the agent that uses it — the [state-contract verification](../../knowledge/state-contract-verification/) bet at $1.93 and ~20 min per site, with a clear view of what that contract does not check.</WhyItMatters>
+
+<KeyStats items={[
+  { value: "85.6%", label: "WebGen-Bench overall", sub: "vs Codex 81.2 / Claude-Code 74.3 / Bolt.diy 67.0, three runs (Tab. 1)" },
+  { value: "+6.9", label: "OSWorld, UI-TARS-1.5-7B", sub: "24.5 → 31.4 after GRPO on our tasks (Fig. 1, Tab. 2)" },
+  { value: "4.4×", label: "discriminative tasks with dense reward", sub: "767 vs 174 of 4,000 (Fig. 8)" },
+  { value: "95/100", label: "tasks + evaluators passing human check", sub: "App. E; rater protocol Not reported" },
+  { value: "$1.93", label: "per generated website", sub: "~0.36M in / 0.34M out tokens, ~20 min median (§4.7)" },
+]} />
+
+## Motivation
+
+RL for GUI agents needs environments, and <Problem>what exists is hand-built — MiniWoB++, WebArena, OSWorld — with tens to hundreds of applications</Problem>, while <Problem>task- and trajectory-synthesis work (OS-Genesis, AgentTrek, AgentSynth) stays inside those same applications</Problem> (§1, §2). LLMs write one page well; a whole site breaks three ways (§1): <Problem>independently generated pages disagree on interfaces, data formats and state</Problem>; <Problem>bugs compound over long-horizon tasks into wrong reward, which destabilises RL</Problem>; <Problem>tasks and styles repeat, so the agent overfits</Problem>.
+
+One task runs through everything below: "Subscribe to newsletter with weekly specials" on a generated restaurant site (task 10, Fig. 12). Generated page by page, the form and the confirmation page share no contract for what a subscription record is or where it lives; if the confirmation code is buggy, a correct agent earns 0, and thousands of such tasks teach noise.
+
+## Contribution (what's new)
+
+<Novelty>Everything is derived from the tasks.</Novelty> Tasks come first; from them we derive one shared specification — data models, pages, user-facing interfaces — so pages cannot disagree (§3.2). <Novelty>Correctness is task-centric</Novelty>: <Term def="Task-Centric Test-Driven Development — tests derived from the task specifications, code patched until they pass">TCTDD</Term> tests only the flows the tasks need, the one subspace an agent's reward can touch, which keeps verification tractable (§3.3). <Novelty>The localStorage state those tests exercise is instrumented into a weighted-checkpoint evaluator</Novelty>, so the oracle that verified the site also pays partial credit during RL (§3.5). Common Crawl seeds and screenshots supply diversity (§3.4).
+
+## Research questions
+
+1. Can one pipeline make LLM-generated websites consistent, correct and diverse enough for RL, and beat commercial coding agents on <Term def="a 101-website benchmark where an LLM agent executes predefined tasks on the generated site; each outcome is Passed, Partial or Failed">WebGen-Bench</Term> and under a visual judge?
+2. Does training on synthetic web environments transfer to the live web (<Term def="Mind2Web tasks run against live websites, so pages, layouts and latency are real">Online-Mind2Web</Term>), the desktop (<Term def="real desktop applications — Chrome, LibreOffice, GIMP, VLC, VS Code, Thunderbird — with execution-based checks; we use the OSWorld-Verified revision">OSWorld</Term>) and mobile (<Term def="an interactive mobile-agent benchmark (Kong et al., 2025)">MobileWorld</Term>)?
+3. Which parts carry the result: TCTDD, the backbone, dense reward?
+
+## Methodology
+
+Input: a <Term def="a one-line description of a website, e.g. 'online bookstore', written by an LLM from a Common Crawl page screenshot">website seed</Term> and that screenshot as design image (App. B); every generation call is GPT-5 at high reasoning effort (§4.1). Four stages (Fig. 3):
+
+1. **Unified specification (§3.2).** 8–10 tasks per seed (App. B), then data models (a subscriptions entity under the key `newslettersubscriptions`, Fig. 12), at most 12 pages, and one set of user-facing interfaces every page calls with identical signatures. Tasks first because only tasks say what the shared spec must contain, the spec is what forces pages to agree, and tasks vary with the seed — that is the functional diversity.
+2. **Task-centric backend (§3.3).** Data is generated to fit the tasks; tests and implementation are generated in parallel from the same tasks and data, run in Node.js, and on failure the LLM sees the failing test, expected vs actual output and the code, then patches, up to 8 times (App. B) — Tab. 4: `submitDemoRequest()` returning `undefined`, 9/10 → 10/10. Task-centric rather than whole-site because verifying all generated code is intractable (§2) and an agent only visits the task-induced subspace, so correctness outside it changes no reward.
+3. **Design-guided frontend (§3.4).** A vision-language model extracts the visual style; per-page HTML, CSS and JavaScript bind elements to the backend SDK via `data-populate` / `data-action`; a homepage script seeds <Term def="the browser's built-in persistent key–value store; the generated site's only database — there is no server">localStorage</Term>.
+4. **Evaluator generation (§3.5, App. A.2).** We add <Term def="localStorage flags written inside the business-logic function when a task step executes, e.g. task10_subscriptionAttempt">instrumentation variables</Term> for each task's key steps beside state the app stores anyway; task 10's evaluator (Fig. 12) checks a valid attempt with weekly specials (0.35), a stored record matching it (0.30) and an on-site confirmation referencing it (0.35). localStorage rather than the DOM because the DOM is one page's transient rendering, localStorage is the only state that survives navigation and the surface TCTDD already tested, and a flag written inside the function that did the work cannot be faked by poking storage (App. A.2). Weighted checkpoints rather than 0/1 because <Term def="Group Relative Policy Optimization — PPO-style RL where each trajectory's advantage is its reward standardised within a group of rollouts of the same task; no value network">GRPO</Term> learns nothing from a group whose rollouts all score alike: dense reward lifts <Term def="a task whose group of rollouts receives at least two different scores, so its group-relative advantage is non-zero (§4.6)">discriminative tasks</Term> from 174 to 767 of 4,000 (Fig. 8).
+
+<Definition term="Dense checkpoint reward (Fig. 12, App. A.2)">
+For a trajectory <M tex="\tau" /> ending in localStorage state <M tex="S_\tau" />, checkpoint predicates <M tex="c_k" /> with weights <M tex="w_k" />, <M tex="\sum_k w_k = 1" />:
+<MathBlock>{`R(\\tau) \\;=\\; \\sum_{k} w_k \\, \\mathbb{1}\\big[c_k(S_\\tau)\\big] \\;\\in\\; [0,1].`}</MathBlock>
+Task 10: <M tex="w = (0.35,\, 0.30,\, 0.35)" />; <M tex="c_1" />: `task10_subscriptionAttempt` holds a valid test email with `wantsWeeklySpecials`; <M tex="c_2" />: a `newslettersubscriptions` record matches the attempt's id and email; <M tex="c_3" />: `task10_subscriptionConfirmedOnSite` references that id.
+</Definition>
+
+<Pass title="Method details: discriminative tasks, GRPO setup, prompts, hyperparameters, evaluation protocol">
+
+<Definition term="Discriminative task (§4.6)">
+A task is discriminative for a group of <M tex="G" /> rollouts <M tex="\{\tau_1,\dots,\tau_G\}" /> iff
+<MathBlock>{`\\exists\\, i \\ne j:\\; R(\\tau_i) \\ne R(\\tau_j) \\quad\\Longleftrightarrow\\quad \\operatorname{std}\\big(R(\\tau_1),\\dots,R(\\tau_G)\\big) > 0,`}</MathBlock>
+i.e. the group carries a non-zero group-relative advantage, so GRPO can learn from it. Counted with <M tex="G=4" /> over 4,000 generated tasks: 767 discriminative under dense reward, 174 under binary (§4.6, Fig. 8).
+</Definition>
+
+<Definition term="GRPO setup as stated (App. B)">
+We post-train UI-TARS-1.5-7B with GRPO (Shao et al., 2024). Per task, <M tex="G = 8" /> trajectories are sampled at temperature 1.0 across 128 parallel environments, at most 15 steps each, and scored by the task's evaluator; the group-relative advantage of Shao et al.,
+<MathBlock>{`\\hat{A}_i \\;=\\; \\frac{R(\\tau_i) - \\operatorname{mean}_j R(\\tau_j)}{\\operatorname{std}_j R(\\tau_j)},`}</MathBlock>
+drives a PPO-style clipped update with clip ratio 0.2–0.3, 1 PPO epoch, learning rate 1e-6, AdamW in bf16, gradient clipping 1.0, global batch size 16 and discount factor <M tex="\gamma = 0.95" />. We do not write out the objective; the KL term, token- vs trajectory-level credit, and how <M tex="\gamma" /> enters a terminal checkpoint reward are Not reported.
+</Definition>
+
+**Frontend realisation (§3.4).** A shared header/footer/CSS-variable framework is generated first from the extracted style (colour system, typography hierarchy, spacing rules, component styling), then each page's HTML, CSS and JavaScript UI layer; routing goes through URL parameters and responsive layouts through grid systems and breakpoints. Placeholder image URLs are replaced with real, context-relevant content via external APIs (§3.3).
+
+**What the prompts pin down (App. F).** Single-user sites, no login pages, no `User` entity or `userId`/`sessionId` parameters — `addToCart(userId, sessionId, productId, quantity)` is wrapped to `addToCart(productId, quantity)` with system parameters fetched internally (§3.2, Fig. 15–18); tasks with concrete thresholds and measurable success, action steps only, no external services (Fig. 14); navigation through URL parameters, not localStorage (Fig. 19–20); pre-generated data volumes `many`/`few`/`none` with real image services (Fig. 16, 26); the backend as one `BusinessLogic` class with all persistence in localStorage, no DOM or `window` references, runnable in both browser and Node.js (Fig. 27); tests as flow-based integration tests that use generated data only in `setupTestData()`, never hardcode expected return values, chain API responses, focus on the happy path, and cover all tasks (Fig. 28); instrumentation added only when existing variables are insufficient, named `taskN_actionDescription`, wrapped in try-catch, placed before the return (Fig. 30–31); evaluator prompts in Fig. 29 and Fig. 32 — the latter asks for a boolean, while Fig. 12 shows the weighted form.
+
+**Data preparation (§3.3).** Generated records are made consistent with the tasks: a task for products under $50 gets a catalog holding $29.99 and $45.00 items, and the test verifies that exactly those are returned for an under-$50 query.
+
+**Generation hyperparameters (App. B, §4.7).** Temperature 0.7, max output 32,000 tokens, 8–10 tasks and at most 12 pages per website, at most 8 TCTDD iterations; most sites pass in 1–3 iterations (App. A.3) and 1.5% never pass (App. E). Per site: ~0.36M input and ~0.34M output tokens at GPT-5 batch prices ($0.625/M in, $5.00/M out) ≈ $1.93; median ~20 min; 600 websites in ~125 minutes in parallel, 6.9% of total training time (Limitations).
+
+**Evaluation protocol (§4.1–4.2).** Website generation baselines Codex v0.46.0, Claude-Code v2.0.0 and Bolt.diy v0.0.7, all on GPT-5 high, same seed and homepage design image, prompt in Fig. 13 (up to 12 pages, localStorage, `design_image.png`). WebGen-Bench: 101 websites, an LLM agent runs each predefined task (agent model Not reported), Passed/Partial/Failed, design images matched from Common Crawl by category and given to all methods. Visual quality: GPT-5 pairwise judge on 200 websites — full-page screenshot beside the reference, five dimensions (layout, colour, typography/spacing, component arrangement, aesthetic consistency), win/lose/tie. Transfer: Online-Mind2Web (in-domain), OSWorld-Verified under 15 max steps (out-of-domain), MobileWorld (mobile). Environment quality (§4.5): UI-TARS-1.5-7B and Agent S2 (GPT-4.1 planner, UI-TARS-72B grounding) on our sites vs OSWorld.
+
+**Human checks.** App. D: 100 sampled pairs across the three comparisons, raters pick the screenshot closer to the reference, 91% agreement with GPT-5, disagreements on subtle near-ties. App. E: 100 sampled tasks, raters judge whether the task is clear and executable on the site and whether the evaluator correctly determines completion; 95 pass. Number of raters, expertise and agreement: Not reported.
+
+</Pass>
+
+## Main result
+
+<Finding src="Tab. 1, Tab. 5, App. C.1">85.6% overall on WebGen-Bench (85.6 ± 1.2 over three runs) vs Codex 81.2, Claude-Code 74.3 and Bolt.diy 67.0; Welch's t-tests `p<0.05` against Codex, `p<0.01` against Claude-Code, `p<0.001` against Bolt.diy</Finding>. We lead every column but Data Display, where Codex's 96.2 beats our 94.1.
+
+<SortableTable columns={["Method", "Content Pres.", "User Inter.", "Data Mgmt.", "Functional", "Data Display", "Design Valid.", "Overall"]} rows={[
+  ["Bolt.diy", 83.2, 59.9, 62.8, 58.4, 84.1, 41.7, 67.0],
+  ["Claude-Code", 87.9, 70.1, 67.6, 67.3, 87.5, 61.1, 74.3],
+  ["Codex", 89.8, 79.2, 75.6, 72.8, 96.2, 76.4, 81.2],
+  ["InfiniteWeb (ours)", 91.5, 83.8, 82.7, 80.9, 94.1, 82.8, 85.6],
+]} />
+
+The GPT-5 [LLM-as-a-judge](../../knowledge/llm-as-a-judge/) prefers our pages <Finding src="Tab. 8, App. D">85.4 ± 0.5% of the time against Claude-Code, 84.2 ± 0.8% against Bolt.diy and 69.3 ± 0.7% against Codex; 100 human-judged pairs agree with it 91% of the time</Finding>. With the Fig. 12 reward, <Finding src="Fig. 1, Tab. 2, Tab. 7">GRPO on our tasks moves UI-TARS-1.5-7B from 24.5 to 31.4 on OSWorld, 23.0 to 28.7 on Online-Mind2Web and 6.4 to 10.3 on MobileWorld</Finding> — on OSWorld past Claude-4-Sonnet's 31.2 (Tab. 2).
+
+<Pass title="Transfer results in full (Tab. 2, 3, 7, 9)">
+
+OSWorld under 15 maximum steps, by domain (%), Tab. 2. Calc/Impress/Writer are LibreOffice; Multi = multi-app; standard deviations over three runs where given.
+
+<SortableTable columns={["Model", "Chrome", "GIMP", "Calc", "Impress", "Writer", "Multi", "OS", "Thunderbird", "VLC", "VSCode", "Overall", "± (3 runs)"]} rows={[
+  ["Computer-use-preview", 36.9, 34.6, 10.6, 25.4, 30.4, 10.8, 45.8, 46.7, 29.4, 47.8, 26.0, "—"],
+  ["Claude-3.7-Sonnet", 41.2, 34.6, 8.5, 29.7, 39.1, 10.8, 50.0, 33.3, 35.3, 43.5, 27.1, "—"],
+  ["Doubao-1.5-thinking-0428", 44.4, 46.2, 13.0, 31.8, 39.1, 4.8, 30.4, 66.7, 23.5, 56.5, 28.1, "—"],
+  ["Claude-4-Sonnet", 36.9, 46.2, 17.0, 36.2, 43.5, 9.7, 37.5, 66.7, 38.5, 60.9, 31.2, "—"],
+  ["OpenCUA-32B", 40.5, 55.1, 13.5, 30.7, 39.1, 9.7, 52.2, 44.4, 25.0, 52.8, 29.7, "1.1"],
+  ["UI-TARS-1.5-7B", 22.9, 51.9, 11.7, 29.7, 39.1, 3.8, 34.8, 26.7, 34.2, 63.0, 24.5, "1.2"],
+  ["+ 200 tasks", 34.8, 61.5, 10.0, 27.7, 34.8, 8.0, 41.7, 40.0, 25.5, 55.1, 27.3, "0.9"],
+  ["+ 400 tasks", 35.5, 69.2, 10.6, 29.8, 37.7, 9.0, 48.6, 35.5, 33.3, 62.3, 29.7, "1.1"],
+  ["+ 600 tasks", 36.9, 69.2, 12.8, 29.8, 47.8, 9.7, 45.8, 40.0, 35.3, 65.2, 31.4, "1.0"],
+]} />
+
+Online-Mind2Web by difficulty (%), Tab. 7; Welch's t vs baseline: 200 tasks t=2.96 `p<0.05`, 400 tasks t=4.47 `p<0.05`, 600 tasks t=6.58 `p<0.01` (App. C.2).
+
+<ResultsTable columns={["Training", "Easy", "Medium", "Hard", "Overall"]} rows={[
+  ["Orig.", "46.9", "18.9", "5.3", "23.0 ± 0.9"],
+  ["200", "54.3", "18.2", "7.9", "25.3 ± 1.0"],
+  ["400", "48.2", "27.3", "5.3", "27.3 ± 1.4"],
+  ["600", "56.8", "23.1", "9.2", "28.7 ± 1.2"],
+]} />
+
+Same 600-task GRPO on Claude-Code-generated sites vs ours (%), Tab. 9 (no ± given):
+
+<ResultsTable columns={["Training data", "Online-Mind2Web", "OSWorld", "MobileWorld"]} rows={[
+  ["Baseline", "23.0", "24.5", "6.4"],
+  ["Claude-Code sites", "23.7 (+0.7)", "25.2 (+0.7)", "5.1 (−1.3)"],
+  ["InfiniteWeb sites", "28.7 (+5.7)", "31.4 (+6.9)", "10.3 (+3.9)"],
+]} />
+
+Environment quality, Tab. 3 (score = task completion %, steps = average steps of successful tasks; no ±):
+
+<ResultsTable columns={["Env.", "Agent", "Score", "Steps"]} rows={[
+  ["InfiniteWeb", "UI-TARS-1.5-7B", "7.4", "10.3"],
+  ["InfiniteWeb", "Agent S2", "14.1", "10.9"],
+  ["OSWorld", "UI-TARS-1.5-7B", "24.5", "9.0"],
+  ["OSWorld", "Agent S2", "27.3", "9.3"],
+]} />
+
+WebGen-Bench with variance, Tab. 5–6: Bolt.diy 67.1 ± 1.8, Claude-Code 75.8 ± 2.4, Codex 80.8 ± 0.4, ours 85.6 ± 1.2; ablations GPT-4.1 backbone 77.4 ± 1.4 (t=7.70, `p<0.01`), without TCTDD 82.6 ± 1.4 (t=2.82, `p<0.05`). Welch's t vs baselines: Bolt.diy t=14.81 `p<0.001`, Claude-Code t=6.33 `p<0.01`, Codex t=6.57 `p<0.05` (App. C.1).
+
+</Pass>
+
+## Key findings
+
+- <Finding src="Fig. 8, §4.6">Dense reward makes 4.4× more tasks learnable: 767 of 4,000 discriminative vs 174 under 0/1</Finding>: at 7.4% success (Tab. 3) most binary groups are all-zero; the 0.35 attempt step splits them.
+- <Finding src="§4.6, Tab. 6">TCTDD is worth 5.0 points in the text (80.6%) but 3.0 in the table (82.6 ± 1.4, t=2.82, `p<0.05`); GPT-4.1 for GPT-5 costs 8.2 (77.4 ± 1.4) yet still beats Claude-Code on GPT-5 (75.8)</Finding>.
+- <Finding src="Tab. 9, App. C.4">Quality, not quantity: the same 600-task GRPO on Claude-Code-generated sites gives +0.7 / +0.7 / −1.3 (Online-Mind2Web / OSWorld / MobileWorld) vs our +5.7 / +6.9 / +3.9</Finding>; Claude-Code stops at 4.9 pages per site vs our 12.6 as its context fills.
+- <Finding src="Tab. 2, Tab. 7">Means scale with data — OSWorld 24.5 → 27.3 → 29.7 → 31.4 at 200/400/600 tasks, Online-Mind2Web 23.0 → 28.7 — but cells do not</Finding>: at 200 tasks VLC drops 34.2 → 25.5 and VSCode 63.0 → 55.1; Online-Mind2Web Hard goes 5.3 → 7.9 → 5.3 → 9.2.
+- <Finding src="Tab. 3">Our sites are harder and more discriminating than OSWorld: UI-TARS-1.5-7B 7.4 vs 24.5, Agent S2 14.1 vs 27.3 — a 6.7-point agent gap vs 2.8</Finding>.
+- <Finding src="App. A.1, Tab. 2">What transfers is behaviour: persistence (VS Code language search, 5 → 15 steps), flow completion (Spotify install, 4 → 13) and loop escape (Thunderbird attachment, 11 wasted steps → done in 5); OSWorld multi-app rises 3.8 → 9.7</Finding>.
+
+## Implications
+
+A site with 8–10 verified tasks costs $1.93 and ~20 minutes, against ~1,800 person-hours for OSWorld's 369 tasks (Limitations). <Related>We inherit CodeT's tests-alongside-code idea but verify only the task-induced subspace; procedurally generated RL environments (Cobbe et al., 2020) are the lineage, OS-Genesis, AgentTrek and AgentSynth the contrast</Related> (§2). <Related>WebGen-Bench's [agent-as-a-verifier](../../knowledge/agent-as-a-verifier/) protocol is our only external check that drives the DOM</Related>. <FollowUp>The task-derived specification is a behavioural model: [model-based GUI testing](../../knowledge/model-based-gui-testing/) could generate the flow tests from it, and the shared state contract is where [differential testing](../../knowledge/differential-testing/) across candidate implementations would attach</FollowUp>.
+
+## Limitations
+
+<Caveat>We know what our oracle covers: TCTDD checks the Node.js business logic against <Term def="tests that exercise only successful scenarios, never error or edge cases">happy-path</Term> flow tests the same LLM wrote (Fig. 27–28); the UI wiring is exercised only by WebGen-Bench's agent; 1.5% of sites never pass within 8 iterations (App. E).</Caveat>
+<Caveat>We did not report the protocol behind the 95/100 (App. E) and 91% (App. D) human checks — rater count, expertise, agreement, or whether evaluators were tested on partial and adversarial runs; each is a 100-sample spot check.</Caveat>
+<Caveat>Every site is single-user, without authentication, at most 12 pages, localStorage-only; tasks never cross sites; mobile transfer comes from responsive layouts, not native apps (Limitations, Fig. 15–17).</Caveat>
+<Caveat>Three runs per arm, Welch's t on n=3, no variance for per-domain or per-category cells (Tab. 1–3, Tab. 9), one 4-rollout count behind 767 vs 174, and MobileWorld at 10.3% absolute.</Caveat>
+
+## Critiques and Questions
+
+1. No independent oracle. GPT-5 writes the tasks, data, code, tests, instrumentation and evaluator, then judges the screenshots. Tests never hardcode expected values, extract them from API responses and cover the happy path only (Fig. 28), so a wrong-but-self-consistent implementation passes; the §3.3 claim that a test checks exactly the $29.99 and $45.00 products for an under-$50 query is stronger than that prompt allows. [Mutation-hardened checks](../../knowledge/mutation-hardened-checks/) (break `submitDemoRequest()` on purpose) would settle it. Fig. 32 asks for boolean evaluators, Fig. 12 returns a weighted sum: which produced the training evaluators?
+2. The numbers disagree. TCTDD ablation: −5.0 to 80.6% (§4.6) vs 82.6 ± 1.4, −3.0 (Tab. 6). Baselines: Codex 81.2 and Claude-Code 74.3 (Tab. 1) vs 80.8 ± 0.4 and 75.8 ± 2.4 (Tab. 5). Scale: "600 tasks" (§4.4, Tab. 9) vs "600 websites in approximately 125 minutes" (Limitations) at 8–10 tasks per website (App. B). Pages: 12.6 per website (App. C.4) against a cap of 12 (App. B).
+3. Contamination and aging are unaddressed: sites, tasks and rewards are GPT-5 artifacts; WebGen-Bench predates GPT-5 with no memorisation check; the WebGen-Bench agent's model, the Online-Mind2Web run date and any Common Crawl overlap with Online-Mind2Web's live sites are Not reported; baselines are pinned to Codex v0.46.0, Claude-Code v2.0.0 and Bolt.diy v0.0.7.
+4. The transfer story is selected: App. A.1 keeps only strong-positive-transfer cases; the regressions in Tab. 2 and Tab. 7 (VLC and VSCode at 200 tasks, Online-Mind2Web Hard at 400) get no analysis and, with n=3, may be noise or real negative transfer.
+
+<SelfCheck q="An agent submits the newsletter form with a valid test email and weekly specials ticked, the subscription record is written, but it never reaches the on-site confirmation. What does the Fig. 12 evaluator return, and why would a script that writes the record straight into localStorage score lower?" a="0.65: CP1 (0.35, the attempt flag with a valid email and wantsWeeklySpecials) and CP2 (0.30, a record in newslettersubscriptions whose id and email match the attempt) pass; CP3 (0.35, a confirmation referencing the same subscription id) fails. A direct write creates the record but not task10_subscriptionAttempt, which is set only inside the instrumented business-logic function, so CP1 fails, CP2 fails because it is keyed on the attempt's id, and CP3 fails too — 0.0. That is why evaluators read instrumented localStorage rather than the DOM or raw records (§3.5, App. A.2)." />
+
+## Glossary
+
+- **UI-TARS-1.5-7B** — the open 7B vision-language GUI agent we post-train.
+- **Agent S2** — planner/grounder computer-use system; GPT-4.1 plans, UI-TARS-72B grounds (§4.5).
+- **OSWorld-Verified** — OSWorld with cleaned tasks and evaluation.
+- **Common Crawl** — open web-crawl archive; our seed and screenshot source (App. B).
+- **Welch's t-test** — two-sample t-test without equal variances; here on three-run means.
+
+{/* NOTES_START */}
+### Personal notes
+{/* NOTES_END */}

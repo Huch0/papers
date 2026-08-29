@@ -55,6 +55,7 @@ knowledge_concepts:
 - state-contract-verification
 - mutation-hardened-checks
 - model-based-gui-testing
+- deterministic-verifier-design
 versions:
 - version_key: v1
   version_label: arXiv v1

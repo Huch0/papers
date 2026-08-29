@@ -496,3 +496,20 @@ Each entry: date, trigger, change, files touched, migration status.
   only the pre-existing PDF-missing errors, site build OK.
 - Lesson for later agents: re-read SKILL.md before every batch; the three hard rules are
   requirements, not tone.
+
+## 2026-08-28 — Deterministic-verifier comparison: InfiniteWeb, AutoWebWorld, HTMLCure added
+- Trigger: the user pointed out that deterministic / programmatic / contract- and
+  requirement-induced verifiers already exist and asked how those papers design theirs, with
+  WebGrader and InfiniteWeb added to the references and compared to ours.
+- Ingested under the venue policy: InfiniteWeb 2601.04126 (**ACL 2026**, DBLP), AutoWebWorld
+  2602.14296 (preprint), HTMLCure 2605.26807 (preprint; the arXiv API returned HTTP 429 for it,
+  so the candidate was built by hand from the abs page — flagged in its metadata `extra.note`).
+  PDFs local-only; extraction.txt generated (`uv run --with pymupdf` — PyMuPDF is not installed
+  for the system python). Triage records only; summaries on demand.
+- config/milestones.yaml: seeds 38–40 on the interactive_component_synthesis reading order
+  (positioning tier) with reading notes pointing at the comparison.
+- The comparison itself lives in the workspace repo:
+  research/contract-harness/reading/2026-08-28-deterministic-verifiers.md (13 verifiers × 9
+  design dimensions, five families, what to borrow, seven bars ours must clear).
+- Extractions also generated for FrontendBench, Web-Bench, VISTA, InteractScience,
+  I-WebGenBench (PDFs were present, text was not).

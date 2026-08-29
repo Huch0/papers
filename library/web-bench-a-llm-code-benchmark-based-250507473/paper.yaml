@@ -38,7 +38,8 @@ milestone:
   significance: 'ByteDance: 50 projects x 20 sequential tasks with Playwright tests; Claude 3.7 Sonnet
     25.1% Pass@1.'
   subarea: programmatic_behavior_tests
-knowledge_concepts: []
+knowledge_concepts:
+- deterministic-verifier-design
 versions:
 - version_key: v1
   version_label: arXiv v1

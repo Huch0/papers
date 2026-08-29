@@ -32,7 +32,14 @@ topic_groups:
 - general_agent_methods
 - llm
 - software_engineering_agents
-tags: []
+tags:
+- environment
+- feedback-behavioral
+- interactive-component-survey
+- model-closed
+- model-open
+- output-interactive
+- training-rl
 venue:
   name: arXiv
   tier: workshop_or_minor
@@ -44,24 +51,27 @@ user:
   triage_confidence: high
   notes: null
 milestone: null
-knowledge_concepts: []
+knowledge_concepts:
+- deterministic-verifier-design
+- state-contract-verification
+- model-based-gui-testing
 versions:
 - version_key: v1
   version_label: arXiv v1
   source: arxiv
   source_url: https://arxiv.org/abs/2602.14296v1
   pdf_path: library/autowebworld-synthesizing-infinite-verifiable-web-environments-via-260214296/v1/paper.pdf
-  summary_path: null
+  summary_path: library/autowebworld-synthesizing-infinite-verifiable-web-environments-via-260214296/v1/summary.mdx
   metadata_path: library/autowebworld-synthesizing-infinite-verifiable-web-environments-via-260214296/v1/metadata.yaml
   fetched_at: '2026-08-29T10:20:01Z'
   source_updated_at: '2026-02-15T20:03:19Z'
   arxiv_version: v1
   pdf_sha256: b660ae0dcc0502236c312ece5ba79434ce8e03c5aca8e819398367759c3f127d
   pdf_bytes: 12204666
-  summary_status: none
-  extraction_status: none
+  summary_status: full
+  extraction_status: full
   created_at: '2026-08-29T10:20:01Z'
-  updated_at: '2026-08-29T10:20:01Z'
+  updated_at: '2026-08-29T11:02:48Z'
 relations:
   duplicate_candidates: []
   related_papers: []

@@ -38,7 +38,8 @@ milestone:
   significance: 201 scientific web apps (sliders, simulations, data-linked charts); a Playwright Interaction
     Probe (Interaction Rate) plus a VLM rubric. The arXiv abstract differs from the full text.
   subarea: programmatic_behavior_tests
-knowledge_concepts: []
+knowledge_concepts:
+- deterministic-verifier-design
 versions:
 - version_key: v1
   version_label: arXiv v1

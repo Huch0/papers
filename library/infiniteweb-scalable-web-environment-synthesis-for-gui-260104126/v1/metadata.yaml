@@ -69,13 +69,14 @@ scoring:
 artifacts:
   pdf: library/infiniteweb-scalable-web-environment-synthesis-for-gui-260104126/v1/paper.pdf
   extraction: library/infiniteweb-scalable-web-environment-synthesis-for-gui-260104126/v1/extraction.txt
-  summary: null
+  summary: library/infiniteweb-scalable-web-environment-synthesis-for-gui-260104126/v1/summary.mdx
   code_url: null
   project_url: null
   dataset_url: null
 status:
   downloaded: true
   extracted: true
-  summarized: false
+  summarized: true
   triaged: true
   user_read_status: unread
+  summary_format: mdx

@@ -44,7 +44,8 @@ milestone:
   significance: 'GameFix track: virtual clock advanced in fixed steps, synthetic inputs, read-only JSON
     state snapshots as the oracle; no required test API.'
   subarea: state_contract_verification
-knowledge_concepts: []
+knowledge_concepts:
+- deterministic-verifier-design
 versions:
 - version_key: v1
   version_label: arXiv v1

@@ -1,0 +1,176 @@
+---
+canonical_key: arxiv-2605.26807
+version_key: v1
+title: 'HTMLCure: Turning Browser Experience into State Guided Repair for Interactive HTML'
+authors:
+- Jiajun Wu
+- Jian Yang
+- Tuney Zheng
+- Wei Zhang
+- Haowen Wang
+- Yihang Lou
+- Xianglong Liu
+venue: arXiv
+year: 2026
+tags: []
+topic_groups: []
+triage_label: SKIP
+triage_confidence: low
+source_link: https://arxiv.org/abs/2605.26807v1
+summary_date: '2026-08-29'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+<TLDR>We judge LLM-generated HTML only after a browser has used it and treat the trace as a control state that decides whether a page is rewritten, patched or preserved and whether each re-executed candidate survives; repairing rather than filtering turns 13,786 usable seeds into 63,703 cleared pages and trains a 27B model to 50.6 on HTMLBench-400 and 81.2 on MiniAppBench-Val.</TLDR>
+
+<WhyItMatters>An execution trace, not a screenshot, routes repair and gates training data — the shape of a verify-then-repair harness, and a worked case of boxing in an [LLM-as-a-judge](../../knowledge/llm-as-a-judge/).</WhyItMatters>
+
+<KeyStats items={[
+  { value: "50.6", label: "HTMLBench-400 score, HTMLCure-27B-Refined", sub: "45.2% TC pass; Kimi-K2.6 49.8, GPT-5.4 49.2 (Tab.4)" },
+  { value: "81.2", label: "MiniAppBench-Val average, same model", sub: "27B-Raw 65.9; Qwen3.6-27B 84.3; GPT-5.4 87.7 (Tab.4)" },
+  { value: "63,703", label: "quality-cleared pages from 13,786 High seeds", sub: "+49,917; 40K exported for SFT (Tab.5)" },
+  { value: "17.0%", label: "catastrophe rate of rewriting a High page", sub: "0.6% on Low pages (Tab.7)" },
+  { value: "1.1 / 10", label: "Interactivity score of our best model", sub: "every Tab.4 row sits between 0.9 and 1.4" },
+]} />
+
+## Motivation
+Take the base defense game of Fig. 9. Its first screenshot looks like a game — canvas, <Term def="Heads-up display: the on-screen score, lives and wave overlay of a game">HUD</Term>, protected zone — but the trace reads "playable loop is incomplete: controls, obstacle checks, and score state are not verified". <Problem>In our 97K-prompt corpus only about 15% of Kimi-K2.5 pages are directly usable under the browser gate; the rest fail through inert controls, stalled game logic, broken responsive layouts, or missing content (§1)</Problem> — failures the single-step screenshot judge of Eq. 1 (a visual model over sampled frames) cannot see, since they appear only after hover, click, scroll, resize, or gameplay. <Problem>Filtering discards such pages unexamined — 91,484 traced pages shrink to 13,786 High ones (Tab. 5) — and a prompt fed only source or a screenshot cannot choose between rewrite, patch and leave-alone</Problem>. <Related>WebArena, MiniAppBench, WebGen-Bench and FullFront already execute pages</Related>; none use the trace as a repair state.
+
+## Contribution (what's new)
+<Novelty>The browser trace is a control state, not a score: its band — Low, Mid, High at 40 and 80 — plus a diagnosis fixes which edit family is admissible (rewrite, diagnose-and-patch, preserve), and a candidate replaces the checkpoint or reaches the <Term def="Supervised fine-tuning: training on fixed prompt-response pairs">SFT</Term> export only after a fresh execution passes a regression-penalized composite.</Novelty> Forced by Tab. 7: rewrite is the best action below 40 (+14.2) and a 17.0%-catastrophe action from 80 up (−2.7), so one prompt cannot serve both; our 46-point game is Mid and the diagnosis chooses.
+
+## Research questions
+1. Does executing a page — viewports, probes, a gameplay rollout — expose failures a screenshot judge misses, with the <Term def="Vision-language model: an LLM that also reads images, here screenshots">VLM</Term> boxed to visual design?
+2. Does the observed state decide which repair family is useful and which is dangerous?
+3. Does repairing weak pages beat filtering as SFT supervision at natural and matched sizes, and transfer to an external benchmark?
+
+## Methodology
+**Experience.** A static pass reads the file; Layers 1–2 render it, change viewports, census the buttons, scan the keyboard, hover; because that evidence says "game", Layer 3 runs a short task-driven rollout and Layer 4 keeps 8–12 annotated <Term def="A screenshot taken at a chosen point of the executed trajectory, tagged with the event that produced it">keyframes</Term> (Fig. 2, §2.2) — [model-based GUI testing](../../knowledge/model-based-gui-testing/) with a fixed protocol. **Judge.** An Analyst VLM sees keyframes and <Term def="A deterministic browser check run by the harness — click, key press, resize, JavaScript assertion, screenshot-change check — independent of any model">probe</Term> results and only describes — observations plus a requirement checklist; a Scorer sees no screenshots and scores from that JSON and the objective metrics (§2.3, D.6.2). **Route.** The game scores 46: Mid. The diagnosis lists the unverified controls, obstacle checks and score state; a fixed rule controller opens the Mid operator set. **Repair and verify.** Round 1 is a structural rebuild (+9.5), round 2 game mechanics, round 3 an interaction fix, then visual polish, feature completion and a final bug fix; each round asks for at most two candidates, re-executes them, keeps one only if <M tex="S_{\mathrm{comp}}" /> beats the checkpoint, and feeds a contrastive keyframe report into the next prompt. The loop runs all eight rounds — 89.9 never reaches the 97 early stop — and exports the best verified checkpoint (Fig. 9).
+
+What breaks without each part: without execution the inert controls are invisible (Eq. 1 vs Eq. 2); without executed keyframes the VLM grades a page that never ran, and without the Analyst/Scorer split and the 20-point cap it could overrule the probes; without bands one prompt rewrites High pages at 17.0% catastrophe or patches Low pages with no stable target (Tab. 7); without <M tex="S_{\mathrm{comp}}" /> from a fresh run a visual gain hides a broken click handler; without repair the gate keeps 13,786 of 91,484 pages (Tab. 5).
+
+<Definition term="Experience trace (Eq. 2)">
+For artifact <M tex="h" /> and action sequence <M tex="\pi=(a_1,\dots,a_T)" />:
+<MathBlock>{`\\mathcal{E}(h,\\pi)=\\{e_t\\}_{t=1}^{T},\\qquad e_t=(v_t,b_t),`}</MathBlock>
+with <M tex="v_t" /> visual evidence (frames, viewport snapshots, frame differences) and <M tex="b_t" /> behavioral evidence (probe outcomes, DOM state, latency, console state) — an ordered trace, not a screenshot set (§2.1).
+</Definition>
+
+<Definition term="Five-component score (Eq. 3, Tab. 2)">
+<MathBlock>{`s_d(h)=g_d\\big(\\mathcal{E}(h,\\pi)\\big),\\qquad S(h)=\\sum_{d\\in D}s_d(h),\\qquad D=\\{\\mathrm{rend},\\mathrm{vis},\\mathrm{func},\\mathrm{inter},\\mathrm{code}\\}.`}</MathBlock>
+HTMLBench scoring profile (coverage is metadata, not a dimension):
+<ResultsTable columns={["Dimension", "Interactive", "Non-interactive", "Evidence"]} rows={[
+  ["Rendering", "10", "10", "Browser health"],
+  ["Visual Design", "20", "20", "VLM keyframes"],
+  ["Functionality", "55", "65", "Frozen TC pass"],
+  ["Interactivity", "10", "0", "Browser probes"],
+  ["Code Quality", "5", "5", "Static pass"],
+  ["Total", "100", "100", "Hybrid"],
+]} />
+</Definition>
+
+<Definition term="State-to-strategy routing (Eq. 4, Eq. 6)">
+With <M tex="s=S(h)" /> and diagnosis <M tex="D(h)" /> (Tab. 15), the band picks the family and <M tex="D(h)" /> binds observed failures to operators inside it (§3.3):
+<MathBlock>{`\\sigma(D,s)=\\begin{cases}\\text{HolisticRewrite}, & s<40,\\\\ \\text{Rewrite or InteractionTargetedFix}(D), & 40\\le s<80,\\\\ \\text{Preserve or TargetedRefine}(D), & s\\ge 80,\\end{cases}`}</MathBlock>
+<MathBlock>{`\\begin{aligned}\\Omega_{\\mathrm{Low}}&=\\{\\text{HolisticRewrite},\\text{FeatureCompletion},\\text{GameRepair}\\},\\\\ \\Omega_{\\mathrm{Mid}}&=\\{\\text{Rewrite},\\text{BugFix},\\text{PlayabilityRepair},\\text{InteractionTargetedFix},\\text{GameRepair},\\text{VisualEnrichment}\\},\\\\ \\Omega_{\\mathrm{High}}&=\\{\\text{NoOpVerify},\\text{VisualPolish},\\text{InteractionEnhance},\\text{FunctionalityRefine},\\text{CodeCleanup}\\}.\\end{aligned}`}</MathBlock>
+</Definition>
+
+<Definition term="Regression-aware acceptance (Eq. 5, Eq. 7)">
+Round <M tex="t" /> re-executes up to two candidates <M tex="C_t" /> for the current page <M tex="h_t" /> and keeps
+<MathBlock>{`h_{t+1}=\\arg\\max_{h'\\in C_t\\cup\\{h_t\\}} S_{\\mathrm{comp}}(h',h_t),\\qquad S_{\\mathrm{comp}}(h',h)=S(h')-\\sum_{d\\in D} w_d\\,\\max\\big(0,\; s_d(h)-s_d(h')\\big);`}</MathBlock>
+functionality and interactivity carry larger <M tex="w_d" /> (values Not reported). A trace stops at <M tex="s\ge 97" />, under a patience rule, or after eight rounds; crossing 80 only switches the family to refinement (§3.2, §3.4).
+</Definition>
+
+<Pass title="Evaluator, controller, and repair diagnostics">
+<Stepper steps={[
+  { title: "Static pass (§2.4, Tab.14)", body: "Extract the HTML; reject malformed, truncated or trivial pages; record code-quality evidence (size, canvas, script, CSS, SVG, requestAnimationFrame, input types, external resources, static issues)." },
+  { title: "Layers 1–2: observe and interact (§2.2)", body: "Load, watch motion, change device views, scroll below the fold, press prominent controls, hover, scan keyboard bindings, trigger scroll behaviour. Runs on every page that survives the static pass. Outputs: render success, console errors and JS exceptions, button census (responsive/tested), confirmed responsive keys, latency, frame differences." },
+  { title: "Layer 3: deep gameplay (conditional)", body: "Only when early evidence indicates deeper interactivity: a short task-driven rollout so game states, counters, canvas changes and multi-step UI transitions stay visible. An optional browser-use tester agent (D.6.2) follows a task-specific protocol — activate entry points, exercise every mentioned feature, complete one full workflow, report bugs — the agent-as-a-verifier slot of the pipeline." },
+  { title: "Layer 4: keyframes", body: "8–12 annotated keyframes selected from the same run with event context (Fig.2). Mid pages receive an extra diagnostic branch because routing is hardest in that band (§2.4)." },
+  { title: "Analyst → Scorer (§2.3, D.6.2)", body: "Analyst (sees screenshots and probes, does not score): factual observation, template-like versus distinctive design signals, working/broken lists, and a prompt-grounded requirement audit with done / broken / missing statuses; rule: identical frames after an interaction mean the interaction is broken. Scorer (no screenshots, deterministic decoding): evidence only; broken items penalise more than missing; unresponsive buttons, keyboard failure, gameplay with no state change or timed-out actions cap interaction; reusable templates do not get top visual scores; guardrails clamp scores when probes contradict the text report. Fast mode skips the VLM for regression checks; leaderboard rows use full mode." },
+  { title: "Diagnosis D(h) (Tab.15)", body: "Score state (total, five components, band, distance to the 97 target); failed test-case ids, assertion messages, missing requirements, pass-rate change; runtime state (render, console, exceptions, overlays, FPS or frozen motion, responsive failures); interaction state (buttons, keyboard, forms, hover, drag, gameplay changes, latency); visual state (Analyst notes, mobile and desktop keyframes, contrastive feedback); history (strategies tried, accepted and rejected candidates, best checkpoint, preservation list)." },
+  { title: "Repair prompts (D.6.3)", body: "One template for every strategy: task, current scores, previous attempts, probe evidence, Analyst evidence, requirement checklist, preservation list, current HTML, plus a strategy-specific block. Patch mode returns JSON old_str/new_str patches; rewrite mode returns the full file. Game pages get a probe-driven prompt naming the failing layer — input (canvas not focusable, listeners on the wrong element, missing preventDefault for arrow keys, key state not read in the loop), loop (requestAnimationFrame never called, loop waits for a click, update or draw throws), canvas (zero size, getContext before DOM ready, clearRect without redraw, overlay hides the canvas), overlay (game-over visible on load, start screen cannot be dismissed), or gameplay logic (collision, scoring, state machine, timer, physics)." },
+  { title: "Contrastive visual feedback (§3.2, D.6.3)", body: "After a candidate is re-run, a VLM compares paired BEFORE/AFTER keyframes at the same interaction state and returns improved / regressed / unchanged lists plus one priority fix, injected into the next prompt next to the deterministic evidence. High pages can additionally get a visual-only diagnosis and a verification call that must return functional_regression = false." },
+]} />
+
+Operator binding inside a set (§3.3): console or probe failures activate bug fixing; broken key or mouse bindings activate playability repair; stable logic with weak presentation activates visual enrichment; game repair is used when the interactive scaffold is worth preserving; in High, verification without editing is a valid controller output. Family profile (Fig. 7): rewrite returns +9.7 with 92% success, 100% safety and 49% support; interaction fix +11.2, 95%, 100%, 9%; other targeted fixes +7.3, 92%, 100%, 42%. Ranked by lift the strategies read fix interaction, fix playability, holistic rewrite, fix game, bug fix, feature complete, visual enrichment — the valuable actions are interaction, playability and rewrite, not polish. State transitions (Tab. 8, within-row percentages): Low → Low 1.8% (278), Mid 44.2% (6,932), High 54.0% (8,476); Mid → Mid 17.9% (11,129), High 82.1% (50,883; Tab. 5 lists 50,881 exports for the same band); High → High 100.0% (13,786). Stopping (Fig. 8, as extracted): Low pages locate their best checkpoint late (R2 23%, 3.5K; R8 16%, 2.5K), Mid pages early (R1 15%, 9.5K; R2 25%, 15.3K), High pages often at input (28%, 3.9K). Retained mean score over rounds (Fig. 5, as extracted): 58.9, 68.5, 79.8, 82.4, with a marked +2.5 gap between peak and current candidate.
+</Pass>
+
+<Pass title="HTMLBench-400 construction, SFT routes, MiniAppBench protocol, compute">
+<ResultsTable columns={["Task family (Tab.3)", "Items", "Test cases", "Subtypes"]} rows={[
+  ["Apps & Tools", "105", "1,688", "18"],
+  ["Content & Marketing", "110", "1,660", "16"],
+  ["Data Visualization", "35", "588", "7"],
+  ["Games & Simulations", "55", "682", "9"],
+  ["3D/WebGL Scenes", "20", "328", "4"],
+  ["Visual Art & Animation", "75", "1,054", "11"],
+  ["Total", "400", "6,000", "65"],
+]} />
+
+**Task construction (§4, D.4, Tab. 12–14).** 400 frozen items with category, subtype, difficulty (122 easy, 156 medium, 122 hard), prompt, `has_interaction` (338 true), weighted test cases and ordered browser steps; the six families are collapsed from ten source buckets (apps, UI pages, games, data visualization, creative pages, SVG art, 3D/WebGL, content pages, landing pages, portfolios). Each scored test case is a deterministic browser program — click, type, hover, key press, resize, screenshot-change check, JavaScript assertion, visibility check; the runner executes 16,120 steps over the 6,000 cases. Rules: prompt-grounded and browser-observable; no selectors, class names, frameworks, hidden DOM assumptions, credentials, payments or private services. Functionality is the weighted pass rate over the frozen pool; the files pass a strict schema validator and a quality audit for duplicate evidence, shallow visual checks and cross-template leftovers. Models receive only the prompt under a minimal system instruction (single self-contained HTML, no prose), with a UI-only demo retry suffix for provider safety blocks (D.6.1). Who wrote the test cases, and whether they were reviewed: Not reported.
+
+**Contamination control (Tab. 13).** An exact normalized prompt match between the 400 benchmark prompts and the 91,484 traced repair records finds zero overlaps. The controller is not trained on HTMLBench (D.5). Nothing beyond exact matching is checked.
+
+**SFT routes (D.1, Tab. 5).** 97,115 browser-crawled prompts (allowlist policy; login, payment, private-backend prompts excluded) mapped to the six families; Kimi-K2.5 generates one page per prompt; 92,418 valid Raw rows; 91,484 with completed repair traces (934 Raw-only). Raw = the valid pool; Filtered = the original High subset (13,786); Refined = a 40K export sampled from the 63,703-page cleared pool, where a repaired page enters only after its retained version is executed again and passes the final gate. Equal-size ablation: 12,392 examples per route. Training: LlamaFactory full-parameter SFT of Qwen3.5 4B / 9B / 27B, `qwen3_5_text` template, packing, sequence length 32,768, cosine schedule, warmup 0.05, 3 epochs, learning rates 1e-5 / 8e-6 / 5e-6, 32 H20 GPUs for 4B and 9B, 128 for 27B. Card-hours (Tab. 10): 27B Raw 5,962, Filtered 740, Refined 2,320; equal-size 27B 801 / 741 / 1,110.
+
+**Evaluation protocol (D.2, Tab. 9).** Local checkpoints served with vLLM, tensor parallel 8, max length 32,768, temperature 0, concurrency 4, timeout 600 s, max output 30,000 tokens; Chromium browser runner in full mode over all 400 items. Repair: provider API plus browser runner, up to 8 rounds and at most 2 candidates per round, every candidate re-executed; the repair model and the judge VLM are not named. Single run per row; no variance.
+
+**MiniAppBench-Val (D.3, Tab. 11).** <Term def="External benchmark of interactive single-page HTML apps scored by its own MiniAppEval runner on Intent, Static and Dynamic axes; we use its released 100-item validation split">MiniAppBench-Val</Term>: the full benchmark has 500 tasks over six domains but the public test set withholds references, so every number uses `query_validation_100.json` — Science 31, Games 23, Tools 28, Visualization 4, Humanities 12, Lifestyle 2 — evaluated through Playwright with 3 workers. It is never used for routing, export gating, threshold selection or checkpoint selection.
+
+**Case cards (Figs. 9–14, all best at R8).** Base defender game (prompt "Create a single-page base defense game…") 46 → 89.9 (+43.9); overseas moving planner 46 → 87.9 (+41.9); traffic analytics dashboard 52 → 90.6 (+38.6); particle clock 47 → 93.8 (+46.8); tidal orbit explorer 47 → 94.2 (+47.2); teacher content manager 60 → 86.7 (+26.7). Per-family before/after lift (Fig. 6, as extracted): Apps/Tools +13.6, Games/Sim. +22.7, Visual/Anim. +23.6, Content +25.9, Data Viz +28.0, 3D/WebGL +34.4; the family with 37% SFT eligibility is not unambiguously labelled in the extraction.
+</Pass>
+
+## Main result
+<Finding src="Tab.4">Under one backbone and recipe, Refined beats Raw and Filtered at every scale: HTMLCure-27B-Refined reaches 50.6 on HTMLBench-400 with 45.2% <Term def="Weighted pass rate over the frozen pool of 6,000 deterministic browser test cases">TC pass</Term>, above Kimi-K2.6 (49.8 / 43.7) and GPT-5.4 (49.2 / 42.7), and 81.2 on MiniAppBench-Val against 65.9 for 27B-Raw</Finding>. For the game: a canvas that draws once versus keys, waves and score that survive the frozen tests. The total carries the 20-point VLM component; TC pass is the deterministic slice.
+
+<SortableTable columns={["Model (Tab.4)", "Size", "HTMLBench-400 score", "TC pass %", "Inter. (of 10)", "MiniApp Intent", "MiniApp Static", "MiniApp Dyn.", "MiniApp avg"]} rows={[
+  ["HTMLCure-27B-Refined", "27B", 50.6, 45.2, 1.1, 87.8, 81.1, 74.6, 81.2],
+  ["HTMLCure-27B-Filtered", "27B", 48.1, 40.8, 1.1, 78.6, 69.7, 61.2, 69.9],
+  ["HTMLCure-27B-Raw", "27B", 45.8, 42.6, 0.9, 76.0, 64.8, 56.7, 65.9],
+  ["Qwen3.5-27B (reference row)", "27B", 45.5, 38.4, 1.1, 87.6, 73.7, 68.3, 76.5],
+  ["Qwen3.6-27B", "27B", 47.1, 38.1, 1.1, 91.7, 84.5, 76.8, 84.3],
+  ["HTMLCure-9B-Refined", "9B", 48.5, 42.1, 1.1, 76.5, 65.0, 28.1, 56.5],
+  ["HTMLCure-4B-Refined", "4B", 46.5, 40.9, 1.2, 72.5, 63.4, 29.0, 55.0],
+  ["Kimi-K2.6", "1TA32B", 49.8, 43.7, 1.2, 92.2, 85.6, 78.9, 85.5],
+  ["GLM-5.1", "754BA40B", 48.6, 39.6, 1.2, 92.8, 87.0, 83.6, 87.8],
+  ["DeepSeek-V3.2", "685BA37B", 48.8, 42.8, 1.4, 89.8, 81.2, 75.1, 82.0],
+  ["GPT-5.4", "—", 49.2, 42.7, 1.0, 90.8, 86.5, 85.6, 87.7],
+  ["Claude-Opus-4.7", "—", 47.8, 39.8, 1.0, 89.7, 83.3, 85.9, 86.3],
+  ["Gemini-3.1-Pro", "—", 45.4, 37.0, 0.9, 84.3, 78.8, 78.3, 80.5],
+]} />
+
+## Key findings
+- <Finding src="Tab.7">The useful action flips with state</Finding>: Low, holistic rewrite +14.2 (90.0% <Term def="Score change of at least +5 after a repair action (Tab.1)">success</Term>, 0.6% <Term def="Score change of −10 or worse after a repair action (Tab.1)">catastrophe</Term>, n = 35,822); Mid, interaction fix +11.3 (95.4%) over rewrite +8.3 (n = 324,880); High, targeted fix −0.2 at 0.0% success, rewrite −2.7 at 17.0% catastrophe (n = 232,128).
+- <Finding src="Tab.5, Tab.8">Repair, not selection, fills the pool</Finding>: 54.0% of Low traces (8,476) and 82.1% of Mid traces (50,881) export and Mid supplies 79.9% of the 63,703 pages, yet 68.5% of original High pages (9,440) are rejected at export although 100.0% stay High.
+- <Finding src="Tab.6">Quality survives matched size</Finding>: at 12,392 examples per route, 27B Refined 49.9 / 43.7 TC pass / 75.1 MiniApp vs Filtered 48.2 / 41.0 / 71.8 and Raw 45.0 / 41.2 / 62.5; at 9B Refined leads HTMLBench (47.5 vs 45.1) but MiniApp ties (55.1 vs 55.2).
+- <Finding src="Tab.4">Filtering raises the total but lowers the deterministic slice at every scale</Finding>: Raw → Filtered TC pass falls 39.5 → 37.5 (4B), 41.4 → 40.3 (9B), 42.6 → 40.8 (27B); Refined restores 40.9 / 42.1 / 45.2.
+- <Finding src="Fig.3, Fig.5, Fig.8">Export the best verified checkpoint, not the last edit</Finding>: the retained mean rises 58.9 → 82.4 while the current candidate lags the peak; 28% (3.9K) of High pages are best at input, Low pages still peak in round 8 (16%, 2.5K).
+
+## Implications
+The transferable pattern: probes decide, the judge describes, the scorer never sees pixels — [agent-as-a-verifier](../../knowledge/agent-as-a-verifier/) with the agent boxed to observation; the frozen prompt-grounded test cases are [state-contract verification](../../knowledge/state-contract-verification/) (a post-interaction state, never a selector). <Related>Self-Refine, Self-Debugging, CodeRL, DesignBench and VIBEPASS</Related> repair or diagnose from feedback; here the state also gates admissible edits and export. <FollowUp>Learn routing and stopping from the 592,830 logged attempts (§8)</FollowUp>; <FollowUp>generate deterministic tests for the corpus so the training gate matches the benchmark gate</FollowUp>; <FollowUp>explain why Interactivity is at floor for every model</FollowUp>.
+
+## Limitations
+- <Caveat>We know the evaluator is validated only by construction</Caveat>: no human agreement, fault injection, or correlation with user judgment for the Analyst/Scorer path or the probes; Interactivity sits between 0.9 and 1.4 of 10 for every row of Tab. 4.
+- <Caveat>We know the same evaluator gates the training data and scores HTMLBench-400</Caveat>: the corpus has no frozen test cases, so band and export rest on the Scorer reading the Analyst's requirement checklist (D.6.2), an LLM judgment whose corpus-side profile we did not report; on the one independent check, MiniAppBench-Val, Refined (81.2) trails GPT-5.4 (87.7), Kimi-K2.6 (85.5) and Qwen3.6-27B (84.3).
+- <Caveat>We did not report who wrote the 6,000 test cases or how they were validated</Caveat>: Tab. 13 gives rules, not authorship, review or agreement; every number is one temperature-0 run without variance; closed rows are provider versions at evaluation time.
+- <Caveat>We know the loop is hand-tuned and single-source</Caveat>: 40 / 80 / 97 thresholds, unreported regression weights and patience rule, an unnamed repair LLM and judge VLM, one generator (Kimi-K2.5), single-file HTML only, probes that cannot cover every interaction (§8).
+
+## Critiques and Questions
+1. Contamination is an exact normalized prompt match (zero of 400 against 91,484 traces, Tab. 13) — it rules out reuse, not preference: Refined is what the evaluator scored at or above 80, and the same Analyst/Scorer supplies HTMLBench's visual points, so part of the 48.1 → 50.6 step over Filtered is learning the judge; the deterministic 40.8 → 45.2 is cleaner evidence. The MiniAppBench "+15.3" is against a Raw route (65.9) that sits below the Qwen3.5-27B row (76.5).
+2. Which VLM judges and which LLM repairs? Neither is named ("Provider API", Tab. 9), so the 20 visual points and the whole funnel are irreproducible; and the Scorer prompt returns all five dimensions plus a total (D.6.2) while §2.3 says only visual design goes through the VLM — the reconciling clamp is described, never quantified.
+3. The game's per-round increments (+9.5, +2.2, +1.3, +0.6, +0.6, +0.9, +1.0, +0.1) are far from its +43.9 verified lift, so what the card numbers denote is Unclear; why 9,440 High pages are rejected at export is never stated. Aging: 16 open-weight and 6 closed rows, single-run, open rows 41.7 to 49.8, best total 50.6 of 100 — unsaturated, but discrimination lives almost only in the functionality slice and drifts with provider versions.
+
+<SelfCheck q="The base defense game scores 46 on its first execution. What may the controller do, what may it not do, and why is the exported page the round-8 checkpoint rather than the last edit?" a="46 is Mid (40–79): the admissible set is Ω_Mid — Rewrite, BugFix, PlayabilityRepair, InteractionTargetedFix, GameRepair, VisualEnrichment — and the diagnosis (unverified controls, obstacle checks, score state) sends round 1 to a structural rebuild, then game and interaction repair; NoOpVerify and pure polish are High-only. Every candidate is re-executed and kept only if S_comp beats the checkpoint, so the export is the best verified checkpoint, not the newest edit (Fig. 5B: the current candidate can lag the peak); all eight rounds ran because 89.9 never reached the 97 early stop." />
+
+## Glossary
+- <Term def="Fraction of the repairable population to which a repair family applies in Fig. 7; the exact definition is not given">support</Term>
+- <Term def="Stopping rule that ends a trace when recent rounds show small or negative gains; its window and threshold are Not reported">patience rule</Term>
+- <Term def="The two-stage VLM judge: the Analyst sees keyframes and probes and only describes; the Scorer sees no images and scores from the Analyst JSON plus objective metrics">Analyst / Scorer</Term>
+- <Term def="Sub-scores of the MiniAppEval runner reported in Tab. 4; their definitions come from MiniAppBench and are not restated in this paper">Intent / Static / Dyn.</Term>
+- <Term def="Evaluation mode that skips the VLM phase for cheap regression checks; leaderboard rows use full mode">fast mode</Term>
+- <Term def="Browser API that schedules the next animation frame; its absence or a throwing update loop is a diagnosed game-loop failure">requestAnimationFrame</Term>
+
+{/* NOTES_START */}
+### Personal notes
+{/* NOTES_END */}

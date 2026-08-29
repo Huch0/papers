@@ -311,3 +311,6 @@
 {"ts": "2026-08-27T04:54:04Z", "source": "download_pdf", "url": "https://arxiv.org/pdf/2606.27665v1", "dest": "library/llm-assisted-model-based-gui-testing-for-260627665/v1/paper.pdf", "bytes": 988268, "ok": true}
 {"ts": "2026-08-27T04:54:15Z", "source": "download_pdf", "url": "https://arxiv.org/pdf/2412.21139v2", "dest": "library/training-software-engineering-agents-and-verifiers-with-241221139/v1/paper.pdf", "bytes": 589198, "ok": true}
 {"ts": "2026-08-27T04:54:27Z", "source": "download_pdf", "url": "https://arxiv.org/pdf/2502.18449v2", "dest": "library/swe-rl-advancing-llm-reasoning-via-reinforcement-250218449/v1/paper.pdf", "bytes": 1941290, "ok": true}
+{"ts": "2026-08-29T10:08:46Z", "source": "download_pdf", "url": "https://arxiv.org/pdf/2601.04126v3", "dest": "library/infiniteweb-scalable-web-environment-synthesis-for-gui-260104126/v1/paper.pdf", "bytes": 13608385, "ok": true}
+{"ts": "2026-08-29T10:20:01Z", "source": "download_pdf", "url": "https://arxiv.org/pdf/2602.14296v1", "dest": "library/autowebworld-synthesizing-infinite-verifiable-web-environments-via-260214296/v1/paper.pdf", "bytes": 12204666, "ok": true}
+{"ts": "2026-08-29T10:23:09Z", "source": "download_pdf", "url": "https://arxiv.org/pdf/2605.26807v1", "dest": "library/htmlcure-turning-browser-experience-into-state-guided-260526807/v1/paper.pdf", "bytes": 22997329, "ok": true}

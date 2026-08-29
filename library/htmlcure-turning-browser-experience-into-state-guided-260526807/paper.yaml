@@ -1,0 +1,57 @@
+canonical_key: arxiv-2605.26807
+slug: htmlcure-turning-browser-experience-into-state-guided-260526807
+title: 'HTMLCure: Turning Browser Experience into State Guided Repair for Interactive HTML'
+authors:
+- Jiajun Wu
+- Jian Yang
+- Tuney Zheng
+- Wei Zhang
+- Haowen Wang
+- Yihang Lou
+- Xianglong Liu
+year: 2026
+primary_ids:
+  doi: null
+  arxiv_base_id: '2605.26807'
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+canonical_urls:
+- https://arxiv.org/abs/2605.26807v1
+- https://arxiv.org/pdf/2605.26807v1
+topic_groups: []
+tags: []
+venue:
+  name: arXiv
+  tier: workshop_or_minor
+  status: preprint
+  year: 2026
+user:
+  read_status: unread
+  triage_label: SKIP
+  triage_confidence: low
+  notes: null
+milestone: null
+knowledge_concepts: []
+versions:
+- version_key: v1
+  version_label: arXiv v1
+  source: arxiv
+  source_url: https://arxiv.org/abs/2605.26807v1
+  pdf_path: library/htmlcure-turning-browser-experience-into-state-guided-260526807/v1/paper.pdf
+  summary_path: null
+  metadata_path: library/htmlcure-turning-browser-experience-into-state-guided-260526807/v1/metadata.yaml
+  fetched_at: '2026-08-29T10:23:09Z'
+  source_updated_at: '2026-05-26T00:00:00Z'
+  arxiv_version: v1
+  pdf_sha256: cb3f4aebf343f8207d44948935b25560b8b3944436990f7a978f12606f309a71
+  pdf_bytes: 22997329
+  summary_status: none
+  extraction_status: none
+  created_at: '2026-08-29T10:23:09Z'
+  updated_at: '2026-08-29T10:23:09Z'
+relations:
+  duplicate_candidates: []
+  related_papers: []
+  supersedes: []
+  superseded_by: []

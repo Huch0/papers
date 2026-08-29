@@ -72,14 +72,14 @@ scoring:
     author_or_lab_signal: 0.0
 artifacts:
   pdf: library/interactscience-programmatic-and-visually-grounded-evaluation-of-251009724/v1/paper.pdf
-  extraction: null
+  extraction: library/interactscience-programmatic-and-visually-grounded-evaluation-of-251009724/v1/extraction.txt
   summary: null
   code_url: null
   project_url: null
   dataset_url: null
 status:
   downloaded: true
-  extracted: false
+  extracted: true
   summarized: false
   triaged: true
   user_read_status: unread

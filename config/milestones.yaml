@@ -1980,6 +1980,44 @@ fields:
       reading_order: 28
       reading_tier: positioning
       reading_note: 'Skim: model-based testing on existing apps; the statechart idea applied elsewhere.'
+    - title: 'InfiniteWeb: Scalable Web Environment Synthesis for GUI Agent Training'
+      year: 2026
+      era: recent
+      arxiv: '2601.04126'
+      subarea: state_contract_verification
+      significance: 'ACL 2026. Websites generated as GUI-agent environments with task-specific
+        evaluators generated alongside them: deterministic JS over localStorage instrumentation
+        variables, weighted checkpoints as a dense GRPO reward (4.4x more discriminative tasks);
+        the checker is written by the same LLM that wrote the site, validated by a 100-task spot check.'
+      reading_order: 38
+      reading_tier: positioning
+      reading_note: 'Skim S3.5 and App. A.2: evaluator = deterministic checks over instrumented state,
+        written with the environment. Compare: same-author checks vs our request-first rules;
+        dense per-rule reward shape for cycle 2. See reading/2026-08-28-deterministic-verifiers.md.'
+    - title: 'AutoWebWorld: Synthesizing Infinite Verifiable Web Environments via Finite State Machines'
+      year: 2026
+      era: recent
+      arxiv: '2602.14296'
+      subarea: state_contract_verification
+      significance: 'Websites synthesized from an LLM-written FSM; tasks are BFS paths whose
+        correctness is certified in the FSM, not in the rendered site (site-FSM conformance is never
+        checked); trajectories filtered only by Playwright executability.'
+      reading_order: 39
+      reading_tier: positioning
+      reading_note: 'Skim S3-4.4: verification by construction and its gap - the statechart is
+        never checked against the program. Our getState/dispatch is what would close it.'
+    - title: 'HTMLCure: Turning Browser Experience into State Guided Repair for Interactive HTML'
+      year: 2026
+      era: recent
+      arxiv: '2605.26807'
+      subarea: programmatic_behavior_tests
+      significance: 'Generic deterministic browser probes + 6,000 frozen per-task tests (HTMLBench-400)
+        with a VLM capped at 20/100; score bands route a closed-loop repair engine and gate SFT export
+        (40K pages; 27B reaches 50.6 / 45.2% deterministic pass). No verifier validation reported.'
+      reading_order: 40
+      reading_tier: positioning
+      reading_note: 'Read S2-3: probe layers, band-to-repair-family routing, regression-penalized
+        acceptance from a fresh run. Baseline for RQ1 (routing vs localization).'
     - title: 'SWE-bench: Can Language Models Resolve Real-World GitHub Issues?'
       year: 2023
       era: foundational

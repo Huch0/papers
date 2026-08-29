@@ -1,0 +1,96 @@
+canonical_key: arxiv-2602.14296
+version_key: v1
+title: 'AutoWebWorld: Synthesizing Infinite Verifiable Web Environments via Finite State Machines'
+authors:
+- Yifan Wu
+- Yiran Peng
+- Yiyu Chen
+- Jianhao Ruan
+- Zijie Zhuang
+- Cheng Yang
+- Jiayi Zhang
+- Man Chen
+- Yenchi Tseng
+- Zhaoyang Yu
+- Liang Chen
+- Yuyao Zhai
+- Bang Liu
+- Chenglin Wu
+- Yuyu Luo
+abstract: 'The performance of autonomous Web GUI agents heavily relies on the quality and quantity of
+  their training data. However, a fundamental bottleneck persists: collecting interaction trajectories
+  from real-world websites is expensive and difficult to verify. The underlying state transitions are
+  hidden, leading to reliance on inconsistent and costly external verifiers to evaluate step-level correctness.
+  To address this, we propose AutoWebWorld, a novel framework for synthesizing controllable and verifiable
+  web environments by modeling them as Finite State Machines (FSMs) and use coding agents to translate
+  FSMs into interactive websites. Unlike real websites, where state transitions are implicit, AutoWebWorld
+  explicitly defines all states, actions, and transition rules. This enables programmatic verification:
+  action correctness is checked against predefined rules, and task success is confirmed by reaching a
+  goal state in the FSM graph. AutoWebWorld enables a fully automated search-and-verify pipeline, generating
+  over 11,663 verified trajectories from 29 diverse web environments at only $0.04 per trajectory. Training
+  on this synthetic data significantly boosts real-world performance. Our 7B Web GUI agent outperforms
+  all baselines within 15 steps on WebVoyager. Furthermore, we observe a clear scaling law: as the synthetic
+  data volume increases, performance on WebVoyager and Online-Mind2Web consistently improves.'
+venue: arXiv
+year: 2026
+source: arxiv
+source_url: https://arxiv.org/abs/2602.14296v1
+pdf_url: https://arxiv.org/pdf/2602.14296v1
+pdf_sha256: b660ae0dcc0502236c312ece5ba79434ce8e03c5aca8e819398367759c3f127d
+fetched_at: '2026-08-29T10:19:57Z'
+source_updated_at: '2026-02-15T20:03:19Z'
+ids:
+  doi: null
+  arxiv_id: 2602.14296v1
+  arxiv_base_id: '2602.14296'
+  arxiv_version: v1
+  openreview_id: null
+  semantic_scholar_id: null
+  openalex_id: null
+tags: []
+topic_groups:
+- computer_use_agents
+- software_engineering_agents
+- general_agent_methods
+- llm
+scoring:
+  score: 54.0
+  label: SKIM
+  confidence: high
+  rationale: 'score=54 -> SKIM | strong: interest_fit(1.00), novelty(0.80), harness_relevance(0.68) |
+    interests: computer_use_agents:GUI agent, computer_use_agents:group:computer_use_agents, software_engineering_agents:coding
+    agent, software_engineering_agents:verifier'
+  matched_interests:
+  - computer_use_agents:GUI agent
+  - computer_use_agents:group:computer_use_agents
+  - software_engineering_agents:coding agent
+  - software_engineering_agents:verifier
+  - software_engineering_agents:group:software_engineering_agents
+  - general_agent_methods:verifier
+  - general_agent_methods:group:general_agent_methods
+  - llm:scaling law
+  - llm:group:llm
+  negative_signals: []
+  subscores:
+    interest_fit: 1.0
+    recency: 0.657
+    venue_quality: 0.4
+    harness_relevance: 0.68
+    novelty: 0.8
+    artifact_availability: 0.0
+    evaluation_quality: 0.0
+    trend_signal: 0.0
+    author_or_lab_signal: 0.0
+artifacts:
+  pdf: library/autowebworld-synthesizing-infinite-verifiable-web-environments-via-260214296/v1/paper.pdf
+  extraction: library/autowebworld-synthesizing-infinite-verifiable-web-environments-via-260214296/v1/extraction.txt
+  summary: null
+  code_url: null
+  project_url: null
+  dataset_url: null
+status:
+  downloaded: true
+  extracted: true
+  summarized: false
+  triaged: true
+  user_read_status: unread

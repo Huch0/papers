@@ -72,14 +72,14 @@ scoring:
     author_or_lab_signal: 0.0
 artifacts:
   pdf: library/web-bench-a-llm-code-benchmark-based-250507473/v1/paper.pdf
-  extraction: null
+  extraction: library/web-bench-a-llm-code-benchmark-based-250507473/v1/extraction.txt
   summary: null
   code_url: null
   project_url: null
   dataset_url: null
 status:
   downloaded: true
-  extracted: false
+  extracted: true
   summarized: false
   triaged: true
   user_read_status: unread

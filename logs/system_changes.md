@@ -530,3 +530,16 @@ Each entry: date, trigger, change, files touched, migration status.
   frontmatter via `--finalize` (python3.12). Survey-axis tags set; concept links added.
 - Gates: check-mdx OK on all four MDX files; knowledge validate OK; validate_registry only
   the pre-existing PDF-missing errors; site build OK.
+
+## 2026-08-30 — Design doc rev. 2 (deterministic-verifier-design)
+- User feedback: the design must be general across GUI / game / simulation; the binding,
+  granularity and role questions are implementation detail; and since the agent writes code
+  and checks together it can always implement the contract — so the design question is trust.
+- knowledge/concepts/deterministic-verifier-design.mdx: §4 gains "generality comes from the
+  ports, not the type" + a port×artifact binding table and the imposed / free / cooperative
+  split of the ports (partial state with declared coverage for wrapped libraries); §5 gains
+  "Keeping same-author checks honest" (authorship separation in time and context, render
+  purity + wiring so `getState` cannot lie — the broken-slider example —, mutation admission,
+  differential testing); §7 replaced: four mechanism-changing decisions + a fixed scope
+  statement (behavior only; aesthetics judged outside the loop). Prose 2,067 words outside
+  tables. check-mdx OK.

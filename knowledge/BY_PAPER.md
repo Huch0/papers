@@ -4,6 +4,9 @@
 
 Concepts grouped by the paper(s) they were learned from / linked to.
 
+## (unlinked)  (`(unlinked)`)
+- [Interactivity Models](concepts/interactivity-models.md)
+
 ## Mind2Web: Towards a Generalist Agent for the Web  (`arxiv-2306.06070`)
 - [Web-Agent Generalization (cross-task / site / domain)](concepts/web-agent-generalization.md)
 

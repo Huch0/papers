@@ -20,8 +20,9 @@
 ## interactive-component-survey (1)
 - [Deterministic verifier design for interactive artifacts](concepts/deterministic-verifier-design.md)
 
-## interactive-ui (3)
+## interactive-ui (4)
 - [Agent-as-a-Verifier](concepts/agent-as-a-verifier.md)
+- [Interactivity Models](concepts/interactivity-models.md)
 - [Model-Based GUI Testing](concepts/model-based-gui-testing.md)
 - [State-Contract Verification](concepts/state-contract-verification.md)
 
@@ -31,14 +32,16 @@
 ## swe-agent (1)
 - [Agent-Computer Interface (ACI)](concepts/agent-computer-interface-aci.md)
 
-## testing (3)
+## testing (4)
 - [Differential Testing](concepts/differential-testing.md)
+- [Interactivity Models](concepts/interactivity-models.md)
 - [Model-Based GUI Testing](concepts/model-based-gui-testing.md)
 - [Mutation-Hardened Checks](concepts/mutation-hardened-checks.md)
 
-## verification (4)
+## verification (5)
 - [Deterministic verifier design for interactive artifacts](concepts/deterministic-verifier-design.md)
 - [Differential Testing](concepts/differential-testing.md)
+- [Interactivity Models](concepts/interactivity-models.md)
 - [Mutation-Hardened Checks](concepts/mutation-hardened-checks.md)
 - [State-Contract Verification](concepts/state-contract-verification.md)
 

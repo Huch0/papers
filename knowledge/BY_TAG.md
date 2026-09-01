@@ -9,19 +9,22 @@
 ## computer-use-agents (1)
 - [Web-Agent Generalization (cross-task / site / domain)](concepts/web-agent-generalization.md)
 
-## evaluation (3)
+## evaluation (4)
 - [Agent-as-a-Verifier](concepts/agent-as-a-verifier.md)
+- [Interactive Artifact Generation Baselines](concepts/interactive-artifact-generation-baselines.md)
 - [LLM-as-a-Judge](concepts/llm-as-a-judge.md)
 - [Web-Agent Generalization (cross-task / site / domain)](concepts/web-agent-generalization.md)
 
-## evaluation-harness (1)
+## evaluation-harness (2)
 - [Deterministic verifier design for interactive artifacts](concepts/deterministic-verifier-design.md)
+- [Interactive Artifact Generation Baselines](concepts/interactive-artifact-generation-baselines.md)
 
 ## interactive-component-survey (1)
 - [Deterministic verifier design for interactive artifacts](concepts/deterministic-verifier-design.md)
 
-## interactive-ui (4)
+## interactive-ui (5)
 - [Agent-as-a-Verifier](concepts/agent-as-a-verifier.md)
+- [Interactive Artifact Generation Baselines](concepts/interactive-artifact-generation-baselines.md)
 - [Interactivity Models](concepts/interactivity-models.md)
 - [Model-Based GUI Testing](concepts/model-based-gui-testing.md)
 - [State-Contract Verification](concepts/state-contract-verification.md)

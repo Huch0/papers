@@ -1,0 +1,101 @@
+---
+name: interactive-artifact-generation-baselines
+title: Interactive Artifact Generation Baselines
+aliases:
+- baseline families for artifact generation
+- feedback-loop baselines
+- judge baselines
+tags:
+- evaluation
+- interactive-ui
+- evaluation-harness
+related_papers:
+- arxiv-2505.03733
+- arxiv-2509.22644
+- arxiv-2510.11498
+- arxiv-2511.08195
+- arxiv-2604.19742
+- arxiv-2605.26807
+- arxiv-2608.06474
+- arxiv-2601.04126
+- arxiv-2207.10397
+- arxiv-2304.05128
+- arxiv-2507.04952
+- arxiv-2510.18560
+- arxiv-2606.03220
+- arxiv-2606.00750
+- arxiv-2506.13832
+- arxiv-2510.09724
+- arxiv-2606.01869
+- arxiv-2605.07442
+- arxiv-2411.03292
+- arxiv-2605.20473
+- arxiv-2605.08680
+related_concepts:
+- deterministic-verifier-design
+- interactivity-models
+- llm-as-a-judge
+- agent-as-a-verifier
+- differential-testing
+created: '2026-09-01T07:57:10Z'
+updated: '2026-09-01T07:58:42Z'
+curated_by: Huch0
+contributors:
+- Huch0
+---
+
+# Interactive Artifact Generation Baselines
+
+## Intuition
+
+When the contract harness is evaluated on interactive-artifact code generation, "baseline" means two different things, and mixing them up is the classic reviewer trap. Axis A is the **generation loop**: what feedback signal repairs or selects the artifact — our harness is one arm among several. Axis B is the **verdict**: who measures the final quality of every axis-A arm — our verifier is an arm here too, and therefore *must not also be the referee for axis A*. The circularity rule in one sentence: an arm may use any signal it likes during generation, but final scores come from human labels, benchmark-native metrics, and judges independent of every arm.
+
+The most important baselines are then simply the strongest published representative of each feedback family at a matched compute budget, plus the judge family our verifier claims to beat.
+
+## Details
+
+### Axis A — the six feedback families (generation-side)
+
+**B0 · Single shot, no feedback.** One prompt, one artifact. The field's universal default; every benchmark below reports it. Anchors the bottom of every curve.
+
+**B1 · Single shot + contract in the prompt.** Our own ablation, isolating what the contract costs or buys before any loop runs. Not optional: WorldCoder-Bench found that breaking a required state interface is the *top* one-shot failure mode (42.8% of failures), so contract conformance is a real treatment, not a formality.
+
+**B2 · LLM-only self-refinement.** Self-Refine/Reflexion-style: the model critiques and revises its own code with no execution signal. Known-weak (the self-correction literature and Self-Debugging's ablations both show gains collapse without real execution), which is exactly why it belongs in the table — it is the cheap arm that shows feedback *content* matters, not iteration count.
+
+**B3 · Visual feedback loop.** Render, screenshot, let a vision model critique, revise. Strongest published representatives: ReLook (RL with a multimodal critic in the loop) and UI2Code^N (interactive visual-feedback loop). This is the strongest *pixels-based* competitor and the arm most cited for "why not just look at it?"
+
+**B4 · Interactive-agent feedback loop.** An agent actually uses the artifact and its experience drives repair: WebGen-Agent (step-level screenshot + GUI-agent feedback, with reported human agreement around 91% in its guided setting) and PlayCoder (a play-testing agent whose bug reports drive repair of GUI/game code; halved unplayable-game rates, and self-reports 16% missed bugs / 5% false alarms). This is the strongest *behavior-aware* competitor — and the expensive one, so it is where quality-per-token comparisons bite.
+
+**B5 · Programmatic-check loops.** The closest relatives, differing from ours mainly in *who writes the checks and when*: HTMLCure (generic browser probes plus per-task tests; score bands route repair), WebGrader (programmatic grader re-grounded on the live DOM, self-evolving, used as an RL reward), InfiniteWeb (checks written by the same author-model as the site, gating dense RL rewards — environment synthesis rather than artifact generation, but the same trust question), and classic unit-test loops where vetted tests exist (FrontendBench's human-vetted tests driving a Self-Debugging-style loop). These arms contest the novelty claim directly, so beating or matching them at lower cost matters more than beating B2.
+
+**B6 · Selection instead of repair.** Sample N artifacts and pick one: best-of-N by a VLM judge; CodeT-style dual execution agreement (generated tests × candidate consensus, 47.0→65.8 pass@1 zero-shot on function code); pure behavioral clustering (DiffCodeGen, Semantic Voting show execution-consensus beats majority voting for algorithmic code). Answers the reviewer question "do you need a loop at all, or just more samples?" — and our differential mechanism must specifically beat naive consensus.
+
+### Axis B — judge baselines (the verifier's own comparison, RQ3)
+
+- **VLM screenshot judge**: ArtifactsBench's checklist-plus-VLM protocol is the citable instantiation; WebDevJudge supplies the reliability ceiling (best judge agrees with humans 70.3% of the time; humans agree 84.6%).
+- **GUI-agent judge**: agent-as-a-verifier protocols (WebDevJudge's agentic mode; WebGen-Bench's UI-agent testing; PlayCoder's play-tester as a grader).
+- **Existing programmatic checkers**: HTMLCure's generic probes and WebGrader's grader, run as verdict-producers rather than repair signals.
+- **Ground truth**: human bug labels — WebRISE released per-requirement human verdicts (its own agent caught 16 of 25 planted defects, so the labels are the point, not its checker), plus our own labeling on sampled runs.
+- Report, for every judge including ours: agreement with human labels, false-negative and false-positive rates on planted bugs (PlayCoder's 16%/5% self-report is the precedent for honest reporting), and cost per verdict (published anchors: 63.75 s per graded website for WebGrader's baseline setting; 7,356 s to play-test one game in GameGen-Verifier's setting).
+
+### Task sources per domain
+
+Web page / app: I-WebGenBench (interactivity-focused, 201 scientific apps), FrontendBench (148 tasks, human-vetted tests), WebGen-Bench (instructed website generation), Interaction2Code (interactive webpage targets). Scientific/plot: InteractScience (programmatic + visually grounded). Game: PlayCoder's task suite; GameGen-Verifier's games. Simulation/3D: WorldCoder-Bench. Project-scale web (probably out of scope for the thesis): Web-Bench. Plus ~50 in-house property tasks where rules are known by construction.
+
+### Fairness rules the setup must obey
+
+1. **Referee independence**: no axis-A arm — ours included — is scored by its own training-time signal; final metrics come from human labels, benchmark-native metrics, and axis-B judges excluded from every loop.
+2. **Matched budget**: feedback loops differ by orders of magnitude in cost; report quality-at-equal-token/compute curves, not just endpoints.
+3. **Same base model, same N, same prompts** modulo the manipulated factor.
+4. **Contract fairness both ways**: run B3/B4 on their native (contract-free) artifacts *and* on contract artifacts, separating "the contract changes generation" from "the verifier changes verdicts."
+5. **Honest error reporting**: FN/FP against human labels for every judge, ours first.
+
+### The minimum viable set (the direct answer)
+
+If only five arms fit the budget: **B0** (single shot), **B3** (ReLook/UI2Code^N-style visual loop), **B4** (WebGen-Agent-style agent loop), **B6** (best-of-N with a VLM judge), and **ours** — with **B1** nearly free as a prompt ablation. On the judge axis: **VLM judge vs GUI-agent judge vs our verifier** on WebRISE's human labels plus planted bugs. The first extension after that is a **B5** arm (HTMLCure- or WebGrader-style), because it is the closest relative and the one a reviewer will name.
+
+## See also
+
+- deterministic-verifier-design — the design being compared; interactivity-models — where its machinery comes from.
+- llm-as-a-judge and agent-as-a-verifier — the axis-B families as concepts.
+- differential-testing — why B6 consensus is the selection baseline our differential loop must beat.

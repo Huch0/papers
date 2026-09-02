@@ -48,7 +48,6 @@ milestone:
   subarea: interactive_ui
 knowledge_concepts:
 - agent-as-a-verifier
-- interactive-artifact-generation-baselines
 versions:
 - version_key: v1
   version_label: arXiv v1

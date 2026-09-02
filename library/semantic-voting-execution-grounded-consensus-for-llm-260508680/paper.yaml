@@ -37,7 +37,6 @@ milestone:
   subarea: candidate_selection
 knowledge_concepts:
 - differential-testing
-- interactive-artifact-generation-baselines
 versions:
 - version_key: v1
   version_label: arXiv v1

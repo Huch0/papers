@@ -36,7 +36,6 @@ user:
   notes: null
 milestone: null
 knowledge_concepts:
-- interactive-artifact-generation-baselines
 versions:
 - version_key: v1
   version_label: arXiv v2

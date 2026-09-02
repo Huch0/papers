@@ -10,7 +10,7 @@ authors:
 - Qipeng Guo
 - Gong Cheng
 - Fei Yuan
-year: 2025
+year: 2026
 primary_ids:
   doi: null
   arxiv_base_id: '2510.09724'
@@ -26,10 +26,10 @@ topic_groups:
 tags:
 - foundational
 venue:
-  name: arXiv
-  tier: workshop_or_minor
-  status: preprint
-  year: 2025
+  name: ICML
+  tier: A_star
+  status: accepted
+  year: 2026
 user:
   read_status: unread
   triage_label: READ_SOON

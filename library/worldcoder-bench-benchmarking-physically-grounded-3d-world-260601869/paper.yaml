@@ -55,8 +55,6 @@ knowledge_concepts:
 - agent-as-a-verifier
 - state-contract-verification
 - mutation-hardened-checks
-- deterministic-verifier-design
-- interactive-artifact-generation-baselines
 versions:
 - version_key: v1
   version_label: arXiv v2

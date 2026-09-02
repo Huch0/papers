@@ -42,8 +42,6 @@ milestone:
     plan assigns element IDs that generated code must follow so tests can target them.
   subarea: programmatic_behavior_tests
 knowledge_concepts:
-- deterministic-verifier-design
-- interactive-artifact-generation-baselines
 versions:
 - version_key: v1
   version_label: arXiv v2

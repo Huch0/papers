@@ -4,15 +4,6 @@
 
 Concepts grouped by the paper(s) they were learned from / linked to.
 
-## (unlinked)  (`(unlinked)`)
-- [Interactivity Models](concepts/interactivity-models.md)
-
-## CodeT: Code Generation with Generated Tests  (`arxiv-2207.10397`)
-- [Interactive Artifact Generation Baselines](concepts/interactive-artifact-generation-baselines.md)
-
-## Teaching Large Language Models to Self-Debug  (`arxiv-2304.05128`)
-- [Interactive Artifact Generation Baselines](concepts/interactive-artifact-generation-baselines.md)
-
 ## Mind2Web: Towards a Generalist Agent for the Web  (`arxiv-2306.06070`)
 - [Web-Agent Generalization (cross-task / site / domain)](concepts/web-agent-generalization.md)
 
@@ -32,50 +23,23 @@ Concepts grouped by the paper(s) they were learned from / linked to.
 - [Agent-Computer Interface (ACI)](concepts/agent-computer-interface-aci.md)
 - [Planner–Executor–Verifier](concepts/planner-executor-verifier.md)
 
-## Interaction2Code: Benchmarking MLLM-based Interactive Webpage Code Generation from Interactive Prototyping  (`arxiv-2411.03292`)
-- [Interactive Artifact Generation Baselines](concepts/interactive-artifact-generation-baselines.md)
-
 ## WebGen-Bench: Evaluating LLMs on Generating Interactive and Functional Websites from Scratch  (`arxiv-2505.03733`)
 - [Agent-as-a-Verifier](concepts/agent-as-a-verifier.md)
-- [Interactive Artifact Generation Baselines](concepts/interactive-artifact-generation-baselines.md)
-
-## Web-Bench: A LLM Code Benchmark Based on Web Standards and Frameworks  (`arxiv-2505.07473`)
-- [Deterministic verifier design for interactive artifacts](concepts/deterministic-verifier-design.md)
-
-## FrontendBench: A Benchmark for Evaluating LLMs on Front-End Development via Automatic Evaluation  (`arxiv-2506.13832`)
-- [Deterministic verifier design for interactive artifacts](concepts/deterministic-verifier-design.md)
-- [Interactive Artifact Generation Baselines](concepts/interactive-artifact-generation-baselines.md)
-
-## ArtifactsBench: Bridging the Visual-Interactive Gap in LLM Code Generation Evaluation  (`arxiv-2507.04952`)
-- [Interactive Artifact Generation Baselines](concepts/interactive-artifact-generation-baselines.md)
 
 ## WebGen-Agent: Enhancing Interactive Website Generation with Multi-Level Feedback and Step-Level Reinforcement Learning  (`arxiv-2509.22644`)
 - [Agent-as-a-Verifier](concepts/agent-as-a-verifier.md)
-- [Interactive Artifact Generation Baselines](concepts/interactive-artifact-generation-baselines.md)
-
-## InteractScience: Programmatic and Visually-Grounded Evaluation of Interactive Scientific Demonstration Code Generation  (`arxiv-2510.09724`)
-- [Deterministic verifier design for interactive artifacts](concepts/deterministic-verifier-design.md)
-- [Interactive Artifact Generation Baselines](concepts/interactive-artifact-generation-baselines.md)
 
 ## ReLook: Vision-Grounded RL with a Multimodal LLM Critic for Agentic Web Coding  (`arxiv-2510.11498`)
-- [Interactive Artifact Generation Baselines](concepts/interactive-artifact-generation-baselines.md)
 - [LLM-as-a-Judge](concepts/llm-as-a-judge.md)
 
 ## WebDevJudge: Evaluating (M)LLMs as Critiques for Web Development Quality  (`arxiv-2510.18560`)
 - [Agent-as-a-Verifier](concepts/agent-as-a-verifier.md)
-- [Interactive Artifact Generation Baselines](concepts/interactive-artifact-generation-baselines.md)
 - [LLM-as-a-Judge](concepts/llm-as-a-judge.md)
 
-## UI2Code^N: UI-to-Code Generation as Interactive Visual Optimization  (`arxiv-2511.08195`)
-- [Interactive Artifact Generation Baselines](concepts/interactive-artifact-generation-baselines.md)
-
 ## InfiniteWeb: Scalable Web Environment Synthesis for GUI Agent Training  (`arxiv-2601.04126`)
-- [Deterministic verifier design for interactive artifacts](concepts/deterministic-verifier-design.md)
-- [Interactive Artifact Generation Baselines](concepts/interactive-artifact-generation-baselines.md)
 - [State-Contract Verification](concepts/state-contract-verification.md)
 
 ## AutoWebWorld: Synthesizing Infinite Verifiable Web Environments via Finite State Machines  (`arxiv-2602.14296`)
-- [Deterministic verifier design for interactive artifacts](concepts/deterministic-verifier-design.md)
 - [Model-Based GUI Testing](concepts/model-based-gui-testing.md)
 - [State-Contract Verification](concepts/state-contract-verification.md)
 
@@ -85,46 +49,28 @@ Concepts grouped by the paper(s) they were learned from / linked to.
 
 ## PlayCoder: Making LLM-Generated GUI Code Playable  (`arxiv-2604.19742`)
 - [Agent-as-a-Verifier](concepts/agent-as-a-verifier.md)
-- [Interactive Artifact Generation Baselines](concepts/interactive-artifact-generation-baselines.md)
 
 ## GameGen-Verifier: Parallel Keypoint-Based Verification for LLM-Generated Games via Runtime State Injection  (`arxiv-2605.07442`)
 - [Agent-as-a-Verifier](concepts/agent-as-a-verifier.md)
-- [Deterministic verifier design for interactive artifacts](concepts/deterministic-verifier-design.md)
-- [Interactive Artifact Generation Baselines](concepts/interactive-artifact-generation-baselines.md)
 - [Model-Based GUI Testing](concepts/model-based-gui-testing.md)
 - [Mutation-Hardened Checks](concepts/mutation-hardened-checks.md)
 - [State-Contract Verification](concepts/state-contract-verification.md)
 
 ## Semantic Voting: Execution-Grounded Consensus for LLM Code Generation  (`arxiv-2605.08680`)
 - [Differential Testing](concepts/differential-testing.md)
-- [Interactive Artifact Generation Baselines](concepts/interactive-artifact-generation-baselines.md)
 
 ## Code Generation by Differential Test Time Scaling  (`arxiv-2605.20473`)
 - [Differential Testing](concepts/differential-testing.md)
-- [Interactive Artifact Generation Baselines](concepts/interactive-artifact-generation-baselines.md)
-
-## VISTA: An End-to-End Benchmark for Visual Spec-to-Web-App Coding Agents  (`arxiv-2605.26144`)
-- [Deterministic verifier design for interactive artifacts](concepts/deterministic-verifier-design.md)
 
 ## HTMLCure: Turning Browser Experience into State Guided Repair for Interactive HTML  (`arxiv-2605.26807`)
-- [Deterministic verifier design for interactive artifacts](concepts/deterministic-verifier-design.md)
-- [Interactive Artifact Generation Baselines](concepts/interactive-artifact-generation-baselines.md)
 - [LLM-as-a-Judge](concepts/llm-as-a-judge.md)
-
-## I-WebGenBench : Evaluating Interactivity in LLM-Generated Scientific Web Applications  (`arxiv-2606.00750`)
-- [Deterministic verifier design for interactive artifacts](concepts/deterministic-verifier-design.md)
-- [Interactive Artifact Generation Baselines](concepts/interactive-artifact-generation-baselines.md)
 
 ## WorldCoder-Bench: Benchmarking Physically Grounded 3D World Synthesis  (`arxiv-2606.01869`)
 - [Agent-as-a-Verifier](concepts/agent-as-a-verifier.md)
-- [Deterministic verifier design for interactive artifacts](concepts/deterministic-verifier-design.md)
-- [Interactive Artifact Generation Baselines](concepts/interactive-artifact-generation-baselines.md)
 - [Mutation-Hardened Checks](concepts/mutation-hardened-checks.md)
 - [State-Contract Verification](concepts/state-contract-verification.md)
 
 ## WebRISE: Requirement-Induced State Evaluation for MLLM-Generated Web Artifacts  (`arxiv-2606.03220`)
-- [Deterministic verifier design for interactive artifacts](concepts/deterministic-verifier-design.md)
-- [Interactive Artifact Generation Baselines](concepts/interactive-artifact-generation-baselines.md)
 - [LLM-as-a-Judge](concepts/llm-as-a-judge.md)
 - [Model-Based GUI Testing](concepts/model-based-gui-testing.md)
 - [Mutation-Hardened Checks](concepts/mutation-hardened-checks.md)
@@ -134,12 +80,7 @@ Concepts grouped by the paper(s) they were learned from / linked to.
 - [Model-Based GUI Testing](concepts/model-based-gui-testing.md)
 
 ## WebGrader: Training LLMs for Web Development with Self-Evolving Programmatic Grader  (`arxiv-2608.06474`)
-- [Deterministic verifier design for interactive artifacts](concepts/deterministic-verifier-design.md)
-- [Interactive Artifact Generation Baselines](concepts/interactive-artifact-generation-baselines.md)
 - [State-Contract Verification](concepts/state-contract-verification.md)
-
-## GameXpert-Bench: How Far Are Coding Agents from Expert Game Development?  (`arxiv-2608.21833`)
-- [Deterministic verifier design for interactive artifacts](concepts/deterministic-verifier-design.md)
 
 ## Differential Testing for Software.  (`openalex-W109452506`)
 - [Differential Testing](concepts/differential-testing.md)

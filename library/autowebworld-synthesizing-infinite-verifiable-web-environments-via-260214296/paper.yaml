@@ -52,7 +52,6 @@ user:
   notes: null
 milestone: null
 knowledge_concepts:
-- deterministic-verifier-design
 - state-contract-verification
 - model-based-gui-testing
 versions:

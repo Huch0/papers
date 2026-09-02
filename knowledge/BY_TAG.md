@@ -9,23 +9,13 @@
 ## computer-use-agents (1)
 - [Web-Agent Generalization (cross-task / site / domain)](concepts/web-agent-generalization.md)
 
-## evaluation (4)
+## evaluation (3)
 - [Agent-as-a-Verifier](concepts/agent-as-a-verifier.md)
-- [Interactive Artifact Generation Baselines](concepts/interactive-artifact-generation-baselines.md)
 - [LLM-as-a-Judge](concepts/llm-as-a-judge.md)
 - [Web-Agent Generalization (cross-task / site / domain)](concepts/web-agent-generalization.md)
 
-## evaluation-harness (2)
-- [Deterministic verifier design for interactive artifacts](concepts/deterministic-verifier-design.md)
-- [Interactive Artifact Generation Baselines](concepts/interactive-artifact-generation-baselines.md)
-
-## interactive-component-survey (1)
-- [Deterministic verifier design for interactive artifacts](concepts/deterministic-verifier-design.md)
-
-## interactive-ui (5)
+## interactive-ui (3)
 - [Agent-as-a-Verifier](concepts/agent-as-a-verifier.md)
-- [Interactive Artifact Generation Baselines](concepts/interactive-artifact-generation-baselines.md)
-- [Interactivity Models](concepts/interactivity-models.md)
 - [Model-Based GUI Testing](concepts/model-based-gui-testing.md)
 - [State-Contract Verification](concepts/state-contract-verification.md)
 
@@ -35,16 +25,13 @@
 ## swe-agent (1)
 - [Agent-Computer Interface (ACI)](concepts/agent-computer-interface-aci.md)
 
-## testing (4)
+## testing (3)
 - [Differential Testing](concepts/differential-testing.md)
-- [Interactivity Models](concepts/interactivity-models.md)
 - [Model-Based GUI Testing](concepts/model-based-gui-testing.md)
 - [Mutation-Hardened Checks](concepts/mutation-hardened-checks.md)
 
-## verification (5)
-- [Deterministic verifier design for interactive artifacts](concepts/deterministic-verifier-design.md)
+## verification (3)
 - [Differential Testing](concepts/differential-testing.md)
-- [Interactivity Models](concepts/interactivity-models.md)
 - [Mutation-Hardened Checks](concepts/mutation-hardened-checks.md)
 - [State-Contract Verification](concepts/state-contract-verification.md)
 

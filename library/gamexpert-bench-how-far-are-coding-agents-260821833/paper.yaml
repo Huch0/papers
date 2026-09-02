@@ -45,7 +45,6 @@ milestone:
     state snapshots as the oracle; no required test API.'
   subarea: state_contract_verification
 knowledge_concepts:
-- deterministic-verifier-design
 versions:
 - version_key: v1
   version_label: arXiv v1
